@@ -309,7 +309,7 @@ static void new_pkunk(Element* ElementPtr)
 	ElementPtr->current.image.frame = SetAbsFrameIndex(
 		StarShipPtr->RaceDescPtr->ship_data.ship[0],
 		StarShipPtr->ShipFacing);
-	SetPrimType(&DisplayArray[ElementPtr->PrimIndex], STAMP_PRIM);
+	SetPrimType(&DisplayArray[ElementPtr->PrimIndex], PrimitiveType::Stamp);
 
 	do
 	{
@@ -430,7 +430,7 @@ static void phoenix_transition(Element* ElementPtr)
 		ShipImagePtr->state_flags = Appearing | FiniteLife | Nonsolid;
 		ShipImagePtr->life_span = TransitionLife;
 		SetPrimType(&DisplayArray[ShipImagePtr->PrimIndex],
-					STAMPFILL_PRIM);
+					PrimitiveType::StampFill);
 		SetPrimColor(
 			&DisplayArray[ShipImagePtr->PrimIndex],
 			StartPhoenixColor);
@@ -569,7 +569,7 @@ static void pkunk_preprocess(Element* ElementPtr)
 						ElementPtr->current.image.farray[0],
 						ElementPtr->current.image.frame);
 			SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
-						STAMP_PRIM);
+						PrimitiveType::Stamp);
 			InitIntersectStartPoint(ElementPtr);
 			InitIntersectEndPoint(ElementPtr);
 			InitIntersectFrame(ElementPtr);

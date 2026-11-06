@@ -190,7 +190,7 @@ void DrawTooltip(ShipInfoDesc* SIPtr)
 
 	Text.pStr = buf;
 	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
-	Text.align = ALIGN_CENTER;
+	Text.align = TextAlign::Center;
 	Text.baseline.y = r.corner.y + ResScale(8) + ResScale(1);
 	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + ResScale(1);
 

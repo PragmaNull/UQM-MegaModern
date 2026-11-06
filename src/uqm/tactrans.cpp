@@ -587,7 +587,7 @@ static void explosion_preprocess(Element* ShipPtr)
 			ElementPtr->playerNr = NeutralPlayerNum;
 			ElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
 			ElementPtr->life_span = 9;
-			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], STAMP_PRIM);
+			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], PrimitiveType::Stamp);
 			ElementPtr->current.image.farray = explosion;
 			ElementPtr->current.image.frame = explosion[0];
 			uint32_t rand_val {uqm::random().next()};
@@ -818,13 +818,13 @@ void spawn_ion_trail(Element* ElementPtr, int16_t x_offset, int16_t y_offset)
 
 		if (!IsHd())
 		{
-			SetPrimType(&DisplayArray[IonElementPtr->PrimIndex], POINT_PRIM);
+			SetPrimType(&DisplayArray[IonElementPtr->PrimIndex], PrimitiveType::Point);
 			IonElementPtr->current.image.frame = DecFrameIndex(stars_in_space);
 			IonElementPtr->current.image.farray = &stars_in_space;
 		}
 		else
 		{
-			SetPrimType(&DisplayArray[IonElementPtr->PrimIndex], STAMPFILL_PRIM);
+			SetPrimType(&DisplayArray[IonElementPtr->PrimIndex], PrimitiveType::StampFill);
 			IonElementPtr->current.image.frame = SetAbsFrameIndex(stars_misc[0], 1);
 			IonElementPtr->current.image.farray = stars_misc;
 			IonElementPtr->next.image.frame = IonElementPtr->current.image.frame;
@@ -883,7 +883,7 @@ void ship_transition(Element* ElementPtr)
 						SetEquFrameIndex(
 							ElementPtr->current.image.farray[0],
 							ElementPtr->current.image.frame);
-				SetPrimType(&DisplayArray[ElementPtr->PrimIndex], STAMP_PRIM);
+				SetPrimType(&DisplayArray[ElementPtr->PrimIndex], PrimitiveType::Stamp);
 				InitIntersectStartPoint(ElementPtr);
 				InitIntersectEndPoint(ElementPtr);
 				InitIntersectFrame(ElementPtr);
@@ -931,7 +931,7 @@ void ship_transition(Element* ElementPtr)
 			// 'cycle_ion_trail', it is given new life a number of
 			// times, by setting life_span to thrust_wait.
 			SetPrimType(&DisplayArray[ShipImagePtr->PrimIndex],
-						STAMPFILL_PRIM);
+						PrimitiveType::StampFill);
 			SetPrimColor(&DisplayArray[ShipImagePtr->PrimIndex],
 						 StartIonColor);
 			ShipImagePtr->colorCycleIndex = 0;

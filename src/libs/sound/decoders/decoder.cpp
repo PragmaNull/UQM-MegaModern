@@ -380,7 +380,7 @@ TFB_SoundDecoder* SoundDecoder_Load(const uqm::io::Directory& dir, const char* f
 	decoder->buffer = decoder->storage.data();
 	decoder->buffer_size = buffer_size;
 	decoder->looping = false;
-	decoder->error = SOUNDDECODER_OK;
+	decoder->error = +SoundDecoderStatus::Ok;
 	decoder->filename = filename;
 
 	if (decoder->is_null)
@@ -454,7 +454,7 @@ uint32_t SoundDecoder_Decode(TFB_SoundDecoder* decoder)
 
 	if (buffer_size == 0)
 	{ // nothing more to decode
-		decoder->error = SOUNDDECODER_EOF;
+		decoder->error = +SoundDecoderStatus::Eof;
 		return 0;
 	}
 
@@ -502,15 +502,15 @@ uint32_t SoundDecoder_Decode(TFB_SoundDecoder* decoder)
 	decoder->pos += decoded_bytes;
 	if (rc < 0)
 	{
-		decoder->error = SOUNDDECODER_ERROR;
+		decoder->error = +SoundDecoderStatus::Error;
 	}
 	else if (rc == 0 || decoder->pos >= max_bytes)
 	{
-		decoder->error = SOUNDDECODER_EOF;
+		decoder->error = +SoundDecoderStatus::Eof;
 	}
 	else
 	{
-		decoder->error = SOUNDDECODER_OK;
+		decoder->error = +SoundDecoderStatus::Ok;
 	}
 
 	if (decoder->need_swap && decoded_bytes > 0 && (decoder->format == decoder_formats.stereo16 || decoder->format == decoder_formats.mono16))
@@ -581,7 +581,7 @@ uint32_t SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder)
 
 	if (rc < 0)
 	{
-		decoder->error = SOUNDDECODER_ERROR;
+		decoder->error = +SoundDecoderStatus::Error;
 		uqm::log::warn("SoundDecoder_DecodeAll(): "
 					   "error decoding {}, code %ld",
 					   decoder->filename, rc);
@@ -596,7 +596,7 @@ uint32_t SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder)
 	decoder->funcs->Init(decoder);
 	decoder->pos = 0;
 	decoder->start_sample = 0;
-	decoder->error = SOUNDDECODER_OK;
+	decoder->error = +SoundDecoderStatus::Ok;
 
 	return decoded_bytes;
 }
@@ -633,7 +633,7 @@ void SoundDecoder_Seek(TFB_SoundDecoder* decoder, uint32_t seekTime)
 		decoder->funcs->Seek(decoder, seekTime);
 	}
 
-	decoder->error = SOUNDDECODER_OK;
+	decoder->error = +SoundDecoderStatus::Ok;
 }
 
 void SoundDecoder_Free(TFB_SoundDecoder* decoder)

@@ -161,7 +161,7 @@ static void DrawFileString(const MeleeTeam* team, const GfxPoint* origin,
 		GfxText Text;
 
 		Text.baseline = *origin;
-		Text.align = ALIGN_LEFT;
+		Text.align = TextAlign::Left;
 		Text.pStr = MeleeTeam_getTeamName(team);
 		Text.CharCount = (uint16_t)~0;
 		font_DrawText(&Text);
@@ -176,7 +176,7 @@ static void DrawFileString(const MeleeTeam* team, const GfxPoint* origin,
 		Text.baseline = *origin;
 		Text.baseline.x += NumMeleeColumns() * (LoadMeleeBoxWidth() + LoadMeleeBoxSpace())
 						 - ResScale(1);
-		Text.align = ALIGN_RIGHT;
+		Text.align = TextAlign::Right;
 		Text.pStr = buf;
 		Text.CharCount = (uint16_t)~0;
 		font_DrawText(&Text);

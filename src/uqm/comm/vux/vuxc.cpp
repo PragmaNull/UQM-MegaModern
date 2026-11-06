@@ -35,8 +35,8 @@ static ConversationData vux_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* (SisTextWidth() - 16) >> 1, */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_TOP, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Top, /* AlienTextValign */
 		VuxColorMap, /* AlienColorMap */
 		VuxMusic, /* AlienSong */
 		{
@@ -277,11 +277,11 @@ static AnimFilterSet vux_filters =
 		{
 								  /* Filter array */
 			{
-				0,				/* Color index */
-				1,				/* Opacity index */
-				-1,				/* Frame index */
-				DRAW_ALPHA,		/* DrawKind*/
-				SwitchOffAnims, /* Flags */
+				0,				 /* Color index */
+				1,				 /* Opacity index */
+				-1,				 /* Frame index */
+				DrawKind::Alpha, /* DrawKind*/
+				SwitchOffAnims,	 /* Flags */
 			},
 								  }
 };

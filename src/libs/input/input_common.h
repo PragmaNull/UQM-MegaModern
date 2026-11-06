@@ -21,15 +21,15 @@
 #include "core/stl/atomic.h"
 
 // driver for TFB_InitInput
-enum
+enum class InputDriver
 {
-	TFB_INPUTDRIVER_SDL
+	Sdl
 };
 
 // flags for TFB_InitInput
 //#define TFB_INPUTFLAGS_ETC (1<<0)
 
-extern int TFB_InitInput(int driver, int flags);
+extern int TFB_InitInput(InputDriver driver, int flags);
 extern void TFB_UninitInput(void);
 
 inline constexpr auto MaxFlightAlternates {2};

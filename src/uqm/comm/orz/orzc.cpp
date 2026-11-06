@@ -42,8 +42,8 @@ static ConversationData orz_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_TOP, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Top, /* AlienTextValign */
 		OrzColorMap, /* AlienColorMap */
 		OrzMusic, /* AlienSong */
 		{
@@ -223,11 +223,11 @@ static AnimFilterSet orz_filters =
 		{
 								  /* Filter array */
 			{
-				0,			   /* Color index */
-				1,			   /* Opacity index */
-				-1,			   /* Frame index */
-				DRAW_MULTIPLY, /* DrawKind*/
-				0,			   /* Flags */
+				0,					/* Color index */
+				1,					/* Opacity index */
+				-1,					/* Frame index */
+				DrawKind::Multiply, /* DrawKind*/
+				0,					/* Flags */
 			},
 								  }
 };

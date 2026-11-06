@@ -21,7 +21,7 @@
 
 LEGACY_VIDEO_REF PlayLegacyVideo(LEGACY_VIDEO vid)
 {
-	VIDEO_TYPE type;
+	VideoType type;
 
 	if (!vid)
 	{
@@ -52,7 +52,7 @@ LEGACY_VIDEO_REF PlayLegacyVideo(LEGACY_VIDEO vid)
 	}
 
 	type = VidPlayEx(ref->vidref, ref->audref, ref->speechref, loopframe);
-	if (type == NO_FMV)
+	if (type == VideoType::None)
 	{ // Video failed to start
 		StopLegacyVideo(ref);
 		return nullptr;

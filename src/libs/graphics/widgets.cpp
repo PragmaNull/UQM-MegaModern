@@ -144,7 +144,7 @@ void DrawLabelAsWindow(WidgetLabel* label, GfxRect* windowRect)
 	for (i = 0; i < label->line_count; i++)
 	{
 		t.pStr = label->lines[i];
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 		t.baseline.y += ResScale(8);
@@ -207,7 +207,7 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 	r.extent.width = CanvasWidth - ResScale(4);
 	r.extent.height = CanvasHeight + ResScale(3);
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = ~0;
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y
@@ -280,7 +280,7 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y + ResScale(6);
 	t.pStr = self->title;
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = ~0;
 	font_DrawText(&t);
 	t.baseline.y += ResScale(8);
@@ -426,7 +426,7 @@ void Widget_DrawChoice(Widget* _self, int x, int y)
 
 	t.baseline.x = x + Lstep();
 	t.baseline.y = y;
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.CharCount = ~0;
 	t.pStr = self->category;
 	if (widget_focus == _self)
@@ -441,7 +441,7 @@ void Widget_DrawChoice(Widget* _self, int x, int y)
 
 	{ // Choicer options
 		t.baseline.x = Rstep();
-		t.align = ALIGN_LEFT;
+		t.align = TextAlign::Left;
 		for (i = 0; i < self->numopts; i++)
 		{
 			if (i == self->selected && widget_focus != _self)
@@ -539,7 +539,7 @@ void Widget_DrawButton(Widget* _self, int x, int y)
 	inactive = WidgetInactiveColor;
 	t.baseline.x = ScreenCenter();
 	t.baseline.y = y;
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = ~0;
 	t.pStr = self->name;
 	if (widget_focus == _self)
@@ -582,7 +582,7 @@ void Widget_DrawLabel(Widget* _self, int x, int y)
 
 	t.baseline.x = ScreenCenter();
 	t.baseline.y = y;
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = ~0;
 
 	for (int i {0}; i < self->line_count; i++)
@@ -651,7 +651,7 @@ void Widget_DrawSlider(Widget* _self, int x, int y)
 
 	t.baseline.x = x + Lstep();
 	t.baseline.y = y;
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.CharCount = ~0;
 	t.pStr = self->category;
 	if (widget_focus == _self)
@@ -700,7 +700,7 @@ void Widget_Slider_DrawValue(WidgetSlider* self, int x, int y)
 
 	t.baseline.x = x + ResScale(14);
 	t.baseline.y = y;
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.CharCount = ~0;
 	t.pStr = buffer;
 
@@ -716,7 +716,7 @@ void Widget_Slider_DrawPercentageValue(WidgetSlider* self, int x, int y)
 
 	t.baseline.x = x + ResScale(14);
 	t.baseline.y = y;
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.CharCount = ~0;
 	t.pStr = buffer;
 
@@ -749,7 +749,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 
 	t.baseline.x = x + Lstep();
 	t.baseline.y = y;
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.CharCount = ~0;
 	t.pStr = self->category;
 	if (widget_focus == _self)
@@ -772,10 +772,10 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
 	t.pStr = self->value;
 
-	if (!(self->state & WTE_EDITING))
+	if (!any(self->state, TextEntryWidgetState::Editing))
 	{ // normal or selected state
 		t.baseline.x = Rstep();
-		t.align = ALIGN_LEFT;
+		t.align = TextAlign::Left;
 
 		if (widget_focus == _self)
 		{
@@ -796,7 +796,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 		int16_t leading {};
 
 		t.baseline.x = Rstep();
-		t.align = ALIGN_LEFT;
+		t.align = TextAlign::Left;
 
 		// calc background box dimensions
 		// XXX: this may need some tuning, especially if a
@@ -835,7 +835,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 			r.corner.x -= ResScale(1);
 		}
 
-		if (self->state & WTE_BLOCKCUR)
+		if (any(self->state, TextEntryWidgetState::BlockCursor))
 		{ // Use block cursor for keyboardless systems
 
 			r.corner.y = r.corner.y;
@@ -906,7 +906,7 @@ void Widget_DrawControlEntry(Widget* _self, int x, int y)
 
 	t.baseline.x = x + ResScale(16);
 	t.baseline.y = y;
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.CharCount = ~0;
 	t.pStr = self->category;
 	if (widget_focus == _self)
@@ -923,7 +923,7 @@ void Widget_DrawControlEntry(Widget* _self, int x, int y)
 
 	const int home_x {t.baseline.x + (CanvasWidth / 3)};
 	const int home_y {t.baseline.y};
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	for (int i {0}; i < 2; i++)
 	{
 		t.baseline.x = home_x + ((i % 3) * (CanvasWidth / 3));
@@ -981,14 +981,14 @@ int Widget_WidthFullScreen(Widget* _self)
 	return CanvasWidth;
 }
 
-int Widget_ReceiveFocusSimple(Widget* _self, int event)
+int Widget_ReceiveFocusSimple(Widget* _self, WidgetEvent event)
 {
 	widget_focus = _self;
 	(void)event;
 	return true;
 }
 
-int Widget_ReceiveFocusChoice(Widget* _self, int event)
+int Widget_ReceiveFocusChoice(Widget* _self, WidgetEvent event)
 {
 	WidgetChoice* self = (WidgetChoice*)_self;
 	widget_focus = _self;
@@ -997,11 +997,11 @@ int Widget_ReceiveFocusChoice(Widget* _self, int event)
 	return true;
 }
 
-int Widget_ReceiveFocusControlEntry(Widget* _self, int event)
+int Widget_ReceiveFocusControlEntry(Widget* _self, WidgetEvent event)
 {
 	WidgetControlEntry* self = (WidgetControlEntry*)_self;
 	int oldval = 0;
-	if (widget_focus->tag == WIDGET_TYPE_CONTROLENTRY)
+	if (widget_focus->tag == WidgetType::ControlEntry)
 	{
 		oldval = ((WidgetControlEntry*)widget_focus)->highlighted;
 	}
@@ -1011,7 +1011,7 @@ int Widget_ReceiveFocusControlEntry(Widget* _self, int event)
 	return true;
 }
 
-int Widget_ReceiveFocusMenuScreen(Widget* _self, int event)
+int Widget_ReceiveFocusMenuScreen(Widget* _self, WidgetEvent event)
 {
 	WidgetMenuScreen* self = (WidgetMenuScreen*)_self;
 	int x {};
@@ -1021,13 +1021,13 @@ int Widget_ReceiveFocusMenuScreen(Widget* _self, int event)
 	{
 		self->child[x]->parent = _self;
 	}
-	if (event == WIDGET_EVENT_UP)
+	if (event == WidgetEvent::Up)
 	{
 		x = self->num_children - 1;
 		dx = -1;
 		last_x = -1;
 	}
-	else if (event == WIDGET_EVENT_DOWN)
+	else if (event == WidgetEvent::Down)
 	{
 		x = 0;
 		dx = 1;
@@ -1052,40 +1052,40 @@ int Widget_ReceiveFocusMenuScreen(Widget* _self, int event)
 	return false;
 }
 
-int Widget_ReceiveFocusRefuseFocus(Widget* self, int event)
+int Widget_ReceiveFocusRefuseFocus(Widget* self, WidgetEvent event)
 {
 	(void)self;
 	(void)event;
 	return false;
 }
 
-int Widget_HandleEventIgnoreAll(Widget* self, int event)
+int Widget_HandleEventIgnoreAll(Widget* self, WidgetEvent event)
 {
 	(void)event;
 	(void)self;
 	return false;
 }
 
-int Widget_HandleEventChoice(Widget* _self, int event)
+int Widget_HandleEventChoice(Widget* _self, WidgetEvent event)
 {
 	WidgetChoice* self = (WidgetChoice*)_self;
 	switch (event)
 	{
-		case WIDGET_EVENT_LEFT:
+		case WidgetEvent::Left:
 			self->highlighted -= 1;
 			if (self->highlighted < 0)
 			{
 				self->highlighted = self->numopts - 1;
 			}
 			return true;
-		case WIDGET_EVENT_RIGHT:
+		case WidgetEvent::Right:
 			self->highlighted += 1;
 			if (self->highlighted >= self->numopts)
 			{
 				self->highlighted = 0;
 			}
 			return true;
-		case WIDGET_EVENT_SELECT:
+		case WidgetEvent::Select:
 			{
 				const int oldval = self->selected;
 				self->selected = self->highlighted;
@@ -1100,12 +1100,12 @@ int Widget_HandleEventChoice(Widget* _self, int event)
 	}
 }
 
-int Widget_HandleEventSlider(Widget* _self, int event)
+int Widget_HandleEventSlider(Widget* _self, WidgetEvent event)
 {
 	WidgetSlider* self = (WidgetSlider*)_self;
 	switch (event)
 	{
-		case WIDGET_EVENT_LEFT:
+		case WidgetEvent::Left:
 			self->value -= self->step;
 			if (self->value < self->min)
 			{
@@ -1116,7 +1116,7 @@ int Widget_HandleEventSlider(Widget* _self, int event)
 				(*(self->onChange))(self);
 			}
 			return true;
-		case WIDGET_EVENT_RIGHT:
+		case WidgetEvent::Right:
 			self->value += self->step;
 			if (self->value > self->max)
 			{
@@ -1132,7 +1132,7 @@ int Widget_HandleEventSlider(Widget* _self, int event)
 	}
 }
 
-int Widget_HandleEventMenuScreen(Widget* _self, int event)
+int Widget_HandleEventMenuScreen(Widget* _self, WidgetEvent event)
 {
 	WidgetMenuScreen* self = (WidgetMenuScreen*)_self;
 	int x {};
@@ -1140,17 +1140,17 @@ int Widget_HandleEventMenuScreen(Widget* _self, int event)
 	int dx {};
 	switch (event)
 	{
-		case WIDGET_EVENT_UP:
+		case WidgetEvent::Up:
 			dx = -1;
 			break;
-		case WIDGET_EVENT_DOWN:
+		case WidgetEvent::Down:
 			dx = 1;
 			break;
-		case WIDGET_EVENT_CANCEL:
+		case WidgetEvent::Cancel:
 			/* On cancel, shift focus to last Element and send a SELECT. */
 			self->highlighted = self->num_children - 1;
 			widget_focus = self->child[self->highlighted];
-			return (widget_focus->handleEvent)(widget_focus, WIDGET_EVENT_SELECT);
+			return (widget_focus->handleEvent)(widget_focus, WidgetEvent::Select);
 		default:
 			return false;
 	}
@@ -1178,10 +1178,10 @@ int Widget_HandleEventMenuScreen(Widget* _self, int event)
 	return false;
 }
 
-int Widget_HandleEventTextEntry(Widget* _self, int event)
+int Widget_HandleEventTextEntry(Widget* _self, WidgetEvent event)
 {
 	WidgetTextEntry* self = (WidgetTextEntry*)_self;
-	if (event == WIDGET_EVENT_SELECT)
+	if (event == WidgetEvent::Select)
 	{
 		if (!self->handleEventSelect)
 		{
@@ -1192,10 +1192,10 @@ int Widget_HandleEventTextEntry(Widget* _self, int event)
 	return false;
 }
 
-int Widget_HandleEventControlEntry(Widget* _self, int event)
+int Widget_HandleEventControlEntry(Widget* _self, WidgetEvent event)
 {
 	WidgetControlEntry* self = (WidgetControlEntry*)_self;
-	if (event == WIDGET_EVENT_SELECT)
+	if (event == WidgetEvent::Select)
 	{
 		if (self->onChange)
 		{
@@ -1203,7 +1203,7 @@ int Widget_HandleEventControlEntry(Widget* _self, int event)
 			return true;
 		}
 	}
-	if (event == WIDGET_EVENT_DELETE)
+	if (event == WidgetEvent::Delete)
 	{
 		if (self->onDelete)
 		{
@@ -1211,7 +1211,7 @@ int Widget_HandleEventControlEntry(Widget* _self, int event)
 			return true;
 		}
 	}
-	if ((event == WIDGET_EVENT_RIGHT) || (event == WIDGET_EVENT_LEFT))
+	if ((event == WidgetEvent::Right) || (event == WidgetEvent::Left))
 	{
 		self->highlighted = 1 - self->highlighted;
 		return true;
@@ -1219,7 +1219,7 @@ int Widget_HandleEventControlEntry(Widget* _self, int event)
 	return false;
 }
 
-int Widget_Event(int event)
+int Widget_Event(WidgetEvent event)
 {
 	Widget* widget = widget_focus;
 	while (widget != nullptr)

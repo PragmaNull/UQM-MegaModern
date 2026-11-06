@@ -252,7 +252,7 @@ ChangeSelection:
 
 				t.baseline.x = r.corner.x + (r.extent.width >> 1);
 				t.baseline.y = r.corner.y + (r.extent.height - ResScale(1));
-				t.align = ALIGN_CENTER;
+				t.align = TextAlign::Center;
 
 				StarShipPtr = LockStarShip(&race_q[0], hBattleShip);
 				if (StarShipPtr->captains_name_index == 0)
@@ -532,7 +532,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 
 	t.baseline.x = pick_r.corner.x + (pick_r.extent.width >> 1);
 	t.baseline.y = pick_r.corner.y + pick_r.extent.height - ResScale(5);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = uqm::gameState().sis().ShipName;
 	t.CharCount = (uint16_t)~0;
 

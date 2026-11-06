@@ -9,11 +9,11 @@
 #include "core/stl/sstream.h"
 
 // Widget callbacks from the graphics library. These tests do not draw or handle input.
-int Widget_HandleEventChoice(Widget*, int)
+int Widget_HandleEventChoice(Widget*, WidgetEvent)
 {
 	return 0;
 }
-int Widget_ReceiveFocusChoice(Widget*, int)
+int Widget_ReceiveFocusChoice(Widget*, WidgetEvent)
 {
 	return 0;
 }
@@ -26,11 +26,11 @@ int Widget_WidthFullScreen(Widget*)
 {
 	return 0;
 }
-int Widget_HandleEventSlider(Widget*, int)
+int Widget_HandleEventSlider(Widget*, WidgetEvent)
 {
 	return 0;
 }
-int Widget_ReceiveFocusSimple(Widget*, int)
+int Widget_ReceiveFocusSimple(Widget*, WidgetEvent)
 {
 	return 0;
 }
@@ -41,16 +41,16 @@ int Widget_HeightOneLine(Widget*)
 }
 void Widget_Slider_DrawValue(WidgetSlider*, int, int) {}
 void Widget_Slider_DrawPercentageValue(WidgetSlider*, int, int) {}
-int Widget_HandleEventIgnoreAll(Widget*, int)
+int Widget_HandleEventIgnoreAll(Widget*, WidgetEvent)
 {
 	return 0;
 }
-int Widget_ReceiveFocusRefuseFocus(Widget*, int)
+int Widget_ReceiveFocusRefuseFocus(Widget*, WidgetEvent)
 {
 	return 0;
 }
 void Widget_DrawLabel(Widget*, int, int) {}
-int Widget_HandleEventTextEntry(Widget*, int)
+int Widget_HandleEventTextEntry(Widget*, WidgetEvent)
 {
 	return 0;
 }
@@ -116,13 +116,13 @@ protected:
 
 	static WidgetChoice& choice(Widget** list, size_t index)
 	{
-		EXPECT_EQ(list[index]->tag, WIDGET_TYPE_CHOICE);
+		EXPECT_EQ(list[index]->tag, WidgetType::Choice);
 		return *reinterpret_cast<WidgetChoice*>(list[index]);
 	}
 
 	static WidgetSlider& slider(Widget** list, size_t index)
 	{
-		EXPECT_EQ(list[index]->tag, WIDGET_TYPE_SLIDER);
+		EXPECT_EQ(list[index]->tag, WidgetType::Slider);
 		return *reinterpret_cast<WidgetSlider*>(list[index]);
 	}
 
@@ -166,7 +166,7 @@ constexpr size_t c_end {8};
 TEST_F(MenuWidgetsTest, BuildsWidgetsInOrder)
 {
 	Widget* const* list {build()};
-	EXPECT_EQ(list[c_heading]->tag, WIDGET_TYPE_LABEL);
+	EXPECT_EQ(list[c_heading]->tag, WidgetType::Label);
 	EXPECT_EQ(list[c_spacer], &spacer);
 	EXPECT_EQ(list[c_back], &back);
 	EXPECT_EQ(list[c_end], nullptr);
@@ -274,7 +274,7 @@ TEST_F(MenuWidgetsTest, TextShowsAndSetsTheSetting)
 		uqstl::move(hooks)
 	  };
 	Widget* const* list {builder.build(textMenu->menus[0])};
-	ASSERT_EQ(list[0]->tag, WIDGET_TYPE_TEXTENTRY);
+	ASSERT_EQ(list[0]->tag, WidgetType::TextEntry);
 	auto& widget {*reinterpret_cast<WidgetTextEntry*>(list[0])};
 	EXPECT_STREQ(widget.category, "Seed");
 	EXPECT_STREQ(widget.tooltip[0], "Type a seed.");
@@ -334,16 +334,16 @@ TEST_F(MenuWidgetsTest, MenuButtonOpensTheTarget)
 	const MenuWidgets::SharedWidgets shared {&spacer, &back, &exit};
 	MenuWidgets builder {options, shared, uqstl::move(hooks)};
 	Widget* const* list {builder.build(buttonMenu->menus[0])};
-	ASSERT_EQ(list[0]->tag, WIDGET_TYPE_BUTTON);
+	ASSERT_EQ(list[0]->tag, WidgetType::Button);
 	const auto& button {*reinterpret_cast<WidgetButton*>(list[0])};
 	EXPECT_STREQ(button.name, "Sound");
 	EXPECT_STREQ(button.tooltip[0], "Opens the sound menu.");
 	EXPECT_EQ(list[2], &exit);
 
-	EXPECT_FALSE(list[0]->handleEvent(list[0], WIDGET_EVENT_DOWN));
+	EXPECT_FALSE(list[0]->handleEvent(list[0], WidgetEvent::Down));
 	EXPECT_TRUE(opened.empty());
-	EXPECT_TRUE(list[0]->handleEvent(list[0], WIDGET_EVENT_SELECT));
-	EXPECT_FALSE(list[1]->handleEvent(list[1], WIDGET_EVENT_SELECT));
+	EXPECT_TRUE(list[0]->handleEvent(list[0], WidgetEvent::Select));
+	EXPECT_FALSE(list[1]->handleEvent(list[1], WidgetEvent::Select));
 	EXPECT_EQ(opened, (uqstl::vector<uqstl::string> {"audio", "missing"}));
 }
 
@@ -382,9 +382,9 @@ TEST_F(MenuWidgetsTest, LegacyItemsGetTheirText)
 	ASSERT_TRUE(legacyMenu.has_value());
 
 	WidgetSlider gamma {};
-	gamma.tag = WIDGET_TYPE_SLIDER;
+	gamma.tag = WidgetType::Slider;
 	WidgetControlEntry up {};
-	up.tag = WIDGET_TYPE_CONTROLENTRY;
+	up.tag = WidgetType::ControlEntry;
 	MenuWidgets::SharedWidgets shared {&spacer, &back};
 	shared.legacy["gamma"] = reinterpret_cast<Widget*>(&gamma);
 	shared.legacy["up"] = reinterpret_cast<Widget*>(&up);
@@ -474,7 +474,7 @@ TEST_F(MenuWidgetsTest, ContentMenusBuild)
 			if (item.kind == MenuItemKind::Legacy && !shared.legacy.contains(item.widget))
 			{
 				auto& widget {*legacyWidgets.emplace_back(uqstl::make_unique<WidgetTextEntry>())};
-				widget.tag = WIDGET_TYPE_TEXTENTRY;
+				widget.tag = WidgetType::TextEntry;
 				shared.legacy[item.widget] = reinterpret_cast<Widget*>(&widget);
 			}
 		}

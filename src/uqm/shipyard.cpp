@@ -167,7 +167,7 @@ static void DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 	{
 		index += NUM_BUILDABLE_SHIPS;
 	}
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x = ShipsCol0();
 
 	r.extent.width = ShipsSelWidth();
@@ -201,7 +201,7 @@ static void DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 	SetContextForeGroundColor(selected ?
 								  ModuleSelectedColor :
 								  ModulePriceColor);
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.baseline.x = ShipsCol1() - ResScale(2);
 	if (!stowed_q)
 	{
@@ -249,7 +249,7 @@ static void DrawShipsDisplay(ShipyardShipsState* shipState)
 	SetContextFont(StarConFont);
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = r.corner.y + ResScale(7);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = GameString(STARBASE_STRING_BASE + 10);
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(ModuleSelectedColor);
@@ -461,7 +461,7 @@ static void showRemainingCrew(void)
 	SetContextForeGroundColor(BlueprintColor);
 	t.baseline.x = r.corner.x;
 	t.baseline.y = r.corner.y + r.extent.height - ResScale(1);
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.CharCount = (uint16_t)~0;
 	t.pStr = buf;
 	uqm::utf8StringCopy(
@@ -619,7 +619,7 @@ static void showRemainingPoints(int delta)
 
 	// Draw remaining points
 	SetContextFont(TinyFont);
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.CharCount = (uint16_t)~0;
 	char buf[30] {};
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", FP);
@@ -813,7 +813,7 @@ static void DrawShipyardShipText(GfxRect* r, int Index)
 		DrawBorder(TEXT_LABEL_FRAME);
 	}
 
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 	text.baseline.x = r->corner.x + (r->extent.width >> 1);
 	text.baseline.y = r->corner.y + leading;
 	int16_t strip_align {text.baseline.x};
@@ -821,13 +821,13 @@ static void DrawShipyardShipText(GfxRect* r, int Index)
 	// Actually we don't want to align, we just want to strip the alignment
 	text.pStr = AlignText((const char*)&race_name, &strip_align);
 	text.CharCount = (uint16_t)~0;
-	font_DrawShadowedText(&text, WEST_SHADOW, ShpTextColor,
+	font_DrawShadowedText(&text, ShadowAngle::West, ShpTextColor,
 						  ShpShadowColor);
 
 	text.baseline.y += leading;
 	text.pStr = AlignText((const char*)&ship_name, &strip_align);
 	text.CharCount = (uint16_t)~0;
-	font_DrawShadowedText(&text, WEST_SHADOW, ShpTextColor,
+	font_DrawShadowedText(&text, ShadowAngle::West, ShpTextColor,
 						  ShpShadowColor);
 
 	SetContextFont(OldFont);
@@ -942,10 +942,10 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 				t.baseline.x = ResScale(4) + RadarWidth() / 2;
 				t.baseline.y = RadarY() - ResScale(2)
 							 - DosNumScl(2) - SafeY();
-				t.align = ALIGN_CENTER;
+				t.align = TextAlign::Center;
 				t.pStr = captain;
 				t.CharCount = (uint16_t)~0;
-				font_DrawShadowedText(&t, WEST_SHADOW, CaptainNameTextColor,
+				font_DrawShadowedText(&t, ShadowAngle::West, CaptainNameTextColor,
 									  ShpShadowColor);
 			}
 			else
@@ -976,7 +976,7 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 		t.baseline.x = ResScale(4) + RadarWidth() - ResScale(2);
 		t.baseline.y = RadarY() + RadarHeight() - ResScale(2)
 					 - DosNumScl(2) - SafeY();
-		t.align = ALIGN_RIGHT;
+		t.align = TextAlign::Right;
 		t.CharCount = (uint16_t)~0;
 		char buf[30] {};
 		t.pStr = buf;
@@ -1115,7 +1115,7 @@ static void ShowShipCrew(ShipFragment* StarShipPtr, const GfxRect* pRect)
 	r = *pRect;
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y + r.extent.height - ResScale(1);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 	if (r.corner.y)

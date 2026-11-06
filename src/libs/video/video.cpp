@@ -109,14 +109,14 @@ bool VidSeek(uint32_t pos)
 	return (bool)TFB_SeekVideo(_cur_video, pos);
 }
 
-VIDEO_TYPE VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
-					 uint32_t LoopFrame)
+VideoType VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
+					uint32_t LoopFrame)
 {
-	VIDEO_TYPE ret;
+	VideoType ret;
 
 	if (!vid)
 	{
-		return NO_FMV;
+		return VideoType::None;
 	}
 
 	if (AudRef)
@@ -148,7 +148,7 @@ VIDEO_TYPE VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
 					  (CanvasHeight - vid->h) / 2))
 	{
 		_cur_video = vid;
-		ret = SOFTWARE_FMV;
+		ret = VideoType::Software;
 		if (SpeechRef)
 		{
 			snd_PlaySpeech(SpeechRef);
@@ -157,13 +157,13 @@ VIDEO_TYPE VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
 	}
 	else
 	{
-		ret = NO_FMV;
+		ret = VideoType::None;
 	}
 
 	return ret;
 }
 
-VIDEO_TYPE VidPlay(VIDEO_REF VidRef)
+VideoType VidPlay(VIDEO_REF VidRef)
 {
 	return VidPlayEx(VidRef, 0, 0, VidNoLoop);
 }

@@ -135,7 +135,7 @@ void DrawSISTitle(const char* pStr)
 
 	t.baseline.x = ResScale((ResDescale(SisTitleWidth()) >> 1));
 	t.baseline.y = SisTitleHeight() - ResScale(2);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = pStr;
 	t.CharCount = (uint16_t)~0;
 
@@ -351,7 +351,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		ClearDrawable();
 
 		DrawBorder(SIS_MSG_FRAME);
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		font_DrawText(&t);
 	}
 	else
@@ -364,7 +364,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		const uint8_t* pchar_deltas {};
 
 		t.baseline.x = ResScale(3);
-		t.align = ALIGN_LEFT;
+		t.align = TextAlign::Left;
 
 		TextRect(&t, &text_r, char_deltas);
 #if 0
@@ -595,7 +595,7 @@ void DrawStatusMessage(const char* pStr)
 
 	t.baseline.x = (StatusMessageWidth() >> 1);
 	t.baseline.y = StatusMessageHeight() - ResScale(1);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = pStr;
 	t.CharCount = (uint16_t)~0;
 
@@ -679,7 +679,7 @@ void DrawCaptainsName(bool NewGame)
 
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = r.corner.y + ResScale(6);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = uqm::gameState().sis().CommanderName;
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(CaptainNameTextColor);
@@ -753,7 +753,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 		r.corner.x + ResScale(ResDescale(r.extent.width) >> 1);
 	t.baseline.y =
 		r.corner.y + (ShipNameHeight() - ResScale(InStatusArea));
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
@@ -876,7 +876,7 @@ void DrawFlagshipStats(void)
 
 	t.baseline.x = ResScale(OrigSisScreenWidth() / 6 + 1);
 	t.baseline.y = base_y;
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.CharCount = (uint16_t)~0;
 
 	SetContextFontEffect(SetAbsFrameIndex(FontGradFrame, 4));
@@ -895,7 +895,7 @@ void DrawFlagshipStats(void)
 
 	t.baseline.x += ResScale(3);
 	t.baseline.y = base_y;
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.pStr = buf;
 
 	fmt::format_to_sz_n(buf, "{}",
@@ -916,7 +916,7 @@ void DrawFlagshipStats(void)
 
 	t.baseline.x = r.extent.width - ResScale(26);
 	t.baseline.y = base_y;
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 
 	SetContextFontEffect(SetAbsFrameIndex(FontGradFrame, 5));
 
@@ -1159,7 +1159,7 @@ static void Draw_SIS(void)
 	GetGaugeRect(&r, false);
 	t.baseline.x = (StatusWidth() >> 1);
 	t.baseline.y = r.corner.y - ResScale(1);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 	SetContextFont(flat ? TinyFontBold : TinyFont);
 	SetContextForeGroundColor(BlackColor);
@@ -1328,7 +1328,7 @@ static void DeltaSISGauges_crewDelta(int16_t crew_delta)
 
 		t.baseline.x = (StatusWidth() >> 1);
 		t.baseline.y = r.corner.y + r.extent.height;
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
 
@@ -1397,7 +1397,7 @@ static void DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 
 		t.baseline.x = (StatusWidth() >> 1);
 		t.baseline.y = r.corner.y + r.extent.height;
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
 

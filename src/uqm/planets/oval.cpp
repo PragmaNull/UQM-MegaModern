@@ -29,7 +29,7 @@
 #include "uqm/setup.h"
 
 static constexpr auto NumQuads {4};
-static constexpr auto OffscreenPrim {NUM_PRIMS};
+static constexpr auto OffscreenPrim {PrimitiveType::Count};
 
 static constexpr auto FirstQuad {(1 << 0)};
 static constexpr auto SecondQuad {(1 << 1)};
@@ -373,7 +373,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 		if (quad_visible & (1 << x))
 		{
 			SetPrimNextLink(&prim[x], StartPrim);
-			SetPrimType(&prim[x], use_pointprim ? POINT_PRIM : STAMPFILL_PRIM);
+			SetPrimType(&prim[x], use_pointprim ? PrimitiveType::Point : PrimitiveType::StampFill);
 			prim[x].Object.Stamp.frame =
 				DecFrameIndex(stars_in_space);
 			SetPrimColor(&prim[x], _get_context_fg_color());
@@ -433,7 +433,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
-							SetPrimType(&prim[0], POINT_PRIM);
+							SetPrimType(&prim[0], PrimitiveType::Point);
 							render++;
 						}
 						else
@@ -446,7 +446,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
-							SetPrimType(&prim[1], POINT_PRIM);
+							SetPrimType(&prim[1], PrimitiveType::Point);
 							render++;
 						}
 						else
@@ -459,7 +459,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
-							SetPrimType(&prim[2], POINT_PRIM);
+							SetPrimType(&prim[2], PrimitiveType::Point);
 							render++;
 						}
 						else
@@ -472,7 +472,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
-							SetPrimType(&prim[3], POINT_PRIM);
+							SetPrimType(&prim[3], PrimitiveType::Point);
 							render++;
 						}
 						else
@@ -523,7 +523,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
-							SetPrimType(&prim[0], STAMPFILL_PRIM);
+							SetPrimType(&prim[0], PrimitiveType::StampFill);
 							render++;
 						}
 						else
@@ -536,7 +536,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
-							SetPrimType(&prim[1], STAMPFILL_PRIM);
+							SetPrimType(&prim[1], PrimitiveType::StampFill);
 							render++;
 						}
 						else
@@ -549,7 +549,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
-							SetPrimType(&prim[2], STAMPFILL_PRIM);
+							SetPrimType(&prim[2], PrimitiveType::StampFill);
 							render++;
 						}
 						else
@@ -562,7 +562,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
-							SetPrimType(&prim[3], STAMPFILL_PRIM);
+							SetPrimType(&prim[3], PrimitiveType::StampFill);
 							render++;
 						}
 						else
@@ -616,7 +616,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
-							SetPrimType(&prim[0], POINT_PRIM);
+							SetPrimType(&prim[0], PrimitiveType::Point);
 							render++;
 						}
 						else
@@ -629,7 +629,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
-							SetPrimType(&prim[1], POINT_PRIM);
+							SetPrimType(&prim[1], PrimitiveType::Point);
 							render++;
 						}
 						else
@@ -642,7 +642,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
-							SetPrimType(&prim[2], POINT_PRIM);
+							SetPrimType(&prim[2], PrimitiveType::Point);
 							render++;
 						}
 						else
@@ -655,7 +655,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
-							SetPrimType(&prim[3], POINT_PRIM);
+							SetPrimType(&prim[3], PrimitiveType::Point);
 							render++;
 						}
 						else
@@ -706,7 +706,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
-							SetPrimType(&prim[0], STAMPFILL_PRIM);
+							SetPrimType(&prim[0], PrimitiveType::StampFill);
 							render++;
 						}
 						else
@@ -719,7 +719,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
-							SetPrimType(&prim[1], STAMPFILL_PRIM);
+							SetPrimType(&prim[1], PrimitiveType::StampFill);
 							render++;
 						}
 						else
@@ -732,7 +732,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
-							SetPrimType(&prim[2], STAMPFILL_PRIM);
+							SetPrimType(&prim[2], PrimitiveType::StampFill);
 							render++;
 						}
 						else
@@ -745,7 +745,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
-							SetPrimType(&prim[3], STAMPFILL_PRIM);
+							SetPrimType(&prim[3], PrimitiveType::StampFill);
 							render++;
 						}
 						else
@@ -827,7 +827,7 @@ void DrawFilledOval(LargeRect* pRect)
 	for (x = 0; x < (NumQuads >> 1); ++x)
 	{
 		SetPrimNextLink(&prim[x], StartPrim);
-		SetPrimType(&prim[x], LINE_PRIM);
+		SetPrimType(&prim[x], PrimitiveType::Line);
 		SetPrimColor(&prim[x], _get_context_fg_color());
 
 		StartPrim = x;
@@ -867,7 +867,7 @@ void DrawFilledOval(LargeRect* pRect)
 			first.y = second.y = B - y;
 			if (((B - y) >= 0 && (B - y) <= SisScreenHeight()))
 			{
-				SetPrimType(&prim[0], LINE_PRIM);
+				SetPrimType(&prim[0], PrimitiveType::Line);
 				prim[0].Object.Line.first = first;
 				prim[0].Object.Line.second = second;
 				lines_r++;
@@ -880,7 +880,7 @@ void DrawFilledOval(LargeRect* pRect)
 			first.y = second.y = B + y;
 			if (((B + y) >= 0 && (B + y) <= SisScreenHeight()))
 			{
-				SetPrimType(&prim[1], LINE_PRIM);
+				SetPrimType(&prim[1], PrimitiveType::Line);
 				prim[1].Object.Line.first = first;
 				prim[1].Object.Line.second = second;
 				lines_r++;
@@ -916,7 +916,7 @@ void DrawFilledOval(LargeRect* pRect)
 		first.y = second.y = B - y;
 		if (((B - y) >= 0 && (B - y) <= SisScreenHeight()))
 		{
-			SetPrimType(&prim[0], LINE_PRIM);
+			SetPrimType(&prim[0], PrimitiveType::Line);
 			prim[0].Object.Line.first = first;
 			prim[0].Object.Line.second = second;
 			lines_r++;
@@ -929,7 +929,7 @@ void DrawFilledOval(LargeRect* pRect)
 		first.y = second.y = B + y;
 		if (((B + y) >= 0 && (B + y) <= SisScreenHeight()))
 		{
-			SetPrimType(&prim[1], LINE_PRIM);
+			SetPrimType(&prim[1], PrimitiveType::Line);
 			prim[1].Object.Line.first = first;
 			prim[1].Object.Line.second = second;
 			lines_r++;

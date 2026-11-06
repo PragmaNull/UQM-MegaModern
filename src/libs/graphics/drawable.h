@@ -23,7 +23,7 @@
 #include "tfb_draw.h"
 #include "core/stl/vector.h"
 
-constexpr auto ValidPrimType(auto pt) { return ((pt) < NUM_PRIMS); }
+constexpr auto ValidPrimType(auto pt) { return ((pt) < PrimitiveType::Count); }
 
 struct BresenhamLine
 {

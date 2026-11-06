@@ -335,7 +335,7 @@ static void utwig_preprocess(Element* ElementPtr)
 					 BuildColor(MakeRgb15(0x1F, 0x1C, 0x00), 0x78));
 		ElementPtr->colorCycleIndex = 0;
 		ElementPtr->life_span = NormalLife;
-		SetPrimType(lpPrim, STAMP_PRIM);
+		SetPrimType(lpPrim, PrimitiveType::Stamp);
 	}
 	else
 	{
@@ -380,7 +380,7 @@ static void utwig_preprocess(Element* ElementPtr)
 		SetPrimColor(lpPrim, colorTable[ElementPtr->colorCycleIndex - 1]);
 
 		ElementPtr->life_span = NormalLife + 1;
-		SetPrimType(lpPrim, STAMPFILL_PRIM);
+		SetPrimType(lpPrim, PrimitiveType::StampFill);
 	}
 }
 

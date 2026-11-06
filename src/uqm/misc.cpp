@@ -51,7 +51,7 @@ void spawn_planet(void)
 		if (uqm::UQMOptions::read().meleeObstacles && !isNetwork())
 		{ // Invisible planet with cheats
 			PlanetElementPtr->state_flags |= Nonsolid;
-			SetPrimType(&DisplayArray[PlanetElementPtr->PrimIndex], POINT_PRIM);
+			SetPrimType(&DisplayArray[PlanetElementPtr->PrimIndex], PrimitiveType::Point);
 			SetPrimColor(&DisplayArray[PlanetElementPtr->PrimIndex],
 						 BuildColorRgba(0x00, 0x00, 0x00, 0x00));
 			PlanetElementPtr->current.location.x =
@@ -64,7 +64,7 @@ void spawn_planet(void)
 		}
 		else
 		{
-			SetPrimType(&DisplayArray[PlanetElementPtr->PrimIndex], STAMP_PRIM);
+			SetPrimType(&DisplayArray[PlanetElementPtr->PrimIndex], PrimitiveType::Stamp);
 			PlanetElementPtr->current.image.farray = planet;
 			PlanetElementPtr->current.image.frame =
 				PlanetElementPtr->current.image.farray[0];
@@ -116,7 +116,7 @@ static void spawn_rubble(Element* AsteroidElementPtr)
 		RubbleElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
 		RubbleElementPtr->life_span = 5;
 		RubbleElementPtr->turn_wait = RubbleElementPtr->next_turn = 0;
-		SetPrimType(&DisplayArray[RubbleElementPtr->PrimIndex], STAMP_PRIM);
+		SetPrimType(&DisplayArray[RubbleElementPtr->PrimIndex], PrimitiveType::Stamp);
 		RubbleElementPtr->current.image.farray = asteroid;
 
 
@@ -195,7 +195,7 @@ void spawn_asteroid(Element* ElementPtr)
 		AsteroidElementPtr->state_flags =
 			uqm::UQMOptions::read().meleeObstacles && !isNetwork() ? Disappearing : Appearing;
 		AsteroidElementPtr->life_span = NormalLife;
-		SetPrimType(&DisplayArray[AsteroidElementPtr->PrimIndex], STAMP_PRIM);
+		SetPrimType(&DisplayArray[AsteroidElementPtr->PrimIndex], PrimitiveType::Stamp);
 		if ((val = (uint16_t)uqm::random().next()) & (1 << 0))
 		{
 			if (!(val & (1 << 1)))
@@ -424,13 +424,13 @@ void AbandonShip(Element* ShipPtr, Element* TargetPtr,
 		CrewPtr->life_span = CrewLife;
 		if (!IsHd())
 		{
-			SetPrimType(&DisplayArray[CrewPtr->PrimIndex], POINT_PRIM);
+			SetPrimType(&DisplayArray[CrewPtr->PrimIndex], PrimitiveType::Point);
 			CrewPtr->current.image.frame = DecFrameIndex(stars_in_space);
 			CrewPtr->current.image.farray = &stars_in_space;
 		}
 		else
 		{
-			SetPrimType(&DisplayArray[CrewPtr->PrimIndex], STAMPFILL_PRIM);
+			SetPrimType(&DisplayArray[CrewPtr->PrimIndex], PrimitiveType::StampFill);
 			CrewPtr->current.image.frame = SetAbsFrameIndex(stars_misc[0], 0);
 			CrewPtr->current.image.farray = stars_misc;
 		}

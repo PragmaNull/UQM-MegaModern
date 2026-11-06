@@ -303,7 +303,7 @@ void object_animation(Element* ElementPtr)
 	uint16_t angle {};
 
 	Primitive* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
-	if (GetPrimType(pPrim) == STAMPFILL_PRIM
+	if (GetPrimType(pPrim) == PrimitiveType::StampFill
 		&& !((ElementPtr->state_flags & FiniteLife)
 			 && ElementPtr->mass_points == EARTHQUAKE_DISASTER))
 	{
@@ -312,7 +312,7 @@ void object_animation(Element* ElementPtr)
 		c = DamageColorCycle(GetPrimColor(pPrim), 0);
 		if (sameColor(c, WhiteColor))
 		{
-			SetPrimType(pPrim, STAMP_PRIM);
+			SetPrimType(pPrim, PrimitiveType::Stamp);
 			if (ElementPtr->hit_points == 0)
 			{
 				ZeroVelocityComponents(&ElementPtr->velocity);
@@ -870,7 +870,7 @@ static void ExplodeCritter(Element* ElementPtr)
 									   * (uqm::lowNibble(ExplosionElementPtr->turn_wait));
 
 		SetPrimType(&DisplayArray[ExplosionElementPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 		DisplayArray[ExplosionElementPtr->PrimIndex].Object.Stamp.frame =
 			SetAbsFrameIndex(LanderFrame[0], 46);
 
@@ -959,7 +959,7 @@ static void shotCreature(Element* ElementPtr, uint8_t value,
 		ElementPtr->mass_points |= CreatureAware;
 	}
 
-	SetPrimType(pPrim, STAMPFILL_PRIM);
+	SetPrimType(pPrim, PrimitiveType::StampFill);
 	SetPrimColor(pPrim, WhiteColor);
 
 	PlaySound(GetSound(LanderSounds, LANDER_HITS),
@@ -1270,14 +1270,14 @@ static void AddLightning(void)
 		if (!IsHd())
 		{
 			SetPrimType(&DisplayArray[LightningElementPtr->PrimIndex],
-						STAMPFILL_PRIM);
+						PrimitiveType::StampFill);
 			SetPrimColor(&DisplayArray[LightningElementPtr->PrimIndex],
 						 WhiteColor);
 		}
 		else
 		{
 			SetPrimType(&DisplayArray[LightningElementPtr->PrimIndex],
-						STAMP_PRIM);
+						PrimitiveType::Stamp);
 		}
 
 		DisplayArray[LightningElementPtr->PrimIndex].Object.Stamp.frame =
@@ -1323,11 +1323,11 @@ static HELEMENT AddGroundDisaster(uint16_t which_disaster)
 		{
 			if (!IsHd())
 			{
-				SetPrimType(pPrim, STAMPFILL_PRIM);
+				SetPrimType(pPrim, PrimitiveType::StampFill);
 			}
 			else
 			{
-				SetPrimType(pPrim, STAMP_PRIM);
+				SetPrimType(pPrim, PrimitiveType::Stamp);
 			}
 
 			pPrim->Object.Stamp.frame = LanderFrame[1];
@@ -1335,7 +1335,7 @@ static HELEMENT AddGroundDisaster(uint16_t which_disaster)
 		}
 		else /* if (which_disaster == LAVASPOT_DISASTER) */
 		{
-			SetPrimType(pPrim, STAMP_PRIM);
+			SetPrimType(pPrim, PrimitiveType::Stamp);
 			GroundDisasterElementPtr->facing =
 				NormalizeFacing(uqm::random().next());
 			pPrim->Object.Stamp.frame = LanderFrame[3];
@@ -1952,7 +1952,7 @@ static void LanderFire(int16_t facing)
 	WeaponElementPtr->state_flags = FiniteLife;
 	WeaponElementPtr->next.location = curLanderLoc;
 
-	SetPrimType(&DisplayArray[WeaponElementPtr->PrimIndex], STAMP_PRIM);
+	SetPrimType(&DisplayArray[WeaponElementPtr->PrimIndex], PrimitiveType::Stamp);
 	DisplayArray[WeaponElementPtr->PrimIndex].Object.Stamp.frame =
 		SetAbsFrameIndex(LanderFrame[0],
 						 /* shot images immediately follow the lander images */
@@ -2014,7 +2014,7 @@ static void put_node(Element* ElementPtr)
 	NodeElementPtr->playerNr = PS_NON_PLAYER;
 	NodeElementPtr->current.location = info.loc_pt;
 
-	SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], STAMP_PRIM);
+	SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], PrimitiveType::Stamp);
 
 	NodeElementPtr->turn_wait = info.type;
 
@@ -2084,7 +2084,7 @@ static void spawn_node(Element* ElementPtr)
 		NodeElementPtr->next.location.x = ElementPtr->next.location.x;
 		NodeElementPtr->next.location.y = ElementPtr->next.location.y - arc;
 
-		SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], STAMP_PRIM);
+		SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], PrimitiveType::Stamp);
 		DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame =
 			IncFrameIndex(ElementPtr->next.image.frame);
 
@@ -2141,7 +2141,7 @@ static void LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amo
 	NodeElementPtr->thrust_wait = amount;
 	NodeElementPtr->preprocess_func = spawn_node;
 
-	SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], STAMPFILL_PRIM);
+	SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], PrimitiveType::StampFill);
 	SetPrimColor(&DisplayArray[NodeElementPtr->PrimIndex], BlackColor);
 	NodeElementPtr->current.image.frame = SetAbsFrameIndex(
 		MiscDataFrame, (NumScandotTransitions * 2)
@@ -2219,7 +2219,7 @@ static bool LanderExplosion(void)
 								   * (uqm::lowNibble(ExplosionElementPtr->turn_wait) + 1);
 
 	SetPrimType(&DisplayArray[ExplosionElementPtr->PrimIndex],
-				STAMP_PRIM);
+				PrimitiveType::Stamp);
 	DisplayArray[ExplosionElementPtr->PrimIndex].Object.Stamp.frame =
 		SetAbsFrameIndex(LanderFrame[0], 46);
 
@@ -2422,7 +2422,7 @@ void MaskLanderGraphics(void)
 		FRAME mods = CaptureDrawable(LoadGraphic(LanderModsPmapAnimRes));
 		FRAME lander {};
 		FRAME mask {};
-		const DrawMode mode = MAKE_DRAW_MODE(DRAW_REPLACE, DrawFactor1);
+		const DrawMode mode = MAKE_DRAW_MODE(DrawKind::Replace, DrawFactor1);
 
 		// Reload landersprites for remasking
 		DestroyDrawable(ReleaseDrawable(LanderFrame[0]));
@@ -2765,7 +2765,7 @@ void PlanetSide(GfxPoint planetLoc)
 	}
 	PSD.ElementLevel = 0;
 
-	PSD.MineralText[0].align = ALIGN_CENTER;
+	PSD.MineralText[0].align = TextAlign::Center;
 	PSD.MineralText[0].pStr = PSD.AmountBuf;
 	PSD.MineralText[1] = PSD.MineralText[0];
 	PSD.MineralText[2] = PSD.MineralText[1];
@@ -2925,7 +2925,7 @@ static void DrawMinDatText(void)
 
 	FONT OldFont {SetContextFont(TinyFontBold)};
 	SetContextForeGroundColor(LandStatMinColor);
-	text.align = ALIGN_LEFT;
+	text.align = TextAlign::Left;
 	text.baseline.x = rect.corner.x + ResScale(1);
 	text.baseline.y = rect.corner.y + rect.extent.height;
 	text.pStr = GameString(STATUS_STRING_BASE + 20); // MIN
@@ -2934,7 +2934,7 @@ static void DrawMinDatText(void)
 	font_DrawText(&text);
 
 	SetContextForeGroundColor(LandStatDatColor);
-	text.align = ALIGN_RIGHT;
+	text.align = TextAlign::Right;
 	text.baseline.x = rect.corner.x + rect.extent.width - ResScale(1);
 	text.pStr = GameString(STATUS_STRING_BASE + 21); // DAT
 	text.CharCount = (uint16_t)~0;

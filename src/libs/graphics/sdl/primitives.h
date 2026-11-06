@@ -29,19 +29,19 @@ GetPixelFn getpixel_for(SDL_Surface* surface);
 PutPixelFn putpixel_for(SDL_Surface* surface);
 
 // This currently matches gfxlib.h:DrawKind for simplicity
-typedef enum
+enum class RenderKind
 {
-	renderReplace = 0,
-	renderAdditive,
-	renderAlpha,
-	renderMultiply,
-	renderOverlay,
-	renderScreen,
-	renderGrayscale,
-	renderLinearburn,
-	renderHypToQuas,
-	renderDesatur,
-} RenderKind;
+	Replace = 0,
+	Additive,
+	Alpha,
+	Multiply,
+	Overlay,
+	Screen,
+	Grayscale,
+	Linearburn,
+	HypToQuas,
+	Desatur,
+};
 
 inline constexpr auto FullyOpaqueAlpha {255};
 inline constexpr auto AdditiveFactor1 {255};

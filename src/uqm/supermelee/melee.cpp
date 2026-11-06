@@ -265,7 +265,7 @@ static void DrawControlText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
 						GameString(MELEE_STRING_BASE + ButtonText(which_icon)));
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y + leading + ResScale(4);
 
@@ -314,7 +314,7 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 	t.baseline.y = r.corner.y + r.extent.height
 				 - ResScale(ResDescale(leading) >> 1) - ResScale(1);
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 	t.pStr = AlignText((const char*)buf, &t.baseline.x);
 
@@ -355,7 +355,7 @@ static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y;
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 	t.pStr = AlignText((const char*)buf, &t.baseline.x);
 
@@ -383,7 +383,7 @@ static void DrawVerticalText(const char* str, GfxPoint point)
 
 	const size_t str_len {strlen(buf)};
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = 1;
 	t.pStr = buf;
 
@@ -515,7 +515,7 @@ static void DrawTeamPickerText(GfxStamp stamp)
 	t.baseline.x = r.extent.width + pt.x + TpPadding();
 	t.baseline.y = pt.y + leading - ResScale(1);
 
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 
@@ -854,7 +854,7 @@ static void DrawSuperMeleeTitle(void)
 
 	t.baseline.x = (CanvasWidth >> 1) - (SafeNeg(1));
 	t.baseline.y = ResScale(4);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = AlignText((const char*)buf, &t.baseline.x);
 	t.CharCount = (uint16_t)~0;
 
@@ -989,7 +989,7 @@ static void DrawFleetValue(MeleeState* pMS, uint16_t side, uint16_t HiLiteState)
 	uint16_t fleetValue {MeleeSetup_getFleetValue(pMS->meleeSetup, side)};
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", fleetValue);
 	rtText.pStr = buf;
-	rtText.align = ALIGN_RIGHT;
+	rtText.align = TextAlign::Right;
 	rtText.CharCount = (uint16_t)~0;
 	rtText.baseline.y = r.corner.y + r.extent.height - ResScale(3);
 	rtText.baseline.x = r.corner.x + r.extent.width;
@@ -1018,7 +1018,7 @@ static bool DrawTeamString(MeleeState* pMS, uint16_t side, uint16_t HiLiteState,
 										  MeleeSetup_getTeamName(pMS->meleeSetup, side);
 	lfText.baseline.y = r.corner.y + r.extent.height - ResScale(3);
 	lfText.baseline.x = r.corner.x + ResScale(1);
-	lfText.align = ALIGN_LEFT;
+	lfText.align = TextAlign::Left;
 	lfText.CharCount = (uint16_t)strlen(lfText.pStr);
 
 	BatchGraphics();
@@ -1182,7 +1182,7 @@ static void DrawMeleeStatusMessage(const char* message)
 	{
 		GfxText lfText;
 		lfText.pStr = message;
-		lfText.align = ALIGN_LEFT;
+		lfText.align = TextAlign::Left;
 		lfText.CharCount = (uint16_t)~0;
 
 		SetContextFont(MicroFont);
@@ -1478,7 +1478,7 @@ void DrawMeleeShipStrings(MeleeState* pMS, MeleeShip NewStarShip)
 		DrawRectangle(&r, IsHd());
 		t.baseline.x = StatusWidth() >> 1;
 		t.baseline.y = ResScale(32);
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		if (pMS->row < NumMeleeRows)
 		{
 			// A ship is selected (or an empty fleet position).
@@ -2063,7 +2063,7 @@ static void StartMelee(MeleeState* pMS)
 {
 	{
 		FadeMusic(0, c_gameSecond / 2);
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2)
+		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2)
 						 + c_gameSecond / 60);
 		FlushColorXForms();
 
@@ -2097,7 +2097,7 @@ static void StartMelee(MeleeState* pMS)
 			return;
 		}
 
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2)
+		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2)
 						 + c_gameSecond / 60);
 		FlushColorXForms();
 
@@ -2260,7 +2260,7 @@ static bool DoConnectingDialog(MeleeState* pMS)
 		}
 		t.baseline.y = r.corner.y + ResScale(10);
 		t.baseline.x = CanvasWidth >> 1;
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.CharCount = ~0;
 		font_DrawText(&t);
 
@@ -2498,7 +2498,7 @@ bool DoMelee(MeleeState* pMS)
 
 		InitMelee(pMS);
 
-		FadeScreen(FadeAllToColor, c_gameSecond / 2);
+		FadeScreen(ScreenFadeType::FadeAllToColor, c_gameSecond / 2);
 		pMS->LastInputTime = GetTimeCounter();
 		return true;
 	}

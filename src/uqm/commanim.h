@@ -190,7 +190,7 @@ struct AnimFilter
 	// If we want to use frame from CommData.AlienFrame
 	// If -1 then we will draw a rectangle that covers all context
 
-	uint8_t Kind;
+	DrawKind Kind;
 	// A drawkind from DrawKind enum
 
 	uint8_t Flags;

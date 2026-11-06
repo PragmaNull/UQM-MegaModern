@@ -38,8 +38,8 @@ static ConversationData utwig_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_MIDDLE, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Middle, /* AlienTextValign */
 		UtwigColorMap, /* AlienColorMap */
 		UtwigMusic, /* AlienSong */
 		{

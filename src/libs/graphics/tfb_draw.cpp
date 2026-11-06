@@ -23,11 +23,11 @@
 const static HOT_SPOT NullHs = {0, 0};
 
 void TFB_DrawScreen_Line(int x1, int y1, int x2, int y2, Color color,
-						 DrawMode mode, SCREEN dest, uint8_t thickness)
+						 DrawMode mode, ScreenBuffer dest, uint8_t thickness)
 {
 	TFB_DrawCommand DC;
 
-	DC.Type = TFB_DRAWCOMMANDTYPE_LINE;
+	DC.Type = DrawCommandType::Line;
 	DC.data.line.x1 = x1;
 	DC.data.line.y1 = y1;
 	DC.data.line.x2 = x2;
@@ -40,7 +40,7 @@ void TFB_DrawScreen_Line(int x1, int y1, int x2, int y2, Color color,
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_Rect(GfxRect* rect, Color color, DrawMode mode, SCREEN dest)
+void TFB_DrawScreen_Rect(GfxRect* rect, Color color, DrawMode mode, ScreenBuffer dest)
 {
 	GfxRect locRect;
 	TFB_DrawCommand DC;
@@ -53,7 +53,7 @@ void TFB_DrawScreen_Rect(GfxRect* rect, Color color, DrawMode mode, SCREEN dest)
 		rect = &locRect;
 	}
 
-	DC.Type = TFB_DRAWCOMMANDTYPE_RECTANGLE;
+	DC.Type = DrawCommandType::Rectangle;
 	DC.data.rect.rect = *rect;
 	DC.data.rect.color = color;
 	DC.data.rect.drawMode = mode;
@@ -63,11 +63,11 @@ void TFB_DrawScreen_Rect(GfxRect* rect, Color color, DrawMode mode, SCREEN dest)
 }
 
 void TFB_DrawScreen_Image(TFB_Image* img, int x, int y, int scale,
-						  uqm::TFBScaleMode scaleMode, TFB_ColorMap* cmap, DrawMode mode, SCREEN dest)
+						  uqm::TFBScaleMode scaleMode, TFB_ColorMap* cmap, DrawMode mode, ScreenBuffer dest)
 {
 	TFB_DrawCommand DC;
 
-	DC.Type = TFB_DRAWCOMMANDTYPE_IMAGE;
+	DC.Type = DrawCommandType::Image;
 	DC.data.image.image = img;
 	DC.data.image.colormap = cmap;
 	DC.data.image.x = x;
@@ -81,11 +81,11 @@ void TFB_DrawScreen_Image(TFB_Image* img, int x, int y, int scale,
 }
 
 void TFB_DrawScreen_FilledImage(TFB_Image* img, int x, int y, int scale,
-								uqm::TFBScaleMode scaleMode, Color color, DrawMode mode, SCREEN dest)
+								uqm::TFBScaleMode scaleMode, Color color, DrawMode mode, ScreenBuffer dest)
 {
 	TFB_DrawCommand DC;
 
-	DC.Type = TFB_DRAWCOMMANDTYPE_FILLEDIMAGE;
+	DC.Type = DrawCommandType::FilledImage;
 	DC.data.filledimage.image = img;
 	DC.data.filledimage.x = x;
 	DC.data.filledimage.y = y;
@@ -99,11 +99,11 @@ void TFB_DrawScreen_FilledImage(TFB_Image* img, int x, int y, int scale,
 }
 
 void TFB_DrawScreen_FontChar(TFB_Char* fontChar, TFB_Image* backing,
-							 int x, int y, DrawMode mode, SCREEN dest)
+							 int x, int y, DrawMode mode, ScreenBuffer dest)
 {
 	TFB_DrawCommand DC;
 
-	DC.Type = TFB_DRAWCOMMANDTYPE_FONTCHAR;
+	DC.Type = DrawCommandType::FontChar;
 	DC.data.fontchar.fontchar = fontChar;
 	DC.data.fontchar.backing = backing;
 	DC.data.fontchar.x = x;
@@ -114,11 +114,11 @@ void TFB_DrawScreen_FontChar(TFB_Char* fontChar, TFB_Image* backing,
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GfxRect* r, SCREEN src)
+void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GfxRect* r, ScreenBuffer src)
 {
 	TFB_DrawCommand DC;
 
-	DC.Type = TFB_DRAWCOMMANDTYPE_COPYTOIMAGE;
+	DC.Type = DrawCommandType::CopyToImage;
 	DC.data.copytoimage.rect = *r;
 	DC.data.copytoimage.image = img;
 	DC.data.copytoimage.srcBuffer = src;
@@ -126,7 +126,7 @@ void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GfxRect* r, SCREEN src)
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_Copy(const GfxRect* r, SCREEN src, SCREEN dest)
+void TFB_DrawScreen_Copy(const GfxRect* r, ScreenBuffer src, ScreenBuffer dest)
 {
 	GfxRect locRect;
 	TFB_DrawCommand DC;
@@ -139,7 +139,7 @@ void TFB_DrawScreen_Copy(const GfxRect* r, SCREEN src, SCREEN dest)
 		r = &locRect;
 	}
 
-	DC.Type = TFB_DRAWCOMMANDTYPE_COPY;
+	DC.Type = DrawCommandType::Copy;
 	DC.data.copy.rect = *r;
 	DC.data.copy.srcBuffer = src;
 	DC.data.copy.destBuffer = dest;
@@ -151,7 +151,7 @@ void TFB_DrawScreen_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx, int ho
 {
 	TFB_DrawCommand DC;
 
-	DC.Type = TFB_DRAWCOMMANDTYPE_SETMIPMAP;
+	DC.Type = DrawCommandType::SetMipmap;
 	DC.data.setmipmap.image = img;
 	DC.data.setmipmap.mipmap = mmimg;
 	DC.data.setmipmap.hotx = hotx;
@@ -166,7 +166,7 @@ void TFB_DrawScreen_DeleteImage(TFB_Image* img)
 	{
 		TFB_DrawCommand DC;
 
-		DC.Type = TFB_DRAWCOMMANDTYPE_DELETEIMAGE;
+		DC.Type = DrawCommandType::DeleteImage;
 		DC.data.deleteimage.image = img;
 
 		TFB_EnqueueDrawCommand(&DC);
@@ -180,7 +180,7 @@ void TFB_DrawScreen_DeleteData(uint8_t* data)
 	{
 		TFB_DrawCommand DC;
 
-		DC.Type = TFB_DRAWCOMMANDTYPE_DELETEDATA;
+		DC.Type = DrawCommandType::DeleteData;
 		DC.data.deletedata.data = data;
 
 		TFB_EnqueueDrawCommand(&DC);
@@ -192,7 +192,7 @@ void TFB_DrawScreen_WaitForSignal(void)
 	// The renderer releases this when it reaches the command.
 	thread_local uqstl::binary_semaphore flushed {0};
 	TFB_DrawCommand DrawCommand;
-	DrawCommand.Type = TFB_DRAWCOMMANDTYPE_SENDSIGNAL;
+	DrawCommand.Type = DrawCommandType::SendSignal;
 	DrawCommand.data.sendsignal.sem = &flushed;
 	Lock_DCQ(1);
 	TFB_BatchReset();
@@ -204,7 +204,7 @@ void TFB_DrawScreen_WaitForSignal(void)
 void TFB_DrawScreen_ReinitVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, int height)
 {
 	TFB_DrawCommand DrawCommand;
-	DrawCommand.Type = TFB_DRAWCOMMANDTYPE_REINITVIDEO;
+	DrawCommand.Type = DrawCommandType::ReinitVideo;
 	DrawCommand.data.reinitvideo.driver = driver;
 	DrawCommand.data.reinitvideo.flags = flags;
 	DrawCommand.data.reinitvideo.width = width;
@@ -215,7 +215,7 @@ void TFB_DrawScreen_ReinitVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int 
 void TFB_DrawScreen_Callback(void (*callback)(void* arg), void* arg)
 {
 	TFB_DrawCommand DrawCommand;
-	DrawCommand.Type = TFB_DRAWCOMMANDTYPE_CALLBACK;
+	DrawCommand.Type = DrawCommandType::Callback;
 	DrawCommand.data.callback.callback = callback;
 	DrawCommand.data.callback.arg = arg;
 	TFB_EnqueueDrawCommand(&DrawCommand);

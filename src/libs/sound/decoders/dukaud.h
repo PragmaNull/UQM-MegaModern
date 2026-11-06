@@ -19,18 +19,21 @@
 #ifndef DUKAUD_H
 #define DUKAUD_H
 
+#include "core/types/enum.h"
 #include "decoder.h"
 
 extern TFB_SoundDecoderFuncs duka_DecoderVtbl;
 
-typedef enum
+enum class DukAudError
 {
 	// positive values are the same as in errno
-	dukae_None = 0,
-	dukae_Unknown = -1,
-	dukae_BadFile = -2,
-	dukae_BadArg = -3,
-	dukae_Other = -1000,
-} DukAud_Error;
+	None = 0,
+	Unknown = -1,
+	BadFile = -2,
+	BadArg = -3,
+	Other = -1000,
+};
+template <>
+inline constexpr bool IsArithmeticEnum<DukAudError> = true;
 
 #endif // DUKAUD_H

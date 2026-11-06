@@ -375,7 +375,7 @@ static void spawn_doggy(Element* ElementPtr)
 		DoggyElementPtr->state_flags = Appearing;
 		DoggyElementPtr->life_span = NormalLife;
 		SetPrimType(&DisplayArray[DoggyElementPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 		{
 			DoggyElementPtr->preprocess_func = doggy_preprocess;
 			DoggyElementPtr->postprocess_func = nullptr;

@@ -199,7 +199,7 @@ static void laser_death(Element* ElementPtr)
 
 			SetElementStarShip(IonSpotsPtr, StarShipPtr);
 
-			SetPrimType(&DisplayArray[IonSpotsPtr->PrimIndex], STAMP_PRIM);
+			SetPrimType(&DisplayArray[IonSpotsPtr->PrimIndex], PrimitiveType::Stamp);
 
 			UnlockElement(hIonSpots);
 			PutElement(hIonSpots);
@@ -296,7 +296,7 @@ static void chmmr_postprocess(Element* ElementPtr)
 		if (MuzzleFlashPtr != ElementPtr
 			&& elementsOfSamePlayer(MuzzleFlashPtr, ElementPtr)
 			&& (MuzzleFlashPtr->state_flags & Appearing)
-			&& GetPrimType(&DisplayArray[MuzzleFlashPtr->PrimIndex]) == LINE_PRIM
+			&& GetPrimType(&DisplayArray[MuzzleFlashPtr->PrimIndex]) == PrimitiveType::Line
 			&& !(StarShipPtr->special_counter & 1)
 			&& (hMuzzleFlash = AllocElement()))
 		{
@@ -315,7 +315,7 @@ static void chmmr_postprocess(Element* ElementPtr)
 
 			SetElementStarShip(MuzzleFlashPtr, StarShipPtr);
 
-			SetPrimType(&DisplayArray[MuzzleFlashPtr->PrimIndex], STAMP_PRIM);
+			SetPrimType(&DisplayArray[MuzzleFlashPtr->PrimIndex], PrimitiveType::Stamp);
 
 			UnlockElement(hMuzzleFlash);
 			PutElement(hMuzzleFlash);
@@ -428,7 +428,7 @@ static void chmmr_postprocess(Element* ElementPtr)
 						SetVelocityComponents(&ShadowElementPtr->velocity,
 											  dx, dy);
 
-						SetPrimType(&DisplayArray[ShadowElementPtr->PrimIndex], STAMPFILL_PRIM);
+						SetPrimType(&DisplayArray[ShadowElementPtr->PrimIndex], PrimitiveType::StampFill);
 						SetPrimColor(&DisplayArray[ShadowElementPtr->PrimIndex], color_tab[i]);
 
 						UnlockElement(hShadow);
@@ -705,7 +705,7 @@ static void spawn_satellites(Element* ElementPtr)
 
 				SetElementStarShip(SattPtr, StarShipPtr);
 
-				SetPrimType(&DisplayArray[SattPtr->PrimIndex], STAMP_PRIM);
+				SetPrimType(&DisplayArray[SattPtr->PrimIndex], PrimitiveType::Stamp);
 
 				UnlockElement(hSatellite);
 				PutElement(hSatellite);

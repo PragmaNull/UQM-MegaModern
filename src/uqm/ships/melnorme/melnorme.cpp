@@ -416,7 +416,7 @@ static void confuse_preprocess_april(Element* ElementPtr)
 			if (ElementPtr->life_span > 1)
 			{
 				SetPrimType(&DisplayArray[eptr->PrimIndex],
-							STAMPFILL_PRIM);
+							PrimitiveType::StampFill);
 				SetPrimColor(&DisplayArray[eptr->PrimIndex],
 							 colorTable[ElementPtr->colorCycleIndex]);
 				ElementPtr->colorCycleIndex++;
@@ -429,7 +429,7 @@ static void confuse_preprocess_april(Element* ElementPtr)
 			else
 			{
 				SetPrimType(&DisplayArray[eptr->PrimIndex],
-							STAMP_PRIM);
+							PrimitiveType::Stamp);
 				BattleSong(true);
 			}
 
@@ -506,7 +506,7 @@ static void confuse_preprocess(Element* ElementPtr)
 				eptr->current = eptr->next = ElementPtr->next;
 				eptr->preprocess_func = confuse_preprocess;
 				SetPrimType(&DisplayArray[eptr->PrimIndex],
-							STAMP_PRIM);
+							PrimitiveType::Stamp);
 
 				GetElementStarShip(ElementPtr, &StarShipPtr);
 				SetElementStarShip(eptr, StarShipPtr);

@@ -85,7 +85,7 @@ static void DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 
 	Text.pStr = pStr;
 	Text.CharCount = CharCount;
-	Text.align = ALIGN_CENTER;
+	Text.align = TextAlign::Center;
 
 	Text.baseline.y = StarconTextHeight() + ResScale(3) + y;
 	Text.baseline.x = StatusWidth() >> 1;
@@ -329,7 +329,7 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 				Text.pStr = buf;
 				Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 			}
-			Text.align = ALIGN_CENTER;
+			Text.align = TextAlign::Center;
 
 			Text.baseline.x = StatusWidth() >> 1;
 			Text.baseline.y = y + GaugeYoffs() + ResScale(3)

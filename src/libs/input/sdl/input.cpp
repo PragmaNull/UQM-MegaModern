@@ -189,7 +189,7 @@ static void register_flight_controls(void)
 									flight_res_names[j], k + 1);
 				if (!res_IsString(buf))
 				{
-					g->type = VCONTROL_NONE;
+					g->type = VControlGestureType::None;
 					continue;
 				}
 				VControl_ParseGesture(g, res_GetString(buf));
@@ -324,7 +324,7 @@ static void initJoystick(void)
 
 #endif /* HAVE_JOYSTICK */
 
-int TFB_InitInput(int driver, int flags)
+int TFB_InitInput(InputDriver driver, int flags)
 {
 	(void)driver;
 	(void)flags;
@@ -545,12 +545,12 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 
 	switch (g->type)
 	{
-		case VCONTROL_KEY:
+		case VControlGestureType::Key:
 			fmt::format_to_sz_n(buffer, maxlen, "{}",
 								VControl_code2name(g->gesture.key));
 			buffer[maxlen - 1] = 0;
 			break;
-		case VCONTROL_JOYBUTTON:
+		case VControlGestureType::JoyButton:
 			switch (uqm::UQMOptions::read().optControllerType)
 			{
 				case uqm::ControllerType::XBox:
@@ -571,7 +571,7 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 					break;
 			}
 			break;
-		case VCONTROL_JOYAXIS:
+		case VControlGestureType::JoyAxis:
 			switch (uqm::UQMOptions::read().optControllerType)
 			{
 				case uqm::ControllerType::XBox:
@@ -618,7 +618,7 @@ void RemoveInputState(int templat, int control, int index)
 
 	VControl_RemoveGestureBinding(g,
 								  (flight_vec + templat * num_flight + control));
-	g->type = VCONTROL_NONE;
+	g->type = VControlGestureType::None;
 
 	fmt::format_to_sz_n(keybuf, "keys.{}.{}.{}", templat + 1,
 						flight_res_names[control], index + 1);

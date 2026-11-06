@@ -52,8 +52,8 @@ static ConversationData commander_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth(), */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_MIDDLE, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Middle, /* AlienTextValign */
 		CommanderColorMap, /* AlienColorMap */
 		CommanderMusic, /* AlienSong */
 		{

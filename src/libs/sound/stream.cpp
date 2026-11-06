@@ -112,9 +112,9 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 			add_scope_data(&soundSource[source], decoded_bytes);
 		}
 
-		if (decoder->error != SOUNDDECODER_OK)
+		if (decoder->error != SoundDecoderStatus::Ok)
 		{
-			if (decoder->error != SOUNDDECODER_EOF || !sample->callbacks.OnEndChunk || !sample->callbacks.OnEndChunk(sample, sample->buffer[i]))
+			if (decoder->error != SoundDecoderStatus::Eof || !sample->callbacks.OnEndChunk || !sample->callbacks.OnEndChunk(sample, sample->buffer[i]))
 			{ // Decoder probably run out of data before we could fill
 				// all buffers, and OnEndChunk() did not set a new one
 				break;
@@ -430,7 +430,7 @@ static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_
 		audio_GetSourcei(source->handle, audio_SOURCE_STATE, &state);
 		if (state != audio_PLAYING)
 		{
-			if (queued == 0 && decoder->error == SOUNDDECODER_EOF)
+			if (queued == 0 && decoder->error == SoundDecoderStatus::Eof)
 			{ // The stream has reached the end
 				uqm::log::info("StreamDecoderTaskFunc(): "
 							   "finished playing {}",
@@ -487,9 +487,9 @@ static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_
 		}
 
 		// See what state the decoder was left in last time around
-		if (decoder->error != SOUNDDECODER_OK)
+		if (decoder->error != SoundDecoderStatus::Ok)
 		{
-			if (decoder->error == SOUNDDECODER_EOF)
+			if (decoder->error == SoundDecoderStatus::Eof)
 			{
 				if (end_chunk_failed)
 				{
@@ -522,7 +522,7 @@ static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_
 
 		// Now replace the unqueued buffer with a new one
 		uint32_t decoded_bytes {SoundDecoder_Decode(decoder)};
-		if (decoder->error == SOUNDDECODER_ERROR)
+		if (decoder->error == SoundDecoderStatus::Error)
 		{
 			uqm::log::warn("StreamDecoderTaskFunc(): "
 						   "SoundDecoder_Decode error {}, file {}",
@@ -614,7 +614,7 @@ static void StreamDecoderTaskFunc(uqstl::stop_token stopToken)
 
 			source->stream_mutex.lock();
 
-			if (!source->sample || !source->sample->decoder || !source->stream_should_be_playing || source->sample->decoder->error == SOUNDDECODER_ERROR)
+			if (!source->sample || !source->sample->decoder || !source->stream_should_be_playing || source->sample->decoder->error == SoundDecoderStatus::Error)
 			{
 				source->stream_mutex.unlock();
 				continue;

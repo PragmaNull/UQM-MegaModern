@@ -114,20 +114,20 @@ static int32_t duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t ifra
 	if (!duka->duk->readValue(hdr))
 	{
 		duka->last_error = errno;
-		return dukae_BadFile;
+		return +DukAudError::BadFile;
 	}
 	hdr.audsize = uqm::convertBigEndian<uint32_t>(hdr.audsize);
 
 	if (!duka->duk->readValue(*aud))
 	{
 		duka->last_error = errno;
-		return dukae_BadFile;
+		return +DukAudError::BadFile;
 	}
 
 	aud->magic = uqm::convertBigEndian<uint16_t>(aud->magic);
 	if (aud->magic != 0xf77f)
 	{
-		return duka->last_error = dukae_BadFile;
+		return duka->last_error = +DukAudError::BadFile;
 	}
 
 	aud->numsamples = uqm::convertBigEndian<uint16_t>(aud->numsamples);
@@ -269,7 +269,7 @@ static int32_t duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	if (!duka->duk->readValue(hdr))
 	{
 		duka->last_error = errno;
-		return dukae_BadFile;
+		return +DukAudError::BadFile;
 	}
 	hdr.audsize = uqm::convertBigEndian<uint32_t>(hdr.audsize);
 
@@ -278,7 +278,7 @@ static int32_t duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	if (!duka->duk->readExact(uqm::io::asBytes(p, hdr.audsize)))
 	{
 		duka->last_error = errno;
-		return dukae_BadFile;
+		return +DukAudError::BadFile;
 	}
 	DukAud_AudSubframe* aud {(DukAud_AudSubframe*)p};
 	p += sizeof(DukAud_AudSubframe);
@@ -286,7 +286,7 @@ static int32_t duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	aud->magic = uqm::convertBigEndian<uint16_t>(aud->magic);
 	if (aud->magic != 0xf77f)
 	{
-		return duka->last_error = dukae_BadFile;
+		return duka->last_error = +DukAudError::BadFile;
 	}
 
 	aud->numsamples = uqm::convertBigEndian<uint16_t>(aud->numsamples);
@@ -355,7 +355,7 @@ static int duka_GetError(TFB_SoundDecoder* This)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 	const int ret = duka->last_error;
-	duka->last_error = dukae_None;
+	duka->last_error = +DukAudError::None;
 	return ret;
 }
 
@@ -411,7 +411,7 @@ static bool duka_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, con
 	duka->cframes = static_cast<uint32_t>(frm->size() / sizeof(uint32_t));
 	if (!duka->cframes)
 	{
-		duka->last_error = dukae_BadFile;
+		duka->last_error = +DukAudError::BadFile;
 		delete frm;
 		duka_Close(This);
 		return false;
@@ -422,7 +422,7 @@ static bool duka_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, con
 	delete frm;
 	if (cread != duka->cframes)
 	{
-		duka->last_error = dukae_BadFile;
+		duka->last_error = +DukAudError::BadFile;
 		duka_Close(This);
 		return false;
 	}
@@ -477,7 +477,7 @@ static int duka_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 
 	if (bufsize <= 0)
 	{
-		return duka->last_error = dukae_BadArg;
+		return duka->last_error = +DukAudError::BadArg;
 	}
 
 	do

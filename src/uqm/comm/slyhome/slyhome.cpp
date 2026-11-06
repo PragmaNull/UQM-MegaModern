@@ -38,8 +38,8 @@ static ConversationData slylandro_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth(), */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_TOP, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Top, /* AlienTextValign */
 		SlylandroColorMap, /* AlienColorMap */
 		SlylandroMusic, /* AlienSong */
 		{
@@ -219,11 +219,11 @@ static AnimFilterSet slyhome_filters =
 		{
 								  /* Filter array */
 			{
-				0,			  /* Color index */
-				1,			  /* Opacity index */
-				-1,			  /* Frame index */
-				DRAW_OVERLAY, /* DrawKind*/
-				0,			  /* Flags */
+				0,				   /* Color index */
+				1,				   /* Opacity index */
+				-1,				   /* Frame index */
+				DrawKind::Overlay, /* DrawKind*/
+				0,				   /* Flags */
 			},
 								  }
 };

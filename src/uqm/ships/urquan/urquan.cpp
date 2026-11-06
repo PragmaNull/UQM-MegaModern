@@ -505,7 +505,7 @@ static void spawn_fighters(Element* ElementPtr)
 									   | CrewObject | IgnoreSimilar;
 		FighterElementPtr->life_span = FighterLife;
 		SetPrimType(&DisplayArray[FighterElementPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 		{
 			FighterElementPtr->preprocess_func = fighter_preprocess;
 			FighterElementPtr->postprocess_func = 0;

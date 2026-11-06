@@ -36,7 +36,7 @@ FONT _CurFontPtr;
 static constexpr auto DefaultForeColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)};
 static constexpr auto DefaultBackColor {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)};
 
-static constexpr auto DefaultDrawMode {MAKE_DRAW_MODE(DRAW_DEFAULT, 255)};
+static constexpr auto DefaultDrawMode {MAKE_DRAW_MODE(DrawKind::Default, 255)};
 
 GFXCONTEXT SetContext(GFXCONTEXT Context)
 {

@@ -253,7 +253,7 @@ static void ZapToUrquanEncounter(void)
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 
 		{
-			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond * 2));
+			SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond * 2));
 			MoveGameClockDays(LostDays);
 		}
 

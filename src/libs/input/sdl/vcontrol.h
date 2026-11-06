@@ -17,6 +17,7 @@
 #ifndef LIBS_INPUT_SDL_VCONTROL_H_
 #define LIBS_INPUT_SDL_VCONTROL_H_
 
+#include "core/types/enum.h"
 #include "port.h"
 #include <SDL3/SDL.h>
 #include "core/stl/stl.h"
@@ -31,19 +32,21 @@ void VControl_Uninit(void);
 /* Structures for representing actual VControl Inputs.  Returned by
    iterators and used to construct bindings. */
 
-typedef enum
+enum class VControlGestureType
 {
-	VCONTROL_NONE,
-	VCONTROL_KEY,
-	VCONTROL_JOYAXIS,
-	VCONTROL_JOYBUTTON,
-	VCONTROL_JOYHAT,
-	NUM_VCONTROL_GESTURES
-} VCONTROL_GESTURE_TYPE;
+	None,
+	Key,
+	JoyAxis,
+	JoyButton,
+	JoyHat,
+	Count
+};
+template <>
+inline constexpr bool IsArithmeticEnum<VControlGestureType> = true;
 
 struct VControlGesture
 {
-	VCONTROL_GESTURE_TYPE type;
+	VControlGestureType type;
 	union
 	{
 		sdl_key_t key;

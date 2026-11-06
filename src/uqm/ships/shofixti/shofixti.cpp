@@ -170,7 +170,7 @@ static void destruct_preprocess(Element* ElementPtr)
 	{
 		// First, stamp-fill the ship's own Element with changing colors
 		// for 3 frames. No explosion Element yet.
-		SetPrimType(lpPrim, STAMPFILL_PRIM);
+		SetPrimType(lpPrim, PrimitiveType::StampFill);
 		if (ElementPtr->life_span == DestructSwitch + 2)
 		{
 			SetPrimColor(lpPrim,
@@ -242,7 +242,7 @@ static void destruct_preprocess(Element* ElementPtr)
 			DestructPtr->playerNr = NeutralPlayerNum;
 			DestructPtr->state_flags = Appearing | FiniteLife | Nonsolid;
 			SetPrimType(&DisplayArray[DestructPtr->PrimIndex],
-						STAMPFILL_PRIM);
+						PrimitiveType::StampFill);
 			SetPrimColor(&DisplayArray[DestructPtr->PrimIndex],
 						 BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 			DestructPtr->current.image.farray =

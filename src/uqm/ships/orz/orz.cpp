@@ -487,7 +487,7 @@ LeftShip:
 		ElementPtr->state_flags &= ~Nonsolid;
 		ElementPtr->state_flags |= Changing | CrewObject;
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 
 		ElementPtr->current.image.frame =
 			ElementPtr->next.image.frame =
@@ -523,7 +523,7 @@ spawn_marine_ion_trail(Element* ElementPtr, Starship* StarShipPtr,
 		// 'cycle_ion_trail', it is given new life a number of
 		// times, by setting life_span to thrust_wait.
 		SetPrimType(&DisplayArray[IonElementPtr->PrimIndex],
-					POINT_PRIM); // Actual marine ion trail
+					PrimitiveType::Point); // Actual marine ion trail
 		SetPrimColor(&DisplayArray[IonElementPtr->PrimIndex],
 					 StartIonColor);
 		IonElementPtr->colorCycleIndex = 0;
@@ -945,7 +945,7 @@ static void turret_postprocess(Element* ElementPtr)
 					if (TurretEffectPtr != ElementPtr
 						&& elementsOfSamePlayer(TurretEffectPtr, ElementPtr)
 						&& (TurretEffectPtr->state_flags & Appearing)
-						&& GetPrimType(&DisplayArray[TurretEffectPtr->PrimIndex]) == STAMP_PRIM
+						&& GetPrimType(&DisplayArray[TurretEffectPtr->PrimIndex]) == PrimitiveType::Stamp
 						&& (hTurretEffect = AllocElement()))
 					{
 						TurretPtr->current.location.x -=
@@ -978,7 +978,7 @@ static void turret_postprocess(Element* ElementPtr)
 
 						SetElementStarShip(TurretEffectPtr, StarShipPtr);
 
-						SetPrimType(&DisplayArray[TurretEffectPtr->PrimIndex], STAMP_PRIM);
+						SetPrimType(&DisplayArray[TurretEffectPtr->PrimIndex], PrimitiveType::Stamp);
 
 						UnlockElement(hTurretEffect);
 						PutElement(hTurretEffect);
@@ -1038,7 +1038,7 @@ static void turret_postprocess(Element* ElementPtr)
 
 				SetElementStarShip(SpaceMarinePtr, StarShipPtr);
 
-				SetPrimType(&DisplayArray[SpaceMarinePtr->PrimIndex], STAMP_PRIM);
+				SetPrimType(&DisplayArray[SpaceMarinePtr->PrimIndex], PrimitiveType::Stamp);
 
 				UnlockElement(hSpaceMarine);
 				PutElement(hSpaceMarine);

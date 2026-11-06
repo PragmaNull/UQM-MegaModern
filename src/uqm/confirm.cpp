@@ -67,7 +67,7 @@ static void DrawConfirmationWindow(bool answer, bool confirm)
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y + ResScale(10);
 	t.pStr = GameString(QUITMENU_STRING_BASE); // "Really Quit?"
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 	t.baseline.y += ResScale(10);
@@ -125,7 +125,7 @@ bool DoConfirmExit(void)
 		r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
 		s = SaveContextFrame(&ctxRect);
 
-		mode = MAKE_DRAW_MODE(DRAW_DESATURATE, DesatAmount);
+		mode = MAKE_DRAW_MODE(DrawKind::Desaturate, DesatAmount);
 		oldMode = SetContextDrawMode(mode);
 		DrawFilledRectangle(&ctxRect);
 		SetContextDrawMode(oldMode);
@@ -249,7 +249,7 @@ void DoPopupWindow(const char* msg)
 		exit(EXIT_FAILURE);
 	}
 
-	label.tag = WIDGET_TYPE_LABEL;
+	label.tag = WidgetType::Label;
 	label.parent = nullptr;
 	label.handleEvent = Widget_HandleEventIgnoreAll;
 	label.receiveFocus = Widget_ReceiveFocusRefuseFocus;

@@ -113,7 +113,7 @@ static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLe
 	GetFrameRect(SetAbsFrameIndex(SpaceJunkFrame, 18), &r);
 	GetContextClipRect(&contextRect);
 
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.CharCount = 1;
 	t.pStr = pStr;
 	bool Sleepy {true};

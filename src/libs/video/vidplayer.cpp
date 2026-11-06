@@ -144,7 +144,7 @@ static bool processAudioSyncedFrame(VIDEO_REF vid)
 	GFXCONTEXT oldContext {SetContext(nullptr)};
 	TFB_DrawScreen_Image(vid->frame,
 						 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
-						 nullptr, DrawReplaceMode, TFB_SCREEN_MAIN);
+						 nullptr, DrawReplaceMode, ScreenBuffer::Main);
 	SetContext(oldContext);
 	FlushGraphics(); // needed to prevent half-frame updates
 
@@ -193,7 +193,7 @@ static bool processMuteFrame(VIDEO_REF vid)
 		GFXCONTEXT oldContext {SetContext(nullptr)};
 		TFB_DrawScreen_Image(vid->frame,
 							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
-							 nullptr, DrawReplaceMode, TFB_SCREEN_MAIN);
+							 nullptr, DrawReplaceMode, ScreenBuffer::Main);
 		SetContext(oldContext);
 		FlushGraphics(); // needed to prevent half-frame updates
 

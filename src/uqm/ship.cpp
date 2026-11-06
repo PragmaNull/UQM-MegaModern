@@ -503,7 +503,7 @@ static bool spawn_ship(Starship* StarShipPtr)
 		ShipElementPtr->life_span = NormalLife;
 		ShipElementPtr->colorCycleIndex = 0;
 
-		SetPrimType(&DisplayArray[ShipElementPtr->PrimIndex], STAMP_PRIM);
+		SetPrimType(&DisplayArray[ShipElementPtr->PrimIndex], PrimitiveType::Stamp);
 		ShipElementPtr->current.image.farray = RDPtr->ship_data.ship;
 
 		if (ShipElementPtr->playerNr == NpcPlayerNum
@@ -540,7 +540,7 @@ static bool spawn_ship(Starship* StarShipPtr)
 				if (IsHd())
 				{
 					const uint16_t numFrames = GetFrameCount(RDPtr->ship_data.ship[0]);
-					const DrawMode mode = MAKE_DRAW_MODE(DRAW_LINEARBURN, 0xFF);
+					const DrawMode mode = MAKE_DRAW_MODE(DrawKind::Linearburn, 0xFF);
 					Color c;
 
 					if (inHyperSpace())

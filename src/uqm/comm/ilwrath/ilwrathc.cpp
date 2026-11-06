@@ -39,8 +39,8 @@ static ConversationData ilwrath_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_MIDDLE, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Middle, /* AlienTextValign */
 		IlwrathColorMap, /* AlienColorMap */
 		IlwrathMusic, /* AlienSong */
 		{

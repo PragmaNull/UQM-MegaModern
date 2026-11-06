@@ -243,7 +243,7 @@ void font_DrawTracedTextAlt(GfxText* pText, Color text, Color trace, FONT AltFon
 	SetContextForeGroundColor(oldfg);
 }
 
-void font_DrawShadowedText(GfxText* pText, uint8_t direction,
+void font_DrawShadowedText(GfxText* pText, ShadowAngle direction,
 						   Color text_color, Color shadow_color)
 {
 	GfxPoint shadow_angle = {0, 0};
@@ -251,28 +251,28 @@ void font_DrawShadowedText(GfxText* pText, uint8_t direction,
 
 	switch (direction)
 	{
-		case NORTH_SHADOW:
+		case ShadowAngle::North:
 			shadow_angle = MAKE_POINT(0, -1);
 			break;
-		case NORTH_EAST_SHADOW:
+		case ShadowAngle::NorthEast:
 			shadow_angle = MAKE_POINT(1, -1);
 			break;
-		case EAST_SHADOW:
+		case ShadowAngle::East:
 			shadow_angle = MAKE_POINT(1, 0);
 			break;
-		case SOUTH_EAST_SHADOW:
+		case ShadowAngle::SouthEast:
 			shadow_angle = MAKE_POINT(1, 1);
 			break;
-		case SOUTH_SHADOW:
+		case ShadowAngle::South:
 			shadow_angle = MAKE_POINT(0, 1);
 			break;
-		case SOUTH_WEST_SHADOW:
+		case ShadowAngle::SouthWest:
 			shadow_angle = MAKE_POINT(-1, 1);
 			break;
-		case WEST_SHADOW:
+		case ShadowAngle::West:
 			shadow_angle = MAKE_POINT(-1, 0);
 			break;
-		case NORTH_WEST_SHADOW:
+		case ShadowAngle::NorthWest:
 			shadow_angle = MAKE_POINT(-1, -1);
 			break;
 	}
@@ -427,11 +427,11 @@ bool TextRect(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta)
 				width -= FontPtr->CharSpace;
 			}
 
-			if (lpText->align == ALIGN_LEFT)
+			if (lpText->align == TextAlign::Left)
 			{
 				pRect->corner.x = 0;
 			}
-			else if (lpText->align == ALIGN_CENTER)
+			else if (lpText->align == TextAlign::Center)
 			{
 				pRect->corner.x = -ResScale((ResDescale(width) >> 1));
 			}
@@ -631,7 +631,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 				{
 					TFB_DrawImage_Image(repair->image, -r.corner.x, -r.corner.y,
 										0, uqm::TFBScaleMode::None, nullptr, DrawReplaceMode, b_clear);
-					TFB_Prim_FontChar(origin, fontChar, b_clear, MAKE_DRAW_MODE(DRAW_GRAYSCALE, 0xff),
+					TFB_Prim_FontChar(origin, fontChar, b_clear, MAKE_DRAW_MODE(DrawKind::Grayscale, 0xff),
 									  ctxOrigin);
 				}
 				TFB_Prim_FontChar(origin, fontChar, b_second, mode,
@@ -794,11 +794,11 @@ bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap,
 				width -= FontPtr->CharSpace;
 			}
 
-			if (lpText->align == ALIGN_LEFT)
+			if (lpText->align == TextAlign::Left)
 			{
 				pRect->corner.x = 0;
 			}
-			else if (lpText->align == ALIGN_CENTER)
+			else if (lpText->align == TextAlign::Center)
 			{
 				pRect->corner.x = -ResScale((ResDescale(width) >> 1));
 			}

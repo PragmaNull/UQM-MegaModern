@@ -1156,7 +1156,7 @@ static HELEMENT AllocHyperElement(const GfxPoint* elem_pt)
 		}
 
 		SetPrimType(&DisplayArray[HyperSpaceElementPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 		HyperSpaceElementPtr->current.image.farray =
 			&hyperstars[1 + (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) >> 1)];
 
@@ -1180,7 +1180,7 @@ static void AddAmbientElement(void)
 		HyperSpaceElementPtr->state_flags =
 			Appearing | FiniteLife | Nonsolid;
 		SetPrimType(&DisplayArray[HyperSpaceElementPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 		HyperSpaceElementPtr->preprocess_func = animation_preprocess;
 
 		if (IsHd() && inQuasiSpace())
@@ -1634,7 +1634,7 @@ static bool ProcessEncounter(Encounter* EncounterPtr, GfxPoint* puniverse,
 			else
 			{
 				SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
-							STAMP_PRIM);
+							PrimitiveType::Stamp);
 			}
 		}
 	}
@@ -1759,7 +1759,7 @@ static bool ProcessEncounter(Encounter* EncounterPtr, GfxPoint* puniverse,
 		{
 			ElementPtr->current.location = ElementPtr->next.location;
 			SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
-						STAMP_PRIM);
+						PrimitiveType::Stamp);
 			if (ElementPtr->death_func == 0)
 			{
 				InitIntersectStartPoint(ElementPtr);
@@ -2144,7 +2144,7 @@ void SeedUniverse(void)
 
 				PrimIndex = &HyperSpaceElementPtr->PrimIndex;
 
-				SetPrimType(&DisplayArray[*PrimIndex], STAMPFILL_PRIM);
+				SetPrimType(&DisplayArray[*PrimIndex], PrimitiveType::StampFill);
 				SetPrimColor(&DisplayArray[*PrimIndex],
 							 GetMaskColor(StarColor(star_type)));
 				SetPrimFlags(&DisplayArray[*PrimIndex], HsStarmask);

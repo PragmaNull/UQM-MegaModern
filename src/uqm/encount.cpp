@@ -354,7 +354,7 @@ uint16_t InitEncounter(void)
 	//    t.baseline.x = SisScreenWidth() >> 1;
 	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 	t.baseline.y = ResScale(10);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
@@ -528,7 +528,7 @@ static void DrawFadeText(const char* str1, const char* str2, bool fade_in,
 
 	t1.baseline.x = pRect->corner.x + ResScale(100);
 	t1.baseline.y = pRect->corner.y + ResScale(45);
-	t1.align = ALIGN_CENTER;
+	t1.align = TextAlign::Center;
 	t1.pStr = str1;
 	t1.CharCount = (uint16_t)~0;
 	t2 = t1;
@@ -737,7 +737,7 @@ uint16_t UninitEncounter(void)
 
 								t.baseline.x = scavenge_r.corner.x + ResScale(100);
 								t.baseline.y = scavenge_r.corner.y + ResScale(68);
-								t.align = ALIGN_CENTER;
+								t.align = TextAlign::Center;
 								t.pStr = buf;
 								t.CharCount = (uint16_t)~0;
 								font_DrawText(&t);
@@ -792,7 +792,7 @@ uint16_t UninitEncounter(void)
 								r.corner.x + r.extent.width
 								- ResScale(1);
 							t.baseline.y = r.corner.y + ResScale(14);
-							t.align = ALIGN_RIGHT;
+							t.align = TextAlign::Right;
 							t.pStr = buf;
 							t.CharCount = (uint16_t)~0;
 							SetContextForeGroundColor(
@@ -911,7 +911,7 @@ uint16_t UninitEncounter(void)
 									 GameString(STATUS_STRING_BASE + 1)); // "RU"
 					t.baseline.x = r.corner.x + (r.extent.width >> 1);
 					t.baseline.y = r.corner.y + ResScale(14);
-					t.align = ALIGN_CENTER;
+					t.align = TextAlign::Center;
 					t.pStr = buf;
 					t.CharCount = (uint16_t)~0;
 					SetContextForeGroundColor(

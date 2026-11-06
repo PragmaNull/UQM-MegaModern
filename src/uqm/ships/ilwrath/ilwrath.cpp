@@ -239,7 +239,7 @@ static void ilwrath_preprocess(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	STATUS_FLAGS status_flags {StarShipPtr->cur_status_flags};
 	Primitive* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
-	if (GetPrimType(lpPrim) == STAMPFILL_PRIM)
+	if (GetPrimType(lpPrim) == PrimitiveType::StampFill)
 	{
 		Color color;
 		bool weapon_discharge {};
@@ -254,7 +254,7 @@ static void ilwrath_preprocess(Element* ElementPtr)
 			if (sameColor(color,
 						  BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)))
 			{
-				SetPrimType(lpPrim, STAMP_PRIM);
+				SetPrimType(lpPrim, PrimitiveType::Stamp);
 			}
 			else if (sameColor(color,
 							   BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)))
@@ -399,7 +399,7 @@ static void ilwrath_preprocess(Element* ElementPtr)
 	{
 		SetPrimColor(lpPrim,
 					 BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
-		SetPrimType(lpPrim, STAMPFILL_PRIM);
+		SetPrimType(lpPrim, PrimitiveType::StampFill);
 
 		ProcessSound(GetSound(
 						 /* CLOAKING_ON */

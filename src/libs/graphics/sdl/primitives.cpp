@@ -491,32 +491,32 @@ RenderPixelFn renderpixel_for(SDL_Surface* surface, RenderKind kind, bool forMas
 	}
 
 	// Rendering other than REPLACE is not supported on RGBA surfaces
-	if (fmt->Amask != 0 && kind != renderReplace && !forMask)
+	if (fmt->Amask != 0 && kind != RenderKind::Replace && !forMask)
 	{
 		return nullptr;
 	}
 
 	switch (kind)
 	{
-		case renderReplace:
+		case RenderKind::Replace:
 			return &renderpixel_replace;
-		case renderAdditive:
+		case RenderKind::Additive:
 			return &renderpixel_additive;
-		case renderAlpha:
+		case RenderKind::Alpha:
 			return &renderpixel_alpha;
-		case renderMultiply:
+		case RenderKind::Multiply:
 			return &renderpixel_multiply;
-		case renderOverlay:
+		case RenderKind::Overlay:
 			return &renderpixel_overlay;
-		case renderScreen:
+		case RenderKind::Screen:
 			return &renderpixel_screen;
-		case renderGrayscale:
+		case RenderKind::Grayscale:
 			return &renderpixel_grayscale;
-		case renderLinearburn:
+		case RenderKind::Linearburn:
 			return &renderpixel_linearburn;
-		case renderHypToQuas:
+		case RenderKind::HypToQuas:
 			return &renderpixel_hypertoquasi;
-		case renderDesatur:
+		case RenderKind::Desatur:
 			return &renderpixel_desaturate;
 	}
 	// should not ever get here

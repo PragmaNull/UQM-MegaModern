@@ -43,8 +43,8 @@ static ConversationData commander_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth(), */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_MIDDLE, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Middle, /* AlienTextValign */
 		CommanderColorMap, /* AlienColorMap */
 		CommanderMusic, /* AlienSong */
 		{
@@ -140,18 +140,18 @@ static AnimFilterSet commander_filters =
 		{
 								  /* Filter array */
 			{
-				0,				/* Color index */
-				1,				/* Opacity index */
-				56,				/* Frame index */
-				DRAW_MULTIPLY,	/* DrawKind*/
-				FilterDisabled, /* Flags */
+				0,					/* Color index */
+				1,					/* Opacity index */
+				56,					/* Frame index */
+				DrawKind::Multiply, /* DrawKind*/
+				FilterDisabled,		/* Flags */
 			},
 								  {
-				2,			  /* Color index */
-				3,			  /* Opacity index */
-				56,			  /* Frame index */
-				DRAW_OVERLAY, /* DrawKind*/
-				TurnOffOft,	  /* Flags */
+				2,				   /* Color index */
+				3,				   /* Opacity index */
+				56,				   /* Frame index */
+				DrawKind::Overlay, /* DrawKind*/
+				TurnOffOft,		   /* Flags */
 			},
 								  }
 };

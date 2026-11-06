@@ -480,7 +480,7 @@ static void UpdatePickMeleeFleetValue(FRAME frame, uint16_t which_player)
 	char buf[40] {};
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", value);
 	t.baseline.y = ResScale(7);
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 	if (isPC(uqm::UQMOptions::read().whichFonts))
@@ -564,7 +564,7 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 		DrawFilledRectangle(&r);
 
 		// Team name at the bottom of the frame:
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.pStr = MeleeSetup_getTeamName(setup, sideI);
 		t.CharCount = (uint16_t)~0;
 		if (isPC(uqm::UQMOptions::read().whichFonts))
@@ -583,7 +583,7 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 		fmt::format_to_n(buf, sizeof(buf) - 1, "{}", MeleeSetup_getFleetValue(setup, sideI));
 		t.baseline.x = ResScale(4);
 		t.baseline.y = ResScale(7);
-		t.align = ALIGN_LEFT;
+		t.align = TextAlign::Left;
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
 		SetContextForeGroundColor(PickshipTeamStartValueColor);
@@ -892,7 +892,7 @@ bool GetInitialMeleeStarShips(HSTARSHIP* result)
 	}
 
 	// Fade in
-	SleepThreadUntil(FadeScreen(FadeAllToColor, c_gameSecond / 2)
+	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToColor, c_gameSecond / 2)
 					 + c_gameSecond / 60);
 	FlushColorXForms();
 

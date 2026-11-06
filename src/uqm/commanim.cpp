@@ -626,7 +626,7 @@ static void ApplyFilterToStamp(GfxStamp s)
 		const int16_t factor {getAlphaChannel(FTPtr->OpacityIndex)};
 
 		// Image is transparent anyway
-		if (factor == 0x00 && FTPtr->Kind == DRAW_ALPHA)
+		if (factor == 0x00 && FTPtr->Kind == DrawKind::Alpha)
 		{
 			continue;
 		}
@@ -763,7 +763,7 @@ bool DrawAlienFrame(AnimSequence* Sequences, uint16_t Num, bool fullRedraw)
 				factor = getAlphaChannel(FTPtr->OpacityIndex);
 
 				// Image is transparent anyway
-				if (factor == 0x00 && FTPtr->Kind == DRAW_ALPHA)
+				if (factor == 0x00 && FTPtr->Kind == DrawKind::Alpha)
 				{
 					goto postprocess;
 				}

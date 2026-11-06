@@ -984,7 +984,7 @@ static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t sc
 			{
 				GfxPoint next;
 
-				if (ObjType == LINE_PRIM)
+				if (ObjType == PrimitiveType::Line)
 				{
 					const int32_t dx {(int32_t)ElementPtr->next.location.x - (int32_t)ElementPtr->current.location.x};
 					const int32_t dy {(int32_t)ElementPtr->next.location.y - (int32_t)ElementPtr->current.location.y};
@@ -1007,7 +1007,7 @@ static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t sc
 					DisplayArray[ElementPtr->PrimIndex].Object.Point.x = CalcDisplayCoord(next.x, SpaceOrg.x, reduction);
 					DisplayArray[ElementPtr->PrimIndex].Object.Point.y = CalcDisplayCoord(next.y, SpaceOrg.y, reduction);
 
-					if (ObjType == STAMP_PRIM || ObjType == STAMPFILL_PRIM)
+					if (ObjType == PrimitiveType::Stamp || ObjType == PrimitiveType::StampFill)
 					{
 						if (view_state == VIEW_CHANGE
 							|| (state_flags & (Appearing | Changing)))
@@ -1059,7 +1059,7 @@ static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t sc
 
 			PostProcess(ElementPtr);
 
-			if (ObjType < NUM_PRIMS)
+			if (ObjType < PrimitiveType::Count)
 			{
 				InsertPrim(&DisplayLinks, ElementPtr->PrimIndex, EndOfList);
 			}

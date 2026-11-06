@@ -123,7 +123,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 	DrawPCMenuFrame(r);
 
 	FONT OldFont {SetContextFont(StarConFont)};
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x = r->corner.x + ResScale(2);
 	t.baseline.y = r->corner.y + PcMenuHeight() - ResScale(1);
 	t.pStr = buf;
@@ -679,14 +679,14 @@ static void Draw3DOMenuText(GfxRect* r, int Index)
 		DrawBorder(TEXT_LABEL_FRAME);
 	}
 
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 	text.baseline.x = r->corner.x + (r->extent.width >> 1);
 	text.baseline.y = r->corner.y + leading - NdosNumScl(2);
 	text.pStr = AlignText(IndexToText(Index),
 						  &text.baseline.x);
 	text.CharCount = (uint16_t)~0;
 
-	font_DrawShadowedText(&text, NORTH_WEST_SHADOW, PmTextColor,
+	font_DrawShadowedText(&text, ShadowAngle::NorthWest, PmTextColor,
 						  PmShadowColor);
 
 	SetContextFont(OldFont);
@@ -850,7 +850,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 			case PM_CREW:
 				t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
 				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
-				t.align = ALIGN_RIGHT;
+				t.align = TextAlign::Right;
 				t.CharCount = (uint16_t)~0;
 				t.pStr = buf;
 				fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().CrewCost);
@@ -868,7 +868,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 			case PM_FUEL:
 				t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
 				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
-				t.align = ALIGN_RIGHT;
+				t.align = TextAlign::Right;
 				t.CharCount = (uint16_t)~0;
 				t.pStr = buf;
 				fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().FuelCost);
@@ -939,7 +939,7 @@ void DrawMineralHelpers(void)
 	// setup Element worths
 	t.baseline.x = ElementCol1();
 	t.baseline.y = ElementOrgY() + ResScale(3);
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 
@@ -998,7 +998,7 @@ void DrawMineralHelpers(void)
 	DrawFilledRectangle(&r);
 
 	SetContextForeGroundColor(ModuleNameColor);
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x = r.corner.x + ResScale(2);
 	t.baseline.y = r.corner.y + leading + ResScale(1);
 	t.pStr = GameString(STATUS_STRING_BASE + 8); // FUEL:
@@ -1021,7 +1021,7 @@ void DrawMineralHelpers(void)
 	font_DrawText(&t);
 
 	SetContextForeGroundColor(ModulePriceColor);
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.baseline.x = r.extent.width + ResScale(2);
 	t.baseline.y = r.corner.y + leading + ResScale(1);
 	t.pStr = WholeFuelValue();

@@ -17,20 +17,23 @@
 #ifndef LIBS_VIDEO_DUKVID_H_
 #define LIBS_VIDEO_DUKVID_H_
 
+#include "core/types/enum.h"
 #include "libs/video/videodec.h"
 
 extern TFB_VideoDecoderFuncs dukv_DecoderVtbl;
 
-typedef enum
+enum class DukVidError
 {
 	// positive values are the same as in errno
-	dukve_None = 0,
-	dukve_Unknown = -1,
-	dukve_BadFile = -2,
-	dukve_BadArg = -3,
-	dukve_OutOfBuf = -4,
-	dukve_EOF = -5,
-	dukve_Other = -1000,
-} DukVid_Error;
+	None = 0,
+	Unknown = -1,
+	BadFile = -2,
+	BadArg = -3,
+	OutOfBuf = -4,
+	Eof = -5,
+	Other = -1000,
+};
+template <>
+inline constexpr bool IsArithmeticEnum<DukVidError> = true;
 
 #endif // LIBS_VIDEO_DUKVID_H_

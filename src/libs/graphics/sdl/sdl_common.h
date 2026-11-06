@@ -32,7 +32,7 @@ struct TFB_GraphicsBackend
 	void (*preprocess)(uqm::TFBRedraw force_redraw, int transition_amount, int fade_amount);
 	void (*postprocess)(bool hd);
 	void (*uploadTransitionScreen)(void);
-	void (*screen)(SCREEN screen, Uint8 alpha, SDL_Rect* rect);
+	void (*screen)(ScreenBuffer screen, Uint8 alpha, SDL_Rect* rect);
 	void (*color)(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect);
 };
 
@@ -41,7 +41,7 @@ extern TFB_GraphicsBackend* graphics_backend;
 extern SDL_Surface* SDL_Screen;
 extern SDL_Surface* TransitionScreen;
 
-extern SDL_Surface* SDL_Screens[TFB_GFX_NUMSCREENS];
+extern SDL_Surface* SDL_Screens[+ScreenBuffer::Count];
 extern SDL_Surface* SDL_Screen_fps;
 // True when SDL_Screen_fps changed after the last upload to its texture.
 extern bool SDL_Screen_fps_changed;

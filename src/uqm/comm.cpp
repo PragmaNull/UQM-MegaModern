@@ -110,7 +110,7 @@ struct CustomBaseline
 {
 	uint16_t index;
 	GfxPoint baseline;
-	TEXT_ALIGN align;
+	TextAlign align;
 	struct CustomBaseline* next;
 };
 
@@ -307,14 +307,14 @@ static int16_t add_text(int status, GfxText* pTextIn)
 	numchars = 0;
 	pStr = pText->pStr;
 
-	if (status > 0 && (CommData.AlienTextValign & (VALIGN_MIDDLE | VALIGN_BOTTOM)))
+	if (status > 0 && any(CommData.AlienTextValign, TextVAlign::Middle | TextVAlign::Bottom))
 	{
 		num_lines = _count_lines(pText);
-		if (CommData.AlienTextValign == VALIGN_BOTTOM)
+		if (CommData.AlienTextValign == TextVAlign::Bottom)
 		{
 			pText->baseline.y -= (leading * num_lines);
 		}
-		else if (CommData.AlienTextValign == VALIGN_MIDDLE)
+		else if (CommData.AlienTextValign == TextVAlign::Middle)
 		{
 			pText->baseline.y -= ((leading * num_lines) / 2);
 		}
@@ -625,7 +625,7 @@ static void RefreshResponsesSpecial(CommEncounterState* pES)
 			TextXOffs() + ResScale(8);
 		pES->response_list[response].response_text.baseline.y =
 			y + leading;
-		pES->response_list[response].response_text.align = ALIGN_LEFT;
+		pES->response_list[response].response_text.align = TextAlign::Left;
 		if (response == pES->cur_response)
 		{
 			y = add_text(-1, &pES->response_list[response].response_text);
@@ -660,7 +660,7 @@ static void RefreshResponses(CommEncounterState* pES)
 			TextXOffs() + ResScale(8);
 		pES->response_list[response].response_text.baseline.y =
 			y + leading;
-		pES->response_list[response].response_text.align = ALIGN_LEFT;
+		pES->response_list[response].response_text.align = TextAlign::Left;
 		if (response == pES->cur_response)
 		{
 			y = add_text(-1, &pES->response_list[response].response_text);
@@ -709,7 +709,7 @@ static void FeedbackPlayerPhrase(char* pStr)
 
 		ct.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 		ct.baseline.y = SliderY() + SliderHeight() + ResScale(13);
-		ct.align = ALIGN_CENTER;
+		ct.align = TextAlign::Center;
 		ct.CharCount = (uint16_t)~0;
 
 		if (!IsDarkMode)
@@ -1207,7 +1207,7 @@ static void CommIntroTransition(void)
 	else if (curIntroMode == CIM_FADE_IN_SCREEN)
 	{
 		UnbatchGraphics();
-		FadeScreen(FadeAllToColor, fadeTime);
+		FadeScreen(ScreenFadeType::FadeAllToColor, fadeTime);
 	}
 	else
 	{ // Uknown transition
@@ -1348,7 +1348,7 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 
 		r.extent.width -= ResScale(2 + 2);
 		t.baseline.x = ResScale(2);
-		t.align = ALIGN_LEFT;
+		t.align = TextAlign::Left;
 		t.baseline.y = DeltaYSummary();
 
 		SetContextFont(TinyFont);
@@ -1428,7 +1428,7 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 
 			mt.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 			mt.baseline.y = t.baseline.y;
-			mt.align = ALIGN_CENTER;
+			mt.align = TextAlign::Center;
 			fmt::format_to_sz_n(buffer, "{}{}{}", // "MORE"
 								StrMiddleDot, GameString(FEEDBACK_STRING_BASE + 1),
 								StrMiddleDot);
@@ -2400,7 +2400,7 @@ static bool PauseSubtitles(bool force)
 static void CheckSubtitles(bool really)
 {
 	GfxPoint baseline;
-	TEXT_ALIGN align;
+	TextAlign align;
 	uint16_t num {};
 
 	if (!really)
@@ -2473,7 +2473,7 @@ void RedrawSISComWindow(void)
 	DrawSISComWindow();
 }
 
-void SetCustomBaseLine(uint16_t sentence, GfxPoint bl, TEXT_ALIGN align)
+void SetCustomBaseLine(uint16_t sentence, GfxPoint bl, TextAlign align)
 { // Add custom baseline to the list
 	CustomBaseline* sPtr {};
 

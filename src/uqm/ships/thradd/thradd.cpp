@@ -244,7 +244,7 @@ static void flame_napalm_preprocess(Element* ElementPtr)
 		ElementPtr->state_flags &= ~Nonsolid;
 		ElementPtr->state_flags |= Appearing;
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 
 		InitIntersectStartPoint(ElementPtr);
 		InitIntersectEndPoint(ElementPtr);

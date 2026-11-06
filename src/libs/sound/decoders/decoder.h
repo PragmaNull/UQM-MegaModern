@@ -21,6 +21,7 @@
 #ifndef DECODER_H
 #define DECODER_H
 
+#include "core/types/enum.h"
 #include "port.h"
 #include <cstdint>
 #include "libs/io/FileSystem.h"
@@ -45,15 +46,17 @@ struct TFB_DecoderFormats
 	uint32_t stereo16;
 };
 
-typedef enum
+enum class AudioFileType
 {
-	AUDIO_WAV,
-	AUDIO_TRACKER,
-	AUDIO_OGG,
-	AUDIO_DUK,
-	AUDIO_AIF,
-	NUM_AUDIO_FILETYPES
-} AUDIO_FILETYPES;
+	Wav,
+	Tracker,
+	Ogg,
+	Duk,
+	Aif,
+	Count
+};
+template <>
+inline constexpr bool IsArithmeticEnum<AudioFileType> = true;
 
 // forward-declare
 typedef struct tfb_sounddecoder TFB_SoundDecoder;
@@ -121,12 +124,14 @@ struct tfb_sounddecoder
 };
 
 // return values
-enum
+enum class SoundDecoderStatus
 {
-	SOUNDDECODER_OK,
-	SOUNDDECODER_ERROR,
-	SOUNDDECODER_EOF,
+	Ok,
+	Error,
+	Eof,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<SoundDecoderStatus> = true;
 
 typedef struct TFB_RegSoundDecoder TFB_RegSoundDecoder;
 

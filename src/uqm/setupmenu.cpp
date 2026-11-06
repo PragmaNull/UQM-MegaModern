@@ -138,9 +138,9 @@ static Widget* find_menu(uqstl::string_view id)
 	return (Widget*)(&menus[static_cast<size_t>(menu - menuDefinition->menus.data())]);
 }
 
-static int quit_main_menu(Widget* self, int event)
+static int quit_main_menu(Widget* self, WidgetEvent event)
 {
-	if (event == WIDGET_EVENT_SELECT)
+	if (event == WidgetEvent::Select)
 	{
 		next = nullptr;
 		return true;
@@ -149,22 +149,22 @@ static int quit_main_menu(Widget* self, int event)
 	return false;
 }
 
-static int quit_sub_menu(Widget* self, int event)
+static int quit_sub_menu(Widget* self, WidgetEvent event)
 {
-	if (event == WIDGET_EVENT_SELECT)
+	if (event == WidgetEvent::Select)
 	{
 		ResetOffset();
 		next = find_menu("main");
-		(*next->receiveFocus)(next, WIDGET_EVENT_SELECT);
+		(*next->receiveFocus)(next, WidgetEvent::Select);
 		return true;
 	}
 	(void)self;
 	return false;
 }
 
-static int start_new_game(Widget* self, int event)
+static int start_new_game(Widget* self, WidgetEvent event)
 {
-	if (event == WIDGET_EVENT_SELECT)
+	if (event == WidgetEvent::Select)
 	{
 		newGameStarted = true;
 		next = nullptr;
@@ -174,9 +174,9 @@ static int start_new_game(Widget* self, int event)
 	return false;
 }
 
-static int cancel_new_game(Widget* self, int event)
+static int cancel_new_game(Widget* self, WidgetEvent event)
 {
-	if (event == WIDGET_EVENT_SELECT)
+	if (event == WidgetEvent::Select)
 	{
 		newGameStarted = false;
 		next = nullptr;
@@ -186,9 +186,9 @@ static int cancel_new_game(Widget* self, int event)
 	return false;
 }
 
-static int random_seed(Widget* self, int event)
+static int random_seed(Widget* self, WidgetEvent event)
 {
-	if (event != WIDGET_EVENT_SELECT)
+	if (event != WidgetEvent::Select)
 	{
 		(void)self;
 		return false;
@@ -266,7 +266,7 @@ static bool DoSetupMenu(SetupMenuState* pInputState)
 
 		current = nullptr;
 		next = find_menu("main");
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
+		(*next->receiveFocus)(next, WidgetEvent::Down);
 
 		pInputState->initialized = true;
 	}
@@ -288,31 +288,31 @@ static bool DoSetupMenu(SetupMenuState* pInputState)
 
 	if (PulsedInputState.menu[KEY_MENU_UP])
 	{
-		Widget_Event(WIDGET_EVENT_UP);
+		Widget_Event(WidgetEvent::Up);
 	}
 	else if (PulsedInputState.menu[KEY_MENU_DOWN])
 	{
-		Widget_Event(WIDGET_EVENT_DOWN);
+		Widget_Event(WidgetEvent::Down);
 	}
 	else if (PulsedInputState.menu[KEY_MENU_LEFT])
 	{
-		Widget_Event(WIDGET_EVENT_LEFT);
+		Widget_Event(WidgetEvent::Left);
 	}
 	else if (PulsedInputState.menu[KEY_MENU_RIGHT])
 	{
-		Widget_Event(WIDGET_EVENT_RIGHT);
+		Widget_Event(WidgetEvent::Right);
 	}
 	if (PulsedInputState.menu[KEY_MENU_SELECT])
 	{
-		Widget_Event(WIDGET_EVENT_SELECT);
+		Widget_Event(WidgetEvent::Select);
 	}
 	if (PulsedInputState.menu[KEY_MENU_CANCEL])
 	{
-		Widget_Event(WIDGET_EVENT_CANCEL);
+		Widget_Event(WidgetEvent::Cancel);
 	}
 	if (PulsedInputState.menu[KEY_MENU_DELETE])
 	{
-		Widget_Event(WIDGET_EVENT_DELETE);
+		Widget_Event(WidgetEvent::Delete);
 	}
 
 	SleepThreadUntil(pInputState->NextTime + MenuFrameRate);
@@ -334,11 +334,11 @@ static bool OnTextEntryChange(TextEntryState* pTES)
 	widget->cursor_pos = pTES->CursorPos;
 	if (pTES->JoystickMode)
 	{
-		widget->state |= WTE_BLOCKCUR;
+		widget->state |= TextEntryWidgetState::BlockCursor;
 	}
 	else
 	{
-		widget->state &= ~WTE_BLOCKCUR;
+		widget->state &= ~TextEntryWidgetState::BlockCursor;
 	}
 
 	// XXX TODO: Here, we can examine the text entered so far
@@ -365,7 +365,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 
 	// position cursor at the end of text
 	widget->cursor_pos = uqm::utf8StringCount(widget->value);
-	widget->state = WTE_EDITING;
+	widget->state = TextEntryWidgetState::Editing;
 	redraw_menu();
 
 	// make a backup copy for revert on cancel
@@ -395,7 +395,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 	}
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
-	widget->state = WTE_NORMAL;
+	widget->state = TextEntryWidgetState::Normal;
 	redraw_menu();
 
 	return true; // event handled
@@ -463,7 +463,7 @@ static void updateGammaBounds(bool useUpper)
 	}
 }
 
-static int gamma_HandleEventSlider(Widget* _self, int event)
+static int gamma_HandleEventSlider(Widget* _self, WidgetEvent event)
 {
 	WidgetSlider* self = (WidgetSlider*)_self;
 	const int prevValue = self->value;
@@ -472,10 +472,10 @@ static int gamma_HandleEventSlider(Widget* _self, int event)
 
 	switch (event)
 	{
-		case WIDGET_EVENT_LEFT:
+		case WidgetEvent::Left:
 			self->value -= self->step;
 			break;
-		case WIDGET_EVENT_RIGHT:
+		case WidgetEvent::Right:
 			self->value += self->step;
 			break;
 		default:
@@ -492,14 +492,14 @@ static int gamma_HandleEventSlider(Widget* _self, int event)
 	}
 
 	// Grow or shrink the range based on accepted values
-	if (gamma < minGamma || (!set && event == WIDGET_EVENT_LEFT))
+	if (gamma < minGamma || (!set && event == WidgetEvent::Left))
 	{
 		gamma = minGamma;
 		updateGammaBounds(true);
 		// at the lowest end
 		self->value = 0;
 	}
-	else if (gamma > maxGamma || (!set && event == WIDGET_EVENT_RIGHT))
+	else if (gamma > maxGamma || (!set && event == WidgetEvent::Right))
 	{
 		gamma = maxGamma;
 		updateGammaBounds(false);
@@ -537,7 +537,7 @@ static void gamma_DrawValue(WidgetSlider* self, int x, int y)
 
 	t.baseline.x = x + ResScale(6);
 	t.baseline.y = y;
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.CharCount = ~0;
 	t.pStr = buf;
 
@@ -590,7 +590,7 @@ static bool open_menu(uqstl::string_view id)
 		menuWidgets->refresh();
 	}
 	next = menu;
-	(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
+	(*next->receiveFocus)(next, WidgetEvent::Down);
 	return true;
 }
 
@@ -626,7 +626,7 @@ static void init_shared_widgets(void)
 	uqm::initLabelWidget(pressToEdit, pressToEditLines);
 
 	gammaSlider = {};
-	gammaSlider.tag = WIDGET_TYPE_SLIDER;
+	gammaSlider.tag = WidgetType::Slider;
 	gammaSlider.handleEvent = gamma_HandleEventSlider;
 	gammaSlider.receiveFocus = Widget_ReceiveFocusSimple;
 	gammaSlider.draw = Widget_DrawSlider;
@@ -638,7 +638,7 @@ static void init_shared_widgets(void)
 	gammaSlider.step = 1;
 
 	layoutName = {};
-	layoutName.tag = WIDGET_TYPE_TEXTENTRY;
+	layoutName.tag = WidgetType::TextEntry;
 	layoutName.handleEvent = Widget_HandleEventTextEntry;
 	layoutName.receiveFocus = Widget_ReceiveFocusSimple;
 	layoutName.draw = Widget_DrawTextEntry;
@@ -646,14 +646,14 @@ static void init_shared_widgets(void)
 	layoutName.width = Widget_WidthFullScreen;
 	layoutName.handleEventSelect = OnTextEntryEvent;
 	layoutName.maxlen = WidgetTextentryWidth - 1;
-	layoutName.state = WTE_NORMAL;
+	layoutName.state = TextEntryWidgetState::Normal;
 	layoutName.onChange = rename_template;
 
 	for (int i {0}; i < NUM_KEYS; i++)
 	{
 		WidgetControlEntry& entry {controlentries[i]};
 		entry = {};
-		entry.tag = WIDGET_TYPE_CONTROLENTRY;
+		entry.tag = WidgetType::ControlEntry;
 		entry.handleEvent = Widget_HandleEventControlEntry;
 		entry.receiveFocus = Widget_ReceiveFocusControlEntry;
 		entry.draw = Widget_DrawControlEntry;
@@ -752,7 +752,7 @@ static void init_widgets(void)
 	menus.assign(menuDefinition->menus.size(), WidgetMenuScreen {});
 	for (auto&& [menu, screen] : uqstl::views::zip(menuDefinition->menus, menus))
 	{
-		screen.tag = WIDGET_TYPE_MENU_SCREEN;
+		screen.tag = WidgetType::MenuScreen;
 		screen.handleEvent = Widget_HandleEventMenuScreen;
 		screen.receiveFocus = Widget_ReceiveFocusMenuScreen;
 		screen.draw = Widget_DrawMenuScreen;
@@ -791,7 +791,7 @@ static void clean_up_widgets(void)
 // Logs the open setup menu for the "dumpmenu" input script command.
 static void dump_setup_menu(void)
 {
-	if (current == nullptr || current->tag != WIDGET_TYPE_MENU_SCREEN)
+	if (current == nullptr || current->tag != WidgetType::MenuScreen)
 	{
 		uqm::log::warn("Input script: dumpmenu: no setup menu is shown.");
 		return;
@@ -805,35 +805,35 @@ static void dump_setup_menu(void)
 		const char marker {i == menu.highlighted ? '>' : ' '};
 		switch (child->tag)
 		{
-			case WIDGET_TYPE_CHOICE:
+			case WidgetType::Choice:
 				{
 					const auto& choice {*reinterpret_cast<const WidgetChoice*>(child)};
 					const bool valid {choice.selected >= 0 && choice.selected < choice.numopts};
 					uqm::log::info("{} {}: {}", marker, choice.category, valid ? choice.options[choice.selected].optname : "?");
 					break;
 				}
-			case WIDGET_TYPE_SLIDER:
+			case WidgetType::Slider:
 				{
 					const auto& slider {*reinterpret_cast<const WidgetSlider*>(child)};
 					uqm::log::info("{} {}: {}", marker, slider.category, slider.value);
 					break;
 				}
-			case WIDGET_TYPE_BUTTON:
+			case WidgetType::Button:
 				uqm::log::info("{} [{}]", marker, reinterpret_cast<const WidgetButton*>(child)->name);
 				break;
-			case WIDGET_TYPE_LABEL:
+			case WidgetType::Label:
 				{
 					const auto& label {*reinterpret_cast<const WidgetLabel*>(child)};
 					uqm::log::info("{} -- {}", marker, label.line_count > 0 ? label.lines[0] : "");
 					break;
 				}
-			case WIDGET_TYPE_TEXTENTRY:
+			case WidgetType::TextEntry:
 				{
 					const auto& entry {*reinterpret_cast<const WidgetTextEntry*>(child)};
 					uqm::log::info("{} {}: \"{}\"", marker, entry.category, entry.value);
 					break;
 				}
-			case WIDGET_TYPE_CONTROLENTRY:
+			case WidgetType::ControlEntry:
 				{
 					const auto& entry {*reinterpret_cast<const WidgetControlEntry*>(child)};
 					uqm::log::info("{} {}: {} | {}", marker, entry.category, entry.controlname[0], entry.controlname[1]);
@@ -854,7 +854,7 @@ static void apply_settings(void)
 	const int factor {uqm::isAddonAvailable(HdMode) ? *uqmOptions.resolutionFactor : 0};
 	if (factor != (int)resolutionFactor)
 	{
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 		resolutionFactor = factor;
 	}
 
@@ -903,7 +903,7 @@ static void apply_settings(void)
 		int w = WindowWidth;
 		int h = WindowHeight;
 
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 
 		FlushGraphics();
 		UninitVideoPlayer();

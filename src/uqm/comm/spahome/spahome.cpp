@@ -38,8 +38,8 @@ static ConversationData spahome_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_TOP, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Top, /* AlienTextValign */
 		SpathiHomeColorMap, /* AlienColorMap */
 		SpathiMusic, /* AlienSong */
 		{
@@ -233,7 +233,7 @@ static AnimFilterSet spahome_filters =
 				0,							/* Color index */
 				1,							/* Opacity index */
 				-1,							/* Frame index */
-				DRAW_ALPHA,					/* DrawKind*/
+				DrawKind::Alpha,			/* DrawKind*/
 				SwitchOnAnims | TurnOffOft, /* Flags */
 			},
 								  }

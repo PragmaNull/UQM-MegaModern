@@ -639,7 +639,7 @@ static bool dukv_Open(TFB_VideoDecoder* This, const uqm::io::Directory& dir, con
 		|| !dukv_ReadVectors(dukv, dir, vectors.data()))
 	{
 		dukv_Close(This);
-		dukv->last_error = dukve_BadFile;
+		dukv->last_error = +DukVidError::BadFile;
 		return false;
 	}
 
@@ -681,7 +681,7 @@ static int dukv_DecodeNext(TFB_VideoDecoder* This)
 	dukv->stream->seek(dukv->frames[dukv->iframe], uqm::io::SeekFrom::Start);
 	if (!dukv->stream->readValue(fh))
 	{
-		dukv->last_error = dukve_EOF;
+		dukv->last_error = +DukVidError::Eof;
 		return 0;
 	}
 
@@ -689,14 +689,14 @@ static int dukv_DecodeNext(TFB_VideoDecoder* This)
 	const uint32_t vsize {uqm::convertBigEndian<uint32_t>(fh[1])};
 	if (vsize > DuckMaxFrameSize)
 	{
-		dukv->last_error = dukve_OutOfBuf;
+		dukv->last_error = +DukVidError::OutOfBuf;
 		return -1;
 	}
 
 	dukv->stream->seek(vofs, uqm::io::SeekFrom::Current);
 	if (!dukv->stream->readExact(uqm::io::asBytes(dukv->inbuf.data(), vsize)))
 	{
-		dukv->last_error = dukve_EOF;
+		dukv->last_error = +DukVidError::Eof;
 		return 0;
 	}
 

@@ -68,7 +68,7 @@ HELEMENT initialize_laser(LaserDesc* pLaserBlock)
 		LaserElementPtr->current.location.y = pLaserBlock->cy
 											+ Sine(FacingToAngle(pLaserBlock->face),
 												   DisplayToWorld(pLaserBlock->pixoffs));
-		SetPrimType(&DisplayArray[LaserElementPtr->PrimIndex], LINE_PRIM);
+		SetPrimType(&DisplayArray[LaserElementPtr->PrimIndex], PrimitiveType::Line);
 		SetPrimColor(&DisplayArray[LaserElementPtr->PrimIndex],
 					 pLaserBlock->color);
 		LaserElementPtr->current.image.frame = DecFrameIndex(stars_in_space);
@@ -101,7 +101,7 @@ HELEMENT initialize_missile(MissileDesc* pMissileBlock)
 		MissileElementPtr->state_flags = Appearing | FiniteLife
 									   | pMissileBlock->flags;
 		MissileElementPtr->life_span = pMissileBlock->life;
-		SetPrimType(&DisplayArray[MissileElementPtr->PrimIndex], STAMP_PRIM);
+		SetPrimType(&DisplayArray[MissileElementPtr->PrimIndex], PrimitiveType::Stamp);
 		MissileElementPtr->current.image.farray = pMissileBlock->farray;
 		MissileElementPtr->current.image.frame =
 			SetAbsFrameIndex(pMissileBlock->farray[0],
@@ -147,8 +147,8 @@ HELEMENT weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 #ifdef NEVER
 			&&
 			/* lasers from the same ship can't hit each other */
-			(GetPrimType (&DisplayArray[HitElementPtr->PrimIndex]) != LINE_PRIM
-			|| GetPrimType (&DisplayArray[WeaponElementPtr->PrimIndex]) != LINE_PRIM
+			(GetPrimType (&DisplayArray[HitElementPtr->PrimIndex]) != PrimitiveType::Line
+			|| GetPrimType (&DisplayArray[WeaponElementPtr->PrimIndex]) != PrimitiveType::Line
 			|| !elementsOfSamePlayer (HitElementPtr, WeaponElementPtr)))
 #endif /* NEVER */
 			{
@@ -178,7 +178,7 @@ HELEMENT weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 		}
 
 		if (GetPrimType(&DisplayArray[WeaponElementPtr->PrimIndex])
-			!= LINE_PRIM)
+			!= PrimitiveType::Line)
 		{
 			WeaponElementPtr->state_flags |= Disappearing;
 		}
@@ -200,7 +200,7 @@ HELEMENT weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 			LockElement(hBlastElement, &BlastElementPtr);
 			BlastElementPtr->playerNr = WeaponElementPtr->playerNr;
 			BlastElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
-			SetPrimType(&DisplayArray[BlastElementPtr->PrimIndex], STAMP_PRIM);
+			SetPrimType(&DisplayArray[BlastElementPtr->PrimIndex], PrimitiveType::Stamp);
 
 			BlastElementPtr->current.location.x = DisplayToWorld(pWPt->x);
 			BlastElementPtr->current.location.y = DisplayToWorld(pWPt->y);

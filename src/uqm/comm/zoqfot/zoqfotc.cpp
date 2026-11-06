@@ -50,8 +50,8 @@ static ConversationData zoqfot_desc =
 		UndefinedColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0, /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_MIDDLE, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Middle, /* AlienTextValign */
 		ZoqfotpikColorMap, /* AlienColorMap */
 		ZoqfotpikMusic, /* AlienSong */
 		{

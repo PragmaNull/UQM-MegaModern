@@ -126,7 +126,7 @@ static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	GfxRect r;
 	struct col_format_t
 	{
-		TEXT_ALIGN align;
+		TextAlign align;
 		int16_t basex;
 	};
 	col_format_t colfmt[uqm::c_creditsMaxColumns];
@@ -173,7 +173,7 @@ static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	// init alignments
 	for (auto& col : colfmt)
 	{
-		col.align = ALIGN_LEFT;
+		col.align = TextAlign::Left;
 		col.basex = CreditsExtent.width / 64;
 	}
 
@@ -185,7 +185,7 @@ static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 		return 0;
 	}
 
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x = 100; // any value will do
 	t.baseline.y = 100; // any value will do
 	t.pStr = " ";
@@ -208,15 +208,15 @@ static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 		switch (column.align)
 		{
 			case uqm::CreditsAlign::Left:
-				format.align = ALIGN_LEFT;
+				format.align = TextAlign::Left;
 				format.basex = basex(r.extent.width);
 				break;
 			case uqm::CreditsAlign::Center:
-				format.align = ALIGN_CENTER;
+				format.align = TextAlign::Center;
 				format.basex = basex(CreditsExtent.width / 2);
 				break;
 			case uqm::CreditsAlign::Right:
-				format.align = ALIGN_RIGHT;
+				format.align = TextAlign::Right;
 				format.basex = basex(CreditsExtent.width - r.extent.width);
 				break;
 		}
@@ -716,7 +716,7 @@ void Credits(bool WithOuttakes)
 	s.origin.y = 0;
 	s.frame = CreditsBack;
 	DrawStamp(&s);
-	FadeScreen(FadeAllToColor, c_gameSecond / 2);
+	FadeScreen(ScreenFadeType::FadeAllToColor, c_gameSecond / 2);
 
 	// set the position of outtakes comm
 	CommWndRect.corner.x = (screenRect.extent.width - CommWndRect.extent.width)
@@ -755,7 +755,7 @@ void Credits(bool WithOuttakes)
 	UninitCredits();
 
 	SetContext(ScreenContext);
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 	FlushColorXForms();
 
 	if (hMusic)

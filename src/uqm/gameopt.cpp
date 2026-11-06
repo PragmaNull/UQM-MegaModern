@@ -71,7 +71,7 @@ void ConfirmSaveLoad(GfxStamp* MsgStamp)
 
 	t.baseline.x = clip_r.extent.width >> 1;
 	t.baseline.y = (clip_r.extent.height >> 1) + ResScale(3);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 	if (MsgStamp)
 	{
@@ -286,7 +286,7 @@ static bool DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 			ForeGround = BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D);
 		}
 		lf.baseline.y = r.corner.y + r.extent.height - ResScale(1);
-		lf.align = ALIGN_CENTER;
+		lf.align = TextAlign::Center;
 	}
 
 	SetContext(StatusContext);
@@ -517,7 +517,7 @@ static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, ui
 	BackGround = SaveSelectedColor;
 	ForeGround = SaveUnselectedColor;
 
-	lf.align = ALIGN_LEFT;
+	lf.align = TextAlign::Left;
 
 	SetContextFont(Font);
 	lf.pStr = fullStr;
@@ -532,7 +532,7 @@ static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, ui
 
 		t.baseline.x = r.corner.x + ResScale(3);
 		t.baseline.y = r.corner.y + ResScale(8);
-		t.align = ALIGN_LEFT;
+		t.align = TextAlign::Left;
 		t.pStr = Str;
 		t.CharCount = (uint16_t)~0;
 		SetContextForeGroundColor(CaptainNameTextColor);
@@ -885,7 +885,7 @@ static void DrawLabel(GfxPoint pt, int16_t width, uint32_t gamestr)
 
 	t.baseline.x = ResScale((width >> 1) + pt.x);
 	t.baseline.y = ResScale(pt.y + 5);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 	t.pStr = AlignText((const char*)buf, &t.baseline.x);
 
@@ -1033,7 +1033,7 @@ static void DrawSaveLoadText(PickGameState* pickState)
 	uqm::utf8StringCopy(buf, sizeof(buf),
 						GameString(LABEL_STRING_BASE + (3 - pickState->saving)));
 
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 	text.CharCount = (uint16_t)~0;
 	text.pStr = buf;
 
@@ -1076,7 +1076,7 @@ static void DrawSavegameCargo(FlagshipData* sisState)
 	t.baseline.x = ResScale(33) + SummaryXOffs() - SummarySideOffs()
 				 + NsafeNumScl(3);
 	t.baseline.y = ElementOrgY() + ResScale(3);
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.pStr = buf;
 
 	// draw Element icons and amounts
@@ -1145,7 +1145,7 @@ static void DrawEmptySlot(void)
 	uqm::utf8StringCopy(buf, sizeof(buf),
 						GameString(LABEL_STRING_BASE + 1)); // EMPTY SLOT
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 
 	oldfg = SetContextForeGroundColor(EmptySlotStroke3Color);
 	t_baseline = t.baseline;
@@ -1240,7 +1240,7 @@ static void DrawBombPodText(GfxStamp* s)
 	t.baseline.y = r.corner.y + ResScale(1);
 	og_baseline_x = t.baseline.x;
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	SetContextForeGroundColor(BombPodTextColor);
 	{
 		uqstl::vector<uqstl::string> tokens;
@@ -1307,7 +1307,7 @@ static void DrawNoLimit(void)
 	t.baseline.y = r.corner.y + leading;
 
 	t.pStr = GameString(LABEL_STRING_BASE); // NO LIMIT
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 
 	oldfg = SetContextForeGroundColor(NoLimitStroke3Color);
@@ -1438,7 +1438,7 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 		SetContextFont(StarConFont);
 		t.baseline.x = ResScale(173) + SummaryXOffs()
 					 + SummarySideOffs();
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.CharCount = (uint16_t)~0;
 		t.pStr = buf;
 		if (pSD->Flags & AfterBombInstalled)
@@ -1488,7 +1488,7 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 		// print the location
 		t.baseline.x = ResScale(1) + (SisMessageWidth() >> 1);
 		t.baseline.y = ResScale(139 + 6) + SafeNumScl(2);
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.pStr = buf;
 		starPt.x = LogxToUniverse(pSD->SS.log_x);
 		starPt.y = LogyToUniverse(pSD->SS.log_y);
@@ -1542,7 +1542,7 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 			replaceChar(buf, UnicharSpace, UnicharTab);
 		}
 		font_DrawText(&t);
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.baseline.x = SisScreenWidth() - SisTitleBoxWidth()
 					 - SafeBoolScl(4, -1)
 					 + ResScale(ResDescale(SisTitleWidth()) >> 1);
@@ -1644,7 +1644,7 @@ static void DrawGameSelection(PickGameState* pickState, uint16_t selSlot)
 
 	t.CharCount = (uint16_t)~0;
 	t.pStr = buf;
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 
 	// Draw savegame slots info
 	curSlot = selSlot - (selSlot % SavesPerPage());
@@ -1935,7 +1935,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 	if (fromMainMenu)
 	{
 		UnbatchGraphics();
-		FadeScreen(FadeAllToColor, c_gameSecond / 2);
+		FadeScreen(ScreenFadeType::FadeAllToColor, c_gameSecond / 2);
 	}
 	else
 	{
@@ -2132,7 +2132,7 @@ bool GameOptions(void)
 				uqm::log::info("Loaded the save file '{}'.", path);
 			}
 			// Fades the screen in, as the load menu does.
-			FadeScreen(FadeAllToColor, TimePeriod {});
+			FadeScreen(ScreenFadeType::FadeAllToColor, TimePeriod {});
 			uqm::currentActivity() |= loaded ? CHECK_LOAD : CHECK_ABORT;
 			return false;
 		}

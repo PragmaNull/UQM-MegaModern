@@ -350,16 +350,16 @@ TimeCount FadeScreen(ScreenFadeType fadeType, TimePeriod TimeInterval)
 
 	switch (fadeType)
 	{
-		case FadeAllToBlack:
-		case FadeSomeToBlack:
+		case ScreenFadeType::FadeAllToBlack:
+		case ScreenFadeType::FadeSomeToBlack:
 			FadeEnd = FadeNoIntensity;
 			break;
-		case FadeAllToColor:
-		case FadeSomeToColor:
+		case ScreenFadeType::FadeAllToColor:
+		case ScreenFadeType::FadeSomeToColor:
 			FadeEnd = FadeNormalIntensity;
 			break;
-		case FadeAllToWhite:
-		case FadeSomeToWhite:
+		case ScreenFadeType::FadeAllToWhite:
+		case ScreenFadeType::FadeSomeToWhite:
 			FadeEnd = FadeFullIntensity;
 			break;
 		default:

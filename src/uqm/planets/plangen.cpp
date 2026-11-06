@@ -398,7 +398,7 @@ static void RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	for (i = 0; i < NumBatchPoints; ++i, ++pBatch)
 	{
 		SetPrimNextLink(pBatch, i + 1);
-		SetPrimType(pBatch, POINT_PRIM);
+		SetPrimType(pBatch, PrimitiveType::Point);
 		SetPrimFlags(pBatch, 0);
 	}
 	SetPrimNextLink(&pBatch[-1], EndOfList);
@@ -1108,7 +1108,7 @@ void Draw3DOShield(GfxStamp ShieldFrame)
 		flip = false;
 	}
 
-	oldmode = SetContextDrawMode(MAKE_DRAW_MODE(DRAW_ADDITIVE,
+	oldmode = SetContextDrawMode(MAKE_DRAW_MODE(DrawKind::Additive,
 												factor[i]));
 
 	DrawStamp(&ShieldFrame);
@@ -1138,9 +1138,9 @@ static void ApplyShieldTint(void)
 
 	tint = BuildColorRgba(0xff, 0x00, 0x00, 0xff);
 #ifdef USE_ALPHA_SHIELD
-	mode = MAKE_DRAW_MODE(DRAW_ALPHA, 150);
+	mode = MAKE_DRAW_MODE(DrawKind::Alpha, 150);
 #else
-	mode = MAKE_DRAW_MODE(DRAW_ADDITIVE, DrawFactor1);
+	mode = MAKE_DRAW_MODE(DrawKind::Additive, DrawFactor1);
 #endif
 	oldMode = SetContextDrawMode(mode);
 	SetContextForeGroundColor(tint);

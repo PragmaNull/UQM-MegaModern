@@ -27,12 +27,12 @@
 extern "C" {
 #endif
 
-typedef enum
+enum class VideoType
 {
-	NO_FMV = 0,
-	HARDWARE_FMV,
-	SOFTWARE_FMV
-} VIDEO_TYPE;
+	None = 0,
+	Hardware,
+	Software
+};
 
 typedef struct TFB_VideoClip* VIDEO_REF;
 typedef struct LegacyVideoDesc* LEGACY_VIDEO;
@@ -45,9 +45,9 @@ extern void UninitVideoPlayer(void);
 
 extern VIDEO_REF LoadVideoFile(const char* pStr);
 extern bool DestroyVideo(VIDEO_REF VidRef);
-extern VIDEO_TYPE VidPlay(VIDEO_REF VidRef);
-extern VIDEO_TYPE VidPlayEx(VIDEO_REF VidRef, MUSIC_REF AudRef,
-							MUSIC_REF SpeechRef, uint32_t LoopFrame);
+extern VideoType VidPlay(VIDEO_REF VidRef);
+extern VideoType VidPlayEx(VIDEO_REF VidRef, MUSIC_REF AudRef,
+						   MUSIC_REF SpeechRef, uint32_t LoopFrame);
 inline constexpr auto VidNoLoop {(0U - 1)};
 extern void VidStop(void);
 extern VIDEO_REF VidPlaying(void);

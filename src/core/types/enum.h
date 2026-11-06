@@ -10,6 +10,140 @@
 template <typename E>
 concept EnumType = std::is_enum_v<E>;
 
+// Specialize as true for an enum whose values are also used as numbers (indexes, offsets, counts).
+template <typename E>
+inline constexpr bool IsArithmeticEnum = false;
+
+template <typename E>
+concept ArithmeticEnum = EnumType<E> && IsArithmeticEnum<E>;
+
+// Specialize as true for an enum whose values are bit flags.
+template <typename E>
+inline constexpr bool IsFlagEnum = false;
+
+template <typename E>
+concept BitFlagEnum = EnumType<E> && IsFlagEnum<E>;
+
+// The value of an arithmetic enum as an integer, for example as an array index: array[+Race::Arilou].
+template <ArithmeticEnum E>
+[[nodiscard]] constexpr auto operator+(E e) noexcept
+{
+	return static_cast<std::underlying_type_t<E>>(e);
+}
+
+template <ArithmeticEnum E, std::integral I>
+[[nodiscard]] constexpr E operator+(E e, I n) noexcept
+{
+	return static_cast<E>(+e + n);
+}
+
+template <ArithmeticEnum E, std::integral I>
+[[nodiscard]] constexpr E operator+(I n, E e) noexcept
+{
+	return static_cast<E>(n + +e);
+}
+
+template <ArithmeticEnum E, std::integral I>
+[[nodiscard]] constexpr E operator-(E e, I n) noexcept
+{
+	return static_cast<E>(+e - n);
+}
+
+template <ArithmeticEnum E>
+[[nodiscard]] constexpr int operator-(E a, E b) noexcept
+{
+	return +a - +b;
+}
+
+template <ArithmeticEnum E>
+constexpr E& operator++(E& e) noexcept
+{
+	return e = e + 1;
+}
+
+template <ArithmeticEnum E>
+constexpr E operator++(E& e, int) noexcept
+{
+	const E old {e};
+	++e;
+	return old;
+}
+
+template <ArithmeticEnum E>
+constexpr E& operator--(E& e) noexcept
+{
+	return e = e - 1;
+}
+
+template <ArithmeticEnum E>
+constexpr E operator--(E& e, int) noexcept
+{
+	const E old {e};
+	--e;
+	return old;
+}
+
+template <ArithmeticEnum E, std::integral I>
+[[nodiscard]] constexpr bool operator==(E e, I n) noexcept
+{
+	return +e == n;
+}
+
+template <ArithmeticEnum E, std::integral I>
+[[nodiscard]] constexpr auto operator<=>(E e, I n) noexcept
+{
+	return +e <=> n;
+}
+
+template <BitFlagEnum E>
+[[nodiscard]] constexpr E operator|(E a, E b) noexcept
+{
+	return static_cast<E>(static_cast<std::underlying_type_t<E>>(a) | static_cast<std::underlying_type_t<E>>(b));
+}
+
+template <BitFlagEnum E>
+[[nodiscard]] constexpr E operator&(E a, E b) noexcept
+{
+	return static_cast<E>(static_cast<std::underlying_type_t<E>>(a) & static_cast<std::underlying_type_t<E>>(b));
+}
+
+template <BitFlagEnum E>
+[[nodiscard]] constexpr E operator^(E a, E b) noexcept
+{
+	return static_cast<E>(static_cast<std::underlying_type_t<E>>(a) ^ static_cast<std::underlying_type_t<E>>(b));
+}
+
+template <BitFlagEnum E>
+[[nodiscard]] constexpr E operator~(E a) noexcept
+{
+	return static_cast<E>(~static_cast<std::underlying_type_t<E>>(a));
+}
+
+template <BitFlagEnum E>
+constexpr E& operator|=(E& a, E b) noexcept
+{
+	return a = a | b;
+}
+
+template <BitFlagEnum E>
+constexpr E& operator&=(E& a, E b) noexcept
+{
+	return a = a & b;
+}
+
+template <BitFlagEnum E>
+constexpr E& operator^=(E& a, E b) noexcept
+{
+	return a = a ^ b;
+}
+
+// True if any of the bits of 'b' are set in 'a'.
+template <BitFlagEnum E>
+[[nodiscard]] constexpr bool any(E a, E b) noexcept
+{
+	return static_cast<std::underlying_type_t<E>>(a & b) != 0;
+}
+
 #define ENUM_BITWISE_OPS(enumName)                                                                                                             \
 	[[nodiscard]] constexpr inline enumName operator|(enumName lhs, enumName rhs) noexcept                                                     \
 	{                                                                                                                                          \

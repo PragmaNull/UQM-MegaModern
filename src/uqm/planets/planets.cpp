@@ -332,14 +332,14 @@ static void DrawEnterOrbitText(GfxRect rect)
 	text.baseline = rect.corner;
 	text.baseline.x += rect.extent.width >> 1;
 	text.baseline.y += ResScale(4) + leading - ResScale(4);
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 
 	const int16_t og_baseline_x {text.baseline.x};
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
 						GameString(NAVIGATION_STRING_BASE + 8));
 
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 	{
 		uqstl::vector<uqstl::string> tokens;
 		uqm::tokenize(uqstl::string_view {buf}, tokens, '\n', false);

@@ -393,7 +393,7 @@ static void GetSphereRect(FleetInfo* FleetPtr, GfxRect* pRect, GfxRect* pRepairR
 		t.baseline.x = pRect->corner.x + (pRect->extent.width >> 1);
 		t.baseline.y = pRect->corner.y + (pRect->extent.height >> 1)
 					 - ResScale(1);
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.CharCount = (uint16_t)~0;
 		t.pStr = FleetPtr->race_strings->text(1);
 		TextRect(&t, pRepairRect, nullptr);
@@ -1342,7 +1342,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 					t.baseline.x = r.corner.x + (r.extent.width >> 1);
 					t.baseline.y = r.corner.y + (r.extent.height >> 1)
 								 - ResScale(1);
-					t.align = ALIGN_CENTER;
+					t.align = TextAlign::Center;
 
 					// For drawing War-Era starmap.
 					if (which_starmap == WAR_ERA_STARMAP)
@@ -1405,7 +1405,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 				t.baseline.x = r.corner.x + (r.extent.width >> 1);
 				t.baseline.y = r.corner.y + (r.extent.height >> 1)
 							 - ResScale(1);
-				t.align = ALIGN_CENTER;
+				t.align = TextAlign::Center;
 
 				TextRect(&t, &r, nullptr);
 
@@ -1551,7 +1551,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 					SetContextForeGroundColor(BuildColor(MakeRgb15(i, j, k), 0x00));
 					t.baseline.x = UniverseToDispx(300 * j + (k / 16 ? 150 : 0));
 					t.baseline.y = UniverseToDispy(300 * i + k % 16 * 300 / 16) + 3;
-					t.align = ALIGN_CENTER;
+					t.align = TextAlign::Center;
 					t.pStr = pStr;
 					t.CharCount = 10;
 					font_DrawText(&t);
@@ -1610,7 +1610,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 			SetContextForeGroundColor(BuildColor(MakeRgb15(0x00, 0x1A, 0x00), 0x2F));
 			t.baseline.x = UniverseToDispx(portal_map[i].star_pt.x);
 			t.baseline.y = UniverseToDispy(portal_map[i].star_pt.y) + 3;
-			t.align = ALIGN_CENTER;
+			t.align = TextAlign::Center;
 			t.pStr = pStr;
 			t.CharCount = 2;
 			font_DrawText(&t);
@@ -3264,7 +3264,7 @@ static void DrawStarmapHelper(void)
 	DrawStamp(&s);
 
 	SetContextForeGroundColor(ModuleNameColor);
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x = r.corner.x + ResScale(12) - ifGamepad(2);
 	t.baseline.y = s.origin.y + leading;
 	t.pStr = GameString(STATUS_STRING_BASE + 12);
@@ -3276,7 +3276,7 @@ static void DrawStarmapHelper(void)
 	s.frame = SetAbsFrameIndex(SubmenuFrame, frame_index + 1);
 	DrawStamp(&s);
 
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x = r.corner.x + ResScale(16) - ifGamepad(6);
 	t.baseline.y = s.origin.y + leading;
 	t.pStr = GameString(STATUS_STRING_BASE + 13);
@@ -3294,7 +3294,7 @@ static void DrawStarmapHelper(void)
 	s.frame = SetAbsFrameIndex(SubmenuFrame, frame_index + 2);
 	DrawStamp(&s);
 
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x = r.corner.x + ResScale(18) - ifGamepad(8);
 	t.baseline.y = s.origin.y + leading;
 	t.pStr = ":";
@@ -3306,7 +3306,7 @@ static void DrawStarmapHelper(void)
 	s.frame = SetAbsFrameIndex(MiscDataFrame, 48);
 	DrawStamp(&s);
 
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x += ResScale(13);
 	t.pStr = GameString(STATUS_STRING_BASE + 14);
 	t.CharCount = (uint16_t)~0;
@@ -3344,7 +3344,7 @@ static void DrawStarmapHelper(void)
 
 	// FUEL:
 	SetContextForeGroundColor(ModuleNameColor);
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x = r.corner.x + ResScale(2);
 	t.baseline.y = r.corner.y + leading + ResScale(1);
 	t.pStr = GameString(STATUS_STRING_BASE + 8); // FUEL:
@@ -3353,7 +3353,7 @@ static void DrawStarmapHelper(void)
 
 	// Current amount of fuel
 	SetContextForeGroundColor(ModulePriceColor);
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.baseline.x = r.extent.width + ResScale(2);
 	t.baseline.y = r.corner.y + leading + ResScale(1);
 	t.pStr = WholeFuelValue();

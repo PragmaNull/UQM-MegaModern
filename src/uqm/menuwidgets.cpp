@@ -198,21 +198,21 @@ Widget* MenuWidgets::buildLegacy(const MenuDef& menu, const MenuItemDef& item)
 	const char* label {stored.label.c_str()};
 	switch (widget->tag)
 	{
-		case WIDGET_TYPE_CHOICE:
+		case WidgetType::Choice:
 			reinterpret_cast<WidgetChoice*>(widget)->category = label;
 			break;
-		case WIDGET_TYPE_SLIDER:
+		case WidgetType::Slider:
 			reinterpret_cast<WidgetSlider*>(widget)->category = label;
 			fillTooltip(reinterpret_cast<WidgetSlider*>(widget)->tooltip, stored.tooltip);
 			break;
-		case WIDGET_TYPE_TEXTENTRY:
+		case WidgetType::TextEntry:
 			reinterpret_cast<WidgetTextEntry*>(widget)->category = label;
 			fillTooltip(reinterpret_cast<WidgetTextEntry*>(widget)->tooltip, stored.tooltip);
 			break;
-		case WIDGET_TYPE_CONTROLENTRY:
+		case WidgetType::ControlEntry:
 			reinterpret_cast<WidgetControlEntry*>(widget)->category = label;
 			break;
-		case WIDGET_TYPE_BUTTON:
+		case WidgetType::Button:
 			reinterpret_cast<WidgetButton*>(widget)->name = label;
 			fillTooltip(reinterpret_cast<WidgetButton*>(widget)->tooltip, stored.tooltip);
 			break;
@@ -263,7 +263,7 @@ Widget* MenuWidgets::buildChoice(const MenuDef& menu, const MenuItemDef& item)
 	const int selected {selectedOption(choice)};
 
 	WidgetChoice& widget {choice.widget};
-	widget.tag = WIDGET_TYPE_CHOICE;
+	widget.tag = WidgetType::Choice;
 	widget.handleEvent = Widget_HandleEventChoice;
 	widget.receiveFocus = Widget_ReceiveFocusChoice;
 	widget.draw = Widget_DrawChoice;
@@ -296,7 +296,7 @@ Widget* MenuWidgets::buildSlider(const MenuDef& menu, const MenuItemDef& item)
 	slider.item = item;
 
 	WidgetSlider& widget {slider.widget};
-	widget.tag = WIDGET_TYPE_SLIDER;
+	widget.tag = WidgetType::Slider;
 	widget.handleEvent = Widget_HandleEventSlider;
 	widget.receiveFocus = Widget_ReceiveFocusSimple;
 	widget.draw = Widget_DrawSlider;
@@ -330,7 +330,7 @@ Widget* MenuWidgets::buildText(const MenuDef& menu, const MenuItemDef& item)
 	text.item = item;
 
 	WidgetTextEntry& widget {text.widget};
-	widget.tag = WIDGET_TYPE_TEXTENTRY;
+	widget.tag = WidgetType::TextEntry;
 	widget.handleEvent = Widget_HandleEventTextEntry;
 	widget.receiveFocus = Widget_ReceiveFocusSimple;
 	widget.draw = Widget_DrawTextEntry;
@@ -339,7 +339,7 @@ Widget* MenuWidgets::buildText(const MenuDef& menu, const MenuItemDef& item)
 	widget.handleEventSelect = m_hooks.textEntrySelect;
 	widget.category = text.item.label.c_str();
 	widget.maxlen = WidgetTextentryWidth - 1;
-	widget.state = WTE_NORMAL;
+	widget.state = TextEntryWidgetState::Normal;
 	widget.cursor_pos = 0;
 	fillTooltip(widget.tooltip, text.item.tooltip);
 	widget.onChange = onTextChanged;
@@ -394,10 +394,10 @@ Widget* MenuWidgets::buildHeading(const MenuItemDef& item)
 	return reinterpret_cast<Widget*>(&widget);
 }
 
-void initButtonWidget(WidgetButton& widget, const uqstl::string& name, const uqstl::vector<uqstl::string>& tooltip, int (*handler)(Widget*, int))
+void initButtonWidget(WidgetButton& widget, const uqstl::string& name, const uqstl::vector<uqstl::string>& tooltip, int (*handler)(Widget*, WidgetEvent))
 {
 	widget = {};
-	widget.tag = WIDGET_TYPE_BUTTON;
+	widget.tag = WidgetType::Button;
 	widget.handleEvent = handler;
 	widget.receiveFocus = Widget_ReceiveFocusSimple;
 	widget.draw = Widget_DrawButton;
@@ -410,7 +410,7 @@ void initButtonWidget(WidgetButton& widget, const uqstl::string& name, const uqs
 void initLabelWidget(WidgetLabel& widget, uqstl::vector<const char*>& lines)
 {
 	widget = {};
-	widget.tag = WIDGET_TYPE_LABEL;
+	widget.tag = WidgetType::Label;
 	widget.handleEvent = Widget_HandleEventIgnoreAll;
 	widget.receiveFocus = Widget_ReceiveFocusRefuseFocus;
 	widget.draw = Widget_DrawLabel;
@@ -492,9 +492,9 @@ void MenuWidgets::onTextChanged(WidgetTextEntry* self)
 	showText(*self, *text.setting);
 }
 
-int MenuWidgets::onMenuButtonEvent(Widget* self, int event)
+int MenuWidgets::onMenuButtonEvent(Widget* self, WidgetEvent event)
 {
-	if (event != WIDGET_EVENT_SELECT)
+	if (event != WidgetEvent::Select)
 	{
 		return false;
 	}

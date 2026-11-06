@@ -310,7 +310,7 @@ void DrawBattleCrewAmount(ShipInfoDesc* ShipInfoPtr, int16_t y_offs)
 
 	t.baseline.x = BattleCrewX() + ResScale(MenuBool(2, 4));
 	t.baseline.y = BattleCrewY() + y_offs;
-	t.align = MenuBool(ALIGN_LEFT, ALIGN_CENTER);
+	t.align = MenuBool(TextAlign::Left, TextAlign::Center);
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 	r.corner.x = t.baseline.x - ResScale(MenuBool(2, 9));
@@ -450,7 +450,7 @@ void DrawCaptainsWindow(Starship* StarShipPtr)
 
 		t.baseline.x = StatusWidth() >> 1;
 		t.baseline.y = y + ResScale(6);
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.pStr = uqm::gameState().sis().CommanderName;
 		t.CharCount = (uint16_t)~0;
 		SetContextForeGroundColor(

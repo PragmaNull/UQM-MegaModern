@@ -265,7 +265,7 @@ static void yehat_postprocess(Element* ElementPtr)
 					BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 				SetPrimType(
 					&DisplayArray[ElementPtr->PrimIndex],
-					STAMPFILL_PRIM);
+					PrimitiveType::StampFill);
 #endif /* OLD */
 
 				ProcessSound(GetSound(
@@ -294,7 +294,7 @@ static void yehat_postprocess(Element* ElementPtr)
 					| FiniteLife | Nonsolid;
 				SetPrimType(
 					&DisplayArray[ShipElementPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 
 				ShipElementPtr->life_span = 0; /* because preprocessing
 													 * will not be done
@@ -334,7 +334,7 @@ static void yehat_preprocess(Element* ElementPtr)
 #ifdef NEVER
 			SetPrimType(
 				&DisplayArray[ElementPtr->PrimIndex],
-				STAMP_PRIM);
+				PrimitiveType::Stamp);
 #endif /* NEVER */
 
 			ElementPtr->next.image.farray = StarShipPtr->RaceDescPtr->ship_data.ship;

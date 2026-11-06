@@ -280,7 +280,7 @@ static void checkExclusiveThread(TFB_DrawCommand* DrawCommand)
 
 	// Only one thread is currently allowed to enqueue commands
 	// This is not a technical limitation but rather a semantical one atm.
-	if (DrawCommand->Type == TFB_DRAWCOMMANDTYPE_REINITVIDEO)
+	if (DrawCommand->Type == DrawCommandType::ReinitVideo)
 	{ // TFB_DRAWCOMMANDTYPE_REINITVIDEO is an exception
 		// It is queued from the main() thread, which is safe to do
 		return;
@@ -308,7 +308,7 @@ void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand)
 
 	checkExclusiveThread(DrawCommand);
 
-	if (DrawCommand->Type <= TFB_DRAWCOMMANDTYPE_COPYTOIMAGE
+	if (DrawCommand->Type <= DrawCommandType::CopyToImage
 		&& _CurFramePtr->Type == ScreenDrawable)
 	{
 		static GfxRect scissor_rect;
@@ -332,12 +332,12 @@ void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand)
 
 			if (scissor_rect.extent.width)
 			{
-				DC.Type = TFB_DRAWCOMMANDTYPE_SCISSORENABLE;
+				DC.Type = DrawCommandType::ScissorEnable;
 				DC.data.scissor.rect = scissor_rect;
 			}
 			else
 			{
-				DC.Type = TFB_DRAWCOMMANDTYPE_SCISSORDISABLE;
+				DC.Type = DrawCommandType::ScissorDisable;
 			}
 
 			TFB_EnqueueDrawCommand(&DC);
@@ -406,7 +406,7 @@ static void drawFPSText(uqstl::string_view text, int x, int y, Color color)
 		TFB_Char* ch = GetFrameForFPS(static_cast<unsigned char>(c));
 		if (ch && ch->disp.width)
 		{
-			TFB_DrawCanvas_FontChar(ch, img, x, y, MAKE_DRAW_MODE(DRAW_ALPHA, 0xff), TFB_GetFPSCanvas());
+			TFB_DrawCanvas_FontChar(ch, img, x, y, MAKE_DRAW_MODE(DrawKind::Alpha, 0xff), TFB_GetFPSCanvas());
 			x += ch->disp.width + GetFontCharSpace();
 		}
 		else
@@ -524,7 +524,7 @@ void TFB_FlushGraphics(void)
 
 		switch (DC.Type)
 		{
-			case TFB_DRAWCOMMANDTYPE_SETMIPMAP:
+			case DrawCommandType::SetMipmap:
 				{
 					const TFB_DrawCommand_SetMipmap* cmd = &DC.data.setmipmap;
 					TFB_DrawImage_SetMipmap(cmd->image, cmd->mipmap,
@@ -532,7 +532,7 @@ void TFB_FlushGraphics(void)
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_IMAGE:
+			case DrawCommandType::Image:
 				{
 					const TFB_DrawCommand_Image* cmd = &DC.data.image;
 					TFB_Image* DC_image = cmd->image;
@@ -544,7 +544,7 @@ void TFB_FlushGraphics(void)
 										 cmd->drawMode,
 										 TFB_GetScreenCanvas(cmd->destBuffer));
 
-					if (cmd->destBuffer == TFB_SCREEN_MAIN)
+					if (cmd->destBuffer == ScreenBuffer::Main)
 					{
 						const uqm::LockGuard imageLock {DC_image->mutex};
 						if (cmd->scale)
@@ -564,7 +564,7 @@ void TFB_FlushGraphics(void)
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_FILLEDIMAGE:
+			case DrawCommandType::FilledImage:
 				{
 					const TFB_DrawCommand_FilledImage* cmd = &DC.data.filledimage;
 					TFB_Image* DC_image = cmd->image;
@@ -576,7 +576,7 @@ void TFB_FlushGraphics(void)
 											   cmd->drawMode,
 											   TFB_GetScreenCanvas(cmd->destBuffer));
 
-					if (cmd->destBuffer == TFB_SCREEN_MAIN)
+					if (cmd->destBuffer == ScreenBuffer::Main)
 					{
 						const uqm::LockGuard imageLock {DC_image->mutex};
 						if (cmd->scale)
@@ -596,7 +596,7 @@ void TFB_FlushGraphics(void)
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_FONTCHAR:
+			case DrawCommandType::FontChar:
 				{
 					const TFB_DrawCommand_FontChar* cmd = &DC.data.fontchar;
 					TFB_Char* DC_char = cmd->fontchar;
@@ -606,7 +606,7 @@ void TFB_FlushGraphics(void)
 					TFB_DrawCanvas_FontChar(DC_char, cmd->backing, x, y,
 											cmd->drawMode, TFB_GetScreenCanvas(cmd->destBuffer));
 
-					if (cmd->destBuffer == TFB_SCREEN_MAIN)
+					if (cmd->destBuffer == ScreenBuffer::Main)
 					{
 						GfxRect r;
 
@@ -621,11 +621,11 @@ void TFB_FlushGraphics(void)
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_LINE:
+			case DrawCommandType::Line:
 				{
 					const TFB_DrawCommand_Line* cmd = &DC.data.line;
 
-					if (cmd->destBuffer == TFB_SCREEN_MAIN)
+					if (cmd->destBuffer == ScreenBuffer::Main)
 					{
 						GfxRect r;
 						r.corner.x = uqstl::min(cmd->x1, cmd->x2);
@@ -642,11 +642,11 @@ void TFB_FlushGraphics(void)
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_RECTANGLE:
+			case DrawCommandType::Rectangle:
 				{
 					TFB_DrawCommand_Rect* cmd = &DC.data.rect;
 
-					if (cmd->destBuffer == TFB_SCREEN_MAIN)
+					if (cmd->destBuffer == ScreenBuffer::Main)
 					{
 						TFB_BBox_RegisterRect(&cmd->rect);
 					}
@@ -656,23 +656,23 @@ void TFB_FlushGraphics(void)
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_SCISSORENABLE:
+			case DrawCommandType::ScissorEnable:
 				{
 					const TFB_DrawCommand_Scissor* cmd = &DC.data.scissor;
 
 					TFB_DrawCanvas_SetClipRect(
-						TFB_GetScreenCanvas(TFB_SCREEN_MAIN), &cmd->rect);
+						TFB_GetScreenCanvas(ScreenBuffer::Main), &cmd->rect);
 					TFB_BBox_SetClipRect(&DC.data.scissor.rect);
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_SCISSORDISABLE:
+			case DrawCommandType::ScissorDisable:
 				TFB_DrawCanvas_SetClipRect(
-					TFB_GetScreenCanvas(TFB_SCREEN_MAIN), nullptr);
+					TFB_GetScreenCanvas(ScreenBuffer::Main), nullptr);
 				TFB_BBox_SetClipRect(nullptr);
 				break;
 
-			case TFB_DRAWCOMMANDTYPE_COPYTOIMAGE:
+			case DrawCommandType::CopyToImage:
 				{
 					const TFB_DrawCommand_CopyToImage* cmd = &DC.data.copytoimage;
 					TFB_Image* DC_image = cmd->image;
@@ -691,12 +691,12 @@ void TFB_FlushGraphics(void)
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_COPY:
+			case DrawCommandType::Copy:
 				{
 					const TFB_DrawCommand_Copy* cmd = &DC.data.copy;
 					const GfxRect r = cmd->rect;
 
-					if (cmd->destBuffer == TFB_SCREEN_MAIN)
+					if (cmd->destBuffer == ScreenBuffer::Main)
 					{
 						TFB_BBox_RegisterRect(&cmd->rect);
 					}
@@ -707,24 +707,24 @@ void TFB_FlushGraphics(void)
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_DELETEIMAGE:
+			case DrawCommandType::DeleteImage:
 				{
 					TFB_Image* DC_image = DC.data.deleteimage.image;
 					TFB_DrawImage_Delete(DC_image);
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_DELETEDATA:
+			case DrawCommandType::DeleteData:
 				{
 					delete[] DC.data.deletedata.data;
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_SENDSIGNAL:
+			case DrawCommandType::SendSignal:
 				DC.data.sendsignal.sem->release();
 				break;
 
-			case TFB_DRAWCOMMANDTYPE_REINITVIDEO:
+			case DrawCommandType::ReinitVideo:
 				{
 					const TFB_DrawCommand_ReinitVideo* cmd = &DC.data.reinitvideo;
 					const uqm::GfxDriver oldDriver = GraphicsDriver;
@@ -753,7 +753,7 @@ void TFB_FlushGraphics(void)
 					break;
 				}
 
-			case TFB_DRAWCOMMANDTYPE_CALLBACK:
+			case DrawCommandType::Callback:
 				{
 					DC.data.callback.callback(DC.data.callback.arg);
 					break;
@@ -795,18 +795,18 @@ void TFB_PurgeDanglingGraphics(void)
 
 		switch (DC.Type)
 		{
-			case TFB_DRAWCOMMANDTYPE_DELETEIMAGE:
+			case DrawCommandType::DeleteImage:
 				{
 					TFB_Image* DC_image = DC.data.deleteimage.image;
 					TFB_DrawImage_Delete(DC_image);
 					break;
 				}
-			case TFB_DRAWCOMMANDTYPE_DELETEDATA:
+			case DrawCommandType::DeleteData:
 				{
 					delete[] DC.data.deletedata.data;
 					break;
 				}
-			case TFB_DRAWCOMMANDTYPE_IMAGE:
+			case DrawCommandType::Image:
 				{
 					TFB_ColorMap* cmap = DC.data.image.colormap;
 					if (cmap)
@@ -815,11 +815,13 @@ void TFB_PurgeDanglingGraphics(void)
 					}
 					break;
 				}
-			case TFB_DRAWCOMMANDTYPE_SENDSIGNAL:
+			case DrawCommandType::SendSignal:
 				{
 					DC.data.sendsignal.sem->release();
 					break;
 				}
+			default:
+				break;
 		}
 	}
 	Unlock_DCQ();

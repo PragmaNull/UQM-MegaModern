@@ -464,7 +464,7 @@ static void SaveProblemMessage(GfxStamp* MsgStamp)
 	SetContextFont(StarConFont);
 
 	t.baseline.x = t.baseline.y = 0;
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	for (i = 0; i < MaxMsgLines; ++i)
 	{
 		GfxRect tr;

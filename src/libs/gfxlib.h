@@ -417,25 +417,27 @@ static inline bool ValidPoint(GfxPoint pt)
 	return (bool)(pt.x != ~0 && pt.y != ~0);
 }
 
-typedef enum
+enum class TextAlign
 {
-	ALIGN_LEFT,
-	ALIGN_CENTER,
-	ALIGN_RIGHT
-} TEXT_ALIGN;
+	Left,
+	Center,
+	Right
+};
 
-typedef enum
+enum class TextVAlign
 {
-	VALIGN_TOP,
-	VALIGN_MIDDLE,
-	VALIGN_BOTTOM
-} TEXT_VALIGN;
+	Top,
+	Middle,
+	Bottom
+};
+template <>
+inline constexpr bool IsFlagEnum<TextVAlign> = true;
 
 struct GfxText
 {
 	GfxPoint baseline;
 	const char* pStr;
-	TEXT_ALIGN align;
+	TextAlign align;
 	uint16_t CharCount;
 };
 
@@ -484,7 +486,7 @@ extern HOT_SPOT MAKE_HOT_SPOT(int16_t, int16_t);
 extern INTERSECT_CODE BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* printer);
 extern void BoxUnion(GfxRect* pr1, GfxRect* pr2, GfxRect* punion);
 
-typedef enum
+enum class ScreenFadeType
 {
 	FadeAllToWhite = 250,
 	FadeSomeToWhite,
@@ -492,20 +494,20 @@ typedef enum
 	FadeAllToColor,
 	FadeSomeToBlack,
 	FadeSomeToColor
-} ScreenFadeType;
+};
 
-typedef enum
+enum class DrawKind : uint8_t
 {
-	DRAW_REPLACE = 0,
+	Replace = 0,
 	// Pixels in the target FRAME are replaced entirely.
 	// Non-stamp primitives with Color.a < 255 to RGB targets are
-	// equivalent to DRAW_ALPHA with (DrawMode.factor = Color.a),
+	// equivalent to Alpha with (DrawMode.factor = Color.a),
 	// except the Text primitives.
 	// DrawMode.factor: ignored
-	// Text: supported (except DRAW_ALPHA via Color.a)
+	// Text: supported (except Alpha via Color.a)
 	// RGBA sources (WantAlpha): per-pixel alpha blending performed
 	// RGBA targets (WantAlpha): replace directly supported
-	DRAW_ADDITIVE,
+	Additive,
 	// Pixel channels of the source FRAME or Color channels of
 	// a primitive are modulated by (DrawMode.factor / 255) and added
 	// to the pixel channels of the target FRAME.
@@ -514,7 +516,7 @@ typedef enum
 	// Text: not yet supported
 	// RGBA sources (WantAlpha): alpha channel ignored
 	// RGBA targets (WantAlpha): not yet supported
-	DRAW_ALPHA,
+	Alpha,
 	// Pixel channels of the source FRAME or Color channels of
 	// a primitive are modulated by (DrawMode.factor / 255) and added
 	// to the pixel channels of the target FRAME, modulated by
@@ -523,7 +525,7 @@ typedef enum
 	// Text: supported
 	// RGBA sources (WantAlpha): alpha channel ignored
 	// RGBA targets (WantAlpha): not yet supported
-	DRAW_MULTIPLY,
+	Multiply,
 	// Pixel channels of the source FRAME or Color channels of
 	// a primitive are modulated by (channel / 255) and multiplied
 	// by pixel channels of the target FRAME, modulated by
@@ -532,19 +534,19 @@ typedef enum
 	// Text: supported
 	// RGBA sources (WantAlpha): alpha channel ignored
 	// RGBA targets (WantAlpha): not yet supported
-	DRAW_OVERLAY,
-	DRAW_SCREEN,
-	DRAW_GRAYSCALE, // To get true grayscale - factor should be == 128
-	DRAW_LINEARBURN,
-	DRAW_HYPTOQUAS,
-	DRAW_DESATURATE, // Desaturate image. Not optimized for high fps
+	Overlay,
+	Screen,
+	Grayscale, // To get true grayscale - factor should be == 128
+	Linearburn,
+	Hyptoquas,
+	Desaturate, // Desaturate image. Not optimized for high fps
 
-	DRAW_DEFAULT = DRAW_REPLACE,
-} DrawKind;
+	Default = Replace,
+};
 
 struct DrawMode
 {
-	uint8_t kind;
+	DrawKind kind;
 	int16_t factor;
 };
 
@@ -555,22 +557,22 @@ inline constexpr auto DesatAmount {0xBE};
 
 constexpr DrawMode MAKE_DRAW_MODE(DrawKind kind, int16_t factor)
 {
-	return {static_cast<uint8_t>(kind), factor};
+	return {kind, factor};
 }
 
-inline constexpr DrawMode DrawReplaceMode {MAKE_DRAW_MODE(DRAW_REPLACE, 0)};
+inline constexpr DrawMode DrawReplaceMode {MAKE_DRAW_MODE(DrawKind::Replace, 0)};
 
-typedef enum
+enum class ShadowAngle
 {
-	NORTH_SHADOW,
-	NORTH_EAST_SHADOW,
-	EAST_SHADOW,
-	SOUTH_EAST_SHADOW,
-	SOUTH_SHADOW,
-	SOUTH_WEST_SHADOW,
-	WEST_SHADOW,
-	NORTH_WEST_SHADOW,
-} SHADOW_ANGLE;
+	North,
+	NorthEast,
+	East,
+	SouthEast,
+	South,
+	SouthWest,
+	West,
+	NorthWest,
+};
 
 extern GFXCONTEXT SetContext(GFXCONTEXT Context);
 extern Color SetContextForeGroundColor(Color Color);
@@ -613,7 +615,7 @@ extern void font_DrawTracedText(GfxText* pText, Color text, Color trace);
 extern uint8_t font_DrawTextAlt(GfxText* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key);
 extern void font_DrawTracedTextAlt(GfxText* pText, Color text, Color trace, FONT AltFontPtr,
 								   uqm::UniChar key);
-extern void font_DrawShadowedText(GfxText* pText, uint8_t direction,
+extern void font_DrawShadowedText(GfxText* pText, ShadowAngle direction,
 								  Color text_color, Color shadow_color);
 extern void DrawBatch(Primitive* pBasePrim, PRIM_LINKS PrimLinks,
 					  BATCH_FLAGS BatchFlags);

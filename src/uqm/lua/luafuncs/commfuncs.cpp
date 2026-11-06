@@ -386,7 +386,7 @@ static int luaUqm_comm_setCustomBaseline(lua_State* luaState)
 		luaL_checkoption(luaState, 4, "ALIGN_LEFT", textAlign);
 
 	SetCustomBaseLine(lineNumber, GfxPoint {(int16_t)baselineX, (int16_t)baselineY},
-					  (TEXT_ALIGN)alignment);
+					  (TextAlign)alignment);
 
 	lua_pushstring(luaState, "");
 

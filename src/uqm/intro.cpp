@@ -111,7 +111,7 @@ static Color commandColor(const uqm::SlideCommand& cmd)
 	return BuildColorRgba(cmd.color[0], cmd.color[1], cmd.color[2], 0xff);
 }
 
-static bool DoFadeScreen(PresentationInputState* pPIS, int msecs, uint8_t FadeType)
+static bool DoFadeScreen(PresentationInputState* pPIS, int msecs, ScreenFadeType FadeType)
 {
 	pPIS->TimeOut = FadeScreen((ScreenFadeType)FadeType, msecs * c_gameSecond / 1000)
 				  + c_gameSecond / 10;
@@ -277,7 +277,7 @@ static void DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool
 
 	Text.pStr = buf;
 	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
-	Text.align = ALIGN_LEFT;
+	Text.align = TextAlign::Left;
 	Text.baseline.y = y;
 	Text.baseline.x = x;
 
@@ -325,7 +325,7 @@ static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_
 
 	Text.pStr = buf;
 	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
-	Text.align = ALIGN_LEFT;
+	Text.align = TextAlign::Left;
 	Text.baseline.y = y;
 	Text.baseline.x = x;
 
@@ -890,7 +890,7 @@ static bool DoPresentation(void* pIS)
 				{ /* simple text draw */
 					GfxText t;
 
-					t.align = ALIGN_CENTER;
+					t.align = TextAlign::Center;
 					t.pStr = cmd.text.c_str();
 					t.CharCount = (uint16_t)~0;
 					t.baseline.x = ResScale(cmd.x);
@@ -989,7 +989,7 @@ static bool DoPresentation(void* pIS)
 									   cmd.text);
 						fmt::format_to_sz_n(buf, "{} Exceed max !", pPIS->Buffer);
 
-						t.align = ALIGN_LEFT;
+						t.align = TextAlign::Left;
 						t.pStr = buf;
 						t.CharCount = (uint16_t)~0;
 						t.baseline = MAKE_POINT(x, y);
@@ -1045,7 +1045,7 @@ static bool DoPresentation(void* pIS)
 					pPIS->tfade_r.extent.height = CanvasHeight;
 					for (i = 0; i < pPIS->LinesCount; ++i, y += leading)
 					{
-						pPIS->TextLines[i].align = ALIGN_CENTER;
+						pPIS->TextLines[i].align = TextAlign::Center;
 						pPIS->TextLines[i].baseline.x = CanvasWidth / 2;
 						pPIS->TextLines[i].baseline.y = y;
 					}
@@ -1089,13 +1089,13 @@ static bool DoPresentation(void* pIS)
 			case uqm::SlideOp::SaveBackground:
 				{ /* save background */
 					TFB_DrawScreen_Copy(&pPIS->clip_r,
-										TFB_SCREEN_MAIN, TFB_SCREEN_EXTRA);
+										ScreenBuffer::Main, ScreenBuffer::Extra);
 					break;
 				}
 			case uqm::SlideOp::RestoreBackground:
 				{ /* restore background */
 					TFB_DrawScreen_Copy(&pPIS->clip_r,
-										TFB_SCREEN_EXTRA, TFB_SCREEN_MAIN);
+										ScreenBuffer::Extra, ScreenBuffer::Main);
 					break;
 				}
 			case uqm::SlideOp::Draw:
@@ -1156,17 +1156,17 @@ static bool DoPresentation(void* pIS)
 			case uqm::SlideOp::FadeToColor:
 				{ /* fade to color */
 					Present_UnbatchGraphics(pPIS, true);
-					return DoFadeScreen(pPIS, cmd.ms, FadeAllToColor);
+					return DoFadeScreen(pPIS, cmd.ms, ScreenFadeType::FadeAllToColor);
 				}
 			case uqm::SlideOp::FadeToBlack:
 				{ /* fade to black */
 					Present_UnbatchGraphics(pPIS, true);
-					return DoFadeScreen(pPIS, cmd.ms, FadeAllToBlack);
+					return DoFadeScreen(pPIS, cmd.ms, ScreenFadeType::FadeAllToBlack);
 				}
 			case uqm::SlideOp::FadeToWhite:
 				{ /* fade to white */
 					Present_UnbatchGraphics(pPIS, true);
-					return DoFadeScreen(pPIS, cmd.ms, FadeAllToWhite);
+					return DoFadeScreen(pPIS, cmd.ms, ScreenFadeType::FadeAllToWhite);
 				}
 			case uqm::SlideOp::ClearScreen:
 				{ /* clear screen */
@@ -1446,14 +1446,14 @@ static bool DoVideoInput(void* pIS)
 
 static void FadeClearScreen(void)
 {
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 
 	// clear the screen with black
 	SetContext(ScreenContext);
 	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
 
-	FadeScreen(FadeAllToColor, TimePeriod {});
+	FadeScreen(ScreenFadeType::FadeAllToColor, TimePeriod {});
 }
 
 static bool ShowLegacyVideo(LEGACY_VIDEO vid)

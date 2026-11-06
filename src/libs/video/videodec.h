@@ -17,6 +17,7 @@
 #ifndef LIBS_VIDEO_VIDEODEC_H_
 #define LIBS_VIDEO_VIDEODEC_H_
 
+#include "core/types/enum.h"
 #include "libs/vidlib.h"
 #include "libs/video/video.h"
 #include "libs/reslib.h"
@@ -91,12 +92,14 @@ struct tfb_videodecoder
 };
 
 // return values
-enum
+enum class VideoDecoderStatus
 {
-	VIDEODECODER_OK,
-	VIDEODECODER_ERROR,
-	VIDEODECODER_EOF,
+	Ok,
+	Error,
+	Eof,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<VideoDecoderStatus> = true;
 
 typedef struct TFB_RegVideoDecoder TFB_RegVideoDecoder;
 

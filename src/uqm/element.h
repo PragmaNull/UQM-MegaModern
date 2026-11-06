@@ -83,7 +83,7 @@ typedef enum
 
 typedef uint16_t ELEMENT_FLAGS;
 
-inline constexpr auto NoPrim {NUM_PRIMS};
+inline constexpr auto NoPrim {PrimitiveType::Count};
 
 struct ElementState
 {
@@ -206,7 +206,7 @@ inline constexpr auto MaxShipMass {10};
 constexpr auto GravityMass(const auto& m) { return ((m) > MaxShipMass * 10); }
 inline auto GravityThreshold() { return (uint16_t)ResScale(255); }
 
-constexpr auto ObjectCloaked(const auto& eptr) { return (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) >= NUM_PRIMS || (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) == STAMPFILL_PRIM && sameColor(GetPrimColor(&DisplayArray[(eptr)->PrimIndex]), BlackColor))); }
+constexpr auto ObjectCloaked(const auto& eptr) { return (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) >= PrimitiveType::Count || (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) == PrimitiveType::StampFill && sameColor(GetPrimColor(&DisplayArray[(eptr)->PrimIndex]), BlackColor))); }
 
 
 extern HELEMENT AllocElement(void);

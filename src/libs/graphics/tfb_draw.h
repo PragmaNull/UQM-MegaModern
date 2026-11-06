@@ -19,6 +19,7 @@
 #ifndef TFB_DRAW_H
 #define TFB_DRAW_H
 
+#include "core/types/enum.h"
 #include "libs/time/timelib.h"
 #include "core/thread/Mutex.h"
 #include "core/stl/array.h"
@@ -27,14 +28,16 @@
 
 typedef void* TFB_Canvas;
 
-typedef enum
+enum class ScreenBuffer
 {
-	TFB_SCREEN_MAIN,
-	TFB_SCREEN_EXTRA,
-	TFB_SCREEN_TRANSITION,
+	Main,
+	Extra,
+	Transition,
 
-	TFB_GFX_NUMSCREENS
-} SCREEN;
+	Count
+};
+template <>
+inline constexpr bool IsArithmeticEnum<ScreenBuffer> = true;
 
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/cmap.h"
@@ -83,17 +86,17 @@ struct TFB_PixelFormat
 // Drawing commands
 
 void TFB_DrawScreen_Line(int x1, int y1, int x2, int y2, Color color,
-						 DrawMode, SCREEN dest, uint8_t thickness);
-void TFB_DrawScreen_Rect(GfxRect* rect, Color, DrawMode, SCREEN dest);
+						 DrawMode, ScreenBuffer dest, uint8_t thickness);
+void TFB_DrawScreen_Rect(GfxRect* rect, Color, DrawMode, ScreenBuffer dest);
 void TFB_DrawScreen_Image(TFB_Image* img, int x, int y, int scale,
-						  uqm::TFBScaleMode scaleMode, TFB_ColorMap*, DrawMode, SCREEN dest);
-void TFB_DrawScreen_Copy(const GfxRect* r, SCREEN src, SCREEN dest);
+						  uqm::TFBScaleMode scaleMode, TFB_ColorMap*, DrawMode, ScreenBuffer dest);
+void TFB_DrawScreen_Copy(const GfxRect* r, ScreenBuffer src, ScreenBuffer dest);
 void TFB_DrawScreen_FilledImage(TFB_Image* img, int x, int y, int scale,
-								uqm::TFBScaleMode scaleMode, Color, DrawMode, SCREEN dest);
+								uqm::TFBScaleMode scaleMode, Color, DrawMode, ScreenBuffer dest);
 void TFB_DrawScreen_FontChar(TFB_Char*, TFB_Image* backing, int x, int y,
-							 DrawMode, SCREEN dest);
+							 DrawMode, ScreenBuffer dest);
 
-void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GfxRect* r, SCREEN src);
+void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GfxRect* r, ScreenBuffer src);
 void TFB_DrawScreen_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx,
 							  int hoty);
 void TFB_DrawScreen_DeleteImage(TFB_Image* img);
@@ -199,7 +202,7 @@ bool TFB_DrawCanvas_SetPixelIndexes(TFB_Canvas, const uint8_t* data,
 
 const char* TFB_DrawCanvas_GetError(void);
 
-TFB_Canvas TFB_GetScreenCanvas(SCREEN screen);
+TFB_Canvas TFB_GetScreenCanvas(ScreenBuffer screen);
 TFB_Canvas TFB_GetFPSCanvas(void);
 
 #endif

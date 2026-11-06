@@ -56,7 +56,7 @@ DRAWABLE LoadDisplayPixmap(const GfxRect* area, FRAME frame)
 	else
 	{
 		TFB_Image* img = frame->image;
-		TFB_DrawScreen_CopyToImage(img, area, TFB_SCREEN_MAIN);
+		TFB_DrawScreen_CopyToImage(img, area, ScreenBuffer::Main);
 	}
 
 	ReleaseDrawable(frame);

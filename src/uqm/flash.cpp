@@ -614,7 +614,7 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 				SetContextBackGroundColor(BuildColorRgba(0, 0, 0, 0));
 				ClearDrawable();
 				// Draw the frame at modulated strength (0 < strength <= 128)
-				SetContextDrawMode(MAKE_DRAW_MODE(DRAW_ADDITIVE,
+				SetContextDrawMode(MAKE_DRAW_MODE(DrawKind::Additive,
 												  DrawFactor1 * blendedNumer / blendedDenom));
 				s.frame = context->original;
 				DrawStamp(&s);
@@ -641,7 +641,7 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 				s.frame = first;
 				DrawStamp(&s);
 				// Merge in the final frame
-				SetContextDrawMode(MAKE_DRAW_MODE(DRAW_ALPHA,
+				SetContextDrawMode(MAKE_DRAW_MODE(DrawKind::Alpha,
 												  DrawFactor1 * blendedNumer / blendedDenom));
 				s.frame = final;
 				DrawStamp(&s);
@@ -656,7 +656,7 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 				s.frame = context->original;
 				DrawStamp(&s);
 				// Add or subtract the overlay at partial strength
-				SetContextDrawMode(MAKE_DRAW_MODE(DRAW_ADDITIVE,
+				SetContextDrawMode(MAKE_DRAW_MODE(DrawKind::Additive,
 												  DrawFactor1 * blendedNumer / blendedDenom));
 				s.frame = context->u.overlay.frame;
 				// Offset the draw origin to hit the right area

@@ -38,8 +38,8 @@ static ConversationData syreen_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_TOP, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Top, /* AlienTextValign */
 		SyreenColorMap, /* AlienColorMap */
 		SyreenMusic, /* AlienSong */
 		{
@@ -244,7 +244,7 @@ static AnimFilterSet syreen_filters =
 				0,	/* Color index */
 				1,	/* Opacity index */
 				-1, /* Frame index */
-				DRAW_ALPHA,
+				DrawKind::Alpha,
 				/* DrawKind*/	//maybe try multiply?
 				SwitchOffAnims, /* Flags */
 			},
@@ -285,9 +285,9 @@ static void FriendlyExit(RESPONSE_REF R)
 	{
 		if (PlayerSaid(R, hands_off))
 		{
-			SetCustomBaseLine(3, MAKE_POINT(108, 81), ALIGN_CENTER);
-			SetCustomBaseLine(4, MAKE_POINT(80, 49), ALIGN_CENTER);
-			SetCustomBaseLine(5, MAKE_POINT(121, 27), ALIGN_CENTER);
+			SetCustomBaseLine(3, MAKE_POINT(108, 81), TextAlign::Center);
+			SetCustomBaseLine(4, MAKE_POINT(80, 49), TextAlign::Center);
+			SetCustomBaseLine(5, MAKE_POINT(121, 27), TextAlign::Center);
 
 			NPCPhrase(OK_WONT_USE_HANDS);
 		}
@@ -307,7 +307,7 @@ static void FriendlyExit(RESPONSE_REF R)
 		AlienTalkSegue(2);
 
 		CommData.AlienTextFColor = WhiteColor;
-		FadeScreen(FadeAllToBlack, TimePeriod {});
+		FadeScreen(ScreenFadeType::FadeAllToBlack, TimePeriod {});
 
 		DrawSISFrame();
 		DrawSISMessage(nullptr);
@@ -326,7 +326,7 @@ static void FriendlyExit(RESPONSE_REF R)
 			EnableTalkingAnim(true);
 			DisengageFilters();
 		}
-		FadeScreen(FadeAllToColor, c_gameSecond / 2);
+		FadeScreen(ScreenFadeType::FadeAllToColor, c_gameSecond / 2);
 		AlienTalkSegue((uint16_t)~0);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HAD_SEX, static_cast<uint32_t>(1));
@@ -338,20 +338,20 @@ static void Sex(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, in_the_spirit))
 	{
-		SetCustomBaseLine(3, MAKE_POINT(98, 21), ALIGN_CENTER);
-		SetCustomBaseLine(4, MAKE_POINT(156, 51), ALIGN_CENTER);
-		SetCustomBaseLine(5, MAKE_POINT(169, 79), ALIGN_CENTER);
+		SetCustomBaseLine(3, MAKE_POINT(98, 21), TextAlign::Center);
+		SetCustomBaseLine(4, MAKE_POINT(156, 51), TextAlign::Center);
+		SetCustomBaseLine(5, MAKE_POINT(169, 79), TextAlign::Center);
 
 		NPCPhrase(OK_SPIRIT);
 	}
 	else if (PlayerSaid(R, what_in_mind))
 	{
-		SetCustomBaseLine(0, MAKE_POINT(3, 0), ALIGN_LEFT);
-		SetCustomBaseLine(1, MAKE_POINT(3, 0), ALIGN_LEFT);
-		SetCustomBaseLine(2, MAKE_POINT(3, 55), ALIGN_LEFT);
-		SetCustomBaseLine(3, MAKE_POINT(125, 67), ALIGN_CENTER);
-		SetCustomBaseLine(4, MAKE_POINT(240, 10), ALIGN_RIGHT);
-		SetCustomBaseLine(5, MAKE_POINT(240, 10), ALIGN_RIGHT);
+		SetCustomBaseLine(0, MAKE_POINT(3, 0), TextAlign::Left);
+		SetCustomBaseLine(1, MAKE_POINT(3, 0), TextAlign::Left);
+		SetCustomBaseLine(2, MAKE_POINT(3, 55), TextAlign::Left);
+		SetCustomBaseLine(3, MAKE_POINT(125, 67), TextAlign::Center);
+		SetCustomBaseLine(4, MAKE_POINT(240, 10), TextAlign::Right);
+		SetCustomBaseLine(5, MAKE_POINT(240, 10), TextAlign::Right);
 
 		NPCPhrase(SOMETHING_LIKE_THIS);
 	}
@@ -445,9 +445,9 @@ static void Foreplay(RESPONSE_REF R)
 	}
 	else if (PlayerSaid(R, why_lights_off))
 	{
-		SetCustomBaseLine(1, MAKE_POINT(60, 41), ALIGN_CENTER);
-		SetCustomBaseLine(2, MAKE_POINT(180, 41), ALIGN_CENTER);
-		SetCustomBaseLine(3, MAKE_POINT(120, 81), ALIGN_CENTER);
+		SetCustomBaseLine(1, MAKE_POINT(60, 41), TextAlign::Center);
+		SetCustomBaseLine(2, MAKE_POINT(180, 41), TextAlign::Center);
+		SetCustomBaseLine(3, MAKE_POINT(120, 81), TextAlign::Center);
 
 		NPCPhrase(LIGHTS_OFF_BECAUSE);
 

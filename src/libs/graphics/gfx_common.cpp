@@ -55,12 +55,12 @@ static uqm::TFBScaleMode gscale_mode = uqm::TFBScaleMode::Nearest;
 
 void DrawFromExtraScreen(GfxRect* r)
 {
-	TFB_DrawScreen_Copy(r, TFB_SCREEN_EXTRA, TFB_SCREEN_MAIN);
+	TFB_DrawScreen_Copy(r, ScreenBuffer::Extra, ScreenBuffer::Main);
 }
 
 void LoadIntoExtraScreen(GfxRect* r)
 {
-	TFB_DrawScreen_Copy(r, TFB_SCREEN_MAIN, TFB_SCREEN_EXTRA);
+	TFB_DrawScreen_Copy(r, ScreenBuffer::Main, ScreenBuffer::Extra);
 }
 
 int SetGraphicScale(int scale)
@@ -113,7 +113,7 @@ void FlushGraphics(void)
 
 void SetTransitionSource(const GfxRect* pRect)
 {
-	TFB_DrawScreen_Copy(nullptr, TFB_SCREEN_MAIN, TFB_SCREEN_TRANSITION);
+	TFB_DrawScreen_Copy(nullptr, ScreenBuffer::Main, ScreenBuffer::Transition);
 	(void)pRect; /* Satisfying compiler (unused parameter) */
 }
 

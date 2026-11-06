@@ -270,7 +270,7 @@ static void PrintCoarseScanPC(void)
 
 	SetContext(PlanetContext);
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 	t.baseline.y = ScanTitleY();
 	t.pStr = buf;
@@ -304,7 +304,7 @@ static void PrintCoarseScanPC(void)
 	}};
 
 	t.baseline.y = ScanBaselineYPc();
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 
 	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(0));
 	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Orbit: "
@@ -476,7 +476,7 @@ static void PrintCoarseScan3DO(void)
 
 	BatchGraphics();
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 	t.baseline.y = ScanTitleY();
 	t.pStr = buf;
@@ -504,7 +504,7 @@ static void PrintCoarseScan3DO(void)
 
 	t.baseline.x = LeftSideBaselineX();
 	t.baseline.y = ScanBaselineY();
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 
 	val = ((pSolarSysState->SysInfo.PlanetInfo.PlanetToSunDist * 100L
 			+ (EarthRadius >> 1))
@@ -567,7 +567,7 @@ static void PrintCoarseScan3DO(void)
 
 	t.baseline.x = RightSideBaselineX();
 	t.baseline.y = ScanBaselineY();
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
 	val = ((uint32_t)val * (uint32_t)val * (uint32_t)val / 100L
@@ -1336,7 +1336,7 @@ static void ScanPlanet(uint16_t scanType)
 
 		t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 		t.baseline.y = SisScreenHeight() - MapHeight() - ResScale(7);
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.CharCount = (uint16_t)~0;
 
 		t.pStr = GameString(SCAN_STRING_BASE + scan);
@@ -1779,7 +1779,7 @@ void GeneratePlanetSide(void)
 			NodeElementPtr->current.location.y = info.loc_pt.y;
 
 			SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex],
-						STAMP_PRIM);
+						PrimitiveType::Stamp);
 			if (scan == MINERAL_SCAN)
 			{
 				NodeElementPtr->turn_wait = info.type;

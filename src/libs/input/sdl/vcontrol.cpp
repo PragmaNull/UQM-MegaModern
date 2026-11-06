@@ -518,24 +518,24 @@ static void event2gesture(SDL_Event* e, VControlGesture* g)
 	switch (e->type)
 	{
 		case SDL_EVENT_KEY_DOWN:
-			g->type = VCONTROL_KEY;
+			g->type = VControlGestureType::Key;
 			g->gesture.key = e->key.key;
 			break;
 #ifdef HAVE_JOYSTICK
 		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
-			g->type = VCONTROL_JOYAXIS;
+			g->type = VControlGestureType::JoyAxis;
 			g->gesture.axis.port = e->gaxis.which;
 			g->gesture.axis.index = e->gaxis.axis;
 			g->gesture.axis.polarity = (e->gaxis.value < 0) ? -1 : 1;
 			break;
 		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
-			g->type = VCONTROL_JOYBUTTON;
+			g->type = VControlGestureType::JoyButton;
 			g->gesture.button.port = e->gbutton.which;
 			g->gesture.button.index = e->gbutton.button;
 			break;
 #endif /* HAVE_JOYSTICK */
 		default:
-			g->type = VCONTROL_NONE;
+			g->type = VControlGestureType::None;
 			break;
 	}
 }
@@ -547,11 +547,11 @@ int VControl_AddGestureBinding(VControlGesture* g, uqstl::atomic<int>* target)
 	int logical_port {};
 	switch (g->type)
 	{
-		case VCONTROL_KEY:
+		case VControlGestureType::Key:
 			result = VControl_AddKeyBinding(g->gesture.key, target);
 			break;
 
-		case VCONTROL_JOYAXIS:
+		case VControlGestureType::JoyAxis:
 #ifdef HAVE_JOYSTICK
 			logical_port = g->gesture.axis.port;
 
@@ -572,7 +572,7 @@ int VControl_AddGestureBinding(VControlGesture* g, uqstl::atomic<int>* target)
 			}
 			break;
 #endif
-		case VCONTROL_JOYBUTTON:
+		case VControlGestureType::JoyButton:
 #ifdef HAVE_JOYSTICK
 			logical_port = g->gesture.button.port;
 
@@ -592,7 +592,7 @@ int VControl_AddGestureBinding(VControlGesture* g, uqstl::atomic<int>* target)
 			}
 			break;
 #endif /* HAVE_JOYSTICK */
-		case VCONTROL_NONE:
+		case VControlGestureType::None:
 			/* Do nothing */
 			break;
 
@@ -610,24 +610,24 @@ void VControl_RemoveGestureBinding(VControlGesture* g, uqstl::atomic<int>* targe
 	const uqm::LockGuard lock {s_vcontrolLock};
 	switch (g->type)
 	{
-		case VCONTROL_KEY:
+		case VControlGestureType::Key:
 			VControl_RemoveKeyBinding(g->gesture.key, target);
 			break;
 
-		case VCONTROL_JOYAXIS:
+		case VControlGestureType::JoyAxis:
 #ifdef HAVE_JOYSTICK
 			VControl_RemoveJoyAxisBinding(g->gesture.axis.port,
 										  g->gesture.axis.index,
 										  (g->gesture.axis.polarity < 0) ? -1 : 1, target);
 			break;
 #endif /* HAVE_JOYSTICK */
-		case VCONTROL_JOYBUTTON:
+		case VControlGestureType::JoyButton:
 #ifdef HAVE_JOYSTICK
 			VControl_RemoveJoyButtonBinding(g->gesture.button.port,
 											g->gesture.button.index, target);
 			break;
 #endif /* HAVE_JOYSTICK */
-		case VCONTROL_NONE:
+		case VControlGestureType::None:
 			break;
 		default:
 			uqm::log::warn("VControl_RemoveGestureBinding didn't "
@@ -1272,7 +1272,7 @@ static void parse_joybinding(parse_state* state, VControlGesture* gesture)
 				const int polarity = consume_polarity(state);
 				if (!state->error)
 				{
-					gesture->type = VCONTROL_JOYAXIS;
+					gesture->type = VControlGestureType::JoyAxis;
 					gesture->gesture.axis.port = sticknum;
 					gesture->gesture.axis.index = axisnum;
 					gesture->gesture.axis.polarity = polarity;
@@ -1285,7 +1285,7 @@ static void parse_joybinding(parse_state* state, VControlGesture* gesture)
 			const int buttonnum {consume_num(state)};
 			if (!state->error)
 			{
-				gesture->type = VCONTROL_JOYBUTTON;
+				gesture->type = VControlGestureType::JoyButton;
 				gesture->gesture.button.port = sticknum;
 				gesture->gesture.button.index = buttonnum;
 			}
@@ -1299,7 +1299,7 @@ static void parse_joybinding(parse_state* state, VControlGesture* gesture)
 				const Uint8 dir = consume_dir(state);
 				if (!state->error)
 				{
-					gesture->type = VCONTROL_JOYHAT;
+					gesture->type = VControlGestureType::JoyHat;
 					gesture->gesture.hat.port = sticknum;
 					gesture->gesture.hat.index = hatnum;
 					gesture->gesture.hat.dir = dir;
@@ -1315,7 +1315,7 @@ static void parse_joybinding(parse_state* state, VControlGesture* gesture)
 
 static void parse_gesture(parse_state* state, VControlGesture* gesture)
 {
-	gesture->type = VCONTROL_NONE; /* Default to error */
+	gesture->type = VControlGestureType::None; /* Default to error */
 	if (!strcasecmp(state->token, "key"))
 	{
 		/* Parse key binding */
@@ -1323,7 +1323,7 @@ static void parse_gesture(parse_state* state, VControlGesture* gesture)
 		const int keysym {consume_keyname(state)};
 		if (!state->error)
 		{
-			gesture->type = VCONTROL_KEY;
+			gesture->type = VControlGestureType::Key;
 			gesture->gesture.key = keysym;
 		}
 	}
@@ -1358,16 +1358,16 @@ size_t VControl_DumpGesture(uqstl::span<char> buf, VControlGesture* g)
 {
 	switch (g->type)
 	{
-		case VCONTROL_KEY:
+		case VControlGestureType::Key:
 			return fmt::format_to_sz_n(buf, "key {}",
 									   VControl_code2name(g->gesture.key))
 				.size;
-		case VCONTROL_JOYAXIS:
+		case VControlGestureType::JoyAxis:
 			return fmt::format_to_sz_n(buf, "joystick {} axis {} {}",
 									   g->gesture.axis.port, g->gesture.axis.index,
 									   (g->gesture.axis.polarity > 0) ? "positive" : "negative")
 				.size;
-		case VCONTROL_JOYBUTTON:
+		case VControlGestureType::JoyButton:
 			return fmt::format_to_sz_n(buf, "joystick {} button {}",
 									   g->gesture.button.port, g->gesture.button.index)
 				.size;

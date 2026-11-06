@@ -702,7 +702,7 @@ CheckGetAway:
 	}
 	else
 	{
-		SetPrimType(&DisplayArray[EPtr->PrimIndex], STAMP_PRIM);
+		SetPrimType(&DisplayArray[EPtr->PrimIndex], PrimitiveType::Stamp);
 		if (task & REFORM_GROUP)
 		{
 			EPtr->state_flags |= Nonsolid;
@@ -812,7 +812,7 @@ static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 		IPSHIPElementPtr->state_flags =
 			Changing | FiniteLife | IgnoreVelocity;
 
-		SetPrimType(&DisplayArray[IPSHIPElementPtr->PrimIndex], STAMP_PRIM);
+		SetPrimType(&DisplayArray[IPSHIPElementPtr->PrimIndex], PrimitiveType::Stamp);
 		// XXX: Hack: farray points to FRAME[3] and given FRAME
 		IPSHIPElementPtr->current.image.farray = &GroupPtr->melee_icon;
 		IPSHIPElementPtr->current.image.frame = SetAbsFrameIndex(
@@ -1064,7 +1064,7 @@ static void spawn_flag_ship(void)
 		}
 		FlagShipElementPtr->life_span = NormalLife;
 		FlagShipElementPtr->thrust_wait = FlipWait;
-		SetPrimType(&DisplayArray[FlagShipElementPtr->PrimIndex], STAMP_PRIM);
+		SetPrimType(&DisplayArray[FlagShipElementPtr->PrimIndex], PrimitiveType::Stamp);
 		FlagShipElementPtr->current.image.farray =
 			&uqm::flagship().shipStamp.frame;
 		FlagShipElementPtr->current.image.frame =

@@ -79,7 +79,7 @@ static void DoRunAway(Starship* StarShipPtr)
 	Element* ElementPtr {};
 
 	LockElement(StarShipPtr->hShip, &ElementPtr);
-	if (GetPrimType(&DisplayArray[ElementPtr->PrimIndex]) == STAMP_PRIM
+	if (GetPrimType(&DisplayArray[ElementPtr->PrimIndex]) == PrimitiveType::Stamp
 		&& ElementPtr->life_span == NormalLife
 		&& !(ElementPtr->state_flags & FiniteLife)
 		&& ElementPtr->mass_points != MaxShipMass * 10
@@ -101,7 +101,7 @@ static void DoRunAway(Starship* StarShipPtr)
 		// XXX: I think this is supposed to be the same as the
 		// first entry of the color cycle table in flee_preeprocess,
 		// but it is slightly different (0x0A as red value). - SvdB.
-		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], STAMPFILL_PRIM);
+		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], PrimitiveType::StampFill);
 
 		StarShipPtr->ship_input_state = 0;
 	}

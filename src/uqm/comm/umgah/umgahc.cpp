@@ -37,8 +37,8 @@ static ConversationData umgah_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_TOP, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Top, /* AlienTextValign */
 		UmgahColorMap, /* AlienColorMap */
 		UmgahMusic, /* AlienSong */
 		{

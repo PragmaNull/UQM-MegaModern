@@ -70,7 +70,7 @@ void ShowRemainingCapacity(void)
 						GetStorageBayCapacity() - uqm::gameState().sis().TotalElementMass);
 	t.baseline.x = ElementCol2() + ResScale(1);
 	t.baseline.y = r.corner.y + TextBaseline();
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 
@@ -114,7 +114,7 @@ static void DrawElementAmount(uint16_t Element, bool selected)
 								  CargoBackColor);
 	DrawFilledRectangle(&r);
 
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.pStr = buf;
 	t.baseline.y = r.corner.y + TextBaseline();
 
@@ -174,7 +174,7 @@ static void DrawCargoDisplay(void)
 	SetContextFont(StarConFont);
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = ResScale(27);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = GameString(CARGO_STRING_BASE);
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(CargoSelectedAmountColor);
@@ -198,7 +198,7 @@ static void DrawCargoDisplay(void)
 	cy = ElementOrgY();
 
 	// print Element column headings
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	t.baseline.y = cy - ResScale(1);
 	t.CharCount = (uint16_t)~0;
 
@@ -251,7 +251,7 @@ static void DrawCargoDisplay(void)
 	// print "Free"
 	t.baseline.x = ResScale(5);
 	t.baseline.y = FreeOrgY() + TextBaseline();
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.pStr = GameString(CARGO_STRING_BASE + 1);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
@@ -331,7 +331,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	SetContextFont(StarConFont);
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = ResScale(27);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = GameString(CARGO_STRING_BASE + 10); // datalog
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(CargoSelectedAmountColor);

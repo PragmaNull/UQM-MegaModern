@@ -385,7 +385,7 @@ static void DrawPauseText(GfxRect* rect)
 	text.baseline = rect->corner;
 	text.baseline.x += rect->extent.width >> 1;
 	text.baseline.y += ResScale(10);
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 	text.pStr = AlignText(
 		(const char*)GameString(QUITMENU_STRING_BASE + 4),
 		&text.baseline.x);
@@ -437,7 +437,7 @@ bool PauseGame(void)
 	r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
 	saveStamp = SaveContextFrame(&ctxRect);
 
-	mode = MAKE_DRAW_MODE(DRAW_DESATURATE, DesatAmount);
+	mode = MAKE_DRAW_MODE(DrawKind::Desaturate, DesatAmount);
 	oldMode = SetContextDrawMode(mode);
 	DrawFilledRectangle(&ctxRect);
 	SetContextDrawMode(oldMode);
@@ -690,7 +690,7 @@ void DrawFlagStatDisplay(const char* str)
 	SetContextFont(StarConFont);
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = r.corner.y + ResScale(7);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = str;
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(ModuleSelectedColor);

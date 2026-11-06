@@ -142,7 +142,7 @@ void DrawToolTips(MenuState* pMS, int answer)
 	for (uint16_t i {0}; i < line_count; i++)
 	{
 		t.pStr = lines[i];
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 		t.baseline.y += ResScale(8);
@@ -164,7 +164,7 @@ static void DrawDiffChooser(MenuState* pMS, int answer, bool confirm)
 
 	FONT oldFont {SetContextFont(MicroFont)};
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.baseline.x = s.origin.x;
 	t.baseline.y = s.origin.y - ResScale(20);
 
@@ -329,7 +329,7 @@ static void InitPulseText(void)
 
 	t.baseline.x = MainTextX();
 	t.baseline.y = MainTextY();
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 
 	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
@@ -383,7 +383,7 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 
 	t.baseline.x = MainTextX();
 	t.baseline.y = MainTextY();
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 
 	SetContextForeGroundColor(MainMenuTextColor);
@@ -404,7 +404,7 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 	t.pStr = buf;
 	t.baseline.x = CanvasWidth - ResScale(2);
 	t.baseline.y = CanvasHeight - ResScale(2);
-	t.align = ALIGN_RIGHT;
+	t.align = TextAlign::Right;
 	font_DrawText(&t);
 
 	// Put the main menu music credit in the bottom left corner.
@@ -415,7 +415,7 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 							GameString(MAINMENU_STRING_BASE + 62 + Rando));
 		t.baseline.x = ResScale(2);
 		t.baseline.y = CanvasHeight - ResScale(2);
-		t.align = ALIGN_LEFT;
+		t.align = TextAlign::Left;
 		font_DrawText(&t);
 	}
 
@@ -444,7 +444,7 @@ static bool RestartMessage(void)
 	// Got to restart -message
 	SetMenuSounds(MenuSoundUp | MenuSoundDown, MenuSoundSelect);
 	SetTransitionSource(nullptr);
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 	uqm::currentActivity() = CHECK_ABORT;
 	restartGame = true;
 	return true;
@@ -525,12 +525,12 @@ static bool DoRestart(MenuState* pMS)
 		LastInputTime = GetTimeCounter();
 		pMS->Initialized = true;
 
-		SleepThreadUntil(FadeScreen(FadeAllToColor, c_gameSecond / 2));
+		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToColor, c_gameSecond / 2));
 	}
 	else if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		SleepThreadUntil(
-			FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+			FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 		return false;
 	}
 	else if (PulsedInputState.menu[KEY_MENU_SELECT])
@@ -549,7 +549,7 @@ static bool DoRestart(MenuState* pMS)
 						MenuSoundSelect);
 					SetTransitionSource(nullptr);
 					SleepThreadUntil(
-						FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+						FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 					uqm::currentActivity() = CHECK_ABORT;
 					restartGame = true;
 					break;
@@ -635,7 +635,7 @@ static bool DoRestart(MenuState* pMS)
 				return true;
 			case QUIT_GAME:
 				SleepThreadUntil(
-					FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+					FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 				uqm::currentActivity() = CHECK_ABORT;
 				break;
 		}
@@ -728,7 +728,7 @@ void ShowGameEnding(void)
 	{ // player blew himself up with Utwig bomb
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP, static_cast<uint32_t>(0));
 
-		SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond / 8)
+		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToWhite, c_gameSecond / 8)
 						 + c_gameSecond / 60);
 		SetContextBackGroundColor(WhiteColor);
 
@@ -744,7 +744,7 @@ void ShowGameEnding(void)
 
 		DeathBySuicide = false;
 
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 8));
+		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 8));
 		SleepThread(c_gameSecond * 3);
 	}
 	else
@@ -798,7 +798,7 @@ static bool RestartMenu(MenuState* pMS)
 	//   screen. It only makes a user wait.
 	// Kruzen: This fade is needed when going from SUPER-MELEE and LOAD menus
 	// and when Skip Intro option is enabled
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 
 	pMS->CurFrame = CaptureDrawable(LoadGraphic(RestartPmapAnimRes));
 
@@ -839,7 +839,7 @@ static bool RestartMenu(MenuState* pMS)
 		return (false); // quit
 	}
 
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 	FlushColorXForms();
 
 	return (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE);
@@ -867,7 +867,7 @@ static bool TryStartGame(void)
 		}
 		else if (uqm::currentActivity() == (ACTIVITY)~0)
 		{ // timed out
-			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+			SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 			return (false);
 		}
 		else if (uqm::currentActivity() & CHECK_ABORT)

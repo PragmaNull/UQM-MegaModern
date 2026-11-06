@@ -2040,11 +2040,11 @@ static void drawContext(GFXCONTEXT context, double hue /* no pun intended */)
 	oldFont = SetContextFont(TinyFont);
 	SetContextForeGroundColor(textCol);
 	// Text prim does not yet support alpha via Color.a
-	oldMode = SetContextDrawMode(MAKE_DRAW_MODE(DRAW_ALPHA, textCol.a));
+	oldMode = SetContextDrawMode(MAKE_DRAW_MODE(DrawKind::Alpha, textCol.a));
 	text.baseline.x = (p1.x + (p2.x + 1)) / 2;
 	text.baseline.y = p1.y + 8;
 	text.pStr = GetContextName(context);
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 	text.CharCount = (uint16_t)~0;
 	font_DrawText(&text);
 	(void)SetContextDrawMode(oldMode);

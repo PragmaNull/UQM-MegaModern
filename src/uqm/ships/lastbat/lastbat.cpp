@@ -335,7 +335,7 @@ static void gate_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			if ((ElementPtr1->state_flags & PlayerShip)
 				&& GetPrimType(
 					   &DisplayArray[ElementPtr0->PrimIndex])
-					   == STAMPFILL_PRIM
+					   == PrimitiveType::StampFill
 				&& uqm::gameState().flag(uqm::GameFlag::BOMB_CARRIER))
 			{
 				uqm::currentActivity() &= ~IN_BATTLE;
@@ -382,7 +382,7 @@ static void gate_preprocess(Element* ElementPtr)
 			BlackColor);
 		SetPrimType(
 			&DisplayArray[ElementPtr->PrimIndex],
-			STAMPFILL_PRIM);
+			PrimitiveType::StampFill);
 	}
 	else
 	{
@@ -862,7 +862,7 @@ static void samatra_preprocess(Element* ElementPtr)
 				GeneratorPtr->state_flags = Appearing | IgnoreSimilar;
 				SetPrimType(
 					&DisplayArray[GeneratorPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 				GeneratorPtr->current.location.x =
 					((LogSpaceWidth() >> 1)
 					 + DisplayToWorld((offs[StarShipPtr->RaceDescPtr->characteristics.max_thrust].x)))
@@ -902,7 +902,7 @@ static void samatra_preprocess(Element* ElementPtr)
 				TurretPtr->state_flags = Appearing | IgnoreSimilar | Nonsolid;
 				SetPrimType(
 					&DisplayArray[TurretPtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 				TurretPtr->current.location.x = LogSpaceWidth() >> 1;
 				TurretPtr->current.location.y = LogSpaceHeight() >> 1;
 				TurretPtr->current.image.farray =
@@ -935,7 +935,7 @@ static void samatra_preprocess(Element* ElementPtr)
 									 | IgnoreSimilar;
 				SetPrimType(
 					&DisplayArray[GatePtr->PrimIndex],
-					STAMP_PRIM);
+					PrimitiveType::Stamp);
 				GatePtr->current.location.x = LogSpaceWidth() >> 1;
 				GatePtr->current.location.y = LogSpaceHeight() >> 1;
 				GatePtr->current.image.farray =

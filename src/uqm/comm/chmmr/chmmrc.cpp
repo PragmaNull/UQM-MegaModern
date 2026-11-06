@@ -45,8 +45,8 @@ static ConversationData chmmr_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_TOP, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Top, /* AlienTextValign */
 		ChmmrColorMap, /* AlienColorMap */
 		ChmmrMusic, /* AlienSong */
 		{
@@ -156,25 +156,25 @@ static AnimFilterSet chmmr_filters =
 		{
 								  /* Filter array */
 			{
-				1,				/* Color index */
-				1,				/* Opacity index */
-				-1,				/* Frame index */
-				DRAW_GRAYSCALE, /* DrawKind*/
-				0,				/* Flags */
+				1,					 /* Color index */
+				1,					 /* Opacity index */
+				-1,					 /* Frame index */
+				DrawKind::Grayscale, /* DrawKind*/
+				0,					 /* Flags */
 			},
 								  {
-				0,			  /* Color index */
-				3,			  /* Opacity index */
-				-1,			  /* Frame index */
-				DRAW_OVERLAY, /* DrawKind*/
-				0,			  /* Flags */
+				0,				   /* Color index */
+				3,				   /* Opacity index */
+				-1,				   /* Frame index */
+				DrawKind::Overlay, /* DrawKind*/
+				0,				   /* Flags */
 			},
 								  {
-				0,			/* Color index */
-				2,			/* Opacity index */
-				-1,			/* Frame index */
-				DRAW_ALPHA, /* DrawKind*/
-				0,			/* Flags */
+				0,				 /* Color index */
+				2,				 /* Opacity index */
+				-1,				 /* Frame index */
+				DrawKind::Alpha, /* DrawKind*/
+				0,				 /* Flags */
 			},
 								  }
 };

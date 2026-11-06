@@ -105,7 +105,7 @@ static void DrawDevice(uint16_t device, uint16_t pos, bool selected)
 	GfxRect r;
 	GfxText t;
 
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.baseline.x = DeviceCol1();
 
 	r.extent.width = DeviceSelWidth();
@@ -171,7 +171,7 @@ static void DrawDevicesDisplay(DevicesMenuState* devState)
 	SetContextFont(StarConFont);
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = r.corner.y + ResScale(7);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = GameString(DEVICE_STRING_BASE);
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(DevicesSelectedNameColor);
@@ -345,14 +345,14 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				&& playerInPlanetOrbit())
 			{
 				PlayMenuSound(MENU_SOUND_INVOKED);
-				SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond * 1)
+				SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToWhite, c_gameSecond * 1)
 								 + (c_gameSecond * 2));
 				if (CurStarDescPtr()->Index != CHMMR_DEFINED
 					|| !matchWorld(pSolarSysState,
 								   pSolarSysState->pOrbitalDesc,
 								   MatchPbyte, MatchPlanet))
 				{
-					FadeScreen(FadeAllToColor, c_gameSecond * 2);
+					FadeScreen(ScreenFadeType::FadeAllToColor, c_gameSecond * 2);
 				}
 				else
 				{

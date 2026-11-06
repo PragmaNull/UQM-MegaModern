@@ -467,7 +467,7 @@ static void ChangeSunColor(void)
 	// for all stars or some will look ugly.
 
 	c = GetColorMapColor(GetColorMapTableIndex(SunCMap, 0), StarColorIndex);
-	mode = MAKE_DRAW_MODE(DRAW_ALPHA, TransferAlpha);
+	mode = MAKE_DRAW_MODE(DrawKind::Alpha, TransferAlpha);
 	maskOffset = GetFrameCount(SunFrame) - SunZoomSizes;
 	sizeIter = maskOffset / SunZoomSizes;
 
@@ -2333,7 +2333,7 @@ static void InitSolarSys(void)
 			DrawOuterSystem();
 			RedrawQueue(false);
 			UnbatchGraphics();
-			FadeScreen(FadeAllToColor, c_gameSecond / 2);
+			FadeScreen(ScreenFadeType::FadeAllToColor, c_gameSecond / 2);
 			NewGameInit = true;
 
 			LastActivity = 0;
@@ -2712,7 +2712,7 @@ static void DrawNebula(FRAME nebula)
 		return;
 	}
 
-	oldMode = SetContextDrawMode(MAKE_DRAW_MODE(DRAW_ALPHA,
+	oldMode = SetContextDrawMode(MAKE_DRAW_MODE(DrawKind::Alpha,
 												(uqm::UQMOptions::read().nebulaevol + 1) * 5));
 	s.origin.x = 0;
 	s.origin.y = 0;

@@ -1,3 +1,4 @@
+#include "core/types/enum.h"
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,20 +17,22 @@
 #ifndef LIBS_GRAPHICS_PRIM_H_
 #define LIBS_GRAPHICS_PRIM_H_
 
-enum gfx_object
+enum class PrimitiveType : uint8_t
 {
-	POINT_PRIM = 0,
-	STAMP_PRIM,
-	STAMPFILL_PRIM,
-	LINE_PRIM,
-	TEXT_PRIM,
-	RECT_PRIM,
-	RECTFILL_PRIM,
-	POINT_PRIM_HD,
+	Point = 0,
+	Stamp,
+	StampFill,
+	Line,
+	Text,
+	Rect,
+	RectFill,
+	PointHd,
 
-	NUM_PRIMS
+	Count
 };
-typedef uint8_t GRAPHICS_PRIM;
+template <>
+inline constexpr bool IsArithmeticEnum<PrimitiveType> = true;
+using GRAPHICS_PRIM = PrimitiveType;
 
 union PRIM_DESC
 {

@@ -62,9 +62,9 @@ static void checkPrimitiveMode(SDL_Surface* surf, Color* color, DrawMode* mode)
 	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surf->format);
 	// Special case: We support DRAW_ALPHA mode to non-alpha surfaces
 	// for primitives via Color.a
-	if (mode->kind == DRAW_REPLACE && fmt->Amask == 0 && color->a != 0xff)
+	if (mode->kind == DrawKind::Replace && fmt->Amask == 0 && color->a != 0xff)
 	{
-		mode->kind = DRAW_ALPHA;
+		mode->kind = DrawKind::Alpha;
 		mode->factor = color->a;
 		color->a = 0xff;
 	}
@@ -129,7 +129,7 @@ void TFB_DrawCanvas_Rect(GfxRect* rect, Color color, DrawMode mode, TFB_Canvas t
 	checkPrimitiveMode(dst, &color, &mode);
 	Uint32 sdlColor {SDL_MapSurfaceRGBA(dst, color.r, color.g, color.b, color.a)};
 
-	if (mode.kind == DRAW_REPLACE)
+	if (mode.kind == DrawKind::Replace)
 	{ // Standard SDL fillrect rendering
 		Uint32 colorkey {};
 		if (fmt->Amask && (TFB_GetColorKey(dst, &colorkey) == 0))
@@ -164,11 +164,11 @@ static void TFB_DrawCanvas_Blit(SDL_Surface* src, SDL_Rect* src_r,
 {
 	const SDL_PixelFormatDetails* srcfmt = SDL_GetPixelFormatDetails(src->format);
 
-	if (mode.kind == DRAW_REPLACE)
+	if (mode.kind == DrawKind::Replace)
 	{ // Standard SDL simple blit
 		SDL_BlitSurface(src, src_r, dst, dst_r);
 	}
-	else if (mode.kind == DRAW_ALPHA && srcfmt->Amask == 0)
+	else if (mode.kind == DrawKind::Alpha && srcfmt->Amask == 0)
 	{ // Standard SDL surface-alpha blit
 		// Note that surface alpha and per-pixel alpha cannot work
 		// at the same time, which is why the Amask test
@@ -298,13 +298,13 @@ void TFB_DrawCanvas_Image(TFB_Image* img, int x, int y, int scale,
 		TFB_ReturnColorMap(cmap);
 	}
 
-	if (mode.kind == DRAW_ALPHA && SDL_GetPixelFormatDetails(surf->format)->Amask != 0)
+	if (mode.kind == DrawKind::Alpha && SDL_GetPixelFormatDetails(surf->format)->Amask != 0)
 	{ // Per-pixel alpha and surface alpha will not work together
 		// We have to handle DRAW_ALPHA differently by modulating
 		// the backing surface alpha channel ourselves.
 		// The existing backing surface alpha channel is ignored.
 		const int alpha = mode.factor;
-		mode.kind = DRAW_REPLACE;
+		mode.kind = DrawKind::Replace;
 
 		if (alpha != 0xFF)
 		{
@@ -554,12 +554,12 @@ void TFB_DrawCanvas_FilledImage(TFB_Image* img, int x, int y, int scale,
 		{ // image or fillcolor changed - regenerate
 			Uint32 fillColor {};
 
-			if (mode.kind == DRAW_ALPHA && fillfmt->Amask)
+			if (mode.kind == DrawKind::Alpha && fillfmt->Amask)
 			{ // Per-pixel alpha and surface alpha will not work together
 				// We have to handle DRAW_ALPHA differently by modulating
 				// the surface alpha channel ourselves.
 				color.a = mode.factor;
-				mode.kind = DRAW_REPLACE;
+				mode.kind = DrawKind::Replace;
 			}
 			else
 			{ // Make sure we do not modulate the alpha channel
@@ -642,13 +642,13 @@ void TFB_DrawCanvas_FontChar(TFB_Char* fontChar, TFB_Image* backing,
 		const Uint8* src_p = fontChar->data;
 		Uint32* dst_p = (Uint32*)surf->pixels;
 
-		if (mode.kind == DRAW_ALPHA)
+		if (mode.kind == DrawKind::Alpha)
 		{ // Per-pixel alpha and surface alpha will not work together
 			// We have to handle DRAW_ALPHA differently by modulating
 			// the backing surface alpha channel ourselves.
 			// The existing backing surface alpha channel is ignored.
 			const int alpha = mode.factor;
-			mode.kind = DRAW_REPLACE;
+			mode.kind = DrawKind::Replace;
 
 			for (y = 0; y < h; ++y, src_p += sskip, dst_p += dskip)
 			{
@@ -667,9 +667,9 @@ void TFB_DrawCanvas_FontChar(TFB_Char* fontChar, TFB_Image* backing,
 				}
 			}
 		}
-		else if (mode.kind == DRAW_GRAYSCALE)
+		else if (mode.kind == DrawKind::Grayscale)
 		{ // For wiping char background
-			mode.kind = DRAW_REPLACE;
+			mode.kind = DrawKind::Replace;
 
 			for (y = 0; y < h; ++y, src_p += sskip, dst_p += dskip)
 			{

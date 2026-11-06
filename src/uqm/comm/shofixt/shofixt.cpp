@@ -38,8 +38,8 @@ static ConversationData shofixti_desc =
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth(), */  /* AlienTextWidth */
-		ALIGN_CENTER, /* AlienTextAlign */
-		VALIGN_TOP, /* AlienTextValign */
+		TextAlign::Center, /* AlienTextAlign */
+		TextVAlign::Top, /* AlienTextValign */
 		ShofixtiColorMap, /* AlienColorMap */
 		ShofixtiMusic, /* AlienSong */
 		{

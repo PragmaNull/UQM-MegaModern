@@ -23,26 +23,26 @@
 
 #include "core/stl/semaphore.h"
 
-enum
+enum class DrawCommandType
 {
-	TFB_DRAWCOMMANDTYPE_LINE,
-	TFB_DRAWCOMMANDTYPE_RECTANGLE,
-	TFB_DRAWCOMMANDTYPE_IMAGE,
-	TFB_DRAWCOMMANDTYPE_FILLEDIMAGE,
-	TFB_DRAWCOMMANDTYPE_FONTCHAR,
+	Line,
+	Rectangle,
+	Image,
+	FilledImage,
+	FontChar,
 
-	TFB_DRAWCOMMANDTYPE_COPY,
-	TFB_DRAWCOMMANDTYPE_COPYTOIMAGE,
+	Copy,
+	CopyToImage,
 
-	TFB_DRAWCOMMANDTYPE_SCISSORENABLE,
-	TFB_DRAWCOMMANDTYPE_SCISSORDISABLE,
+	ScissorEnable,
+	ScissorDisable,
 
-	TFB_DRAWCOMMANDTYPE_SETMIPMAP,
-	TFB_DRAWCOMMANDTYPE_DELETEIMAGE,
-	TFB_DRAWCOMMANDTYPE_DELETEDATA,
-	TFB_DRAWCOMMANDTYPE_SENDSIGNAL,
-	TFB_DRAWCOMMANDTYPE_REINITVIDEO,
-	TFB_DRAWCOMMANDTYPE_CALLBACK,
+	SetMipmap,
+	DeleteImage,
+	DeleteData,
+	SendSignal,
+	ReinitVideo,
+	Callback,
 };
 
 struct TFB_DrawCommand_Line
@@ -50,7 +50,7 @@ struct TFB_DrawCommand_Line
 	int x1, y1, x2, y2;
 	Color color;
 	DrawMode drawMode;
-	SCREEN destBuffer;
+	ScreenBuffer destBuffer;
 	uint8_t thickness;
 };
 
@@ -59,14 +59,14 @@ struct TFB_DrawCommand_Rect
 	GfxRect rect;
 	Color color;
 	DrawMode drawMode;
-	SCREEN destBuffer;
+	ScreenBuffer destBuffer;
 };
 
 struct TFB_DrawCommand_Image
 {
 	TFB_Image* image;
 	int x, y;
-	SCREEN destBuffer;
+	ScreenBuffer destBuffer;
 	TFB_ColorMap* colormap;
 	DrawMode drawMode;
 	int scale;
@@ -78,7 +78,7 @@ struct TFB_DrawCommand_FilledImage
 	TFB_Image* image;
 	int x, y;
 	Color color;
-	SCREEN destBuffer;
+	ScreenBuffer destBuffer;
 	DrawMode drawMode;
 	int scale;
 	uqm::TFBScaleMode scaleMode;
@@ -90,20 +90,20 @@ struct TFB_DrawCommand_FontChar
 	TFB_Image* backing;
 	int x, y;
 	DrawMode drawMode;
-	SCREEN destBuffer;
+	ScreenBuffer destBuffer;
 };
 
 struct TFB_DrawCommand_Copy
 {
 	GfxRect rect;
-	SCREEN srcBuffer, destBuffer;
+	ScreenBuffer srcBuffer, destBuffer;
 };
 
 struct TFB_DrawCommand_CopyToImage
 {
 	TFB_Image* image;
 	GfxRect rect;
-	SCREEN srcBuffer;
+	ScreenBuffer srcBuffer;
 };
 
 struct TFB_DrawCommand_Scissor
@@ -150,7 +150,7 @@ struct TFB_DrawCommand_Callback
 
 struct TFB_DrawCommand
 {
-	int Type {};
+	DrawCommandType Type {};
 	union
 	{
 		TFB_DrawCommand_Line line;

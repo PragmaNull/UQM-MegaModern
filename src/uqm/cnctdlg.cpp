@@ -70,9 +70,9 @@ static ConnectDialogState* current_state;
 
 static FONT PlayerFont;
 
-static int do_connect(Widget* self, int event);
-static int do_listen(Widget* self, int event);
-static int do_cancel(Widget* self, int event);
+static int do_connect(Widget* self, WidgetEvent event);
+static int do_listen(Widget* self, WidgetEvent event);
+static int do_cancel(Widget* self, WidgetEvent event);
 
 static void MCD_DrawMenuScreen(Widget* _self, int x, int y)
 {
@@ -102,7 +102,7 @@ static void MCD_DrawButton(Widget* _self, int x, int y)
 
 	t.baseline.x = ResScale(160);
 	t.baseline.y = y;
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.CharCount = ~0;
 	t.pStr = self->name;
 	if (widget_focus == _self)
@@ -137,7 +137,7 @@ static void MCD_DrawSlider(Widget* _self, int x, int y)
 
 	t.baseline.x = x;
 	t.baseline.y = y;
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.CharCount = ~0;
 	t.pStr = self->category;
 	if (widget_focus == _self)
@@ -189,7 +189,7 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 
 	t.baseline.x = x;
 	t.baseline.y = y;
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.CharCount = ~0;
 	t.pStr = self->category;
 	if (widget_focus == _self)
@@ -209,10 +209,10 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
 	t.pStr = self->value;
 
-	if (!(self->state & WTE_EDITING))
+	if (!any(self->state, TextEntryWidgetState::Editing))
 	{ // normal or selected state
 		t.baseline.x = ResScale(160);
-		t.align = ALIGN_CENTER;
+		t.align = TextAlign::Center;
 
 		if (widget_focus == _self)
 		{
@@ -233,7 +233,7 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 		int16_t leading {};
 
 		t.baseline.x = x + (ResScale(90));
-		t.align = ALIGN_LEFT;
+		t.align = TextAlign::Left;
 
 		// calc background box dimensions
 		// XXX: this may need some tuning, especially if a
@@ -272,7 +272,7 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 			r.corner.x -= ResScale(1);
 		}
 
-		if (self->state & WTE_BLOCKCUR)
+		if (any(self->state, TextEntryWidgetState::BlockCursor))
 		{ // Use block cursor for keyboardless systems
 
 			r.corner.y = r.corner.y;
@@ -330,11 +330,11 @@ static bool OnTextEntryChange(TextEntryState* pTES)
 	widget->cursor_pos = pTES->CursorPos;
 	if (pTES->JoystickMode)
 	{
-		widget->state |= WTE_BLOCKCUR;
+		widget->state |= TextEntryWidgetState::BlockCursor;
 	}
 	else
 	{
-		widget->state &= ~WTE_BLOCKCUR;
+		widget->state &= ~TextEntryWidgetState::BlockCursor;
 	}
 
 	// XXX TODO: Here, we can examine the text entered so far
@@ -362,7 +362,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 
 	// position cursor at the end of text
 	widget->cursor_pos = uqm::utf8StringCount(widget->value);
-	widget->state = WTE_EDITING;
+	widget->state = TextEntryWidgetState::Editing;
 	DrawConnectDialog();
 
 	// make a backup copy for revert on cancel
@@ -391,7 +391,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 		}
 	}
 
-	widget->state = WTE_NORMAL;
+	widget->state = TextEntryWidgetState::Normal;
 	DrawConnectDialog();
 
 	return true; // event handled
@@ -399,9 +399,9 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 
 /* Button response routines */
 
-static int do_connect(Widget* self, int event)
+static int do_connect(Widget* self, WidgetEvent event)
 {
-	if (event == WIDGET_EVENT_SELECT)
+	if (event == WidgetEvent::Select)
 	{
 		/* These assignments are safe exactly because texts[] is file-scope) */
 		auto& netplayOptions {uqm::UQMOptions::getInstance().getNetplayOptions()};
@@ -417,9 +417,9 @@ static int do_connect(Widget* self, int event)
 	return false;
 }
 
-static int do_listen(Widget* self, int event)
+static int do_listen(Widget* self, WidgetEvent event)
 {
-	if (event == WIDGET_EVENT_SELECT)
+	if (event == WidgetEvent::Select)
 	{
 		/* These assignments are safe exactly because texts[] is file-scope) */
 		auto& netplayOptions {uqm::UQMOptions::getInstance().getNetplayOptions()};
@@ -434,9 +434,9 @@ static int do_listen(Widget* self, int event)
 	return false;
 }
 
-static int do_cancel(Widget* self, int event)
+static int do_cancel(Widget* self, WidgetEvent event)
 {
-	if (event == WIDGET_EVENT_SELECT)
+	if (event == WidgetEvent::Select)
 	{
 		current_state->confirmed = false;
 		done = true;
@@ -454,7 +454,7 @@ static void CreateWidgets(void)
 
 	for (i = 0; i < 3; i++)
 	{
-		buttons[i].tag = WIDGET_TYPE_BUTTON;
+		buttons[i].tag = WidgetType::Button;
 		buttons[i].parent = nullptr;
 		buttons[i].receiveFocus = Widget_ReceiveFocusSimple;
 		buttons[i].draw = MCD_DrawButton;
@@ -472,7 +472,7 @@ static void CreateWidgets(void)
 	buttons[1].handleEvent = do_listen;
 	buttons[2].handleEvent = do_cancel;
 
-	menu.tag = WIDGET_TYPE_MENU_SCREEN;
+	menu.tag = WidgetType::MenuScreen;
 	menu.parent = nullptr;
 	menu.receiveFocus = Widget_ReceiveFocusMenuScreen;
 	menu.draw = MCD_DrawMenuScreen;
@@ -484,7 +484,7 @@ static void CreateWidgets(void)
 
 	auto& netplayOptions {uqm::UQMOptions::getInstance().getNetplayOptions()};
 
-	slider.tag = WIDGET_TYPE_SLIDER;
+	slider.tag = WidgetType::Slider;
 	slider.parent = nullptr;
 	slider.handleEvent = Widget_HandleEventSlider;
 	slider.receiveFocus = Widget_ReceiveFocusSimple;
@@ -501,7 +501,7 @@ static void CreateWidgets(void)
 
 	for (i = 0; i < 2; i++)
 	{
-		texts[i].tag = WIDGET_TYPE_TEXTENTRY;
+		texts[i].tag = WidgetType::TextEntry;
 		texts[i].parent = nullptr;
 		texts[i].handleEvent = Widget_HandleEventTextEntry;
 		texts[i].receiveFocus = Widget_ReceiveFocusSimple;
@@ -510,7 +510,7 @@ static void CreateWidgets(void)
 		texts[i].width = Widget_WidthFullScreen;
 		texts[i].handleEventSelect = OnTextEntryEvent;
 		texts[i].maxlen = WidgetTextentryWidth - ResScale(1);
-		texts[i].state = WTE_NORMAL;
+		texts[i].state = TextEntryWidgetState::Normal;
 		texts[i].cursor_pos = 0;
 	}
 
@@ -529,7 +529,7 @@ static void CreateWidgets(void)
 	}
 	fmt::format_to_sz_n(texts[1].value, std::min(sizeof(texts[1].value), static_cast<size_t>(texts[1].maxlen)), "{}", peerData.address.port);
 
-	menu.receiveFocus((Widget*)&menu, WIDGET_EVENT_DOWN);
+	menu.receiveFocus((Widget*)&menu, WidgetEvent::Down);
 }
 
 static void DrawConnectDialog(void)
@@ -570,31 +570,31 @@ static bool DoMeleeConnectDialog(ConnectDialogState* state)
 
 	if (PulsedInputState.menu[KEY_MENU_UP])
 	{
-		Widget_Event(WIDGET_EVENT_UP);
+		Widget_Event(WidgetEvent::Up);
 	}
 	else if (PulsedInputState.menu[KEY_MENU_DOWN])
 	{
-		Widget_Event(WIDGET_EVENT_DOWN);
+		Widget_Event(WidgetEvent::Down);
 	}
 	else if (PulsedInputState.menu[KEY_MENU_LEFT])
 	{
-		Widget_Event(WIDGET_EVENT_LEFT);
+		Widget_Event(WidgetEvent::Left);
 	}
 	else if (PulsedInputState.menu[KEY_MENU_RIGHT])
 	{
-		Widget_Event(WIDGET_EVENT_RIGHT);
+		Widget_Event(WidgetEvent::Right);
 	}
 	else if (PulsedInputState.menu[KEY_MENU_SELECT])
 	{
-		Widget_Event(WIDGET_EVENT_SELECT);
+		Widget_Event(WidgetEvent::Select);
 	}
 	else if (PulsedInputState.menu[KEY_MENU_CANCEL])
 	{
-		Widget_Event(WIDGET_EVENT_CANCEL);
+		Widget_Event(WidgetEvent::Cancel);
 	}
 	else if (PulsedInputState.menu[KEY_MENU_DELETE])
 	{
-		Widget_Event(WIDGET_EVENT_DELETE);
+		Widget_Event(WidgetEvent::Delete);
 	}
 	else
 	{

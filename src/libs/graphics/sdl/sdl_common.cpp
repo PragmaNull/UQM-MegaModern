@@ -46,7 +46,7 @@
 SDL_Surface* SDL_Screen;
 SDL_Surface* TransitionScreen;
 
-SDL_Surface* SDL_Screens[TFB_GFX_NUMSCREENS];
+SDL_Surface* SDL_Screens[+ScreenBuffer::Count];
 SDL_Surface* SDL_Screen_fps;
 bool SDL_Screen_fps_changed {};
 
@@ -78,7 +78,7 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 
 
 	/* Null out screen pointers the first time */
-	for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
+	for (i = 0; i < ScreenBuffer::Count; i++)
 	{
 		SDL_Screens[i] = nullptr;
 	}
@@ -106,7 +106,7 @@ void TFB_UninitGraphics(void)
 {
 	Uninit_DrawCommandQueue();
 
-	for (int i {0}; i < TFB_GFX_NUMSCREENS; i++)
+	for (int i {0}; i < ScreenBuffer::Count; i++)
 	{
 		UnInit_Screen(&SDL_Screens[i]);
 	}
@@ -214,11 +214,11 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 
 	graphics_backend->preprocess(force_full_redraw, transition_amount,
 								 fade_amount);
-	graphics_backend->screen(TFB_SCREEN_MAIN, 255, nullptr);
+	graphics_backend->screen(ScreenBuffer::Main, 255, nullptr);
 
 	if (transition_amount != 255)
 	{
-		graphics_backend->screen(TFB_SCREEN_TRANSITION,
+		graphics_backend->screen(ScreenBuffer::Transition,
 								 255 - transition_amount, pTransitionClipRect);
 	}
 
@@ -297,9 +297,9 @@ SDL_Surface* TFB_DisplayFormatAlpha(SDL_Surface* surface)
 
 // This function should only be called from the graphics thread,
 // like from a TFB_DrawCommand_Callback command.
-TFB_Canvas TFB_GetScreenCanvas(SCREEN screen)
+TFB_Canvas TFB_GetScreenCanvas(ScreenBuffer screen)
 {
-	return SDL_Screens[screen];
+	return SDL_Screens[+screen];
 }
 
 TFB_Canvas TFB_GetFPSCanvas(void)

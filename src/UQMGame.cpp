@@ -369,7 +369,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	TFB_SetInputVectors(ImmediateInputState.menu, NUM_MENU_KEYS,
 						&ImmediateInputState.key[0][0], NUM_KEYS,
 						uqstl::to_underlying(ControlTemplate::NUM));
-	TFB_InitInput(TFB_INPUTDRIVER_SDL, 0);
+	TFB_InitInput(InputDriver::Sdl, 0);
 
 	return {EXIT_SUCCESS, false};
 }

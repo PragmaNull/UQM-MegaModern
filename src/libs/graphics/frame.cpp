@@ -138,16 +138,16 @@ void DrawBatch(Primitive* lpBasePrim, PRIM_LINKS PrimLinks,
 
 			switch (PrimType)
 			{
-				case POINT_PRIM:
+				case PrimitiveType::Point:
 					color = GetPrimColor(lpWorkPrim);
 					TFB_Prim_Point(&lpWorkPrim->Object.Point, color,
 								   mode, origin, false);
 					break;
-				case STAMP_PRIM:
+				case PrimitiveType::Stamp:
 					if (flags & HyperToQuasiColor)
 					{
 						TFB_Prim_Stamp(&lpWorkPrim->Object.Stamp,
-									   MAKE_DRAW_MODE(DRAW_HYPTOQUAS, TransferAlpha),
+									   MAKE_DRAW_MODE(DrawKind::Hyptoquas, TransferAlpha),
 									   origin, (bool)(flags & UnscaledStamp));
 					}
 					else
@@ -156,12 +156,12 @@ void DrawBatch(Primitive* lpBasePrim, PRIM_LINKS PrimLinks,
 									   origin, (bool)(flags & UnscaledStamp));
 					}
 					break;
-				case STAMPFILL_PRIM:
+				case PrimitiveType::StampFill:
 					color = GetPrimColor(lpWorkPrim);
 					if (flags & HsStarmask)
 					{
 						TFB_Prim_StampFill(&lpWorkPrim->Object.Stamp, color,
-										   MAKE_DRAW_MODE(DRAW_OVERLAY, TransferAlpha),
+										   MAKE_DRAW_MODE(DrawKind::Overlay, TransferAlpha),
 										   origin, (bool)(flags & UnscaledStamp));
 					}
 					else
@@ -170,12 +170,12 @@ void DrawBatch(Primitive* lpBasePrim, PRIM_LINKS PrimLinks,
 										   mode, origin, (bool)(flags & UnscaledStamp));
 					}
 					break;
-				case LINE_PRIM:
+				case PrimitiveType::Line:
 					color = GetPrimColor(lpWorkPrim);
 					TFB_Prim_Line(&lpWorkPrim->Object.Line, color,
 								  mode, origin, chooseIfHd(1, 3));
 					break;
-				case TEXT_PRIM:
+				case PrimitiveType::Text:
 					if (!TextRect(&lpWorkPrim->Object.Text, &ClipRect, nullptr))
 					{
 						continue;
@@ -183,20 +183,22 @@ void DrawBatch(Primitive* lpBasePrim, PRIM_LINKS PrimLinks,
 					// ClipRect is relative to origin
 					_text_blt(&ClipRect, &lpWorkPrim->Object.Text, origin);
 					break;
-				case RECT_PRIM:
+				case PrimitiveType::Rect:
 					color = GetPrimColor(lpWorkPrim);
 					TFB_Prim_Rect(&lpWorkPrim->Object.Rect, color,
 								  mode, origin, false);
 					break;
-				case RECTFILL_PRIM:
+				case PrimitiveType::RectFill:
 					color = GetPrimColor(lpWorkPrim);
 					TFB_Prim_FillRect(&lpWorkPrim->Object.Rect, color,
 									  mode, origin);
 					break;
-				case POINT_PRIM_HD:
+				case PrimitiveType::PointHd:
 					color = GetPrimColor(lpWorkPrim);
 					TFB_Prim_Point(&lpWorkPrim->Object.Point, color,
 								   mode, origin, true);
+					break;
+				default:
 					break;
 			}
 		}

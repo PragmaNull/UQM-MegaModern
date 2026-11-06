@@ -136,11 +136,11 @@ TFB_SoundDecoderFuncs aifa_DecoderVtbl =
 };
 
 
-typedef enum
+enum class AiffCompression
 {
-	aifc_None,
-	aifc_Sdx2,
-} aiff_CompressionType;
+	None,
+	Sdx2,
+};
 
 constexpr int c_maxAiffChannels {4};
 
@@ -153,7 +153,7 @@ struct TFB_AiffSoundDecoder
 	int32_t last_error;
 	uqgsl::owner<uqm::io::File*> fp;
 	aiff_ExtCommonChunk fmtHdr;
-	aiff_CompressionType comp_type;
+	AiffCompression comp_type;
 	unsigned bits_per_sample;
 	unsigned block_align;
 	unsigned file_block;
@@ -306,7 +306,7 @@ static int aifa_readCommonChunk(TFB_AiffSoundDecoder* aifa, uint32_t size,
 	memset(fmt, 0, sizeof(*fmt));
 	if (size < AiffCommSize)
 	{
-		aifa->last_error = aifae_BadFile;
+		aifa->last_error = +AiffError::BadFile;
 		return 0;
 	}
 
@@ -473,7 +473,7 @@ static bool aifa_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, con
 			aifa_Close(This);
 			return false;
 		}
-		aifa->comp_type = aifc_None;
+		aifa->comp_type = AiffCompression::None;
 	}
 	else if (fileHdr.type == aiff_FormTypeAIFC)
 	{
@@ -484,7 +484,7 @@ static bool aifa_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, con
 			aifa_Close(This);
 			return false;
 		}
-		aifa->comp_type = aifc_Sdx2;
+		aifa->comp_type = AiffCompression::Sdx2;
 		aifa->file_block /= 2;
 		assert(aifa->fmtHdr.channels <= c_maxAiffChannels);
 		// after decompression, we will get samples in machine byte order
@@ -494,7 +494,7 @@ static bool aifa_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, con
 
 	aifa->data_size = aifa->fmtHdr.sampleFrames * aifa->file_block;
 
-	if (aifa->comp_type == aifc_Sdx2 && aifa->bits_per_sample != 16)
+	if (aifa->comp_type == AiffCompression::Sdx2 && aifa->bits_per_sample != 16)
 	{
 		uqm::log::warn("aifa_Open(): unsupported sample size {} for SDX2",
 					   (unsigned)aifa->fmtHdr.sampleSize);
@@ -539,9 +539,9 @@ static int aifa_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 	switch (aifa->comp_type)
 	{
-		case aifc_None:
+		case AiffCompression::None:
 			return aifa_DecodePCM(aifa, buf, bufsize);
-		case aifc_Sdx2:
+		case AiffCompression::Sdx2:
 			return aifa_DecodeSDX2(aifa, buf, bufsize);
 		default:
 			assert(false && "Unknown comp_type");

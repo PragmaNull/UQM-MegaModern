@@ -150,7 +150,7 @@ extern void SetCommIntroMode(CommIntroMode, TimePeriod howLong);
 extern void EnableTalkingAnim(bool enable);
 extern void SetCommDarkMode(bool state);
 extern void RedrawSISComWindow(void);
-extern void SetCustomBaseLine(uint16_t sentence, GfxPoint bl, TEXT_ALIGN align);
+extern void SetCustomBaseLine(uint16_t sentence, GfxPoint bl, TextAlign align);
 extern void FlushCustomBaseLine(void);
 extern void BlockTalkingAnim(uint16_t trackStart, uint16_t trackEnd);
 extern void UpdateDuty(bool talk);

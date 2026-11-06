@@ -51,7 +51,7 @@ static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewStat
 	SetContextForeGroundColor(BlackColor);
 
 	t.baseline.x = ResScale(73 - 4) + SafeX();
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 
 	if (OldState == (STARBASE_STATE)~0)
 	{
@@ -489,7 +489,7 @@ static constexpr auto LostDays {14};
 
 static void DoTimePassage(void)
 {
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond * 2));
+	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond * 2));
 	MoveGameClockDays(LostDays);
 
 	// JMS: Calculate flagship location in IP.
@@ -630,7 +630,7 @@ void InstallBombAtEarth(void)
 	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
 
-	SleepThreadUntil(FadeScreen(FadeAllToColor, TimePeriod {}));
+	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToColor, TimePeriod {}));
 
 	uqm::gameState().setFlag(uqm::GameFlag::CHMMR_BOMB_STATE, static_cast<uint32_t>(3)); /* bomb processed */
 	uqm::currentActivity() = CHECK_LOAD;												 /* fake a load game */
@@ -647,7 +647,7 @@ uint16_t WrapText(const char* pStr, uint16_t len, GfxText* tarray, int16_t field
 		GfxRect r;
 		uint16_t OldCount {};
 
-		tarray->align = ALIGN_LEFT; /* set alignment to something */
+		tarray->align = TextAlign::Left; /* set alignment to something */
 		tarray->pStr = pStr;
 		tarray->CharCount = 1;
 		++num_lines;

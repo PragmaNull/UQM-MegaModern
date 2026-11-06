@@ -270,13 +270,13 @@ void InitGalaxy(void)
 
 		if (i < BigStarCount + MedStarCount)
 		{
-			SetPrimType(&DisplayArray[p], STAMP_PRIM);
+			SetPrimType(&DisplayArray[p], PrimitiveType::Stamp);
 			SetPrimColor(&DisplayArray[p],
 						 BuildColor(MakeRgb15(0x0B, 0x0B, 0x1F), 0x09));
 
 			if (useScenery && i == (BigStarCount + MedStarCount - 1))
 			{ //Set SA-MATRA as background image on the second Star layer
-				SetPrimType(&DisplayArray[p], STAMP_PRIM);
+				SetPrimType(&DisplayArray[p], PrimitiveType::Stamp);
 				DisplayArray[p].Object.Stamp.frame = scenery;
 				num_sceneries = 1;
 			}
@@ -289,7 +289,7 @@ void InitGalaxy(void)
 		{
 			if (IsHd())
 			{ // In HdResolutionFactor the smallest stars are images
-				SetPrimType(&DisplayArray[p], STAMP_PRIM);
+				SetPrimType(&DisplayArray[p], PrimitiveType::Stamp);
 				if (uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE)
 				{
 					SetPrimFlags(&DisplayArray[p], UnscaledStamp);
@@ -308,7 +308,7 @@ void InitGalaxy(void)
 			}
 			else
 			{ // Pixel starpoints in original res
-				SetPrimType(&DisplayArray[p], POINT_PRIM);
+				SetPrimType(&DisplayArray[p], PrimitiveType::Point);
 				if (uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE)
 				{
 					SetPrimColor(&DisplayArray[p],
@@ -396,7 +396,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 			}
 			else
 			{
-				GRAPHICS_PRIM star_object[2];
+				uint8_t star_object[2];
 				FRAME star_frame[3];
 
 				if (meleeScaleModeIsStep)
@@ -426,27 +426,27 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 
 					if (meleeScaleModeIsStep)
 					{ /* on PC, the closest stars are images when zoomed out */
-						star_object[0] = STAMP_PRIM;
+						star_object[0] = +PrimitiveType::Stamp;
 						if (reduction > 0)
 						{
-							star_object[1] = POINT_PRIM;
+							star_object[1] = +PrimitiveType::Point;
 							star_frame[0] = star_frame[1];
 						}
 						else
 						{
-							star_object[1] = STAMP_PRIM;
+							star_object[1] = +PrimitiveType::Stamp;
 						}
 					}
 					else
 					{ /* on 3DO, the closest stars are pixels when zoomed out */
-						star_object[1] = POINT_PRIM;
+						star_object[1] = +PrimitiveType::Point;
 						if (reduction > (1 << ZoomShift))
 						{
-							star_object[0] = POINT_PRIM;
+							star_object[0] = +PrimitiveType::Point;
 						}
 						else
 						{
-							star_object[0] = STAMP_PRIM;
+							star_object[0] = +PrimitiveType::Stamp;
 						}
 					}
 				}
@@ -456,7 +456,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 					star_frame[1] = IncFrameIndex(stars_in_space);		 // mid blue
 					star_frame[2] = SetAbsFrameIndex(stars_in_space, 2); // small blue
 
-					star_object[0] = star_object[1] = STAMP_PRIM;
+					star_object[0] = star_object[1] = +PrimitiveType::Stamp;
 
 					if (meleeScaleModeIsStep && reduction > 0)
 					{
@@ -482,7 +482,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 				{
 					for (i = star_counts[iss]; i > (num_sceneries & iss); --i, ++pprim)
 					{
-						SetPrimType(pprim, star_object[iss] & 15);
+						SetPrimType(pprim, static_cast<PrimitiveType>(star_object[iss] & 15));
 						SetPrimFlags(pprim, star_object[iss] >> 7);
 						pprim->Object.Stamp.frame = star_frame[iss];
 					}

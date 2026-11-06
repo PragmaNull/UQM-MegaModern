@@ -114,7 +114,7 @@ SoundPosition CalcSoundPosition(Element* ElementPtr)
 	else
 	{
 		const GRAPHICS_PRIM objtype {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
-		if (objtype == LINE_PRIM)
+		if (objtype == PrimitiveType::Line)
 		{
 			pos.x = DisplayArray[ElementPtr->PrimIndex].Object.Line.first.x;
 			pos.y = DisplayArray[ElementPtr->PrimIndex].Object.Line.first.y;

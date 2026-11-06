@@ -73,7 +73,7 @@ private:
 	static void onChoiceChanged(WidgetChoice* self, int oldValue);
 	static void onSliderChanged(WidgetSlider* self);
 	static void onTextChanged(WidgetTextEntry* self);
-	static int onMenuButtonEvent(Widget* self, int event);
+	static int onMenuButtonEvent(Widget* self, WidgetEvent event);
 
 	Widget* buildChoice(const MenuDef& menu, const MenuItemDef& item);
 	Widget* buildSlider(const MenuDef& menu, const MenuItemDef& item);
@@ -98,7 +98,7 @@ private:
 };
 
 // Sets up a full-width button. The strings must stay valid while the widget is in use.
-void initButtonWidget(WidgetButton& widget, const uqstl::string& name, const uqstl::vector<uqstl::string>& tooltip, int (*handler)(Widget*, int));
+void initButtonWidget(WidgetButton& widget, const uqstl::string& name, const uqstl::vector<uqstl::string>& tooltip, int (*handler)(Widget*, WidgetEvent));
 // Sets up a full-width label. The lines must stay valid while the widget is in use.
 void initLabelWidget(WidgetLabel& widget, uqstl::vector<const char*>& lines);
 

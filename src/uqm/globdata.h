@@ -144,8 +144,8 @@ struct ConversationData
 	Color AlienTextFColor, AlienTextBColor;
 	GfxPoint AlienTextBaseline;
 	uint16_t AlienTextWidth;
-	TEXT_ALIGN AlienTextAlign;
-	TEXT_VALIGN AlienTextValign;
+	TextAlign AlienTextAlign;
+	TextVAlign AlienTextValign;
 	RESOURCE AlienColorMapRes;
 	RESOURCE AlienSongRes;
 	AlienAltResources AltRes;

@@ -536,7 +536,7 @@ static void renderTintFrame(Color tintColor)
 	DrawStamp(&s);
 
 	// apply the tint
-	mode = MAKE_DRAW_MODE(DRAW_ADDITIVE, DrawFactor1 * is_red);
+	mode = MAKE_DRAW_MODE(DrawKind::Additive, DrawFactor1 * is_red);
 
 	oldMode = SetContextDrawMode(mode);
 	SetContextForeGroundColor(tintColor);

@@ -40,7 +40,7 @@ void TFB_Prim_Point(GfxPoint* p, Color color, DrawMode mode, GfxPoint ctxOrigin,
 
 	if (_CurFramePtr->Type == ScreenDrawable)
 	{
-		TFB_DrawScreen_Rect(&r, color, mode, TFB_SCREEN_MAIN);
+		TFB_DrawScreen_Rect(&r, color, mode, ScreenBuffer::Main);
 	}
 	else
 	{
@@ -103,7 +103,7 @@ void TFB_Prim_FillRect(GfxRect* r, Color color, DrawMode mode, GfxPoint ctxOrigi
 
 	if (_CurFramePtr->Type == ScreenDrawable)
 	{
-		TFB_DrawScreen_Rect(&rect, color, mode, TFB_SCREEN_MAIN);
+		TFB_DrawScreen_Rect(&rect, color, mode, ScreenBuffer::Main);
 	}
 	else
 	{
@@ -122,7 +122,7 @@ void TFB_Prim_Line(GfxLine* line, Color color, DrawMode mode, GfxPoint ctxOrigin
 
 	if (_CurFramePtr->Type == ScreenDrawable)
 	{
-		TFB_DrawScreen_Line(x1, y1, x2, y2, color, mode, TFB_SCREEN_MAIN, thickness);
+		TFB_DrawScreen_Line(x1, y1, x2, y2, color, mode, ScreenBuffer::Main, thickness);
 	}
 	else
 	{
@@ -180,7 +180,7 @@ void TFB_Prim_Stamp(GfxStamp* stmp, DrawMode mode, GfxPoint ctxOrigin, bool unsc
 	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		TFB_DrawScreen_Image(img, x, y, scaleMode,
-							 GetGraphicScaleMode(), cmap, mode, TFB_SCREEN_MAIN);
+							 GetGraphicScaleMode(), cmap, mode, ScreenBuffer::Main);
 	}
 	else
 	{
@@ -232,7 +232,7 @@ void TFB_Prim_StampFill(GfxStamp* stmp, Color color, DrawMode mode, GfxPoint ctx
 	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		TFB_DrawScreen_FilledImage(img, x, y, scaleMode,
-								   GetGraphicScaleMode(), color, mode, TFB_SCREEN_MAIN);
+								   GetGraphicScaleMode(), color, mode, ScreenBuffer::Main);
 	}
 	else
 	{
@@ -254,7 +254,7 @@ void TFB_Prim_FontChar(GfxPoint charOrigin, TFB_Char* fontChar, TFB_Image* backi
 	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		TFB_DrawScreen_FontChar(fontChar, backing, x, y, mode,
-								TFB_SCREEN_MAIN);
+								ScreenBuffer::Main);
 	}
 	else
 	{

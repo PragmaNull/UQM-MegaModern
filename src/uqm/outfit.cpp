@@ -109,7 +109,7 @@ static void DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 	GfxText t;
 	char buf[10];
 
-	t.align = ALIGN_LEFT;
+	t.align = TextAlign::Left;
 	t.baseline.x = ModuleCol0();
 
 	r.extent.width = ModuleSelWidth();
@@ -143,7 +143,7 @@ static void DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 		SetContextForeGroundColor(selected ?
 									  ModuleSelectedColor :
 									  ModulePriceColor);
-		t.align = ALIGN_RIGHT;
+		t.align = TextAlign::Right;
 		t.baseline.x = ModuleCol1() - ResScale(2);
 		t.baseline.y -= ResScale(3);
 		fmt::format_to_sz_n(buf, "{}",
@@ -188,7 +188,7 @@ static void DrawModuleDisplay(ModulesMenuState* modState)
 	SetContextFont(StarConFont);
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = r.corner.y + ResScale(7);
-	t.align = ALIGN_CENTER;
+	t.align = TextAlign::Center;
 	t.pStr = GameString(STARBASE_STRING_BASE + 11);
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(ModuleSelectedColor);
@@ -304,7 +304,7 @@ static void DrawModuleMenuText(GfxRect* r, int Index)
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
 						GameString(TdoStarbaseStringBase + Index));
 
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 	{
 		uqstl::vector<uqstl::string> tokens;
 		uqm::tokenize(uqstl::string_view {buf}, tokens, ' ', false);
@@ -314,7 +314,7 @@ static void DrawModuleMenuText(GfxRect* r, int Index)
 								  &text.baseline.x);
 			text.CharCount = (uint16_t)~0;
 
-			font_DrawShadowedText(&text, WEST_SHADOW, MdlTextColor,
+			font_DrawShadowedText(&text, ShadowAngle::West, MdlTextColor,
 								  MdlShadowColor);
 
 			text.baseline.y += leading;
@@ -408,7 +408,7 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 		// Print the module cost.
 		t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
 		t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
-		t.align = ALIGN_RIGHT;
+		t.align = TextAlign::Right;
 		t.CharCount = (uint16_t)~0;
 		t.pStr = buf;
 		fmt::format_to_n(buf, sizeof(buf) - 1, "{}",
@@ -487,14 +487,14 @@ static void DrawEscapePodText(GfxRect rect)
 	text.baseline = rect.corner;
 	text.baseline.x += DosBoolScl(189, 27);
 	text.baseline.y += ResScale(39);
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 
 	const int16_t og_baseline_x {text.baseline.x};
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
 						GameString(EndStarbaseStringBase + 1));
 
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 	SetContextForeGroundColor(LanderPodTextColor);
 
 	{
@@ -540,7 +540,7 @@ static void DrawNoLandersText(GfxRect rect)
 	text.baseline = rect.corner;
 	text.baseline.x += ResScale(81);
 	text.baseline.y += ResScale(17);
-	text.align = ALIGN_CENTER;
+	text.align = TextAlign::Center;
 	text.pStr = AlignText(
 		(const char*)GameString(EndStarbaseStringBase),
 		&text.baseline.x);
