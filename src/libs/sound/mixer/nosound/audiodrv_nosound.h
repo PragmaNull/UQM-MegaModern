@@ -39,15 +39,15 @@ int32_t noSound_GetError(void);
 void noSound_GenSources(uint32_t n, audio_Object* psrcobj);
 void noSound_DeleteSources(uint32_t n, audio_Object* psrcobj);
 bool noSound_IsSource(audio_Object srcobj);
-void noSound_Sourcei(audio_Object srcobj, audio_SourceProp pname,
+void noSound_Sourcei(audio_Object srcobj, int32_t pname,
 					 audio_IntVal value);
-void noSound_Sourcef(audio_Object srcobj, audio_SourceProp pname,
+void noSound_Sourcef(audio_Object srcobj, int32_t pname,
 					 float value);
-void noSound_Sourcefv(audio_Object srcobj, audio_SourceProp pname,
+void noSound_Sourcefv(audio_Object srcobj, int32_t pname,
 					  float* value);
-void noSound_GetSourcei(audio_Object srcobj, audio_SourceProp pname,
+void noSound_GetSourcei(audio_Object srcobj, int32_t pname,
 						audio_IntVal* value);
-void noSound_GetSourcef(audio_Object srcobj, audio_SourceProp pname,
+void noSound_GetSourcef(audio_Object srcobj, int32_t pname,
 						float* value);
 void noSound_SourceRewind(audio_Object srcobj);
 void noSound_SourcePlay(audio_Object srcobj);
@@ -62,7 +62,7 @@ void noSound_SourceUnqueueBuffers(audio_Object srcobj, uint32_t n,
 void noSound_GenBuffers(uint32_t n, audio_Object* pbufobj);
 void noSound_DeleteBuffers(uint32_t n, audio_Object* pbufobj);
 bool noSound_IsBuffer(audio_Object bufobj);
-void noSound_GetBufferi(audio_Object bufobj, audio_BufferProp pname,
+void noSound_GetBufferi(audio_Object bufobj, int32_t pname,
 						audio_IntVal* value);
 void noSound_BufferData(audio_Object bufobj, uint32_t format, void* data,
 						uint32_t size, uint32_t freq);

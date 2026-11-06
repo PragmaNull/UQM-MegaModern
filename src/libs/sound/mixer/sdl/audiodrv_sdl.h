@@ -34,15 +34,15 @@ int32_t mixSDL_GetError(void);
 void mixSDL_GenSources(uint32_t n, audio_Object* psrcobj);
 void mixSDL_DeleteSources(uint32_t n, audio_Object* psrcobj);
 bool mixSDL_IsSource(audio_Object srcobj);
-void mixSDL_Sourcei(audio_Object srcobj, audio_SourceProp pname,
+void mixSDL_Sourcei(audio_Object srcobj, int32_t pname,
 					audio_IntVal value);
-void mixSDL_Sourcef(audio_Object srcobj, audio_SourceProp pname,
+void mixSDL_Sourcef(audio_Object srcobj, int32_t pname,
 					float value);
-void mixSDL_Sourcefv(audio_Object srcobj, audio_SourceProp pname,
+void mixSDL_Sourcefv(audio_Object srcobj, int32_t pname,
 					 float* value);
-void mixSDL_GetSourcei(audio_Object srcobj, audio_SourceProp pname,
+void mixSDL_GetSourcei(audio_Object srcobj, int32_t pname,
 					   audio_IntVal* value);
-void mixSDL_GetSourcef(audio_Object srcobj, audio_SourceProp pname,
+void mixSDL_GetSourcef(audio_Object srcobj, int32_t pname,
 					   float* value);
 void mixSDL_SourceRewind(audio_Object srcobj);
 void mixSDL_SourcePlay(audio_Object srcobj);
@@ -57,7 +57,7 @@ void mixSDL_SourceUnqueueBuffers(audio_Object srcobj, uint32_t n,
 void mixSDL_GenBuffers(uint32_t n, audio_Object* pbufobj);
 void mixSDL_DeleteBuffers(uint32_t n, audio_Object* pbufobj);
 bool mixSDL_IsBuffer(audio_Object bufobj);
-void mixSDL_GetBufferi(audio_Object bufobj, audio_BufferProp pname,
+void mixSDL_GetBufferi(audio_Object bufobj, int32_t pname,
 					   audio_IntVal* value);
 void mixSDL_BufferData(audio_Object bufobj, uint32_t format, void* data,
 					   uint32_t size, uint32_t freq);

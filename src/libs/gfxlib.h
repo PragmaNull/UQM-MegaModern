@@ -21,6 +21,7 @@
 #ifndef LIBS_GFXLIB_H_
 #define LIBS_GFXLIB_H_
 
+#include "core/types/enum.h"
 #include <fmt/base.h>
 #include "port.h"
 #include "core/misc/bittricks.h"

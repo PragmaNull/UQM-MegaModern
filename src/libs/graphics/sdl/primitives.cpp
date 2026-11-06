@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "port.h"
 #include "sdl_common.h"
 #include "primitives.h"
@@ -664,39 +665,41 @@ void line_aa_prim(int x1, int y1, int x2, int y2, Uint32 color, RenderPixelFn pl
 
 // Clips line against rectangle using Cohen-Sutherland algorithm
 
-enum
+enum class ClipCode
 {
-	C_TOP = 0x1,
-	C_BOTTOM = 0x2,
-	C_RIGHT = 0x4,
-	C_LEFT = 0x8
+	Top = 0x1,
+	Bottom = 0x2,
+	Right = 0x4,
+	Left = 0x8
 };
+template <>
+inline constexpr bool IsFlagEnum<ClipCode> = true;
 
-static int compute_code(float x, float y, float xmin, float ymin, float xmax, float ymax)
+static ClipCode compute_code(float x, float y, float xmin, float ymin, float xmax, float ymax)
 {
-	int c = 0;
+	ClipCode c {};
 	if (y > ymax)
 	{
-		c |= C_TOP;
+		c |= ClipCode::Top;
 	}
 	else if (y < ymin)
 	{
-		c |= C_BOTTOM;
+		c |= ClipCode::Bottom;
 	}
 	if (x > xmax)
 	{
-		c |= C_RIGHT;
+		c |= ClipCode::Right;
 	}
 	else if (x < xmin)
 	{
-		c |= C_LEFT;
+		c |= ClipCode::Left;
 	}
 	return c;
 }
 
 int clip_line(int* lx1, int* ly1, int* lx2, int* ly2, const SDL_Rect* r)
 {
-	int C {};
+	ClipCode C {};
 	float x {NAN};
 	float y {NAN};
 	float x0 {NAN};
@@ -718,13 +721,13 @@ int clip_line(int* lx1, int* ly1, int* lx2, int* ly2, const SDL_Rect* r)
 	xmax = (float)r->x + r->w - 1;
 	ymax = (float)r->y + r->h - 1;
 
-	int C0 {compute_code(x0, y0, xmin, ymin, xmax, ymax)};
-	int C1 {compute_code(x1, y1, xmin, ymin, xmax, ymax)};
+	ClipCode C0 {compute_code(x0, y0, xmin, ymin, xmax, ymax)};
+	ClipCode C1 {compute_code(x1, y1, xmin, ymin, xmax, ymax)};
 
 	for (;;)
 	{
 		/* trivial accept: both ends in rectangle */
-		if ((C0 | C1) == 0)
+		if ((C0 | C1) == ClipCode {})
 		{
 			*lx1 = (int)x0;
 			*ly1 = (int)y0;
@@ -734,24 +737,24 @@ int clip_line(int* lx1, int* ly1, int* lx2, int* ly2, const SDL_Rect* r)
 		}
 
 		/* trivial reject: both ends on the external side of the rectangle */
-		if ((C0 & C1) != 0)
+		if (any(C0, C1))
 		{
 			return 0;
 		}
 
 		/* normal case: clip end outside rectangle */
-		C = C0 ? C0 : C1;
-		if (C & C_TOP)
+		C = C0 != ClipCode {} ? C0 : C1;
+		if (any(C, ClipCode::Top))
 		{
 			x = x0 + (x1 - x0) * (ymax - y0) / (y1 - y0);
 			y = ymax;
 		}
-		else if (C & C_BOTTOM)
+		else if (any(C, ClipCode::Bottom))
 		{
 			x = x0 + (x1 - x0) * (ymin - y0) / (y1 - y0);
 			y = ymin;
 		}
-		else if (C & C_RIGHT)
+		else if (any(C, ClipCode::Right))
 		{
 			x = xmax;
 			y = y0 + (y1 - y0) * (xmax - x0) / (x1 - x0);

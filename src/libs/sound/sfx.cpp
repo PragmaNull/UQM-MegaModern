@@ -48,7 +48,7 @@ void PlayChannel(uint16_t channel, SOUND snd, SoundPosition pos,
 
 	UpdateSoundPosition(channel, uqm::UQMOptions::read().stereoSFX ? pos : notPositional);
 
-	audio_Sourcei(soundSource[channel].handle, audio_BUFFER,
+	audio_Sourcei(soundSource[channel].handle, AudioEnum::Buffer,
 				  sample->buffer[0]);
 	audio_SourcePlay(soundSource[channel].handle);
 	(void)priority;
@@ -66,9 +66,9 @@ static void CheckFinishedChannels(void)
 	{
 		audio_IntVal state {};
 
-		audio_GetSourcei(soundSource[i].handle, audio_SOURCE_STATE,
+		audio_GetSourcei(soundSource[i].handle, AudioEnum::SourceState,
 						 &state);
-		if (state == audio_STOPPED)
+		if (state == AudioEnum::Stopped)
 		{
 			CleanSource(i);
 			// and if it failed... we still dont care
@@ -82,8 +82,8 @@ bool ChannelPlaying(uint16_t WhichChannel)
 	audio_IntVal state {};
 
 	audio_GetSourcei(soundSource[WhichChannel].handle,
-					 audio_SOURCE_STATE, &state);
-	if (state == audio_PLAYING)
+					 AudioEnum::SourceState, &state);
+	if (state == AudioEnum::Playing)
 	{
 		return true;
 	}
@@ -122,7 +122,7 @@ void UpdateSoundPosition(uint16_t channel, SoundPosition pos)
 			fpos[2] *= scale;
 		}
 
-		audio_Sourcefv(soundSource[channel].handle, audio_POSITION, fpos);
+		audio_Sourcefv(soundSource[channel].handle, AudioEnum::Position, fpos);
 		//log_add (log_Debug, "UpdateSoundPosition(): channel {}, pos {} {}, posobj {:x}",
 		//		channel, pos.x, pos.y, (unsigned int)soundSource[channel].positional_object);
 	}
@@ -130,7 +130,7 @@ void UpdateSoundPosition(uint16_t channel, SoundPosition pos)
 	{
 		fpos[0] = fpos[1] = 0.0f;
 		fpos[2] = -1.0f;
-		audio_Sourcefv(soundSource[channel].handle, audio_POSITION, fpos);
+		audio_Sourcefv(soundSource[channel].handle, AudioEnum::Position, fpos);
 	}
 }
 
@@ -138,7 +138,7 @@ void SetChannelVolume(uint16_t channel, uint16_t volume, uint8_t priority)
 // I wonder what this whole priority business is...
 // I can probably ignore it.
 {
-	audio_Sourcef(soundSource[channel].handle, audio_GAIN,
+	audio_Sourcef(soundSource[channel].handle, AudioEnum::Gain,
 				  (volume / (float)MaxVolume) * sfxVolumeScale);
 	(void)priority; // ignored
 }

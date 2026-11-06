@@ -34,21 +34,21 @@ struct audio_Driver
 	void (*Uninitialize)(void);
 	int32_t (*GetError)(void);
 	AudioDriverType driverID;
-	int32_t EnumLookup[audio_ENUM_SIZE];
+	int32_t EnumLookup[+AudioEnum::Count];
 
 	/* Sources */
 	void (*GenSources)(uint32_t n, audio_Object* psrcobj);
 	void (*DeleteSources)(uint32_t n, audio_Object* psrcobj);
 	bool (*IsSource)(audio_Object srcobj);
-	void (*Sourcei)(audio_Object srcobj, audio_SourceProp pname,
+	void (*Sourcei)(audio_Object srcobj, int32_t pname,
 					audio_IntVal value);
-	void (*Sourcef)(audio_Object srcobj, audio_SourceProp pname,
+	void (*Sourcef)(audio_Object srcobj, int32_t pname,
 					float value);
-	void (*Sourcefv)(audio_Object srcobj, audio_SourceProp pname,
+	void (*Sourcefv)(audio_Object srcobj, int32_t pname,
 					 float* value);
-	void (*GetSourcei)(audio_Object srcobj, audio_SourceProp pname,
+	void (*GetSourcei)(audio_Object srcobj, int32_t pname,
 					   audio_IntVal* value);
-	void (*GetSourcef)(audio_Object srcobj, audio_SourceProp pname,
+	void (*GetSourcef)(audio_Object srcobj, int32_t pname,
 					   float* value);
 	void (*SourceRewind)(audio_Object srcobj);
 	void (*SourcePlay)(audio_Object srcobj);
@@ -63,7 +63,7 @@ struct audio_Driver
 	void (*GenBuffers)(uint32_t n, audio_Object* pbufobj);
 	void (*DeleteBuffers)(uint32_t n, audio_Object* pbufobj);
 	bool (*IsBuffer)(audio_Object bufobj);
-	void (*GetBufferi)(audio_Object bufobj, audio_BufferProp pname,
+	void (*GetBufferi)(audio_Object bufobj, int32_t pname,
 					   audio_IntVal* value);
 	void (*BufferData)(audio_Object bufobj, uint32_t format, void* data,
 					   uint32_t size, uint32_t freq);

@@ -147,8 +147,8 @@ void ResumeTrack(void)
 		return;
 	}
 
-	audio_GetSourcei(soundSource[SpeechSource].handle, audio_SOURCE_STATE, &state);
-	if (state == audio_PAUSED)
+	audio_GetSourcei(soundSource[SpeechSource].handle, AudioEnum::SourceState, &state);
+	if (state == AudioEnum::Paused)
 	{
 		ResumeStream(SpeechSource);
 	}

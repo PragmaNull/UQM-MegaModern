@@ -44,15 +44,15 @@ int32_t openAL_GetError(void);
 void openAL_GenSources(uint32_t n, audio_Object* psrcobj);
 void openAL_DeleteSources(uint32_t n, audio_Object* psrcobj);
 bool openAL_IsSource(audio_Object srcobj);
-void openAL_Sourcei(audio_Object srcobj, audio_SourceProp pname,
+void openAL_Sourcei(audio_Object srcobj, int32_t pname,
 					audio_IntVal value);
-void openAL_Sourcef(audio_Object srcobj, audio_SourceProp pname,
+void openAL_Sourcef(audio_Object srcobj, int32_t pname,
 					float value);
-void openAL_Sourcefv(audio_Object srcobj, audio_SourceProp pname,
+void openAL_Sourcefv(audio_Object srcobj, int32_t pname,
 					 float* value);
-void openAL_GetSourcei(audio_Object srcobj, audio_SourceProp pname,
+void openAL_GetSourcei(audio_Object srcobj, int32_t pname,
 					   audio_IntVal* value);
-void openAL_GetSourcef(audio_Object srcobj, audio_SourceProp pname,
+void openAL_GetSourcef(audio_Object srcobj, int32_t pname,
 					   float* value);
 void openAL_SourceRewind(audio_Object srcobj);
 void openAL_SourcePlay(audio_Object srcobj);
@@ -67,7 +67,7 @@ void openAL_SourceUnqueueBuffers(audio_Object srcobj, uint32_t n,
 void openAL_GenBuffers(uint32_t n, audio_Object* pbufobj);
 void openAL_DeleteBuffers(uint32_t n, audio_Object* pbufobj);
 bool openAL_IsBuffer(audio_Object bufobj);
-void openAL_GetBufferi(audio_Object bufobj, audio_BufferProp pname,
+void openAL_GetBufferi(audio_Object bufobj, int32_t pname,
 					   audio_IntVal* value);
 void openAL_BufferData(audio_Object bufobj, uint32_t format, void* data,
 					   uint32_t size, uint32_t freq);

@@ -25,45 +25,48 @@ static constexpr inline AudioFlags AudioQualityFlagMask {AudioFlags::QualityLow 
 /* Interface Types */
 using audio_Object = uintptr_t;
 using audio_IntVal = intptr_t;
-using audio_SourceProp = const int32_t;
-using audio_BufferProp = const int32_t;
 
-enum
+enum class AudioEnum
 {
 	/* Errors */
-	audio_NO_ERROR = 0,
-	audio_INVALID_NAME,
-	audio_INVALID_ENUM,
-	audio_INVALID_VALUE,
-	audio_INVALID_OPERATION,
-	audio_OUT_OF_MEMORY,
-	audio_DRIVER_FAILURE,
+	NoError = 0,
+	InvalidName,
+	InvalidEnum,
+	InvalidValue,
+	InvalidOperation,
+	OutOfMemory,
+	DriverFailure,
 
 	/* Source properties */
-	audio_POSITION,
-	audio_LOOPING,
-	audio_BUFFER,
-	audio_GAIN,
-	audio_SOURCE_STATE,
-	audio_BUFFERS_QUEUED,
-	audio_BUFFERS_PROCESSED,
+	Position,
+	Looping,
+	Buffer,
+	Gain,
+	SourceState,
+	BuffersQueued,
+	BuffersProcessed,
 
 	/* Source state information */
-	audio_INITIAL,
-	audio_STOPPED,
-	audio_PLAYING,
-	audio_PAUSED,
+	Initial,
+	Stopped,
+	Playing,
+	Paused,
 
 	/* Sound buffer properties */
-	audio_FREQUENCY,
-	audio_BITS,
-	audio_CHANNELS,
-	audio_SIZE,
-	audio_FORMAT_MONO16,
-	audio_FORMAT_STEREO16,
-	audio_FORMAT_MONO8,
-	audio_FORMAT_STEREO8,
-	audio_ENUM_SIZE
+	Frequency,
+	Bits,
+	Channels,
+	Size,
+	FormatMono16,
+	FormatStereo16,
+	FormatMono8,
+	FormatStereo8,
+	Count
 };
+template <>
+inline constexpr bool IsArithmeticEnum<AudioEnum> = true;
+
+using audio_SourceProp = AudioEnum;
+using audio_BufferProp = AudioEnum;
 
 #endif /*LIBS_SOUND_AUDIOCOREDEFS_H_*/

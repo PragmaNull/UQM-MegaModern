@@ -34,38 +34,38 @@ const static audio_Driver noSound_Driver =
 		noSound_GetError,
 		AudioDriverType::NoSound,
 		{/* Errors */
-		 MIX_NO_ERROR,
-				   MIX_INVALID_NAME,
-				   MIX_INVALID_ENUM,
-				   MIX_INVALID_VALUE,
-				   MIX_INVALID_OPERATION,
-				   MIX_OUT_OF_MEMORY,
-				   MIX_DRIVER_FAILURE,
+		 +MixerError::NoError,
+				   +MixerError::InvalidName,
+				   +MixerError::InvalidEnum,
+				   +MixerError::InvalidValue,
+				   +MixerError::InvalidOperation,
+				   +MixerError::OutOfMemory,
+				   +MixerError::DriverFailure,
 
 				   /* Source properties */
-		 MIX_POSITION,
-				   MIX_LOOPING,
-				   MIX_BUFFER,
-				   MIX_GAIN,
-				   MIX_SOURCE_STATE,
-				   MIX_BUFFERS_QUEUED,
-				   MIX_BUFFERS_PROCESSED,
+		 +MixerSourceProp::Position,
+				   +MixerSourceProp::Looping,
+				   +MixerSourceProp::Buffer,
+				   +MixerSourceProp::Gain,
+				   +MixerSourceProp::SourceState,
+				   +MixerSourceProp::BuffersQueued,
+				   +MixerSourceProp::BuffersProcessed,
 
 				   /* Source state information */
-		 MIX_INITIAL,
-				   MIX_STOPPED,
-				   MIX_PLAYING,
-				   MIX_PAUSED,
+		 +MixerSourceState::Initial,
+				   +MixerSourceState::Stopped,
+				   +MixerSourceState::Playing,
+				   +MixerSourceState::Paused,
 
 				   /* Sound buffer properties */
-		 MIX_FREQUENCY,
-				   MIX_BITS,
-				   MIX_CHANNELS,
-				   MIX_SIZE,
-				   MIX_FORMAT_MONO16,
-				   MIX_FORMAT_STEREO16,
-				   MIX_FORMAT_MONO8,
-				   MIX_FORMAT_STEREO8},
+		 +MixerBufferProp::Frequency,
+				   +MixerBufferProp::Bits,
+				   +MixerBufferProp::Channels,
+				   +MixerBufferProp::Size,
+				   +MixerFormat::Mono16,
+				   +MixerFormat::Stereo16,
+				   +MixerFormat::Mono8,
+				   +MixerFormat::Stereo8},
 
 		/* Sources */
 		noSound_GenSources,
@@ -128,14 +128,14 @@ int32_t noSound_Init(audio_Driver* driver, AudioFlags flags)
 	TFB_DecoderFormats formats =
 		{
 			0, 0,
-			audio_FORMAT_MONO8, audio_FORMAT_STEREO8,
-			audio_FORMAT_MONO16, audio_FORMAT_STEREO16};
+			+AudioEnum::FormatMono8, +AudioEnum::FormatStereo8,
+			+AudioEnum::FormatMono16, +AudioEnum::FormatStereo16};
 
 	uqm::log::info("Using nosound audio driver.");
 	uqm::log::info("Initializing mixer.");
 
 	if (!mixer_Init(nosound_freq, MixFormatMake(1, 1),
-					MIX_QUALITY_LOW, MIX_FAKE_DATA))
+					MixerQuality::Low, MixerFlags::FakeData))
 	{
 		uqm::log::error("Mixer initialization failed: {:x}",
 						mixer_GetError());
@@ -224,25 +224,25 @@ void PlaybackTaskFunc(uqstl::stop_token stopToken)
 
 int32_t noSound_GetError(void)
 {
-	int32_t value = mixer_GetError();
+	const MixerError value {mixer_GetError()};
 	switch (value)
 	{
-		case MIX_NO_ERROR:
-			return audio_NO_ERROR;
-		case MIX_INVALID_NAME:
-			return audio_INVALID_NAME;
-		case MIX_INVALID_ENUM:
-			return audio_INVALID_ENUM;
-		case MIX_INVALID_VALUE:
-			return audio_INVALID_VALUE;
-		case MIX_INVALID_OPERATION:
-			return audio_INVALID_OPERATION;
-		case MIX_OUT_OF_MEMORY:
-			return audio_OUT_OF_MEMORY;
+		case MixerError::NoError:
+			return +AudioEnum::NoError;
+		case MixerError::InvalidName:
+			return +AudioEnum::InvalidName;
+		case MixerError::InvalidEnum:
+			return +AudioEnum::InvalidEnum;
+		case MixerError::InvalidValue:
+			return +AudioEnum::InvalidValue;
+		case MixerError::InvalidOperation:
+			return +AudioEnum::InvalidOperation;
+		case MixerError::OutOfMemory:
+			return +AudioEnum::OutOfMemory;
 		default:
 			uqm::log::debug("noSound_GetError: unknown value {:x}",
 							value);
-			return audio_DRIVER_FAILURE;
+			return +AudioEnum::DriverFailure;
 			break;
 	}
 }
@@ -270,61 +270,61 @@ bool noSound_IsSource(audio_Object srcobj)
 	return mixer_IsSource((mixer_Object)srcobj);
 }
 
-void noSound_Sourcei(audio_Object srcobj, audio_SourceProp pname,
+void noSound_Sourcei(audio_Object srcobj, int32_t pname,
 					 audio_IntVal value)
 
 {
-	mixer_Sourcei((mixer_Object)srcobj, (mixer_SourceProp)pname,
+	mixer_Sourcei((mixer_Object)srcobj, (MixerSourceProp)pname,
 				  (mixer_IntVal)value);
 }
 
-void noSound_Sourcef(audio_Object srcobj, audio_SourceProp pname,
+void noSound_Sourcef(audio_Object srcobj, int32_t pname,
 					 float value)
 {
-	mixer_Sourcef((mixer_Object)srcobj, (mixer_SourceProp)pname, value);
+	mixer_Sourcef((mixer_Object)srcobj, (MixerSourceProp)pname, value);
 }
 
-void noSound_Sourcefv(audio_Object srcobj, audio_SourceProp pname,
+void noSound_Sourcefv(audio_Object srcobj, int32_t pname,
 					  float* value)
 {
-	mixer_Sourcefv((mixer_Object)srcobj, (mixer_SourceProp)pname, value);
+	mixer_Sourcefv((mixer_Object)srcobj, (MixerSourceProp)pname, value);
 }
 
-void noSound_GetSourcei(audio_Object srcobj, audio_SourceProp pname,
+void noSound_GetSourcei(audio_Object srcobj, int32_t pname,
 						audio_IntVal* value)
 {
 	mixer_IntVal temp = *value;
-	mixer_GetSourcei((mixer_Object)srcobj, (mixer_SourceProp)pname,
+	mixer_GetSourcei((mixer_Object)srcobj, (MixerSourceProp)pname,
 					 &temp);
 	*value = temp;
-	if (pname == MIX_SOURCE_STATE)
+	if (pname == MixerSourceProp::SourceState)
 	{
-		switch (*value)
+		switch (static_cast<MixerSourceState>(*value))
 		{
-			case MIX_INITIAL:
-				*value = audio_INITIAL;
+			case MixerSourceState::Initial:
+				*value = +AudioEnum::Initial;
 				break;
-			case MIX_STOPPED:
-				*value = audio_STOPPED;
+			case MixerSourceState::Stopped:
+				*value = +AudioEnum::Stopped;
 				break;
-			case MIX_PLAYING:
-				*value = audio_PLAYING;
+			case MixerSourceState::Playing:
+				*value = +AudioEnum::Playing;
 				break;
-			case MIX_PAUSED:
-				*value = audio_PAUSED;
+			case MixerSourceState::Paused:
+				*value = +AudioEnum::Paused;
 				break;
 			default:
 				uqm::log::debug("noSound_GetSourcei(): unknown value %lx",
 								(long int)*value);
-				*value = audio_DRIVER_FAILURE;
+				*value = +AudioEnum::DriverFailure;
 		}
 	}
 }
 
-void noSound_GetSourcef(audio_Object srcobj, audio_SourceProp pname,
+void noSound_GetSourcef(audio_Object srcobj, int32_t pname,
 						float* value)
 {
-	mixer_GetSourcef((mixer_Object)srcobj, (mixer_SourceProp)pname, value);
+	mixer_GetSourcef((mixer_Object)srcobj, (MixerSourceProp)pname, value);
 }
 
 void noSound_SourceRewind(audio_Object srcobj)
@@ -388,11 +388,11 @@ bool noSound_IsBuffer(audio_Object bufobj)
 	return mixer_IsBuffer((mixer_Object)bufobj);
 }
 
-void noSound_GetBufferi(audio_Object bufobj, audio_BufferProp pname,
+void noSound_GetBufferi(audio_Object bufobj, int32_t pname,
 						audio_IntVal* value)
 {
 	mixer_IntVal temp = *value;
-	mixer_GetBufferi((mixer_Object)bufobj, (mixer_BufferProp)pname,
+	mixer_GetBufferi((mixer_Object)bufobj, (MixerBufferProp)pname,
 					 &temp);
 	*value = temp;
 }

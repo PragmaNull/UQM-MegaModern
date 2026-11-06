@@ -216,7 +216,7 @@ void SetMusicVolume(uint16_t Volume)
 {
 	const float f = (Volume / (float)MaxVolume) * musicVolumeScale;
 	musicVolume = Volume;
-	audio_Sourcef(soundSource[MusicSource].handle, audio_GAIN, f);
+	audio_Sourcef(soundSource[MusicSource].handle, AudioEnum::Gain, f);
 }
 
 char* CheckMusicResName(char* fileName)

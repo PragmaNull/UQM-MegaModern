@@ -45,7 +45,7 @@ const static audio_Driver openAL_Driver =
 				  AL_INVALID_VALUE,
 				  AL_INVALID_OPERATION,
 				  AL_OUT_OF_MEMORY,
-				  audio_DRIVER_FAILURE,
+				  +AudioEnum::DriverFailure,
 
 				  /* Source properties */
 		 AL_POSITION,
@@ -133,8 +133,8 @@ int32_t openAL_Init(audio_Driver* driver, AudioFlags flags)
 	TFB_DecoderFormats formats =
 		{
 			uqstl::endian::native == uqstl::endian::big, uqstl::endian::native == uqstl::endian::big,
-			audio_FORMAT_MONO8, audio_FORMAT_STEREO8,
-			audio_FORMAT_MONO16, audio_FORMAT_STEREO16};
+			+AudioEnum::FormatMono8, +AudioEnum::FormatStereo8,
+			+AudioEnum::FormatMono16, +AudioEnum::FormatStereo16};
 
 	uqm::log::info("Initializing OpenAL.");
 	alcDevice = alcOpenDevice(nullptr);
@@ -252,20 +252,20 @@ int32_t openAL_GetError(void)
 	switch (value)
 	{
 		case AL_FALSE:
-			return audio_NO_ERROR;
+			return +AudioEnum::NoError;
 		case AL_INVALID_NAME:
-			return audio_INVALID_NAME;
+			return +AudioEnum::InvalidName;
 		case AL_INVALID_ENUM:
-			return audio_INVALID_ENUM;
+			return +AudioEnum::InvalidEnum;
 		case AL_INVALID_VALUE:
-			return audio_INVALID_VALUE;
+			return +AudioEnum::InvalidValue;
 		case AL_INVALID_OPERATION:
-			return audio_INVALID_OPERATION;
+			return +AudioEnum::InvalidOperation;
 		case AL_OUT_OF_MEMORY:
-			return audio_OUT_OF_MEMORY;
+			return +AudioEnum::OutOfMemory;
 		default:
 			uqm::log::debug("openAL_GetError: unknown value {:x}", value);
-			return audio_DRIVER_FAILURE;
+			return +AudioEnum::DriverFailure;
 			break;
 	}
 }
@@ -293,26 +293,26 @@ bool openAL_IsSource(audio_Object srcobj)
 	return alIsSource((ALuint)srcobj);
 }
 
-void openAL_Sourcei(audio_Object srcobj, audio_SourceProp pname,
+void openAL_Sourcei(audio_Object srcobj, int32_t pname,
 					audio_IntVal value)
 
 {
 	alSourcei((ALuint)srcobj, (ALenum)pname, (ALint)value);
 }
 
-void openAL_Sourcef(audio_Object srcobj, audio_SourceProp pname,
+void openAL_Sourcef(audio_Object srcobj, int32_t pname,
 					float value)
 {
 	alSourcef((ALuint)srcobj, (ALenum)pname, (ALfloat)value);
 }
 
-void openAL_Sourcefv(audio_Object srcobj, audio_SourceProp pname,
+void openAL_Sourcefv(audio_Object srcobj, int32_t pname,
 					 float* value)
 {
 	alSourcefv((ALuint)srcobj, (ALenum)pname, (ALfloat*)value);
 }
 
-void openAL_GetSourcei(audio_Object srcobj, audio_SourceProp pname,
+void openAL_GetSourcei(audio_Object srcobj, int32_t pname,
 					   audio_IntVal* value)
 {
 	ALint temp = *value;
@@ -323,26 +323,26 @@ void openAL_GetSourcei(audio_Object srcobj, audio_SourceProp pname,
 		switch (*value)
 		{
 			case AL_INITIAL:
-				*value = audio_INITIAL;
+				*value = +AudioEnum::Initial;
 				break;
 			case AL_STOPPED:
-				*value = audio_STOPPED;
+				*value = +AudioEnum::Stopped;
 				break;
 			case AL_PLAYING:
-				*value = audio_PLAYING;
+				*value = +AudioEnum::Playing;
 				break;
 			case AL_PAUSED:
-				*value = audio_PAUSED;
+				*value = +AudioEnum::Paused;
 				break;
 			default:
 				uqm::log::debug("openAL_GetSourcei(): unknown value {:x}",
 								*value);
-				*value = audio_DRIVER_FAILURE;
+				*value = +AudioEnum::DriverFailure;
 		}
 	}
 }
 
-void openAL_GetSourcef(audio_Object srcobj, audio_SourceProp pname,
+void openAL_GetSourcef(audio_Object srcobj, int32_t pname,
 					   float* value)
 {
 	alGetSourcef((ALuint)srcobj, (ALenum)pname, (ALfloat*)value);
@@ -407,7 +407,7 @@ bool openAL_IsBuffer(audio_Object bufobj)
 	return alIsBuffer((ALuint)bufobj);
 }
 
-void openAL_GetBufferi(audio_Object bufobj, audio_BufferProp pname,
+void openAL_GetBufferi(audio_Object bufobj, int32_t pname,
 					   audio_IntVal* value)
 {
 	ALint temp = *value;

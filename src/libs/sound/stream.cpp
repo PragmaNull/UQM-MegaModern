@@ -75,7 +75,7 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 
 	soundSource[source].sample = sample;
 	decoder->looping = looping;
-	audio_Sourcei(soundSource[source].handle, audio_LOOPING, false);
+	audio_Sourcei(soundSource[source].handle, AudioEnum::Looping, false);
 
 	if (scope)
 	{ // Prealloc the scope buffer in advance so that we do not
@@ -364,7 +364,7 @@ static void remove_scope_data(TFB_SoundSource* source, audio_Object buffer) UQM_
 {
 	audio_IntVal buf_size {};
 
-	audio_GetBufferi(buffer, audio_SIZE, &buf_size);
+	audio_GetBufferi(buffer, AudioEnum::Size, &buf_size);
 	source->sbuf_head += buf_size;
 	// the buffer is cyclic
 	source->sbuf_head %= source->sbuf_size;
@@ -420,15 +420,15 @@ static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_
 	audio_IntVal processed {};
 	audio_IntVal queued {};
 
-	audio_GetSourcei(source->handle, audio_BUFFERS_PROCESSED, &processed);
-	audio_GetSourcei(source->handle, audio_BUFFERS_QUEUED, &queued);
+	audio_GetSourcei(source->handle, AudioEnum::BuffersProcessed, &processed);
+	audio_GetSourcei(source->handle, AudioEnum::BuffersQueued, &queued);
 
 	if (processed == 0)
 	{ // Nothing was played
 		audio_IntVal state {};
 
-		audio_GetSourcei(source->handle, audio_SOURCE_STATE, &state);
-		if (state != audio_PLAYING)
+		audio_GetSourcei(source->handle, AudioEnum::SourceState, &state);
+		if (state != AudioEnum::Playing)
 		{
 			if (queued == 0 && decoder->error == SoundDecoderStatus::Eof)
 			{ // The stream has reached the end
@@ -463,7 +463,7 @@ static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_
 		// Get the buffer that finished playing
 		audio_SourceUnqueueBuffers(source->handle, 1, &buffer);
 		error = audio_GetError();
-		if (error != audio_NO_ERROR)
+		if (error != AudioEnum::NoError)
 		{
 			uqm::log::warn("StreamDecoderTaskFunc(): "
 						   "error after audio_SourceUnqueueBuffers: {:x}, file {}",
@@ -542,7 +542,7 @@ static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_
 		audio_BufferData(buffer, decoder->format, decoder->buffer,
 						 decoded_bytes, decoder->frequency);
 		error = audio_GetError();
-		if (error != audio_NO_ERROR)
+		if (error != AudioEnum::NoError)
 		{
 			uqm::log::warn("StreamDecoderTaskFunc(): "
 						   "error after audio_BufferData: {:x}, file {}, decoded {}",
@@ -553,7 +553,7 @@ static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_
 		// Now queue the buffer
 		audio_SourceQueueBuffers(source->handle, 1, &buffer);
 		error = audio_GetError();
-		if (error != audio_NO_ERROR)
+		if (error != AudioEnum::NoError)
 		{
 			uqm::log::warn("StreamDecoderTaskFunc(): "
 						   "error after audio_SourceQueueBuffers: {:x}, file {}, "

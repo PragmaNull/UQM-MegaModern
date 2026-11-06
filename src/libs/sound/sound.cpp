@@ -43,7 +43,7 @@ void CleanSource(int iSource)
 
 	soundSource[iSource].positional_object = nullptr;
 	audio_GetSourcei(soundSource[iSource].handle,
-					 audio_BUFFERS_PROCESSED, &processed);
+					 AudioEnum::BuffersProcessed, &processed);
 	if (processed != 0)
 	{
 		uqstl::vector<audio_Object> bufs(processed);
@@ -79,8 +79,8 @@ bool SoundPlaying(void)
 		else
 		{
 			audio_IntVal state {};
-			audio_GetSourcei(soundSource[i].handle, audio_SOURCE_STATE, &state);
-			if (state == audio_PLAYING)
+			audio_GetSourcei(soundSource[i].handle, AudioEnum::SourceState, &state);
+			if (state == AudioEnum::Playing)
 			{
 				return true;
 			}
@@ -125,13 +125,13 @@ void SetSFXVolume(float volume)
 {
 	for (int i {FirstSfxSource}; i <= LastSfxSource; ++i)
 	{
-		audio_Sourcef(soundSource[i].handle, audio_GAIN, volume);
+		audio_Sourcef(soundSource[i].handle, AudioEnum::Gain, volume);
 	}
 }
 
 void SetSpeechVolume(float volume)
 {
-	audio_Sourcef(soundSource[SpeechSource].handle, audio_GAIN, volume);
+	audio_Sourcef(soundSource[SpeechSource].handle, AudioEnum::Gain, volume);
 }
 
 TimeCount FadeMusic(uint8_t end_vol, TimePeriod TimeInterval)

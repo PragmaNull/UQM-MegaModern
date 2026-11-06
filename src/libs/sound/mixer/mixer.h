@@ -20,6 +20,7 @@
 #ifndef LIBS_SOUND_MIXER_MIXER_H_
 #define LIBS_SOUND_MIXER_MIXER_H_
 
+#include "core/types/enum.h"
 #include "config.h"
 #include <cstdint>
 #include "core/stl/memory.h"
@@ -37,71 +38,79 @@
 /**
  * Mixer errors (see OpenAL errors)
  */
-enum
+enum class MixerError
 {
-	MIX_NO_ERROR = 0,
-	MIX_INVALID_NAME = 0xA001U,
-	MIX_INVALID_ENUM = 0xA002U,
-	MIX_INVALID_VALUE = 0xA003U,
-	MIX_INVALID_OPERATION = 0xA004U,
-	MIX_OUT_OF_MEMORY = 0xA005U,
+	NoError = 0,
+	InvalidName = 0xA001U,
+	InvalidEnum = 0xA002U,
+	InvalidValue = 0xA003U,
+	InvalidOperation = 0xA004U,
+	OutOfMemory = 0xA005U,
 
-	MIX_DRIVER_FAILURE = 0xA101U
+	DriverFailure = 0xA101U
 };
+template <>
+inline constexpr bool IsArithmeticEnum<MixerError> = true;
 
 /**
  * Source properties (see OpenAL)
  */
-typedef enum
+enum class MixerSourceProp
 {
-	MIX_POSITION = 0x1004,
-	MIX_LOOPING = 0x1007,
-	MIX_BUFFER = 0x1009,
-	MIX_GAIN = 0x100A,
-	MIX_SOURCE_STATE = 0x1010,
+	Position = 0x1004,
+	Looping = 0x1007,
+	Buffer = 0x1009,
+	Gain = 0x100A,
+	SourceState = 0x1010,
 
-	MIX_BUFFERS_QUEUED = 0x1015,
-	MIX_BUFFERS_PROCESSED = 0x1016
+	BuffersQueued = 0x1015,
+	BuffersProcessed = 0x1016
 
-} mixer_SourceProp;
+};
+template <>
+inline constexpr bool IsArithmeticEnum<MixerSourceProp> = true;
 
 /**
  * Source state information
  */
-typedef enum
+enum class MixerSourceState
 {
-	MIX_INITIAL = 0,
-	MIX_STOPPED,
-	MIX_PLAYING,
-	MIX_PAUSED,
+	Initial = 0,
+	Stopped,
+	Playing,
+	Paused,
 
-} mixer_SourceState;
+};
+template <>
+inline constexpr bool IsArithmeticEnum<MixerSourceState> = true;
 
 /** 
  * Sound buffer properties
  */
-typedef enum
+enum class MixerBufferProp
 {
-	MIX_FREQUENCY = 0x2001,
-	MIX_BITS = 0x2002,
-	MIX_CHANNELS = 0x2003,
-	MIX_SIZE = 0x2004,
-	MIX_DATA = 0x2005
+	Frequency = 0x2001,
+	Bits = 0x2002,
+	Channels = 0x2003,
+	Size = 0x2004,
+	Data = 0x2005
 
-} mixer_BufferProp;
+};
+template <>
+inline constexpr bool IsArithmeticEnum<MixerBufferProp> = true;
 
 /**
  * Buffer states: semi-private
  */
-typedef enum
+enum class MixerBufferState
 {
-	MIX_BUF_INITIAL = 0,
-	MIX_BUF_FILLED,
-	MIX_BUF_QUEUED,
-	MIX_BUF_PLAYING,
-	MIX_BUF_PROCESSED
+	Initial = 0,
+	Filled,
+	Queued,
+	Playing,
+	Processed
 
-} mixer_BufferState;
+};
 
 /** Sound buffers: format specifier.
  * bits 00..07: bytes per sample
@@ -117,30 +126,36 @@ constexpr auto MixFormatMake(auto b, auto c) { return (MixFormatDummyid | ((b) &
 
 constexpr auto MixFormatSampsize(auto f) { return (MixFormatBpc(f) * MixFormatChans(f)); }
 
-typedef enum
+enum class MixerFormat
 {
-	MIX_FORMAT_MONO8 = MixFormatMake(1, 1),
-	MIX_FORMAT_STEREO8 = MixFormatMake(1, 2),
-	MIX_FORMAT_MONO16 = MixFormatMake(2, 1),
-	MIX_FORMAT_STEREO16 = MixFormatMake(2, 2)
+	Mono8 = MixFormatMake(1, 1),
+	Stereo8 = MixFormatMake(1, 2),
+	Mono16 = MixFormatMake(2, 1),
+	Stereo16 = MixFormatMake(2, 2)
 
-} mixer_Format;
+};
+template <>
+inline constexpr bool IsArithmeticEnum<MixerFormat> = true;
 
-typedef enum
+enum class MixerQuality
 {
-	MIX_QUALITY_LOW = 0,
-	MIX_QUALITY_MEDIUM,
-	MIX_QUALITY_HIGH,
-	MIX_QUALITY_DEFAULT = MIX_QUALITY_MEDIUM,
-	MIX_QUALITY_COUNT
+	Low = 0,
+	Medium,
+	High,
+	Default = Medium,
+	Count
 
-} mixer_Quality;
+};
+template <>
+inline constexpr bool IsArithmeticEnum<MixerQuality> = true;
 
-typedef enum
+enum class MixerFlags
 {
-	MIX_NOFLAGS = 0,
-	MIX_FAKE_DATA = 1
-} mixer_Flags;
+	None = 0,
+	FakeData = 1
+};
+template <>
+inline constexpr bool IsFlagEnum<MixerFlags> = true;
 
 /*************************************************
  *  Interface Types
@@ -155,7 +170,7 @@ struct mixer_Buffer
 {
 	uint32_t magic;
 	bool locked;
-	mixer_BufferState state;
+	MixerBufferState state;
 	uqstl::unique_ptr<uint8_t[]> data;
 	uint32_t size;
 	uint32_t sampsize;
@@ -178,7 +193,7 @@ struct _mixer_Source
 {
 	uint32_t magic;
 	bool locked;
-	mixer_SourceState state;
+	MixerSourceState state;
 	bool looping;
 	float gain;
 	float leftGain;
@@ -200,10 +215,10 @@ inline constexpr auto mixer_srcMagic {0x5358494DU}; /* MIXS in LSB */
 /*************************************************
  *  General interface
  */
-uint32_t mixer_GetError(void);
+MixerError mixer_GetError(void);
 
-bool mixer_Init(uint32_t frequency, uint32_t format, mixer_Quality quality,
-				mixer_Flags flags);
+bool mixer_Init(uint32_t frequency, uint32_t format, MixerQuality quality,
+				MixerFlags flags);
 void mixer_Uninit(void);
 void mixer_MixChannels(void* userdata, uint8_t* stream, int32_t len);
 void mixer_MixFake(void* userdata, uint8_t* stream, int32_t len);
@@ -214,15 +229,15 @@ void mixer_MixFake(void* userdata, uint8_t* stream, int32_t len);
 void mixer_GenSources(uint32_t n, mixer_Object* psrcobj);
 void mixer_DeleteSources(uint32_t n, mixer_Object* psrcobj);
 bool mixer_IsSource(mixer_Object srcobj);
-void mixer_Sourcei(mixer_Object srcobj, mixer_SourceProp pname,
+void mixer_Sourcei(mixer_Object srcobj, MixerSourceProp pname,
 				   mixer_IntVal value);
-void mixer_Sourcef(mixer_Object srcobj, mixer_SourceProp pname,
+void mixer_Sourcef(mixer_Object srcobj, MixerSourceProp pname,
 				   float value);
-void mixer_Sourcefv(mixer_Object srcobj, mixer_SourceProp pname,
+void mixer_Sourcefv(mixer_Object srcobj, MixerSourceProp pname,
 					float* value);
-void mixer_GetSourcei(mixer_Object srcobj, mixer_SourceProp pname,
+void mixer_GetSourcei(mixer_Object srcobj, MixerSourceProp pname,
 					  mixer_IntVal* value);
-void mixer_GetSourcef(mixer_Object srcobj, mixer_SourceProp pname,
+void mixer_GetSourcef(mixer_Object srcobj, MixerSourceProp pname,
 					  float* value);
 void mixer_SourceRewind(mixer_Object srcobj);
 void mixer_SourcePlay(mixer_Object srcobj);
@@ -239,7 +254,7 @@ void mixer_SourceUnqueueBuffers(mixer_Object srcobj, uint32_t n,
 void mixer_GenBuffers(uint32_t n, mixer_Object* pbufobj);
 void mixer_DeleteBuffers(uint32_t n, mixer_Object* pbufobj);
 bool mixer_IsBuffer(mixer_Object bufobj);
-void mixer_GetBufferi(mixer_Object bufobj, mixer_BufferProp pname,
+void mixer_GetBufferi(mixer_Object bufobj, MixerBufferProp pname,
 					  mixer_IntVal* value);
 void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 					  uint32_t size, uint32_t freq);

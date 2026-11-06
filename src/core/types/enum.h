@@ -137,6 +137,14 @@ constexpr E& operator^=(E& a, E b) noexcept
 	return a = a ^ b;
 }
 
+// fmt formats arithmetic and flag enums as their numbers.
+template <EnumType E>
+	requires(ArithmeticEnum<E> || BitFlagEnum<E>)
+[[nodiscard]] constexpr auto format_as(E e) noexcept
+{
+	return static_cast<std::underlying_type_t<E>>(e);
+}
+
 // True if any of the bits of 'b' are set in 'a'.
 template <BitFlagEnum E>
 [[nodiscard]] constexpr bool any(E a, E b) noexcept

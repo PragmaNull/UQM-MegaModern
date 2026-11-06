@@ -21,6 +21,7 @@
 #ifndef LIBS_SOUND_MIXER_MIXERINT_H_
 #define LIBS_SOUND_MIXER_MIXERINT_H_
 
+#include "core/types/enum.h"
 #include "core/stl/stl.h"
 #include "port.h"
 #include <cstdint>
@@ -30,19 +31,21 @@
  */
 
 /* Conversion info types and funcs */
-typedef enum
+enum class MixerConvFlags
 {
-	mixConvNone = 0,
-	mixConvStereoUp = 1,
-	mixConvStereoDown = 2,
-	mixConvSizeUp = 4,
-	mixConvSizeDown = 8
+	None = 0,
+	StereoUp = 1,
+	StereoDown = 2,
+	SizeUp = 4,
+	SizeDown = 8
 
-} mixer_ConvFlags;
+};
+template <>
+inline constexpr bool IsFlagEnum<MixerConvFlags> = true;
 
-mixer_ConvFlags operator|=(mixer_ConvFlags lhs, mixer_ConvFlags rhs)
+MixerConvFlags operator|=(MixerConvFlags lhs, MixerConvFlags rhs)
 {
-	return static_cast<mixer_ConvFlags>(static_cast<std::underlying_type_t<mixer_ConvFlags>>(lhs) | static_cast<std::underlying_type_t<mixer_ConvFlags>>(rhs));
+	return static_cast<MixerConvFlags>(static_cast<std::underlying_type_t<MixerConvFlags>>(lhs) | static_cast<std::underlying_type_t<MixerConvFlags>>(rhs));
 }
 
 struct mixer_Convertion
@@ -61,7 +64,7 @@ struct mixer_Convertion
 	uint32_t dstchans;
 	uint32_t dstsamples;
 
-	mixer_ConvFlags flags;
+	MixerConvFlags flags;
 };
 
 struct mixer_Resampling
