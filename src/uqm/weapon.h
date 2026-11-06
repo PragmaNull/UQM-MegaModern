@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-typedef struct
+struct LASER_BLOCK
 {
 	int16_t cx, cy, ex, ey;
 	ELEMENT_FLAGS flags;
@@ -34,9 +34,9 @@ typedef struct
 	int16_t pixoffs;
 	uint16_t face;
 	Color color;
-} LASER_BLOCK;
+};
 
-typedef struct
+struct MISSILE_BLOCK
 {
 	int16_t cx, cy;
 	ELEMENT_FLAGS flags;
@@ -46,7 +46,7 @@ typedef struct
 	FRAME* farray;
 	void (*preprocess_func)(ELEMENT* ElementPtr);
 	int16_t blast_offs;
-} MISSILE_BLOCK;
+};
 
 extern HELEMENT initialize_laser(LASER_BLOCK* pLaserBlock);
 extern HELEMENT initialize_missile(MISSILE_BLOCK* pMissileBlock);

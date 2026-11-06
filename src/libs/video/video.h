@@ -26,7 +26,7 @@
 #include "core/thread/Mutex.h"
 
 
-typedef struct tfb_videoclip
+struct TFB_VideoClip
 {
 	TFB_VideoDecoder* decoder; // decoder to read from
 	float length;			   // total length of clip seconds
@@ -49,8 +49,7 @@ typedef struct tfb_videoclip
 	int lag_cnt;							   // N of frames video is behind or ahead of audio
 
 	void* data; // user-defined data
-
-} TFB_VideoClip;
+};
 
 extern VIDEO_REF _init_video_file(const char* pStr);
 

@@ -63,11 +63,11 @@ static FRAME CreditsFrame;
 // Size of the credits "window" (normally screen size)
 static EXTENT CreditsExtent;
 
-typedef struct
+struct CreditTextFrame
 {
 	FRAME frame;
 	int strIndex;
-} CreditTextFrame;
+};
 
 static constexpr auto MaxCreditFrames {32};
 // Circular text frame buffer for scrolling
@@ -84,12 +84,12 @@ static int totalHeight;
 // Current vertical offset into the first text frame
 static int curFrameOfs;
 
-typedef struct
+struct FONT_SIZE_DEF
 {
 	int size;
 	RESOURCE res;
 	FONT font;
-} FONT_SIZE_DEF;
+};
 
 static FONT_SIZE_DEF CreditsFont[] =
 	{
@@ -124,11 +124,11 @@ static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	int16_t leading {};
 	TEXT t;
 	GFXRECT r;
-	typedef struct
+	struct col_format_t
 	{
 		TEXT_ALIGN align;
 		int16_t basex;
-	} col_format_t;
+	};
 	col_format_t colfmt[uqm::c_creditsMaxColumns];
 
 	const auto blockCount {static_cast<int>(CreditsBlocks.size())};
@@ -605,7 +605,7 @@ static void OutTakes(void)
 	oscillDisabled = false;
 }
 
-typedef struct
+struct CREDITS_INPUT_STATE
 {
 	// standard state required by DoInput
 	bool (*InputFunc)(void* pInputState);
@@ -614,8 +614,7 @@ typedef struct
 	bool AllowSpeedChange;
 	bool CloseWhenDone;
 	TimeCount CloseTimeOut;
-
-} CREDITS_INPUT_STATE;
+};
 
 static bool DoCreditsInput(void* pIS)
 {

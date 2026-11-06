@@ -139,24 +139,24 @@ enum MOVEMENT_STATE
 	NO_MOVEMENT
 };
 
-typedef struct
+struct EVALUATE_DESC
 {
 	ELEMENT* ObjectPtr;
 	uint16_t facing;
 	uint16_t which_turn;
 	MOVEMENT_STATE MoveState;
-} EVALUATE_DESC;
+};
 
 typedef void(IntelligenceFunc)(ELEMENT* ShipPtr,
 							   EVALUATE_DESC* ObjectsOfConcern, uint16_t ConcernCounter);
-typedef struct
+struct INTEL_STUFF
 {
 	uint16_t ManeuverabilityIndex;
 	uint16_t WeaponRange;
 	IntelligenceFunc* intelligence_func;
-} INTEL_STUFF;
+};
 
-typedef struct
+struct CHARACTERISTIC_STUFF
 {
 	uint16_t max_thrust;
 	uint16_t thrust_increment;
@@ -169,9 +169,9 @@ typedef struct
 	uint8_t weapon_wait;
 	uint8_t special_wait;
 	uint8_t ship_mass;
-} CHARACTERISTIC_STUFF;
+};
 
-typedef struct
+struct SHIP_INFO
 {
 	const char* idStr;
 	uint16_t ship_flags;
@@ -189,18 +189,17 @@ typedef struct
 	uqm::StringTable* race_strings;
 	FRAME icons;
 	FRAME melee_icon;
-} SHIP_INFO;
+};
 
 inline constexpr auto InfiniteRadius {((uint16_t)~0)};
 
-typedef struct
+struct FLEET_STUFF
 {
 	uint16_t strength;
 	GFXPOINT known_loc;
+};
 
-} FLEET_STUFF;
-
-typedef struct
+struct DATA_STUFF
 {
 	RESOURCE ship_rsc[NumViews];
 	RESOURCE weapon_rsc[NumViews];
@@ -216,7 +215,7 @@ typedef struct
 	SOUND_REF ship_sounds;
 	// The index in ship_sounds of the sound of the primary weapon.
 	uint16_t weapon_sound_index;
-} DATA_STUFF;
+};
 
 
 typedef struct race_desc RACE_DESC;
@@ -245,7 +244,7 @@ struct race_desc
 };
 
 
-typedef struct
+struct SHIP_BASE
 {
 	/* LINK elements; must be first */
 	HLINK pred;
@@ -254,7 +253,7 @@ typedef struct
 	SPECIES_ID SpeciesID;
 	uint8_t captains_name_index; /* Also used in full-game to detect if a STARSHIP is an escort
 			 * or the flagship (captains_name_index == 0) */
-} SHIP_BASE;
+};
 
 
 struct STARSHIP : SHIP_BASE
@@ -342,7 +341,7 @@ constexpr auto FreeShipFrag(const auto& pq, const auto& h) { return FreeLink(pq,
 
 typedef HLINK HFLEETINFO;
 
-typedef struct
+struct FLEET_INFO
 {
 	// LINK elements; must be first
 	HFLEETINFO pred;
@@ -388,8 +387,7 @@ typedef struct
 	bool can_build;
 	/* Determines if you can build the ship regardless
 			 * of allegiance */
-
-} FLEET_INFO;
+};
 
 // Values for FLEET_INFO.allied_state
 enum

@@ -53,37 +53,37 @@ static constexpr auto aiff_FormTypeAIFC {AiffMakeId('A', 'I', 'F', 'C')};
 static constexpr auto aiff_CompressionTypeSDX2 {AiffMakeId('S', 'D', 'X', '2')};
 
 
-typedef struct
+struct aiff_ChunkHeader
 {
 	aiff_ID id;
 	uint32_t size;
-} aiff_ChunkHeader;
+};
 
 static constexpr auto AiffChunkHdrSize {(4 + 4)};
 
-typedef struct
+struct aiff_FileHeader
 {
 	aiff_ChunkHeader chunk;
 	aiff_ID type;
-} aiff_FileHeader;
+};
 
-typedef struct
+struct aiff_FormatVersionChunk
 {
 	uint32_t version; /* format version, in Mac format */
-} aiff_FormatVersionChunk;
+};
 
-typedef struct
+struct aiff_CommonChunk
 {
 	uint16_t channels;	   /* number of channels */
 	uint32_t sampleFrames; /* number of sample frames */
 	uint16_t sampleSize;   /* number of bits per sample */
 	int32_t sampleRate;	   /* number of frames per second */
 						   /* this is actually stored as IEEE-754 80bit in files */
-} aiff_CommonChunk;
+};
 
 static constexpr auto AiffCommSize {(2 + 4 + 2 + 10)};
 
-typedef struct
+struct aiff_ExtCommonChunk
 {
 	uint16_t channels;	   /* number of channels */
 	uint32_t sampleFrames; /* number of sample frames */
@@ -91,15 +91,15 @@ typedef struct
 	int32_t sampleRate;	   /* number of frames per second */
 	aiff_ID extTypeID;	   /* compression type ID */
 	char extName[32];	   /* compression type name */
-} aiff_ExtCommonChunk;
+};
 
 static constexpr auto AiffExtCommSize {(AiffCommSize + 4)};
 
-typedef struct
+struct aiff_SoundDataChunk
 {
 	uint32_t offset;	/* offset to sound data */
 	uint32_t blockSize; /* size of alignment blocks */
-} aiff_SoundDataChunk;
+};
 
 static constexpr auto AiffSsndSize {(4 + 4)};
 
@@ -144,7 +144,7 @@ typedef enum
 
 constexpr int c_maxAiffChannels {4};
 
-typedef struct tfb_wavesounddecoder
+struct TFB_AiffSoundDecoder
 {
 	// always the first member
 	TFB_SoundDecoder decoder;
@@ -162,8 +162,7 @@ typedef struct tfb_wavesounddecoder
 	uint32_t max_pcm;
 	uint32_t cur_pcm;
 	int32_t prev_val[c_maxAiffChannels];
-
-} TFB_AiffSoundDecoder;
+};
 
 const static TFB_DecoderFormats* aifa_formats = nullptr;
 

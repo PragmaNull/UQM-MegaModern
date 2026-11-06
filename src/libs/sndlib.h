@@ -61,11 +61,11 @@ private:
 typedef uqm::SoundBank* SOUND_REF;
 typedef TFB_SoundSample* SOUND;
 
-typedef struct soundposition
+struct SoundPosition
 {
 	bool positional;
 	int x, y;
-} SoundPosition;
+};
 
 // The sound 'index' of 'bank', or nullptr if there is no bank.
 inline SOUND GetSound(SOUND_REF bank, size_t index)
@@ -129,12 +129,12 @@ extern TimeCount FadeMusic(uint8_t end_vol, TimePeriod TimeInterval);
 extern uint8_t GetCurrMusicVol(void);
 
 // For music resume option
-typedef struct music_position
+struct MUSIC_POSITION
 {
 	uint32_t filename_hash;
 	uint32_t position;
 	TimeCount last_played;
-} MUSIC_POSITION;
+};
 
 extern void SetMusicPosition(void);
 extern bool OkayToResume(void);

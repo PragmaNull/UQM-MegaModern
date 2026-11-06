@@ -45,7 +45,7 @@ mixer_ConvFlags operator|=(mixer_ConvFlags lhs, mixer_ConvFlags rhs)
 	return static_cast<mixer_ConvFlags>(static_cast<std::underlying_type_t<mixer_ConvFlags>>(lhs) | static_cast<std::underlying_type_t<mixer_ConvFlags>>(rhs));
 }
 
-typedef struct
+struct mixer_Convertion
 {
 	uint32_t srcfmt;
 	void* srcdata;
@@ -62,15 +62,14 @@ typedef struct
 	uint32_t dstsamples;
 
 	mixer_ConvFlags flags;
+};
 
-} mixer_Convertion;
-
-typedef struct
+struct mixer_Resampling
 {
 	float (*Upsample)(mixer_Source* src, bool left);
 	float (*Downsample)(mixer_Source* src, bool left);
 	float (*None)(mixer_Source* src, bool left);
-} mixer_Resampling;
+};
 
 static void mixer_ConvertBuffer_internal(mixer_Convertion* conv);
 static void mixer_ResampleFlat(mixer_Convertion* conv);

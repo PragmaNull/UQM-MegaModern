@@ -41,7 +41,7 @@ inline constexpr auto FadeFullIntensity {510};
 
 typedef struct NativePalette NativePalette;
 
-typedef struct tfb_colormap
+struct TFB_ColorMap
 {
 	int index;
 	// Colormap index as the game sees it
@@ -51,10 +51,10 @@ typedef struct tfb_colormap
 	// of XFormColorMap(). Paletted TFB_Images track the last
 	// colormap version they were drawn with for optimization.
 	int refcount;
-	struct tfb_colormap* next;
+	struct TFB_ColorMap* next;
 	// for spares linking
 	NativePalette* palette;
-} TFB_ColorMap;
+};
 
 extern int GetFadeAmount(void);
 

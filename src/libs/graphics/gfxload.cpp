@@ -209,11 +209,11 @@ bool _ReleaseCelData(void* handle)
 	return (true);
 }
 
-typedef struct BuildCharDesc
+struct BuildCharDesc
 {
 	TFB_Canvas canvas;
 	uqm::UniChar index;
-} BuildCharDesc;
+};
 
 void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 {

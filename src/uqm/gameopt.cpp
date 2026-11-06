@@ -824,7 +824,7 @@ void SettingsMenu(bool NameFlagship)
 	DrawStatusMessage(nullptr);
 }
 
-typedef struct
+struct PICK_GAME_STATE
 {
 	SUMMARY_DESC summary[MaxSavedGames];
 	bool saving;
@@ -832,8 +832,7 @@ typedef struct
 	bool success;
 	// true when load/save succeeded
 	FRAME SummaryFrame;
-
-} PICK_GAME_STATE;
+};
 
 static void DrawLines(GFXPOINT pt, int16_t width)
 {

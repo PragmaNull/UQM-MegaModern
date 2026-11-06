@@ -25,14 +25,14 @@
 
 constexpr auto ValidPrimType(auto pt) { return ((pt) < NUM_PRIMS); }
 
-typedef struct bresenham_line
+struct BRESENHAM_LINE
 {
 	GFXPOINT first, second;
 	int16_t abs_delta_x, abs_delta_y;
 	int16_t error_term;
 	bool end_points_exchanged;
 	INTERSECT_CODE intersect_code;
-} BRESENHAM_LINE;
+};
 
 typedef uint16_t DRAWABLE_TYPE;
 inline constexpr auto RomDrawable {0};
@@ -65,11 +65,11 @@ constexpr auto SetFrameBounds(auto f, auto w, auto h) { return ((f)->Bounds.widt
 extern DRAWABLE AllocDrawable(uint16_t num_frames);
 constexpr auto FreeDrawable(auto D) { return _ReleaseCelData(D); }
 
-typedef struct
+struct IMAGE_BOX
 {
 	GFXRECT Box;
 	FRAME FramePtr;
-} IMAGE_BOX;
+};
 
 extern INTERSECT_CODE _clip_line(const DRECT* pClipRect,
 								 BRESENHAM_LINE* pLine);

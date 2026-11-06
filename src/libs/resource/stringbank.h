@@ -25,12 +25,12 @@
 
 inline constexpr auto StrbankChunkSize {(1024 - sizeof(void*) - sizeof(int))};
 
-typedef struct _stringbank_chunk
+struct stringbank
 {
 	char data[StrbankChunkSize];
 	int len;
-	struct _stringbank_chunk* next;
-} stringbank;
+	struct stringbank* next;
+};
 
 /* Constructors and destructors */
 stringbank* StringBank_Create(void);

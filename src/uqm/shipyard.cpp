@@ -120,19 +120,19 @@ static auto TextSpacingY() { return ResScale(7); }
 
 static constexpr auto MaxVisModules {5};
 
-typedef struct
+struct SHIP_STATS
 {
 	char ShipName[30];
 	uint16_t ShipCost;
 	uint8_t CrewLevel, MaxCrew;
-} SHIP_STATS;
+};
 
-typedef struct
+struct SHIPS_STATE
 {
 	uint16_t count;	   // Number of buildable ships in the list
 	uint16_t topIndex; // Index of the top ship displayed
 	SHIP_STATS ShipStats[NUM_BUILDABLE_SHIPS + MaxStowedShips];
-} SHIPS_STATE;
+};
 
 SHIPS_STATE ShipState;
 

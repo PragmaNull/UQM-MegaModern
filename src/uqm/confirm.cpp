@@ -217,13 +217,13 @@ bool DoConfirmExit(void)
 	return (result);
 }
 
-typedef struct popup_state
+struct POPUP_STATE
 {
 	// standard state required by DoInput
-	bool (*InputFunc)(struct popup_state* self);
-} POPUP_STATE;
+	bool (*InputFunc)(struct POPUP_STATE* self);
+};
 
-static bool DoPopup(struct popup_state* self)
+static bool DoPopup(struct POPUP_STATE* self)
 {
 	(void)self;
 	SleepThread(c_gameSecond / 20);

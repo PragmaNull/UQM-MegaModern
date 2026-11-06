@@ -26,13 +26,13 @@
  * of which are only callable by the thread that is permitted to touch
  * the screen.  No explicit locks should therefore be required. */
 
-typedef struct
+struct TFB_BoundingBox
 {
 	int valid;		// If zero, the next point registered becomes the region
 	GFXRECT region; // The actual modified rectangle
 	GFXRECT clip;	// Points outside of this rectangle are pushed to
 					// the closest border point
-} TFB_BoundingBox;
+};
 
 extern TFB_BoundingBox TFB_BBox;
 

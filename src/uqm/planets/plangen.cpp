@@ -98,10 +98,10 @@ static constexpr auto AaWeightBits {16};
 // MAP3D_POINT map_rotate[330][330];
 // //MAP3D_POINT map_rotate[Diameter][Diameter];
 
-typedef struct
+struct POINT3
 {
 	double x, y, z;
-} POINT3;
+};
 
 const static Color tintColors[] =
 	{
@@ -2404,13 +2404,12 @@ static constexpr auto LmapAvgBlock {((Sc2MapHeight + 64) / 5)};
 static constexpr auto LmapMaxDist {((LmapAvgBlock + 1) >> 1)};
 static constexpr auto LmapWeightThres {(LmapMaxDist * 2 / 3)};
 
-typedef struct
+struct elev_block_t
 {
 	int min;
 	int max;
 	int avg;
-
-} elev_block_t;
+};
 
 static inline void get_vblock_avg(elev_block_t* pblk, int8_t* pTopo, int x, int y,
 								  uint16_t width, uint16_t height)

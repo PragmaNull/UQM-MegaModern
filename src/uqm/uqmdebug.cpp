@@ -980,10 +980,10 @@ static void moonRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* pl
 
 ////////////////////////////////////////////////////////////////////////////
 
-typedef struct
+struct DumpUniverseArg
 {
 	FILE* out;
-} DumpUniverseArg;
+};
 
 // Must be called from the Starcon2Main thread.
 void dumpUniverse(FILE* out)
@@ -1603,10 +1603,10 @@ void forAllPlanetTypes(void (*callback)(int, const PlanetFrame*, void*),
 	}
 }
 
-typedef struct
+struct DumpPlanetTypesArg
 {
 	FILE* out;
-} DumpPlanetTypesArg;
+};
 
 void dumpPlanetTypes(FILE* out)
 {
@@ -2071,16 +2071,16 @@ static void describeContext(FILE* out, const GFXCONTEXT context)
 }
 
 
-typedef struct wait_state
+struct WAIT_STATE
 {
 	// standard state required by DoInput
-	bool (*InputFunc)(struct wait_state* self);
-} WAIT_STATE;
+	bool (*InputFunc)(struct WAIT_STATE* self);
+};
 
 
 // Maybe move to elsewhere, where it can be reused?
 static bool
-waitForKey(struct wait_state* self)
+waitForKey(struct WAIT_STATE* self)
 {
 	if (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])
 	{

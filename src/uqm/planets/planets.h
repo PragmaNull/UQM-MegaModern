@@ -148,11 +148,11 @@ typedef struct portal_location PORTAL_LOCATION;
 #include "../gendef.h" //JSD need gendef.h unless we move plots & starmap to starmap
 #include "uqm/random/UQMRandom.h"
 
-typedef struct
+struct MAP3D_POINT
 {
 	GFXPOINT p[4];
 	uint32_t m[4];
-} MAP3D_POINT;
+};
 
 struct planet_orbit
 {

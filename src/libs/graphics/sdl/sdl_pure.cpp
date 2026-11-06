@@ -27,7 +27,7 @@
 #include "libs/graphics/imgui/imguilayer.h"
 
 
-typedef struct tfb_sdl_screeninfo_s
+struct TFB_SDL_SCREENINFO
 {
 	SDL_Surface* scaled;
 	SDL_Texture* texture;
@@ -35,7 +35,7 @@ typedef struct tfb_sdl_screeninfo_s
 	SDL_Texture* scaledTarget;
 	bool dirty, active;
 	SDL_Rect updated;
-} TFB_SDL_SCREENINFO;
+};
 
 static TFB_SDL_SCREENINFO ScreenTextures[TFB_GFX_NUMSCREENS];
 

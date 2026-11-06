@@ -36,15 +36,15 @@ typedef void* QUEUE_HANDLE;
 typedef uint16_t OBJ_SIZE;
 typedef QUEUE_HANDLE HLINK;
 
-typedef struct link
+struct LINK
 {
 	// Every queue element of any queue must have these
 	// two as the first members
 	HLINK pred;
 	HLINK succ;
-} LINK;
+};
 
-typedef struct /* queue */
+struct QUEUE
 {
 	HLINK head;
 	HLINK tail;
@@ -52,7 +52,7 @@ typedef struct /* queue */
 	HLINK free_list;
 	uint16_t object_size;
 	uint8_t num_objects;
-} QUEUE;
+};
 
 
 extern HLINK AllocLink(QUEUE* pq);

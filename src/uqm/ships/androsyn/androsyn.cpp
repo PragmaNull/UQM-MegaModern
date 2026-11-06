@@ -133,10 +133,10 @@ static RACE_DESC androsynth_desc =
 
 
 // Private per-instance ship data
-typedef struct
+struct ANDROSYNTH_DATA
 {
 	ElementCollisionFunc* collision_func;
-} ANDROSYNTH_DATA;
+};
 
 // Local typedef
 typedef ANDROSYNTH_DATA CustomShipData_t;

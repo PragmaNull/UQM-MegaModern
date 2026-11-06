@@ -64,7 +64,7 @@ TFB_SoundDecoderFuncs duka_DecoderVtbl =
 		duka_GetFrame,
 };
 
-typedef struct tfb_ducksounddecoder
+struct TFB_DuckSoundDecoder
 {
 	// always the first member
 	TFB_SoundDecoder decoder;
@@ -86,23 +86,22 @@ typedef struct tfb_ducksounddecoder
 	uint32_t dataofs;
 	// decoder stuff
 	int32_t predictors[2];
+};
 
-} TFB_DuckSoundDecoder;
 
-
-typedef struct
+struct DukAud_FrameHeader
 {
 	uint32_t audsize;
 	uint32_t vidsize;
-} DukAud_FrameHeader;
+};
 
-typedef struct
+struct DukAud_AudSubframe
 {
 	uint16_t magic; // always 0xf77f
 	uint16_t numsamples;
 	uint16_t tag;
 	uint16_t indices[2]; // initial indices for channels
-} DukAud_AudSubframe;
+};
 
 const static TFB_DecoderFormats* duka_formats = nullptr;
 

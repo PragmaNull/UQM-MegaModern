@@ -27,14 +27,14 @@
 #include "libs/graphics/gfx_common.h"
 
 // The Graphics Backend vtable
-typedef struct _tfb_graphics_backend
+struct TFB_GRAPHICS_BACKEND
 {
 	void (*preprocess)(uqm::TFBRedraw force_redraw, int transition_amount, int fade_amount);
 	void (*postprocess)(bool hd);
 	void (*uploadTransitionScreen)(void);
 	void (*screen)(SCREEN screen, Uint8 alpha, SDL_Rect* rect);
 	void (*color)(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect);
-} TFB_GRAPHICS_BACKEND;
+};
 
 extern TFB_GRAPHICS_BACKEND* graphics_backend;
 

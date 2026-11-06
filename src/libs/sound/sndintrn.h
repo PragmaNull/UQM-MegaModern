@@ -50,7 +50,7 @@ struct tfb_soundsample
 };
 
 // equivalent to channel in legacy sound code
-typedef struct tfb_soundsource
+struct TFB_SoundSource
 {
 	uqm::RecursiveMutex stream_mutex;
 	TFB_SoundSample* sample;
@@ -68,7 +68,7 @@ typedef struct tfb_soundsource
 	uint32_t sbuf_tail UQM_GUARDED_BY(stream_mutex);
 	uint32_t sbuf_head UQM_GUARDED_BY(stream_mutex);
 	TimeCount sbuf_lasttime UQM_GUARDED_BY(stream_mutex); // timestamp of the first queued buffer
-} TFB_SoundSource;
+};
 
 extern TFB_SoundSource soundSource[];
 

@@ -2749,7 +2749,7 @@ void confirmationCancelled(MELEE_STATE* pMS, uint16_t side)
 
 static void connectionFeedback(NetConnection* conn, const char* str, bool forcePopup)
 {
-	const struct battlestate_struct* bs = NetMelee_getBattleState(conn);
+	const struct BATTLE_STATE* bs = NetMelee_getBattleState(conn);
 
 	if (bs == nullptr && !forcePopup)
 	{

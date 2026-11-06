@@ -26,7 +26,7 @@
 typedef struct tfb_videodecoder TFB_VideoDecoder;
 
 
-typedef struct tfb_videodecoderfunc
+struct TFB_VideoDecoderFuncs
 {
 	const char* (*GetName)(void);
 	bool (*InitModule)(int flags);
@@ -44,12 +44,11 @@ typedef struct tfb_videodecoderfunc
 	float (*SeekTime)(TFB_VideoDecoder*, float time);
 	uint32_t (*GetFrame)(TFB_VideoDecoder*);
 	float (*GetTime)(TFB_VideoDecoder*);
-
-} TFB_VideoDecoderFuncs;
+};
 
 // decoder will call these to get info
 // from the player
-typedef struct tfb_videocallbacks
+struct TFB_VideoCallbacks
 {
 	// any decoder calls these
 	void (*BeginFrame)(TFB_VideoDecoder*);
@@ -61,8 +60,7 @@ typedef struct tfb_videocallbacks
 	// non-audio-driven decoders call this to inform
 	// the player when the next frame should be drawn
 	bool (*SetTimer)(TFB_VideoDecoder*, uint32_t msecs);
-
-} TFB_VideoCallbacks;
+};
 
 
 struct tfb_videodecoder

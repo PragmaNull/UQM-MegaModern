@@ -93,27 +93,27 @@ extern "C" {
 #include "packetq.h"
 
 
-typedef struct
+struct HandShakeFlags
 {
 	// For actions that require agreement by both parties.
 	bool localOk   :1; /* Action confirmed by us */
 	bool remoteOk  :1; /* Action confirmed by the remote party */
 	bool canceling :1; /* Awaiting cancel confirmation */
-} HandShakeFlags;
+};
 
-typedef struct
+struct ReadyFlags
 {
 	// For actions that do not require agreement, but for which it
 	// only is relevant that both sides are ready.
 	bool localReady	 :1;
 	bool remoteReady :1;
-} ReadyFlags;
+};
 
-typedef struct
+struct ResetFlags
 {
 	bool localReset	 :1;
 	bool remoteReset :1;
-} ResetFlags;
+};
 
 // Which parameters have we both sides of a connection reached agreement on?
 struct Agreement
@@ -121,7 +121,7 @@ struct Agreement
 	bool randomSeed :1;
 };
 
-typedef struct
+struct NetStateFlags
 {
 	bool connected;
 	/* This NetConnection is connected. */
@@ -146,7 +146,7 @@ typedef struct
 #ifdef NETPLAY_CHECKSUM
 	size_t checksumInterval;
 #endif
-} NetStateFlags;
+};
 
 struct NetConnection
 {

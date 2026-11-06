@@ -91,7 +91,7 @@ namespace uqm
 
 /* These get edited by TEXTENTRY widgets, so they should have room to
  * hold as much as one of them allows by default. */
-typedef struct _input_template
+struct INPUT_TEMPLATE
 {
 	char name[30];
 
@@ -99,7 +99,7 @@ typedef struct _input_template
 	 * and whether or not joysticks are enabled at all, and
 	 * possibly the whole configuration scheme.  If we do that, we
 	 * can actually ditch much of VControl. */
-} INPUT_TEMPLATE;
+};
 
 extern INPUT_TEMPLATE input_templates[6];
 

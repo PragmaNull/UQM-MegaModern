@@ -41,7 +41,7 @@ typedef enum
 	NUM_VCONTROL_GESTURES
 } VCONTROL_GESTURE_TYPE;
 
-typedef struct
+struct VCONTROL_GESTURE
 {
 	VCONTROL_GESTURE_TYPE type;
 	union
@@ -61,7 +61,7 @@ typedef struct
 			Uint8 dir;
 		} hat;
 	} gesture;
-} VCONTROL_GESTURE;
+};
 
 /* Control of bindings */
 int VControl_AddGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target);

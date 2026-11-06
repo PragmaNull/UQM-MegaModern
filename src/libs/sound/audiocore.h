@@ -28,7 +28,7 @@
 extern AudioDriverType snddriver;
 extern AudioFlags soundflags;
 
-typedef struct
+struct audio_Driver
 {
 	/* General */
 	void (*Uninitialize)(void);
@@ -67,7 +67,7 @@ typedef struct
 					   audio_IntVal* value);
 	void (*BufferData)(audio_Object bufobj, uint32_t format, void* data,
 					   uint32_t size, uint32_t freq);
-} audio_Driver;
+};
 
 
 /* Initialization */

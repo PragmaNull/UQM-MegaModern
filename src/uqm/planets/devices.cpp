@@ -75,7 +75,7 @@ typedef enum
 	DEVICE_SUCCESS_NO_SOUND,
 } DeviceStatus;
 
-typedef struct
+struct DEVICES_STATE
 {
 	uint8_t list[NUM_DEVICES];
 	// List of all devices player has
@@ -83,7 +83,7 @@ typedef struct
 	// Number of devices in the list
 	uint16_t topIndex;
 	// Index of the top device displayed
-} DEVICES_STATE;
+};
 
 
 #if 0

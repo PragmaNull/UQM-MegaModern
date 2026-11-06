@@ -847,11 +847,11 @@ static bool DispatchLander(void)
 	return true;
 }
 
-typedef struct
+struct PICK_PLANET_STATE
 {
 	bool success;
 	// true when player selected a location
-} PICK_PLANET_STATE;
+};
 
 static bool DoPickPlanetSide(MENU_STATE* pMS)
 {

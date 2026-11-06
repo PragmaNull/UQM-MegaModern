@@ -32,7 +32,7 @@ inline constexpr auto ClockFrameRate {(c_gameSecond / ClockBaseFramerate)};
 
 typedef HLINK HEVENT;
 
-typedef struct event
+struct EVENT
 {
 	// LINK elements; must be first
 	HEVENT pred, succ;
@@ -40,7 +40,7 @@ typedef struct event
 	uint8_t day_index, month_index;
 	uint16_t year_index;
 	uint8_t func_index;
-} EVENT;
+};
 
 typedef enum
 {

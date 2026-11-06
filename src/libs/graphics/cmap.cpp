@@ -27,7 +27,7 @@
 #include <stdlib.h>
 
 
-typedef struct xform_control
+struct XFORM_CONTROL
 {
 	int CMapIndex; // -1 means unused
 	COLORMAPPTR CMapPtr;
@@ -35,7 +35,7 @@ typedef struct xform_control
 	TimeCount StartTime;
 	TimeCount EndTime;
 	Color OldCMap[NumberOfPlutvals];
-} XFORM_CONTROL;
+};
 
 static constexpr auto MaxXforms {16};
 static struct

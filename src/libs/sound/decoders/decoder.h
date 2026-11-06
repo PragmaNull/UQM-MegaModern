@@ -35,7 +35,7 @@
 #endif /* _MSC_VER */
 #endif /* OVCODEC_NONE */
 
-typedef struct tfb_decoderformats
+struct TFB_DecoderFormats
 {
 	bool big_endian;
 	bool want_big_endian;
@@ -43,7 +43,7 @@ typedef struct tfb_decoderformats
 	uint32_t stereo8;
 	uint32_t mono16;
 	uint32_t stereo16;
-} TFB_DecoderFormats;
+};
 
 typedef enum
 {
@@ -59,7 +59,7 @@ typedef enum
 typedef struct tfb_sounddecoder TFB_SoundDecoder;
 
 
-typedef struct tfb_sounddecoderfunc
+struct TFB_SoundDecoderFuncs
 {
 	const char* (*GetName)(void);
 	bool (*InitModule)(AudioFlags flags, const TFB_DecoderFormats*);
@@ -77,8 +77,7 @@ typedef struct tfb_sounddecoderfunc
 	uint32_t (*Seek)(TFB_SoundDecoder*, uint32_t pcm_pos);
 	// returns the pcm position set
 	uint32_t (*GetFrame)(TFB_SoundDecoder*);
-
-} TFB_SoundDecoderFuncs;
+};
 
 
 struct tfb_sounddecoder

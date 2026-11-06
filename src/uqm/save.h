@@ -37,7 +37,7 @@ inline constexpr auto SaveNameSize {64};
 
 constexpr uint32_t c_saveFormatVersion {1};
 
-typedef struct
+struct SUMMARY_DESC
 {
 	SIS_STATE SS;
 	uint8_t Activity;
@@ -50,7 +50,7 @@ typedef struct
 	uint8_t DeviceList[MaxExclusiveDevices];
 	char SaveName[SaveNameSize];
 	uint8_t res_factor;
-} SUMMARY_DESC;
+};
 
 extern ACTIVITY NextActivity;
 

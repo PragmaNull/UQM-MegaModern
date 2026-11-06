@@ -63,7 +63,7 @@ TFB_VideoDecoderFuncs dukv_DecoderVtbl =
 		dukv_GetTime,
 };
 
-typedef struct tfb_duckvideoheader
+struct TFB_DuckVideoHeader
 {
 	uint32_t version;
 	uint32_t scrn_x_ofs; // horz screen offset in pixels
@@ -71,22 +71,20 @@ typedef struct tfb_duckvideoheader
 	uint16_t wb, hb;	 // width + height in blocks
 	int16_t lumas[8];	 // future luminance deltas
 	int16_t chromas[8];	 // future chrominance deltas
-
-} TFB_DuckVideoHeader;
+};
 
 static constexpr auto NumVecItems {0x010};
 static constexpr auto NumVectors {0x100};
 
-typedef struct tfb_duckvideodeltas
+struct TFB_DuckVideoDeltas
 {
 	int32_t lumas[NumVectors][NumVecItems];
 	int32_t chromas[NumVectors][NumVecItems];
-
-} TFB_DuckVideoDeltas;
+};
 
 // specific video decoder struct derived from TFB_VideoDecoder
 // the only sane way in C one can :)
-typedef struct tfb_duckvideodecoder
+struct TFB_DuckVideoDecoder
 {
 	// always the first member
 	TFB_VideoDecoder decoder;
@@ -107,8 +105,7 @@ typedef struct tfb_duckvideodecoder
 
 	uqstl::vector<uint8_t> inbuf;
 	uqstl::vector<uint32_t> decbuf;
-
-} TFB_DuckVideoDecoder;
+};
 
 static constexpr auto DuckGeneralFps {14.622f};
 static constexpr auto DuckMaxFrameSize {0x8000U};

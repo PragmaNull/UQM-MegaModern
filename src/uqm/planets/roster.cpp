@@ -40,7 +40,7 @@ static STAMP savedShipFrame;
 // Ship icon positions in status display around the flagship
 const auto& ship_pos {SupportShipPts};
 
-typedef struct
+struct ROSTER_STATE
 {
 	// Ship icon positions split into (lower half) left and right (upper)
 	// and sorted in the Y coord. These are used for navigation around the
@@ -56,7 +56,7 @@ typedef struct
 	bool modifyingCrew;
 	// true when in crew modification "sub-menu". This is simple
 	// enough that it does not require a real sub-menu.
-} ROSTER_STATE;
+};
 
 static SHIP_FRAGMENT* LockSupportShip(ROSTER_STATE*, HSHIPFRAG* phFrag);
 

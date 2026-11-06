@@ -99,15 +99,14 @@ TFB_SoundDecoderFuncs nula_DecoderVtbl =
 		nula_GetFrame,
 };
 
-typedef struct tfb_nullsounddecoder
+struct TFB_NullSoundDecoder
 {
 	// always the first member
 	TFB_SoundDecoder decoder;
 
 	// private
 	uint32_t cur_pcm;
-
-} TFB_NullSoundDecoder;
+};
 
 
 struct TFB_RegSoundDecoder

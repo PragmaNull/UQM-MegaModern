@@ -123,10 +123,10 @@ static RACE_DESC umgah_desc =
 
 
 // Private per-instance ship data
-typedef struct
+struct UMGAH_DATA
 {
 	uint16_t prevFacing;
-} UMGAH_DATA;
+};
 
 // Local typedef
 typedef UMGAH_DATA CustomShipData_t;

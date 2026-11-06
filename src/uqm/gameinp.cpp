@@ -48,10 +48,10 @@
 static constexpr auto AccelerationIncrement {(c_gameSecond / 12)};
 static constexpr auto MenuRepeatDelay {(c_gameSecond / 2)};
 
-typedef struct
+struct INPUT_STATE_DESC
 {
 	bool (*InputFunc)(void* pInputState);
-} INPUT_STATE_DESC;
+};
 
 // These static variables are the values that are set by the controllers.
 

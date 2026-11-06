@@ -149,7 +149,7 @@ inline constexpr GFXPOINT LanderDosPts[MaxLanders] {
 
 inline constexpr auto SisNameSize {32};
 
-typedef struct
+struct SIS_STATE
 {
 	int32_t log_x, log_y;
 
@@ -178,7 +178,7 @@ typedef struct
 	uint8_t ShipSeed;
 	int32_t Seed;
 	uint8_t SaveVersion;
-} SIS_STATE;
+};
 
 inline constexpr auto OverrideLanderFlags {(1 << 7)};
 inline constexpr auto AfterBombInstalled {(1 << 7)};

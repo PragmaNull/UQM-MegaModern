@@ -34,60 +34,60 @@ static constexpr auto PoolChunkSize {64};
  * an array with one entry per key. */
 static constexpr auto KeyboardInputBuckets {512};
 
-typedef struct vcontrol_keybinding
+struct keybinding
 {
 	uqstl::atomic<int>* target;
 	sdl_key_t keycode;
-	struct vcontrol_keypool* parent;
-	struct vcontrol_keybinding* next;
-} keybinding;
+	struct keypool* parent;
+	struct keybinding* next;
+};
 
-typedef struct vcontrol_keypool
+struct keypool
 {
 	keybinding pool[PoolChunkSize];
 	int remaining;
-	struct vcontrol_keypool* next;
-} keypool;
+	struct keypool* next;
+};
 
 // The main thread handles input events while the game thread can change the bindings.
 static uqm::RecursiveMutex s_vcontrolLock {};
 
 #ifdef HAVE_JOYSTICK
 
-typedef struct vcontrol_joystick_axis
+struct axis_type
 {
 	keybinding *neg, *pos;
 	int polarity;
-} axis_type;
+};
 
-typedef struct vcontrol_joystick_hat
+struct hat_type
 {
 	keybinding *left, *right, *up, *down;
 	Uint8 last;
-} hat_type;
+};
 
-typedef struct vcontrol_joystick
+struct joystick
 {
 	SDL_Gamepad* stick;
 	int numaxes, numbuttons;
 	int threshold;
 	uqstl::vector<axis_type> axes;
 	uqstl::vector<keybinding*> buttons;
-} joystick;
+};
 
 
-typedef struct vcontrol_controller_list
+struct controller_list
 {
 	joystick gamepad;
-	struct vcontrol_controller_list* next;
+	struct controller_list* next;
 	SDL_JoystickID instance_id;
-} controller_list;
+};
 
 static controller_list* controller_list_head UQM_GUARDED_BY(s_vcontrolLock) = nullptr;
 static int controller_assignments[2] UQM_GUARDED_BY(s_vcontrolLock) = {-1, -1};
 static int active_controller_count UQM_GUARDED_BY(s_vcontrolLock) = 0;
 
-typedef struct
+struct default_binding
 {
 	int is_axis_binding;
 	int axis;
@@ -95,7 +95,7 @@ typedef struct
 	int button;
 	uqstl::atomic<int>* target;
 	int logical_port;
-} default_binding;
+};
 
 static uqstl::vector<default_binding> default_bindings UQM_GUARDED_BY(s_vcontrolLock) {};
 
@@ -1126,14 +1126,14 @@ int VControl_GetLastGesture(VCONTROL_GESTURE* g)
 static constexpr auto LineSize {256};
 static constexpr auto TokenSize {64};
 
-typedef struct vcontrol_parse_state
+struct parse_state
 {
 	char line[LineSize] {};
 	char token[TokenSize] {};
 	int index {};
 	int error {};
 	int linenum {};
-} parse_state;
+};
 
 static void next_token(parse_state* state)
 {

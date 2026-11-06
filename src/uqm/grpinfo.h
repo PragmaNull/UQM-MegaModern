@@ -40,7 +40,7 @@ inline constexpr auto Rotates {(1 << 1)};
 inline constexpr auto IsProbe {(1 << 2)};
 inline constexpr auto IsXform {(1 << 3)};
 
-typedef struct
+struct IP_GROUP
 {
 	// LINK elements; must be first
 	HIPGROUP pred;
@@ -66,7 +66,7 @@ typedef struct
 	FRAME melee_icon;
 
 	IP_FLAGS flags;
-} IP_GROUP;
+};
 
 enum
 {

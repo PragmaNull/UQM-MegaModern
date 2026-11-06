@@ -66,7 +66,7 @@ TFB_SoundDecoderFuncs ova_DecoderVtbl =
 		ova_GetFrame,
 };
 
-typedef struct tfb_oggsounddecoder
+struct TFB_OggSoundDecoder
 {
 	// always the first member
 	TFB_SoundDecoder decoder;
@@ -74,8 +74,7 @@ typedef struct tfb_oggsounddecoder
 	// private
 	int32_t last_error;
 	OggVorbis_File vf;
-
-} TFB_OggSoundDecoder;
+};
 
 const static TFB_DecoderFormats* ova_formats = nullptr;
 

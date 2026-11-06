@@ -19,7 +19,7 @@
 //    (which may be the current system). Thus the randomly generated groups
 //    are valid for 7 days (set in PutGroupInfo) after the player leaves
 //    the system, or until the player enters another star system.
-typedef struct
+struct GROUP_HEADER
 {
 	uint8_t NumGroups;
 	uint8_t day_index, month_index;
@@ -43,8 +43,7 @@ typedef struct
 	// 1 byte, RaceType
 	// 16 bytes, part of SHIP_FRAGMENT struct
 	//                  (part of IP_GROUP struct in Group 0)
-
-} GROUP_HEADER;
+};
 
 void ReadGroupHeader(GAME_STATE_FILE* fp, GROUP_HEADER* pGH);
 void WriteGroupHeader(GAME_STATE_FILE* fp, const GROUP_HEADER* pGH);

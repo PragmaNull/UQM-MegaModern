@@ -48,14 +48,14 @@ static uint16_t num_sceneries;
 
 static constexpr auto NumStarPlanes {3};
 
-typedef struct
+struct STAR_BLOCK
 {
 	uint16_t min_star_index;
 	uint16_t num_stars;
 	DPOINT* star_array;
 	DPOINT* pmin_star;
 	DPOINT* plast_star;
-} STAR_BLOCK;
+};
 
 STAR_BLOCK StarBlock[NumStarPlanes] =
 	{

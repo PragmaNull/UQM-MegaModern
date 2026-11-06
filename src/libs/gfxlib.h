@@ -204,30 +204,30 @@ struct EXTENT
 };
 
 // JMS: Extent with larger values to avoid overflows in hires modes.
-typedef struct dextent
+struct DEXTENT
 {
 	int32_t width, height;
-} DEXTENT;
+};
 
-typedef struct point
+struct GFXPOINT
 {
-	constexpr point() = default;
-	constexpr point(int16_t _x, int16_t _y)
+	constexpr GFXPOINT() = default;
+	constexpr GFXPOINT(int16_t _x, int16_t _y)
 		: x {_x}
 		, y {_y}
 	{
 	}
-	constexpr point(int _x, int _y)
+	constexpr GFXPOINT(int _x, int _y)
 		: x {(int16_t)_x}
 		, y {(int16_t)_y}
 	{
 	}
-	constexpr point(float _x, float _y)
+	constexpr GFXPOINT(float _x, float _y)
 		: x {(int16_t)_x}
 		, y {(int16_t)_y}
 	{
 	}
-	constexpr point(double _x, double _y)
+	constexpr GFXPOINT(double _x, double _y)
 		: x {(int16_t)_x}
 		, y {(int16_t)_y}
 	{
@@ -235,7 +235,7 @@ typedef struct point
 
 	int16_t x {};
 	int16_t y {};
-} GFXPOINT;
+};
 
 inline GFXPOINT operator+(const GFXPOINT& lhs, const GFXPOINT& rhs)
 {
@@ -244,35 +244,35 @@ inline GFXPOINT operator+(const GFXPOINT& lhs, const GFXPOINT& rhs)
 
 
 // JMS: coordinate point with larger values to avoid overflows in hires modes.
-typedef struct dpoint
+struct DPOINT
 {
 	int32_t x, y;
-} DPOINT;
+};
 
-typedef struct stamp
+struct STAMP
 {
 	GFXPOINT origin;
 	FRAME frame;
-} STAMP;
+};
 
-typedef struct rect
+struct GFXRECT
 {
 	GFXPOINT corner;
 	EXTENT extent;
-} GFXRECT;
+};
 
 // Kruzen: Thanks to JMS, using this to draw ovals
 // Overflows happen in HdResolutionFactor with Starmap and max zoom (Fuel circles)
-typedef struct drect
+struct DRECT
 {
 	DPOINT corner;
 	DEXTENT extent;
-} DRECT;
+};
 
-typedef struct line
+struct LINE
 {
 	GFXPOINT first, second;
-} LINE;
+};
 
 static inline GFXPOINT MAKE_POINT(int16_t x, int16_t y)
 {
@@ -431,13 +431,13 @@ typedef enum
 	VALIGN_BOTTOM
 } TEXT_VALIGN;
 
-typedef struct text
+struct TEXT
 {
 	GFXPOINT baseline;
 	const char* pStr;
 	TEXT_ALIGN align;
 	uint16_t CharCount;
-} TEXT;
+};
 
 #if 0 //defined(__cplusplus)
 }
@@ -461,12 +461,12 @@ typedef uint8_t BATCH_FLAGS;
 // This flag is currently unused but it might make sense to restore it
 inline constexpr auto BatchBuildPage {(BATCH_FLAGS)(1 << 0)};
 
-typedef struct
+struct INTERSECT_CONTROL
 {
 	TIME_VALUE last_time_val;
 	GFXPOINT EndPoint;
 	STAMP IntersectStamp;
-} INTERSECT_CONTROL;
+};
 
 typedef uint8_t INTERSECT_CODE;
 
@@ -542,11 +542,11 @@ typedef enum
 	DRAW_DEFAULT = DRAW_REPLACE,
 } DrawKind;
 
-typedef struct
+struct DrawMode
 {
 	uint8_t kind;
 	int16_t factor;
-} DrawMode;
+};
 
 inline constexpr auto DrawFactor1 {0xff};
 inline constexpr auto TransferAlpha {0x7fff};

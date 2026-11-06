@@ -40,13 +40,13 @@ typedef union
 	GFXRECT Rect;
 } INTERNAL_PRIM_DESC;
 
-typedef struct
+struct INTERNAL_PRIMITIVE
 {
 	PRIM_LINKS Links;
 	GRAPHICS_PRIM Type;
 	Color Color;
 	INTERNAL_PRIM_DESC Object;
-} INTERNAL_PRIMITIVE;
+};
 
 
 // pValidRect or origin may be nullptr

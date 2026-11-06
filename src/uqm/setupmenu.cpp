@@ -49,14 +49,14 @@
 #include "uqm/random/GameSeed.h"
 #include "uqm/setupsettings.h"
 
-typedef struct setup_menu_state
+struct SETUP_MENU_STATE
 {
-	bool (*InputFunc)(struct setup_menu_state* pInputState);
+	bool (*InputFunc)(struct SETUP_MENU_STATE* pInputState);
 
 	bool initialized;
 	int anim_frame_count;
 	TimeCount NextTime;
-} SETUP_MENU_STATE;
+};
 
 static SOUND_REF testSounds;
 

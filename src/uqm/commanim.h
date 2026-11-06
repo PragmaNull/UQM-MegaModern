@@ -89,7 +89,7 @@ inline constexpr auto OneShotAnim {TalkIntro};
 // disabled after they run once.
 
 
-typedef struct
+struct ANIMATION_DESC
 {
 	uint16_t StartIndex;
 	// Index of the first image (for image animation) or
@@ -117,7 +117,7 @@ typedef struct
 	// Bit mask of the indices of all animations that can not
 	// be active at the same time as this animation, usually,
 	// due to the image overlap conflicts.
-} ANIMATION_DESC;
+};
 
 inline constexpr auto MaxAnimations {30}; // JMS: Was 20
 
@@ -174,7 +174,7 @@ inline constexpr auto FilterDisabled {(1 << 3)};
 inline constexpr auto SwitchOffAnims {(1 << 4)};
 inline constexpr auto SwitchOnAnims {(1 << 5)};
 
-typedef struct
+struct FILTER
 {
 	uint8_t ColorIndex;
 	// Index of filter color in color
@@ -195,15 +195,14 @@ typedef struct
 
 	uint8_t Flags;
 	// Any possible flags
-} FILTER;
+};
 
-typedef struct
+struct FILTER_DESC
 {
 	uint8_t NumFilters;
 
 	FILTER FilterArray[MaxFilters];
-
-} FILTER_DESC;
+};
 
 extern FILTER_DESC FilterData;
 

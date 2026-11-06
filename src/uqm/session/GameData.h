@@ -7,7 +7,7 @@
 #include "uqm/displist.h"
 #include "uqm/sis.h"
 
-typedef struct
+struct GAME_STATE
 {
 	uint8_t CrewCost, FuelCost;
 	uint8_t ModuleCost[NUM_MODULES];
@@ -34,6 +34,6 @@ typedef struct
 	uqm::LinkQueue stowed_ship_q;
 	/* List of escort ships available at starbase;
 			 * queue element is SHIP_FRAGMENT */
-} GAME_STATE;
+};
 
 #endif // UQM_SESSION_GAMEDATA_H_

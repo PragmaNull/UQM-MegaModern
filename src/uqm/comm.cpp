@@ -82,18 +82,18 @@ bool cwLock = false; // To avoid drawing over comWindow if JumpTrack() is called
 uint8_t altResFlags = 0;
 static uint16_t fadeIndex;
 
-typedef struct response_entry
+struct RESPONSE_ENTRY
 {
 	RESPONSE_REF response_ref;
 	TEXT response_text;
 	RESPONSE_FUNC response_func;
 	// The response text after Lua interpolation, if it needed that.
 	uqstl::string allocedResponse;
-} RESPONSE_ENTRY;
+};
 
-typedef struct encounter_state
+struct ENCOUNTER_STATE
 {
-	bool (*InputFunc)(struct encounter_state* pES);
+	bool (*InputFunc)(struct ENCOUNTER_STATE* pES);
 
 	uint16_t Initialized;
 	TimeCount NextTime; // framerate control
@@ -103,17 +103,16 @@ typedef struct encounter_state
 	RESPONSE_ENTRY response_list[MaxResponses];
 
 	char phrase_buf[1024];
-} ENCOUNTER_STATE;
+};
 
 // Required to set custom baseline per one sentence
-typedef struct CustomBaseline
+struct CUSTOM_BASELINE
 {
 	uint16_t index;
 	GFXPOINT baseline;
 	TEXT_ALIGN align;
-	struct CustomBaseline* next;
-
-} CUSTOM_BASELINE;
+	struct CUSTOM_BASELINE* next;
+};
 
 static CUSTOM_BASELINE* head_node; // Head node of custom baseline list
 static CUSTOM_BASELINE* cur_node;  // not null if current sentence number has been found in the list
@@ -921,18 +920,17 @@ static void UpdateCommGraphics(void)
 }
 
 // Derived from INPUT_STATE_DESC
-typedef struct talking_state
+struct TALKING_STATE
 {
 	// Fields required by DoInput()
-	bool (*InputFunc)(struct talking_state*);
+	bool (*InputFunc)(struct TALKING_STATE*);
 
 	TimeCount NextTime; // framerate control
 	uint16_t waitTrack;
 	bool rewind;
 	bool seeking;
 	bool ended;
-
-} TALKING_STATE;
+};
 
 static bool DoTalkSegue(TALKING_STATE* pTS)
 {
@@ -1270,18 +1268,17 @@ void AlienTalkSegue(uint16_t wait_track)
 }
 
 
-typedef struct summary_state
+struct SUMMARY_STATE
 {
 	// standard state required by DoInput
-	bool (*InputFunc)(struct summary_state* pSS);
+	bool (*InputFunc)(struct SUMMARY_STATE* pSS);
 
 	// extended state
 	bool Initialized;
 	bool PrintNext;
 	SUBTITLE_REF NextSub;
 	const char* LeftOver;
-
-} SUMMARY_STATE;
+};
 
 static void remove_char_from_string(char* str, const char c)
 { // MB: Hack for removing '$' characters from Orz dialogue when viewing
@@ -1611,15 +1608,14 @@ static void PlayerResponseInput(ENCOUNTER_STATE* pES)
 }
 
 // Derived from INPUT_STATE_DESC
-typedef struct last_replay_state
+struct LAST_REPLAY_STATE
 {
 	// Fields required by DoInput()
-	bool (*InputFunc)(struct last_replay_state*);
+	bool (*InputFunc)(struct LAST_REPLAY_STATE*);
 
 	TimeCount NextTime; // framerate control
 	TimeCount TimeOut;
-
-} LAST_REPLAY_STATE;
+};
 
 static bool DoLastReplay(LAST_REPLAY_STATE* pLRS)
 {

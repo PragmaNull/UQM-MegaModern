@@ -42,7 +42,7 @@
 
 static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands);
 
-typedef struct
+struct PRESENTATION_INPUT_STATE
 {
 	/* standard state required by DoInput */
 	bool (*InputFunc)(void* pInputState);
@@ -83,10 +83,9 @@ typedef struct
 	uint16_t CurrentFrameIndex;
 	bool HaveFrame;
 	bool Skip;
+};
 
-} PRESENTATION_INPUT_STATE;
-
-typedef struct
+struct SPINANIM_INPUT_STATE
 {
 	/* standard state required by DoInput */
 	bool (*InputFunc)(void* pInputState);
@@ -95,16 +94,15 @@ typedef struct
 	STAMP anim;
 	TimeCount last_time;
 	int debounce;
-} SPINANIM_INPUT_STATE;
+};
 
-typedef struct
+struct VIDEO_INPUT_STATE
 {
 	// standard state required by DoInput
 	bool (*InputFunc)(void* pInputState);
 
 	LEGACY_VIDEO_REF CurVideo;
-
-} VIDEO_INPUT_STATE;
+};
 
 static bool DoPresentation(void* pIS);
 
@@ -423,7 +421,7 @@ static bool ShowPresentationFile(const char* name)
 	return ShowSlidePresentation(*commands);
 }
 
-typedef struct
+struct SHIPMAP
 {
 	SPECIES_ID sID;	   // The ship SPECIES_ID, a second index
 	char ditty[256];   // The ditty string (file name)
@@ -431,7 +429,7 @@ typedef struct
 	char ship[256];	   // The ship's name string e.g. CRUISER
 	uint16_t spinline; // The line on which race/ship strings occur
 	uint16_t width;	   // The SD pixel width of the race name
-} SHIPMAP;
+};
 
 const static SHIPMAP ship_map[] = {
 	{ARILOU_ID,		"arilou",	  "ARILOULALEELAY", " SKIFF",		  2,	 123},

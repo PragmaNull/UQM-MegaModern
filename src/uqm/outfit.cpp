@@ -91,7 +91,7 @@ static auto TextSpacingY() { return ResScale(7); }
 
 static constexpr auto MaxVisModules {5};
 
-typedef struct
+struct MODULES_STATE
 {
 	uint8_t list[NUM_PURCHASE_MODULES];
 	// List of all modules player has
@@ -99,7 +99,7 @@ typedef struct
 	// Number of modules in the list
 	uint16_t topIndex;
 	// Index of the top module displayed
-} MODULES_STATE;
+};
 
 MODULES_STATE ModuleState;
 

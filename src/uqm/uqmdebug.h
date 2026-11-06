@@ -103,7 +103,7 @@ void forAllMoons(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
 				 void* arg);
 
 // Argument to UniverseRecurse()
-typedef struct
+struct UniverseRecurseArg
 {
 	void (*systemFuncPre)(const STAR_DESC* star,
 						  const SOLARSYS_STATE* system, void* arg);
@@ -119,7 +119,7 @@ typedef struct
 	// Called for each moon.
 	void* arg;
 	// User data.
-} UniverseRecurseArg;
+};
 // Recurse through all systems, planets, and moons in the universe.
 // Must be called on the Starcon2Main thread.
 void UniverseRecurse(UniverseRecurseArg* universeRecurseArg);

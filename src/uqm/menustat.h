@@ -27,10 +27,10 @@
 extern "C" {
 #endif
 
-typedef struct menu_state
+struct MENU_STATE
 {
 	// Standard field required by DoInput()
-	bool (*InputFunc)(struct menu_state* pMS);
+	bool (*InputFunc)(struct MENU_STATE* pMS);
 
 	int16_t Initialized;
 
@@ -50,8 +50,7 @@ typedef struct menu_state
 	// For private use by various menus
 	// Usually, a menu associates its internal data struct using this
 	void* privData;
-
-} MENU_STATE;
+};
 
 // XXX: Should probably go to menu.h (does not yet exist)
 enum

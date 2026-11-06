@@ -39,7 +39,7 @@ typedef enum
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/cmap.h"
 
-typedef struct tfb_image
+struct TFB_Image
 {
 	TFB_Canvas NormalImg;
 	TFB_Canvas ScaledImg;
@@ -56,9 +56,9 @@ typedef struct tfb_image
 	EXTENT extent;
 	uqm::RecursiveMutex mutex;
 	bool dirty;
-} TFB_Image;
+};
 
-typedef struct tfb_char
+struct TFB_Char
 {
 	EXTENT extent;
 	EXTENT disp;
@@ -68,17 +68,17 @@ typedef struct tfb_char
 	uint32_t pitch;
 	// Pitch is for storing all chars of a page
 	// in one rectangular pixel matrix
-} TFB_Char;
+};
 
 // we do not support paletted format for now
-typedef struct tfb_pixelformat
+struct TFB_PixelFormat
 {
 	int BitsPerPixel;
 	int BytesPerPixel;
 	uint32_t Rmask, Gmask, Bmask, Amask;
 	uint32_t Rshift, Gshift, Bshift, Ashift;
 	uint32_t Rloss, Gloss, Bloss, Aloss;
-} TFB_PixelFormat;
+};
 
 // Drawing commands
 

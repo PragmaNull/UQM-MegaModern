@@ -168,13 +168,12 @@ static RACE_DESC sis_desc =
 };
 
 // Private per-instance SIS data
-typedef struct
+struct SIS_DATA
 {
 	uint16_t num_trackers;
 	uint16_t num_blasters;
 	MISSILE_BLOCK MissileBlock[6];
-
-} SIS_DATA;
+};
 
 static void InitWeaponSlots(RACE_DESC* RaceDescPtr,
 							const uint8_t* ModuleSlots);

@@ -170,11 +170,11 @@ SPECIES_ID ShipIdStrToIndex(const char* shipIdStr)
 	return result;
 }
 
-typedef struct
+struct RaceIdMap
 {
 	const char* idStr;
 	RACE_ID id;
-} RaceIdMap;
+};
 
 // We would eventually want to unhardcode this.
 static RaceIdMap raceIdMap[] = {

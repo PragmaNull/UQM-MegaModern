@@ -63,7 +63,7 @@ TFB_SoundDecoderFuncs moda_DecoderVtbl =
 		moda_GetFrame,
 };
 
-typedef struct tfb_modsounddecoder
+struct TFB_ModSoundDecoder
 {
 	// always the first member
 	TFB_SoundDecoder decoder;
@@ -71,8 +71,7 @@ typedef struct tfb_modsounddecoder
 	// private
 	int32_t last_error;
 	MODULE* module;
-
-} TFB_ModSoundDecoder;
+};
 
 
 // MikMod Output driver
@@ -173,12 +172,11 @@ const static TFB_DecoderFormats* moda_formats = nullptr;
 // MikMod READER interface
 //  we provide our own so that we can do loading via libs/io
 //
-typedef struct MIOREADER
+struct MIOREADER
 {
 	MREADER core;
 	uqm::io::File* file;
-
-} MIOREADER;
+};
 
 static BOOL moda_ioReader_Eof(MREADER* reader)
 {

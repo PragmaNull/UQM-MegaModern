@@ -49,98 +49,98 @@ typedef enum
 inline constexpr auto WidgetTextentryWidth {32};
 inline constexpr auto WidgetControlentryWidth {16};
 
-typedef struct _widget
+struct WIDGET
 {
 	WIDGET_TYPE tag;
-	struct _widget* parent;
-	int (*handleEvent)(struct _widget* self, int event);
-	int (*receiveFocus)(struct _widget* self, int event);
-	void (*draw)(struct _widget* self, int x, int y);
-	int (*height)(struct _widget* self);
-	int (*width)(struct _widget* self);
-} WIDGET;
+	struct WIDGET* parent;
+	int (*handleEvent)(struct WIDGET* self, int event);
+	int (*receiveFocus)(struct WIDGET* self, int event);
+	void (*draw)(struct WIDGET* self, int x, int y);
+	int (*height)(struct WIDGET* self);
+	int (*width)(struct WIDGET* self);
+};
 
-typedef struct _widget_menu_screen
+struct WIDGET_MENU_SCREEN
 {
 	WIDGET_TYPE tag;
-	struct _widget* parent;
-	int (*handleEvent)(struct _widget* self, int event);
-	int (*receiveFocus)(struct _widget* self, int event);
-	void (*draw)(struct _widget* self, int x, int y);
-	int (*height)(struct _widget* self);
-	int (*width)(struct _widget* self);
+	struct WIDGET* parent;
+	int (*handleEvent)(struct WIDGET* self, int event);
+	int (*receiveFocus)(struct WIDGET* self, int event);
+	void (*draw)(struct WIDGET* self, int x, int y);
+	int (*height)(struct WIDGET* self);
+	int (*width)(struct WIDGET* self);
 	const char* title;
 	const char* subtitle;
 	STAMP bgStamp;
 	int num_children;
-	struct _widget** child;
+	struct WIDGET** child;
 	int highlighted;
-} WIDGET_MENU_SCREEN;
+};
 
-typedef struct
+struct CHOICE_OPTION
 {
 	const char* optname;
 	const char* tooltip[3];
-} CHOICE_OPTION;
+};
 
-typedef struct _widget_choice
+struct WIDGET_CHOICE
 {
 	WIDGET_TYPE tag;
-	struct _widget* parent;
-	int (*handleEvent)(struct _widget* self, int event);
-	int (*receiveFocus)(struct _widget* self, int event);
-	void (*draw)(struct _widget* self, int x, int y);
-	int (*height)(struct _widget* self);
-	int (*width)(struct _widget* self);
+	struct WIDGET* parent;
+	int (*handleEvent)(struct WIDGET* self, int event);
+	int (*receiveFocus)(struct WIDGET* self, int event);
+	void (*draw)(struct WIDGET* self, int x, int y);
+	int (*height)(struct WIDGET* self);
+	int (*width)(struct WIDGET* self);
 	const char* category;
 	int numopts;
 	CHOICE_OPTION* options;
 	int selected, highlighted, choice_num;
-	void (*onChange)(struct _widget_choice* self, int oldval);
-} WIDGET_CHOICE;
+	void (*onChange)(struct WIDGET_CHOICE* self, int oldval);
+};
 
-typedef struct _widget_button
+struct WIDGET_BUTTON
 {
 	WIDGET_TYPE tag;
-	struct _widget* parent;
-	int (*handleEvent)(struct _widget* self, int event);
-	int (*receiveFocus)(struct _widget* self, int event);
-	void (*draw)(struct _widget* self, int x, int y);
-	int (*height)(struct _widget* self);
-	int (*width)(struct _widget* self);
+	struct WIDGET* parent;
+	int (*handleEvent)(struct WIDGET* self, int event);
+	int (*receiveFocus)(struct WIDGET* self, int event);
+	void (*draw)(struct WIDGET* self, int x, int y);
+	int (*height)(struct WIDGET* self);
+	int (*width)(struct WIDGET* self);
 	const char* name;
 	const char* tooltip[3];
-} WIDGET_BUTTON;
+};
 
-typedef struct _widget_label
+struct WIDGET_LABEL
 {
 	WIDGET_TYPE tag;
-	struct _widget* parent;
-	int (*handleEvent)(struct _widget* self, int event);
-	int (*receiveFocus)(struct _widget* self, int event);
-	void (*draw)(struct _widget* self, int x, int y);
-	int (*height)(struct _widget* self);
-	int (*width)(struct _widget* self);
+	struct WIDGET* parent;
+	int (*handleEvent)(struct WIDGET* self, int event);
+	int (*receiveFocus)(struct WIDGET* self, int event);
+	void (*draw)(struct WIDGET* self, int x, int y);
+	int (*height)(struct WIDGET* self);
+	int (*width)(struct WIDGET* self);
 	int line_count;
 	const char** lines;
-} WIDGET_LABEL;
+};
 
-typedef struct _widget_slider
+struct WIDGET_SLIDER
 {
 	WIDGET_TYPE tag;
-	struct _widget* parent;
-	int (*handleEvent)(struct _widget* self, int event);
-	int (*receiveFocus)(struct _widget* self, int event);
-	void (*draw)(struct _widget* self, int x, int y);
-	int (*height)(struct _widget* self);
-	int (*width)(struct _widget* self);
-	void (*draw_value)(struct _widget_slider* self, int x, int y);
+	struct WIDGET* parent;
+	int (*handleEvent)(struct WIDGET* self, int event);
+	int (*receiveFocus)(struct WIDGET* self, int event);
+	void (*draw)(struct WIDGET* self, int x, int y);
+	int (*height)(struct WIDGET* self);
+	int (*width)(struct WIDGET* self);
+	void (*draw_value)(struct WIDGET_SLIDER* self, int x, int y);
 	int min, max, step;
 	int value;
 	const char* category;
 	const char* tooltip[3];
-	void (*onChange)(struct _widget_slider* self);
-} WIDGET_SLIDER;
+	void (*onChange)(struct WIDGET_SLIDER* self);
+};
 
 typedef enum
 {
@@ -164,44 +164,44 @@ inline WIDGET_TEXTENTRY_STATE operator&=(WIDGET_TEXTENTRY_STATE lhs, WIDGET_TEXT
 }
 
 
-typedef struct _widget_textentry
+struct WIDGET_TEXTENTRY
 {
 	WIDGET_TYPE tag;
-	struct _widget* parent;
-	int (*handleEvent)(struct _widget* self, int event);
-	int (*receiveFocus)(struct _widget* self, int event);
-	void (*draw)(struct _widget* self, int x, int y);
-	int (*height)(struct _widget* self);
-	int (*width)(struct _widget* self);
-	int (*handleEventSelect)(struct _widget_textentry* self);
+	struct WIDGET* parent;
+	int (*handleEvent)(struct WIDGET* self, int event);
+	int (*receiveFocus)(struct WIDGET* self, int event);
+	void (*draw)(struct WIDGET* self, int x, int y);
+	int (*height)(struct WIDGET* self);
+	int (*width)(struct WIDGET* self);
+	int (*handleEventSelect)(struct WIDGET_TEXTENTRY* self);
 	// handleEventSelect is an overridable callback event
 	// called by the default handleEvent implementation
 	// can be nullptr, in which case SELECT is ignored
-	void (*onChange)(struct _widget_textentry* self);
+	void (*onChange)(struct WIDGET_TEXTENTRY* self);
 	const char* category;
 	char value[WidgetTextentryWidth];
 	int maxlen;
 	WIDGET_TEXTENTRY_STATE state;
 	int cursor_pos;
 	const char* tooltip[3];
-} WIDGET_TEXTENTRY;
+};
 
-typedef struct _widget_controlentry
+struct WIDGET_CONTROLENTRY
 {
 	WIDGET_TYPE tag;
-	struct _widget* parent;
-	int (*handleEvent)(struct _widget* self, int event);
-	int (*receiveFocus)(struct _widget* self, int event);
-	void (*draw)(struct _widget* self, int x, int y);
-	int (*height)(struct _widget* self);
-	int (*width)(struct _widget* self);
-	void (*onChange)(struct _widget_controlentry* self);
-	void (*onDelete)(struct _widget_controlentry* self);
+	struct WIDGET* parent;
+	int (*handleEvent)(struct WIDGET* self, int event);
+	int (*receiveFocus)(struct WIDGET* self, int event);
+	void (*draw)(struct WIDGET* self, int x, int y);
+	int (*height)(struct WIDGET* self);
+	int (*width)(struct WIDGET* self);
+	void (*onChange)(struct WIDGET_CONTROLENTRY* self);
+	void (*onDelete)(struct WIDGET_CONTROLENTRY* self);
 	const char* category;
 	int controlindex;
 	int highlighted;
 	char controlname[2][WidgetControlentryWidth];
-} WIDGET_CONTROLENTRY;
+};
 
 void DrawShadowedBox(GFXRECT* r, Color bg, Color dark, Color medium);
 void DrawLabelAsWindow(WIDGET_LABEL* label, GFXRECT* windowRect);

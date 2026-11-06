@@ -132,14 +132,13 @@ static RACE_DESC pkunk_desc =
 };
 
 // Private per-instance ship data
-typedef struct
+struct PKUNK_DATA
 {
 	HELEMENT hPhoenix;
 	ElementProcessFunc* saved_preprocess_func;
 	ElementProcessFunc* saved_postprocess_func;
 	ElementProcessFunc* saved_death_func;
-
-} PKUNK_DATA;
+};
 
 // Local typedef
 typedef PKUNK_DATA CustomShipData_t;

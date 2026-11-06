@@ -85,7 +85,7 @@ typedef uint16_t ELEMENT_FLAGS;
 
 inline constexpr auto NoPrim {NUM_PRIMS};
 
-typedef struct state
+struct STATE
 {
 	GFXPOINT location;
 	struct
@@ -93,7 +93,7 @@ typedef struct state
 		FRAME frame;
 		FRAME* farray;
 	} image;
-} STATE;
+};
 
 
 typedef struct element ELEMENT;

@@ -34,7 +34,7 @@ static BattleStateData* BattleStateData_alloc(void);
 static void BattleStateData_free(BattleStateData* battleStateData);
 static inline BattleStateData* BattleStateData_new(
 	struct melee_state* meleeState,
-	struct battlestate_struct* battleState,
+	struct BATTLE_STATE* battleState,
 	struct getmelee_struct* getMeleeState);
 static void BattleStateData_delete(BattleStateData* battleStateData);
 
@@ -50,7 +50,7 @@ static void BattleStateData_free(BattleStateData* battleStateData)
 }
 
 static inline BattleStateData* BattleStateData_new(struct melee_state* meleeState,
-												   struct battlestate_struct* battleState,
+												   struct BATTLE_STATE* battleState,
 												   struct getmelee_struct* getMeleeState)
 {
 	BattleStateData* battleStateData = BattleStateData_alloc();

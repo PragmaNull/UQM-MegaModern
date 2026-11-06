@@ -30,14 +30,14 @@ inline constexpr auto MusicSource {(LastSfxSource + 1)};
 inline constexpr auto SpeechSource {(MusicSource + 1)};
 inline constexpr auto NumSoundsources {(SpeechSource + 1)};
 
-typedef struct
+struct TFB_SoundTag
 {
 	int in_use;
 	audio_Object buf_name;
 	intptr_t data; // user-defined data
-} TFB_SoundTag;
+};
 
-typedef struct tfb_soundcallbacks
+struct TFB_SoundCallbacks
 {
 	// return true to continue, false to abort
 	bool (*OnStartStream)(TFB_SoundSample*);
@@ -49,7 +49,7 @@ typedef struct tfb_soundcallbacks
 	void (*OnTaggedBuffer)(TFB_SoundSample*, TFB_SoundTag*);
 	// buffer just queued
 	void (*OnQueueBuffer)(TFB_SoundSample*, audio_Object);
-} TFB_SoundCallbacks;
+};
 
 
 extern int musicVolume;

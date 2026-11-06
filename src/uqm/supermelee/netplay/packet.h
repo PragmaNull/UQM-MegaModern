@@ -88,12 +88,12 @@ extern "C" {
  */
 typedef NetResult (*PacketHandler)(NetConnection* conn, const void* packet);
 
-typedef struct
+struct PacketTypeData
 {
 	size_t len; /* Minimal length of a packet of this type */
 	PacketHandler handler;
 	const char* name;
-} PacketTypeData;
+};
 
 extern PacketTypeData packetTypeData[];
 
@@ -112,11 +112,11 @@ extern "C" {
 // Fields should be no longer than 4 bytes in themselves, as larger
 // fields may require a larger alignment.
 
-typedef struct
+struct PacketHeader
 {
 	uint16_t len;
 	uint16_t type; /* Actually of type PacketType */
-} PacketHeader;
+};
 
 // "Base class" for all packets.
 struct Packet
@@ -139,7 +139,7 @@ static inline bool validPacketType(PacketType type)
 	return type < PACKET_NUM;
 }
 
-typedef struct
+struct Packet_Init
 {
 	PacketHeader header;
 	struct
@@ -155,39 +155,39 @@ typedef struct
 		uint8_t patch;
 	} uqmVersion;	  /* Protocol version */
 	uint8_t padding1; /* Set to 0 */
-} Packet_Init;
+};
 
-typedef struct
+struct Packet_Ping
 {
 	PacketHeader header;
 	uint32_t id;
-} Packet_Ping;
+};
 
 // Acknowledgement of a Ping.
-typedef struct
+struct Packet_Ack
 {
 	PacketHeader header;
 	uint32_t id;
-} Packet_Ack;
+};
 
 // Used to signal that a party is ready to continue.
-typedef struct
+struct Packet_Ready
 {
 	PacketHeader header;
 	// No contents.
-} Packet_Ready;
+};
 
-typedef struct
+struct Packet_SeedRandom
 {
 	PacketHeader header;
 	uint32_t seed;
-} Packet_SeedRandom;
+};
 
-typedef struct
+struct Packet_InputDelay
 {
 	PacketHeader header;
 	uint32_t delay;
-} Packet_InputDelay;
+};
 
 // This enum is used to indicate that a packet containing it relates to
 // either the local or the remote player, from the perspective of the
@@ -198,15 +198,15 @@ typedef enum
 	NetplaySide_remote
 } NetplaySide;
 
-typedef struct
+struct FleetEntry
 {
 	uint8_t index; /* Position in the fleet */
 	uint8_t ship;  /* Ship type index; actually MeleeShip */
-} FleetEntry;
+};
 // Structure describing an update to a player's fleet.
 // TODO: use strings as ship identifiers, instead of numbers,
 // so that adding of new ships doesn't break this.
-typedef struct
+struct Packet_Fleet
 {
 	PacketHeader header;
 	uint8_t side;
@@ -215,7 +215,7 @@ typedef struct
 	// The fleet entries follow the structure. See fleetEntries().
 	// Be sure to add padding to this structure to make it a multiple of
 	// 4 bytes in length.
-} Packet_Fleet;
+};
 
 static_assert(sizeof(Packet_Fleet) == 8, "The size of the packet header is part of the protocol.");
 
@@ -230,7 +230,7 @@ inline const FleetEntry* fleetEntries(const Packet_Fleet* packet)
 	return reinterpret_cast<const FleetEntry*>(packet + 1);
 }
 
-typedef struct
+struct Packet_TeamName
 {
 	PacketHeader header;
 	uint8_t side;
@@ -238,7 +238,7 @@ typedef struct
 	// The '\0'-terminated name follows the structure. See teamName().
 	// Be sure to add padding to this structure to make it a multiple of
 	// 4 bytes in length.
-} Packet_TeamName;
+};
 
 static_assert(sizeof(Packet_TeamName) == 6, "The size of the packet header is part of the protocol.");
 
@@ -253,72 +253,72 @@ inline const uint8_t* teamName(const Packet_TeamName* packet)
 	return reinterpret_cast<const uint8_t*>(packet + 1);
 }
 
-typedef struct
+struct Packet_Handshake0
 {
 	PacketHeader header;
 	// No contents.
-} Packet_Handshake0;
+};
 
-typedef struct
+struct Packet_Handshake1
 {
 	PacketHeader header;
 	// No contents.
-} Packet_Handshake1;
+};
 
-typedef struct
+struct Packet_HandshakeCancel
 {
 	PacketHeader header;
 	// No contents.
-} Packet_HandshakeCancel;
+};
 
-typedef struct
+struct Packet_HandshakeCancelAck
 {
 	PacketHeader header;
 	// No contents.
-} Packet_HandshakeCancelAck;
+};
 
-typedef struct
+struct Packet_SelectShip
 {
 	PacketHeader header;
 	uint16_t ship;
 	// The value '(uint16_t) ~0' indicates random selection.
 	uint16_t padding;
-} Packet_SelectShip;
+};
 
-typedef struct
+struct Packet_BattleInput
 {
 	PacketHeader header;
 	uint8_t state; /* Actually BATTLE_INPUT_STATE */
 	uint8_t padding0;
 	uint16_t padding1;
-} Packet_BattleInput;
+};
 
-typedef struct
+struct Packet_FrameCount
 {
 	PacketHeader header;
 	uint32_t frameCount; /* Actually BattleFrameCounter */
-} Packet_FrameCount;
+};
 
-typedef struct
+struct Packet_Checksum
 {
 	PacketHeader header;
 	uint32_t frameNr;  /* Actually BattleFrameCounter */
 	uint32_t checksum; /* Actually Checksum */
-} Packet_Checksum;
+};
 
-typedef struct
+struct Packet_Abort
 {
 	PacketHeader header;
 	uint16_t reason; /* Actually NetplayAbortReason */
 	uint16_t padding0;
-} Packet_Abort;
+};
 
-typedef struct
+struct Packet_Reset
 {
 	PacketHeader header;
 	uint16_t reason; /* Actually NetplayResetReason */
 	uint16_t padding0;
-} Packet_Reset;
+};
 
 
 #ifndef PACKET_H_STANDALONE

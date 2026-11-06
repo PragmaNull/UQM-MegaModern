@@ -27,18 +27,18 @@
 
 /* ---- Structures */
 
-typedef struct tColorRGBA
+struct tColorRGBA
 {
 	Uint8 r;
 	Uint8 g;
 	Uint8 b;
 	Uint8 a;
-} tColorRGBA;
+};
 
-typedef struct tColorY
+struct tColorY
 {
 	Uint8 y;
-} tColorY;
+};
 
 
 /* ---- Prototypes */

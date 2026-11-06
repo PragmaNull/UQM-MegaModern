@@ -34,7 +34,7 @@ typedef enum
 	SOFTWARE_FMV
 } VIDEO_TYPE;
 
-typedef struct tfb_videoclip* VIDEO_REF;
+typedef struct TFB_VideoClip* VIDEO_REF;
 typedef struct legacy_video_desc* LEGACY_VIDEO;
 typedef struct legacy_video_ref* LEGACY_VIDEO_REF;
 

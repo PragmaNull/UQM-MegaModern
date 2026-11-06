@@ -52,10 +52,10 @@ typedef enum
 extern "C" {
 #endif
 
-typedef struct
+struct NetStateData
 {
 	const char* name;
-} NetStateData;
+};
 extern NetStateData netStateData[];
 
 typedef void (*NetConnectionStateData_ReleaseFunction)(

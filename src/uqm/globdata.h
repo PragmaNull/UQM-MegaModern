@@ -34,7 +34,7 @@
 // many languages require various plural forms
 // for digit names like "hundred"
 // possibly needs reworking for others
-typedef struct
+struct SPEECH_DIGITNAME
 {
 	// an array of these structs must be in ascending remainder order
 	// terminate the array with Divider == 0
@@ -47,9 +47,9 @@ typedef struct
 	// string table index for this name
 	// i.e. "hundred" in English
 	uint16_t StrIndex;
-} SPEECH_DIGITNAME;
+};
 
-typedef struct
+struct SPEECH_DIGIT
 {
 	// digit divider, i.e. 1, 10, 100, etc.
 	int Divider;
@@ -69,12 +69,12 @@ typedef struct
 	// common digit name string table index
 	// i.e. "hundred" in English
 	uint16_t CommonNameIndex;
-} SPEECH_DIGIT;
+};
 
 // this accomodates up to "billions" in english
 inline constexpr auto MaxSpeechDigits {7};
 
-typedef struct
+struct NUMBER_SPEECH_DESC
 {
 	// slots used in Digits array
 	uint16_t NumDigits;
@@ -82,7 +82,7 @@ typedef struct
 	// teens is exception
 	// 0-9, 10-19, ..20-90, ..100-900, etc.
 	SPEECH_DIGIT Digits[MaxSpeechDigits];
-} NUMBER_SPEECH_DESC;
+};
 const typedef NUMBER_SPEECH_DESC* NUMBER_SPEECH;
 
 typedef uint32_t LDAS_FLAGS;
@@ -122,14 +122,14 @@ typedef enum
 	NUM_CONVERSATIONS,
 } CONVERSATION;
 
-typedef struct
+struct ALT_RESOURCE
 {
 	RESOURCE AlienFrameRes;
 	RESOURCE AlienColorMapRes;
 	RESOURCE AlienSongRes;
-} ALT_RESOURCE;
+};
 
-typedef struct
+struct LOCDATA
 {
 	CONVERSATION AlienConv;
 	void (*init_encounter_func)(void);
@@ -171,7 +171,7 @@ typedef struct
 	MUSIC_REF AlienSong;
 	uqm::StringTable* ConversationPhrases;
 	uint16_t AlienColorMapIndex;
-} LOCDATA;
+};
 
 enum
 {

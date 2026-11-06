@@ -47,7 +47,7 @@ typedef bool (*ForEachConnectionCallback)(NetConnection* conn, void* arg);
 bool forEachConnectedPlayer(ForEachConnectionCallback callback, void* arg);
 
 struct melee_state* NetMelee_getMeleeState(NetConnection* conn);
-struct battlestate_struct* NetMelee_getBattleState(NetConnection* conn);
+struct BATTLE_STATE* NetMelee_getBattleState(NetConnection* conn);
 
 void netInput(void);
 void netInputBlocking(uint32_t timeoutMs);
@@ -60,7 +60,7 @@ void connectionsLocalReady(NetConnection_ReadyCallback callback, void* arg);
 bool allConnected(void);
 
 void initBattleStateDataConnections(void);
-void setBattleStateConnections(struct battlestate_struct* bs);
+void setBattleStateConnections(struct BATTLE_STATE* bs);
 
 BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context,
 									  STARSHIP* StarShipPtr);

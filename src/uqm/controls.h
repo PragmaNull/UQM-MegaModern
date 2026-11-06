@@ -200,16 +200,16 @@ extern uqstl::atomic<bool> GamePaused;
 extern uqstl::atomic<bool> ExitRequested;
 
 // A UTF-8 character in the joystick alphabet.
-typedef struct joy_char
+struct joy_char_t
 {
 	unsigned char len;
 	char enc[7];
-} joy_char_t;
+};
 
-typedef struct textentry_state
+struct TEXTENTRY_STATE
 {
 	// standard state required by DoInput
-	bool (*InputFunc)(struct textentry_state* pTES);
+	bool (*InputFunc)(struct TEXTENTRY_STATE* pTES);
 
 	// these are semi-private read-only
 	bool Initialized;
@@ -229,14 +229,13 @@ typedef struct textentry_state
 	int CursorPos; // set to current cursor pos in chars
 	int MaxSize;   // set to max size of edited string
 
-	bool (*ChangeCallback)(struct textentry_state* pTES);
+	bool (*ChangeCallback)(struct TEXTENTRY_STATE* pTES);
 	// returns true if last change is OK
-	bool (*FrameCallback)(struct textentry_state* pTES);
+	bool (*FrameCallback)(struct TEXTENTRY_STATE* pTES);
 	// called on every input frame; do whatever;
 	// returns true to continue processing
 	void* CbParam; // callback parameter, use as you like
-
-} TEXTENTRY_STATE;
+};
 
 extern bool DoTextEntry(TEXTENTRY_STATE* pTES);
 

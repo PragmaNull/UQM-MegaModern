@@ -34,14 +34,14 @@ static constexpr auto wave_WaveID {WaveMakeId('W', 'A', 'V', 'E')};
 static constexpr auto wave_FmtID {WaveMakeId('f', 'm', 't', ' ')};
 static constexpr auto wave_DataID {WaveMakeId('d', 'a', 't', 'a')};
 
-typedef struct
+struct wave_FileHeader
 {
 	uint32_t id;
 	uint32_t size;
 	uint32_t type;
-} wave_FileHeader;
+};
 
-typedef struct
+struct wave_FormatHeader
 {
 	uint16_t format;
 	uint16_t channels;
@@ -49,13 +49,13 @@ typedef struct
 	uint32_t bytesPerSec;
 	uint16_t blockAlign;
 	uint16_t bitsPerSample;
-} wave_FormatHeader;
+};
 
-typedef struct
+struct wave_ChunkHeader
 {
 	uint32_t id;
 	uint32_t size;
-} wave_ChunkHeader;
+};
 
 
 const static char* wava_GetName(void);
@@ -89,7 +89,7 @@ TFB_SoundDecoderFuncs wava_DecoderVtbl =
 		wava_GetFrame,
 };
 
-typedef struct tfb_wavesounddecoder
+struct TFB_WaveSoundDecoder
 {
 	// always the first member
 	TFB_SoundDecoder decoder;
@@ -102,8 +102,7 @@ typedef struct tfb_wavesounddecoder
 	uint32_t data_size;
 	uint32_t max_pcm;
 	uint32_t cur_pcm;
-
-} TFB_WaveSoundDecoder;
+};
 
 const static TFB_DecoderFormats* wava_formats = nullptr;
 

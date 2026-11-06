@@ -34,10 +34,10 @@
 #include <ctype.h>
 
 
-typedef struct
+struct CODERES_STRUCT
 {
 	RACE_DESC data;
-} CODERES_STRUCT;
+};
 
 typedef enum
 {

@@ -65,12 +65,12 @@ typedef enum
 	NUM_STARMAPS
 } CURRENT_STARMAP_SHOWN;
 
-typedef struct namePlate
+struct NAMEPLATE
 {
 	GFXRECT rect;
 	TEXT text;
 	uint8_t index;
-} NAMEPLATE;
+};
 
 static void SwapPlates(NAMEPLATE* n1, NAMEPLATE* n2)
 {
@@ -2131,7 +2131,7 @@ static void UpdateFuelRequirement(void)
 
 static constexpr auto StarSearchBufsize {256};
 
-typedef struct starsearch_state
+struct STAR_SEARCH_STATE
 {
 	// TODO: pMS field is probably not needed anymore
 	MENU_STATE* pMS;
@@ -2150,7 +2150,7 @@ typedef struct starsearch_state
 	int ClusterLen;
 	int ClusterPos;
 	int SortedStars[NumSolarSystems];
-} STAR_SEARCH_STATE;
+};
 
 static bool starNameLess(int index1, int index2)
 {

@@ -269,13 +269,13 @@ typedef enum
 
 
 // Define the information specifying a particular technology
-typedef struct
+struct TechData
 {
 	TechId_t id;	 // ID of the technology
 	TechType_t type; // Type of the technology
 	int subtype;	 // Subtype of the technology
 	int info;		 // Supplemental information
-} TechData;
+};
 
 
 // A table of the available technologies.
@@ -470,13 +470,13 @@ static int GetLineSafe(const int array[], size_t linenum)
 }
 
 // Data structure to hold the Melnorme's info on a technology
-typedef struct
+struct TechSaleData
 {
 	TechId_t techId; // ID of technology
 	int price;		 // Melnorme's price to sell
 	int sale_line;	 // Sales pitch line ID
 	int sold_line;	 // Post-sale line ID
-} TechSaleData;
+};
 
 // Right now, all techs have the same price.
 // Unless Hard Mode is enabled.

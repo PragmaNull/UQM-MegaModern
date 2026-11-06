@@ -35,16 +35,16 @@ inline constexpr auto MagShift {2};
 
 inline constexpr auto NumTextFrames {32};
 
-typedef struct
+struct NODE_DATA
 {
 	uint8_t NumNodesGrabbed;
 	uint8_t NodeType[32];
 	uint16_t NodeAmounts[32];
-} NODE_DATA;
+};
 
 // XXX: This is a private type now. Move it to lander.c?
 //   We may also want to merge it with LanderInputState.
-typedef struct
+struct PLANETSIDE_DESC
 {
 	bool InTransit;
 	// Landing on or taking of from a planet.
@@ -66,7 +66,7 @@ typedef struct
 	uint8_t FireChance;
 
 	NODE_DATA NodeData;
-} PLANETSIDE_DESC;
+};
 
 extern MUSIC_REF LanderMusic;
 

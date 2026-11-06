@@ -137,7 +137,7 @@ NetMelee_getMeleeState(NetConnection* conn)
 	}
 }
 
-struct battlestate_struct*
+struct BATTLE_STATE*
 NetMelee_getBattleState(NetConnection* conn)
 {
 	if (NetConnection_getState(conn) > NetState_connecting)
@@ -307,7 +307,7 @@ void initBattleStateDataConnections(void)
 	}
 }
 
-void setBattleStateConnections(struct battlestate_struct* bs)
+void setBattleStateConnections(struct BATTLE_STATE* bs)
 {
 	for (uint16_t player {0}; player < NumPlayers; player++)
 	{
@@ -494,12 +494,12 @@ bool resetConnections(NetplayResetReason reason)
 
 /////////////////////////////////////////////////////////////////////////////
 
-typedef struct
+struct LocalReadyConnectionArg
 {
 	NetConnection_ReadyCallback readyCallback;
 	void* readyCallbackArg;
 	bool notifyRemote;
-} LocalReadyConnectionArg;
+};
 
 static bool localReadyConnection(NetConnection* conn, void* arg)
 {

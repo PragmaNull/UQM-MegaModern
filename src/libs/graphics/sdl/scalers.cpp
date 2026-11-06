@@ -180,11 +180,11 @@ void Scale_ExpandRect(SDL_Rect* rect, int expansion, const SDL_Rect* limits)
 
 // Platform+Scaler function lookups
 
-typedef struct
+struct Scale_PlatDef_t
 {
 	Scale_PlatType_t platform;
 	const Scale_FuncDef_t* funcdefs;
-} Scale_PlatDef_t;
+};
 
 
 const static Scale_PlatDef_t

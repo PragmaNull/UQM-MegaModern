@@ -151,7 +151,7 @@ typedef intptr_t mixer_IntVal;
 
 typedef struct _mixer_Source mixer_Source;
 
-typedef struct _mixer_Buffer
+struct mixer_Buffer
 {
 	uint32_t magic;
 	bool locked;
@@ -169,9 +169,8 @@ typedef struct _mixer_Buffer
 	uint32_t orgchannels;
 	uint32_t orgchansize;
 	/* next buffer in chain */
-	struct _mixer_Buffer* next;
-
-} mixer_Buffer;
+	struct mixer_Buffer* next;
+};
 
 inline constexpr auto mixer_bufMagic {0x4258494DU}; /* MIXB in LSB */
 

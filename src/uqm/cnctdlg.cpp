@@ -35,16 +35,16 @@ static auto McdHeight() { return ResScale(110); }
 
 static constexpr auto MenuFrameRate {(c_gameSecond / 20)};
 
-typedef struct connect_dialog_state
+struct CONNECT_DIALOG_STATE
 {
-	bool (*InputFunc)(struct connect_dialog_state* pInputState);
+	bool (*InputFunc)(struct CONNECT_DIALOG_STATE* pInputState);
 
 	TimeCount NextTime;
 	bool Initialized;
 	int which_side;
 
 	int confirmed;
-} CONNECT_DIALOG_STATE;
+};
 
 static void DrawConnectDialog(void);
 

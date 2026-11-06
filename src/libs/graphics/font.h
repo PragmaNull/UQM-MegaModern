@@ -26,14 +26,14 @@ inline constexpr auto MaxUnicode {0xFFFF};
 
 inline constexpr auto CharacterPageMask {0xfffff800};
 
-typedef struct FontPage
+struct FONT_PAGE
 {
-	struct FontPage* next;
+	struct FONT_PAGE* next;
 	uqm::UniChar pageStart;
 	uqm::UniChar firstChar;
 	size_t numChars;
 	uqstl::vector<TFB_Char> charDesc;
-} FONT_PAGE;
+};
 
 static inline FONT_PAGE* AllocFontPage(int numChars)
 {

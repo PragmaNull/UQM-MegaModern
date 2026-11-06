@@ -28,7 +28,7 @@ extern "C" {
 #endif
 // for NumPlayers
 
-typedef struct BattleInputBuffer
+struct BattleInputBuffer
 {
 	BATTLE_INPUT_STATE* buf;
 	// Cyclic buffer. if 'size' > 0, then 'first' is an index to
@@ -38,7 +38,7 @@ typedef struct BattleInputBuffer
 	size_t maxSize;
 	size_t first;
 	size_t size;
-} BattleInputBuffer;
+};
 
 void setBattleInputDelay(size_t delay);
 size_t getBattleInputDelay(void);

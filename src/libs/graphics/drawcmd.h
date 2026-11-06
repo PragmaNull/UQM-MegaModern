@@ -45,24 +45,24 @@ enum
 	TFB_DRAWCOMMANDTYPE_CALLBACK,
 };
 
-typedef struct tfb_dc_line
+struct TFB_DrawCommand_Line
 {
 	int x1, y1, x2, y2;
 	Color color;
 	DrawMode drawMode;
 	SCREEN destBuffer;
 	uint8_t thickness;
-} TFB_DrawCommand_Line;
+};
 
-typedef struct tfb_dc_rect
+struct TFB_DrawCommand_Rect
 {
 	GFXRECT rect;
 	Color color;
 	DrawMode drawMode;
 	SCREEN destBuffer;
-} TFB_DrawCommand_Rect;
+};
 
-typedef struct tfb_dc_img
+struct TFB_DrawCommand_Image
 {
 	TFB_Image* image;
 	int x, y;
@@ -71,9 +71,9 @@ typedef struct tfb_dc_img
 	DrawMode drawMode;
 	int scale;
 	uqm::TFBScaleMode scaleMode;
-} TFB_DrawCommand_Image;
+};
 
-typedef struct tfb_dc_filledimg
+struct TFB_DrawCommand_FilledImage
 {
 	TFB_Image* image;
 	int x, y;
@@ -82,71 +82,71 @@ typedef struct tfb_dc_filledimg
 	DrawMode drawMode;
 	int scale;
 	uqm::TFBScaleMode scaleMode;
-} TFB_DrawCommand_FilledImage;
+};
 
-typedef struct tfb_dc_fontchar
+struct TFB_DrawCommand_FontChar
 {
 	TFB_Char* fontchar;
 	TFB_Image* backing;
 	int x, y;
 	DrawMode drawMode;
 	SCREEN destBuffer;
-} TFB_DrawCommand_FontChar;
+};
 
-typedef struct tfb_dc_copy
+struct TFB_DrawCommand_Copy
 {
 	GFXRECT rect;
 	SCREEN srcBuffer, destBuffer;
-} TFB_DrawCommand_Copy;
+};
 
-typedef struct tfb_dc_copyimg
+struct TFB_DrawCommand_CopyToImage
 {
 	TFB_Image* image;
 	GFXRECT rect;
 	SCREEN srcBuffer;
-} TFB_DrawCommand_CopyToImage;
+};
 
-typedef struct tfb_dc_scissor
+struct TFB_DrawCommand_Scissor
 {
 	GFXRECT rect;
-} TFB_DrawCommand_Scissor;
+};
 
-typedef struct tfb_dc_setmip
+struct TFB_DrawCommand_SetMipmap
 {
 	TFB_Image* image;
 	TFB_Image* mipmap;
 	int hotx, hoty;
-} TFB_DrawCommand_SetMipmap;
+};
 
-typedef struct tfb_dc_delimg
+struct TFB_DrawCommand_DeleteImage
 {
 	TFB_Image* image;
-} TFB_DrawCommand_DeleteImage;
+};
 
-typedef struct tfb_dc_deldata
+struct TFB_DrawCommand_DeleteData
 {
 	// Made with new[].
 	uint8_t* data;
-} TFB_DrawCommand_DeleteData;
+};
 
-typedef struct tfb_dc_signal
+struct TFB_DrawCommand_SendSignal
 {
 	uqstl::binary_semaphore* sem;
-} TFB_DrawCommand_SendSignal;
+};
 
-typedef struct tfb_dc_reinit_video
+struct TFB_DrawCommand_ReinitVideo
 {
 	uqm::GfxDriver driver;
 	uqm::GfxFlags flags;
 	int width;
 	int height;
-} TFB_DrawCommand_ReinitVideo;
+};
 
-typedef struct tfb_dc_callback
+struct TFB_DrawCommand_Callback
 {
 	void (*callback)(void* arg);
 	void* arg;
-} TFB_DrawCommand_Callback;
+};
 
 struct TFB_DrawCommand
 {
@@ -172,7 +172,7 @@ struct TFB_DrawCommand
 
 // Queue Stuff
 
-typedef struct tfb_drawcommandqueue
+struct TFB_DrawCommandQueue
 {
 	int Front;
 	int Back;
@@ -180,7 +180,7 @@ typedef struct tfb_drawcommandqueue
 	int Batching;
 	int FullSize;
 	int Size;
-} TFB_DrawCommandQueue;
+};
 
 void Init_DrawCommandQueue(void);
 

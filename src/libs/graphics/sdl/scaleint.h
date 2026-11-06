@@ -77,11 +77,11 @@ extern YUV_VECTOR RGB15_to_YUV[0x8000];
 
 // Platform+Scaler function lookups
 //
-typedef struct
+struct Scale_FuncDef_t
 {
 	uqm::GfxFlags flag;
 	TFB_ScaleFunc func;
-} Scale_FuncDef_t;
+};
 
 
 // expands the given rectangle in all directions by 'expansion'

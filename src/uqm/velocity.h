@@ -26,14 +26,14 @@
 extern "C" {
 #endif
 
-typedef struct velocity_desc
+struct VELOCITY_DESC
 {
 	uint16_t TravelAngle;
 	EXTENT vector;
 	EXTENT fract;
 	EXTENT error;
 	EXTENT incr;
-} VELOCITY_DESC;
+};
 
 constexpr auto ZeroVelocityComponents(const auto& pv) { return memset(pv, 0, sizeof(*(pv))); }
 constexpr auto& GetVelocityTravelAngle(auto* pv) { return pv->TravelAngle; }

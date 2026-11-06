@@ -31,10 +31,10 @@ extern void* CaptureCodeRes(void* hCode, void* pData, void** ppLocData);
 extern void* ReleaseCodeRes(void* CodeRef);
 extern bool DestroyCodeRes(void* hCode);
 
-typedef struct
+struct CODE_REF
 {
 	uint16_t size;
-} CODE_REF;
+};
 
 #if 0 //defined(__cplusplus)
 }

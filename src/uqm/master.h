@@ -26,7 +26,7 @@ extern "C" {
 
 typedef HLINK HMASTERSHIP;
 
-typedef struct
+struct MASTER_SHIP_INFO
 {
 	// LINK elements; must be first
 	HMASTERSHIP pred;
@@ -38,7 +38,7 @@ typedef struct
 	FLEET_STUFF Fleet;
 	// FLEET_STUFF is only necessary here because avail_race_q
 	// is initialized in part from master_q (kinda hacky)
-} MASTER_SHIP_INFO;
+};
 
 extern QUEUE master_q;
 /* List of ships available in SuperMelee;

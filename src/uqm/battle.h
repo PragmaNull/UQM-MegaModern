@@ -35,13 +35,13 @@ extern "C" {
 // just before the display queue is drawn
 typedef void(BattleFrameCallback)(void);
 
-typedef struct battlestate_struct
+struct BATTLE_STATE
 {
-	bool (*InputFunc)(struct battlestate_struct* pInputState);
+	bool (*InputFunc)(struct BATTLE_STATE* pInputState);
 	bool first_time;
 	TimeCount NextTime;
 	BattleFrameCallback* frame_cb;
-} BATTLE_STATE;
+};
 
 extern uint8_t battle_counter[NumSides];
 extern bool instantVictory;

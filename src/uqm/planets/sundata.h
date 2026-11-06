@@ -33,14 +33,14 @@ inline constexpr auto DwarfEnergy {1};
 inline constexpr auto GiantEnergy {5};
 inline constexpr auto SupergiantEnergy {20};
 
-typedef struct
+struct SYSTEM_INFO
 {
 	uint8_t StarSize;
 	uint8_t StarIntensity;
 	uint16_t StarEnergy;
 
 	PLANET_INFO PlanetInfo;
-} SYSTEM_INFO;
+};
 
 inline constexpr auto GenerateAll {((uint16_t)~0)};
 
