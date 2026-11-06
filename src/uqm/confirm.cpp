@@ -44,8 +44,8 @@ static void DrawConfirmationWindow(bool answer, bool confirm)
 	const Color oldfg = SetContextForeGroundColor(ShadowboxDarkColor);
 	FONT oldfont = SetContextFont(StarConFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 
 	BatchGraphics();
 	r.corner.x = (CanvasWidth - ConfirmWinWidth()) >> 1;
@@ -102,10 +102,10 @@ bool DoConfirmExit(void)
 	const bool FlashPaused {PauseFlash()};
 
 	{
-		GFXRECT r;
-		STAMP s;
-		GFXRECT ctxRect;
-		GFXRECT oldRect;
+		GfxRect r;
+		GfxStamp s;
+		GfxRect ctxRect;
+		GfxRect oldRect;
 		bool response = false;
 		Color OldColor;
 		DrawMode mode;
@@ -217,13 +217,13 @@ bool DoConfirmExit(void)
 	return (result);
 }
 
-struct POPUP_STATE
+struct PopupState
 {
 	// standard state required by DoInput
-	bool (*InputFunc)(struct POPUP_STATE* self);
+	bool (*InputFunc)(struct PopupState* self);
 };
 
-static bool DoPopup(struct POPUP_STATE* self)
+static bool DoPopup(struct PopupState* self)
 {
 	(void)self;
 	SleepThread(c_gameSecond / 20);
@@ -234,11 +234,11 @@ void DoPopupWindow(const char* msg)
 {
 	stringbank* bank = StringBank_Create();
 	const char* lines[30];
-	WIDGET_LABEL label;
-	STAMP s;
-	GFXRECT oldRect;
-	GFXRECT windowRect;
-	POPUP_STATE state;
+	WidgetLabel label;
+	GfxStamp s;
+	GfxRect oldRect;
+	GfxRect windowRect;
+	PopupState state;
 	MENU_SOUND_FLAGS s0 {};
 	MENU_SOUND_FLAGS s1 {};
 
@@ -265,7 +265,7 @@ void DoPopupWindow(const char* msg)
 	GetContextClipRect(&oldRect);
 	SetContextClipRect(nullptr);
 
-	// TODO: Maybe DrawLabelAsWindow() should return a saved STAMP?
+	// TODO: Maybe DrawLabelAsWindow() should return a saved GfxStamp?
 	//   We do not know the dimensions here, and so save the whole context
 	s = SaveContextFrame(nullptr);
 

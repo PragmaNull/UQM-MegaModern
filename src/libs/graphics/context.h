@@ -25,7 +25,7 @@ typedef uint16_t FBK_FLAGS;
 inline constexpr auto FbkDirty {(1 << 0)};
 inline constexpr auto FbkImage {(1 << 1)};
 
-struct context_desc
+struct GraphicsContextDesc
 {
 	uint16_t Flags;
 	// Low nibble currently unused
@@ -36,7 +36,7 @@ struct context_desc
 	FRAME ForeGroundFrame;
 	FONT Font;
 
-	GFXRECT ClipRect;
+	GfxRect ClipRect;
 
 	FRAME FontEffect;
 	TFB_Image* FontBacking;
@@ -50,7 +50,7 @@ struct context_desc
 
 
 extern GFXCONTEXT _pCurContext;
-extern PRIMITIVE _locPrim;
+extern Primitive _locPrim;
 
 inline Color& _get_context_fg_color() { return _pCurContext->ForeGroundColor; }
 inline Color& _get_context_bg_color() { return _pCurContext->BackGroundColor; }
@@ -108,7 +108,7 @@ inline bool GraphicsSystemActive() { return (_GraphicsStatusFlags & SystemActive
 inline GRAPHICS_STATUS GraphicsStatus() { return _GraphicsStatusFlags & (GRAPHICS_STATUS)(GraphicsActiveFlag | GraphicsVisible); }
 
 // pValidRect or origin may be nullptr
-bool GetContextValidRect(GFXRECT* pValidRect, GFXPOINT* origin);
+bool GetContextValidRect(GfxRect* pValidRect, GfxPoint* origin);
 extern void FixContextFontEffect(void);
 
 #endif /* LIBS_GRAPHICS_CONTEXT_H_ */

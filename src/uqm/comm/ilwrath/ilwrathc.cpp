@@ -26,7 +26,7 @@
 #include "uqm/lua/UQMLua.h"
 
 
-static LOCDATA ilwrath_desc =
+static ConversationData ilwrath_desc =
 	{
 		ILWRATH_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -741,7 +741,7 @@ static void post_ilwrath_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_ilwrath_comm(void)
+ConversationData* init_ilwrath_comm(void)
 {
 	ilwrath_desc.init_encounter_func = Intro;
 	ilwrath_desc.post_encounter_func = post_ilwrath_enc;
@@ -764,7 +764,7 @@ LOCDATA* init_ilwrath_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&ilwrath_desc};
+	ConversationData* retval {&ilwrath_desc};
 
 	return (retval);
 }

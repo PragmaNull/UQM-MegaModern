@@ -29,7 +29,7 @@ static constexpr auto LowFuelColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E
 
 void DrawCrewFuelString(int16_t y, int16_t state)
 {
-	STAMP Stamp;
+	GfxStamp Stamp;
 
 	Stamp.origin.y = y + GaugeYoffs() + StarconTextHeight();
 	if (state == 0)
@@ -59,7 +59,7 @@ void DrawCrewFuelString(int16_t y, int16_t state)
 	{
 		if (IsHd())
 		{
-			GFXRECT r;
+			GfxRect r;
 			GetFrameRect(Stamp.frame, &r);
 			r.corner.x += Stamp.origin.x;
 			r.corner.y += Stamp.origin.y;
@@ -79,7 +79,7 @@ void DrawCrewFuelString(int16_t y, int16_t state)
 
 static void DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 {
-	TEXT Text;
+	GfxText Text;
 
 	FONT OldFont {SetContextFont(StarConFont)};
 
@@ -102,7 +102,7 @@ static void DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 
 void ClearShipStatus(int16_t y)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
@@ -115,7 +115,7 @@ void ClearShipStatus(int16_t y)
 
 void OutlineShipStatus(int16_t y)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F));
@@ -150,13 +150,13 @@ void OutlineShipStatus(int16_t y)
 	DrawFilledRectangle(&r);
 }
 
-void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect, bool inMeleeMenu)
+void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRect, bool inMeleeMenu)
 {
-	GFXRECT r;
+	GfxRect r;
 	int16_t y = 0; // default, for Melee menu
-	STAMP Stamp;
-	GFXRECT oldClipRect;
-	GFXPOINT oldOrigin = {0, 0};
+	GfxStamp Stamp;
+	GfxRect oldClipRect;
+	GfxPoint oldOrigin = {0, 0};
 
 	if (StarShipPtr) // set during battle
 	{
@@ -164,7 +164,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 		y = status_y_offsets[StarShipPtr->playerNr];
 
 		{
-			CAPTAIN_STUFF* cs = &StarShipPtr->RaceDescPtr->ship_data.captain_control;
+			CaptainGraphics* cs = &StarShipPtr->RaceDescPtr->ship_data.captain_control;
 
 			cs->tl_offset = 0;
 			cs->tr_offset = 0;
@@ -306,7 +306,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 
 		{
 			char buf[30] {};
-			TEXT Text;
+			GfxText Text;
 
 			FONT OldFont {SetContextFont(MenuBool(TinyFontBold, TinyFont))};
 
@@ -377,11 +377,11 @@ static constexpr auto FuelUnitColor {BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x0
 
 // Pre: -crew_delta <= ShipInfoPtr->crew_level
 //      crew_delta <= ShipInfoPtr->max_crew - ShipInfoPtr->crew_level
-void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
+void DeltaStatistics(ShipInfoDesc* ShipInfoPtr, int16_t y_offs,
 					 int16_t crew_delta, int16_t energy_delta)
 {
 	int16_t y {};
-	GFXRECT r;
+	GfxRect r;
 
 	if (crew_delta == 0 && energy_delta == 0)
 	{

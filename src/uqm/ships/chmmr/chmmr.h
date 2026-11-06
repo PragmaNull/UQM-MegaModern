@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_chmmr(void);
+RaceDesc* init_chmmr(void);
 
 #if 0 //defined(__cplusplus)
 }

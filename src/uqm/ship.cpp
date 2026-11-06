@@ -38,7 +38,7 @@
 #include "uqm/random/UQMRandom.h"
 
 
-void animation_preprocess(ELEMENT* ElementPtr)
+void animation_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -55,7 +55,7 @@ void animation_preprocess(ELEMENT* ElementPtr)
 }
 
 
-STATUS_FLAGS inertial_thrust(ELEMENT* ElementPtr)
+STATUS_FLAGS inertial_thrust(Element* ElementPtr)
 {
 	const auto MaxAllowedSpeed = [&] {
 		return WorldToVelocity(DisplayToWorld(ResScale(18)));
@@ -67,9 +67,9 @@ STATUS_FLAGS inertial_thrust(ELEMENT* ElementPtr)
 	uint16_t CurrentAngle {};
 	uint16_t max_thrust {};
 	uint16_t thrust_increment {};
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
-	VELOCITY_DESC* VelocityPtr {&ElementPtr->velocity};
+	VelocityDesc* VelocityPtr {&ElementPtr->velocity};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	CurrentAngle = FacingToAngle(StarShipPtr->ShipFacing);
@@ -131,7 +131,7 @@ STATUS_FLAGS inertial_thrust(ELEMENT* ElementPtr)
 			// thrusting at an angle while at max velocity only changes
 			// the travel vector, but does not really change the velocity
 
-			VELOCITY_DESC v = *VelocityPtr;
+			VelocityDesc v = *VelocityPtr;
 
 			DeltaVelocityComponents(&v,
 									Cosine(CurrentAngle, thrust_increment >> 1)
@@ -156,10 +156,10 @@ STATUS_FLAGS inertial_thrust(ELEMENT* ElementPtr)
 	}
 }
 
-void DrawHDMeleeBorder(STARSHIP* StarShipPtr)
+void DrawHDMeleeBorder(Starship* StarShipPtr)
 {
 	int16_t y = 0;
-	GFXRECT r;
+	GfxRect r;
 
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
 		&& StarShipPtr->playerNr != RpgPlayerNum)
@@ -177,13 +177,13 @@ void DrawHDMeleeBorder(STARSHIP* StarShipPtr)
 	DrawRenderedBox(&r, false, NullColor, THICK_OUTER_BEVEL, false);
 }
 
-void ship_preprocess(ELEMENT* ElementPtr)
+void ship_preprocess(Element* ElementPtr)
 {
 	STATUS_FLAGS cur_status_flags {};
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	RACE_DESC* RDPtr {StarShipPtr->RaceDescPtr};
+	RaceDesc* RDPtr {StarShipPtr->RaceDescPtr};
 
 	cur_status_flags =
 		StarShipPtr->cur_status_flags
@@ -200,7 +200,7 @@ void ship_preprocess(ELEMENT* ElementPtr)
 		if (ElementPtr->playerNr == NpcPlayerNum
 			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{ // Sa-Matra
-			STAMP s;
+			GfxStamp s;
 
 			GFXCONTEXT OldContext {SetContext(StatusContext)};
 			s.origin.x = s.origin.y = 0;
@@ -329,9 +329,9 @@ void ship_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-void ship_postprocess(ELEMENT* ElementPtr)
+void ship_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	if (ElementPtr->crew_level == 0)
 	{
@@ -339,7 +339,7 @@ void ship_postprocess(ELEMENT* ElementPtr)
 	}
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	const RACE_DESC* RDPtr {StarShipPtr->RaceDescPtr};
+	const RaceDesc* RDPtr {StarShipPtr->RaceDescPtr};
 
 	if (StarShipPtr->weapon_counter)
 	{
@@ -356,7 +356,7 @@ void ship_postprocess(ELEMENT* ElementPtr)
 
 		if (num_weapons)
 		{
-			STARSHIP* StarShipPtr {};
+			Starship* StarShipPtr {};
 			bool played_sfx = false;
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -366,7 +366,7 @@ void ship_postprocess(ELEMENT* ElementPtr)
 				HELEMENT w {*WeaponPtr++};
 				if (w)
 				{
-					ELEMENT* EPtr {};
+					Element* EPtr {};
 
 					LockElement(w, &EPtr);
 					SetElementStarShip(EPtr, StarShipPtr);
@@ -407,8 +407,8 @@ void ship_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-void collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-			   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+void collision(Element* ElementPtr0, GfxPoint* pPt0,
+			   Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (!(ElementPtr1->state_flags & FiniteLife))
 	{
@@ -437,11 +437,11 @@ void collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static bool spawn_ship(STARSHIP* StarShipPtr)
+static bool spawn_ship(Starship* StarShipPtr)
 {
 	HELEMENT hShip {};
 
-	RACE_DESC* RDPtr {load_ship(StarShipPtr->SpeciesID, true)};
+	RaceDesc* RDPtr {load_ship(StarShipPtr->SpeciesID, true)};
 	if (!RDPtr)
 	{
 		return false;
@@ -489,8 +489,8 @@ static bool spawn_ship(STARSHIP* StarShipPtr)
 	StarShipPtr->hShip = hShip;
 	if (StarShipPtr->hShip != 0)
 	{
-		// Construct an ELEMENT for the STARSHIP
-		ELEMENT* ShipElementPtr {};
+		// Construct an Element for the Starship
+		Element* ShipElementPtr {};
 
 		LockElement(hShip, &ShipElementPtr);
 
@@ -531,7 +531,7 @@ static bool spawn_ship(STARSHIP* StarShipPtr)
 				}
 
 				// XXX: This appears to set the facing to a random value
-				//   for when the ship returns from an encounter back
+				//   for when the ship returns from an Encounter back
 				//   to HyperSpace. However, it is overwritten later
 				//   in sis.c. See also r1614.
 				//GLOBAL (ShipFacing) = StarShipPtr->ShipFacing + 1;
@@ -587,12 +587,12 @@ static bool spawn_ship(STARSHIP* StarShipPtr)
 }
 
 // Select a new ship and spawn it.
-bool GetNextStarShip(STARSHIP* LastStarShipPtr, uint16_t which_side)
+bool GetNextStarShip(Starship* LastStarShipPtr, uint16_t which_side)
 {
 	HSTARSHIP hBattleShip {GetEncounterStarShip(LastStarShipPtr, which_side)};
 	if (hBattleShip)
 	{
-		STARSHIP* StarShipPtr {LockStarShip(&race_q[which_side], hBattleShip)};
+		Starship* StarShipPtr {LockStarShip(&race_q[which_side], hBattleShip)};
 		if (LastStarShipPtr)
 		{
 			if (StarShipPtr == LastStarShipPtr)
@@ -637,7 +637,7 @@ bool GetInitialStarShips(void)
 		{
 			const uint16_t playerI = GetPlayerOrder(i);
 
-			STARSHIP* StarShipPtr {LockStarShip(&race_q[playerI], ships[playerI])};
+			Starship* StarShipPtr {LockStarShip(&race_q[playerI], ships[playerI])};
 			if (!spawn_ship(StarShipPtr))
 			{
 				UnlockStarShip(&race_q[playerI], ships[playerI]);

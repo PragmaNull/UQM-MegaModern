@@ -38,7 +38,7 @@ int TFB_ReInitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, in
 void TFB_UninitGraphics(void);
 void TFB_ProcessEvents(void);
 bool TFB_SetGamma(float gamma);
-void TFB_UploadTransitionScreen(GFXRECT* pRect);
+void TFB_UploadTransitionScreen(GfxRect* pRect);
 int TFB_SupportsHardwareScaling(void);
 // This function should not be called directly
 void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw);
@@ -47,14 +47,14 @@ bool TFB_ImGuiVisible(void);
 
 inline constexpr auto GscaleIdentity {256};
 
-void LoadIntoExtraScreen(GFXRECT* r);
-void DrawFromExtraScreen(GFXRECT* r);
+void LoadIntoExtraScreen(GfxRect* r);
+void DrawFromExtraScreen(GfxRect* r);
 int SetGraphicScale(int scale);
 int GetGraphicScale(void);
 uqm::TFBScaleMode SetGraphicScaleMode(uqm::TFBScaleMode mode);
 uqm::TFBScaleMode GetGraphicScaleMode();
-void SetTransitionSource(const GFXRECT* pRect);
-void ScreenTransition(uqm::EmulationMode transition, const GFXRECT* pRect);
+void SetTransitionSource(const GfxRect* pRect);
+void ScreenTransition(uqm::EmulationMode transition, const GfxRect* pRect);
 
 void TFB_FlushGraphics(void);		  // Only call from main thread!!
 void TFB_PurgeDanglingGraphics(void); // Only call from main thread as part of shutdown.

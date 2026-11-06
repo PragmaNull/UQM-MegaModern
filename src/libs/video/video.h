@@ -33,8 +33,8 @@ struct TFB_VideoClip
 	uint32_t w, h;
 
 	// video player data
-	GFXRECT dst_rect; // destination screen rect
-	GFXRECT src_rect; // source rect
+	GfxRect dst_rect; // destination screen rect
+	GfxRect src_rect; // source rect
 	MUSIC_REF hAudio;
 	TimeCount frame_time; // time when next frame should be rendered
 	TFB_Image* frame;	  // frame preped and optimized for rendering

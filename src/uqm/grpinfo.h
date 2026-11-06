@@ -21,7 +21,7 @@
 #include "core/misc/bittricks.h"
 #include "displist.h"
 #include "libs/gfxlib.h"
-// for GFXPOINT
+// for GfxPoint
 #include <assert.h>
 
 #if 0 //defined(__cplusplus)
@@ -40,9 +40,9 @@ inline constexpr auto Rotates {(1 << 1)};
 inline constexpr auto IsProbe {(1 << 2)};
 inline constexpr auto IsXform {(1 << 3)};
 
-struct IP_GROUP
+struct InterplanetaryGroup
 {
-	// LINK elements; must be first
+	// QueueLink elements; must be first
 	HIPGROUP pred;
 	HIPGROUP succ;
 
@@ -61,7 +61,7 @@ struct IP_GROUP
 	/* Also: saved prev dest_loc before intercept call,
 			 *   restored to dest_loc on all-clear */
 	uint8_t group_id;
-	GFXPOINT loc;
+	GfxPoint loc;
 
 	FRAME melee_icon;
 
@@ -83,16 +83,16 @@ inline constexpr auto MaxRevolutions {5};
 inline constexpr auto StationRadius {1600};
 inline constexpr auto OrbitRadius {2400};
 
-static inline IP_GROUP* LockIpGroup(const QUEUE* pq, HIPGROUP h)
+static inline InterplanetaryGroup* LockIpGroup(const Queue* pq, HIPGROUP h)
 {
-	assert(GetLinkSize(pq) == sizeof(IP_GROUP));
-	return (IP_GROUP*)LockLink(pq, h);
+	assert(GetLinkSize(pq) == sizeof(InterplanetaryGroup));
+	return (InterplanetaryGroup*)LockLink(pq, h);
 }
 
 constexpr auto UnlockIpGroup(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
 constexpr auto FreeIpGroup(const auto& pq, const auto& h) { return FreeLink(pq, h); }
 
-extern HIPGROUP BuildGroup(QUEUE* pDstQueue, uint8_t race_id);
+extern HIPGROUP BuildGroup(Queue* pDstQueue, uint8_t race_id);
 
 #if 0 //defined(__cplusplus)
 }

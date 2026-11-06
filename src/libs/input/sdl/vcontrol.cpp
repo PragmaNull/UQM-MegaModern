@@ -513,7 +513,7 @@ static void deactivate(keybinding* i, sdl_key_t keycode)
 	}
 }
 
-static void event2gesture(SDL_Event* e, VCONTROL_GESTURE* g)
+static void event2gesture(SDL_Event* e, VControlGesture* g)
 {
 	switch (e->type)
 	{
@@ -540,7 +540,7 @@ static void event2gesture(SDL_Event* e, VCONTROL_GESTURE* g)
 	}
 }
 
-int VControl_AddGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target)
+int VControl_AddGestureBinding(VControlGesture* g, uqstl::atomic<int>* target)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
 	int result = -1;
@@ -605,7 +605,7 @@ int VControl_AddGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target)
 	return result;
 }
 
-void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target)
+void VControl_RemoveGestureBinding(VControlGesture* g, uqstl::atomic<int>* target)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
 	switch (g->type)
@@ -1076,7 +1076,7 @@ void VControl_ClearGesture(void)
 	event_ready = 0;
 }
 
-int VControl_GetLastGesture(VCONTROL_GESTURE* g)
+int VControl_GetLastGesture(VControlGesture* g)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
 	if (event_ready && g != nullptr)
@@ -1257,7 +1257,7 @@ static Uint8 consume_dir(parse_state* state)
 	return result;
 }
 
-static void parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
+static void parse_joybinding(parse_state* state, VControlGesture* gesture)
 {
 	consume(state, "joystick");
 	const int sticknum {consume_num(state)};
@@ -1313,7 +1313,7 @@ static void parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
 	}
 }
 
-static void parse_gesture(parse_state* state, VCONTROL_GESTURE* gesture)
+static void parse_gesture(parse_state* state, VControlGesture* gesture)
 {
 	gesture->type = VCONTROL_NONE; /* Default to error */
 	if (!strcasecmp(state->token, "key"))
@@ -1337,7 +1337,7 @@ static void parse_gesture(parse_state* state, VCONTROL_GESTURE* gesture)
 	}
 }
 
-void VControl_ParseGesture(VCONTROL_GESTURE* g, const char* spec)
+void VControl_ParseGesture(VControlGesture* g, const char* spec)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
 	parse_state ps {};
@@ -1354,7 +1354,7 @@ void VControl_ParseGesture(VCONTROL_GESTURE* g, const char* spec)
 	}
 }
 
-size_t VControl_DumpGesture(uqstl::span<char> buf, VCONTROL_GESTURE* g)
+size_t VControl_DumpGesture(uqstl::span<char> buf, VControlGesture* g)
 {
 	switch (g->type)
 	{

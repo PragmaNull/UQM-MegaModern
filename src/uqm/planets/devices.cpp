@@ -75,7 +75,7 @@ typedef enum
 	DEVICE_SUCCESS_NO_SOUND,
 } DeviceStatus;
 
-struct DEVICES_STATE
+struct DevicesMenuState
 {
 	uint8_t list[NUM_DEVICES];
 	// List of all devices player has
@@ -89,7 +89,7 @@ struct DEVICES_STATE
 #if 0
 static void EraseDevicesBackground (void)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	r.corner.x = ResScale (3); 
 	r.extent.width = FieldWidth() - ResScale (1); 
@@ -102,8 +102,8 @@ static void EraseDevicesBackground (void)
 
 static void DrawDevice(uint16_t device, uint16_t pos, bool selected)
 {
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 
 	t.align = ALIGN_CENTER;
 	t.baseline.x = DeviceCol1();
@@ -142,11 +142,11 @@ static void DrawDevice(uint16_t device, uint16_t pos, bool selected)
 	font_DrawText(&t);
 }
 
-static void DrawDevicesDisplay(DEVICES_STATE* devState)
+static void DrawDevicesDisplay(DevicesMenuState* devState)
 {
-	TEXT t;
-	GFXRECT r;
-	STAMP s;
+	GfxText t;
+	GfxRect r;
+	GfxStamp s;
 	int16_t cy {};
 
 	r.corner.x = ResScale(2);
@@ -201,7 +201,7 @@ static void DrawDevicesDisplay(DEVICES_STATE* devState)
 	}
 }
 
-static void DrawDevices(DEVICES_STATE* devState, uint16_t OldDevice, uint16_t NewDevice)
+static void DrawDevices(DevicesMenuState* devState, uint16_t OldDevice, uint16_t NewDevice)
 {
 	BatchGraphics();
 
@@ -216,13 +216,13 @@ static void DrawDevices(DEVICES_STATE* devState, uint16_t OldDevice, uint16_t Ne
 	}
 
 	if (OldDevice != NewDevice)
-	{ // unselect the previous element
+	{ // unselect the previous Element
 		DrawDevice(devState->list[OldDevice], OldDevice - devState->topIndex,
 				   false);
 	}
 
 	if (NewDevice < NUM_DEVICES)
-	{ // select the new element
+	{ // select the new Element
 		DrawDevice(devState->list[NewDevice], NewDevice - devState->topIndex,
 				   true);
 	}
@@ -282,7 +282,7 @@ static bool UseCaster(void)
 		{
 			// Is an Ilwrath ship in the system?
 
-			const IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+			const InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 			FoundIlwrath = (GroupPtr->race_id == ILWRATH_SHIP);
 			UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 		}
@@ -518,9 +518,9 @@ bool InvokeSpawner(void)
 	return (status == DEVICE_FAILURE);
 }
 
-static bool DoManipulateDevices(MENU_STATE* pMS)
+static bool DoManipulateDevices(MenuState* pMS)
 {
-	DEVICES_STATE* devState = (DEVICES_STATE*)pMS->privData;
+	DevicesMenuState* devState = (DevicesMenuState*)pMS->privData;
 	bool select {};
 	bool cancel {};
 	bool forward {};
@@ -718,11 +718,11 @@ int16_t InventoryDevices(uint8_t* pDeviceMap, uint16_t Size)
 
 bool DevicesMenu(void)
 {
-	MENU_STATE MenuState;
-	DEVICES_STATE DevicesState;
+	MenuState menuState;
+	DevicesMenuState DevicesState;
 
-	memset(&MenuState, 0, sizeof MenuState);
-	MenuState.privData = &DevicesState;
+	memset(&menuState, 0, sizeof menuState);
+	menuState.privData = &DevicesState;
 
 	memset(&DevicesState, 0, sizeof DevicesState);
 
@@ -732,7 +732,7 @@ bool DevicesMenu(void)
 		return false;
 	}
 
-	DrawDevices(&DevicesState, (uint16_t)~0, MenuState.CurState);
+	DrawDevices(&DevicesState, (uint16_t)~0, menuState.CurState);
 
 	SetMenuSounds(MenuSoundArrows | MenuSoundPage,
 				  MenuSoundSelect);
@@ -742,8 +742,8 @@ bool DevicesMenu(void)
 		DrawMenuStateStrings(PM_ALT_CARGO, 1);
 	}
 
-	MenuState.InputFunc = DoManipulateDevices;
-	DoInput(&MenuState, true);
+	menuState.InputFunc = DoManipulateDevices;
+	DoInput(&menuState, true);
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 

@@ -67,16 +67,16 @@ public:
 	// Adds an event at an absolute date, after the events on the same date. Returns 0 if the queue is full.
 	HEVENT addEvent(uint16_t month, uint16_t day, uint16_t year, uint8_t funcIndex);
 	// The first event in the queue, or nullopt if the queue is empty.
-	[[nodiscard]] uqstl::optional<EVENT> firstEvent() const;
+	[[nodiscard]] uqstl::optional<GameEvent> firstEvent() const;
 	// The events in the queue, in date order.
-	[[nodiscard]] uqstl::vector<EVENT> eventList() const;
+	[[nodiscard]] uqstl::vector<GameEvent> eventList() const;
 	// True if the clock date is before the date.
 	[[nodiscard]] bool isBefore(uint16_t year, uint16_t month, uint16_t day) const noexcept;
 	// Removes the first event of today or before from the queue and gives its function index.
 	// Returns false if no event is due.
 	[[nodiscard]] bool takeDueEvent(uint8_t& funcIndex);
 
-	[[nodiscard]] QUEUE& events() noexcept
+	[[nodiscard]] Queue& events() noexcept
 	{
 		return m_events;
 	}

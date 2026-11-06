@@ -32,46 +32,46 @@ inline constexpr auto OnlyLarge {(1 << 3)};
 inline constexpr auto OnlyGas {(1 << 4)};
 
 
-bool GenerateDefault_initNpcs(SOLARSYS_STATE* solarSys);
-bool GenerateDefault_reinitNpcs(SOLARSYS_STATE* solarSys);
-bool GenerateDefault_uninitNpcs(SOLARSYS_STATE* solarSys);
-bool GenerateDefault_generatePlanets(SOLARSYS_STATE* solarSys);
-bool GenerateDefault_generateMoons(SOLARSYS_STATE* solarSys,
-								   PLANET_DESC* planet);
-bool GenerateDefault_generateName(const SOLARSYS_STATE*,
-								  const PLANET_DESC* world);
-bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys,
-									 PLANET_DESC* world);
-uint16_t GenerateDefault_generateMinerals(const SOLARSYS_STATE*,
-										  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-uint16_t GenerateDefault_generateEnergy(const SOLARSYS_STATE*,
-										const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-uint16_t GenerateDefault_generateLife(const SOLARSYS_STATE*,
-									  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-bool GenerateDefault_pickupMinerals(SOLARSYS_STATE*, PLANET_DESC* world,
+bool GenerateDefault_initNpcs(SolarSystemState* solarSys);
+bool GenerateDefault_reinitNpcs(SolarSystemState* solarSys);
+bool GenerateDefault_uninitNpcs(SolarSystemState* solarSys);
+bool GenerateDefault_generatePlanets(SolarSystemState* solarSys);
+bool GenerateDefault_generateMoons(SolarSystemState* solarSys,
+								   SystemPlanet* planet);
+bool GenerateDefault_generateName(const SolarSystemState*,
+								  const SystemPlanet* world);
+bool GenerateDefault_generateOrbital(SolarSystemState* solarSys,
+									 SystemPlanet* world);
+uint16_t GenerateDefault_generateMinerals(const SolarSystemState*,
+										  const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+uint16_t GenerateDefault_generateEnergy(const SolarSystemState*,
+										const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+uint16_t GenerateDefault_generateLife(const SolarSystemState*,
+									  const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+bool GenerateDefault_pickupMinerals(SolarSystemState*, SystemPlanet* world,
 									uint16_t whichNode);
-bool GenerateDefault_pickupEnergy(SOLARSYS_STATE*, PLANET_DESC* world,
+bool GenerateDefault_pickupEnergy(SolarSystemState*, SystemPlanet* world,
 								  uint16_t whichNode);
-bool GenerateDefault_pickupLife(SOLARSYS_STATE*, PLANET_DESC* world,
+bool GenerateDefault_pickupLife(SolarSystemState*, SystemPlanet* world,
 								uint16_t whichNode);
 
-uint16_t GenerateDefault_generateArtifact(const SOLARSYS_STATE*,
-										  uint16_t whichNode, NODE_INFO* info);
-uint16_t GenerateDefault_generateRuins(const SOLARSYS_STATE*,
-									   uint16_t whichNode, NODE_INFO* info);
-bool GenerateDefault_landerReport(SOLARSYS_STATE*);
-bool GenerateDefault_landerReportCycle(SOLARSYS_STATE*);
-extern void GeneratePlanets(SOLARSYS_STATE* system);
-extern bool CheckForHabitable(SOLARSYS_STATE* solarSys);
+uint16_t GenerateDefault_generateArtifact(const SolarSystemState*,
+										  uint16_t whichNode, SurfaceNode* info);
+uint16_t GenerateDefault_generateRuins(const SolarSystemState*,
+									   uint16_t whichNode, SurfaceNode* info);
+bool GenerateDefault_landerReport(SolarSystemState*);
+bool GenerateDefault_landerReportCycle(SolarSystemState*);
+extern void GeneratePlanets(SolarSystemState* system);
+extern bool CheckForHabitable(SolarSystemState* solarSys);
 extern uint8_t GenerateWorlds(uint8_t whichType);
-extern void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys);
+extern void GenerateGasGiantRanged(SolarSystemState* solarSys);
 extern uint8_t GenerateCrystalWorld(void);
 extern uint8_t GenerateDesolateWorld(void);
 extern uint8_t GenerateHabitableWorld(void);
 extern uint8_t GenerateGasGiantWorld(void);
 extern uint8_t GenerateMinPlanets(uint8_t min);
 extern uint8_t GenerateNumberOfPlanets(uint8_t minimum);
-extern uint8_t PlanetByteGen(PLANET_DESC* pPDesc);
+extern uint8_t PlanetByteGen(SystemPlanet* pPDesc);
 
 const extern GenerateFunctions generateDefaultFunctions;
 

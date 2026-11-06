@@ -30,17 +30,17 @@ HOT_SPOT MAKE_HOT_SPOT(int16_t x, int16_t y)
 	return hs;
 }
 
-// XXX: INTERNAL_PRIMITIVE and INTERNAL_PRIM_DESC are not used
+// XXX: InternalPrimitive and INTERNAL_PRIM_DESC are not used
 typedef union
 {
-	GFXPOINT Point;
-	STAMP Stamp;
-	BRESENHAM_LINE Line;
-	TEXT Text;
-	GFXRECT Rect;
+	GfxPoint Point;
+	GfxStamp Stamp;
+	BresenhamLine Line;
+	GfxText Text;
+	GfxRect Rect;
 } INTERNAL_PRIM_DESC;
 
-struct INTERNAL_PRIMITIVE
+struct InternalPrimitive
 {
 	PRIM_LINKS Links;
 	GRAPHICS_PRIM Type;
@@ -50,10 +50,10 @@ struct INTERNAL_PRIMITIVE
 
 
 // pValidRect or origin may be nullptr
-bool GetContextValidRect(GFXRECT* pValidRect, GFXPOINT* origin)
+bool GetContextValidRect(GfxRect* pValidRect, GfxPoint* origin)
 {
-	GFXRECT tempRect;
-	GFXPOINT tempPt;
+	GfxRect tempRect;
+	GfxPoint tempPt;
 
 	if (!pValidRect)
 	{
@@ -89,9 +89,9 @@ bool GetContextValidRect(GFXRECT* pValidRect, GFXPOINT* origin)
 	return (true);
 }
 
-static void ClearBackGround(GFXRECT* pClipRect)
+static void ClearBackGround(GfxRect* pClipRect)
 {
-	GFXRECT clearRect;
+	GfxRect clearRect;
 	const Color color = _get_context_bg_color();
 	clearRect.corner.x = 0;
 	clearRect.corner.y = 0;
@@ -100,15 +100,15 @@ static void ClearBackGround(GFXRECT* pClipRect)
 					  pClipRect->corner);
 }
 
-void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
+void DrawBatch(Primitive* lpBasePrim, PRIM_LINKS PrimLinks,
 			   BATCH_FLAGS BatchFlags)
 {
-	GFXRECT ValidRect;
-	GFXPOINT origin;
+	GfxRect ValidRect;
+	GfxPoint origin;
 
 	if (GraphicsSystemActive() && GetContextValidRect(&ValidRect, &origin))
 	{
-		PRIMITIVE* lpPrim {};
+		Primitive* lpPrim {};
 		const DrawMode mode = _get_context_draw_mode();
 
 		BatchGraphics();
@@ -123,7 +123,7 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 		for (; CurIndex != EndOfList;
 			 CurIndex = GetSuccLink(GetPrimLinks(lpPrim)))
 		{
-			GFXRECT ClipRect;
+			GfxRect ClipRect;
 			Color color;
 
 			lpPrim = &lpBasePrim[CurIndex];
@@ -134,7 +134,7 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 			}
 			const uint8_t flags {GetPrimFlags(lpPrim)};
 
-			PRIMITIVE* lpWorkPrim {lpPrim};
+			Primitive* lpWorkPrim {lpPrim};
 
 			switch (PrimType)
 			{
@@ -207,7 +207,7 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 
 void ClearDrawable(void)
 {
-	GFXRECT ValidRect;
+	GfxRect ValidRect;
 
 	if (GraphicsSystemActive() && GetContextValidRect(&ValidRect, nullptr))
 	{
@@ -217,7 +217,7 @@ void ClearDrawable(void)
 
 void ClearScreen(void)
 {
-	GFXRECT ValidRect;
+	GfxRect ValidRect;
 
 	if (!GraphicsSystemActive())
 	{
@@ -231,9 +231,9 @@ void ClearScreen(void)
 	ClearBackGround(&ValidRect);
 }
 
-void DrawPoint(GFXPOINT* lpPoint)
+void DrawPoint(GfxPoint* lpPoint)
 {
-	GFXPOINT origin;
+	GfxPoint origin;
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
@@ -245,13 +245,13 @@ void DrawPoint(GFXPOINT* lpPoint)
 
 void InstaPoint(int x, int y)
 {
-	GFXPOINT origin = {(int16_t)x, (int16_t)y};
+	GfxPoint origin = {(int16_t)x, (int16_t)y};
 	DrawPoint(&origin);
 }
 
-void DrawRectangle(GFXRECT* lpRect, bool scaled)
+void DrawRectangle(GfxRect* lpRect, bool scaled)
 {
-	GFXPOINT origin;
+	GfxPoint origin;
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
@@ -263,16 +263,16 @@ void DrawRectangle(GFXRECT* lpRect, bool scaled)
 
 void InstaRect(int x, int y, int w, int h, bool scaled)
 {
-	GFXRECT r = {
+	GfxRect r = {
 		{(int16_t)x, (int16_t)y},
 		{(int16_t)w, (int16_t)h}
 	};
 	DrawRectangle(&r, scaled);
 }
 
-void DrawFilledRectangle(GFXRECT* lpRect)
+void DrawFilledRectangle(GfxRect* lpRect)
 {
-	GFXPOINT origin;
+	GfxPoint origin;
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
@@ -284,16 +284,16 @@ void DrawFilledRectangle(GFXRECT* lpRect)
 
 void InstaFilledRect(int x, int y, int w, int h)
 {
-	GFXRECT r = {
+	GfxRect r = {
 		{(int16_t)x, (int16_t)y},
 		{(int16_t)w, (int16_t)h}
 	};
 	DrawFilledRectangle(&r);
 }
 
-void DrawLine(LINE* lpLine, uint8_t thickness)
+void DrawLine(GfxLine* lpLine, uint8_t thickness)
 {
-	GFXPOINT origin;
+	GfxPoint origin;
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
@@ -305,16 +305,16 @@ void DrawLine(LINE* lpLine, uint8_t thickness)
 
 void InstaLine(int x1, int y1, int x2, int y2)
 {
-	LINE line = {
+	GfxLine line = {
 		{(int16_t)x1, (int16_t)y1},
 		{(int16_t)x2, (int16_t)y2}
 	  };
 	DrawLine(&line, 1);
 }
 
-void DrawStamp(STAMP* stmp)
+void DrawStamp(GfxStamp* stmp)
 {
-	GFXPOINT origin;
+	GfxPoint origin;
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
@@ -323,9 +323,9 @@ void DrawStamp(STAMP* stmp)
 	}
 }
 
-void DrawFilledStamp(STAMP* stmp)
+void DrawFilledStamp(GfxStamp* stmp)
 {
-	GFXPOINT origin;
+	GfxPoint origin;
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
@@ -343,7 +343,7 @@ void DrawFilledStamp(STAMP* stmp)
 // applied to every pixel equally with alpha = 255
 void ApplyMask(FRAME layer, FRAME base, DrawMode mode, Color* fill)
 {
-	GFXPOINT origin;
+	GfxPoint origin;
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{

@@ -25,7 +25,7 @@
 #include "uqm/gameev.h"
 
 
-static LOCDATA thradd_desc =
+static ConversationData thradd_desc =
 	{
 		THRADD_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -765,7 +765,7 @@ static void Intro(void)
 {
 	uint8_t NumVisits {};
 	HFLEETINFO hThradd = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, THRADDASH_SHIP);
-	const FLEET_INFO* ThraddPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd);
+	const FleetInfo* ThraddPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd);
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -1051,7 +1051,7 @@ static void post_thradd_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_thradd_comm(void)
+ConversationData* init_thradd_comm(void)
 {
 	thradd_desc.init_encounter_func = Intro;
 	thradd_desc.post_encounter_func = post_thradd_enc;
@@ -1074,7 +1074,7 @@ LOCDATA* init_thradd_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&thradd_desc};
+	ConversationData* retval {&thradd_desc};
 
 	return (retval);
 }

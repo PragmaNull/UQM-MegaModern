@@ -69,7 +69,7 @@ static uint16_t probe_tens_names[] =
 		ENUMERATE_NINETY,
 };
 
-const static NUMBER_SPEECH_DESC probe_numbers_english =
+const static NumberSpeechDesc probe_numbers_english =
 	{
 		5, /* NumDigits */
 		{
@@ -115,7 +115,7 @@ const static NUMBER_SPEECH_DESC probe_numbers_english =
 			}}
 };
 
-static LOCDATA slylandro_desc =
+static ConversationData slylandro_desc =
 	{
 		SLYLANDRO_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -552,7 +552,7 @@ static void post_slyland_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_slyland_comm(void)
+ConversationData* init_slyland_comm(void)
 {
 	slylandro_desc.init_encounter_func = Intro;
 	slylandro_desc.post_encounter_func = post_slyland_enc;
@@ -564,7 +564,7 @@ LOCDATA* init_slyland_comm(void)
 	slylandro_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	setSegue(Segue_hostile);
-	LOCDATA* retval {&slylandro_desc};
+	ConversationData* retval {&slylandro_desc};
 
 	return (retval);
 }

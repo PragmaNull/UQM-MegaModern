@@ -56,7 +56,7 @@ struct TFB_DrawCommand_Line
 
 struct TFB_DrawCommand_Rect
 {
-	GFXRECT rect;
+	GfxRect rect;
 	Color color;
 	DrawMode drawMode;
 	SCREEN destBuffer;
@@ -95,20 +95,20 @@ struct TFB_DrawCommand_FontChar
 
 struct TFB_DrawCommand_Copy
 {
-	GFXRECT rect;
+	GfxRect rect;
 	SCREEN srcBuffer, destBuffer;
 };
 
 struct TFB_DrawCommand_CopyToImage
 {
 	TFB_Image* image;
-	GFXRECT rect;
+	GfxRect rect;
 	SCREEN srcBuffer;
 };
 
 struct TFB_DrawCommand_Scissor
 {
-	GFXRECT rect;
+	GfxRect rect;
 };
 
 struct TFB_DrawCommand_SetMipmap

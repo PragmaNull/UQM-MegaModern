@@ -25,16 +25,16 @@
 extern "C" {
 #endif
 
-extern bool GetNextStarShip(STARSHIP* LastStarShipPtr, uint16_t which_side);
+extern bool GetNextStarShip(Starship* LastStarShipPtr, uint16_t which_side);
 extern bool GetInitialStarShips(void);
 
-extern void animation_preprocess(ELEMENT* ElementPtr);
-extern void ship_preprocess(ELEMENT* ElementPtr);
-extern void ship_postprocess(ELEMENT* ElementPtr);
-extern void collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-					  ELEMENT* ElementPtr1, GFXPOINT* pPt1);
+extern void animation_preprocess(Element* ElementPtr);
+extern void ship_preprocess(Element* ElementPtr);
+extern void ship_postprocess(Element* ElementPtr);
+extern void collision(Element* ElementPtr0, GfxPoint* pPt0,
+					  Element* ElementPtr1, GfxPoint* pPt1);
 
-extern STATUS_FLAGS inertial_thrust(ELEMENT* ElementPtr);
+extern STATUS_FLAGS inertial_thrust(Element* ElementPtr);
 
 #if 0 //defined(__cplusplus)
 }

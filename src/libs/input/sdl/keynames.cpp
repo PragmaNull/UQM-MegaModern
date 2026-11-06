@@ -160,7 +160,7 @@ static keyname keynames[] = {
 
 	{"Unknown",		0				 }
 };
-/* Last element must have code zero */
+/* Last Element must have code zero */
 
 const char* VControl_code2name(int code)
 {

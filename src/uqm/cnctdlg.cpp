@@ -35,9 +35,9 @@ static auto McdHeight() { return ResScale(110); }
 
 static constexpr auto MenuFrameRate {(c_gameSecond / 20)};
 
-struct CONNECT_DIALOG_STATE
+struct ConnectDialogState
 {
-	bool (*InputFunc)(struct CONNECT_DIALOG_STATE* pInputState);
+	bool (*InputFunc)(struct ConnectDialogState* pInputState);
 
 	TimeCount NextTime;
 	bool Initialized;
@@ -48,54 +48,54 @@ struct CONNECT_DIALOG_STATE
 
 static void DrawConnectDialog(void);
 
-static WIDGET_MENU_SCREEN menu;
-static WIDGET_BUTTON buttons[3];
-static WIDGET_SLIDER slider;
-static WIDGET_TEXTENTRY texts[2];
+static WidgetMenuScreen menu;
+static WidgetButton buttons[3];
+static WidgetSlider slider;
+static WidgetTextEntry texts[2];
 
-static WIDGET* menu_widgets[] = {
-	(WIDGET*)&buttons[1],
-	(WIDGET*)&texts[0],
-	(WIDGET*)&buttons[0],
-	(WIDGET*)&slider,
-	(WIDGET*)&texts[1],
-	(WIDGET*)&buttons[2]};
+static Widget* menu_widgets[] = {
+	(Widget*)&buttons[1],
+	(Widget*)&texts[0],
+	(Widget*)&buttons[0],
+	(Widget*)&slider,
+	(Widget*)&texts[1],
+	(Widget*)&buttons[2]};
 
 static bool done;
 
 /* This kind of sucks, but the Button callbacks need access to the
- * CONNECT_DIALOG_STATE, so we need a pointer to it */
+ * ConnectDialogState, so we need a pointer to it */
 
-static CONNECT_DIALOG_STATE* current_state;
+static ConnectDialogState* current_state;
 
 static FONT PlayerFont;
 
-static int do_connect(WIDGET* self, int event);
-static int do_listen(WIDGET* self, int event);
-static int do_cancel(WIDGET* self, int event);
+static int do_connect(Widget* self, int event);
+static int do_listen(Widget* self, int event);
+static int do_cancel(Widget* self, int event);
 
-static void MCD_DrawMenuScreen(WIDGET* _self, int x, int y)
+static void MCD_DrawMenuScreen(Widget* _self, int x, int y)
 {
-	const WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
+	const WidgetMenuScreen* self = (WidgetMenuScreen*)_self;
 
 	int widget_y {y + ResScale(8)};
 	for (int widget_index {0}; widget_index < self->num_children; widget_index++)
 	{
-		WIDGET* c = self->child[widget_index];
+		Widget* c = self->child[widget_index];
 		(*c->draw)(c, x, widget_y);
 		widget_y += (*c->height)(c) + ResScale(8);
 	}
 }
 
-static void MCD_DrawButton(WIDGET* _self, int x, int y)
+static void MCD_DrawButton(Widget* _self, int x, int y)
 {
-	const WIDGET_BUTTON* self = (WIDGET_BUTTON*)_self;
+	const WidgetButton* self = (WidgetButton*)_self;
 	Color oldtext;
 	Color inactive;
 	Color selected;
 	FONT oldfont = SetContextFont(StarConFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
+	GfxText t;
 
 	selected = MenuHighlightColor;
 	inactive = MenuTextColor;
@@ -120,16 +120,16 @@ static void MCD_DrawButton(WIDGET* _self, int x, int y)
 	(void)x;
 }
 
-static void MCD_DrawSlider(WIDGET* _self, int x, int y)
+static void MCD_DrawSlider(Widget* _self, int x, int y)
 {
-	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
+	WidgetSlider* self = (WidgetSlider*)_self;
 	Color oldtext;
 	Color default_color;
 	Color selected;
 	FONT oldfont = SetContextFont(PlayerFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
-	GFXRECT r;
+	GfxText t;
+	GfxRect r;
 	const int tick = ResScale(ResDescale(McdWidth()) / 8);
 
 	default_color = MenuTextColor;
@@ -170,16 +170,16 @@ static void MCD_DrawSlider(WIDGET* _self, int x, int y)
 	SetContextForeGroundColor(oldtext);
 }
 
-static void MCD_DrawTextEntry(WIDGET* _self, int x, int y)
+static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 {
-	WIDGET_TEXTENTRY* self = (WIDGET_TEXTENTRY*)_self;
+	WidgetTextEntry* self = (WidgetTextEntry*)_self;
 	Color oldtext;
 	Color inactive;
 	Color default_color;
 	Color selected;
 	FONT oldfont = SetContextFont(PlayerFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
+	GfxText t;
 
 	default_color = MenuTextColor;
 	selected = MenuHighlightColor;
@@ -227,9 +227,9 @@ static void MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 	else
 	{ // editing state
 		uint16_t i {};
-		GFXRECT text_r;
+		GfxRect text_r;
 		uint8_t char_deltas[WidgetTextentryWidth];
-		GFXRECT r;
+		GfxRect r;
 		int16_t leading {};
 
 		t.baseline.x = x + (ResScale(90));
@@ -323,9 +323,9 @@ static void MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 /* Text entry stuff, mostly C&Ped from setupmenu.c.  Could use some
  * refactoring, as redraw_menu () is the only real change. */
 
-static bool OnTextEntryChange(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryChange(TextEntryState* pTES)
 {
-	WIDGET_TEXTENTRY* widget = (WIDGET_TEXTENTRY*)pTES->CbParam;
+	WidgetTextEntry* widget = (WidgetTextEntry*)pTES->CbParam;
 
 	widget->cursor_pos = pTES->CursorPos;
 	if (pTES->JoystickMode)
@@ -344,7 +344,7 @@ static bool OnTextEntryChange(TEXTENTRY_STATE* pTES)
 	return true; // allow change
 }
 
-static bool OnTextEntryFrame(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryFrame(TextEntryState* pTES)
 {
 	DrawConnectDialog();
 
@@ -355,9 +355,9 @@ static bool OnTextEntryFrame(TEXTENTRY_STATE* pTES)
 	return true; // continue
 }
 
-static int OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
+static int OnTextEntryEvent(WidgetTextEntry* widget)
 { // Going to edit the text
-	TEXTENTRY_STATE tes;
+	TextEntryState tes;
 	char revert_buf[256];
 
 	// position cursor at the end of text
@@ -399,7 +399,7 @@ static int OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 
 /* Button response routines */
 
-static int do_connect(WIDGET* self, int event)
+static int do_connect(Widget* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -417,7 +417,7 @@ static int do_connect(WIDGET* self, int event)
 	return false;
 }
 
-static int do_listen(WIDGET* self, int event)
+static int do_listen(Widget* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -434,7 +434,7 @@ static int do_listen(WIDGET* self, int event)
 	return false;
 }
 
-static int do_cancel(WIDGET* self, int event)
+static int do_cancel(Widget* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -529,12 +529,12 @@ static void CreateWidgets(void)
 	}
 	fmt::format_to_sz_n(texts[1].value, std::min(sizeof(texts[1].value), static_cast<size_t>(texts[1].maxlen)), "{}", peerData.address.port);
 
-	menu.receiveFocus((WIDGET*)&menu, WIDGET_EVENT_DOWN);
+	menu.receiveFocus((Widget*)&menu, WIDGET_EVENT_DOWN);
 }
 
 static void DrawConnectDialog(void)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	r.extent.width = McdWidth();
 	r.extent.height = McdHeight();
@@ -545,11 +545,11 @@ static void DrawConnectDialog(void)
 	DrawShadowedBox(&r, ShadowboxBackgroundColor,
 					ShadowboxDarkColor, ShadowboxMediumColor);
 
-	menu.draw((WIDGET*)&menu,
+	menu.draw((Widget*)&menu,
 			  r.corner.x + ResScale(10), r.corner.y + ResScale(10));
 }
 
-static bool DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
+static bool DoMeleeConnectDialog(ConnectDialogState* state)
 {
 	bool changed {};
 
@@ -613,7 +613,7 @@ static bool DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
 
 bool MeleeConnectDialog(int side)
 {
-	CONNECT_DIALOG_STATE state;
+	ConnectDialogState state;
 
 	PlayerFont = LoadFont(PlayerFontRes);
 

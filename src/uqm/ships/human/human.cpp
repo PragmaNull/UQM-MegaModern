@@ -54,9 +54,9 @@ static constexpr auto SpecialEnergyCost {4};
 static constexpr auto SpecialWait {9};
 static auto LaserRange() { return (uint16_t)ResScale(100); }
 
-RACE_DESC human_desc =
+RaceDesc human_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "cruiser",
 		 FiresFore | SeekingWeapon | PointDefense,
 		 11, /* Super Melee cost */
@@ -67,7 +67,7 @@ RACE_DESC human_desc =
 		 HumanMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			0, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
@@ -126,7 +126,7 @@ RACE_DESC human_desc =
 		0, /* CodeRef */
 };
 
-static void nuke_preprocess(ELEMENT* ElementPtr)
+static void nuke_preprocess(Element* ElementPtr)
 {
 	uint16_t facing {GetFrameIndex(ElementPtr->next.image.frame)};
 	if (ElementPtr->turn_wait > 0)
@@ -158,9 +158,9 @@ static void nuke_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void spawn_point_defense(ELEMENT* ElementPtr)
+static void spawn_point_defense(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (ElementPtr->state_flags & PlayerShip)
@@ -168,7 +168,7 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 		HELEMENT hDefense {AllocElement()};
 		if (hDefense)
 		{
-			ELEMENT* DefensePtr {};
+			Element* DefensePtr {};
 
 			LockElement(hDefense, &DefensePtr);
 			DefensePtr->playerNr = ElementPtr->playerNr;
@@ -185,14 +185,14 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 	else
 	{
 		HELEMENT hNextObject {};
-		ELEMENT* ShipPtr {};
+		Element* ShipPtr {};
 
 		bool PaidFor {false};
 
 		LockElement(StarShipPtr->hShip, &ShipPtr);
 		for (HELEMENT hObject {GetTailElement()}; hObject; hObject = hNextObject)
 		{
-			ELEMENT* ObjectPtr {};
+			Element* ObjectPtr {};
 
 			LockElement(hObject, &ObjectPtr);
 			hNextObject = GetPredElement(ObjectPtr);
@@ -216,7 +216,7 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 				if ((uint16_t)delta_x <= LaserRange() && (uint16_t)delta_y <= LaserRange() && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LaserRange() * LaserRange())
 				{
 					HELEMENT hPointDefense {};
-					LASER_BLOCK LaserBlock;
+					LaserDesc LaserBlock;
 
 					if (!PaidFor)
 					{
@@ -248,7 +248,7 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 					hPointDefense = initialize_laser(&LaserBlock);
 					if (hPointDefense)
 					{
-						ELEMENT* PDPtr {};
+						Element* PDPtr {};
 
 						LockElement(hPointDefense, &PDPtr);
 						SetElementStarShip(PDPtr, StarShipPtr);
@@ -265,10 +265,10 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
+static uint16_t initialize_nuke(Element* ShipPtr, HELEMENT NukeArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -288,7 +288,7 @@ static uint16_t initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 
 	if (NukeArray[0])
 	{
-		ELEMENT* NukePtr {};
+		Element* NukePtr {};
 
 		LockElement(NukeArray[0], &NukePtr);
 		NukePtr->turn_wait = TrackWait;
@@ -298,10 +298,10 @@ static uint16_t initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 	return (1);
 }
 
-static void human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void human_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 							   uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0
@@ -332,9 +332,9 @@ static void human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern
 	}
 }
 
-static void human_postprocess(ELEMENT* ElementPtr)
+static void human_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
@@ -344,7 +344,7 @@ static void human_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_human(void)
+RaceDesc* init_human(void)
 {
 	if (IsHd())
 	{
@@ -363,7 +363,7 @@ RACE_DESC* init_human(void)
 	human_desc.init_weapon_func = initialize_nuke;
 	human_desc.cyborg_control.intelligence_func = human_intelligence;
 
-	RACE_DESC* RaceDescPtr {&human_desc};
+	RaceDesc* RaceDescPtr {&human_desc};
 
 	return (RaceDescPtr);
 }

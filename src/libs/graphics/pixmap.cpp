@@ -57,7 +57,7 @@ uint16_t GetFrameCount(FRAME FramePtr)
 		return (0);
 	}
 
-	const DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
+	const DrawableDesc* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 	return DrawablePtr->MaxIndex + 1;
 }
 
@@ -75,7 +75,7 @@ FRAME SetAbsFrameIndex(FRAME FramePtr, uint16_t FrameIndex)
 {
 	if (FramePtr != 0)
 	{
-		DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
+		DrawableDesc* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 
 		FrameIndex = FrameIndex % (DrawablePtr->MaxIndex + 1);
 		FramePtr = &DrawablePtr->Frame[FrameIndex];
@@ -89,7 +89,7 @@ FRAME SetRelFrameIndex(FRAME FramePtr, int16_t FrameOffs)
 	{
 		uint16_t num_frames {};
 
-		DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
+		DrawableDesc* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 		num_frames = DrawablePtr->MaxIndex + 1;
 		if (FrameOffs < 0)
 		{
@@ -114,7 +114,7 @@ FRAME SetEquFrameIndex(FRAME DstFramePtr, FRAME SrcFramePtr)
 	const uint16_t Index {GetFrameIndex(SrcFramePtr)};
 #ifdef DEBUG
 	{
-		DRAWABLE_DESC* DrawablePtr = GetFrameParentDrawable(DstFramePtr);
+		DrawableDesc* DrawablePtr = GetFrameParentDrawable(DstFramePtr);
 		if (Index > DrawablePtr->MaxIndex)
 		{
 			uqm::log::debug("SetEquFrameIndex: source index ({}) beyond "
@@ -135,7 +135,7 @@ FRAME IncFrameIndex(FRAME FramePtr)
 		return (0);
 	}
 
-	DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
+	DrawableDesc* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 	if (FramePtr->Index < DrawablePtr->MaxIndex)
 	{
 		return ++FramePtr;
@@ -159,7 +159,7 @@ FRAME DecFrameIndex(FRAME FramePtr)
 	}
 	else
 	{
-		DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
+		DrawableDesc* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 		return &DrawablePtr->Frame[DrawablePtr->MaxIndex];
 	}
 }

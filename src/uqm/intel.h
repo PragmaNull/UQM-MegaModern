@@ -35,23 +35,23 @@ constexpr auto WorldToTurn(const auto& d) { return ((d) >> 6); }
 constexpr auto ResolutionCompensated(const auto& speed) { return (ResScale(ResScale(speed))); }
 
 extern BATTLE_INPUT_STATE computer_intelligence(
-	ComputerInputContext* context, STARSHIP* StarShipPtr);
+	ComputerInputContext* context, Starship* StarShipPtr);
 extern BATTLE_INPUT_STATE tactical_intelligence(
-	ComputerInputContext* context, STARSHIP* StarShipPtr);
-extern void ship_intelligence(ELEMENT* ShipPtr,
-							  EVALUATE_DESC* ObjectsOfConcern, uint16_t ConcernCounter);
-extern bool ship_weapons(ELEMENT* ShipPtr, ELEMENT* OtherPtr,
+	ComputerInputContext* context, Starship* StarShipPtr);
+extern void ship_intelligence(Element* ShipPtr,
+							  ObjectEvaluation* ObjectsOfConcern, uint16_t ConcernCounter);
+extern bool ship_weapons(Element* ShipPtr, Element* OtherPtr,
 						 uint16_t margin_of_error);
 
-extern void Pursue(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr);
-extern void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr);
-extern void Avoid(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr);
-extern bool TurnShip(ELEMENT* ShipPtr, uint16_t angle);
-extern bool ThrustShip(ELEMENT* ShipPtr, uint16_t angle);
+extern void Pursue(Element* ShipPtr, ObjectEvaluation* EvalDescPtr);
+extern void Entice(Element* ShipPtr, ObjectEvaluation* EvalDescPtr);
+extern void Avoid(Element* ShipPtr, ObjectEvaluation* EvalDescPtr);
+extern bool TurnShip(Element* ShipPtr, uint16_t angle);
+extern bool ThrustShip(Element* ShipPtr, uint16_t angle);
 
 extern PlayerControlFlags PlayerControl[];
 
-static inline bool antiCheatImpl(const ELEMENT* element, const bool swapPlayers, const uqm::GodModeFlags testFlags, uqstl::span<PlayerControlFlags> playerControl, const uqm::GodModeFlags godModeData)
+static inline bool antiCheatImpl(const Element* Element, const bool swapPlayers, const uqm::GodModeFlags testFlags, uqstl::span<PlayerControlFlags> playerControl, const uqm::GodModeFlags godModeData)
 {
 	// both players are AI-controlled
 	if (testFlag(playerControl[0] & playerControl[1], ComputerControlFlags))
@@ -64,13 +64,13 @@ static inline bool antiCheatImpl(const ELEMENT* element, const bool swapPlayers,
 		return false;
 	}
 
-	if (element == nullptr || element->playerNr < 0 || element->playerNr >= playerControl.size()) [[unlikely]]
+	if (Element == nullptr || Element->playerNr < 0 || Element->playerNr >= playerControl.size()) [[unlikely]]
 	{
 		return false;
 	}
 
-	assert(element->playerNr == 0 || element->playerNr == 1);
-	const int elementOwner = element->playerNr;
+	assert(Element->playerNr == 0 || Element->playerNr == 1);
+	const int elementOwner = Element->playerNr;
 	const int opponent = elementOwner ^ 1;
 
 	const int playerIndex = swapPlayers ? elementOwner : opponent;
@@ -78,7 +78,7 @@ static inline bool antiCheatImpl(const ELEMENT* element, const bool swapPlayers,
 	return testFlag(playerControl[playerIndex], ComputerControlFlags);
 }
 
-static inline bool antiCheat(ELEMENT* ElementPtr, bool SwapBool, uqm::GodModeFlags godModeType)
+static inline bool antiCheat(Element* ElementPtr, bool SwapBool, uqm::GodModeFlags godModeType)
 {
 	return antiCheatImpl(ElementPtr, SwapBool, godModeType, {PlayerControl, NumPlayers}, uqm::UQMOptions::read().optGodModes);
 }

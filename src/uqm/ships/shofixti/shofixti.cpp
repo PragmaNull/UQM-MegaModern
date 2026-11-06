@@ -60,9 +60,9 @@ static constexpr auto NumLimpets {3};
 // HdResolutionFactor
 static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
-static RACE_DESC shofixti_desc =
+static RaceDesc shofixti_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "scout",
 		 FiresFore,
 		 5, /* Super Melee cost */
@@ -73,7 +73,7 @@ static RACE_DESC shofixti_desc =
 		 ShofixtiMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			0, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
@@ -132,11 +132,11 @@ static RACE_DESC shofixti_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missile(Element* ShipPtr, HELEMENT MissileArray[])
 {
 
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -159,17 +159,17 @@ static uint16_t initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileAr
 
 static constexpr auto DestructSwitch {((NumExplosionFrames * 3) - 3)};
 
-static void destruct_preprocess(ELEMENT* ElementPtr)
+static void destruct_preprocess(Element* ElementPtr)
 {
 
-	// ship_death() set the ship element's life_span to
+	// ship_death() set the ship Element's life_span to
 	// (NumExplosionFrames * 3)
-	PRIMITIVE* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
+	Primitive* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	ElementPtr->state_flags |= Changing;
 	if (ElementPtr->life_span > DestructSwitch)
 	{
-		// First, stamp-fill the ship's own element with changing colors
-		// for 3 frames. No explosion element yet.
+		// First, stamp-fill the ship's own Element with changing colors
+		// for 3 frames. No explosion Element yet.
 		SetPrimType(lpPrim, STAMPFILL_PRIM);
 		if (ElementPtr->life_span == DestructSwitch + 2)
 		{
@@ -184,7 +184,7 @@ static void destruct_preprocess(ELEMENT* ElementPtr)
 	}
 	else if (ElementPtr->life_span < DestructSwitch)
 	{
-		// Stamp-fill the explosion element with cycling colors for the
+		// Stamp-fill the explosion Element with cycling colors for the
 		// remainder of the glory explosion frames.
 		const Color color = GetPrimColor(lpPrim);
 
@@ -218,19 +218,19 @@ static void destruct_preprocess(ELEMENT* ElementPtr)
 	else
 	{
 		SetPrimType(lpPrim, NoPrim);
-		// The ship's own element will not be drawn anymore but will remain
+		// The ship's own Element will not be drawn anymore but will remain
 		// alive all through the glory explosion.
 		ElementPtr->preprocess_func = nullptr;
 
-		// Spawn a separate glory explosion element.
-		// XXX: Why? Why not keep using the ship's element?
+		// Spawn a separate glory explosion Element.
+		// XXX: Why? Why not keep using the ship's Element?
 		//   Is it because of conflicting state_flags, hit_points or
 		//   mass_points?
 		HELEMENT hDestruct {AllocElement()};
 		if (hDestruct)
 		{
-			ELEMENT* DestructPtr {};
-			STARSHIP* StarShipPtr {};
+			Element* DestructPtr {};
+			Starship* StarShipPtr {};
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -267,16 +267,16 @@ static void destruct_preprocess(ELEMENT* ElementPtr)
 #include "uqm/random/UQMRandom.h"
 constexpr auto OrzMarine(const auto& ptr) { return (ptr->preprocess_func == intruder_preprocess && ptr->collision_func == marine_collision); }
 
-static void self_destruct_kill_objects(ELEMENT* ElementPtr)
+static void self_destruct_kill_objects(Element* ElementPtr)
 {
 	// This is called during PostProcessQueue(), close to or at the end,
-	// for the temporary destruct element to apply the effects of glory
+	// for the temporary destruct Element to apply the effects of glory
 	// explosion. The effects are not seen until the next frame.
 	HELEMENT hNextElement {};
 
 	for (HELEMENT hElement {GetHeadElement()}; hElement != 0; hElement = hNextElement)
 	{
-		ELEMENT* ObjPtr {};
+		Element* ObjPtr {};
 		uint32_t dist {};
 
 		LockElement(hElement, &ObjPtr);
@@ -337,9 +337,9 @@ static void self_destruct_kill_objects(ELEMENT* ElementPtr)
 
 // This function is called when the ship dies via Glory Device.
 // The generic ship_death() function is not called for the ship in this case.
-static void shofixti_destruct_death(ELEMENT* ShipPtr)
+static void shofixti_destruct_death(Element* ShipPtr)
 {
-	STARSHIP* StarShip {};
+	Starship* StarShip {};
 
 	GetElementStarShip(ShipPtr, &StarShip);
 
@@ -353,7 +353,7 @@ static void shofixti_destruct_death(ELEMENT* ShipPtr)
 					   1),
 			  CalcSoundPosition(ShipPtr), ShipPtr, GameSoundPriority + 1);
 
-	STARSHIP* winner {GetWinnerStarShip()};
+	Starship* winner {GetWinnerStarShip()};
 	if (winner == nullptr)
 	{ // No winner determined yet
 		winner = FindAliveStarShip(ShipPtr);
@@ -372,21 +372,21 @@ static void shofixti_destruct_death(ELEMENT* ShipPtr)
 	RecordShipDeath(ShipPtr);
 }
 
-static void self_destruct(ELEMENT* ElementPtr)
+static void self_destruct(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
-	// Spawn a temporary element, which dies in this same frame, in order
+	// Spawn a temporary Element, which dies in this same frame, in order
 	// to defer the effects of the glory explosion.
-	// It will be the last element (or one of the last) for which the
+	// It will be the last Element (or one of the last) for which the
 	// death_func() will be called from PostProcessQueue() in this frame.
 	// XXX: Why at the end? Why not just do it now?
 	HELEMENT hDestruct {AllocElement()};
 	if (hDestruct)
 	{
-		ELEMENT* DestructPtr {};
+		Element* DestructPtr {};
 
 		LockElement(hDestruct, &DestructPtr);
 		DestructPtr->playerNr = ElementPtr->playerNr;
@@ -414,10 +414,10 @@ static void self_destruct(ELEMENT* ElementPtr)
 	ElementPtr->death_func = shofixti_destruct_death;
 }
 
-static void shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void shofixti_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								  uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
@@ -433,8 +433,8 @@ static void shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConc
 	}
 	else
 	{
-		const EVALUATE_DESC* lpWeaponEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
-		const EVALUATE_DESC* lpShipEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+		const ObjectEvaluation* lpWeaponEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+		const ObjectEvaluation* lpShipEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 		if (StarShipPtr->RaceDescPtr->ship_data.special[0]
 			&& (StarShipPtr->RaceDescPtr->ship_data.captain_control.special_offset < 4
 				|| (lpShipEvalDesc->ObjectPtr != nullptr
@@ -452,9 +452,9 @@ static void shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConc
 	}
 }
 
-static void shofixti_preprocess(ELEMENT* ElementPtr)
+static void shofixti_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags
@@ -473,9 +473,9 @@ static void shofixti_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void shofixti_postprocess(ELEMENT* ElementPtr)
+static void shofixti_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->RaceDescPtr->ship_data.captain_control.special_offset == 5)
@@ -485,11 +485,11 @@ static void shofixti_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_shofixti(void)
+RaceDesc* init_shofixti(void)
 {
-	RACE_DESC* RaceDescPtr {};
+	RaceDesc* RaceDescPtr {};
 	// The caller of this func will copy the struct
-	static RACE_DESC new_shofixti_desc;
+	static RaceDesc new_shofixti_desc;
 
 	if (IsHd())
 	{

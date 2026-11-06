@@ -126,7 +126,7 @@ inline constexpr auto UqmSisScreenHeight {(227)};
 inline constexpr auto HdmodSisScreenWidth {(1074)};
 inline constexpr auto HdmodSisScreenHeight {(924)};
 
-inline constexpr EXTENT SisScreenDimensions[] {
+inline constexpr GfxExtent SisScreenDimensions[] {
 	{DosSisScreenWidth,		DosSisScreenHeight	  },
 	{ThreedoSisScreenWidth, ThreedoSisScreenHeight},
 	{UqmSisScreenWidth,		UqmSisScreenHeight	  },

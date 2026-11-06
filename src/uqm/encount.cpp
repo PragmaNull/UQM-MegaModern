@@ -53,10 +53,10 @@
 
 
 static void DrawFadeText(const char* str1, const char* str2,
-						 bool fade_in, GFXRECT* pRect);
+						 bool fade_in, GfxRect* pRect);
 
 
-static bool DoSelectAction(MENU_STATE* pMS)
+static bool DoSelectAction(MenuState* pMS)
 {
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	if (uqm::currentActivity() & CHECK_ABORT)
@@ -98,7 +98,7 @@ static bool DoSelectAction(MENU_STATE* pMS)
 	return (true);
 }
 
-static QUEUE* GetShipFragQueueForPlayer(uint16_t playerNr)
+static Queue* GetShipFragQueueForPlayer(uint16_t playerNr)
 {
 	if (playerNr == RpgPlayerNum)
 	{
@@ -130,14 +130,14 @@ void SetBattlePlanet(void)
 	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(selector));
 }
 
-// Called by comm code to intialize battle fleets during encounter
+// Called by comm code to intialize battle fleets during Encounter
 void BuildBattle(uint16_t which_player)
 {
-	const QUEUE* pQueue {};
+	const Queue* pQueue {};
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
 	HSTARSHIP hBuiltShip {};
-	STARSHIP* BuiltShipPtr {};
+	Starship* BuiltShipPtr {};
 
 	EncounterRace = -1;
 
@@ -170,10 +170,10 @@ void BuildBattle(uint16_t which_player)
 					uqm::gameState().setFlag(uqm::GameFlag::ESCAPE_COUNTER, static_cast<uint32_t>(110));
 
 					if (IsExtended() && pSolarSysState && worldIsMoon(pSolarSysState, pSolarSysState->pOrbitalDesc))
-					{ // Set gravity well to moon if encounter takes
+					{ // Set gravity well to moon if Encounter takes
 						// place there (Spathiwa moon, Taalo HW,
 						// Utwig Bomb Loc)
-						// Only if encounter starts with moon collision
+						// Only if Encounter starts with moon collision
 						// colliding with IP group in inner system still
 						// uses main planet for gravity well
 
@@ -208,7 +208,7 @@ void BuildBattle(uint16_t which_player)
 	for (hStarShip = GetHeadLink(pQueue);
 		 hStarShip != 0; hStarShip = hNextShip)
 	{
-		const SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hStarShip)};
+		const ShipFragment* FragPtr {LockShipFrag(pQueue, hStarShip)};
 		hNextShip = _GetSuccLink(FragPtr);
 
 		hBuiltShip = Build(&race_q[which_player],
@@ -263,35 +263,35 @@ void BuildBattle(uint16_t which_player)
 
 bool FleetIsInfinite(uint16_t playerNr)
 {
-	const QUEUE* pQueue {GetShipFragQueueForPlayer(playerNr)};
+	const Queue* pQueue {GetShipFragQueueForPlayer(playerNr)};
 	HSHIPFRAG hShipFrag {GetHeadLink(pQueue)};
 	if (!hShipFrag)
 	{ // Ship queue is empty in SuperMelee or for RPG player w/o escorts
 		return false;
 	}
 
-	const SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hShipFrag)};
+	const ShipFragment* FragPtr {LockShipFrag(pQueue, hShipFrag)};
 	const bool ret {(FragPtr->crew_level == InfiniteFleet)};
 	UnlockShipFrag(pQueue, hShipFrag);
 
 	return ret;
 }
 
-void UpdateShipFragCrew(STARSHIP* StarShipPtr)
+void UpdateShipFragCrew(Starship* StarShipPtr)
 {
 	HSHIPFRAG hShipFrag {};
 	HSHIPFRAG hNextFrag {};
-	SHIP_FRAGMENT* frag {};
+	ShipFragment* frag {};
 	HSTARSHIP hStarShip {};
 	HSTARSHIP hNextShip {};
-	const STARSHIP* ship {};
+	const Starship* ship {};
 
-	const QUEUE* frag_q {GetShipFragQueueForPlayer(StarShipPtr->playerNr)};
-	const QUEUE* ship_q {&race_q[StarShipPtr->playerNr]};
+	const Queue* frag_q {GetShipFragQueueForPlayer(StarShipPtr->playerNr)};
+	const Queue* ship_q {&race_q[StarShipPtr->playerNr]};
 
-	// Find a SHIP_FRAGMENT that corresponds to the given STARSHIP
+	// Find a ShipFragment that corresponds to the given Starship
 	// The ships and fragments are in the same order in two queues
-	// XXX: It would probably be simpler to keep HSHIPFRAG in STARSHIP struct
+	// XXX: It would probably be simpler to keep HSHIPFRAG in Starship struct
 	for (hShipFrag = GetHeadLink(frag_q), hStarShip = GetHeadLink(ship_q);
 		 hShipFrag != 0 && hStarShip != 0;
 		 hShipFrag = hNextFrag, hStarShip = hNextShip)
@@ -320,15 +320,15 @@ void UpdateShipFragCrew(STARSHIP* StarShipPtr)
 
 /*
  * Encountering an alien.
- * Draws the encounter screen, plays the red alert music, and
+ * Draws the Encounter screen, plays the red alert music, and
  * waits for a decision of the player on how to handle the situation.
  * Returns either HAIL or ATTACK.
  */
 uint16_t InitEncounter(void)
 {
 	uint16_t i {};
-	STAMP s;
-	TEXT t;
+	GfxStamp s;
+	GfxText t;
 	extern FRAME planet[];
 
 
@@ -399,7 +399,7 @@ uint16_t InitEncounter(void)
 	{
 		HSHIPFRAG hStarShip {};
 		HSHIPFRAG hNextShip {};
-		const GFXPOINT display_pt[] =
+		const GfxPoint display_pt[] =
 			{
 				{10,	 51 },
 				{-10, 51 },
@@ -417,9 +417,9 @@ uint16_t InitEncounter(void)
 		for (hStarShip = GetHeadLink(&uqm::gameState().game().npc_built_ship_q), i = 0;
 			 hStarShip && i < 60; hStarShip = hNextShip, ++i)
 		{
-			GFXRECT r;
+			GfxRect r;
 
-			const SHIP_FRAGMENT* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
+			const ShipFragment* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
 			if (FragPtr->crew_level != InfiniteFleet)
 			{
 				hNextShip = _GetSuccLink(FragPtr);
@@ -465,28 +465,28 @@ uint16_t InitEncounter(void)
 
 
 	{
-		MENU_STATE MenuState;
+		MenuState menuState;
 
-		MenuState.InputFunc = DoSelectAction;
-		MenuState.Initialized = false;
+		menuState.InputFunc = DoSelectAction;
+		menuState.Initialized = false;
 
-		DrawMenuStateStrings(PM_CONVERSE, MenuState.CurState = HAIL);
+		DrawMenuStateStrings(PM_CONVERSE, menuState.CurState = HAIL);
 		SetFlashRect(SfrMenu3do(), false);
 
-		DoInput(&MenuState, true);
+		DoInput(&menuState, true);
 
 		SetFlashRect(nullptr, false);
 
-		return (MenuState.CurState);
+		return (menuState.CurState);
 	}
 }
 
-//static STAMP
-//SetTextFrameRect (const char* str1, const char* str2, GFXRECT* pRect)
+//static GfxStamp
+//SetTextFrameRect (const char* str1, const char* str2, GfxRect* pRect)
 //{
-//	STAMP s;
-//	TEXT t1, t2;
-//	GFXRECT r1, r2, res;
+//	GfxStamp s;
+//	GfxText t1, t2;
+//	GfxRect r1, r2, res;
 //
 //	t1.baseline.x = pRect->corner.x + ResScale(100);
 //	t1.baseline.y = pRect->corner.y + ResScale(45);
@@ -516,13 +516,13 @@ uint16_t InitEncounter(void)
 //}
 
 static void DrawFadeText(const char* str1, const char* str2, bool fade_in,
-						 GFXRECT* pRect)
+						 GfxRect* pRect)
 {
 	TimeCount TimeIn;
-	TEXT t1;
-	TEXT t2;
-	GFXRECT r1;
-	GFXRECT r2;
+	GfxText t1;
+	GfxText t2;
+	GfxRect r1;
+	GfxRect r2;
 	const auto& fade_cycle {ScavengeTextColorTable};
 	constexpr auto NumFades {(std::size(fade_cycle))};
 
@@ -577,7 +577,7 @@ static void DrawFadeText(const char* str1, const char* str2, bool fade_in,
 	}
 }
 
-static void ClearRectBack(GFXRECT* pRect)
+static void ClearRectBack(GfxRect* pRect)
 {
 	if (IsHd())
 	{
@@ -616,18 +616,18 @@ uint16_t UninitEncounter(void)
 		int16_t VictoryState {};
 		int16_t i {};
 		uint16_t RecycleAmount = 0;
-		GFXRECT r;
-		GFXRECT scavenge_r = {
+		GfxRect r;
+		GfxRect scavenge_r = {
 			{0, 0},
 			{0, 0}
 		  };
-		TEXT t;
-		STAMP ship_s;
+		GfxText t;
+		GfxStamp ship_s;
 		const char* str1 = nullptr;
 		const char* str2 = nullptr;
 		StatMsgMode prevMsgMode = SMM_UNDEFINED;
 		char buf[80] {};
-		const SHIP_FRAGMENT* FragPtr {};
+		const ShipFragment* FragPtr {};
 		const auto& fade_ship_cycle {ScavengeScreenColorTable};
 		constexpr auto NumShipFades {(std::size(fade_ship_cycle))};
 
@@ -660,7 +660,7 @@ uint16_t UninitEncounter(void)
 		Sleepy = true;
 		for (i = 0; i < NumSides; ++i)
 		{
-			QUEUE* pQueue {};
+			Queue* pQueue {};
 			HSHIPFRAG hNextShip {};
 
 			if (i == 0)
@@ -808,7 +808,7 @@ uint16_t UninitEncounter(void)
 							}
 							else
 							{
-								const GFXRECT textRect = font_GetTextRect(&t);
+								const GfxRect textRect = font_GetTextRect(&t);
 								SetContextForeGroundColor(BlackColor);
 
 								r.corner.x =
@@ -844,8 +844,8 @@ uint16_t UninitEncounter(void)
 
 									if (IsHd())
 									{ // Back of the current ship
-										GFXPOINT p;
-										GFXRECT ship_r;
+										GfxPoint p;
+										GfxRect ship_r;
 
 										GetFrameRect(ship_s.frame, &ship_r);
 										p = GetFrameHot(ship_s.frame);
@@ -950,7 +950,7 @@ uint16_t UninitEncounter(void)
 			&& ships_killed)
 		{
 			HFLEETINFO hEncounter {};
-			FLEET_INFO* EncounterPtr {};
+			FleetInfo* EncounterPtr {};
 			bool isBanned = false;
 			const uint8_t bannedShip[7] =
 				{

@@ -26,35 +26,35 @@
 extern "C" {
 #endif
 
-struct VELOCITY_DESC
+struct VelocityDesc
 {
 	uint16_t TravelAngle;
-	EXTENT vector;
-	EXTENT fract;
-	EXTENT error;
-	EXTENT incr;
+	GfxExtent vector;
+	GfxExtent fract;
+	GfxExtent error;
+	GfxExtent incr;
 };
 
 constexpr auto ZeroVelocityComponents(const auto& pv) { return memset(pv, 0, sizeof(*(pv))); }
 constexpr auto& GetVelocityTravelAngle(auto* pv) { return pv->TravelAngle; }
 
-extern void GetCurrentVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t* pdy);
+extern void GetCurrentVelocityComponents(VelocityDesc* velocityptr, int16_t* pdx, int16_t* pdy);
 
 // JMS_GFX: New function to prevent overflows in hi-res.
-extern void GetCurrentVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, int32_t* pdy);
+extern void GetCurrentVelocityComponentsSdword(VelocityDesc* velocityptr, int32_t* pdx, int32_t* pdy);
 
-extern void GetNextVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t* pdy, uint16_t num_frames);
+extern void GetNextVelocityComponents(VelocityDesc* velocityptr, int16_t* pdx, int16_t* pdy, uint16_t num_frames);
 
 // JMS_GFX: New function to prevent overflows in hi-res.
-extern void GetNextVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, int32_t* pdy, uint32_t num_frames);
+extern void GetNextVelocityComponentsSdword(VelocityDesc* velocityptr, int32_t* pdx, int32_t* pdy, uint32_t num_frames);
 
-extern void SetVelocityVector(VELOCITY_DESC* velocityptr, int32_t magnitude, uint16_t facing); // JMS_GFX: Changed int16_t to int32_t to prevent overflows
+extern void SetVelocityVector(VelocityDesc* velocityptr, int32_t magnitude, uint16_t facing); // JMS_GFX: Changed int16_t to int32_t to prevent overflows
 
-extern void SetVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy); // JMS_GFX: Changed int16_t to int32_t to prevent overflows
+extern void SetVelocityComponents(VelocityDesc* velocityptr, int32_t dx, int32_t dy); // JMS_GFX: Changed int16_t to int32_t to prevent overflows
 
-extern void DeltaVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy); // JMS_GFX: Changed int16_t to int32_t to prevent overflows
+extern void DeltaVelocityComponents(VelocityDesc* velocityptr, int32_t dx, int32_t dy); // JMS_GFX: Changed int16_t to int32_t to prevent overflows
 
-static inline bool IsVelocityZero(VELOCITY_DESC* vptr)
+static inline bool IsVelocityZero(VelocityDesc* vptr)
 {
 	return vptr->vector.width == 0 && vptr->vector.height == 0 && vptr->incr.width == 0 && vptr->incr.height == 0 && vptr->fract.width == 0 && vptr->fract.height == 0;
 }

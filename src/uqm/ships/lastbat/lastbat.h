@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_samatra(void);
+RaceDesc* init_samatra(void);
 
 #if 0 //defined(__cplusplus)
 }

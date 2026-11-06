@@ -52,9 +52,9 @@ static constexpr auto MissileOffset {0};
 static constexpr auto SpecialEnergyCost {3};
 static constexpr auto SpecialWait {13};
 
-static RACE_DESC ilwrath_desc =
+static RaceDesc ilwrath_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "avenger",
 		 FiresFore,
 		 10, /* Super Melee cost */
@@ -65,7 +65,7 @@ static RACE_DESC ilwrath_desc =
 		 IlwrathMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			1410 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -124,7 +124,7 @@ static RACE_DESC ilwrath_desc =
 		0, /* CodeRef */
 };
 
-static void flame_preprocess(ELEMENT* ElementPtr)
+static void flame_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -140,20 +140,20 @@ static void flame_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void flame_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void flame_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							Element* ElementPtr1, GfxPoint* pPt1)
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 	ElementPtr0->state_flags &= ~Disappearing;
 	ElementPtr0->state_flags |= Nonsolid;
 }
 
-static void ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								 uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	lpEvalDesc->MoveState = PURSUE;
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 10)
 	{
@@ -190,10 +190,10 @@ static void ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConce
 	}
 }
 
-static uint16_t initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
+static uint16_t initialize_flame(Element* ShipPtr, HELEMENT FlameArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -216,7 +216,7 @@ static uint16_t initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 	{
 		int32_t dx {};
 		int32_t dy {};
-		ELEMENT* FlamePtr {};
+		Element* FlamePtr {};
 
 		LockElement(FlameArray[0], &FlamePtr);
 		GetCurrentVelocityComponentsSdword(&ShipPtr->velocity, &dx, &dy);
@@ -232,13 +232,13 @@ static uint16_t initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 	return (1);
 }
 
-static void ilwrath_preprocess(ELEMENT* ElementPtr)
+static void ilwrath_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	STATUS_FLAGS status_flags {StarShipPtr->cur_status_flags};
-	PRIMITIVE* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
+	Primitive* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (GetPrimType(lpPrim) == STAMPFILL_PRIM)
 	{
 		Color color;
@@ -293,12 +293,12 @@ static void ilwrath_preprocess(ELEMENT* ElementPtr)
 					uint16_t facing {StarShipPtr->ShipFacing};
 					if (TrackShip(ElementPtr, &facing) >= 0)
 					{
-						ELEMENT* eptr {};
+						Element* eptr {};
 						int16_t dx0 {};
 						int16_t dy0 {};
 						int16_t dx1 {};
 						int16_t dy1 {};
-						VELOCITY_DESC v;
+						VelocityDesc v;
 
 						LockElement(ElementPtr->hTarget, &eptr);
 						v = eptr->velocity;
@@ -322,7 +322,7 @@ static void ilwrath_preprocess(ELEMENT* ElementPtr)
 
 							do
 							{
-								VELOCITY_DESC temp_v;
+								VelocityDesc temp_v;
 
 								last_facing = StarShipPtr->ShipFacing;
 								inertial_thrust(ElementPtr);
@@ -412,7 +412,7 @@ static void ilwrath_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_ilwrath(void)
+RaceDesc* init_ilwrath(void)
 {
 	if (IsHd())
 	{
@@ -432,7 +432,7 @@ RACE_DESC* init_ilwrath(void)
 	ilwrath_desc.init_weapon_func = initialize_flame;
 	ilwrath_desc.cyborg_control.intelligence_func = ilwrath_intelligence;
 
-	RACE_DESC* RaceDescPtr {&ilwrath_desc};
+	RaceDesc* RaceDescPtr {&ilwrath_desc};
 
 	return (RaceDescPtr);
 }

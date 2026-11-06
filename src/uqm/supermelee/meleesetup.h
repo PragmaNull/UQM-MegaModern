@@ -126,13 +126,13 @@ int MeleeSetup_serializeTeam(const MeleeSetup* setup, size_t teamNr,
 							 uqm::io::File& stream);
 
 
-void MeleeState_setShip(MELEE_STATE* pMS, size_t teamNr,
+void MeleeState_setShip(MeleeState* pMS, size_t teamNr,
 						FleetShipIndex slotNr, MeleeShip ship);
-void MeleeState_setFleet(MELEE_STATE* pMS, size_t teamNr,
+void MeleeState_setFleet(MeleeState* pMS, size_t teamNr,
 						 const MeleeShip* fleet);
-void MeleeState_setTeamName(MELEE_STATE* pMS, size_t teamNr,
+void MeleeState_setTeamName(MeleeState* pMS, size_t teamNr,
 							const char* name);
-void MeleeState_setTeam(MELEE_STATE* pMS, size_t teamNr,
+void MeleeState_setTeam(MeleeState* pMS, size_t teamNr,
 						const MeleeTeam* team);
 
 #if 0 //defined(__cplusplus)

@@ -27,7 +27,7 @@
 #include "libs/graphics/imgui/imguilayer.h"
 
 
-struct TFB_SDL_SCREENINFO
+struct TFB_SdlScreenInfo
 {
 	SDL_Surface* scaled;
 	SDL_Texture* texture;
@@ -37,7 +37,7 @@ struct TFB_SDL_SCREENINFO
 	SDL_Rect updated;
 };
 
-static TFB_SDL_SCREENINFO ScreenTextures[TFB_GFX_NUMSCREENS];
+static TFB_SdlScreenInfo ScreenTextures[TFB_GFX_NUMSCREENS];
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
@@ -101,21 +101,21 @@ static void TFB_SDL_GpuScaled_ScreenLayer(SCREEN screen, Uint8 a,
 static void TFB_SDL_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
 							   SDL_Rect* rect);
 
-static TFB_GRAPHICS_BACKEND sdl_scaled_backend = {
+static TFB_GraphicsBackend sdl_scaled_backend = {
 	TFB_SDL_Preprocess,
 	TFB_SDL_Postprocess,
 	TFB_SDL_UploadTransitionScreen,
 	TFB_SDL_Scaled_ScreenLayer,
 	TFB_SDL_ColorLayer};
 
-static TFB_GRAPHICS_BACKEND sdl_gpu_scaled_backend = {
+static TFB_GraphicsBackend sdl_gpu_scaled_backend = {
 	TFB_SDL_Preprocess,
 	TFB_SDL_Postprocess,
 	TFB_SDL_UploadTransitionScreen,
 	TFB_SDL_GpuScaled_ScreenLayer,
 	TFB_SDL_ColorLayer};
 
-static TFB_GRAPHICS_BACKEND sdl_unscaled_backend = {
+static TFB_GraphicsBackend sdl_unscaled_backend = {
 	TFB_SDL_Preprocess,
 	TFB_SDL_Postprocess,
 	TFB_SDL_UploadTransitionScreen,
@@ -579,7 +579,7 @@ void TFB_Pure_UninitGraphics(void)
 		// This also destroys the screen textures.
 		SDL_DestroyRenderer(renderer);
 		renderer = nullptr;
-		for (TFB_SDL_SCREENINFO& screen : ScreenTextures)
+		for (TFB_SdlScreenInfo& screen : ScreenTextures)
 		{
 			screen.texture = nullptr;
 			screen.scaledTarget = nullptr;
@@ -844,7 +844,7 @@ static void TFB_SDL_Scaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 
 static void TFB_SDL_GpuScaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 {
-	TFB_SDL_SCREENINFO& info {ScreenTextures[screen]};
+	TFB_SdlScreenInfo& info {ScreenTextures[screen]};
 	if (info.dirty)
 	{
 		TFB_SDL_UpdateTexture(info.texture, SDL_Screens[screen], &info.updated);

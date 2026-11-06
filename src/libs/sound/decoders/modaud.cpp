@@ -172,7 +172,7 @@ const static TFB_DecoderFormats* moda_formats = nullptr;
 // MikMod READER interface
 //  we provide our own so that we can do loading via libs/io
 //
-struct MIOREADER
+struct MikModReader
 {
 	MREADER core;
 	uqm::io::File* file;
@@ -180,32 +180,32 @@ struct MIOREADER
 
 static BOOL moda_ioReader_Eof(MREADER* reader)
 {
-	return ((MIOREADER*)reader)->file->eof();
+	return ((MikModReader*)reader)->file->eof();
 }
 
 static BOOL moda_ioReader_Read(MREADER* reader, void* ptr, size_t size)
 {
-	return ReadResFile(ptr, size, 1, *((MIOREADER*)reader)->file);
+	return ReadResFile(ptr, size, 1, *((MikModReader*)reader)->file);
 }
 
 static int moda_ioReader_Get(MREADER* reader)
 {
-	return ((MIOREADER*)reader)->file->getChar();
+	return ((MikModReader*)reader)->file->getChar();
 }
 
 static BOOL moda_ioReader_Seek(MREADER* reader, long offset, int whence)
 {
-	return SeekResFile(*((MIOREADER*)reader)->file, offset, whence);
+	return SeekResFile(*((MikModReader*)reader)->file, offset, whence);
 }
 
 static long moda_ioReader_Tell(MREADER* reader)
 {
-	return TellResFile(*((MIOREADER*)reader)->file);
+	return TellResFile(*((MikModReader*)reader)->file);
 }
 
 static MREADER* moda_new_ioReader(uqm::io::File* fp)
 {
-	auto* reader {new MIOREADER {}};
+	auto* reader {new MikModReader {}};
 	reader->core.Eof = &moda_ioReader_Eof;
 	reader->core.Read = &moda_ioReader_Read;
 	reader->core.Get = &moda_ioReader_Get;
@@ -219,7 +219,7 @@ static MREADER* moda_new_ioReader(uqm::io::File* fp)
 
 static void moda_delete_ioReader(MREADER* reader)
 {
-	delete reinterpret_cast<MIOREADER*>(reader);
+	delete reinterpret_cast<MikModReader*>(reader);
 }
 
 

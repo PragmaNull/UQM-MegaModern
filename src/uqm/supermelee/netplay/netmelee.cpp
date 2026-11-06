@@ -122,7 +122,7 @@ void closeDisconnectedConnections(void)
 ////////////////////////////////////////////////////////////////////////////
 
 
-struct melee_state*
+struct MeleeState*
 NetMelee_getMeleeState(NetConnection* conn)
 {
 	if (NetConnection_getState(conn) > NetState_connecting)
@@ -133,11 +133,11 @@ NetMelee_getMeleeState(NetConnection* conn)
 	}
 	else
 	{
-		return (struct melee_state*)NetConnection_getExtra(conn);
+		return (struct MeleeState*)NetConnection_getExtra(conn);
 	}
 }
 
-struct BATTLE_STATE*
+struct BattleState*
 NetMelee_getBattleState(NetConnection* conn)
 {
 	if (NetConnection_getState(conn) > NetState_connecting)
@@ -307,7 +307,7 @@ void initBattleStateDataConnections(void)
 	}
 }
 
-void setBattleStateConnections(struct BATTLE_STATE* bs)
+void setBattleStateConnections(struct BattleState* bs)
 {
 	for (uint16_t player {0}; player < NumPlayers; player++)
 	{
@@ -326,7 +326,7 @@ void setBattleStateConnections(struct BATTLE_STATE* bs)
 
 static constexpr auto MaxBlockTime {500};
 
-BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context, STARSHIP* StarShipPtr)
+BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context, Starship* StarShipPtr)
 {
 	BattleInputBuffer* bib = getBattleInputBuffer(context->playerNr);
 	BATTLE_INPUT_STATE result {};
@@ -528,7 +528,7 @@ static constexpr auto NetworkPollDelay {(GameTicksPerSecond / 24)};
 typedef struct NegotiateReadyState NegotiateReadyState;
 struct NegotiateReadyState
 {
-	// Common fields of INPUT_STATE_DESC, from which this structure
+	// Common fields of InputStateDesc, from which this structure
 	// "inherits".
 	bool (*InputFunc)(void* pInputState);
 
@@ -622,7 +622,7 @@ bool negotiateReadyConnections(bool notifyRemote, NetState nextState)
 typedef struct WaitReadyState WaitReadyState;
 struct WaitReadyState
 {
-	// Common fields of INPUT_STATE_DESC, from which this structure
+	// Common fields of InputStateDesc, from which this structure
 	// "inherits".
 	bool (*InputFunc)(void* pInputState);
 
@@ -682,7 +682,7 @@ bool waitReady(NetConnection* conn)
 typedef struct WaitResetState WaitResetState;
 struct WaitResetState
 {
-	// Common fields of INPUT_STATE_DESC, from which this structure
+	// Common fields of InputStateDesc, from which this structure
 	// "inherits".
 	bool (*InputFunc)(void* pInputState);
 

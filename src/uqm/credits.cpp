@@ -61,7 +61,7 @@ static GFXCONTEXT LocalContext;
 // Pre-rendered frame, possibly with a cutout
 static FRAME CreditsFrame;
 // Size of the credits "window" (normally screen size)
-static EXTENT CreditsExtent;
+static GfxExtent CreditsExtent;
 
 struct CreditTextFrame
 {
@@ -84,14 +84,14 @@ static int totalHeight;
 // Current vertical offset into the first text frame
 static int curFrameOfs;
 
-struct FONT_SIZE_DEF
+struct FontSizeDef
 {
 	int size;
 	RESOURCE res;
 	FONT font;
 };
 
-static FONT_SIZE_DEF CreditsFont[] =
+static FontSizeDef CreditsFont[] =
 	{
 		{13, Pt13aaFontRes, 0},
 		{17, Pt17aaFontRes, 0},
@@ -118,12 +118,12 @@ static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 {
 	FRAME f {};
 	FRAME OldFrame {};
-	TEXT TextLines[uqm::c_creditsMaxLines];
+	GfxText TextLines[uqm::c_creditsMaxLines];
 	int i {};
-	const FONT_SIZE_DEF* fdef {};
+	const FontSizeDef* fdef {};
 	int16_t leading {};
-	TEXT t;
-	GFXRECT r;
+	GfxText t;
+	GfxRect r;
 	struct col_format_t
 	{
 		TEXT_ALIGN align;
@@ -147,7 +147,7 @@ static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	const uqm::CreditsBlock& block {CreditsBlocks[*istr]};
 	*istr += dir;
 
-	// one TEXT for each cell; the baseline holds the column and the row.
+	// one GfxText for each cell; the baseline holds the column and the row.
 	// The first cell of each line comes first, then the other cells while there is space.
 	const int rows {static_cast<int>(block.lines.size())};
 	int cnt {0};
@@ -256,7 +256,7 @@ static inline int frameIndex(int index)
 
 static void RenderCreditsScreen(GFXCONTEXT targetContext)
 {
-	STAMP s;
+	GfxStamp s;
 
 	GFXCONTEXT oldContext {SetContext(targetContext)};
 	// draw background
@@ -269,7 +269,7 @@ static void RenderCreditsScreen(GFXCONTEXT targetContext)
 	s.origin.y = -curFrameOfs;
 	for (int i {firstFrame}; i != lastFrame; i = frameIndex(i + 1))
 	{
-		GFXRECT fr;
+		GfxRect fr;
 
 		s.frame = textFrames[i].frame;
 		DrawStamp(&s);
@@ -288,7 +288,7 @@ static void RenderCreditsScreen(GFXCONTEXT targetContext)
 
 static void InitCredits(void)
 {
-	GFXRECT ctxRect;
+	GfxRect ctxRect;
 
 	memset(textFrames, 0, sizeof textFrames);
 
@@ -358,7 +358,7 @@ static int calcDeficitHeight(void)
 	int maxPos {-curFrameOfs};
 	for (int i {firstFrame}; i != lastFrame; i = frameIndex(i + 1))
 	{
-		GFXRECT fr;
+		GfxRect fr;
 
 		GetFrameRect(textFrames[i].frame, &fr);
 		maxPos += fr.extent.height;
@@ -374,10 +374,10 @@ static void processCreditsFrame(void)
 
 	if (Now >= NextTime)
 	{
-		GFXRECT fr;
+		GfxRect fr;
 		int direction {};
 		int dirstep {};
-		STAMP s;
+		GfxStamp s;
 
 		int rate {abs(CreditsRate)};
 		if (rate != 0)
@@ -541,7 +541,7 @@ static bool LoadCredits(void)
 	CreditsBlocks = uqstl::move(*blocks);
 	CreditsBack = CaptureDrawable(LoadGraphic(CreditsBackAnimRes));
 	// load fonts
-	for (FONT_SIZE_DEF* fdef {CreditsFont}; fdef->size; ++fdef)
+	for (FontSizeDef* fdef {CreditsFont}; fdef->size; ++fdef)
 	{
 		fdef->font = LoadFont(fdef->res);
 	}
@@ -557,7 +557,7 @@ static void FreeCredits(void)
 	CreditsBack = nullptr;
 
 	// free fonts
-	for (FONT_SIZE_DEF* fdef {CreditsFont}; fdef->size; ++fdef)
+	for (FontSizeDef* fdef {CreditsFont}; fdef->size; ++fdef)
 	{
 		DestroyFont(fdef->font);
 		fdef->font = nullptr;
@@ -605,7 +605,7 @@ static void OutTakes(void)
 	oscillDisabled = false;
 }
 
-struct CREDITS_INPUT_STATE
+struct CreditsInputState
 {
 	// standard state required by DoInput
 	bool (*InputFunc)(void* pInputState);
@@ -618,7 +618,7 @@ struct CREDITS_INPUT_STATE
 
 static bool DoCreditsInput(void* pIS)
 {
-	CREDITS_INPUT_STATE* pCIS = (CREDITS_INPUT_STATE*)pIS;
+	CreditsInputState* pCIS = (CreditsInputState*)pIS;
 
 	if (CreditsRunning)
 	{ // cancel timeout if resumed (or just running)
@@ -694,9 +694,9 @@ static void on_input_frame(void)
 
 void Credits(bool WithOuttakes)
 {
-	CREDITS_INPUT_STATE cis;
-	GFXRECT screenRect;
-	STAMP s;
+	CreditsInputState cis;
+	GfxRect screenRect;
+	GfxStamp s;
 
 	MUSIC_REF hMusic {LoadMusicInstance(CreditsMusicRes)};
 

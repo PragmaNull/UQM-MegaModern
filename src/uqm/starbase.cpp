@@ -42,7 +42,7 @@ static void CleanupAfterStarBase(void);
 
 static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 {
-	TEXT t;
+	GfxText t;
 	const uint16_t text_base_y = ResScale(106 + 28);
 	const uint16_t text_spacing_y = ResScale(23 - 4);
 
@@ -86,9 +86,9 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 {
 	Color OldColor = UndefinedColor;
 	// Initialisation is just to keep the compiler silent.
-	GFXRECT r;
-	STAMP Side;
-	STAMP Top;
+	GfxRect r;
+	GfxStamp Side;
+	GfxStamp Top;
 
 	int8_t RepairSlot {0};
 	switch (which_piece)
@@ -271,7 +271,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 
 		if (which_slot == 1 && which_piece == EmptySlot + 2)
 		{
-			STAMP s;
+			GfxStamp s;
 
 			s.origin = Top.origin;
 			s.origin.x -= ShipPieceOffset();
@@ -303,7 +303,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	}
 }
 
-static void rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
+static void rotateStarbase(MenuState* pMS, FRAME AniFrame)
 {
 	static TimeCount NextTime {};
 	const TimeCount Now = GetTimeCounter();
@@ -317,7 +317,7 @@ static void rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
 
 	if (Now >= NextTime || AniFrame)
 	{
-		STAMP s;
+		GfxStamp s;
 
 		NextTime = Now + (c_gameSecond / 20); // Starbase animation framerate
 
@@ -334,7 +334,7 @@ static void rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
 	}
 }
 
-bool DoStarBase(MENU_STATE* pMS)
+bool DoStarBase(MenuState* pMS)
 {
 	// XXX: This function is full of hacks and otherwise strange code
 
@@ -496,7 +496,7 @@ static void DoTimePassage(void)
 	if (uqm::UQMOptions::read().orbitingPlanets)
 	{
 		double newAngle {NAN};
-		GFXPOINT starbase_coords;
+		GfxPoint starbase_coords;
 
 		// Calculate the starbase position on a circle with the help of sin and cos.
 		newAngle = ((double)(10) + daysElapsed() * (FullCircle / 11.46)) * M_PI / 32 - M_PI / 2; // JMS: Starbase orbit values copied from gensol.c
@@ -513,7 +513,7 @@ static void DoTimePassage(void)
 
 void VisitStarBase(void)
 {
-	MENU_STATE MenuState;
+	MenuState menuState;
 	GFXCONTEXT OldContext {};
 	StatMsgMode prevMsgMode = SMM_UNDEFINED;
 
@@ -529,7 +529,7 @@ void VisitStarBase(void)
 	if (!uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 	{
 		HSHIPFRAG hStarShip {};
-		SHIP_FRAGMENT* FragPtr {};
+		ShipFragment* FragPtr {};
 
 		// Unallied Starbase conversation
 		SetCommIntroMode(CIM_CROSSFADE_SCREEN, TimePeriod {});
@@ -594,11 +594,11 @@ void VisitStarBase(void)
 		uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
 	}
 
-	memset(&MenuState, 0, sizeof(MenuState));
-	MenuState.InputFunc = DoStarBase;
+	memset(&menuState, 0, sizeof(menuState));
+	menuState.InputFunc = DoStarBase;
 
 	OldContext = SetContext(ScreenContext);
-	DoInput(&MenuState, true);
+	DoInput(&menuState, true);
 	SetContext(OldContext);
 
 	SetStatusMessageMode(prevMsgMode);
@@ -639,12 +639,12 @@ void InstallBombAtEarth(void)
 }
 
 // XXX: Doesn't really belong in this file.
-uint16_t WrapText(const char* pStr, uint16_t len, TEXT* tarray, int16_t field_width)
+uint16_t WrapText(const char* pStr, uint16_t len, GfxText* tarray, int16_t field_width)
 {
 	uint16_t num_lines {0};
 	do
 	{
-		GFXRECT r;
+		GfxRect r;
 		uint16_t OldCount {};
 
 		tarray->align = ALIGN_LEFT; /* set alignment to something */

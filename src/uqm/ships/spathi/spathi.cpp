@@ -58,9 +58,9 @@ static constexpr auto TrackWait {1};
 static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 static auto MissileRangeHd() { return (MissileSpeedHd() * MissileLife); }
 
-static RACE_DESC spathi_desc =
+static RaceDesc spathi_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "eluder",
 		 FiresFore | FiresAft | SeekingSpecial | DontChase,
 		 18, /* Super Melee cost */
@@ -71,7 +71,7 @@ static RACE_DESC spathi_desc =
 		 SpathiMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			1000 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -130,7 +130,7 @@ static RACE_DESC spathi_desc =
 		0, /* CodeRef */
 };
 
-static void butt_missile_preprocess(ELEMENT* ElementPtr)
+static void butt_missile_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -154,10 +154,10 @@ static void butt_missile_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void spawn_butt_missile(ELEMENT* ShipPtr)
+static void spawn_butt_missile(Element* ShipPtr)
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK ButtMissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc ButtMissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	ButtMissileBlock.cx = ShipPtr->next.location.x;
@@ -178,7 +178,7 @@ static void spawn_butt_missile(ELEMENT* ShipPtr)
 	HELEMENT ButtMissile {initialize_missile(&ButtMissileBlock)};
 	if (ButtMissile)
 	{
-		ELEMENT* ButtPtr {};
+		Element* ButtPtr {};
 
 		LockElement(ButtMissile, &ButtPtr);
 		ButtPtr->turn_wait = TrackWait;
@@ -194,17 +194,17 @@ static void spawn_butt_missile(ELEMENT* ShipPtr)
 	}
 }
 
-static void spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void spathi_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~SpecialFlag;
 
-	const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->special_counter == 0
 		&& lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->which_turn <= 24)
@@ -245,10 +245,10 @@ static void spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcer
 	}
 }
 
-static uint16_t initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missile(Element* ShipPtr, HELEMENT MissileArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -269,9 +269,9 @@ static uint16_t initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileAr
 	return (1);
 }
 
-static void spathi_postprocess(ELEMENT* ElementPtr)
+static void spathi_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
@@ -285,7 +285,7 @@ static void spathi_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_spathi(void)
+RaceDesc* init_spathi(void)
 {
 	if (IsHd())
 	{
@@ -304,7 +304,7 @@ RACE_DESC* init_spathi(void)
 	spathi_desc.init_weapon_func = initialize_standard_missile;
 	spathi_desc.cyborg_control.intelligence_func = spathi_intelligence;
 
-	RACE_DESC* RaceDescPtr {&spathi_desc};
+	RaceDesc* RaceDescPtr {&spathi_desc};
 
 	return (RaceDescPtr);
 }

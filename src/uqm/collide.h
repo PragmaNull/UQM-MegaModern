@@ -32,24 +32,24 @@ inline constexpr auto SkipCollision {(Nonsolid | Disappearing)};
 constexpr auto CollidingElement(const auto& e) { return (!((e)->state_flags & SkipCollision)); }
 constexpr auto CollisionPossible(const auto& e0, const auto& e1) { return (CollidingElement(e0) && (!(((e1)->state_flags & (e0)->state_flags) & Collision) && ((!(((e1)->state_flags & (e0)->state_flags) & IgnoreSimilar) || (e1)->pParent != (e0)->pParent)) && ((e1)->mass_points || (e0)->mass_points))); }
 
-inline void InitIntersectStartPoint(ELEMENT* eptr)
+inline void InitIntersectStartPoint(Element* eptr)
 {
 	eptr->IntersectControl.IntersectStamp.origin.x = WorldToDisplay(eptr->current.location.x);
 	eptr->IntersectControl.IntersectStamp.origin.y = WorldToDisplay(eptr->current.location.y);
 }
 
-inline void InitIntersectEndPoint(ELEMENT* eptr)
+inline void InitIntersectEndPoint(Element* eptr)
 {
 	eptr->IntersectControl.EndPoint.x = WorldToDisplay(eptr->next.location.x);
 	eptr->IntersectControl.EndPoint.y = WorldToDisplay(eptr->next.location.y);
 }
 
-inline void InitIntersectFrame(ELEMENT* eptr)
+inline void InitIntersectFrame(Element* eptr)
 {
 	eptr->IntersectControl.IntersectStamp.frame = SetEquFrameIndex(eptr->next.image.farray[0], eptr->next.image.frame);
 }
 
-extern void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1);
+extern void collide(Element* ElementPtr0, Element* ElementPtr1);
 
 #if 0 //defined(__cplusplus)
 }

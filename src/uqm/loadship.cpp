@@ -193,11 +193,11 @@ static void SwapStrings(uqm::StringTable* a, uqm::StringTable* b, size_t ia, siz
 	a->swap(ia, *b, ib);
 }
 
-RACE_DESC* load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
+RaceDesc* load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 {
-	RACE_DESC* RDPtr = 0;
+	RaceDesc* RDPtr = 0;
 	void* CodeRef {};
-	RACE_DESC* RDPtrSwap = 0;
+	RaceDesc* RDPtrSwap = 0;
 	void* CodeRefSwap {};
 
 	if (SpeciesID >= NUM_SPECIES_ID)
@@ -266,7 +266,7 @@ RACE_DESC* load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 
 	if (LoadBattleData)
 	{
-		DATA_STUFF* RawPtr = &RDPtr->ship_data;
+		ShipResources* RawPtr = &RDPtr->ship_data;
 		if (!load_animation(RawPtr->ship,
 							RawPtr->ship_rsc[0],
 							RawPtr->ship_rsc[1],
@@ -343,7 +343,7 @@ BadLoad:
 	goto ExitFunc;
 }
 
-void free_ship(RACE_DESC* raceDescPtr, bool FreeIconData,
+void free_ship(RaceDesc* raceDescPtr, bool FreeIconData,
 			   bool FreeBattleData)
 {
 	if (raceDescPtr->uninit_func != nullptr)
@@ -353,7 +353,7 @@ void free_ship(RACE_DESC* raceDescPtr, bool FreeIconData,
 
 	if (FreeBattleData)
 	{
-		DATA_STUFF* shipData = &raceDescPtr->ship_data;
+		ShipResources* shipData = &raceDescPtr->ship_data;
 
 		free_image(shipData->special);
 		free_image(shipData->weapon);
@@ -367,7 +367,7 @@ void free_ship(RACE_DESC* raceDescPtr, bool FreeIconData,
 
 	if (FreeIconData)
 	{
-		const SHIP_INFO* shipInfo = &raceDescPtr->ship_info;
+		const ShipInfoDesc* shipInfo = &raceDescPtr->ship_info;
 
 		DestroyDrawable(ReleaseDrawable(shipInfo->melee_icon));
 		DestroyDrawable(ReleaseDrawable(shipInfo->icons));

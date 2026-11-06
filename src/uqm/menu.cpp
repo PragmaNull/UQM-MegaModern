@@ -42,11 +42,11 @@ static uint8_t NextMenuState(uint8_t BaseState, uint8_t CurState);
 static uint8_t PreviousMenuState(uint8_t BaseState, uint8_t CurState);
 static bool GetAlternateMenu(uint8_t* BaseState, uint8_t* CurState);
 static uint8_t ConvertAlternateMenu(uint8_t BaseState, uint8_t NewState);
-void FunkyMenu(uint8_t m, STAMP stmp);
+void FunkyMenu(uint8_t m, GfxStamp stmp);
 
 /* Draw the blue background for PC Menu Text, with a border around it.
  * The specified rectangle includes the border. */
-static void DrawPCMenuFrame(GFXRECT* r)
+static void DrawPCMenuFrame(GfxRect* r)
 {
 
 	if (IsHd() || uqm::UQMOptions::read().customBorder)
@@ -81,14 +81,14 @@ static char pm_crew_str[128];
 static char pm_fuel_str[128];
 
 /* Actually display the menu text */
-static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilite, GFXRECT* r)
+static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilite, GfxRect* r)
 {
 	uint8_t pos {};
 	uint16_t j {};
 	static uint16_t rd = 0;
-	TEXT t;
+	GfxText t;
 	char buf[256];
-	GFXRECT rt;
+	GfxRect rt;
 
 	pos = beg_index + NewState;
 	const int num_items {1 + end_index - beg_index};
@@ -153,7 +153,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 				r->extent.height = PcMenuHeight() - ResScale(1);
 				if (uqm::UQMOptions::read().customBorder)
 				{
-					STAMP s;
+					GfxStamp s;
 
 					s.origin = r->corner;
 
@@ -497,7 +497,7 @@ static uint8_t ConvertAlternateMenu(uint8_t BaseState, uint8_t NewState)
 	return (NewState);
 }
 
-bool DoMenuChooser(MENU_STATE* pMS, uint8_t BaseState)
+bool DoMenuChooser(MenuState* pMS, uint8_t BaseState)
 {
 	uint8_t NewState = pMS->CurState;
 	const uint8_t OrigBase = BaseState;
@@ -650,11 +650,11 @@ const char* IndexToText(int Index)
 	return GameString(PLAYMENU_STRING_BASE + i);
 }
 
-static void Draw3DOMenuText(GFXRECT* r, int Index)
+static void Draw3DOMenuText(GfxRect* r, int Index)
 {
-	TEXT text;
+	GfxText text;
 	int16_t leading {};
-	GFXRECT block;
+	GfxRect block;
 	Color OldColor;
 
 	if (IndexToText(Index) == nullptr)
@@ -695,8 +695,8 @@ static void Draw3DOMenuText(GFXRECT* r, int Index)
 
 void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 {
-	GFXRECT r;
-	STAMP s;
+	GfxRect r;
+	GfxStamp s;
 	uint8_t hilite = 1;
 	extern FRAME PlayFrame;
 
@@ -842,7 +842,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 
 		Draw3DOMenuText(&r, beg_index + NewState);
 
-		TEXT t;
+		GfxText t;
 		char buf[20];
 
 		switch (beg_index + NewState)
@@ -892,10 +892,10 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 
 void DrawMineralHelpers(void)
 {
-	STAMP s;
-	TEXT t;
+	GfxStamp s;
+	GfxText t;
 	char buf[40];
-	GFXRECT r;
+	GfxRect r;
 	int16_t leading {};
 
 	if (!uqm::UQMOptions::read().submenu)
@@ -931,12 +931,12 @@ void DrawMineralHelpers(void)
 		return ResScale(58);
 	};
 
-	// setup element icons
+	// setup Element icons
 	s.frame = SetAbsFrameIndex(MiscDataFrame,
 							   (NumScandotTransitions << 1) + 3);
 	s.origin.x = ElementCol0();
 	s.origin.y = ElementOrgY();
-	// setup element worths
+	// setup Element worths
 	t.baseline.x = ElementCol1();
 	t.baseline.y = ElementOrgY() + ResScale(3);
 	t.align = ALIGN_RIGHT;
@@ -946,15 +946,15 @@ void DrawMineralHelpers(void)
 	r.extent = GetFrameBounds(s.frame);
 	r.corner.x = ElementCol0() - ResScale(3);
 
-	// draw element icons and worths
+	// draw Element icons and worths
 	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
 	{
-		// draw element icon
+		// draw Element icon
 		DrawStamp(&s);
 		s.frame = SetRelFrameIndex(s.frame, 5);
 		s.origin.y += ElementSpacingY();
 
-		// print element worth
+		// print Element worth
 		SetContextForeGroundColor(ModulePriceColor);
 		fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().ElementWorth[i]);
 		font_DrawText(&t);
@@ -964,7 +964,7 @@ void DrawMineralHelpers(void)
 		t.baseline.x -= ResScale(11);
 		font_DrawText(&t);
 
-		// print the element amount
+		// print the Element amount
 		SetContextForeGroundColor(ModuleNameColor);
 		t.baseline.x = ElementCol2();
 		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().ElementAmounts[i]);
@@ -1076,7 +1076,7 @@ void DrawMineralHelpers(void)
 
 void DrawBorder(uint8_t Visible)
 {
-	STAMP s;
+	GfxStamp s;
 
 	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
@@ -1097,7 +1097,7 @@ void DrawBorder(uint8_t Visible)
 	SetContext(OldContext);
 }
 
-void FunkyMenu(uint8_t m, STAMP stmp)
+void FunkyMenu(uint8_t m, GfxStamp stmp)
 {
 	static bool subMenuFlag;
 

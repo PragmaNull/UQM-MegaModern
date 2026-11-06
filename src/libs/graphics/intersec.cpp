@@ -24,14 +24,14 @@
 
 //#define DEBUG_INTERSEC
 
-static inline bool images_intersect(IMAGE_BOX* box1, IMAGE_BOX* box2, const GFXRECT* rect)
+static inline bool images_intersect(ImageBox* box1, ImageBox* box2, const GfxRect* rect)
 {
 	return TFB_DrawImage_Intersect(box1->FramePtr->image, box1->Box.corner,
 								   box2->FramePtr->image, box2->Box.corner, rect);
 }
 
-static TIME_VALUE frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
-								  INTERSECT_CONTROL* pControl1, GFXRECT* pr1, TIME_VALUE t0,
+static TIME_VALUE frame_intersect(IntersectInfo* pControl0, GfxRect* pr0,
+								  IntersectInfo* pControl1, GfxRect* pr1, TIME_VALUE t0,
 								  TIME_VALUE t1)
 {
 	int32_t time_error0 {};
@@ -50,9 +50,9 @@ static TIME_VALUE frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 	int32_t ystep0 {};
 	int32_t xstep1 {};
 	int32_t ystep1 {};
-	GFXRECT r_intersect;
-	IMAGE_BOX IB0;
-	IMAGE_BOX IB1;
+	GfxRect r_intersect;
+	ImageBox IB0;
+	ImageBox IB1;
 	bool check0 {};
 	bool check1 {};
 
@@ -284,11 +284,11 @@ CheckFirstIntersection:
 	return ((TIME_VALUE)0);
 }
 
-TIME_VALUE DrawablesIntersect(INTERSECT_CONTROL* pControl0,
-							  INTERSECT_CONTROL* pControl1, TIME_VALUE max_time_val)
+TIME_VALUE DrawablesIntersect(IntersectInfo* pControl0,
+							  IntersectInfo* pControl1, TIME_VALUE max_time_val)
 {
-	GFXRECT r0;
-	GFXRECT r1;
+	GfxRect r0;
+	GfxRect r1;
 
 	if (!ContextActive() || max_time_val == 0)
 	{

@@ -33,38 +33,38 @@ inline constexpr auto DwarfEnergy {1};
 inline constexpr auto GiantEnergy {5};
 inline constexpr auto SupergiantEnergy {20};
 
-struct SYSTEM_INFO
+struct SolarSystemInfo
 {
 	uint8_t StarSize;
 	uint8_t StarIntensity;
 	uint16_t StarEnergy;
 
-	PLANET_INFO PlanetInfo;
+	PlanetData PlanetInfo;
 };
 
 inline constexpr auto GenerateAll {((uint16_t)~0)};
 
-extern uint16_t GenerateMineralDeposits(const SYSTEM_INFO*, uint16_t whichDeposit,
-										NODE_INFO* info);
-extern uint16_t GenerateLifeForms(const SYSTEM_INFO*, uint16_t whichLife,
-								  NODE_INFO* info);
-extern void GenerateRandomLocation(GFXPOINT* loc);
-extern uint16_t GenerateRandomNodes(const SYSTEM_INFO*, uint16_t scan, uint16_t numNodes,
-									uint16_t type, uint16_t whichNode, NODE_INFO* info);
-extern uint16_t CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
-									  NODE_INFO* info, uint16_t numNodes, uint16_t type, uint8_t quality);
-extern uint16_t CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
-									 GFXPOINT location);
+extern uint16_t GenerateMineralDeposits(const SolarSystemInfo*, uint16_t whichDeposit,
+										SurfaceNode* info);
+extern uint16_t GenerateLifeForms(const SolarSystemInfo*, uint16_t whichLife,
+								  SurfaceNode* info);
+extern void GenerateRandomLocation(GfxPoint* loc);
+extern uint16_t GenerateRandomNodes(const SolarSystemInfo*, uint16_t scan, uint16_t numNodes,
+									uint16_t type, uint16_t whichNode, SurfaceNode* info);
+extern uint16_t CustomMineralDeposits(const SolarSystemInfo* SysInfoPtr, uint16_t which_deposit,
+									  SurfaceNode* info, uint16_t numNodes, uint16_t type, uint8_t quality);
+extern uint16_t CustomMineralDeposit(SurfaceNode* info, uint16_t type, uint8_t quality,
+									 GfxPoint location);
 // Generate lifeforms from a preset lifeTypes[] array
-extern uint16_t GeneratePresetLife(const SYSTEM_INFO*,
-								   const int8_t* lifeTypes, uint16_t whichLife, NODE_INFO* info);
+extern uint16_t GeneratePresetLife(const SolarSystemInfo*,
+								   const int8_t* lifeTypes, uint16_t whichLife, SurfaceNode* info);
 
 
 inline constexpr auto SupergiantElementDensity {8};
 
 
-extern void DoPlanetaryAnalysis(SYSTEM_INFO* SysInfoPtr,
-								PLANET_DESC* pPlanetDesc);
+extern void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr,
+								SystemPlanet* pPlanetDesc);
 
 #if 0 //defined(__cplusplus)
 }

@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-typedef struct melee_state MELEE_STATE;
+struct MeleeState;
 
 inline constexpr auto NumMeleeRows {2};
 inline auto NumMeleeColumns() { return SafeBool(7, 6); }
@@ -69,9 +69,9 @@ extern "C" {
 
 inline constexpr auto MeleeStateIndexDone {((uint16_t)-1)};
 
-struct melee_state
+struct MeleeState
 {
-	bool (*InputFunc)(struct melee_state* pInputState);
+	bool (*InputFunc)(struct MeleeState* pInputState);
 
 	bool Initialized;
 	bool meleeStarted;
@@ -103,19 +103,19 @@ struct melee_state
 extern void Melee(void);
 
 // Some prototypes for use by loadmele.c:
-bool DoMelee(MELEE_STATE* pMS);
+bool DoMelee(MeleeState* pMS);
 void DrawMeleeIcon(uint16_t which_icon, bool HiLite);
-void GetShipBox(GFXRECT* pRect, uint16_t side, uint16_t row, uint16_t col);
-void RepairMeleeFrame(const GFXRECT* pRect);
-void DrawMeleeShipStrings(MELEE_STATE* pMS, MeleeShip NewStarShip);
+void GetShipBox(GfxRect* pRect, uint16_t side, uint16_t row, uint16_t col);
+void RepairMeleeFrame(const GfxRect* pRect);
+void DrawMeleeShipStrings(MeleeState* pMS, MeleeShip NewStarShip);
 extern FRAME MeleeFrame;
-void Melee_flashSelection(MELEE_STATE* pMS);
-extern void QuickRepair(uint16_t whichFrame, GFXRECT* pRect);
+void Melee_flashSelection(MeleeState* pMS);
+extern void QuickRepair(uint16_t whichFrame, GfxRect* pRect);
 
 uint16_t GetShipValue(MeleeShip StarShip);
 
-void updateRandomSeed(MELEE_STATE* pMS, uint16_t side, uint32_t seed);
-void confirmationCancelled(MELEE_STATE* pMS, uint16_t side);
+void updateRandomSeed(MeleeState* pMS, uint16_t side, uint32_t seed);
+void confirmationCancelled(MeleeState* pMS, uint16_t side);
 void connectedFeedback(NetConnection* conn);
 void abortFeedback(NetConnection* conn, NetplayAbortReason reason);
 void resetFeedback(NetConnection* conn, NetplayResetReason reason,
@@ -123,23 +123,23 @@ void resetFeedback(NetConnection* conn, NetplayResetReason reason,
 void errorFeedback(NetConnection* conn);
 void closeFeedback(NetConnection* conn);
 
-bool Melee_LocalChange_ship(MELEE_STATE* pMS, uint16_t side,
+bool Melee_LocalChange_ship(MeleeState* pMS, uint16_t side,
 							FleetShipIndex index, MeleeShip ship);
-bool Melee_LocalChange_teamName(MELEE_STATE* pMS, uint16_t side,
+bool Melee_LocalChange_teamName(MeleeState* pMS, uint16_t side,
 								const char* name);
-bool Melee_LocalChange_fleet(MELEE_STATE* pMS, size_t teamNr,
+bool Melee_LocalChange_fleet(MeleeState* pMS, size_t teamNr,
 							 const MeleeShip* fleet);
-bool Melee_LocalChange_team(MELEE_STATE* pMS, size_t teamNr,
+bool Melee_LocalChange_team(MeleeState* pMS, size_t teamNr,
 							const MeleeTeam* team);
 
-void Melee_bootstrapSyncTeam(MELEE_STATE* pMS, size_t teamNr);
+void Melee_bootstrapSyncTeam(MeleeState* pMS, size_t teamNr);
 
-void Melee_RemoteChange_ship(MELEE_STATE* pMS, NetConnection* conn,
+void Melee_RemoteChange_ship(MeleeState* pMS, NetConnection* conn,
 							 uint16_t side, FleetShipIndex index, MeleeShip ship);
-void Melee_RemoteChange_teamName(MELEE_STATE* pMS, NetConnection* conn,
+void Melee_RemoteChange_teamName(MeleeState* pMS, NetConnection* conn,
 								 uint16_t side, const char* name);
 
-void DrawShipPickerText(STAMP stamp);
+void DrawShipPickerText(GfxStamp stamp);
 
 enum
 { // meleemenu.ani enumerator

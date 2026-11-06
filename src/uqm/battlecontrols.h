@@ -35,9 +35,9 @@ extern "C" {
 #endif
 
 typedef BATTLE_INPUT_STATE (*BattleFrameInputFunction)(
-	InputContext* context, STARSHIP* StarShipPtr);
+	InputContext* context, Starship* StarShipPtr);
 typedef bool (*SelectShipFunction)(InputContext* context,
-								   GETMELEE_STATE* gms);
+								   PickMeleeState* gms);
 typedef bool (*BattleEndReadyFunction)(InputContext* context);
 typedef void (*DeleteInputContextFunction)(InputContext* context);
 
@@ -83,7 +83,7 @@ extern InputContext* PlayerInput[];
 
 
 BATTLE_INPUT_STATE frameInputHuman(HumanInputContext* context,
-								   STARSHIP* StarShipPtr);
+								   Starship* StarShipPtr);
 void InputContext_init(InputContext* context, BattleInputHandlers* handlers,
 					   uint16_t playerNr);
 // Do not call directly, only from the FreeInputContextFunction.

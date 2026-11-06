@@ -4,10 +4,10 @@
 // For IPGROUP
 #include "grpinfo.h"
 
-// For SHIP_FRAGMENT
+// For ShipFragment
 #include "races.h"
 
-// For GAME_STATE_FILE
+// For GameStateFile
 #include "state.h"
 
 //#define DEBUG_GROUPS
@@ -19,7 +19,7 @@
 //    (which may be the current system). Thus the randomly generated groups
 //    are valid for 7 days (set in PutGroupInfo) after the player leaves
 //    the system, or until the player enters another star system.
-struct GROUP_HEADER
+struct BattleGroupHeader
 {
 	uint8_t NumGroups;
 	uint8_t day_index, month_index;
@@ -41,15 +41,15 @@ struct GROUP_HEADER
 	// 1 byte, NumShips (NumGroups in Group 0)
 	// Ships follow:
 	// 1 byte, RaceType
-	// 16 bytes, part of SHIP_FRAGMENT struct
-	//                  (part of IP_GROUP struct in Group 0)
+	// 16 bytes, part of ShipFragment struct
+	//                  (part of InterplanetaryGroup struct in Group 0)
 };
 
-void ReadGroupHeader(GAME_STATE_FILE* fp, GROUP_HEADER* pGH);
-void WriteGroupHeader(GAME_STATE_FILE* fp, const GROUP_HEADER* pGH);
-void ReadShipFragment(GAME_STATE_FILE* fp, SHIP_FRAGMENT* FragPtr);
-void WriteShipFragment(GAME_STATE_FILE* fp, const SHIP_FRAGMENT* FragPtr);
-void ReadIpGroup(GAME_STATE_FILE* fp, IP_GROUP* GroupPtr);
-void WriteIpGroup(GAME_STATE_FILE* fp, const IP_GROUP* GroupPtr);
+void ReadGroupHeader(GameStateFile* fp, BattleGroupHeader* pGH);
+void WriteGroupHeader(GameStateFile* fp, const BattleGroupHeader* pGH);
+void ReadShipFragment(GameStateFile* fp, ShipFragment* FragPtr);
+void WriteShipFragment(GameStateFile* fp, const ShipFragment* FragPtr);
+void ReadIpGroup(GameStateFile* fp, InterplanetaryGroup* GroupPtr);
+void WriteIpGroup(GameStateFile* fp, const InterplanetaryGroup* GroupPtr);
 
 #endif

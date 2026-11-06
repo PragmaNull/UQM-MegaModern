@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_melnorme(void);
+RaceDesc* init_melnorme(void);
 
 #if 0 //defined(__cplusplus)
 }

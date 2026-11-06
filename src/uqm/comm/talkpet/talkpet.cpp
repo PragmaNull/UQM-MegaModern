@@ -29,7 +29,7 @@ static constexpr auto StrobeRate {30};
 static constexpr auto StrobeLength {(GameTicksPerSecond / 3)};
 static constexpr auto NumStrobes {(StrobeLength * StrobeRate / GameTicksPerSecond)};
 
-static LOCDATA talkpet_desc =
+static ConversationData talkpet_desc =
 	{
 		TALKING_PET_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -264,7 +264,7 @@ static LOCDATA talkpet_desc =
 		nullptr,
 };
 
-static FILTER_DESC talkpet_filters =
+static AnimFilterSet talkpet_filters =
 	{
 		1, /* Number of filters */
 		{
@@ -932,7 +932,7 @@ static void post_talkpet_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_talkpet_comm(void)
+ConversationData* init_talkpet_comm(void)
 {
 	talkpet_desc.init_encounter_func = Intro;
 	talkpet_desc.post_encounter_func = post_talkpet_enc;
@@ -955,7 +955,7 @@ LOCDATA* init_talkpet_comm(void)
 		setSegue(Segue_hostile);
 	}
 
-	LOCDATA* retval {&talkpet_desc};
+	ConversationData* retval {&talkpet_desc};
 
 	return (retval);
 }

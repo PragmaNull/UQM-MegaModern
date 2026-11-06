@@ -55,9 +55,9 @@ static auto LaunchYoffs2() { return -DisplayToWorld(chooseIfHd(4, 11)); }
 static constexpr auto SpecialEnergyCost {1};
 static constexpr auto SpecialWait {12};
 
-static RACE_DESC utwig_desc =
+static RaceDesc utwig_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "jugger",
 		 FiresFore | PointDefense | ShieldDefense,
 		 22, /* Super Melee cost */
@@ -68,7 +68,7 @@ static RACE_DESC utwig_desc =
 		 UtwigMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			666 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -127,10 +127,10 @@ static RACE_DESC utwig_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
+static uint16_t initialize_lance(Element* ShipPtr, HELEMENT WeaponArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
@@ -192,15 +192,15 @@ static uint16_t initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 	return (6);
 }
 
-static void utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void utwig_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 							   uint16_t ConcernCounter)
 {
 	int16_t ShieldStatus {};
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level == 0)
 	{
 		ShieldStatus = 0;
@@ -261,7 +261,7 @@ static void utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level
 		&& (lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX])->ObjectPtr)
 	{
-		STARSHIP* EnemyStarShipPtr {};
+		Starship* EnemyStarShipPtr {};
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
@@ -273,8 +273,8 @@ static void utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 }
 
-static void utwig_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void utwig_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (ElementPtr0->life_span > NormalLife
 		&& (ElementPtr1->state_flags & FiniteLife)
@@ -286,9 +286,9 @@ static void utwig_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
-static void utwig_preprocess(ELEMENT* ElementPtr)
+static void utwig_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	if (ElementPtr->state_flags & Appearing)
 	{
@@ -327,7 +327,7 @@ static void utwig_preprocess(ELEMENT* ElementPtr)
 		}
 	}
 
-	PRIMITIVE* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
+	Primitive* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (StarShipPtr->special_counter == 0)
 	{
 		// The shield is off.
@@ -384,7 +384,7 @@ static void utwig_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_utwig(void)
+RaceDesc* init_utwig(void)
 {
 	if (IsHd())
 	{
@@ -403,7 +403,7 @@ RACE_DESC* init_utwig(void)
 	utwig_desc.init_weapon_func = initialize_lance;
 	utwig_desc.cyborg_control.intelligence_func = utwig_intelligence;
 
-	RACE_DESC* RaceDescPtr {&utwig_desc};
+	RaceDesc* RaceDescPtr {&utwig_desc};
 
 	return (RaceDescPtr);
 }

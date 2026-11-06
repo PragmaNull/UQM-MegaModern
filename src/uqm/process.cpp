@@ -39,8 +39,8 @@
 //#define DEBUG_PROCESS
 
 uint16_t DisplayFreeList;
-PRIMITIVE DisplayArray[MaxDisplayPrims];
-extern DPOINT SpaceOrg;
+Primitive DisplayArray[MaxDisplayPrims];
+extern LargePoint SpaceOrg;
 
 uint16_t zoom_out = 1 << ZoomShift;
 static int16_t opt_max_zoom_out;
@@ -83,7 +83,7 @@ HELEMENT AllocElement(void)
 	HELEMENT hElement {AllocLink(&disp_q)};
 	if (hElement)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		memset(ElementPtr, 0, sizeof(*ElementPtr));
@@ -105,7 +105,7 @@ void FreeElement(HELEMENT hElement)
 {
 	if (hElement)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		FreeDisplayPrim(ElementPtr->PrimIndex);
@@ -115,7 +115,7 @@ void FreeElement(HELEMENT hElement)
 	}
 }
 
-void SetUpElement(ELEMENT* ElementPtr)
+void SetUpElement(Element* ElementPtr)
 {
 	ElementPtr->next = ElementPtr->current;
 	if (CollidingElement(ElementPtr))
@@ -126,13 +126,13 @@ void SetUpElement(ELEMENT* ElementPtr)
 	}
 }
 
-static void PreProcess(ELEMENT* ElementPtr)
+static void PreProcess(Element* ElementPtr)
 {
 	ELEMENT_FLAGS state_flags {};
 
 	if (ElementPtr->life_span == 0)
 	{
-		if (ElementPtr->pParent) /* untarget this dead element */
+		if (ElementPtr->pParent) /* untarget this dead Element */
 		{
 			Untarget(ElementPtr);
 		}
@@ -198,7 +198,7 @@ static void PreProcess(ELEMENT* ElementPtr)
 							| PreProcessFlag;
 }
 
-static void PostProcess(ELEMENT* ElementPtr)
+static void PostProcess(Element* ElementPtr)
 {
 	if (ElementPtr->postprocess_func)
 	{
@@ -321,7 +321,7 @@ static uint16_t CalcReduction(int32_t dx, int32_t dy)
 
 static constexpr auto ZoomJump {((1 << ZoomShift) >> 3)};
 
-static VIEW_STATE CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
+static VIEW_STATE CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
 						   int32_t* pdx, int32_t* pdy, uint16_t ships_alive)
 {
 	VIEW_STATE view_state;
@@ -414,14 +414,14 @@ static VIEW_STATE CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 }
 
 
-static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
+static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, Element* ElementPtr,
 									   TIME_VALUE min_time, ELEMENT_FLAGS process_flags)
 {
 	HELEMENT hTestElement {};
 
 	while ((hTestElement = hSuccElement) != 0)
 	{
-		ELEMENT* TestElementPtr {};
+		Element* TestElementPtr {};
 
 		LockElement(hTestElement, &TestElementPtr);
 		if (!(TestElementPtr->state_flags & process_flags))
@@ -484,7 +484,7 @@ static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPt
 							if (test_state_flags & Appearing)
 							{
 								do_damage(TestElementPtr, TestElementPtr->hit_points);
-								if (TestElementPtr->pParent) /* untarget this dead element */
+								if (TestElementPtr->pParent) /* untarget this dead Element */
 								{
 									Untarget(TestElementPtr);
 								}
@@ -498,7 +498,7 @@ static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPt
 							if (state_flags & Appearing)
 							{
 								do_damage(ElementPtr, ElementPtr->hit_points);
-								if (ElementPtr->pParent) /* untarget this dead element */
+								if (ElementPtr->pParent) /* untarget this dead Element */
 								{
 									Untarget(ElementPtr);
 								}
@@ -554,7 +554,7 @@ static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPt
 							InitIntersectFrame(ElementPtr);
 							if (state_flags & PlayerShip)
 							{
-								STARSHIP* StarShipPtr {};
+								Starship* StarShipPtr {};
 
 								GetElementStarShip(ElementPtr, &StarShipPtr);
 								StarShipPtr->ShipFacing =
@@ -567,7 +567,7 @@ static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPt
 							InitIntersectFrame(TestElementPtr);
 							if (test_state_flags & PlayerShip)
 							{
-								STARSHIP* StarShipPtr {};
+								Starship* StarShipPtr {};
 
 								GetElementStarShip(TestElementPtr, &StarShipPtr);
 								StarShipPtr->ShipFacing =
@@ -589,7 +589,7 @@ static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPt
 
 			if (time_val > 0)
 			{
-				GFXPOINT SavePt, TestSavePt;
+				GfxPoint SavePt, TestSavePt;
 
 #ifdef DEBUG_PROCESS
 				uqm::log::debug("{:#x} <--> {:#x} at {}", ElementPtr,
@@ -698,7 +698,7 @@ static VIEW_STATE PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 	int16_t min_reduction {};
 	int16_t max_reduction {};
 	uint16_t sides_active {};
-	DPOINT Origin;
+	LargePoint Origin;
 
 #ifdef KDEBUG
 	uqm::log::debug("PreProcess:");
@@ -722,7 +722,7 @@ static VIEW_STATE PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 	uint16_t ships_alive {0};
 	while (hElement != 0)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 
@@ -889,7 +889,7 @@ static inline int16_t CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reductio
 
 static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 {
-	DPOINT delta;
+	LargePoint delta;
 	int16_t reduction {};
 
 #ifdef KDEBUG
@@ -908,7 +908,7 @@ static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t sc
 	while (hElement != 0)
 	{
 		ELEMENT_FLAGS state_flags {};
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 		HELEMENT hNextElement {};
 
 		LockElement(hElement, &ElementPtr);
@@ -941,7 +941,7 @@ static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t sc
 			HELEMENT hPostElement {hElement};
 			do
 			{
-				ELEMENT* PostElementPtr {};
+				Element* PostElementPtr {};
 
 				LockElement(hPostElement, &PostElementPtr);
 				if (!(PostElementPtr->state_flags & PreProcessFlag))
@@ -982,7 +982,7 @@ static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t sc
 			if (view_state != VIEW_STABLE
 				|| (state_flags & (Appearing | Changing)))
 			{
-				GFXPOINT next;
+				GfxPoint next;
 
 				if (ObjType == LINE_PRIM)
 				{
@@ -1040,7 +1040,7 @@ static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t sc
 
 								// TODO: This is currently hacky, this code
 								//   really should not dereference FRAME.
-								//   Perhaps make mipmap part of STAMP prim?
+								//   Perhaps make mipmap part of GfxStamp prim?
 								if (frame && mmframe)
 								{
 									const HOT_SPOT mmhs = GetFrameHot(mmframe);
@@ -1159,14 +1159,14 @@ void RedrawQueue(bool clear)
 
 // Set the hTarget field to 0 for all elements in the display list that
 // have hTarget set to ElementPtr.
-void Untarget(ELEMENT* ElementPtr)
+void Untarget(Element* ElementPtr)
 {
 	HELEMENT hNextElement {};
 
 	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
 		HELEMENT hTarget {};
-		ELEMENT* ListPtr {};
+		Element* ListPtr {};
 
 		LockElement(hElement, &ListPtr);
 		hNextElement = GetSuccElement(ListPtr);
@@ -1174,7 +1174,7 @@ void Untarget(ELEMENT* ElementPtr)
 		hTarget = ListPtr->hTarget;
 		if (hTarget)
 		{
-			ELEMENT* TargetElementPtr {};
+			Element* TargetElementPtr {};
 
 			LockElement(hTarget, &TargetElementPtr);
 			if (TargetElementPtr == ElementPtr)
@@ -1192,7 +1192,7 @@ void RemoveElement(HLINK hLink)
 {
 	if (uqm::UQMOptions::read().stereoSFX)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hLink, &ElementPtr);
 		if (ElementPtr != nullptr)

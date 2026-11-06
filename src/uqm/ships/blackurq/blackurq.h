@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_black_urquan(void);
+RaceDesc* init_black_urquan(void);
 
 #if 0 //defined(__cplusplus)
 }

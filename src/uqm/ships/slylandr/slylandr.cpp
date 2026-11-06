@@ -49,9 +49,9 @@ static constexpr auto SpecialWait {20};
 static auto HarvestRange() { return ResScale(208 * 3 / 8); }
 /* Was originally (SpaceHeight() * 3 / 8) */
 
-static RACE_DESC slylandro_desc =
+static RaceDesc slylandro_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "probe",
 		 SeekingWeapon | CrewImmune,
 		 17, /* Super Melee cost */
@@ -62,7 +62,7 @@ static RACE_DESC slylandro_desc =
 		 SlylandroMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			InfiniteRadius, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
@@ -121,10 +121,10 @@ static RACE_DESC slylandro_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_lightning(ELEMENT* ElementPtr,
+static uint16_t initialize_lightning(Element* ElementPtr,
 									 HELEMENT LaserArray[]);
 
-static void lightning_postprocess(ELEMENT* ElementPtr)
+static void lightning_postprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait
 		&& !(ElementPtr->state_flags & Collision))
@@ -139,10 +139,10 @@ static void lightning_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void lightning_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void lightning_collision(Element* ElementPtr0, GfxPoint* pPt0,
+								Element* ElementPtr1, GfxPoint* pPt1)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr0, &StarShipPtr);
 	if (StarShipPtr->weapon_counter > WeaponWait >> 1)
@@ -156,9 +156,9 @@ static void lightning_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
-static uint16_t initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
+static uint16_t initialize_lightning(Element* ElementPtr, HELEMENT LaserArray[])
 {
-	LASER_BLOCK LaserBlock;
+	LaserDesc LaserBlock;
 
 	LaserBlock.cx = ElementPtr->next.location.x;
 	LaserBlock.cy = ElementPtr->next.location.y;
@@ -176,8 +176,8 @@ static uint16_t initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 		int16_t delta {};
 		uint16_t angle {};
 		uint16_t facing {};
-		ELEMENT* LaserPtr {};
-		STARSHIP* StarShipPtr {};
+		Element* LaserPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -269,10 +269,10 @@ static uint16_t initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 	return (1);
 }
 
-static void slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void slylandro_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								   uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	// no dodging in role playing game, unless you haven't
 	// visited the starbase yet or difficulty is set to Hard
@@ -281,7 +281,7 @@ static void slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfCon
 		ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = 0;
 	}
 
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0
@@ -320,7 +320,7 @@ static void slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfCon
 	}
 }
 
-static bool harvest_space_junk(ELEMENT* ElementPtr)
+static bool harvest_space_junk(Element* ElementPtr)
 {
 	HELEMENT hElement {};
 	HELEMENT hNextElement {};
@@ -329,7 +329,7 @@ static bool harvest_space_junk(ELEMENT* ElementPtr)
 	for (hElement = GetHeadElement();
 		 hElement; hElement = hNextElement)
 	{
-		ELEMENT* ObjPtr {};
+		Element* ObjPtr {};
 
 		LockElement(hElement, &ObjPtr);
 		hNextElement = GetSuccElement(ObjPtr);
@@ -364,7 +364,7 @@ static bool harvest_space_junk(ELEMENT* ElementPtr)
 
 				if (!retval)
 				{
-					STARSHIP* StarShipPtr {};
+					Starship* StarShipPtr {};
 
 					retval = true;
 
@@ -383,9 +383,9 @@ static bool harvest_space_junk(ELEMENT* ElementPtr)
 	return (retval);
 }
 
-static void slylandro_postprocess(ELEMENT* ElementPtr)
+static void slylandro_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->weapon_counter
@@ -409,11 +409,11 @@ static void slylandro_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void slylandro_preprocess(ELEMENT* ElementPtr)
+static void slylandro_preprocess(Element* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & (Appearing | Nonsolid)))
 	{
-		STARSHIP* StarShipPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		if ((StarShipPtr->cur_status_flags & ThrustFlag)
@@ -455,7 +455,7 @@ static void slylandro_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_slylandro(void)
+RaceDesc* init_slylandro(void)
 {
 	if (IsHd())
 	{
@@ -476,7 +476,7 @@ RACE_DESC* init_slylandro(void)
 	slylandro_desc.init_weapon_func = initialize_lightning;
 	slylandro_desc.cyborg_control.intelligence_func = slylandro_intelligence;
 
-	RACE_DESC* RaceDescPtr {&slylandro_desc};
+	RaceDesc* RaceDescPtr {&slylandro_desc};
 
 	return (RaceDescPtr);
 }

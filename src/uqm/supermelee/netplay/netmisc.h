@@ -34,9 +34,9 @@ extern "C" {
 
 struct BattleStateData : NetConnectionStateData
 {
-	struct melee_state* meleeState;
-	struct BATTLE_STATE* battleState;
-	struct getmelee_struct* getMeleeState;
+	struct MeleeState* meleeState;
+	struct BattleState* battleState;
+	struct PickMeleeState* getMeleeState;
 	BattleFrameCounter endFrameCount;
 };
 

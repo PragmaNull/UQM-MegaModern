@@ -25,7 +25,7 @@
 #include "displist.h"
 #include "uqm/inteldefs.h"
 
-typedef struct STARSHIP STARSHIP;
+struct Starship;
 typedef HLINK HSTARSHIP;
 
 #include "element.h"
@@ -37,7 +37,7 @@ typedef HLINK HSTARSHIP;
 
 inline constexpr auto MaxShipsPerSide {14};
 
-/* SHIP_INFO.ship_flags - ship specific flags */
+/* ShipInfoDesc.ship_flags - ship specific flags */
 /* bits 0 and 1 are now available */
 inline constexpr auto SeekingWeapon {(1 << 2)};
 inline constexpr auto SeekingSpecial {(1 << 3)};
@@ -116,7 +116,7 @@ inline SPECIES_ID postIncSpeciesId_HACK(SPECIES_ID& id)
 }
 
 
-struct CAPTAIN_STUFF
+struct CaptainGraphics
 {
 	RESOURCE captain_rsc;
 	FRAME background;
@@ -139,24 +139,24 @@ enum MOVEMENT_STATE
 	NO_MOVEMENT
 };
 
-struct EVALUATE_DESC
+struct ObjectEvaluation
 {
-	ELEMENT* ObjectPtr;
+	Element* ObjectPtr;
 	uint16_t facing;
 	uint16_t which_turn;
 	MOVEMENT_STATE MoveState;
 };
 
-typedef void(IntelligenceFunc)(ELEMENT* ShipPtr,
-							   EVALUATE_DESC* ObjectsOfConcern, uint16_t ConcernCounter);
-struct INTEL_STUFF
+typedef void(IntelligenceFunc)(Element* ShipPtr,
+							   ObjectEvaluation* ObjectsOfConcern, uint16_t ConcernCounter);
+struct ShipIntelligence
 {
 	uint16_t ManeuverabilityIndex;
 	uint16_t WeaponRange;
 	IntelligenceFunc* intelligence_func;
 };
 
-struct CHARACTERISTIC_STUFF
+struct ShipCharacteristics
 {
 	uint16_t max_thrust;
 	uint16_t thrust_increment;
@@ -171,7 +171,7 @@ struct CHARACTERISTIC_STUFF
 	uint8_t ship_mass;
 };
 
-struct SHIP_INFO
+struct ShipInfoDesc
 {
 	const char* idStr;
 	uint16_t ship_flags;
@@ -193,18 +193,18 @@ struct SHIP_INFO
 
 inline constexpr auto InfiniteRadius {((uint16_t)~0)};
 
-struct FLEET_STUFF
+struct FleetStatus
 {
 	uint16_t strength;
-	GFXPOINT known_loc;
+	GfxPoint known_loc;
 };
 
-struct DATA_STUFF
+struct ShipResources
 {
 	RESOURCE ship_rsc[NumViews];
 	RESOURCE weapon_rsc[NumViews];
 	RESOURCE special_rsc[NumViews];
-	CAPTAIN_STUFF captain_control;
+	CaptainGraphics captain_control;
 	RESOURCE victory_ditty_rsc;
 	RESOURCE ship_sounds_rsc;
 
@@ -218,20 +218,20 @@ struct DATA_STUFF
 };
 
 
-typedef struct race_desc RACE_DESC;
+struct RaceDesc;
 
-typedef void(PREPROCESS_FUNC)(ELEMENT* ElementPtr);
-typedef void(POSTPROCESS_FUNC)(ELEMENT* ElementPtr);
-typedef uint16_t(INIT_WEAPON_FUNC)(ELEMENT* ElementPtr, HELEMENT Weapon[]);
-typedef void(UNINIT_FUNC)(RACE_DESC* pRaceDesc);
+typedef void(PREPROCESS_FUNC)(Element* ElementPtr);
+typedef void(POSTPROCESS_FUNC)(Element* ElementPtr);
+typedef uint16_t(INIT_WEAPON_FUNC)(Element* ElementPtr, HELEMENT Weapon[]);
+typedef void(UNINIT_FUNC)(RaceDesc* pRaceDesc);
 
-struct race_desc
+struct RaceDesc
 {
-	SHIP_INFO ship_info;
-	FLEET_STUFF fleet;
-	CHARACTERISTIC_STUFF characteristics;
-	DATA_STUFF ship_data;
-	INTEL_STUFF cyborg_control;
+	ShipInfoDesc ship_info;
+	FleetStatus fleet;
+	ShipCharacteristics characteristics;
+	ShipResources ship_data;
+	ShipIntelligence cyborg_control;
 
 	UNINIT_FUNC* uninit_func;
 	PREPROCESS_FUNC* preprocess_func;
@@ -244,22 +244,22 @@ struct race_desc
 };
 
 
-struct SHIP_BASE
+struct ShipBase
 {
-	/* LINK elements; must be first */
+	/* QueueLink elements; must be first */
 	HLINK pred;
 	HLINK succ;
 
 	SPECIES_ID SpeciesID;
-	uint8_t captains_name_index; /* Also used in full-game to detect if a STARSHIP is an escort
+	uint8_t captains_name_index; /* Also used in full-game to detect if a Starship is an escort
 			 * or the flagship (captains_name_index == 0) */
 };
 
 
-struct STARSHIP : SHIP_BASE
+struct Starship : ShipBase
 {
 
-	RACE_DESC* RaceDescPtr;
+	RaceDesc* RaceDescPtr;
 
 	// Ship information
 	uint16_t crew_level;
@@ -297,10 +297,10 @@ struct STARSHIP : SHIP_BASE
 inline constexpr auto RpgPlayerNum {0};
 inline constexpr auto NpcPlayerNum {1};
 
-static inline STARSHIP* LockStarShip(const QUEUE* pq, HSTARSHIP h)
+static inline Starship* LockStarShip(const Queue* pq, HSTARSHIP h)
 {
-	assert(GetLinkSize(pq) == sizeof(STARSHIP));
-	return (STARSHIP*)LockLink(pq, h);
+	assert(GetLinkSize(pq) == sizeof(Starship));
+	return (Starship*)LockLink(pq, h);
 }
 
 constexpr auto UnlockStarShip(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
@@ -310,7 +310,7 @@ typedef HLINK HSHIPFRAG;
 
 inline constexpr auto InfiniteFleet {((uint16_t)~0)};
 
-struct SHIP_FRAGMENT : SHIP_BASE
+struct ShipFragment : ShipBase
 {
 	uint8_t race_id;
 	uint8_t index;
@@ -329,10 +329,10 @@ struct SHIP_FRAGMENT : SHIP_BASE
 	FRAME melee_icon; /* Only used by Shipyard */
 };
 
-static inline SHIP_FRAGMENT* LockShipFrag(const QUEUE* pq, HSHIPFRAG h)
+static inline ShipFragment* LockShipFrag(const Queue* pq, HSHIPFRAG h)
 {
-	assert(GetLinkSize(pq) == sizeof(SHIP_FRAGMENT));
-	return (SHIP_FRAGMENT*)LockLink(pq, h);
+	assert(GetLinkSize(pq) == sizeof(ShipFragment));
+	return (ShipFragment*)LockLink(pq, h);
 }
 
 constexpr auto UnlockShipFrag(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
@@ -341,9 +341,9 @@ constexpr auto FreeShipFrag(const auto& pq, const auto& h) { return FreeLink(pq,
 
 typedef HLINK HFLEETINFO;
 
-struct FLEET_INFO
+struct FleetInfo
 {
-	// LINK elements; must be first
+	// QueueLink elements; must be first
 	HFLEETINFO pred;
 	HFLEETINFO succ;
 
@@ -357,7 +357,7 @@ struct FLEET_INFO
 	uint16_t max_crew;
 	uint8_t growth;
 	uint8_t max_energy;
-	GFXPOINT loc; /* Location of the fleet (center) */
+	GfxPoint loc; /* Location of the fleet (center) */
 
 	uqm::StringTable* race_strings;
 	/* Race specific strings, see doc/devel/racestrings. */
@@ -373,7 +373,7 @@ struct FLEET_INFO
 	/* Measure for the size of the sphere of influence when last
 			 * checked the starmap.
 			 * 0 if the race's SoI is not known. */
-	GFXPOINT known_loc;
+	GfxPoint known_loc;
 	/* Location of the SoI (center) when last checked
 			 * the starmap. */
 
@@ -382,14 +382,14 @@ struct FLEET_INFO
 	/* Function index defined in clock.h (the same as in SetEvent())
 			 * for the function to call when the fleet reaches 'dest_loc'.
 			 * '(uint8_t) ~0' means no function to call. */
-	GFXPOINT dest_loc;
+	GfxPoint dest_loc;
 	/* Location to which the fleet (center) is moving. */
 	bool can_build;
 	/* Determines if you can build the ship regardless
 			 * of allegiance */
 };
 
-// Values for FLEET_INFO.allied_state
+// Values for FleetInfo.allied_state
 enum
 {
 	DEAD_GUY = 0, // Race is extinct
@@ -397,10 +397,10 @@ enum
 	BAD_GUY,	  // Race is not allied with the player
 };
 
-static inline FLEET_INFO* LockFleetInfo(const QUEUE* pq, HFLEETINFO h)
+static inline FleetInfo* LockFleetInfo(const Queue* pq, HFLEETINFO h)
 {
-	assert(GetLinkSize(pq) == sizeof(FLEET_INFO));
-	return (FLEET_INFO*)LockLink(pq, h);
+	assert(GetLinkSize(pq) == sizeof(FleetInfo));
+	return (FleetInfo*)LockLink(pq, h);
 }
 
 constexpr auto UnlockFleetInfo(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
@@ -601,7 +601,7 @@ inline constexpr uint8_t RaceMusicBool[] {
 	0, /* URQUAN_DRONE_SHIP */
 };
 
-// How many ships will an encounter consist of.
+// How many ships will an Encounter consist of.
 // The first number specifies the minimum, the second the maximum.
 // The chance is 50% for each ship past the minimum to be present.
 inline constexpr uint8_t RaceEncounterMakeup[] {

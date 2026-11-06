@@ -110,13 +110,13 @@ void UninitMenuMusic(void)
 	}
 }
 
-void DrawToolTips(MENU_STATE* pMS, int answer)
+void DrawToolTips(MenuState* pMS, int answer)
 {
-	TEXT t;
+	GfxText t;
 	stringbank* bank = StringBank_Create();
 	const char* lines[30];
-	GFXRECT r;
-	STAMP s;
+	GfxRect r;
+	GfxStamp s;
 
 	SetContextFont(TinyFont);
 
@@ -151,10 +151,10 @@ void DrawToolTips(MENU_STATE* pMS, int answer)
 	StringBank_Free(bank);
 }
 
-static void DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
+static void DrawDiffChooser(MenuState* pMS, int answer, bool confirm)
 {
-	STAMP s;
-	TEXT t;
+	GfxStamp s;
+	GfxText t;
 
 	s.origin = MAKE_POINT(ChooserX(), ChooserY());
 	s.frame = SetRelFrameIndex(pMS->CurFrame, 2);
@@ -186,12 +186,12 @@ static void DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 	SetContextFont(oldFont);
 }
 
-static bool DoDiffChooser(MENU_STATE* pMS)
+static bool DoDiffChooser(MenuState* pMS)
 {
 	static TimeCount LastInputTime;
 	static TimePeriod InactTimeOut;
-	GFXRECT oldRect;
-	STAMP s;
+	GfxRect oldRect;
+	GfxStamp s;
 	bool response = false;
 	bool done = false;
 	uint8_t a = 1;
@@ -315,7 +315,7 @@ static void InitPulseText(void)
 	FRAME frame {};
 	FRAME OldFrame {};
 	int16_t leading {};
-	TEXT t;
+	GfxText t;
 
 	if (TextCache[0] != nullptr)
 	{
@@ -354,11 +354,11 @@ static void InitPulseText(void)
 }
 
 // Draw the full restart menu. Nothing is done with selections.
-static void DrawRestartMenuGraphic(MENU_STATE* pMS)
+static void DrawRestartMenuGraphic(MenuState* pMS)
 {
-	GFXRECT r;
-	STAMP s;
-	TEXT t;
+	GfxRect r;
+	GfxStamp s;
+	GfxText t;
 	char buf[64];
 	int16_t leading {};
 
@@ -422,9 +422,9 @@ static void DrawRestartMenuGraphic(MENU_STATE* pMS)
 	UnbatchGraphics();
 }
 
-static void DrawRestartMenu(MENU_STATE* pMS, uint8_t NewState, FRAME f)
+static void DrawRestartMenu(MenuState* pMS, uint8_t NewState, FRAME f)
 {
-	GFXPOINT origin;
+	GfxPoint origin;
 	origin.x = 0;
 	origin.y = 0;
 	Flash_setOverlay(pMS->flashContext, &origin, TextCache[NewState], false);
@@ -469,7 +469,7 @@ const char* TakePlaySave(void)
 	return uqm::UQMOptions::read().playSave.c_str();
 }
 
-static bool DoRestart(MENU_STATE* pMS)
+static bool DoRestart(MenuState* pMS)
 {
 	static TimeCount LastInputTime;
 	static TimePeriod InactTimeOut;
@@ -781,7 +781,7 @@ void ShowGameEnding(void)
 	uqm::currentActivity() = CHECK_ABORT;
 }
 
-static bool RestartMenu(MENU_STATE* pMS)
+static bool RestartMenu(MenuState* pMS)
 {
 	ReinitQueue(&race_q[0]);
 	ReinitQueue(&race_q[1]);
@@ -847,15 +847,15 @@ static bool RestartMenu(MENU_STATE* pMS)
 
 static bool TryStartGame(void)
 {
-	MENU_STATE MenuState;
+	MenuState menuState;
 
 	LastActivity = uqm::currentActivity();
 	uqm::currentActivity() = 0;
 
-	memset(&MenuState, 0, sizeof(MenuState));
-	MenuState.InputFunc = DoRestart;
+	memset(&menuState, 0, sizeof(menuState));
+	menuState.InputFunc = DoRestart;
 
-	while (!RestartMenu(&MenuState))
+	while (!RestartMenu(&menuState))
 	{ // spin until a game is started or loaded
 		if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE && !(uqm::currentActivity() & CHECK_ABORT))
 		{
@@ -863,7 +863,7 @@ static bool TryStartGame(void)
 			uqm::UQMGame::getInstance().beginSession(uqm::SessionKind::SuperMelee);
 			Melee();
 			uqm::UQMGame::getInstance().endSession();
-			MenuState.Initialized = false;
+			menuState.Initialized = false;
 		}
 		else if (uqm::currentActivity() == (ACTIVITY)~0)
 		{ // timed out
@@ -946,7 +946,7 @@ bool StartGame(void)
 		}
 		Elements = ElementsArray;
 		PlanData = PlanetsArray;
-		constel_array = (const GFXPOINT*)ConstellationsArray;
+		constel_array = (const GfxPoint*)ConstellationsArray;
 	}
 	PlayerControl[0] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
 	PlayerControl[1] = PlayerControlFlags::Cyborg | PlayerControlFlags::Psytron | PlayerControlFlags::DifficultyAwesome;

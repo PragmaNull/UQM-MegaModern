@@ -22,7 +22,7 @@
 #include "uqm/races.h"
 #include "uqm/lua/UQMLua.h"
 
-static LOCDATA vux_desc =
+static ConversationData vux_desc =
 	{
 		VUX_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -271,7 +271,7 @@ static LOCDATA vux_desc =
 		nullptr,
 };
 
-static FILTER_DESC vux_filters =
+static AnimFilterSet vux_filters =
 	{
 		1, /* Number of filters */
 		{
@@ -905,7 +905,7 @@ static void post_vux_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_vux_comm(void)
+ConversationData* init_vux_comm(void)
 {
 	vux_desc.init_encounter_func = Intro;
 	vux_desc.post_encounter_func = post_vux_enc;
@@ -939,7 +939,7 @@ LOCDATA* init_vux_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&vux_desc};
+	ConversationData* retval {&vux_desc};
 
 	return (retval);
 }

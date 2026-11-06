@@ -25,7 +25,7 @@
 #include "uqm/build.h"
 
 
-static LOCDATA slylandro_desc =
+static ConversationData slylandro_desc =
 	{
 		SLYLANDRO_HOME_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -213,7 +213,7 @@ static LOCDATA slylandro_desc =
 		nullptr,
 };
 
-static FILTER_DESC slyhome_filters =
+static AnimFilterSet slyhome_filters =
 	{
 		1, /* Number of filters */
 		{
@@ -985,7 +985,7 @@ static void post_slylandro_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_slylandro_comm(void)
+ConversationData* init_slylandro_comm(void)
 {
 	slylandro_desc.init_encounter_func = Intro;
 	slylandro_desc.post_encounter_func = post_slylandro_enc;
@@ -1001,7 +1001,7 @@ LOCDATA* init_slylandro_comm(void)
 	slylandro_desc.AlienTextWidth = SisTextWidth();
 
 	setSegue(Segue_peace);
-	LOCDATA* retval {&slylandro_desc};
+	ConversationData* retval {&slylandro_desc};
 
 	return (retval);
 }

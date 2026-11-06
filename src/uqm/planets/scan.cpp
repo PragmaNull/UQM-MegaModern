@@ -57,8 +57,8 @@ static constexpr auto FlashIndex {105};
 
 static GFXCONTEXT ScanContext;
 
-static GFXPOINT planetLoc;
-static GFXRECT cursorRect;
+static GfxPoint planetLoc;
+static GfxRect cursorRect;
 static FRAME eraseFrame;
 
 // ScanSystem() menu items
@@ -71,10 +71,10 @@ enum ScanMenuItems
 };
 
 
-void RepairBackRect(GFXRECT* pRect)
+void RepairBackRect(GfxRect* pRect)
 {
-	GFXRECT new_r;
-	GFXRECT old_r;
+	GfxRect new_r;
+	GfxRect old_r;
 
 	GetContextClipRect(&old_r);
 	new_r.corner.x = pRect->corner.x + old_r.corner.x;
@@ -97,7 +97,7 @@ static void EraseCoarseScan(void)
 	UnbatchGraphics();
 }
 
-static void PrintScanTitleText(TEXT* t)
+static void PrintScanTitleText(GfxText* t)
 {
 	SetContextForeGroundColor(uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ? ScanPcTitleColor6014 : ScanPcTitleColor);
 
@@ -113,9 +113,9 @@ static void PrintScanTitleText(TEXT* t)
 	SetContextForeGroundColor(ScanInfoColor);
 }
 
-static void PrintScanTitlePC(TEXT* t, char* buf, int16_t xpos)
+static void PrintScanTitlePC(GfxText* t, char* buf, int16_t xpos)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	t->baseline.x = xpos;
 
@@ -128,7 +128,7 @@ static void PrintScanTitlePC(TEXT* t, char* buf, int16_t xpos)
 	t->baseline.x += r.extent.width;
 }
 
-static void PrintScanText(TEXT* t)
+static void PrintScanText(GfxText* t)
 {
 	if (!uqm::usesPictograms(uqm::UQMOptions::read().whichCoarseScan))
 	{
@@ -263,7 +263,7 @@ static auto ScanTitleY() { return ResScale(13); }
 static void PrintCoarseScanPC(void)
 {
 	int32_t val {};
-	TEXT t;
+	GfxText t;
 	char buf[200] {};
 
 	GetPlanetTitle({buf, sizeof(buf)});
@@ -460,8 +460,8 @@ static void PrintCoarseScan3DO(void)
 		return ResScale(19);
 	};
 	int32_t val {};
-	TEXT t;
-	STAMP s;
+	GfxText t;
+	GfxStamp s;
 	char buf[200] {};
 	uint16_t frameIndex = 20;
 
@@ -627,7 +627,7 @@ static void initPlanetLocationImage(void)
 
 static void savePlanetLocationImage(void)
 {
-	GFXRECT r;
+	GfxRect r;
 	FRAME cursorFrame = SetAbsFrameIndex(MiscDataFrame, FlashIndex);
 	const HOT_SPOT hs = GetFrameHot(cursorFrame);
 
@@ -642,7 +642,7 @@ static void savePlanetLocationImage(void)
 
 static void restorePlanetLocationImage(void)
 {
-	STAMP s;
+	GfxStamp s;
 
 	s.origin = cursorRect.corner;
 	s.frame = eraseFrame; // saved image
@@ -651,7 +651,7 @@ static void restorePlanetLocationImage(void)
 
 static void drawPlanetCursor(bool filled)
 {
-	STAMP s;
+	GfxStamp s;
 
 	s.origin = cursorRect.corner;
 	s.frame = SetAbsFrameIndex(MiscDataFrame, FlashIndex);
@@ -665,14 +665,14 @@ static void drawPlanetCursor(bool filled)
 	}
 }
 
-static void setPlanetCursorLoc(GFXPOINT new_pt)
+static void setPlanetCursorLoc(GfxPoint new_pt)
 {
 	new_pt.x >>= MagShift;
 	new_pt.y >>= MagShift;
 	cursorRect.corner = new_pt;
 }
 
-static void setPlanetLoc(GFXPOINT new_pt, bool restoreOld)
+static void setPlanetLoc(GfxPoint new_pt, bool restoreOld)
 {
 	planetLoc = new_pt;
 
@@ -691,7 +691,7 @@ static void flashPlanetLocation(void)
 {
 	static uint8_t c = 0x00;
 	static int val = -2;
-	static GFXPOINT prevPt;
+	static GfxPoint prevPt;
 	static TimeCount NextTime {};
 	bool locChanged {};
 	const TimeCount Now = GetTimeCounter();
@@ -737,7 +737,7 @@ static void flashPlanetLocation(void)
 	drawPlanetCursor(true);
 }
 
-void RedrawSurfaceScan(const GFXPOINT* newLoc)
+void RedrawSurfaceScan(const GfxPoint* newLoc)
 {
 	GFXCONTEXT OldContext {SetContext(ScanContext)};
 
@@ -780,7 +780,7 @@ static void spawnFwiffo(void)
 								  &uqm::gameState().game().npc_built_ship_q, 1);
 	if (hStarShip)
 	{
-		SHIP_FRAGMENT* StarShipPtr {};
+		ShipFragment* StarShipPtr {};
 
 		StarShipPtr = LockShipFrag(&uqm::gameState().game().npc_built_ship_q,
 								   hStarShip);
@@ -847,15 +847,15 @@ static bool DispatchLander(void)
 	return true;
 }
 
-struct PICK_PLANET_STATE
+struct PickPlanetState
 {
 	bool success;
 	// true when player selected a location
 };
 
-static bool DoPickPlanetSide(MENU_STATE* pMS)
+static bool DoPickPlanetSide(MenuState* pMS)
 {
-	PICK_PLANET_STATE* pickState = (PICK_PLANET_STATE*)pMS->privData;
+	PickPlanetState* pickState = (PickPlanetState*)pMS->privData;
 	const TimeCount TimeIn {GetTimeCounter()};
 	bool select {};
 	bool cancel {};
@@ -883,7 +883,7 @@ static bool DoPickPlanetSide(MENU_STATE* pMS)
 	{
 		int16_t dx = 0;
 		int16_t dy = 0;
-		GFXPOINT new_pt;
+		GfxPoint new_pt;
 		static TimeCount tNext {};
 
 		new_pt = planetLoc;
@@ -1000,13 +1000,13 @@ static void eraseLandingFuelUsage(void)
 
 static bool PickPlanetSide(void)
 {
-	MENU_STATE MenuState;
-	PICK_PLANET_STATE PickState;
+	MenuState menuState;
+	PickPlanetState PickState;
 	const uint16_t fuel = getLandingFuelNeeded();
 	bool retval = true;
 
-	memset(&MenuState, 0, sizeof MenuState);
-	MenuState.privData = &PickState;
+	memset(&menuState, 0, sizeof menuState);
+	menuState.privData = &PickState;
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
 	{
@@ -1033,8 +1033,8 @@ static bool PickPlanetSide(void)
 	SetMenuSounds(MenuSoundNone, MenuSoundSelect);
 
 	PickState.success = false;
-	MenuState.InputFunc = DoPickPlanetSide;
-	DoInput(&MenuState, true);
+	menuState.InputFunc = DoPickPlanetSide;
+	DoInput(&menuState, true);
 
 	eraseLandingFuelUsage();
 	if (PickState.success)
@@ -1062,9 +1062,9 @@ static void DrawScannedStuff(uint16_t y, uint16_t scan)
 
 	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 		int16_t dy {};
-		STAMP s;
+		GfxStamp s;
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
@@ -1138,8 +1138,8 @@ static void DrawPCScannedStuff(uint16_t scan)
 	HELEMENT hNextElement {};
 	TimePeriod interval;
 	TimeCount now;
-	ELEMENT* ElementPtr {};
-	STAMP s;
+	Element* ElementPtr {};
+	GfxStamp s;
 
 	interval = c_gameSecond / 10;
 
@@ -1229,9 +1229,9 @@ static void DrawPCScannedStuff(uint16_t scan)
 	}
 }
 
-uint16_t callGenerateForScanType(const SOLARSYS_STATE* solarSys,
-								 const PLANET_DESC* world, uint16_t node, uint8_t scanType,
-								 NODE_INFO* info)
+uint16_t callGenerateForScanType(const SolarSystemState* solarSys,
+								 const SystemPlanet* world, uint16_t node, uint8_t scanType,
+								 SurfaceNode* info)
 {
 	switch (scanType)
 	{
@@ -1250,7 +1250,7 @@ uint16_t callGenerateForScanType(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-bool callPickupForScanType(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+bool callPickupForScanType(SolarSystemState* solarSys, SystemPlanet* world,
 						   uint16_t node, uint8_t scanType)
 {
 	switch (scanType)
@@ -1292,7 +1292,7 @@ static void ScanPlanet(uint16_t scanType)
 
 	uint16_t startScan {};
 	uint16_t endScan {};
-	GFXRECT r;
+	GfxRect r;
 	const static Color textColors[] =
 		{
 			ScanMineralTextColor,
@@ -1326,7 +1326,7 @@ static void ScanPlanet(uint16_t scanType)
 
 	for (uint16_t scan {startScan}; scan <= endScan; ++scan)
 	{
-		TEXT t;
+		GfxText t;
 		int16_t i = 0;
 		Color tintColor;
 		// Alpha value will be ignored.
@@ -1460,7 +1460,7 @@ static void ScanPlanet(uint16_t scanType)
 	FlushInput();
 }
 
-static bool DoScan(MENU_STATE* pMS)
+static bool DoScan(MenuState* pMS)
 {
 	bool select {};
 	bool cancel {};
@@ -1535,7 +1535,7 @@ static bool DoScan(MENU_STATE* pMS)
 
 static GFXCONTEXT CreateScanContext(bool inSpace)
 {
-	GFXRECT r;
+	GfxRect r;
 	int16_t x_offset {};
 
 	// ScanContext rect is relative to SpaceContext
@@ -1600,9 +1600,9 @@ void DestroyScanContext(void)
 
 void ScanSystem(void)
 {
-	MENU_STATE MenuState;
+	MenuState menuState;
 
-	memset(&MenuState, 0, sizeof MenuState);
+	memset(&menuState, 0, sizeof menuState);
 
 	// fmt::printWorld (pSolarSysState->pOrbitalDesc);
 
@@ -1610,11 +1610,11 @@ void ScanSystem(void)
 
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::Console3DO && ((pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED) || pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == GasGiantAtmosphere))
 	{
-		MenuState.CurState = EXIT_SCAN;
+		menuState.CurState = EXIT_SCAN;
 	}
 	else
 	{
-		MenuState.CurState = AUTO_SCAN;
+		menuState.CurState = AUTO_SCAN;
 		planetLoc.x = (ScaledMapWidth() >> 1) << MagShift;
 		planetLoc.y = (MapHeight() >> 1) << MagShift;
 
@@ -1623,7 +1623,7 @@ void ScanSystem(void)
 		DrawScannedObjects(false);
 	}
 
-	DrawMenuStateStrings(PM_MIN_SCAN, MenuState.CurState);
+	DrawMenuStateStrings(PM_MIN_SCAN, menuState.CurState);
 
 	SetFlashRect(SfrMenu3do(), false);
 
@@ -1638,9 +1638,9 @@ void ScanSystem(void)
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
-	MenuState.InputFunc = DoScan;
+	menuState.InputFunc = DoScan;
 
-	DoInput(&MenuState, false);
+	DoInput(&menuState, false);
 
 	SetFlashRect(nullptr, false);
 
@@ -1659,7 +1659,7 @@ void ScanSystem(void)
 	eraseFrame = nullptr;
 }
 
-static void generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
+static void generateBioNode(SolarSystemState* system, Element* NodeElementPtr,
 							uint8_t* life_init_tab, uint16_t creatureType)
 {
 	uint16_t i {};
@@ -1752,8 +1752,8 @@ void GeneratePlanetSide(void)
 
 		while (num_nodes--)
 		{
-			ELEMENT* NodeElementPtr {};
-			NODE_INFO info;
+			Element* NodeElementPtr {};
+			SurfaceNode info;
 
 			if (isNodeRetrieved(&pSolarSysState->SysInfo.PlanetInfo,
 								scan, num_nodes))
@@ -1828,13 +1828,13 @@ void GeneratePlanetSide(void)
 	}
 }
 
-bool isNodeRetrieved(PLANET_INFO* planetInfo, uint8_t scanType, uint8_t nodeNr)
+bool isNodeRetrieved(PlanetData* planetInfo, uint8_t scanType, uint8_t nodeNr)
 {
 	return (planetInfo->ScanRetrieveMask[scanType] & ((uint32_t)1 << nodeNr))
 		!= 0;
 }
 
-uint16_t countNodesRetrieved(PLANET_INFO* planetInfo, uint8_t scanType)
+uint16_t countNodesRetrieved(PlanetData* planetInfo, uint8_t scanType)
 {
 	uint16_t count {};
 	uint32_t mask = planetInfo->ScanRetrieveMask[scanType];
@@ -1851,12 +1851,12 @@ uint16_t countNodesRetrieved(PLANET_INFO* planetInfo, uint8_t scanType)
 	return count;
 }
 
-void setNodeRetrieved(PLANET_INFO* planetInfo, uint8_t scanType, uint8_t nodeNr)
+void setNodeRetrieved(PlanetData* planetInfo, uint8_t scanType, uint8_t nodeNr)
 {
 	planetInfo->ScanRetrieveMask[scanType] |= ((uint32_t)1 << nodeNr);
 }
 
-void setNodeNotRetrieved(PLANET_INFO* planetInfo, uint8_t scanType, uint8_t nodeNr)
+void setNodeNotRetrieved(PlanetData* planetInfo, uint8_t scanType, uint8_t nodeNr)
 {
 	planetInfo->ScanRetrieveMask[scanType] &= ~((uint32_t)1 << nodeNr);
 }

@@ -29,7 +29,7 @@
 #include "../../controls.h"
 // for BATTLE_INPUT_STATE
 #include "../../races.h"
-// for STARSHIP
+// for Starship
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -46,8 +46,8 @@ size_t getNumNetConnections(void);
 typedef bool (*ForEachConnectionCallback)(NetConnection* conn, void* arg);
 bool forEachConnectedPlayer(ForEachConnectionCallback callback, void* arg);
 
-struct melee_state* NetMelee_getMeleeState(NetConnection* conn);
-struct BATTLE_STATE* NetMelee_getBattleState(NetConnection* conn);
+struct MeleeState* NetMelee_getMeleeState(NetConnection* conn);
+struct BattleState* NetMelee_getBattleState(NetConnection* conn);
 
 void netInput(void);
 void netInputBlocking(uint32_t timeoutMs);
@@ -60,10 +60,10 @@ void connectionsLocalReady(NetConnection_ReadyCallback callback, void* arg);
 bool allConnected(void);
 
 void initBattleStateDataConnections(void);
-void setBattleStateConnections(struct BATTLE_STATE* bs);
+void setBattleStateConnections(struct BattleState* bs);
 
 BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context,
-									  STARSHIP* StarShipPtr);
+									  Starship* StarShipPtr);
 
 NetConnection* openPlayerNetworkConnection(uint16_t player, void* extra);
 void closePlayerNetworkConnection(uint16_t player);

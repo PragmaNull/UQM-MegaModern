@@ -59,7 +59,7 @@ static constexpr auto PickshipTeamStartValueColor {BuildColor(MakeRgb15(0x04, 0x
 
 
 #ifdef NETPLAY
-static void reportShipSelected(GETMELEE_STATE* gms, uint16_t index);
+static void reportShipSelected(PickMeleeState* gms, uint16_t index);
 #endif
 
 
@@ -82,14 +82,14 @@ static uint8_t PickMelee_GetShipColumn(int index)
 }
 
 // Returns the <index>th ship in the queue, or 0 if it is not available.
-static HSTARSHIP MeleeShipByQueueIndex(const QUEUE* queue, uint16_t index)
+static HSTARSHIP MeleeShipByQueueIndex(const Queue* queue, uint16_t index)
 {
 	HSTARSHIP hShip {};
 	HSTARSHIP hNextShip {};
 
 	for (hShip = GetHeadLink(queue); hShip != 0; hShip = hNextShip)
 	{
-		const STARSHIP* StarShipPtr = LockStarShip(queue, hShip);
+		const Starship* StarShipPtr = LockStarShip(queue, hShip);
 		if (StarShipPtr->index == index)
 		{
 			hNextShip = hShip;
@@ -108,14 +108,14 @@ static HSTARSHIP MeleeShipByQueueIndex(const QUEUE* queue, uint16_t index)
 }
 
 // Returns the <index>th available ship in the queue.
-static HSTARSHIP MeleeShipByUsedIndex(const QUEUE* queue, uint16_t index)
+static HSTARSHIP MeleeShipByUsedIndex(const Queue* queue, uint16_t index)
 {
 	HSTARSHIP hShip {};
 	HSTARSHIP hNextShip {};
 
 	for (hShip = GetHeadLink(queue); hShip != 0; hShip = hNextShip)
 	{
-		const STARSHIP* StarShipPtr = LockStarShip(queue, hShip);
+		const Starship* StarShipPtr = LockStarShip(queue, hShip);
 		if ((StarShipPtr->SpeciesID != NO_ID) && index-- == 0)
 		{
 			UnlockStarShip(queue, hShip);
@@ -132,16 +132,16 @@ static HSTARSHIP MeleeShipByUsedIndex(const QUEUE* queue, uint16_t index)
 static uint16_t queueIndexFromShip (HSTARSHIP hShip)
 {
 	uint16_t result;
-	STARSHIP *StarShipPtr = LockStarShip (queue, hShip);
+	Starship *StarShipPtr = LockStarShip (queue, hShip);
 	result = StarShipPtr->index;
 	UnlockStarShip (queue, hShip);
 }
 #endif
 
 // Pre: called does not hold the graphics lock
-static void PickMelee_ChangedSelection(GETMELEE_STATE* gms, uint16_t playerI)
+static void PickMelee_ChangedSelection(PickMeleeState* gms, uint16_t playerI)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	r.corner.x = SafeX() + PickXOffs() + ((IconWidth() + ResScale(2)) * gms->player[playerI].col);
 	r.corner.y = SafeY() + PickYOffs() + ((IconHeight() + ResScale(2)) * gms->player[playerI].row) + ((1 - playerI) * PickSideOffs());
@@ -152,7 +152,7 @@ static void PickMelee_ChangedSelection(GETMELEE_STATE* gms, uint16_t playerI)
 }
 
 // Only returns false when there is no ship for the choice.
-bool setShipSelected(GETMELEE_STATE* gms, uint16_t playerI, uint16_t choice,
+bool setShipSelected(PickMeleeState* gms, uint16_t playerI, uint16_t choice,
 					 bool reportNetwork)
 {
 	HSTARSHIP ship {};
@@ -192,7 +192,7 @@ bool setShipSelected(GETMELEE_STATE* gms, uint16_t playerI, uint16_t choice,
 }
 
 // Returns false if aborted.
-static bool SelectShip_processInput(GETMELEE_STATE* gms, uint16_t playerI,
+static bool SelectShip_processInput(PickMeleeState* gms, uint16_t playerI,
 									BATTLE_INPUT_STATE inputState)
 {
 	if (inputState & BattleWeapon)
@@ -268,7 +268,7 @@ static bool SelectShip_processInput(GETMELEE_STATE* gms, uint16_t playerI,
 	return true;
 }
 
-bool selectShipHuman(HumanInputContext* context, GETMELEE_STATE* gms)
+bool selectShipHuman(HumanInputContext* context, PickMeleeState* gms)
 {
 	const BATTLE_INPUT_STATE inputState =
 		PulsedInputToBattleInput(context->playerNr);
@@ -278,7 +278,7 @@ bool selectShipHuman(HumanInputContext* context, GETMELEE_STATE* gms)
 
 static constexpr auto ComputerSelectionDelay {(c_gameSecond / 2)};
 
-bool selectShipComputer(ComputerInputContext* context, GETMELEE_STATE* gms)
+bool selectShipComputer(ComputerInputContext* context, PickMeleeState* gms)
 {
 	const TimeCount now = GetTimeCounter();
 	if (now < gms->player[context->playerNr].timeIn + ComputerSelectionDelay)
@@ -291,7 +291,7 @@ bool selectShipComputer(ComputerInputContext* context, GETMELEE_STATE* gms)
 }
 
 #ifdef NETPLAY
-bool selectShipNetwork(NetworkInputContext* context, GETMELEE_STATE* gms)
+bool selectShipNetwork(NetworkInputContext* context, PickMeleeState* gms)
 {
 	flushPacketQueues();
 	// Sets gms->player[context->playerNr].remoteSelected if input
@@ -312,7 +312,7 @@ bool selectShipNetwork(NetworkInputContext* context, GETMELEE_STATE* gms)
 // to the chosen (or randomly selected) ship, or to 0 if 'exit' has
 // been chosen.
 /* TODO: Include player timeouts */
-static bool DoGetMelee(GETMELEE_STATE* gms)
+static bool DoGetMelee(PickMeleeState* gms)
 {
 	bool done {};
 	uint16_t playerI {};
@@ -405,7 +405,7 @@ aborted:
 	return false;
 }
 
-static uint16_t GetRaceQueueValue(const QUEUE* queue)
+static uint16_t GetRaceQueueValue(const Queue* queue)
 {
 	HSTARSHIP hBattleShip {};
 	HSTARSHIP hNextShip {};
@@ -414,7 +414,7 @@ static uint16_t GetRaceQueueValue(const QUEUE* queue)
 	for (hBattleShip = GetHeadLink(queue);
 		 hBattleShip != 0; hBattleShip = hNextShip)
 	{
-		const STARSHIP* StarShipPtr = LockStarShip(queue, hBattleShip);
+		const Starship* StarShipPtr = LockStarShip(queue, hBattleShip);
 		hNextShip = _GetSuccLink(StarShipPtr);
 
 		if (StarShipPtr->SpeciesID == NO_ID)
@@ -436,7 +436,7 @@ static uint16_t GetRaceQueueValue(const QUEUE* queue)
 // Pre: caller holds the graphics lock.
 static void CrossOutShip(FRAME frame, uint16_t shipNr)
 {
-	STAMP s;
+	GfxStamp s;
 	const uint8_t row = PickMelee_GetShipRow(shipNr);
 	const uint8_t col = PickMelee_GetShipColumn(shipNr);
 
@@ -457,8 +457,8 @@ static void CrossOutShip(FRAME frame, uint16_t shipNr)
 // Pre: caller holds the graphics lock.
 static void UpdatePickMeleeFleetValue(FRAME frame, uint16_t which_player)
 {
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 
 	uint16_t value {GetRaceQueueValue(&race_q[which_player])};
 
@@ -501,7 +501,7 @@ static void UpdatePickMeleeFleetValue(FRAME frame, uint16_t which_player)
 // to be used when selecting the next ship to fight with.
 void BuildPickMeleeFrame(void)
 {
-	STAMP s;
+	GfxStamp s;
 	GFXCONTEXT OldContext = SetContext(OffScreenContext);
 
 	if (PickMeleeFrame)
@@ -536,9 +536,9 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 
 	for (uint16_t i {0}; i < NumSides; ++i)
 	{
-		GFXRECT r;
-		TEXT t;
-		STAMP s;
+		GfxRect r;
+		GfxText t;
+		GfxStamp s;
 
 		const uint16_t sideI {GetPlayerOrder(i)};
 		const uint16_t side {!sideI};
@@ -606,7 +606,7 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 				uint8_t captains_name_index {};
 
 				HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, StarShip)};
-				const MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
+				const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 
 				captains_name_index = NameCaptain(&race_q[side],
 												  MasterPtr->SpeciesID);
@@ -623,7 +623,7 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 				ship_cost = MasterPtr->ShipInfo.ship_cost;
 				UnlockMasterShip(&master_q, hMasterShip);
 
-				STARSHIP* BuiltShipPtr {LockStarShip(&race_q[side], hBuiltShip)};
+				Starship* BuiltShipPtr {LockStarShip(&race_q[side], hBuiltShip)};
 				BuiltShipPtr->index = index;
 				BuiltShipPtr->ship_cost = ship_cost;
 				BuiltShipPtr->playerNr = side;
@@ -651,7 +651,7 @@ void DestroyPickMeleeFrame(void)
 // Pre: caller holds the graphics lock.
 static void DrawPickMeleeFrame(uint16_t which_player)
 {
-	STAMP s;
+	GfxStamp s;
 
 	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	s.frame = SetAbsFrameIndex(PickMeleeFrame, which_player);
@@ -701,7 +701,7 @@ void MeleeGameOver(void)
 					 || GetTimeCounter() < TimeOut)));
 }
 
-void MeleeShipDeath(STARSHIP* ship)
+void MeleeShipDeath(Starship* ship)
 {
 	// Deactivate fleet position.
 	ship->SpeciesID = NO_ID;
@@ -715,7 +715,7 @@ void MeleeShipDeath(STARSHIP* ship)
 static bool GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 {
 	uint16_t playerI {};
-	GETMELEE_STATE gmstate;
+	PickMeleeState gmstate;
 	TimeCount now;
 
 #ifdef NETPLAY
@@ -925,7 +925,7 @@ bool GetNextMeleeStarShip(uint16_t which_player, HSTARSHIP* result)
 
 #ifdef NETPLAY
 // Called when a ship selection has arrived from a remote player.
-bool updateMeleeSelection(GETMELEE_STATE* gms, uint16_t playerI, uint16_t ship)
+bool updateMeleeSelection(PickMeleeState* gms, uint16_t playerI, uint16_t ship)
 {
 	if (gms == nullptr || !gms->player[playerI].selecting || gms->player[playerI].done)
 	{
@@ -947,7 +947,7 @@ bool updateMeleeSelection(GETMELEE_STATE* gms, uint16_t playerI, uint16_t ship)
 	return true;
 }
 
-static void reportShipSelected(GETMELEE_STATE* gms, uint16_t index)
+static void reportShipSelected(PickMeleeState* gms, uint16_t index)
 {
 	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
 	{

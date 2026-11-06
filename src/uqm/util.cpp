@@ -37,11 +37,11 @@
 #include "starmap.h"
 #include "uqm/random/UQMRandom.h"
 
-void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
+void DrawStarConBox(GfxRect* pRect, int16_t BorderWidth, Color TopLeftColor,
 					Color BottomRightColor, bool FillInterior, Color InteriorColor,
 					bool CreateCorners, Color CornerColor)
 {
-	GFXRECT locRect;
+	GfxRect locRect;
 	Color oldcolor;
 
 	BatchGraphics();
@@ -157,11 +157,11 @@ void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
 	UnbatchGraphics();
 }
 
-void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color, int type,
+void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, int type,
 					 int custom)
 {
 	int i {};
-	STAMP stamp;
+	GfxStamp stamp;
 	int16_t columns = r->extent.width;
 	int16_t rows = r->extent.height;
 
@@ -250,7 +250,7 @@ void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color, int type,
 
 void DrawBorderPadding(uint32_t videoWidth)
 {
-	GFXRECT r;
+	GfxRect r;
 	const uint16_t safe_x =
 		(videoWidth && videoWidth < 280 ? SafeNeg(4) * 2 : SafeX());
 
@@ -300,7 +300,7 @@ void DrawBorderPadding(uint32_t videoWidth)
 
 void DrawRadarBorder(void)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	if (IsPad())
 	{
@@ -337,9 +337,9 @@ uint32_t SeedRandomNumbers(void)
 	return (cur_time);
 }
 
-STAMP SaveContextFrame(const GFXRECT* saveRect)
+GfxStamp SaveContextFrame(const GfxRect* saveRect)
 {
-	STAMP s;
+	GfxStamp s;
 
 	if (saveRect)
 	{ // a portion of the context
@@ -356,11 +356,11 @@ STAMP SaveContextFrame(const GFXRECT* saveRect)
 	return s;
 }
 
-static void DrawPauseText(GFXRECT* rect)
+static void DrawPauseText(GfxRect* rect)
 {
-	TEXT text;
+	GfxText text;
 	Color OldColor;
-	GFXRECT block;
+	GfxRect block;
 
 	if (!strlen(GameString(QUITMENU_STRING_BASE + 4)))
 	{
@@ -399,12 +399,12 @@ static void DrawPauseText(GFXRECT* rect)
 
 bool PauseGame(void)
 {
-	GFXRECT r;
-	STAMP s;
-	STAMP saveStamp;
-	GFXRECT ctxRect;
-	GFXPOINT OldOrigin;
-	GFXRECT OldRect;
+	GfxRect r;
+	GfxStamp s;
+	GfxStamp saveStamp;
+	GfxRect ctxRect;
+	GfxPoint OldOrigin;
+	GfxRect OldRect;
 	Color OldColor;
 	DrawMode mode;
 	DrawMode oldMode;
@@ -643,7 +643,7 @@ void SleepGame(void)
  */
 uint32_t get_fuel_to_sol(void)
 {
-	GFXPOINT pt;
+	GfxPoint pt;
 
 	pt.x = LogxToUniverse(uqm::gameState().sis().log_x);
 	pt.y = LogyToUniverse(uqm::gameState().sis().log_y);
@@ -667,8 +667,8 @@ uint32_t get_fuel_to_sol(void)
 
 void DrawFlagStatDisplay(const char* str)
 {
-	TEXT t;
-	GFXRECT r;
+	GfxText t;
+	GfxRect r;
 
 	r.corner.x = ResScale(2);
 	r.corner.y = ResScale(20);

@@ -25,9 +25,9 @@
 
 constexpr auto ValidPrimType(auto pt) { return ((pt) < NUM_PRIMS); }
 
-struct BRESENHAM_LINE
+struct BresenhamLine
 {
-	GFXPOINT first, second;
+	GfxPoint first, second;
 	int16_t abs_delta_x, abs_delta_y;
 	int16_t error_term;
 	bool end_points_exchanged;
@@ -39,21 +39,21 @@ inline constexpr auto RomDrawable {0};
 inline constexpr auto RamDrawable {1};
 inline constexpr auto ScreenDrawable {2};
 
-struct frame_desc
+struct FrameDesc
 {
 	DRAWABLE_TYPE Type;
 	uint16_t Index;
 	HOT_SPOT HotSpot;
-	EXTENT Bounds;
+	GfxExtent Bounds;
 	TFB_Image* image;
-	struct drawable_desc* parent;
+	struct DrawableDesc* parent;
 };
 
-struct drawable_desc
+struct DrawableDesc
 {
 	CREATE_FLAGS Flags;
 	uint16_t MaxIndex;
-	uqstl::vector<FRAME_DESC> Frame;
+	uqstl::vector<FrameDesc> Frame;
 };
 
 constexpr auto GetFrameWidth(auto f) { return ((f)->Bounds.width); }
@@ -65,14 +65,14 @@ constexpr auto SetFrameBounds(auto f, auto w, auto h) { return ((f)->Bounds.widt
 extern DRAWABLE AllocDrawable(uint16_t num_frames);
 constexpr auto FreeDrawable(auto D) { return _ReleaseCelData(D); }
 
-struct IMAGE_BOX
+struct ImageBox
 {
-	GFXRECT Box;
+	GfxRect Box;
 	FRAME FramePtr;
 };
 
-extern INTERSECT_CODE _clip_line(const DRECT* pClipRect,
-								 BRESENHAM_LINE* pLine);
+extern INTERSECT_CODE _clip_line(const LargeRect* pClipRect,
+								 BresenhamLine* pLine);
 
 extern void* _GetCelData(const ResourceFile& resource);
 extern bool _ReleaseCelData(void* handle);
@@ -80,8 +80,8 @@ extern bool _ReleaseCelData(void* handle);
 extern FRAME _CurFramePtr;
 
 // ClipRect is relative to ctxOrigin
-extern void _text_blt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin);
-extern void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME repair, bool* skip);
-extern uint8_t _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap, FONT AltFontPtr, uqm::UniChar key);
+extern void _text_blt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin);
+extern void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FRAME repair, bool* skip);
+extern uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, uint8_t swap, FONT AltFontPtr, uqm::UniChar key);
 
 #endif /* LIBS_GRAPHICS_DRAWABLE_H_ */

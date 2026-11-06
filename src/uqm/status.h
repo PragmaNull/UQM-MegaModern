@@ -62,18 +62,18 @@ extern void InitStatusOffsets(void);
 extern void DrawCrewFuelString(int16_t y, int16_t state);
 extern void ClearShipStatus(int16_t y);
 extern void OutlineShipStatus(int16_t y);
-extern void InitShipStatus(SHIP_INFO* ShipInfoPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect, bool inMeleeMenu);
+extern void InitShipStatus(ShipInfoDesc* ShipInfoPtr, Starship* StarShipPtr, GfxRect* pClipRect, bool inMeleeMenu);
 // StarShipPtr or pClipRect can be nullptr
-extern void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
+extern void DeltaStatistics(ShipInfoDesc* ShipInfoPtr, int16_t y_offs,
 							int16_t crew_delta, int16_t energy_delta);
-extern void DrawBattleCrewAmount(SHIP_INFO* ShipInfoPtr, int16_t y_offs);
+extern void DrawBattleCrewAmount(ShipInfoDesc* ShipInfoPtr, int16_t y_offs);
 
-extern void DrawCaptainsWindow(STARSHIP* StarShipPtr);
-extern bool DeltaEnergy(ELEMENT* ElementPtr, int16_t energy_delta);
-extern bool DeltaCrew(ELEMENT* ElementPtr, int16_t crew_delta);
+extern void DrawCaptainsWindow(Starship* StarShipPtr);
+extern bool DeltaEnergy(Element* ElementPtr, int16_t energy_delta);
+extern bool DeltaCrew(Element* ElementPtr, int16_t crew_delta);
 
-extern void PreProcessStatus(ELEMENT* ShipPtr);
-extern void PostProcessStatus(ELEMENT* ShipPtr);
+extern void PreProcessStatus(Element* ShipPtr);
+extern void PostProcessStatus(Element* ShipPtr);
 
 #if 0 //defined(__cplusplus)
 }

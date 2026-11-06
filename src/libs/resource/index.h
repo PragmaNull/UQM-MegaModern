@@ -47,7 +47,7 @@ struct resource_desc
 	unsigned refcount;
 };
 
-struct resource_index_desc
+struct ResourceIndexDesc
 {
 	uqstl::unordered_map<uqstl::string, ResourceDesc*>* map;
 	size_t numRes;

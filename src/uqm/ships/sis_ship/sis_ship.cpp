@@ -95,9 +95,9 @@ static auto BlasterSpeedHd() { return ResScale(BlasterSpeed); }
 static auto BlasterSpeedBool() { return chooseIfHd(BlasterSpeed, BlasterSpeedHd()); }
 
 
-static RACE_DESC sis_desc =
+static RaceDesc sis_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "flagship",
 		 0,
 		 16, /* Super Melee cost */
@@ -108,7 +108,7 @@ static RACE_DESC sis_desc =
 		 NullResource,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			0, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
@@ -168,36 +168,36 @@ static RACE_DESC sis_desc =
 };
 
 // Private per-instance SIS data
-struct SIS_DATA
+struct FlagshipBattleData
 {
 	uint16_t num_trackers;
 	uint16_t num_blasters;
-	MISSILE_BLOCK MissileBlock[6];
+	MissileDesc MissileBlock[6];
 };
 
-static void InitWeaponSlots(RACE_DESC* RaceDescPtr,
+static void InitWeaponSlots(RaceDesc* RaceDescPtr,
 							const uint8_t* ModuleSlots);
-static void InitModuleSlots(RACE_DESC* RaceDescPtr,
+static void InitModuleSlots(RaceDesc* RaceDescPtr,
 							const uint8_t* ModuleSlots);
-static void InitDriveSlots(RACE_DESC* RaceDescPtr,
+static void InitDriveSlots(RaceDesc* RaceDescPtr,
 						   const uint8_t* DriveSlots);
-static void InitJetSlots(RACE_DESC* RaceDescPtr,
+static void InitJetSlots(RaceDesc* RaceDescPtr,
 						 const uint8_t* JetSlots);
-static void uninit_sis(RACE_DESC* pRaceDesc);
+static void uninit_sis(RaceDesc* pRaceDesc);
 
 
 // Local typedef
-typedef SIS_DATA CustomShipData_t;
+typedef FlagshipBattleData CustomShipData_t;
 
 // Retrieve race-specific ship data from a race desc
-static CustomShipData_t* GetCustomShipData(RACE_DESC* pRaceDesc)
+static CustomShipData_t* GetCustomShipData(RaceDesc* pRaceDesc)
 {
 	return (CustomShipData_t*)pRaceDesc->data;
 }
 
 // Set the race-specific data in a race desc
 // (Re)Allocates its own storage for the data.
-static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
+static void SetCustomShipData(RaceDesc* pRaceDesc, const CustomShipData_t* data)
 {
 	if (pRaceDesc->data == data)
 	{
@@ -216,13 +216,13 @@ static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data
 	}
 }
 
-static void sis_hyper_preprocess(ELEMENT* ElementPtr)
+static void sis_hyper_preprocess(Element* ElementPtr)
 {
 	int32_t udx = 0;
 	int32_t udy = 0;
 	int16_t dx = 0;
 	int16_t dy = 0;
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	if (ElementPtr->state_flags & Appearing)
 	{
@@ -266,7 +266,7 @@ LeaveAutoPilot:
 	else
 	{
 		int16_t facing {};
-		GFXPOINT universe;
+		GfxPoint universe;
 
 		universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
 		universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
@@ -402,9 +402,9 @@ LeaveAutoPilot:
 
 static constexpr auto MenuDelay {10};
 
-static void sis_hyper_postprocess(ELEMENT* ElementPtr)
+static void sis_hyper_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	uqm::flagship().velocity = ElementPtr->velocity;
 
@@ -418,9 +418,9 @@ static void sis_hyper_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void spawn_point_defense(ELEMENT* ElementPtr)
+static void spawn_point_defense(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (ElementPtr->state_flags & PlayerShip)
@@ -428,7 +428,7 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 		HELEMENT hDefense {AllocElement()};
 		if (hDefense)
 		{
-			ELEMENT* DefensePtr {};
+			Element* DefensePtr {};
 
 			LockElement(hDefense, &DefensePtr);
 			DefensePtr->playerNr = ElementPtr->playerNr;
@@ -445,7 +445,7 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 	else
 	{
 		HELEMENT hNextObject {};
-		ELEMENT* ShipPtr {};
+		Element* ShipPtr {};
 		Color LaserColor;
 		const static Color ColorRange[] =
 			{
@@ -465,7 +465,7 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 		LockElement(StarShipPtr->hShip, &ShipPtr);
 		for (HELEMENT hObject {GetTailElement()}; hObject; hObject = hNextObject)
 		{
-			ELEMENT* ObjectPtr {};
+			Element* ObjectPtr {};
 
 			LockElement(hObject, &ObjectPtr);
 			hNextObject = GetPredElement(ObjectPtr);
@@ -486,7 +486,7 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 				if ((uint16_t)delta_x <= LaserRange() && (uint16_t)delta_y <= LaserRange() && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LaserRange() * LaserRange())
 				{
 					HELEMENT hPointDefense {};
-					LASER_BLOCK LaserBlock;
+					LaserDesc LaserBlock;
 
 					if (!PaidFor)
 					{
@@ -520,7 +520,7 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 					hPointDefense = initialize_laser(&LaserBlock);
 					if (hPointDefense)
 					{
-						ELEMENT* PDPtr {};
+						Element* PDPtr {};
 
 						LockElement(hPointDefense, &PDPtr);
 						PDPtr->mass_points =
@@ -539,9 +539,9 @@ static void spawn_point_defense(ELEMENT* ElementPtr)
 	}
 }
 
-static void sis_battle_preprocess(ELEMENT* ElementPtr)
+static void sis_battle_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->RaceDescPtr->characteristics.special_energy_cost == 0)
@@ -557,9 +557,9 @@ static void sis_battle_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void sis_battle_postprocess(ELEMENT* ElementPtr)
+static void sis_battle_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
@@ -570,13 +570,13 @@ static void sis_battle_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void blaster_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void blaster_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							  Element* ElementPtr1, GfxPoint* pPt1)
 {
 	HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 	if (hBlastElement)
 	{
-		ELEMENT* BlastElementPtr {};
+		Element* BlastElementPtr {};
 
 		LockElement(hBlastElement, &BlastElementPtr);
 		switch (ElementPtr0->mass_points)
@@ -602,7 +602,7 @@ static void blaster_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void blaster_preprocess(ELEMENT* ElementPtr)
+static void blaster_preprocess(Element* ElementPtr)
 {
 	uint8_t wait {};
 
@@ -650,18 +650,18 @@ static void blaster_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t initialize_blasters(ELEMENT* ShipPtr, HELEMENT BlasterArray[])
+static uint16_t initialize_blasters(Element* ShipPtr, HELEMENT BlasterArray[])
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	const SIS_DATA* SisData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
+	const FlagshipBattleData* SisData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 
 	const uint8_t nt {(uint8_t)((4 - SisData->num_trackers) & 3)};
 
 	for (uint16_t i {0}; i < SisData->num_blasters; ++i)
 	{
-		MISSILE_BLOCK MissileBlock = SisData->MissileBlock[i];
+		MissileDesc MissileBlock = SisData->MissileBlock[i];
 
 		MissileBlock.cx = ShipPtr->next.location.x;
 		MissileBlock.cy = ShipPtr->next.location.y;
@@ -673,7 +673,7 @@ static uint16_t initialize_blasters(ELEMENT* ShipPtr, HELEMENT BlasterArray[])
 		BlasterArray[i] = initialize_missile(&MissileBlock);
 		if (BlasterArray[i])
 		{
-			ELEMENT* BlasterPtr {};
+			Element* BlasterPtr {};
 
 			LockElement(BlasterArray[i], &BlasterPtr);
 			BlasterPtr->collision_func = blaster_collision;
@@ -685,15 +685,15 @@ static uint16_t initialize_blasters(ELEMENT* ShipPtr, HELEMENT BlasterArray[])
 	return SisData->num_blasters;
 }
 
-static void sis_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 							 uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	const SIS_DATA* SisData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
+	const FlagshipBattleData* SisData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		if (StarShipPtr->RaceDescPtr->characteristics.special_energy_cost)
@@ -763,10 +763,10 @@ static void sis_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void InitWeaponSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
+static void InitWeaponSlots(RaceDesc* RaceDescPtr, const uint8_t* ModuleSlots)
 {
-	SIS_DATA* SisData = GetCustomShipData(RaceDescPtr);
-	MISSILE_BLOCK* lpMB = SisData->MissileBlock;
+	FlagshipBattleData* SisData = GetCustomShipData(RaceDescPtr);
+	MissileDesc* lpMB = SisData->MissileBlock;
 
 	SisData->num_blasters = 0;
 	for (uint16_t i {0}; i < NumModuleSlots; ++i)
@@ -850,9 +850,9 @@ static void InitWeaponSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
 	}
 }
 
-static void InitModuleSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
+static void InitModuleSlots(RaceDesc* RaceDescPtr, const uint8_t* ModuleSlots)
 {
-	SIS_DATA* SisData = GetCustomShipData(RaceDescPtr);
+	FlagshipBattleData* SisData = GetCustomShipData(RaceDescPtr);
 
 	RaceDescPtr->ship_info.max_crew = 0;
 	uint16_t num_trackers {0};
@@ -903,7 +903,7 @@ static void InitModuleSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
 	}
 }
 
-static void InitDriveSlots(RACE_DESC* RaceDescPtr, const uint8_t* DriveSlots)
+static void InitDriveSlots(RaceDesc* RaceDescPtr, const uint8_t* DriveSlots)
 {
 	// NB. RaceDescPtr->characteristics.max_thrust is already initialised.
 	RaceDescPtr->characteristics.thrust_wait = 0;
@@ -923,7 +923,7 @@ static void InitDriveSlots(RACE_DESC* RaceDescPtr, const uint8_t* DriveSlots)
 		* RaceDescPtr->characteristics.thrust_increment;
 }
 
-static void InitJetSlots(RACE_DESC* RaceDescPtr, const uint8_t* JetSlots)
+static void InitJetSlots(RaceDesc* RaceDescPtr, const uint8_t* JetSlots)
 {
 	for (uint16_t i {0}; i < NumJetSlots; ++i)
 	{
@@ -936,13 +936,13 @@ static void InitJetSlots(RACE_DESC* RaceDescPtr, const uint8_t* JetSlots)
 	}
 }
 
-RACE_DESC* init_sis(void)
+RaceDesc* init_sis(void)
 {
-	RACE_DESC* RaceDescPtr {};
+	RaceDesc* RaceDescPtr {};
 	uint16_t i {};
 	// The caller of this func will copy the struct
-	static RACE_DESC new_sis_desc;
-	SIS_DATA empty_data;
+	static RaceDesc new_sis_desc;
+	FlagshipBattleData empty_data;
 	memset(&empty_data, 0, sizeof(empty_data));
 
 	if (IsHd())
@@ -1036,7 +1036,7 @@ RACE_DESC* init_sis(void)
 	return (RaceDescPtr);
 }
 
-static void uninit_sis(RACE_DESC* pRaceDesc)
+static void uninit_sis(RaceDesc* pRaceDesc)
 {
 	if (!inHQSpace())
 	{

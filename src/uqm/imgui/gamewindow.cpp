@@ -37,9 +37,9 @@ struct GameView
 	uint16_t year {};
 	int16_t tickCount {};
 	int16_t dayInTicks {};
-	uqstl::vector<EVENT> events {};
+	uqstl::vector<GameEvent> events {};
 	FlagshipState flagship {};
-	SIS_STATE sis {};
+	FlagshipData sis {};
 };
 
 // Nullopt if no game runs.
@@ -270,7 +270,7 @@ void drawClock()
 		ImGui::TableSetupColumn("Date", ImGuiTableColumnFlags_WidthFixed, ImGui::GetFontSize() * 7.0f);
 		ImGui::TableSetupColumn("Event");
 		ImGui::TableHeadersRow();
-		for (const EVENT& event : view.events)
+		for (const GameEvent& event : view.events)
 		{
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
@@ -284,7 +284,7 @@ void drawClock()
 
 // An input for a SIS value that sets it when the player presses Enter.
 template <typename T>
-void drawSisValue(const char* label, T value, ImGuiDataType type, void (*set)(SIS_STATE&, T))
+void drawSisValue(const char* label, T value, ImGuiDataType type, void (*set)(FlagshipData&, T))
 {
 	T edited {value};
 	ImGui::SetNextItemWidth(ImGui::GetFontSize() * 10.0f);
@@ -303,16 +303,16 @@ void drawShip()
 	ImGui::Text("Activity: %s", activityText(view.activity).c_str());
 
 	ImGui::SeparatorText("Resources");
-	drawSisValue<uint32_t>("Resource units", view.sis.ResUnits, ImGuiDataType_U32, [](SIS_STATE& sis, uint32_t value) {
+	drawSisValue<uint32_t>("Resource units", view.sis.ResUnits, ImGuiDataType_U32, [](FlagshipData& sis, uint32_t value) {
 		sis.ResUnits = value;
 	});
-	drawSisValue<uint32_t>("Fuel (1/100 units)", view.sis.FuelOnBoard, ImGuiDataType_U32, [](SIS_STATE& sis, uint32_t value) {
+	drawSisValue<uint32_t>("Fuel (1/100 units)", view.sis.FuelOnBoard, ImGuiDataType_U32, [](FlagshipData& sis, uint32_t value) {
 		sis.FuelOnBoard = value;
 	});
-	drawSisValue<uint16_t>("Crew", view.sis.CrewEnlisted, ImGuiDataType_U16, [](SIS_STATE& sis, uint16_t value) {
+	drawSisValue<uint16_t>("Crew", view.sis.CrewEnlisted, ImGuiDataType_U16, [](FlagshipData& sis, uint16_t value) {
 		sis.CrewEnlisted = value;
 	});
-	drawSisValue<uint8_t>("Landers", view.sis.NumLanders, ImGuiDataType_U8, [](SIS_STATE& sis, uint8_t value) {
+	drawSisValue<uint8_t>("Landers", view.sis.NumLanders, ImGuiDataType_U8, [](FlagshipData& sis, uint8_t value) {
 		sis.NumLanders = value;
 	});
 	textDisabledWrapped("The status panel shows a new value when the game draws it again.");

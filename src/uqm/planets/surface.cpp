@@ -31,10 +31,10 @@ const PlanetFrame* PlanData;
 static constexpr auto MediumDepositThreshold {150};
 static constexpr auto LargeDepositThreshold {225};
 
-static uint16_t CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
-									NODE_INFO* info)
+static uint16_t CalcMineralDeposits(const SolarSystemInfo* SysInfoPtr, uint16_t which_deposit,
+									SurfaceNode* info)
 {
-	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
+	const ElementDeposit* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
 	uint16_t num_deposits {0};
 	uint8_t j {NumUsefulElements};
 	do
@@ -68,7 +68,7 @@ static uint16_t CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whic
 			// number of deposit nodes on the surface. In that case we
 			// don't need to use the PartiallyScavengedList
 			// since the amount of minerals in that node is not stored yet.
-			// (AND we cannot use the list since accessing element 65535
+			// (AND we cannot use the list since accessing Element 65535
 			// would crash the game ;)
 			else
 			{
@@ -119,10 +119,10 @@ static uint16_t CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whic
 //   for whichLife==~0 : the number of nodes generated
 //   for whichLife<32  : the index of the last node (no known usage exists)
 // Sets the SysGenRNG to the required state first.
-uint16_t GenerateMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whichDeposit,
-								 NODE_INFO* info)
+uint16_t GenerateMineralDeposits(const SolarSystemInfo* SysInfoPtr, uint16_t whichDeposit,
+								 SurfaceNode* info)
 {
-	NODE_INFO temp_info;
+	SurfaceNode temp_info;
 	if (!info) // user not interested in info but we need space for it
 	{
 		info = &temp_info;
@@ -133,8 +133,8 @@ uint16_t GenerateMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whichDe
 
 static constexpr auto MinLifeChance {10};
 
-static uint16_t CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
-							  NODE_INFO* info)
+static uint16_t CalcLifeForms(const SolarSystemInfo* SysInfoPtr, uint16_t which_life,
+							  SurfaceNode* info)
 {
 	uint16_t num_life_forms {0};
 	if (Plansize(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != GAS_GIANT)
@@ -188,10 +188,10 @@ static uint16_t CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life
 //   for whichLife==~0 : the number of lifeforms generated
 //   for whichLife<32  : the index of the last lifeform (no known usage exists)
 // Sets the SysGenRNG to the required state first.
-uint16_t GenerateLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t whichLife,
-						   NODE_INFO* info)
+uint16_t GenerateLifeForms(const SolarSystemInfo* SysInfoPtr, uint16_t whichLife,
+						   SurfaceNode* info)
 {
-	NODE_INFO temp_info;
+	SurfaceNode temp_info;
 	if (!info) // user not interested in info but we need space for it
 	{
 		info = &temp_info;
@@ -205,11 +205,11 @@ uint16_t GenerateLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t whichLife,
 //   for whichLife<32  : the index of the last lifeform (no known usage exists)
 // Sets the SysGenRNG to the required state first.
 // lifeTypes[] is terminated with -1
-uint16_t GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
-							uint16_t whichLife, NODE_INFO* info)
+uint16_t GeneratePresetLife(const SolarSystemInfo* SysInfoPtr, const int8_t* lifeTypes,
+							uint16_t whichLife, SurfaceNode* info)
 {
 	uint16_t i {};
-	NODE_INFO temp_info;
+	SurfaceNode temp_info;
 
 	if (!info) // user not interested in info but we need space for it
 	{
@@ -277,7 +277,7 @@ static int16_t scaleMapHeight(int16_t value)
 	return ResScale((int16_t)(value * percentage));
 }
 
-void GenerateRandomLocation(GFXPOINT* loc)
+void GenerateRandomLocation(GfxPoint* loc)
 {
 	uint16_t rand_val {};
 
@@ -291,11 +291,11 @@ void GenerateRandomLocation(GFXPOINT* loc)
 //   for whichNode==~0 : the number of nodes generated
 //   for whichNode<32  : the index of the last node (no known usage exists)
 // Sets the SysGenRNG to the required state first.
-uint16_t GenerateRandomNodes(const SYSTEM_INFO* SysInfoPtr, uint16_t scan, uint16_t numNodes,
-							 uint16_t type, uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateRandomNodes(const SolarSystemInfo* SysInfoPtr, uint16_t scan, uint16_t numNodes,
+							 uint16_t type, uint16_t whichNode, SurfaceNode* info)
 {
 	uint16_t i {};
-	NODE_INFO temp_info;
+	SurfaceNode temp_info;
 
 	if (!info) // user not interested in info but we need space for it
 	{
@@ -321,11 +321,11 @@ uint16_t GenerateRandomNodes(const SYSTEM_INFO* SysInfoPtr, uint16_t scan, uint1
 	return i;
 }
 
-uint16_t CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
-							   NODE_INFO* info, uint16_t numNodes, uint16_t type, uint8_t quality)
+uint16_t CustomMineralDeposits(const SolarSystemInfo* SysInfoPtr, uint16_t which_deposit,
+							   SurfaceNode* info, uint16_t numNodes, uint16_t type, uint8_t quality)
 {
 	bool OpenSeason = true;
-	NODE_INFO temp_info;
+	SurfaceNode temp_info;
 
 	if (!info) // user not interested in info but we need space for it
 	{
@@ -334,7 +334,7 @@ uint16_t CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_dep
 
 	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
 
-	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
+	const ElementDeposit* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
 	uint16_t num_deposits {0};
 	uint8_t j {NumUsefulElements};
 	do
@@ -381,7 +381,7 @@ uint16_t CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_dep
 			// function is being called only to count the number of deposit nodes on the
 			// surface. In that case we don't need to use the PartiallyScavengedList
 			// since the amount of minerals in that node is not stored yet.
-			// (AND we cannot use the list since accessing element 65535 would crash the game ;)
+			// (AND we cannot use the list since accessing Element 65535 would crash the game ;)
 			else
 			{
 				temp_deposit_quality = deposit_quality_fine;
@@ -426,8 +426,8 @@ uint16_t CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_dep
 	return num_deposits;
 }
 
-uint16_t CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
-							  GFXPOINT location)
+uint16_t CustomMineralDeposit(SurfaceNode* info, uint16_t type, uint8_t quality,
+							  GfxPoint location)
 {
 	uint16_t deposit_quality_fine {};
 	uint16_t deposit_quality_gross {};

@@ -51,13 +51,13 @@ static bool PointOnScreen(int32_t x, int32_t y)
 			&& (y + extend) >= 0 && y <= SisScreenHeight());
 }
 
-static bool DPointOnScreen(DPOINT* p)
+static bool DPointOnScreen(LargePoint* p)
 {
 	return (p->x >= 0 && p->x <= SisScreenWidth()
 			&& p->y >= 0 && p->y <= SisScreenHeight());
 }
 
-static void TruncateDPoint(DPOINT* p)
+static void TruncateDPoint(LargePoint* p)
 {
 	if (p->x > 32767)
 	{
@@ -89,9 +89,9 @@ static void TruncateDPoint(DPOINT* p)
 // through ellipse equation. If radius > 1 - point is outside of the ellipse, and if < 1 - inside. In case if one point is inside and the other is
 // outside - then the diagonal crosses the curve somewhere on the screen, therefore the curve is visible. Otherwise, if both points are
 // inside/outside, then the curve is not on screen.
-static uint8_t CheckOvalCollision(DPOINT* p0, DPOINT* p1)
+static uint8_t CheckOvalCollision(LargePoint* p0, LargePoint* p1)
 {
-	DPOINT mp; // Middle point
+	LargePoint mp; // Middle point
 	uint8_t quad_visible = 0;
 	int32_t y1 {}; // Coords of top left and bottom right corners of inner rect
 	double asquared {NAN};
@@ -246,11 +246,11 @@ static uint8_t CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 }
 
 //static uint8_t
-//CheckOvalCollisionOld (GFXPOINT *ch_one, GFXPOINT *ch_two)
+//CheckOvalCollisionOld (GfxPoint *ch_one, GfxPoint *ch_two)
 //{
-//	GFXPOINT mp;
-//	BRESENHAM_LINE ClipLine;
-//	GFXRECT ClipRect;
+//	GfxPoint mp;
+//	BresenhamLine ClipLine;
+//	GfxRect ClipRect;
 //	uint8_t quad_visible = 0;
 //
 //	ClipRect.corner.x = ClipRect.corner.y = 0;
@@ -269,7 +269,7 @@ static uint8_t CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.first.y = ch_one->y;
 //		ClipLine.second.x = ch_two->x;
 //		ClipLine.second.y = mp.y;
-//		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
+//		if (_clip_line ((LargeRect *)&ClipRect, &ClipLine))
 //			quad_visible |= FirstQuad;
 //	}
 //
@@ -282,7 +282,7 @@ static uint8_t CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.first.y = ch_one->y;
 //		ClipLine.second.x = ch_one->x;
 //		ClipLine.second.y = mp.y;
-//		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
+//		if (_clip_line ((LargeRect *)&ClipRect, &ClipLine))
 //			quad_visible |= SecondQuad;
 //	}
 //
@@ -295,7 +295,7 @@ static uint8_t CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.first.y = ch_two->y;
 //		ClipLine.second.x = ch_one->x;
 //		ClipLine.second.y = mp.y;
-//		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
+//		if (_clip_line ((LargeRect *)&ClipRect, &ClipLine))
 //			quad_visible |= ThirdQuad;
 //	}
 //
@@ -308,14 +308,14 @@ static uint8_t CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.first.y = ch_two->y;
 //		ClipLine.second.x = ch_two->x;
 //		ClipLine.second.y = mp.y;
-//		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
+//		if (_clip_line ((LargeRect *)&ClipRect, &ClipLine))
 //			quad_visible |= FourthQuad;
 //	}
 //
 //	return quad_visible;
 //}
 
-void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
+void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 {
 	int16_t x {};
 	int16_t y {};
@@ -323,9 +323,9 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 	int16_t B {};
 	int64_t TwoAsquared {};
 	int64_t dy {};
-	PRIMITIVE prim[NumQuads];
-	DPOINT p0;
-	DPOINT p1;
+	Primitive prim[NumQuads];
+	LargePoint p0;
+	LargePoint p1;
 	const bool use_pointprim = (!scaled && num_off_pixels <= 1);
 	uint8_t render {};
 
@@ -336,7 +336,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 	// Kruzen: adapted from the original code. If rect is defined incorrectly - make it flat as a pancake and draw a line.
 	if (p1.x <= p0.x || p1.y <= p0.y)
 	{
-		LINE corners;
+		GfxLine corners;
 
 		if (p1.x < p0.x)
 		{
@@ -776,7 +776,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 	}
 }
 
-void DrawFilledOval(DRECT* pRect)
+void DrawFilledOval(LargeRect* pRect)
 { // Kruzen: originally there was standard rect, but drawing fuel circle in HdResolutionFactor on max zoom causes overflow (Width ~65k)
 	// So unless we want to expand standard rect to support 4 bytes per dimension - use this
 	int16_t x {};
@@ -785,11 +785,11 @@ void DrawFilledOval(DRECT* pRect)
 	int16_t B {};
 	int64_t TwoAsquared {};
 	int64_t dy {};
-	PRIMITIVE prim[NumQuads >> 1];
-	GFXPOINT first;
-	GFXPOINT second;
-	DPOINT p0;
-	DPOINT p1;
+	Primitive prim[NumQuads >> 1];
+	GfxPoint first;
+	GfxPoint second;
+	LargePoint p0;
+	LargePoint p1;
 	uint16_t lines_r = 0;
 
 	p0.x = pRect->corner.x;
@@ -799,7 +799,7 @@ void DrawFilledOval(DRECT* pRect)
 	// Kruzen: adapted from the original code. If rect is defined incorrectly - make it flat as a pancake and draw a line.
 	if (p1.x <= p0.x || p1.y <= p0.y)
 	{
-		LINE corners;
+		GfxLine corners;
 
 		if (p1.x < p0.x)
 		{
@@ -959,8 +959,8 @@ void DrawFilledOval(DRECT* pRect)
 
 void DrawEllipseQuadrants(int cx, int cy, int x, int y, int shear, int filled)
 {
-	GFXPOINT p;
-	LINE l;
+	GfxPoint p;
+	GfxLine l;
 
 	if (filled && y != 0)
 	{
@@ -1021,7 +1021,7 @@ void DrawEllipse(int cx, int cy, int rx, int ry, int shear, int filled, int dott
 	}
 	if (!rx || !ry)
 	{
-		LINE l;
+		GfxLine l;
 		l.first.x = cx - rx;
 		l.first.y = cy - ry - shear;
 		l.second.x = cx + rx;

@@ -35,9 +35,9 @@ static constexpr auto SpecialWait {0};
 
 static constexpr auto ShipMass {0};
 
-static RACE_DESC probe_desc =
+static RaceDesc probe_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "urquanprobe",
 		 0,
 		 0, /* Super Melee cost */
@@ -48,7 +48,7 @@ static RACE_DESC probe_desc =
 		 UrquanDroneMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			0, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
@@ -107,9 +107,9 @@ static RACE_DESC probe_desc =
 		0, /* CodeRef */
 };
 
-RACE_DESC* init_probe(void)
+RaceDesc* init_probe(void)
 {
-	RACE_DESC* RaceDescPtr {&probe_desc};
+	RaceDesc* RaceDescPtr {&probe_desc};
 
 	return (RaceDescPtr);
 }

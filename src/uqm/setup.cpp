@@ -66,7 +66,7 @@ FONT LabelFont;
 FONT SlabFont;
 FONT SquareFont;
 FONT PlayMenuFont;
-QUEUE race_q[NumPlayers];
+Queue race_q[NumPlayers];
 FRAME ActivityFrame;
 FRAME StatusFrame;
 FRAME SubmenuFrame;
@@ -79,7 +79,7 @@ FRAME HDBorderFrame;
 FRAME CustBevelFrame;
 FRAME DefBevelFrame;
 uqm::StringTablePtr GameStrings {};
-QUEUE disp_q;
+Queue disp_q;
 
 bool solTexturesPresent;
 bool SyreenVoiceFix;
@@ -260,7 +260,7 @@ bool LoadKernel(int argc, char* argv[])
 
 bool InitContexts(void)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	StatusContext = CreateContext("StatusContext");
 	if (StatusContext == nullptr)
@@ -292,7 +292,7 @@ bool InitContexts(void)
 	}
 	AdvanceLoadProgress();
 
-	if (!InitQueue(&disp_q, MaxDisplayElements, sizeof(ELEMENT)))
+	if (!InitQueue(&disp_q, MaxDisplayElements, sizeof(Element)))
 	{
 		return false;
 	}
@@ -305,7 +305,7 @@ static bool InitKernel(void)
 {
 	for (uint16_t counter {0}; counter < NumPlayers; ++counter)
 	{
-		InitQueue(&race_q[counter], MaxShipsPerSide, sizeof(STARSHIP));
+		InitQueue(&race_q[counter], MaxShipsPerSide, sizeof(Starship));
 	}
 
 	StarConFont = LoadFont(StarconFontRes);

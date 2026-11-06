@@ -26,7 +26,7 @@
 #include "uqm/lua/UQMLua.h"
 
 
-static LOCDATA arilou_desc =
+static ConversationData arilou_desc =
 	{
 		ARILOU_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -898,7 +898,7 @@ static void post_arilou_enc(void)
 	}
 }
 
-LOCDATA* init_arilou_comm(void)
+ConversationData* init_arilou_comm(void)
 {
 	arilou_desc.init_encounter_func = Intro;
 	arilou_desc.post_encounter_func = post_arilou_enc;
@@ -920,7 +920,7 @@ LOCDATA* init_arilou_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&arilou_desc};
+	ConversationData* retval {&arilou_desc};
 
 	return (retval);
 }

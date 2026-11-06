@@ -17,7 +17,7 @@
 #include "uqm/state.h"
 #include <cstdint>
 
-struct star_desc;
+struct StarDesc;
 
 namespace uqm
 {
@@ -25,12 +25,12 @@ namespace uqm
 class GameState
 {
 public:
-	[[nodiscard]] SIS_STATE& sis() noexcept
+	[[nodiscard]] FlagshipData& sis() noexcept
 	{
 		return m_sis;
 	}
 
-	[[nodiscard]] GAME_STATE& game() noexcept
+	[[nodiscard]] GameData& game() noexcept
 	{
 		return m_game;
 	}
@@ -46,7 +46,7 @@ public:
 	}
 
 	// One of the files StarinfoFile, RandgrpinfoFile and DefgrpinfoFile.
-	[[nodiscard]] GAME_STATE_FILE& stateFile(int index) noexcept
+	[[nodiscard]] GameStateFile& stateFile(int index) noexcept
 	{
 		return m_stateFiles[index];
 	}
@@ -83,20 +83,20 @@ public:
 	}
 
 	// The star system that the flagship is in or last visited, or nullptr. It points into star_array.
-	[[nodiscard]] star_desc*& currentStar() noexcept
+	[[nodiscard]] StarDesc*& currentStar() noexcept
 	{
 		return m_currentStar;
 	}
 
 private:
-	SIS_STATE m_sis {};
-	GAME_STATE m_game {};
+	FlagshipData m_sis {};
+	GameData m_game {};
 	GameClock m_clock {};
 	FlagshipState m_flagship {};
-	uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> m_stateFiles {MakeStateFiles()};
+	uqstl::array<GameStateFile, NUM_STATE_FILES> m_stateFiles {MakeStateFiles()};
 	uqstl::array<uint32_t, c_gameFlagCount> m_flagValues {};
 	uqstl::map<uqstl::string, uint32_t, uqstl::less<>> m_otherFlags {};
-	star_desc* m_currentStar {};
+	StarDesc* m_currentStar {};
 	GameSeed m_seed {};
 };
 

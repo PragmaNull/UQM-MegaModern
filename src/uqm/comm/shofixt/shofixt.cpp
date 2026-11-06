@@ -25,7 +25,7 @@
 #include "uqm/races.h"
 
 
-static LOCDATA shofixti_desc =
+static ConversationData shofixti_desc =
 	{
 		SHOFIXTI_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -667,7 +667,7 @@ static void post_shofixti_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_shofixti_comm(void)
+ConversationData* init_shofixti_comm(void)
 {
 	shofixti_desc.init_encounter_func = Intro;
 	shofixti_desc.post_encounter_func = post_shofixti_enc;
@@ -688,7 +688,7 @@ LOCDATA* init_shofixti_comm(void)
 
 	setSegue(Segue_peace);
 
-	LOCDATA* retval {&shofixti_desc};
+	ConversationData* retval {&shofixti_desc};
 
 	return (retval);
 }

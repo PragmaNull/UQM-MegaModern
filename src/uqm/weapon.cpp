@@ -36,8 +36,8 @@
 
 // A wrapper function for weapon_collision that discards the return value.
 // This makes its signature match ElementCollisionFunc.
-static void weapon_collision_cb(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
-								ELEMENT* HitElementPtr, GFXPOINT* pHPt)
+static void weapon_collision_cb(Element* WeaponElementPtr, GfxPoint* pWPt,
+								Element* HitElementPtr, GfxPoint* pHPt)
 {
 	weapon_collision(WeaponElementPtr, pWPt, HitElementPtr, pHPt);
 }
@@ -45,12 +45,12 @@ static void weapon_collision_cb(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 
 static constexpr auto LaserLife {1};
 
-HELEMENT initialize_laser(LASER_BLOCK* pLaserBlock)
+HELEMENT initialize_laser(LaserDesc* pLaserBlock)
 {
 	HELEMENT hLaserElement {AllocElement()};
 	if (hLaserElement)
 	{
-		ELEMENT* LaserElementPtr {};
+		Element* LaserElementPtr {};
 
 		LockElement(hLaserElement, &LaserElementPtr);
 		LaserElementPtr->playerNr = pLaserBlock->sender;
@@ -84,7 +84,7 @@ HELEMENT initialize_laser(LASER_BLOCK* pLaserBlock)
 	return (hLaserElement);
 }
 
-HELEMENT initialize_missile(MISSILE_BLOCK* pMissileBlock)
+HELEMENT initialize_missile(MissileDesc* pMissileBlock)
 {
 	HELEMENT hMissileElement {AllocElement()};
 	if (hMissileElement)
@@ -92,7 +92,7 @@ HELEMENT initialize_missile(MISSILE_BLOCK* pMissileBlock)
 		int16_t delta_x {};
 		int16_t delta_y {};
 		uint16_t angle {};
-		ELEMENT* MissileElementPtr {};
+		Element* MissileElementPtr {};
 
 		LockElement(hMissileElement, &MissileElementPtr);
 		MissileElementPtr->hit_points = (uint8_t)pMissileBlock->hit_points;
@@ -129,8 +129,8 @@ HELEMENT initialize_missile(MISSILE_BLOCK* pMissileBlock)
 	return (hMissileElement);
 }
 
-HELEMENT weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
-						  ELEMENT* HitElementPtr, GFXPOINT* pHPt)
+HELEMENT weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
+						  Element* HitElementPtr, GfxPoint* pHPt)
 {
 	int16_t damage {};
 	HELEMENT hBlastElement {};
@@ -193,7 +193,7 @@ HELEMENT weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 			uint16_t blast_index {};
 			int16_t blast_offs {};
 			uint16_t num_blast_frames {};
-			ELEMENT* BlastElementPtr {};
+			Element* BlastElementPtr {};
 			extern FRAME blast[];
 
 			PutElement(hBlastElement);
@@ -251,14 +251,14 @@ HELEMENT weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 	return ((HELEMENT)0);
 }
 
-FRAME ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
+FRAME ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
 					   uint8_t modify_flags)
 {
-	GFXRECT r {};
-	GFXRECT originalRect {};
-	INTERSECT_CONTROL ShipIntersect;
-	INTERSECT_CONTROL ObjectIntersect;
-	STARSHIP* StarShipPtr {};
+	GfxRect r {};
+	GfxRect originalRect {};
+	IntersectInfo ShipIntersect;
+	IntersectInfo ObjectIntersect;
+	Starship* StarShipPtr {};
 	GFXCONTEXT OldContext {};
 
 	FRAME f {0};
@@ -323,10 +323,10 @@ FRAME ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
 // -1 if no target was found.
 // Cloaked ships won't be detected, except when the Appearing flag is
 // set for the Tracker.
-int16_t TrackShip(ELEMENT* Tracker, uint16_t* pfacing)
+int16_t TrackShip(Element* Tracker, uint16_t* pfacing)
 {
 	HELEMENT hNextShip {};
-	ELEMENT* Trackee {};
+	Element* Trackee {};
 
 	int16_t best_delta {0};
 	int16_t best_delta_facing {-1};
@@ -350,7 +350,7 @@ int16_t TrackShip(ELEMENT* Tracker, uint16_t* pfacing)
 				|| ((Tracker->state_flags & PlayerShip)
 					&& (Tracker->state_flags & Appearing))))
 		{
-			STARSHIP* StarShipPtr; // NOLINT(cppcoreguidelines-init-variables)
+			Starship* StarShipPtr; // NOLINT(cppcoreguidelines-init-variables)
 
 CheckTracking:
 			GetElementStarShip(Trackee, &StarShipPtr);

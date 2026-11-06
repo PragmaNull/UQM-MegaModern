@@ -26,32 +26,32 @@ inline constexpr auto MaxUnicode {0xFFFF};
 
 inline constexpr auto CharacterPageMask {0xfffff800};
 
-struct FONT_PAGE
+struct FontPage
 {
-	struct FONT_PAGE* next;
+	struct FontPage* next;
 	uqm::UniChar pageStart;
 	uqm::UniChar firstChar;
 	size_t numChars;
 	uqstl::vector<TFB_Char> charDesc;
 };
 
-static inline FONT_PAGE* AllocFontPage(int numChars)
+static inline FontPage* AllocFontPage(int numChars)
 {
-	auto* result {new FONT_PAGE {}};
+	auto* result {new FontPage {}};
 	result->charDesc.assign(numChars, TFB_Char {});
 	return result;
 }
 
-static inline void FreeFontPage(FONT_PAGE* page)
+static inline void FreeFontPage(FontPage* page)
 {
 	delete page;
 }
 
-struct font_desc
+struct FontDesc
 {
 	uint8_t Leading;
-	FONT_PAGE* fontPages;
-	EXTENT disp;
+	FontPage* fontPages;
+	GfxExtent disp;
 	uint8_t CharSpace;
 	uint8_t KernAmount;
 	uint8_t KernTab[MaxUnicode];

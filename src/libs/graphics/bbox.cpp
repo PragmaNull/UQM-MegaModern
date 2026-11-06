@@ -34,7 +34,7 @@ void TFB_BBox_Reset(void)
 	TFB_BBox.valid = 0;
 }
 
-void TFB_BBox_SetClipRect(const GFXRECT* r)
+void TFB_BBox_SetClipRect(const GfxRect* r)
 {
 	if (!r)
 	{ /* No clipping -- full rect */
@@ -131,9 +131,9 @@ void TFB_BBox_RegisterPoint(int x, int y)
 	}
 }
 
-void TFB_BBox_RegisterRect(const GFXRECT* r)
+void TFB_BBox_RegisterRect(const GfxRect* r)
 {
-	/* GFXRECT will still register as a corner point of the cliprect even
+	/* GfxRect will still register as a corner point of the cliprect even
 	 * if it does not intersect with the cliprect at all. This is not
 	 * a problem, as more is not less. */
 	TFB_BBox_RegisterPoint(r->corner.x, r->corner.y);
@@ -143,7 +143,7 @@ void TFB_BBox_RegisterRect(const GFXRECT* r)
 
 void TFB_BBox_RegisterCanvas(TFB_Canvas c, int x, int y)
 {
-	GFXRECT r;
+	GfxRect r;
 	r.corner.x = x;
 	r.corner.y = y;
 	TFB_DrawCanvas_GetExtent(c, &r.extent);

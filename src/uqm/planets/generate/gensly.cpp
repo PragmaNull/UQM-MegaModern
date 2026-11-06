@@ -23,11 +23,11 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateSlylandro_generateName(const SOLARSYS_STATE*,
-										   const PLANET_DESC* world);
-static bool GenerateSlylandro_generateOrbital(SOLARSYS_STATE* solarSys,
-											  PLANET_DESC* world);
+static bool GenerateSlylandro_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateSlylandro_generateName(const SolarSystemState*,
+										   const SystemPlanet* world);
+static bool GenerateSlylandro_generateOrbital(SolarSystemState* solarSys,
+											  SystemPlanet* world);
 
 
 const GenerateFunctions generateSlylandroFunctions = {
@@ -47,10 +47,10 @@ const GenerateFunctions generateSlylandroFunctions = {
 };
 
 
-static bool GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSlylandro_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -70,8 +70,8 @@ static bool GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
-										   const PLANET_DESC* world)
+static bool GenerateSlylandro_generateName(const SolarSystemState* solarSys,
+										   const SystemPlanet* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -79,7 +79,7 @@ static bool GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
 		&& uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_HOME_VISITS))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const SystemPlanet pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
@@ -91,8 +91,8 @@ static bool GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateSlylandro_generateOrbital(SOLARSYS_STATE* solarSys,
-											  PLANET_DESC* world)
+static bool GenerateSlylandro_generateOrbital(SolarSystemState* solarSys,
+											  SystemPlanet* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

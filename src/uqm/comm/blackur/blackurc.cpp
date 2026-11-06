@@ -21,7 +21,7 @@
 #include "strings.h"
 #include "uqm/lua/UQMLua.h"
 
-static LOCDATA blackurq_desc =
+static ConversationData blackurq_desc =
 	{
 		BLACKURQ_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -588,7 +588,7 @@ static void post_blackurq_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_blackurq_comm(void)
+ConversationData* init_blackurq_comm(void)
 {
 	blackurq_desc.init_encounter_func = Intro;
 	blackurq_desc.post_encounter_func = post_blackurq_enc;
@@ -609,7 +609,7 @@ LOCDATA* init_blackurq_comm(void)
 	{
 		setSegue(Segue_peace);
 	}
-	LOCDATA* retval {&blackurq_desc};
+	ConversationData* retval {&blackurq_desc};
 
 	return (retval);
 }

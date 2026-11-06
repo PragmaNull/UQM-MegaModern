@@ -110,7 +110,7 @@ static FlashContext* Flash_create(GFXCONTEXT gfxContext)
 // 'startNumer / denom' is the brightness in the start state of the sequence.
 // 'endNumer / denom' is the brightness in the end state of the sequence.
 // These numbers are relative to the brighness of the original image.
-FlashContext* Flash_createHighlight(GFXCONTEXT gfxContext, const GFXRECT* rect)
+FlashContext* Flash_createHighlight(GFXCONTEXT gfxContext, const GfxRect* rect)
 {
 	FlashContext* context = Flash_create(gfxContext);
 
@@ -132,7 +132,7 @@ FlashContext* Flash_createHighlight(GFXCONTEXT gfxContext, const GFXRECT* rect)
 	return context;
 }
 
-FlashContext* Flash_createTransition(GFXCONTEXT gfxContext, const GFXPOINT* origin,
+FlashContext* Flash_createTransition(GFXCONTEXT gfxContext, const GfxPoint* origin,
 									 FRAME first, FRAME final)
 {
 	FlashContext* context = Flash_create(gfxContext);
@@ -147,7 +147,7 @@ FlashContext* Flash_createTransition(GFXCONTEXT gfxContext, const GFXPOINT* orig
 	return context;
 }
 
-FlashContext* Flash_createOverlay(GFXCONTEXT gfxContext, const GFXPOINT* origin, FRAME overlay)
+FlashContext* Flash_createOverlay(GFXCONTEXT gfxContext, const GfxPoint* origin, FRAME overlay)
 {
 	FlashContext* context = Flash_create(gfxContext);
 
@@ -446,7 +446,7 @@ static void Flash_clearCache(FlashContext* context)
 	}
 }
 
-void Flash_setRect(FlashContext* context, const GFXRECT* rect)
+void Flash_setRect(FlashContext* context, const GfxRect* rect)
 {
 	assert(context->type == FlashType_highlight);
 
@@ -466,7 +466,7 @@ void Flash_setRect(FlashContext* context, const GFXRECT* rect)
 	}
 }
 
-void Flash_getRect(FlashContext* context, GFXRECT* rect)
+void Flash_getRect(FlashContext* context, GfxRect* rect)
 {
 	//assert (!context->type == FlashType_highlight); <-- original expression. hmmm
 	assert(context->type != FlashType_highlight);
@@ -477,7 +477,7 @@ void Flash_getRect(FlashContext* context, GFXRECT* rect)
 // JMS_GFX: The cleanup boolean can be used when changing between normal and hi-res modes.
 // It ensures that an ugly wrong-sized flash overlay from previous resolution is cleaned
 // from the flash process.
-void Flash_setOverlay(FlashContext* context, const GFXPOINT* origin, FRAME overlay, bool cleanup)
+void Flash_setOverlay(FlashContext* context, const GfxPoint* origin, FRAME overlay, bool cleanup)
 {
 	assert(context->type == FlashType_overlay);
 
@@ -594,7 +594,7 @@ static inline void Flash_blendFraction(FlashContext* context, int numer, int den
 
 static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
 {
-	STAMP s;
+	GfxStamp s;
 	int blendedNumer {};
 	int blendedDenom {};
 
@@ -649,7 +649,7 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 			}
 		case FlashType_overlay:
 			{
-				GFXPOINT oldOrigin;
+				GfxPoint oldOrigin;
 
 				// Draw the original at full strength
 				SetContextDrawMode(DrawReplaceMode);
@@ -727,7 +727,7 @@ Color GetFlashPCColor(void)
 
 static void Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
 {
-	STAMP stamp;
+	GfxStamp stamp;
 
 	GFXCONTEXT oldGfxContext {SetContext(context->gfxContext)};
 

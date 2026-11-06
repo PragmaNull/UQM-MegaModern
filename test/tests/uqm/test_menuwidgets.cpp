@@ -9,54 +9,54 @@
 #include "core/stl/sstream.h"
 
 // Widget callbacks from the graphics library. These tests do not draw or handle input.
-int Widget_HandleEventChoice(WIDGET*, int)
+int Widget_HandleEventChoice(Widget*, int)
 {
 	return 0;
 }
-int Widget_ReceiveFocusChoice(WIDGET*, int)
+int Widget_ReceiveFocusChoice(Widget*, int)
 {
 	return 0;
 }
-void Widget_DrawChoice(WIDGET*, int, int) {}
-int Widget_HeightChoice(WIDGET*)
+void Widget_DrawChoice(Widget*, int, int) {}
+int Widget_HeightChoice(Widget*)
 {
 	return 0;
 }
-int Widget_WidthFullScreen(WIDGET*)
+int Widget_WidthFullScreen(Widget*)
 {
 	return 0;
 }
-int Widget_HandleEventSlider(WIDGET*, int)
+int Widget_HandleEventSlider(Widget*, int)
 {
 	return 0;
 }
-int Widget_ReceiveFocusSimple(WIDGET*, int)
+int Widget_ReceiveFocusSimple(Widget*, int)
 {
 	return 0;
 }
-void Widget_DrawSlider(WIDGET*, int, int) {}
-int Widget_HeightOneLine(WIDGET*)
+void Widget_DrawSlider(Widget*, int, int) {}
+int Widget_HeightOneLine(Widget*)
 {
 	return 0;
 }
-void Widget_Slider_DrawValue(WIDGET_SLIDER*, int, int) {}
-void Widget_Slider_DrawPercentageValue(WIDGET_SLIDER*, int, int) {}
-int Widget_HandleEventIgnoreAll(WIDGET*, int)
+void Widget_Slider_DrawValue(WidgetSlider*, int, int) {}
+void Widget_Slider_DrawPercentageValue(WidgetSlider*, int, int) {}
+int Widget_HandleEventIgnoreAll(Widget*, int)
 {
 	return 0;
 }
-int Widget_ReceiveFocusRefuseFocus(WIDGET*, int)
+int Widget_ReceiveFocusRefuseFocus(Widget*, int)
 {
 	return 0;
 }
-void Widget_DrawLabel(WIDGET*, int, int) {}
-int Widget_HandleEventTextEntry(WIDGET*, int)
+void Widget_DrawLabel(Widget*, int, int) {}
+int Widget_HandleEventTextEntry(Widget*, int)
 {
 	return 0;
 }
-void Widget_DrawTextEntry(WIDGET*, int, int) {}
-void Widget_DrawButton(WIDGET*, int, int) {}
-int Widget_HeightLabel(WIDGET*)
+void Widget_DrawTextEntry(Widget*, int, int) {}
+void Widget_DrawButton(Widget*, int, int) {}
+int Widget_HeightLabel(Widget*)
 {
 	return 0;
 }
@@ -98,7 +98,7 @@ protected:
 		definition = *parsed;
 	}
 
-	WIDGET** build()
+	Widget** build()
 	{
 		MenuWidgets::Hooks hooks {};
 		hooks.isAddonAvailable = [this](uqstl::string_view addon) {
@@ -114,27 +114,27 @@ protected:
 		return widgets->build(definition.menus[0]);
 	}
 
-	static WIDGET_CHOICE& choice(WIDGET** list, size_t index)
+	static WidgetChoice& choice(Widget** list, size_t index)
 	{
 		EXPECT_EQ(list[index]->tag, WIDGET_TYPE_CHOICE);
-		return *reinterpret_cast<WIDGET_CHOICE*>(list[index]);
+		return *reinterpret_cast<WidgetChoice*>(list[index]);
 	}
 
-	static WIDGET_SLIDER& slider(WIDGET** list, size_t index)
+	static WidgetSlider& slider(Widget** list, size_t index)
 	{
 		EXPECT_EQ(list[index]->tag, WIDGET_TYPE_SLIDER);
-		return *reinterpret_cast<WIDGET_SLIDER*>(list[index]);
+		return *reinterpret_cast<WidgetSlider*>(list[index]);
 	}
 
 	// Does what the widget system does when the player picks an option.
-	static void select(WIDGET_CHOICE& widget, int option)
+	static void select(WidgetChoice& widget, int option)
 	{
 		const int oldValue {widget.selected};
 		widget.selected = option;
 		widget.onChange(&widget, oldValue);
 	}
 
-	static void move(WIDGET_SLIDER& widget, int value)
+	static void move(WidgetSlider& widget, int value)
 	{
 		widget.value = value;
 		widget.onChange(&widget);
@@ -142,8 +142,8 @@ protected:
 
 	OptionsStruct options {};
 	MenuDefinition definition {};
-	WIDGET spacer {};
-	WIDGET back {};
+	Widget spacer {};
+	Widget back {};
 	uqstl::vector<uqstl::string> availableAddons {};
 	int unavailableCount {};
 	uqstl::vector<uqstl::string> changed {};
@@ -165,21 +165,21 @@ constexpr size_t c_end {8};
 
 TEST_F(MenuWidgetsTest, BuildsWidgetsInOrder)
 {
-	WIDGET* const* list {build()};
+	Widget* const* list {build()};
 	EXPECT_EQ(list[c_heading]->tag, WIDGET_TYPE_LABEL);
 	EXPECT_EQ(list[c_spacer], &spacer);
 	EXPECT_EQ(list[c_back], &back);
 	EXPECT_EQ(list[c_end], nullptr);
 
-	const auto& heading {*reinterpret_cast<WIDGET_LABEL*>(list[c_heading])};
+	const auto& heading {*reinterpret_cast<WidgetLabel*>(list[c_heading])};
 	ASSERT_EQ(heading.line_count, 1);
 	EXPECT_STREQ(heading.lines[0], "Section");
 }
 
 TEST_F(MenuWidgetsTest, ChoiceShowsLabelsAndTooltips)
 {
-	WIDGET** list {build()};
-	const WIDGET_CHOICE& widget {choice(list, c_skipIntro)};
+	Widget** list {build()};
+	const WidgetChoice& widget {choice(list, c_skipIntro)};
 	EXPECT_STREQ(widget.category, "Skip Intro");
 	ASSERT_EQ(widget.numopts, 2);
 	EXPECT_STREQ(widget.options[1].optname, "Enabled");
@@ -191,14 +191,14 @@ TEST_F(MenuWidgetsTest, ChoiceSelectsTheCurrentValue)
 {
 	options.skipIntro = true;
 	options.sphereColors = SphereOfInfluenceColors::Starseed;
-	WIDGET** list {build()};
+	Widget** list {build()};
 	EXPECT_EQ(choice(list, c_skipIntro).selected, 1);
 	EXPECT_EQ(choice(list, c_sphereColors).selected, 1);
 }
 
 TEST_F(MenuWidgetsTest, ChoiceChangeSetsTheSetting)
 {
-	WIDGET** list {build()};
+	Widget** list {build()};
 	select(choice(list, c_skipIntro), 1);
 	EXPECT_TRUE(*options.skipIntro);
 	EXPECT_EQ(changed, (uqstl::vector<uqstl::string> {"interface.skipIntro"}));
@@ -209,7 +209,7 @@ TEST_F(MenuWidgetsTest, ChoiceChangeSetsTheSetting)
 
 TEST_F(MenuWidgetsTest, NoChangeHookWhenTheValueStaysTheSame)
 {
-	WIDGET** list {build()};
+	Widget** list {build()};
 	select(choice(list, c_skipIntro), 0);
 	EXPECT_TRUE(changed.empty());
 }
@@ -217,8 +217,8 @@ TEST_F(MenuWidgetsTest, NoChangeHookWhenTheValueStaysTheSame)
 TEST_F(MenuWidgetsTest, MissingAddonRefusesTheOption)
 {
 	options.use3doMusic = false;
-	WIDGET** list {build()};
-	WIDGET_CHOICE& widget {choice(list, c_music3do)};
+	Widget** list {build()};
+	WidgetChoice& widget {choice(list, c_music3do)};
 	select(widget, 1);
 	EXPECT_EQ(widget.selected, 0);
 	EXPECT_FALSE(*options.use3doMusic);
@@ -230,7 +230,7 @@ TEST_F(MenuWidgetsTest, AvailableAddonAllowsTheOption)
 {
 	options.use3doMusic = false;
 	availableAddons.emplace_back("3domusic");
-	WIDGET** list {build()};
+	Widget** list {build()};
 	select(choice(list, c_music3do), 1);
 	EXPECT_TRUE(*options.use3doMusic);
 	EXPECT_EQ(unavailableCount, 0);
@@ -241,7 +241,7 @@ TEST_F(MenuWidgetsTest, SliderShowsTheScaledValue)
 {
 	options.musicVolumeScale = 0.4f;
 	options.nebulaevol = 20;
-	WIDGET** list {build()};
+	Widget** list {build()};
 	EXPECT_EQ(slider(list, c_musicVolume).value, 40);
 	EXPECT_EQ(slider(list, c_musicVolume).max, 100);
 	EXPECT_EQ(slider(list, c_nebulae).value, 20);
@@ -250,7 +250,7 @@ TEST_F(MenuWidgetsTest, SliderShowsTheScaledValue)
 
 TEST_F(MenuWidgetsTest, SliderChangeSetsTheSetting)
 {
-	WIDGET** list {build()};
+	Widget** list {build()};
 	move(slider(list, c_musicVolume), 55);
 	EXPECT_FLOAT_EQ(*options.musicVolumeScale, 0.55f);
 	move(slider(list, c_nebulae), 33);
@@ -273,9 +273,9 @@ TEST_F(MenuWidgetsTest, TextShowsAndSetsTheSetting)
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
 		uqstl::move(hooks)
 	  };
-	WIDGET* const* list {builder.build(textMenu->menus[0])};
+	Widget* const* list {builder.build(textMenu->menus[0])};
 	ASSERT_EQ(list[0]->tag, WIDGET_TYPE_TEXTENTRY);
-	auto& widget {*reinterpret_cast<WIDGET_TEXTENTRY*>(list[0])};
+	auto& widget {*reinterpret_cast<WidgetTextEntry*>(list[0])};
 	EXPECT_STREQ(widget.category, "Seed");
 	EXPECT_STREQ(widget.tooltip[0], "Type a seed.");
 	EXPECT_STREQ(widget.value, "12345");
@@ -309,8 +309,8 @@ TEST_F(MenuWidgetsTest, ChoiceUsesSuppliedLabels)
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
 		uqstl::move(hooks)
 	  };
-	WIDGET** list {builder.build(labelMenu->menus[0])};
-	const WIDGET_CHOICE& widget {choice(list, 0)};
+	Widget** list {builder.build(labelMenu->menus[0])};
+	const WidgetChoice& widget {choice(list, 0)};
 	EXPECT_STREQ(widget.options[0].optname, "Arrows");
 	EXPECT_STREQ(widget.options[1].optname, "Template 2");
 }
@@ -330,12 +330,12 @@ TEST_F(MenuWidgetsTest, MenuButtonOpensTheTarget)
 		opened.emplace_back(id);
 		return id == "audio";
 	};
-	WIDGET exit {};
+	Widget exit {};
 	const MenuWidgets::SharedWidgets shared {&spacer, &back, &exit};
 	MenuWidgets builder {options, shared, uqstl::move(hooks)};
-	WIDGET* const* list {builder.build(buttonMenu->menus[0])};
+	Widget* const* list {builder.build(buttonMenu->menus[0])};
 	ASSERT_EQ(list[0]->tag, WIDGET_TYPE_BUTTON);
-	const auto& button {*reinterpret_cast<WIDGET_BUTTON*>(list[0])};
+	const auto& button {*reinterpret_cast<WidgetButton*>(list[0])};
 	EXPECT_STREQ(button.name, "Sound");
 	EXPECT_STREQ(button.tooltip[0], "Opens the sound menu.");
 	EXPECT_EQ(list[2], &exit);
@@ -349,7 +349,7 @@ TEST_F(MenuWidgetsTest, MenuButtonOpensTheTarget)
 
 TEST_F(MenuWidgetsTest, RefreshShowsChangedSettings)
 {
-	WIDGET** list {build()};
+	Widget** list {build()};
 	options.skipIntro = true;
 	options.nebulaevol = 12;
 	widgets->refresh();
@@ -364,11 +364,11 @@ TEST_F(MenuWidgetsTest, LegacyItemsUseTheGivenWidget)
 	]}]})")};
 	ASSERT_TRUE(legacyMenu.has_value());
 
-	WIDGET windowType {};
+	Widget windowType {};
 	MenuWidgets::SharedWidgets shared {&spacer, &back};
 	shared.legacy["windowType"] = &windowType;
 	MenuWidgets builder {options, shared, {}};
-	WIDGET* const* list {builder.build(legacyMenu->menus[0])};
+	Widget* const* list {builder.build(legacyMenu->menus[0])};
 	EXPECT_EQ(list[0], &windowType);
 	EXPECT_EQ(list[1], &back);
 	EXPECT_EQ(list[2], nullptr);
@@ -381,13 +381,13 @@ TEST_F(MenuWidgetsTest, LegacyItemsGetTheirText)
 	]}]})")};
 	ASSERT_TRUE(legacyMenu.has_value());
 
-	WIDGET_SLIDER gamma {};
+	WidgetSlider gamma {};
 	gamma.tag = WIDGET_TYPE_SLIDER;
-	WIDGET_CONTROLENTRY up {};
+	WidgetControlEntry up {};
 	up.tag = WIDGET_TYPE_CONTROLENTRY;
 	MenuWidgets::SharedWidgets shared {&spacer, &back};
-	shared.legacy["gamma"] = reinterpret_cast<WIDGET*>(&gamma);
-	shared.legacy["up"] = reinterpret_cast<WIDGET*>(&up);
+	shared.legacy["gamma"] = reinterpret_cast<Widget*>(&gamma);
+	shared.legacy["up"] = reinterpret_cast<Widget*>(&up);
 	MenuWidgets builder {options, shared, {}};
 	builder.build(legacyMenu->menus[0]);
 	EXPECT_STREQ(gamma.category, "Gamma");
@@ -419,9 +419,9 @@ TEST_F(MenuWidgetsTest, StateChoiceUsesTheStateHooks)
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
 		uqstl::move(hooks)
 	  };
-	WIDGET** list {builder.build(stateMenu->menus[0])};
+	Widget** list {builder.build(stateMenu->menus[0])};
 	ASSERT_EQ(list[1], nullptr);
-	WIDGET_CHOICE& widget {choice(list, 0)};
+	WidgetChoice& widget {choice(list, 0)};
 	EXPECT_EQ(widget.selected, 2);
 
 	select(widget, 1);
@@ -447,7 +447,7 @@ TEST_F(MenuWidgetsTest, ItemsNeedTheirAddons)
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
 		uqstl::move(hooks)
 	  };
-	WIDGET* const* list {builder.build(addonMenu->menus[0])};
+	Widget* const* list {builder.build(addonMenu->menus[0])};
 	EXPECT_EQ(list[0], &back);
 	EXPECT_EQ(list[1], nullptr);
 }
@@ -464,18 +464,18 @@ TEST_F(MenuWidgetsTest, ContentMenusBuild)
 	const auto content {menuDefinitionFromJson(text.str())};
 	ASSERT_TRUE(content.has_value());
 
-	WIDGET exit {};
+	Widget exit {};
 	MenuWidgets::SharedWidgets shared {&spacer, &back, &exit};
-	uqstl::vector<uqstl::unique_ptr<WIDGET_TEXTENTRY>> legacyWidgets {};
+	uqstl::vector<uqstl::unique_ptr<WidgetTextEntry>> legacyWidgets {};
 	for (const MenuDef& menu : content->menus)
 	{
 		for (const MenuItemDef& item : menu.items)
 		{
 			if (item.kind == MenuItemKind::Legacy && !shared.legacy.contains(item.widget))
 			{
-				auto& widget {*legacyWidgets.emplace_back(uqstl::make_unique<WIDGET_TEXTENTRY>())};
+				auto& widget {*legacyWidgets.emplace_back(uqstl::make_unique<WidgetTextEntry>())};
 				widget.tag = WIDGET_TYPE_TEXTENTRY;
-				shared.legacy[item.widget] = reinterpret_cast<WIDGET*>(&widget);
+				shared.legacy[item.widget] = reinterpret_cast<Widget*>(&widget);
 			}
 		}
 	}
@@ -486,7 +486,7 @@ TEST_F(MenuWidgetsTest, ContentMenusBuild)
 	MenuWidgets builder {options, shared, uqstl::move(hooks)};
 	for (const MenuDef& menu : content->menus)
 	{
-		WIDGET* const* list {builder.build(menu)};
+		Widget* const* list {builder.build(menu)};
 		size_t count {};
 		while (list[count] != nullptr)
 		{

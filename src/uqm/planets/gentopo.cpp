@@ -22,7 +22,7 @@
 #include "libs/mathlib.h"
 #include "planets.h"
 
-void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GFXRECT* pRect,
+void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GfxRect* pRect,
 					 int16_t depth_delta)
 {
 	int16_t width {};

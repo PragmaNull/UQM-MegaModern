@@ -32,7 +32,7 @@
 #include "../../starmap.h"
 
 
-static LOCDATA chmmr_desc =
+static ConversationData chmmr_desc =
 	{
 		CHMMR_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -150,7 +150,7 @@ static LOCDATA chmmr_desc =
 		nullptr,
 };
 
-static FILTER_DESC chmmr_filters =
+static AnimFilterSet chmmr_filters =
 	{
 		3, /* Number of filters */
 		{
@@ -738,7 +738,7 @@ static void Intro(void)
 			{
 				HFLEETINFO hChmmr = GetStarShipFromIndex(
 					&uqm::gameState().game().avail_race_q, CHMMR_SHIP);
-				FLEET_INFO* ChmmrPtr = LockFleetInfo(
+				FleetInfo* ChmmrPtr = LockFleetInfo(
 					&uqm::gameState().game().avail_race_q, hChmmr);
 
 				if (ChmmrPtr)
@@ -769,7 +769,7 @@ static void post_chmmr_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_chmmr_comm(void)
+ConversationData* init_chmmr_comm(void)
 {
 	chmmr_desc.init_encounter_func = Intro;
 	chmmr_desc.post_encounter_func = post_chmmr_enc;
@@ -791,7 +791,7 @@ LOCDATA* init_chmmr_comm(void)
 	chmmr_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	setSegue(Segue_peace);
-	LOCDATA* retval {&chmmr_desc};
+	ConversationData* retval {&chmmr_desc};
 
 	return (retval);
 }

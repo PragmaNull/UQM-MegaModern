@@ -116,7 +116,7 @@ inline constexpr auto MaxStowedShips {200}; // Limited to a byte
 											/* Maximum number of ships banked at the starbase */
 inline constexpr auto MaxLanders {10};
 
-inline constexpr GFXPOINT SupportShipPts[MaxBuiltShips] {
+inline constexpr GfxPoint SupportShipPts[MaxBuiltShips] {
 	{3 + 0,	30 + (2 * 16)},
 	{3 + 42, 30 + (2 * 16)},
 	{3 + 0,	30 + (3 * 16)},
@@ -134,7 +134,7 @@ inline constexpr GFXPOINT SupportShipPts[MaxBuiltShips] {
 inline constexpr auto LanderDosX {206};
 inline constexpr auto LanderDosY {59};
 
-inline constexpr GFXPOINT LanderDosPts[MaxLanders] {
+inline constexpr GfxPoint LanderDosPts[MaxLanders] {
 	{LanderDosX,		 LanderDosY	   },
 	{LanderDosX + 14, LanderDosY - 6 },
 	{LanderDosX + 14, LanderDosY + 9 },
@@ -149,7 +149,7 @@ inline constexpr GFXPOINT LanderDosPts[MaxLanders] {
 
 inline constexpr auto SisNameSize {32};
 
-struct SIS_STATE
+struct FlagshipData
 {
 	int32_t log_x, log_y;
 
@@ -187,19 +187,19 @@ extern void RepairSISBorder(void);
 extern void InitSISContexts(void);
 extern void DrawSISFrame(void);
 extern void ClearSISRect(uint8_t ClearFlags);
-extern void SetFlashRect(const GFXRECT* pRect, bool purple);
-extern void SetAdditionalRect(const GFXRECT* pRect, uint16_t number);
+extern void SetFlashRect(const GfxRect* pRect, bool purple);
+extern void SetAdditionalRect(const GfxRect* pRect, uint16_t number);
 extern void DumpAdditionalRect(void);
 extern void PreUpdateFlashRect(void);
 extern void PostUpdateFlashRect(void);
 extern bool PauseFlash(void);
 extern void ContinueFlash(void);
 
-inline auto SfrMenu3do() { return ((GFXRECT*)~0L); }
-inline auto SfrMenuAny() { return ((GFXRECT*)~1L); }
-inline auto SfrMenuNon() { return ((GFXRECT*)~2L); }
-extern void DrawHyperCoords(GFXPOINT puniverse);
-extern void DrawSaveInfo(SIS_STATE SisState);
+inline auto SfrMenu3do() { return ((GfxRect*)~0L); }
+inline auto SfrMenuAny() { return ((GfxRect*)~1L); }
+inline auto SfrMenuNon() { return ((GfxRect*)~2L); }
+extern void DrawHyperCoords(GfxPoint puniverse);
+extern void DrawSaveInfo(FlagshipData SisState);
 extern void DrawSISTitle(const char* pStr);
 
 // Flags for DrawSISMessageEx (may be OR'ed):
@@ -220,8 +220,8 @@ extern void DrawSISMessage(const char* pStr);
 extern void DateToString(char* buf, size_t bufLen,
 						 uint8_t month_index, uint8_t day_index, uint16_t year_index);
 
-// Returned GFXRECT is relative to the StatusContext
-extern void GetStatusMessageRect(GFXRECT* r);
+// Returned GfxRect is relative to the StatusContext
+extern void GetStatusMessageRect(GfxRect* r);
 extern void DrawStatusMessage(const char* pStr);
 typedef enum
 {
@@ -239,7 +239,7 @@ extern StatMsgMode SetStatusMessageMode(StatMsgMode);
 
 extern void DrawLanders(void);
 extern void DrawStorageBays(bool Refresh);
-extern void GetGaugeRect(GFXRECT* pRect, bool IsCrewRect);
+extern void GetGaugeRect(GfxRect* pRect, bool IsCrewRect);
 extern void DrawFlagshipStats(void);
 void DrawAutoPilotMessage(bool Reset);
 
@@ -249,11 +249,11 @@ extern uint16_t GetCrewCount(void);
 extern uint16_t GetModuleCrewCapacity(uint8_t moduleType);
 
 extern uint16_t GetCrewPodCapacity(void);
-extern uint16_t GetCPodCapacity(GFXPOINT* ppt);
+extern uint16_t GetCPodCapacity(GfxPoint* ppt);
 
 extern uint16_t GetModuleStorageCapacity(uint8_t moduleType);
 extern uint16_t GetStorageBayCapacity(void);
-extern uint16_t GetSBayCapacity(GFXPOINT* ppt);
+extern uint16_t GetSBayCapacity(GfxPoint* ppt);
 
 extern uint32_t GetModuleFuelCapacity(uint8_t moduleType);
 extern uint32_t GetFuelTankCapacity(void);

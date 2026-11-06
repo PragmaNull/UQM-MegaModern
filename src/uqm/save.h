@@ -17,7 +17,7 @@
 #ifndef UQM_SAVE_H_
 #define UQM_SAVE_H_
 
-#include "sis.h" // SUMMARY_DESC includes SIS_STATE in it
+#include "sis.h" // SaveSummaryData includes FlagshipData in it
 #include "globdata.h"
 #include "core/misc/bittricks.h"
 #include "core/stl/optional.h"
@@ -37,9 +37,9 @@ inline constexpr auto SaveNameSize {64};
 
 constexpr uint32_t c_saveFormatVersion {1};
 
-struct SUMMARY_DESC
+struct SaveSummaryData
 {
-	SIS_STATE SS;
+	FlagshipData SS;
 	uint8_t Activity;
 	uint8_t Flags;
 	uint8_t day_index, month_index;
@@ -55,17 +55,17 @@ struct SUMMARY_DESC
 extern ACTIVITY NextActivity;
 
 // Loads only the summary when summary_desc is not null.
-extern bool LoadGame(uint16_t which_game, SUMMARY_DESC* summary_desc);
+extern bool LoadGame(uint16_t which_game, SaveSummaryData* summary_desc);
 // Loads a game from the text of a save file. 'file' names the save in error messages.
-bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_DESC* summary_desc);
+bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SaveSummaryData* summary_desc);
 // Loads a game from a save file at any path.
 bool LoadGameFile(const char* path);
 uqstl::string saveFileName(uint16_t which_game);
 
 extern void SaveProblem(void);
-extern bool SaveGame(uint16_t which_game, SUMMARY_DESC* summary_desc, const char* name);
+extern bool SaveGame(uint16_t which_game, SaveSummaryData* summary_desc, const char* name);
 // Saves the game to the text of a save file, or nullopt if it cannot.
-uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* summary_desc, const char* name);
+uqstl::optional<uqstl::string> SaveGameJson(SaveSummaryData* summary_desc, const char* name);
 
 
 #if 0 //defined(__cplusplus)

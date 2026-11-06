@@ -22,7 +22,7 @@
 
 
 // Reads a piece of screen into a passed FRAME or a newly created one
-DRAWABLE LoadDisplayPixmap(const GFXRECT* area, FRAME frame)
+DRAWABLE LoadDisplayPixmap(const GfxRect* area, FRAME frame)
 {
 	// TODO: This should just return a FRAME instead of DRAWABLE
 	DRAWABLE buffer = GetFrameParentDrawable(frame);

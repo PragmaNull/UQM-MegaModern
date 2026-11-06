@@ -63,9 +63,9 @@ static constexpr auto StartIonColor {BuildColorRgba(0xfc, 0xb8, 0xfc, 0xff)};
 // HdResolutionFactor
 static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
-static RACE_DESC urquan_desc =
+static RaceDesc urquan_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "dreadnought",
 		 FiresFore | SeekingSpecial,
 		 30, /* Super Melee cost */
@@ -76,7 +76,7 @@ static RACE_DESC urquan_desc =
 		 UrquanMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			2666 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -135,10 +135,10 @@ static RACE_DESC urquan_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
+static uint16_t initialize_fusion(Element* ShipPtr, HELEMENT FusionArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -159,10 +159,10 @@ static uint16_t initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
 	return (1);
 }
 
-static void fighter_postprocess(ELEMENT* ElementPtr)
+static void fighter_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
-	LASER_BLOCK LaserBlock;
+	Starship* StarShipPtr {};
+	LaserDesc LaserBlock;
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	LaserBlock.cx = ElementPtr->next.location.x;
@@ -177,7 +177,7 @@ static void fighter_postprocess(ELEMENT* ElementPtr)
 	HELEMENT Laser {initialize_laser(&LaserBlock)};
 	if (Laser)
 	{
-		ELEMENT* LaserPtr {};
+		Element* LaserPtr {};
 
 		LockElement(Laser, &LaserPtr);
 		SetElementStarShip(LaserPtr, StarShipPtr);
@@ -196,7 +196,7 @@ static void fighter_postprocess(ELEMENT* ElementPtr)
 }
 
 //static void
-//ion_preprocess (ELEMENT* ElementPtr)
+//ion_preprocess (Element* ElementPtr)
 //{
 //	static const Color colorTable[] =
 //	{
@@ -221,7 +221,7 @@ static void fighter_postprocess(ELEMENT* ElementPtr)
 //}
 
 //static void
-//spawn_fighter_ion_trail (ELEMENT *ElementPtr, STARSHIP *StarShipPtr,
+//spawn_fighter_ion_trail (Element *ElementPtr, Starship *StarShipPtr,
 //		uint16_t facing)
 //{
 //	HELEMENT hIonElement;
@@ -230,7 +230,7 @@ static void fighter_postprocess(ELEMENT* ElementPtr)
 //	if (hIonElement)
 //	{
 //		uint16_t angle;
-//		ELEMENT *IonElementPtr;
+//		Element *IonElementPtr;
 //
 //		angle = FacingToAngle (facing) + HalfCircle;
 //
@@ -262,9 +262,9 @@ static void fighter_postprocess(ELEMENT* ElementPtr)
 //	}
 //}
 
-static void fighter_preprocess(ELEMENT* ElementPtr)
+static void fighter_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -274,7 +274,7 @@ static void fighter_preprocess(ELEMENT* ElementPtr)
 	{
 		uint16_t orig_facing {};
 		uint16_t facing {};
-		ELEMENT* eptr {};
+		Element* eptr {};
 
 		bool Enroute {true};
 
@@ -379,10 +379,10 @@ static void fighter_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void fighter_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							  Element* ElementPtr1, GfxPoint* pPt1)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr0, &StarShipPtr);
 	if (GravityMass(ElementPtr1->mass_points))
@@ -392,7 +392,7 @@ static void fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		{
 			uint16_t travel_facing {};
 			int16_t delta_facing {};
-			ELEMENT* FighterElementPtr {};
+			Element* FighterElementPtr {};
 
 			LockElement(hFighterElement, &FighterElementPtr);
 			const uint16_t primIndex {FighterElementPtr->PrimIndex};
@@ -470,12 +470,12 @@ static void fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void spawn_fighters(ELEMENT* ElementPtr)
+static void spawn_fighters(Element* ElementPtr)
 {
 	int16_t i {};
 	uint16_t facing {};
 	HELEMENT hFighterElement {};
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	facing = StarShipPtr->ShipFacing + AngleToFacing(HalfCircle);
@@ -488,7 +488,7 @@ static void spawn_fighters(ELEMENT* ElementPtr)
 		int32_t sx {};
 		int32_t sy {};
 		uint16_t fighter_facing {};
-		ELEMENT* FighterElementPtr {};
+		Element* FighterElementPtr {};
 
 		if (!antiCheat(ElementPtr, false, uqm::GodModeFlags::NoDamage))
 		{
@@ -545,15 +545,15 @@ static void spawn_fighters(ELEMENT* ElementPtr)
 	}
 }
 
-static void urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
 	ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = PURSUE;
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == ENTICE
 		&& (!(lpEvalDesc->ObjectPtr->state_flags & CrewObject)
@@ -571,7 +571,7 @@ static void urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcer
 
 	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
 	{
-		STARSHIP* EnemyStarShipPtr = nullptr;
+		Starship* EnemyStarShipPtr = nullptr;
 
 		if (lpEvalDesc->ObjectPtr)
 		{
@@ -603,9 +603,9 @@ static void urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcer
 	StarShipPtr->RaceDescPtr->characteristics.special_wait = 0;
 }
 
-static void urquan_postprocess(ELEMENT* ElementPtr)
+static void urquan_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
@@ -623,7 +623,7 @@ static void urquan_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_urquan(void)
+RaceDesc* init_urquan(void)
 {
 	if (IsHd())
 	{
@@ -643,7 +643,7 @@ RACE_DESC* init_urquan(void)
 	urquan_desc.init_weapon_func = initialize_fusion;
 	urquan_desc.cyborg_control.intelligence_func = urquan_intelligence;
 
-	RACE_DESC* RaceDescPtr {&urquan_desc};
+	RaceDesc* RaceDescPtr {&urquan_desc};
 
 	return (RaceDescPtr);
 }

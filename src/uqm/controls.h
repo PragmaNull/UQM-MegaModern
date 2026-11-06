@@ -112,18 +112,18 @@ static constexpr const char* toString(ControlTemplate val)
 
 
 // The input that the main thread writes while the game thread reads it.
-struct IMMEDIATE_INPUT_STATE
+struct ImmediateKeyState
 {
 	uqstl::atomic<int> key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
 	uqstl::atomic<int> menu[NUM_MENU_KEYS];
 };
 
-struct CONTROLLER_INPUT_STATE
+struct ControllerInputState
 {
 	int key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
 	int menu[NUM_MENU_KEYS];
 
-	CONTROLLER_INPUT_STATE& operator=(const IMMEDIATE_INPUT_STATE& rhs)
+	ControllerInputState& operator=(const ImmediateKeyState& rhs)
 	{
 		for (int t = 0; t < uqstl::to_underlying(ControlTemplate::NUM); ++t)
 		{
@@ -155,9 +155,9 @@ inline constexpr auto BattleThrustAlt {((BATTLE_INPUT_STATE)(1 << 7))};
 BATTLE_INPUT_STATE CurrentInputToBattleInput(uint16_t player);
 BATTLE_INPUT_STATE PulsedInputToBattleInput(uint16_t player);
 
-extern CONTROLLER_INPUT_STATE CurrentInputState;
-extern CONTROLLER_INPUT_STATE PulsedInputState;
-extern IMMEDIATE_INPUT_STATE ImmediateInputState;
+extern ControllerInputState CurrentInputState;
+extern ControllerInputState PulsedInputState;
+extern ImmediateKeyState ImmediateInputState;
 extern ControlTemplate PlayerControlTemplates[];
 extern bool WarpFromMenu;
 
@@ -193,7 +193,7 @@ void DoPopupWindow(const char* msg);
 
 typedef void(InputFrameCallback)(void);
 InputFrameCallback* SetInputCallback(InputFrameCallback*);
-// pInputState must point to a struct derived from INPUT_STATE_DESC
+// pInputState must point to a struct derived from InputStateDesc
 void DoInput(void* pInputState, bool resetInput);
 
 extern uqstl::atomic<bool> GamePaused;
@@ -206,10 +206,10 @@ struct joy_char_t
 	char enc[7];
 };
 
-struct TEXTENTRY_STATE
+struct TextEntryState
 {
 	// standard state required by DoInput
-	bool (*InputFunc)(struct TEXTENTRY_STATE* pTES);
+	bool (*InputFunc)(struct TextEntryState* pTES);
 
 	// these are semi-private read-only
 	bool Initialized;
@@ -229,15 +229,15 @@ struct TEXTENTRY_STATE
 	int CursorPos; // set to current cursor pos in chars
 	int MaxSize;   // set to max size of edited string
 
-	bool (*ChangeCallback)(struct TEXTENTRY_STATE* pTES);
+	bool (*ChangeCallback)(struct TextEntryState* pTES);
 	// returns true if last change is OK
-	bool (*FrameCallback)(struct TEXTENTRY_STATE* pTES);
+	bool (*FrameCallback)(struct TextEntryState* pTES);
 	// called on every input frame; do whatever;
 	// returns true to continue processing
 	void* CbParam; // callback parameter, use as you like
 };
 
-extern bool DoTextEntry(TEXTENTRY_STATE* pTES);
+extern bool DoTextEntry(TextEntryState* pTES);
 
 extern void TestSpeechSound(SOUND snd);
 

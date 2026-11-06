@@ -69,16 +69,16 @@ static inline void crc_processTIME_VALUE(crc_State *state, const TIME_VALUE val)
 }
 #endif
 
-void crc_processEXTENT(crc_State* state, const EXTENT* val);
-void crc_processVELOCITY_DESC(crc_State* state, const VELOCITY_DESC* val);
-void crc_processPOINT(crc_State* state, const GFXPOINT* val);
+void crc_processEXTENT(crc_State* state, const GfxExtent* val);
+void crc_processVELOCITY_DESC(crc_State* state, const VelocityDesc* val);
+void crc_processPOINT(crc_State* state, const GfxPoint* val);
 #if 0
-void crc_processSTAMP(crc_State *state, const STAMP *val);
+void crc_processSTAMP(crc_State *state, const GfxStamp *val);
 void crc_processINTERSECT_CONTROL(crc_State *state,
-		const INTERSECT_CONTROL *val);
+		const IntersectInfo *val);
 #endif
-void crc_processSTATE(crc_State* state, const STATE* val);
-void crc_processELEMENT(crc_State* state, const ELEMENT* val);
+void crc_processSTATE(crc_State* state, const ElementState* val);
+void crc_processELEMENT(crc_State* state, const Element* val);
 void crc_processDispQueue(crc_State* state);
 void crc_processRNG(crc_State* state);
 void crc_processState(crc_State* state);

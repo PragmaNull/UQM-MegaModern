@@ -89,7 +89,7 @@ TEST_F(RingBufferTest, FillAndOverwriteWhenFull)
 	EXPECT_EQ(rb.front(), 1);
 	EXPECT_EQ(rb.back(), 4);
 
-	// Overwrite oldest element
+	// Overwrite oldest Element
 	rb.push_back(5);
 	EXPECT_TRUE(rb.full());
 	EXPECT_EQ(rb.size(), 4u);

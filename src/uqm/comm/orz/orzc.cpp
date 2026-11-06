@@ -29,7 +29,7 @@
 // for GraphicsLock
 
 
-static LOCDATA orz_desc =
+static ConversationData orz_desc =
 	{
 		ORZ_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -217,7 +217,7 @@ static LOCDATA orz_desc =
 		nullptr,
 };
 
-static FILTER_DESC orz_filters =
+static AnimFilterSet orz_filters =
 	{
 		1, /* Number of filters */
 		{
@@ -996,7 +996,7 @@ static void post_orz_enc(void)
 	}
 }
 
-LOCDATA* init_orz_comm(void)
+ConversationData* init_orz_comm(void)
 {
 	orz_desc.init_encounter_func = Intro;
 	orz_desc.post_encounter_func = post_orz_enc;
@@ -1019,7 +1019,7 @@ LOCDATA* init_orz_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&orz_desc};
+	ConversationData* retval {&orz_desc};
 
 	return (retval);
 }

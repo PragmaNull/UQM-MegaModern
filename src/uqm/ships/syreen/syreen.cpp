@@ -54,9 +54,9 @@ static constexpr auto MaxAbandoners {8};
 // HdResolutionFactor
 static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
-static RACE_DESC syreen_desc =
+static RaceDesc syreen_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "penetrator",
 		 FiresFore,
 		 13, /* Super Melee cost */
@@ -67,7 +67,7 @@ static RACE_DESC syreen_desc =
 		 SyreenMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			0, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
@@ -126,10 +126,10 @@ static RACE_DESC syreen_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
+static uint16_t initialize_dagger(Element* ShipPtr, HELEMENT DaggerArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -150,14 +150,14 @@ static uint16_t initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
 	return (1);
 }
 
-static void spawn_crew(ELEMENT* ElementPtr)
+static void spawn_crew(Element* ElementPtr)
 {
 	if (ElementPtr->state_flags & PlayerShip)
 	{
 		HELEMENT hCrew {AllocElement()};
 		if (hCrew != 0)
 		{
-			ELEMENT* CrewPtr {};
+			Element* CrewPtr {};
 
 			LockElement(hCrew, &CrewPtr);
 			CrewPtr->next.location = ElementPtr->next.location;
@@ -180,7 +180,7 @@ static void spawn_crew(ELEMENT* ElementPtr)
 		for (hElement = GetHeadElement();
 			 hElement != 0; hElement = hNextElement)
 		{
-			ELEMENT* ObjPtr {};
+			Element* ObjPtr {};
 
 			LockElement(hElement, &ObjPtr);
 			hNextElement = GetSuccElement(ObjPtr);
@@ -234,17 +234,17 @@ static void spawn_crew(ELEMENT* ElementPtr)
 	}
 }
 
-static void syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void syreen_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								uint16_t ConcernCounter)
 {
 	ship_intelligence(ShipPtr,
 					  ObjectsOfConcern, ConcernCounter);
 
-	const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr != nullptr)
 	{
-		STARSHIP* StarShipPtr {};
-		STARSHIP* EnemyStarShipPtr {};
+		Starship* StarShipPtr {};
+		Starship* EnemyStarShipPtr {};
 
 		GetElementStarShip(ShipPtr, &StarShipPtr);
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
@@ -262,9 +262,9 @@ static void syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcer
 	}
 }
 
-static void syreen_postprocess(ELEMENT* ElementPtr)
+static void syreen_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
@@ -282,7 +282,7 @@ static void syreen_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_syreen(void)
+RaceDesc* init_syreen(void)
 {
 	if (IsHd())
 	{
@@ -302,7 +302,7 @@ RACE_DESC* init_syreen(void)
 	syreen_desc.init_weapon_func = initialize_dagger;
 	syreen_desc.cyborg_control.intelligence_func = syreen_intelligence;
 
-	RACE_DESC* RaceDescPtr {&syreen_desc};
+	RaceDesc* RaceDescPtr {&syreen_desc};
 
 	return (RaceDescPtr);
 }

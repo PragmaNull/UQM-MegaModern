@@ -27,21 +27,21 @@
 extern "C" {
 #endif
 
-struct MENU_STATE
+struct MenuState
 {
 	// Standard field required by DoInput()
-	bool (*InputFunc)(struct MENU_STATE* pMS);
+	bool (*InputFunc)(struct MenuState* pMS);
 
 	int16_t Initialized;
 
 	uint8_t CurState;
 	FRAME CurFrame;
 	COLORMAP HangarColorMap;
-	GFXPOINT first_item;
+	GfxPoint first_item;
 	int16_t delta_item;
 
 	FRAME ModuleFrame;
-	GFXRECT flash_rect0, flash_rect1, flash_rect2;
+	GfxRect flash_rect0, flash_rect1, flash_rect2;
 	FRAME flash_frame0, flash_frame1;
 	FlashContext* flashContext;
 
@@ -146,7 +146,7 @@ enum
 	GAMESTR_CHANGE_SIS,
 };
 
-extern bool DoMenuChooser(MENU_STATE* pMS, uint8_t BaseState);
+extern bool DoMenuChooser(MenuState* pMS, uint8_t BaseState);
 extern void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState);
 extern void DrawMineralHelpers(void);
 extern void DrawBorder(uint8_t Visible);

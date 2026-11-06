@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_probe(void);
+RaceDesc* init_probe(void);
 
 #if 0 //defined(__cplusplus)
 }

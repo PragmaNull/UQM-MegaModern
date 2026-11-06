@@ -33,9 +33,9 @@
 static BattleStateData* BattleStateData_alloc(void);
 static void BattleStateData_free(BattleStateData* battleStateData);
 static inline BattleStateData* BattleStateData_new(
-	struct melee_state* meleeState,
-	struct BATTLE_STATE* battleState,
-	struct getmelee_struct* getMeleeState);
+	struct MeleeState* meleeState,
+	struct BattleState* battleState,
+	struct PickMeleeState* getMeleeState);
 static void BattleStateData_delete(BattleStateData* battleStateData);
 
 
@@ -49,9 +49,9 @@ static void BattleStateData_free(BattleStateData* battleStateData)
 	free(battleStateData);
 }
 
-static inline BattleStateData* BattleStateData_new(struct melee_state* meleeState,
-												   struct BATTLE_STATE* battleState,
-												   struct getmelee_struct* getMeleeState)
+static inline BattleStateData* BattleStateData_new(struct MeleeState* meleeState,
+												   struct BattleState* battleState,
+												   struct PickMeleeState* getMeleeState)
 {
 	BattleStateData* battleStateData = BattleStateData_alloc();
 	battleStateData->releaseFunction =
@@ -76,7 +76,7 @@ static void NetMelee_enterState_inSetup(NetConnection* conn, void* arg);
 // Called when a connection has been established.
 void NetMelee_connectCallback(NetConnection* conn)
 {
-	struct melee_state* meleeState {(struct melee_state*)NetConnection_getExtra(conn)};
+	struct MeleeState* meleeState {(struct MeleeState*)NetConnection_getExtra(conn)};
 	BattleStateData* battleStateData {BattleStateData_new(meleeState, nullptr, nullptr)};
 	NetConnection_setStateData(conn, (NetConnectionStateData*)battleStateData);
 	NetConnection_setExtra(conn, nullptr);
@@ -106,7 +106,7 @@ void NetMelee_errorCallback(NetConnection* conn,
 // initial connect.
 static void NetMelee_enterState_inSetup(NetConnection* conn, void* arg)
 {
-	struct melee_state* meleeState {};
+	struct MeleeState* meleeState {};
 
 	NetConnection_setState(conn, NetState_inSetup);
 

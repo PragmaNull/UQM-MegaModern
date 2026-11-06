@@ -33,19 +33,19 @@ extern "C" {
 inline constexpr auto NormalLife {1};
 
 typedef HLINK HELEMENT;
-typedef struct STARSHIP STARSHIP;
+struct Starship;
 
 // Bits for ELEMENT_FLAGS:
 // bits 0 and 1 are now available
 inline constexpr auto PlayerShip {(1 << 2)};
-// The ELEMENT is a player controlable ship, and not some bullet,
+// The Element is a player controlable ship, and not some bullet,
 // crew, asteroid, fighter, etc. This does not mean that the ship
 // is actually controlled by a human; it may be a computer.
 
 inline constexpr auto Appearing {(1 << 3)};
 inline constexpr auto Disappearing {(1 << 4)};
 inline constexpr auto Changing {(1 << 5)};
-// The element's graphical representation has changed.
+// The Element's graphical representation has changed.
 
 inline constexpr auto Nonsolid {(1 << 6)};
 inline constexpr auto Collision {(1 << 7)};
@@ -55,7 +55,7 @@ inline constexpr auto DefyPhysics {(1 << 9)};
 inline constexpr auto FiniteLife {(1 << 10)};
 
 inline constexpr auto PreProcessFlag {(1 << 11)};
-// PreProcess() is to be called for the ELEMENT.
+// PreProcess() is to be called for the Element.
 inline constexpr auto PostProcessFlag {(1 << 12)};
 
 inline constexpr auto IgnoreVelocity {(1 << 13)};
@@ -85,9 +85,9 @@ typedef uint16_t ELEMENT_FLAGS;
 
 inline constexpr auto NoPrim {NUM_PRIMS};
 
-struct STATE
+struct ElementState
 {
-	GFXPOINT location;
+	GfxPoint location;
 	struct
 	{
 		FRAME frame;
@@ -96,16 +96,16 @@ struct STATE
 };
 
 
-typedef struct element ELEMENT;
+struct Element;
 
-typedef void(ElementProcessFunc)(ELEMENT* ElementPtr);
-typedef void(ElementCollisionFunc)(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-								   ELEMENT* ElementPtr1, GFXPOINT* pPt1);
+typedef void(ElementProcessFunc)(Element* ElementPtr);
+typedef void(ElementCollisionFunc)(Element* ElementPtr0, GfxPoint* pPt0,
+								   Element* ElementPtr1, GfxPoint* pPt1);
 
 // Any physical object in the simulation.
-struct element
+struct Element
 {
-	// LINK elements; must be first
+	// QueueLink elements; must be first
 	HELEMENT pred, succ;
 
 	ElementProcessFunc* preprocess_func;
@@ -113,7 +113,7 @@ struct element
 	ElementCollisionFunc* collision_func;
 	ElementProcessFunc* death_func;
 
-	// Player this element belongs to
+	// Player this Element belongs to
 	// -1: neutral (planets, asteroids, crew, etc.)
 	//  0: Melee: bottom player; Full-game: the human player
 	//  1: Melee: top player;    Full-game: the NPC opponent
@@ -159,31 +159,31 @@ struct element
 	// Melee: used to cycle ion trails and warp shadows, and
 	//        to cycle the ship color when fleeing.
 
-	VELOCITY_DESC velocity;
-	INTERSECT_CONTROL IntersectControl;
+	VelocityDesc velocity;
+	IntersectInfo IntersectControl;
 	uint16_t PrimIndex;
-	STATE current, next;
+	ElementState current, next;
 
 	void* pParent;
-	// The ship this element belongs to.
+	// The ship this Element belongs to.
 	HELEMENT hTarget;
 };
 
 inline constexpr auto NeutralPlayerNum {-1};
 
-static inline bool elementsOfSamePlayer(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
+static inline bool elementsOfSamePlayer(Element* ElementPtr0, Element* ElementPtr1)
 {
 	return (bool)(ElementPtr0->playerNr == ElementPtr1->playerNr);
 }
 
-extern QUEUE disp_q;
+extern Queue disp_q;
 // The maximum number of elements is chosen to provide a slight margin.
 // Currently, it is maximum *known used* in Melee + 30
 inline constexpr auto MaxDisplayElements {150};
 
 inline constexpr auto MaxDisplayPrims {330};
 extern uint16_t DisplayFreeList;
-extern PRIMITIVE DisplayArray[MaxDisplayPrims];
+extern Primitive DisplayArray[MaxDisplayPrims];
 
 inline uint16_t AllocDisplayPrim()
 {
@@ -197,8 +197,8 @@ inline void FreeDisplayPrim(uint16_t p)
 	DisplayFreeList = p;
 }
 
-inline void GetElementStarShip(const ELEMENT* e, STARSHIP** ppsd) { *ppsd = static_cast<STARSHIP*>(e->pParent); }
-inline void SetElementStarShip(ELEMENT* e, STARSHIP* psd) { e->pParent = psd; }
+inline void GetElementStarShip(const Element* e, Starship** ppsd) { *ppsd = static_cast<Starship*>(e->pParent); }
+inline void SetElementStarShip(Element* e, Starship* psd) { e->pParent = psd; }
 
 inline constexpr auto MaxCrewSize {42};
 inline constexpr auto MaxEnergySize {42};
@@ -215,7 +215,7 @@ constexpr auto PutElement(const auto& h) { return PutQueue(&disp_q, h); }
 constexpr auto InsertElement(const auto& h, const auto& i) { return InsertQueue(&disp_q, h, i); }
 constexpr auto GetHeadElement() { return GetHeadLink(&disp_q); }
 constexpr auto GetTailElement() { return GetTailLink(&disp_q); }
-inline void LockElement(HELEMENT h, ELEMENT** ppe) { *ppe = reinterpret_cast<ELEMENT*>(LockLink(&disp_q, h)); }
+inline void LockElement(HELEMENT h, Element** ppe) { *ppe = reinterpret_cast<Element*>(LockLink(&disp_q, h)); }
 constexpr auto UnlockElement(const auto& h) { return UnlockLink(&disp_q, h); }
 constexpr auto GetPredElement(const auto& l) { return _GetPredLink(l); }
 constexpr auto GetSuccElement(const auto& l) { return _GetSuccLink(l); }
@@ -223,22 +223,22 @@ extern void RemoveElement(HLINK hLink);
 
 // XXX: The following functions should not really be here
 extern void spawn_planet(void);
-extern void spawn_asteroid(ELEMENT* ElementPtr);
-extern void do_damage(ELEMENT* ElementPtr, int16_t damage);
-extern void crew_preprocess(ELEMENT* ElementPtr);
-extern void crew_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-						   ELEMENT* ElementPtr1, GFXPOINT* pPt1);
-extern void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
+extern void spawn_asteroid(Element* ElementPtr);
+extern void do_damage(Element* ElementPtr, int16_t damage);
+extern void crew_preprocess(Element* ElementPtr);
+extern void crew_collision(Element* ElementPtr0, GfxPoint* pPt0,
+						   Element* ElementPtr1, GfxPoint* pPt1);
+extern void AbandonShip(Element* ShipPtr, Element* TargetPtr,
 						uint16_t crew_loss);
-extern bool TimeSpaceMatterConflict(ELEMENT* ElementPtr);
-extern uint16_t PlotIntercept(ELEMENT* ElementPtr0,
-							  ELEMENT* ElementPtr1, uint16_t max_turns, uint16_t margin_of_error);
+extern bool TimeSpaceMatterConflict(Element* ElementPtr);
+extern uint16_t PlotIntercept(Element* ElementPtr0,
+							  Element* ElementPtr1, uint16_t max_turns, uint16_t margin_of_error);
 
 extern void InitGalaxy(void);
-extern void SetStarPoint(GFXPOINT pt, uint16_t i);
+extern void SetStarPoint(GfxPoint pt, uint16_t i);
 extern void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy);
 
-extern bool CalculateGravity(ELEMENT* ElementPtr);
+extern bool CalculateGravity(Element* ElementPtr);
 
 
 #if 0 //defined(__cplusplus)

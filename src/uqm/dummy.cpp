@@ -34,9 +34,9 @@
 #include <ctype.h>
 
 
-struct CODERES_STRUCT
+struct CodeResData
 {
-	RACE_DESC data;
+	RaceDesc data;
 };
 
 typedef enum
@@ -72,7 +72,7 @@ typedef enum
 	PROBE_CODE_RES
 } ShipCodeRes;
 
-typedef RACE_DESC* (*RaceDescInitFunc)(void);
+typedef RaceDesc* (*RaceDescInitFunc)(void);
 
 static RaceDescInitFunc CodeResToInitFunc(ShipCodeRes res)
 {
@@ -153,13 +153,13 @@ static void GetCodeResData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	}
 	const auto which_res {static_cast<uint8_t>(*ship_id)};
 	RaceDescInitFunc initFunc = CodeResToInitFunc((ShipCodeRes)which_res);
-	const RACE_DESC* RDPtr = (initFunc == nullptr) ? nullptr : (*initFunc)();
-	resdata->ptr = RDPtr ? new CODERES_STRUCT {*RDPtr} : nullptr;
+	const RaceDesc* RDPtr = (initFunc == nullptr) ? nullptr : (*initFunc)();
+	resdata->ptr = RDPtr ? new CodeResData {*RDPtr} : nullptr;
 }
 
 static bool _ReleaseCodeResData(void* data)
 {
-	delete static_cast<CODERES_STRUCT*>(data);
+	delete static_cast<CodeResData*>(data);
 	return true;
 }
 
@@ -184,7 +184,7 @@ void* LoadCodeResInstance(RESOURCE res)
 
 bool DestroyCodeRes(void* hCode)
 {
-	delete static_cast<CODERES_STRUCT*>(hCode);
+	delete static_cast<CodeResData*>(hCode);
 	return true;
 }
 
@@ -197,7 +197,7 @@ void* CaptureCodeRes(void* hCode, void* pData, void** ppLocData)
 		return (nullptr);
 	}
 
-	CODERES_STRUCT* cs {(CODERES_STRUCT*)hCode};
+	CodeResData* cs {(CodeResData*)hCode};
 	*ppLocData = &cs->data;
 
 	(void)pData; /* Satisfying compiler (unused parameter) */

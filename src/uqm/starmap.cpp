@@ -37,27 +37,27 @@
 // of the data so that it may be manipulated or placed back to default from
 // there.  "starmap_array" should never be altered and referenced as little
 // as possible.
-//STAR_DESC *star_array;
-STAR_DESC star_array[NumSolarSystems + NumHyperVortices + 3] {};
-//STAR_DESC star_array[NumSolarSystems + NumHyperVortices + 3] =
+//StarDesc *star_array;
+StarDesc star_array[NumSolarSystems + NumHyperVortices + 3] {};
+//StarDesc star_array[NumSolarSystems + NumHyperVortices + 3] =
 //		{[0 ... (NumSolarSystems + NumHyperVortices + 2)] =
 //		{{~0, ~0}, 0, 0, 0, 0}};
-const GFXPOINT* constel_array;
+const GfxPoint* constel_array;
 // JSD Give my own starseed
 uqstl::optional<uqm::UQMRandom> StarGenRNG {};
-PORTAL_LOCATION portal_map[NumHyperVortices + 1] {};
-//PORTAL_LOCATION portal_map[NumHyperVortices+1] =
+PortalLocation portal_map[NumHyperVortices + 1] {};
+//PortalLocation portal_map[NumHyperVortices+1] =
 //		{[0 ... (NumHyperVortices)] = {{0, 0}, {0, 0}, nullptr}};
 
 
-STAR_DESC* FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
-					int16_t ybounds)
+StarDesc* FindStar(StarDesc* LastSDPtr, GfxPoint* puniverse, int16_t xbounds,
+				   int16_t ybounds)
 {
 	int16_t min_y {};
 	int16_t max_y {};
 	int16_t lo {};
 	int16_t hi {};
-	STAR_DESC* BaseSDPtr {};
+	StarDesc* BaseSDPtr {};
 
 	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
@@ -140,7 +140,7 @@ STAR_DESC* FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
 	return (0);
 }
 
-void GetClusterName(const STAR_DESC* pSD, char buf[])
+void GetClusterName(const StarDesc* pSD, char buf[])
 {
 	const char* pStr {};
 
@@ -168,7 +168,7 @@ void GetClusterName(const STAR_DESC* pSD, char buf[])
 
 // Finds the nearest (constellation = true / false = star) to the
 // point P provided on the starmap, returns pointer to that star.
-STAR_DESC* FindNearest(STAR_DESC* starmap, GFXPOINT p, bool constellation)
+StarDesc* FindNearest(StarDesc* starmap, GfxPoint p, bool constellation)
 {
 	if (!starmap || p.x == ~0 || p.y == ~0)
 	{
@@ -190,13 +190,13 @@ STAR_DESC* FindNearest(STAR_DESC* starmap, GFXPOINT p, bool constellation)
 }
 
 // Returns a pointer to the closest star to point p on the starmap
-STAR_DESC* FindNearestStar(STAR_DESC* starmap, GFXPOINT p)
+StarDesc* FindNearestStar(StarDesc* starmap, GfxPoint p)
 {
 	return (starmap ? FindNearest(starmap, p, false) : nullptr);
 }
 
 // Returns a pointer to the closest constellation to point p on the starmap
-STAR_DESC* FindNearestConstellation(STAR_DESC* starmap, GFXPOINT p)
+StarDesc* FindNearestConstellation(StarDesc* starmap, GfxPoint p)
 {
 	return (starmap ? FindNearest(starmap, p, true) : nullptr);
 }
@@ -216,8 +216,8 @@ STAR_DESC* FindNearestConstellation(STAR_DESC* starmap, GFXPOINT p)
 // distances are set.
 // The COORDS are initialized with {~0, ~0}, the rest 0.
 // Plot ID 0 (ARILOU_DEFINED) is ARILOU_HYPERSPACE_PORTAL location.
-PLOT_LOCATION plot_map[NUM_PLOTS] = {};
-//PLOT_LOCATION plot_map[NUM_PLOTS] = {[0 ... (NUM_PLOTS - 1)] =
+PlotLocation plot_map[NUM_PLOTS] = {};
+//PlotLocation plot_map[NUM_PLOTS] = {[0 ... (NUM_PLOTS - 1)] =
 //		{{~0, ~0}, nullptr, {[0 ... (NUM_PLOTS - 1)] = 0}}};
 
 static constexpr auto MinPortal {2000}; // The min distance between portals (exits)
@@ -230,7 +230,7 @@ static constexpr auto MinVortex {150};	// The min distance between vorticies in 
 // These are called Hyperspace Vortices (Vortex) when in Quasispace,
 // and Quasispace Portals when in Hyperspace (all of these are exit only)
 // The recurring 2-way Portal/Vortex is ARILOU_DEFINED plot loc and 5000x5000
-PORTAL_LOCATION portalmap_array[NumHyperVortices + 1] =
+PortalLocation portalmap_array[NumHyperVortices + 1] =
 	{
 		{{4091, 7748},
 		 {(-12 * VortexScale) + 5000, (-21 * VortexScale) + 5000},
@@ -283,7 +283,7 @@ PORTAL_LOCATION portalmap_array[NumHyperVortices + 1] =
 };
 
 // Reset the given starmap to the default static starmap array
-void DefaultStarmap(STAR_DESC* starmap)
+void DefaultStarmap(StarDesc* starmap)
 {
 	if (!starmap)
 	{
@@ -306,7 +306,7 @@ void DefaultStarmap(STAR_DESC* starmap)
 // 47 w dwarf 80 b dwarf 96 g dwarf 50 y dwarf 97 o dwarf 99 r dwarf
 //  5 w giant  4 b giant  4 g giant  2 y giant  5 o giant  4 r giant
 //  1 w super  1 b super  2 g super  3 y super  0 o super  2 r super
-void SeedStarmap(STAR_DESC* starmap)
+void SeedStarmap(StarDesc* starmap)
 {
 	if (!starmap)
 	{
@@ -409,7 +409,7 @@ static constexpr auto MaxPweight {100000000}; // (10000 * 10000) or MAX_PLOT * M
 // and remove the plot lengths from existing plotweights before changing.
 // Also increments the plot weight totals of the plots.
 // Min and max can't be the same value, must be at least 100 apart.
-void SetPlotLength(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB,
+void SetPlotLength(PlotLocation* plot, uint16_t plotA, uint16_t plotB,
 				   uint16_t p_min, uint16_t p_max)
 {
 	uint16_t min = p_min;
@@ -478,7 +478,7 @@ void SetPlotLength(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB,
 // If the min/max plot lengths are set and valid, gives relative weight of
 // this plot pair, otherwise 0.  The relative weight is the min distance
 // plus the (MaxPlot - the max distance) of each plot thread connected.
-uint32_t ConnectedPlot(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB)
+uint32_t ConnectedPlot(PlotLocation* plot, uint16_t plotA, uint16_t plotB)
 {
 	// report bad data
 	if (!(plot && (plotA < NUM_PLOTS) && (plotB < NUM_PLOTS)))
@@ -504,9 +504,9 @@ static uint16_t next_plot = ~0;
 // Internal.
 // This returns the plot_id (number) with the highest weight on the
 // plot map which has yet to be assigned a home, or NUM_PLOTS if all
-// plots are allocated For a plot to be set, both int16_t and STAR_DESC
+// plots are allocated For a plot to be set, both int16_t and StarDesc
 // ptr need data.  If both are set, we'll just stamp the starmap.
-uint16_t GetNextPlot(PLOT_LOCATION* plot)
+uint16_t GetNextPlot(PlotLocation* plot)
 {
 	uint16_t plot_id = 0;
 	uint32_t top_weight = 0;
@@ -577,7 +577,7 @@ uint16_t GetNextPlot(PLOT_LOCATION* plot)
 
 // Internal but could be shared
 // Sets all plot lengths and weights, locations and pointers to zero.
-void ResetPlot(PLOT_LOCATION* plot)
+void ResetPlot(PlotLocation* plot)
 {
 	if (!plot)
 	{
@@ -591,7 +591,7 @@ void ResetPlot(PLOT_LOCATION* plot)
 		{
 			plot[i].dist_sq[j] = 0;
 		}
-		plot[i].star_pt = GFXPOINT {~0, ~0};
+		plot[i].star_pt = GfxPoint {~0, ~0};
 		plot[i].star = nullptr;
 	}
 }
@@ -600,7 +600,7 @@ static constexpr auto ArilouSpaceX {438};  // We don't seed arilou from the map,
 static constexpr auto ArilouSpaceY {6372}; // are hard code all the way.
 
 // Sets all plot locations to their position on the provided starmap.
-void DefaultPlot(PLOT_LOCATION* plot, STAR_DESC* starmap)
+void DefaultPlot(PlotLocation* plot, StarDesc* starmap)
 {
 
 	if (!plot || !starmap)
@@ -611,7 +611,7 @@ void DefaultPlot(PLOT_LOCATION* plot, STAR_DESC* starmap)
 	}
 
 	ResetPlot(plot);
-	plot[0].star_pt = GFXPOINT {ArilouSpaceX, ArilouSpaceY};
+	plot[0].star_pt = GfxPoint {ArilouSpaceX, ArilouSpaceY};
 	plot[0].star = &(starmap[NumSolarSystems + 1 + NumHyperVortices + 1]);
 	for (uint16_t i {0}; i < NumSolarSystems; i++)
 	{
@@ -631,7 +631,7 @@ void DefaultPlot(PLOT_LOCATION* plot, STAR_DESC* starmap)
 // the seeding engine determine correctness.
 // Extended lore is taken into account regardless so that changing modes
 // doesn't alter the seed.
-void InitPlot(PLOT_LOCATION* plotmap)
+void InitPlot(PlotLocation* plotmap)
 {
 	if (!plotmap)
 	{
@@ -832,7 +832,7 @@ void InitPlot(PLOT_LOCATION* plotmap)
 
 // Sets up the plot threads for rainbow worlds and Melnormes, including
 // the Melnorme 1 near Sol, and Melnorme 7 near Thraddash
-void InitMelnormeRainbow(PLOT_LOCATION* plotmap)
+void InitMelnormeRainbow(PlotLocation* plotmap)
 {
 	uint16_t i {};
 	uint16_t j {};
@@ -844,7 +844,7 @@ void InitMelnormeRainbow(PLOT_LOCATION* plotmap)
 	for (i = RAINBOW0_DEFINED; i <= RAINBOW9_DEFINED; i++)
 	{
 		plotmap[i].star = nullptr;
-		plotmap[i].star_pt = GFXPOINT {~0, ~0};
+		plotmap[i].star_pt = GfxPoint {~0, ~0};
 		for (j = RAINBOW0_DEFINED; j <= RAINBOW9_DEFINED; j++)
 		{
 			if (i != j)
@@ -856,7 +856,7 @@ void InitMelnormeRainbow(PLOT_LOCATION* plotmap)
 	for (i = MELNORME0_DEFINED; i <= MELNORME8_DEFINED; i++)
 	{
 		plotmap[i].star = nullptr;
-		plotmap[i].star_pt = GFXPOINT {~0, ~0};
+		plotmap[i].star_pt = GfxPoint {~0, ~0};
 		for (j = MELNORME0_DEFINED; j <= MELNORME8_DEFINED; j++)
 		{
 			if (i != j)
@@ -897,7 +897,7 @@ void InitMelnormeRainbow(PLOT_LOCATION* plotmap)
 // go past validation check but eventually if the star is in a bad spot,
 // it will be replaced.  Although it may also impose irrelevant restrictions
 // in the interim.  Do need to worry about undefined plot {~0,~0}.
-bool CheckValid(PLOT_LOCATION* plot, uint16_t plot_id)
+bool CheckValid(PlotLocation* plot, uint16_t plot_id)
 {
 	uint32_t distance_sq {};
 	if (!plot || plot_id >= NUM_PLOTS)
@@ -985,7 +985,7 @@ static bool NeedsHabitable(uint8_t sIndex)
 // specifications, using other plots on the starmap, and/or using
 // the global StarmapArray constants.
 // We let the colors mostly stay random but this is easily changed.
-void Plotify(STAR_DESC* starmap, STAR_DESC* star)
+void Plotify(StarDesc* starmap, StarDesc* star)
 {
 	if (!starmap || !star)
 	{
@@ -1204,8 +1204,8 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 			star->Prefix = 0;
 			star->Postfix = 129;
 			// Find the nearest constellation to old Sol
-			const STAR_DESC* pStr = FindNearestConstellation(starmap,
-															 starmap[j].star_pt);
+			const StarDesc* pStr = FindNearestConstellation(starmap,
+															starmap[j].star_pt);
 			// Find the highest Prefix
 			for (k = 0; k < NumSolarSystems; k++)
 			{
@@ -1273,7 +1273,7 @@ static constexpr auto StarFactor {89};
 // recurse further until complete, otherwise return failed plot ID which is
 // used by previous iteration to retry with differnt locations.
 // NUM_PLOTS = success; NUM_PLOTS + 1 = timed out
-uint16_t SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
+uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 {
 	static bool timer_running = false;
 	static clock_t timer;
@@ -1500,7 +1500,7 @@ uint16_t SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		if (plot_id == ARILOU_DEFINED)
 		{
 			star_id = (rand_val + i * StarFactor) % 100;
-			plotmap[ARILOU_DEFINED].star_pt = GFXPOINT {
+			plotmap[ARILOU_DEFINED].star_pt = GfxPoint {
 				(star_id / 10) * 1000 + uqm::lowByte(rand_val) * 100 / 256,
 				(star_id % 10) * 1000 + uqm::highByte(rand_val) * 100 / 256};
 			plotmap[ARILOU_DEFINED].star = FindNearestStar(starmap,
@@ -1572,7 +1572,7 @@ uint16_t SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 				{
 					starmap[star_id].Index = 0;
 				}
-				plotmap[plot_id].star_pt = GFXPOINT {~0, ~0};
+				plotmap[plot_id].star_pt = GfxPoint {~0, ~0};
 				plotmap[plot_id].star = nullptr;
 				if (my_clock)
 				{
@@ -1594,7 +1594,7 @@ uint16_t SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		{
 			starmap[star_id].Index = 0;
 		}
-		plotmap[plot_id].star_pt = GFXPOINT {~0, ~0};
+		plotmap[plot_id].star_pt = GfxPoint {~0, ~0};
 		plotmap[plot_id].star = nullptr;
 	}
 #ifdef DEBUG_STARSEED_TRACE_Z
@@ -1611,7 +1611,7 @@ uint16_t SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 }
 
 // Reset the quasispace portal map to the static default portalmap_array
-void DefaultQuasispace(PORTAL_LOCATION* portalmap)
+void DefaultQuasispace(PortalLocation* portalmap)
 {
 	if (!portalmap)
 	{
@@ -1624,7 +1624,7 @@ void DefaultQuasispace(PORTAL_LOCATION* portalmap)
 	{
 		portalmap[i].star_pt = portalmap_array[i].star_pt;
 		portalmap[i].quasi_pt = portalmap_array[i].quasi_pt;
-		portalmap[i].nearest_star = FindNearestConstellation((STAR_DESC*)StarmapArray, portalmap[i].star_pt);
+		portalmap[i].nearest_star = FindNearestConstellation((StarDesc*)StarmapArray, portalmap[i].star_pt);
 		if (!portalmap[i].nearest_star)
 		{
 			fmt::print(stderr, "BAD Quasi Portal %c at %05.1f : %05.1f, {}",
@@ -1641,10 +1641,10 @@ void DefaultQuasispace(PORTAL_LOCATION* portalmap)
 // and keep them a minimum distance apart as well.
 // Then sort the quasi side based on Y value ascending (starmap requirement)
 // Then shove the coords into the star_map (QUASI side) in the same order
-bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
-					STAR_DESC* starmap)
+bool SeedQuasispace(PortalLocation* portalmap, PlotLocation* plotmap,
+					StarDesc* starmap)
 {
-	PORTAL_LOCATION swap;
+	PortalLocation swap;
 	uint16_t rand_val {};
 	uint16_t i {};
 	uint16_t j {};
@@ -1675,7 +1675,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 				// half above.
 				// We locate the portal by up to 1147 (114.7) in any direction.
 				// Also note int16_t is just int16_t and can be negative.
-				portalmap[i].star_pt = GFXPOINT {
+				portalmap[i].star_pt = GfxPoint {
 					(int16_t)uqm::lowByte(rand_val) * 9 + plotmap[SOL_DEFINED].star_pt.x - 1147,
 					(int16_t)uqm::highByte(rand_val) * 9 + plotmap[SOL_DEFINED].star_pt.y - 1147};
 				// Take care of anything off the map (w/in 18.9) or too close
@@ -1700,7 +1700,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 				// 189 [0] and 9810 [255].
 				// ([rnd] 255 * 9999 / 265 = 9621) + 189 = 9810
 				// (or 189 below the top)
-				portalmap[i].star_pt = GFXPOINT {uqm::lowByte(rand_val) * MaxXUniverse / 265 + 189,
+				portalmap[i].star_pt = GfxPoint {uqm::lowByte(rand_val) * MaxXUniverse / 265 + 189,
 												 uqm::highByte(rand_val) * MaxYUniverse / 265 + 189};
 				for (j = 0; j < i; j++)
 				{
@@ -1756,7 +1756,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 		{
 			valid = true;
 			rand_val = StarGenRNG->next();
-			portalmap[i].quasi_pt = GFXPOINT {(uqm::lowByte(rand_val) * 51 / 256 - 25) * VortexScale + 5000,
+			portalmap[i].quasi_pt = GfxPoint {(uqm::lowByte(rand_val) * 51 / 256 - 25) * VortexScale + 5000,
 											  (uqm::highByte(rand_val) * 51 / 256 - 25) * VortexScale + 5000};
 			for (j = 0; j < i; j++)
 			{

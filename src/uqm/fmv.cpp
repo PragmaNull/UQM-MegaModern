@@ -37,14 +37,14 @@ static constexpr auto MaxLoadEntries {40};
 
 void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 {
-	GFXRECT old_r;
+	GfxRect old_r;
 
 	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
 	if (uqm::currentSeed().ships)
 	{
 		HMASTERSHIP hMaster = GetStarShipFromIndex(&master_q, index);
-		const MASTER_SHIP_INFO* mPtr = LockMasterShip(&master_q, hMaster);
+		const MasterShipInfo* mPtr = LockMasterShip(&master_q, hMaster);
 		index = FindMasterShipIndex(SeedShip(mPtr->SpeciesID, false));
 		UnlockMasterShip(&master_q, hMaster);
 	}
@@ -102,7 +102,7 @@ void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 
 void SplashScreen(void (*DoProcessing)(TimeCount TimeOut))
 {
-	STAMP s;
+	GfxStamp s;
 	TimeCount TimeOut {};
 	const TimeCount OverallWait = GetTimeCounter() + (c_gameSecond * 3);
 
@@ -229,7 +229,7 @@ void AdvanceLoadProgress(void)
 {
 	if (optRequiresReload)
 	{
-		GFXRECT r;
+		GfxRect r;
 		static uint16_t i = 0;
 
 		r.corner.x = ResScale(16);

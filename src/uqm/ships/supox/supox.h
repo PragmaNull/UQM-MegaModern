@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_supox(void);
+RaceDesc* init_supox(void);
 
 #if 0 //defined(__cplusplus)
 }

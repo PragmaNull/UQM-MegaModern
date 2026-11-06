@@ -48,7 +48,7 @@
 static constexpr auto AccelerationIncrement {(c_gameSecond / 12)};
 static constexpr auto MenuRepeatDelay {(c_gameSecond / 2)};
 
-struct INPUT_STATE_DESC
+struct InputStateDesc
 {
 	bool (*InputFunc)(void* pInputState);
 };
@@ -64,8 +64,8 @@ struct MenuAnnotations
 
 
 ControlTemplate PlayerControlTemplates[NumPlayers];
-CONTROLLER_INPUT_STATE CurrentInputState, PulsedInputState;
-static CONTROLLER_INPUT_STATE CachedInputState, OldInputState;
+ControllerInputState CurrentInputState, PulsedInputState;
+static ControllerInputState CachedInputState, OldInputState;
 static MenuAnnotations<TimePeriod> RepeatDelays;
 static MenuAnnotations<TimeCount> Times;
 static TimePeriod GestaltRepeatDelay;
@@ -76,7 +76,7 @@ static bool _gestalt_keys;
 
 static MENU_SOUND_FLAGS sound_0, sound_1;
 
-IMMEDIATE_INPUT_STATE ImmediateInputState {};
+ImmediateKeyState ImmediateInputState {};
 
 uqstl::atomic<bool> ExitRequested {};
 uqstl::atomic<bool> GamePaused {};
@@ -187,7 +187,7 @@ static void applyInputScript(void)
 	}
 	if (step.saveSlot)
 	{
-		SUMMARY_DESC summary {};
+		SaveSummaryData summary {};
 		if (!IsGameInProgress())
 		{
 			uqm::log::error("Input script: no game runs, so there is no game to save.");
@@ -500,7 +500,7 @@ void FlushInput(void)
 	_clear_menu_state();
 }
 
-static MENU_SOUND_FLAGS MenuKeysToSoundFlags(const CONTROLLER_INPUT_STATE* state)
+static MENU_SOUND_FLAGS MenuKeysToSoundFlags(const ControllerInputState* state)
 {
 	MENU_SOUND_FLAGS soundFlags {MenuSoundNone};
 	if (state->menu[KEY_MENU_UP])
@@ -579,7 +579,7 @@ void DoInput(void* pInputState, bool resetInput)
 			inputCallback();
 		}
 
-	} while (((INPUT_STATE_DESC*)pInputState)->InputFunc(pInputState));
+	} while (((InputStateDesc*)pInputState)->InputFunc(pInputState));
 
 	if (resetInput)
 	{

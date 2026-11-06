@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_pkunk(void);
+RaceDesc* init_pkunk(void);
 
 #if 0 //defined(__cplusplus)
 }

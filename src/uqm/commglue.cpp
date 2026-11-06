@@ -383,7 +383,7 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 	int toplevel = 0;
 	const char* TrackNames[MaxNumberTracks];
 	char numbuf[60] {};
-	const SPEECH_DIGIT* dig = nullptr;
+	const SpeechDigit* dig = nullptr;
 
 	if (!speech)
 	{
@@ -438,7 +438,7 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 
 		if (dig->Names != 0)
 		{
-			for (const SPEECH_DIGITNAME* name {dig->Names}; name->Divider; ++name)
+			for (const SpeechDigitName* name {dig->Names}; name->Divider; ++name)
 			{
 				if (number % name->Divider <= name->MaxRemainder)
 				{
@@ -562,7 +562,7 @@ Segue getSegue(void)
 	}
 }
 
-LOCDATA* init_race(CONVERSATION comm_id)
+ConversationData* init_race(CONVERSATION comm_id)
 {
 	switch (comm_id)
 	{

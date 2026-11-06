@@ -52,7 +52,7 @@ inline auto MapHeight() { return ResScale(Sc2MapHeight); }
 inline auto ScaledMapWidth() { return ResScale(((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
 inline auto UnscaledMapWidth() { return (((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
 
-inline constexpr EXTENT MapDimensions[] {
+inline constexpr GfxExtent MapDimensions[] {
 	{Sc2MapWidth,		  Sc2MapHeight},
 	{(UqmMapWidth - 1), UqmMapHeight},
 };
@@ -128,18 +128,18 @@ inline constexpr auto NumRaceRuins {16};
 constexpr auto MinBrightness(const auto& a) { return ((a == ENERGY_SCAN) ? (50) : (55)); }
 constexpr auto MaxBrightness(const auto& a) { return ((a == ENERGY_SCAN) ? (90) : (135)); }
 
-typedef struct planet_desc PLANET_DESC;
-typedef struct star_desc STAR_DESC;
-typedef struct node_info NODE_INFO;
-typedef struct planet_orbit PLANET_ORBIT;
-typedef struct solarsys_state SOLARSYS_STATE;
+struct SystemPlanet;
+struct StarDesc;
+struct SurfaceNode;
+struct PlanetOrbit;
+struct SolarSystemState;
 // JSD plot_map is an array of "plot locations" for each plot in the game,
 // the contents of which are COORDS to the star system (for dialogs and fleets)
 // as well as internal required distance parameters used during the initial seed.
-// It also might make sense for this and star_desc to be defined in starmap.h and
+// It also might make sense for this and StarDesc to be defined in starmap.h and
 // the corresponding functions & the star_map object in starmap.c.
-typedef struct plot_location PLOT_LOCATION;
-typedef struct portal_location PORTAL_LOCATION;
+struct PlotLocation;
+struct PortalLocation;
 
 #include "generate.h"
 #include "lifeform.h"
@@ -148,13 +148,13 @@ typedef struct portal_location PORTAL_LOCATION;
 #include "../gendef.h" //JSD need gendef.h unless we move plots & starmap to starmap
 #include "uqm/random/UQMRandom.h"
 
-struct MAP3D_POINT
+struct MapPoint3D
 {
-	GFXPOINT p[4];
+	GfxPoint p[4];
 	uint32_t m[4];
 };
 
-struct planet_orbit
+struct PlanetOrbit
 {
 	FRAME TopoZoomFrame;
 	// 4x scaled topo image for planet-side
@@ -183,7 +183,7 @@ struct planet_orbit
 	// background frame to make shields transparent with nebulae on
 	// BW: extra stuff for animated IP
 	uint32_t** light_diff;
-	MAP3D_POINT** map_rotate;
+	MapPoint3D** map_rotate;
 	// doubly dynamically allocated depending on map size
 
 	// stuff to draw DOS spheres
@@ -200,25 +200,25 @@ struct planet_orbit
 extern "C" {
 #endif
 
-struct planet_desc
+struct SystemPlanet
 {
 	uint32_t rand_seed; // seed for topography and node generation
 
 	uint8_t data_index; // what planet is this
 	uint8_t NumPlanets; // number of moons
 	int16_t radius;		// radius of planet orbit
-	GFXPOINT location;	// coords on screen
+	GfxPoint location;	// coords on screen
 
 	Color temp_color;	// color of planet orbit
 	uint16_t NextIndex; // index to a next planet
-	STAMP image;		// image of a planet in IP view
+	GfxStamp image;		// image of a planet in IP view
 
-	PLANET_DESC* pPrevDesc;
+	SystemPlanet* pPrevDesc;
 	// The Sun or planet that this world is orbiting around.
 
 	// BW : new stuff for animated solar systems
-	PLANET_ORBIT orbit; // Link to moon(s)
-	uint16_t size;		// size of a planet
+	PlanetOrbit orbit; // Link to moon(s)
+	uint16_t size;	   // size of a planet
 
 	uint16_t angle;
 	int rotFrameIndex, rotPointIndex, rotwidth, rotheight;
@@ -232,20 +232,20 @@ struct planet_desc
 	uint8_t frame_offset;
 };
 
-struct star_desc
+struct StarDesc
 {
-	GFXPOINT star_pt;
+	GfxPoint star_pt;
 	uint8_t Type;
 	uint8_t Index;
 	uint8_t Prefix;
 	uint8_t Postfix;
 };
 
-struct node_info
+struct SurfaceNode
 {
 	// This structire is filled in when a generateMinerals, generateEnergy,
 	// or generateLife call is made.
-	GFXPOINT loc_pt;
+	GfxPoint loc_pt;
 	// Position of the mineral/bio/energy node on the planet.
 	uint16_t density;
 	// For bio and energy: undefined
@@ -253,7 +253,7 @@ struct node_info
 	// deposit (this determines the image), and the high
 	// byte is the fine size (the actual quantity).
 	uint16_t type;
-	// For minerals: the type of element
+	// For minerals: the type of Element
 	// For bio: the type of the creature.
 	//       0 through NumCreatureTypes - 1 are normal creatures,
 	//       NumCreatureTypes     is an Evil One
@@ -263,14 +263,14 @@ struct node_info
 };
 
 // See doc/devel/generate for information on how this structure is filled.
-struct solarsys_state
+struct SolarSystemState
 {
 	// Standard field required by DoInput()
-	bool (*InputFunc)(struct solarsys_state*);
+	bool (*InputFunc)(struct SolarSystemState*);
 
 	bool InIpFlight;
 	// Set to true when player is flying around in interplanetary
-	// Reset to false when going into orbit or encounter
+	// Reset to false when going into orbit or Encounter
 
 	uint16_t WaitIntersect;
 	// Planet/moon number with which the flagship should not
@@ -278,20 +278,20 @@ struct solarsys_state
 	// inner system. If set to (uint16_t)~0, all planet collisions are
 	// disabled until the flagship stops intersecting with all
 	// planets.
-	PLANET_DESC SunDesc[MaxSuns];
-	PLANET_DESC PlanetDesc[MaxPlanets];
+	SystemPlanet SunDesc[MaxSuns];
+	SystemPlanet PlanetDesc[MaxPlanets];
 	// Description of the planets in the system.
 	// Only defined after a call to (*genFuncs)->generatePlanets()
 	// and overwritten by subsequent calls.
-	PLANET_DESC MoonDesc[MaxGenMoons];
+	SystemPlanet MoonDesc[MaxGenMoons];
 	// Description of the moons orbiting the planet pointed to
 	// by pBaseDesc.
 	// Only defined after a call to (*genFuncs)->generateMoons()
 	// as its argument, and overwritten by subsequent calls.
-	PLANET_DESC* pBaseDesc;
+	SystemPlanet* pBaseDesc;
 	// In outer system: points to PlanetDesc[]
 	// In inner system: points to MoonDesc[]
-	PLANET_DESC* pOrbitalDesc;
+	SystemPlanet* pOrbitalDesc;
 	// In orbit: points into PlanetDesc or MoonDesc to the planet
 	// currently orbiting.
 	// In inner system: points into PlanetDesc to the planet whose
@@ -314,7 +314,7 @@ struct solarsys_state
 	uqm::StringTablePtr OrbitalCMap {};
 	uint16_t OrbitalCMapIndex;
 
-	SYSTEM_INFO SysInfo;
+	SolarSystemInfo SysInfo;
 
 	const GenerateFunctions* genFuncs;
 	// Functions to call to fill in various parts of this
@@ -330,7 +330,7 @@ struct solarsys_state
 			 * [5] = bio 3 (world-specific)
 			 */
 	FRAME TopoFrame;
-	PLANET_ORBIT Orbit;
+	PlanetOrbit Orbit;
 	bool InOrbit;
 	// Set to true when player hits a world in an inner system
 	// Homeworld encounters count as 'in orbit'
@@ -338,7 +338,7 @@ struct solarsys_state
 	// For PC scan, generated from TopoFrame
 };
 
-// The other part of PLOT_LOCATION
+// The other part of PlotLocation
 // star_pt is the coords where the plot is seeded, for public consumption.
 // star is the pointer to the star description on the starmap on which this
 // plotmap was seeded.
@@ -347,25 +347,25 @@ struct solarsys_state
 // dist_sq is the min or max distance to the plot in the array (it stores both),
 // or the "weight" of the plot at that location when called reflexively.
 // dist_sq is internal and accessed by the "PLOT_" defines on "plot" variable.
-struct plot_location
+struct PlotLocation
 {
-	GFXPOINT star_pt;
-	STAR_DESC* star;
+	GfxPoint star_pt;
+	StarDesc* star;
 	uint32_t dist_sq[NUM_PLOTS];
 };
 
-// PORTAL_LOCATION aka portal_location.  The star_pt is the location in
+// PortalLocation aka PortalLocation.  The star_pt is the location in
 // hyperspace, while quasi_pt is the location in quasispace.  The
 // nearest_star variable is the pointer to the star description on the
 // starmap provided of the nearest actual star.
-struct portal_location
+struct PortalLocation
 {
-	GFXPOINT star_pt;
-	GFXPOINT quasi_pt;
-	STAR_DESC* nearest_star;
+	GfxPoint star_pt;
+	GfxPoint quasi_pt;
+	StarDesc* nearest_star;
 };
 
-extern SOLARSYS_STATE* pSolarSysState;
+extern SolarSystemState* pSolarSysState;
 extern MUSIC_REF SpaceMusic;
 extern GFXCONTEXT PlanetContext;
 extern bool use3DOSpheres;
@@ -378,48 +378,48 @@ extern uqm::UQMRandom* SysGenRNGDebug;
 bool playerInSolarSystem(void);
 bool playerInPlanetOrbit(void);
 bool playerInInnerSystem(void);
-bool worldIsPlanet(const SOLARSYS_STATE* solarSys,
-				   const PLANET_DESC* world);
-bool worldIsMoon(const SOLARSYS_STATE* solarSys,
-				 const PLANET_DESC* world);
-uint16_t planetIndex(const SOLARSYS_STATE* solarSys,
-					 const PLANET_DESC* world);
-uint16_t moonIndex(const SOLARSYS_STATE* solarSys, const PLANET_DESC* moon);
+bool worldIsPlanet(const SolarSystemState* solarSys,
+				   const SystemPlanet* world);
+bool worldIsMoon(const SolarSystemState* solarSys,
+				 const SystemPlanet* world);
+uint16_t planetIndex(const SolarSystemState* solarSys,
+					 const SystemPlanet* world);
+uint16_t moonIndex(const SolarSystemState* solarSys, const SystemPlanet* moon);
 inline constexpr auto MatchPlanet {((uint8_t)-1)};
 inline constexpr auto MatchPbyte {((uint8_t)-2)};
 inline constexpr auto MatchMbyte {((uint8_t)-3)};
-bool matchWorld(const SOLARSYS_STATE* solarSys, const PLANET_DESC* world,
+bool matchWorld(const SolarSystemState* solarSys, const SystemPlanet* world,
 				uint8_t planetI, uint8_t moonI);
 
-uint32_t GetRandomSeedForStar(const STAR_DESC* star);
+uint32_t GetRandomSeedForStar(const StarDesc* star);
 
-GFXPOINT locationToDisplay(GFXPOINT pt, int16_t scaleRadius);
-GFXPOINT displayToLocation(GFXPOINT pt, int16_t scaleRadius);
-GFXPOINT planetOuterLocation(uint16_t planetI);
+GfxPoint locationToDisplay(GfxPoint pt, int16_t scaleRadius);
+GfxPoint displayToLocation(GfxPoint pt, int16_t scaleRadius);
+GfxPoint planetOuterLocation(uint16_t planetI);
 
-extern void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height);
+extern void DestroyOrbitStruct(PlanetOrbit* Orbit, int16_t height);
 extern void LoadPlanet(FRAME SurfDefFrame);
 extern void DrawPlanet(int dy, Color tintColor);
 extern void DrawPCScanTint(uint16_t cur_scan);
 extern void FreePlanet(void);
-extern void LoadStdLanderFont(PLANET_INFO* info);
-extern void FreeLanderFont(PLANET_INFO* info);
+extern void LoadStdLanderFont(PlanetData* info);
+extern void FreeLanderFont(PlanetData* info);
 
 extern void ExploreSolarSys(void);
 extern void DrawStarBackGround(void);
 extern FRAME GetStarBackFround(void);
-extern void XFormIPLoc(GFXPOINT* pIn, GFXPOINT* pOut, bool ToDisplay);
-extern void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled);
-extern void DrawFilledOval(DRECT* pRect);
+extern void XFormIPLoc(GfxPoint* pIn, GfxPoint* pOut, bool ToDisplay);
+extern void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled);
+extern void DrawFilledOval(LargeRect* pRect);
 extern void DrawEllipse(int cx, int cy, int rx, int ry, int shear,
 						int filled, int dotted);
 extern void DrawRotatedEllipse(int cx, int cy, int rx, int ry,
 							   int angle_deg, int filled, int dotted);
-extern void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
+extern void ComputeSpeed(SystemPlanet* planet, bool GeneratingMoons,
 						 uint16_t rand_val);
 inline constexpr auto NumplanetsPdesc {((uint8_t)-2)};
-extern void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
-					   PLANET_DESC* pBaseDesc, bool TypesDefined);
+extern void FillOrbits(SolarSystemState* system, uint8_t NumPlanets,
+					   SystemPlanet* pBaseDesc, bool TypesDefined);
 extern void InitLander(uint8_t LanderFlags);
 extern void InitPCLander(bool Loading);
 extern void DestroyPCLanderContext(void);
@@ -428,44 +428,44 @@ extern void InitSphereRotation(int direction, bool shielded,
 							   uint16_t width, uint16_t height);
 extern void UninitSphereRotation(void);
 extern void PrepareNextRotationFrame(void);
-extern void PrepareNextRotationFrameForIP(PLANET_DESC* pPlanetDesc,
+extern void PrepareNextRotationFrameForIP(SystemPlanet* pPlanetDesc,
 										  int16_t frameCounter);
 extern void DrawPlanetSphere(int x, int y, bool back);
 extern void DrawDefaultPlanetSphere(void);
 extern void RerenderPlanetSphere(void);
-extern void RenderDOSPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame,
+extern void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame,
 								  int offset);
-extern void Render3DOPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame,
+extern void Render3DOPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame,
 								  int offset, uint16_t rotwidth, uint16_t height);
-extern void RenderPlanetSphere(PLANET_ORBIT* Orbit, FRAME Frame,
+extern void RenderPlanetSphere(PlanetOrbit* Orbit, FRAME Frame,
 							   int offset, bool shielded, bool doThrob, uint16_t width,
 							   uint16_t height, uint16_t radius);
 extern void SetShieldThrobEffect(FRAME FromFrame, int offset,
 								 FRAME ToFrame);
-extern void Draw3DOShield(STAMP ShieldFrame);
+extern void Draw3DOShield(GfxStamp ShieldFrame);
 
 extern void ZoomInPlanetSphere(void);
-extern void RotatePlanetSphere(bool keepRate, STAMP* onTop);
+extern void RotatePlanetSphere(bool keepRate, GfxStamp* onTop);
 
 extern void DrawScannedObjects(bool Reversed);
-extern void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame);
-extern void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc,
+extern void GetPlanetTopography(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame);
+extern void GeneratePlanetSurface(SystemPlanet* pPlanetDesc,
 								  FRAME SurfDefFrame, uint16_t width, uint16_t height);
 extern void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray,
-							GFXRECT* pRect, int16_t depth_delta);
+							GfxRect* pRect, int16_t depth_delta);
 
 extern void TransformColor(Color* c, uint16_t scan);
 
 extern void DrawPlanetSurfaceBorder(void);
 
-extern FRAME GetStarBackGround(bool encounter);
+extern FRAME GetStarBackGround(bool Encounter);
 const extern char* GetNamedPlanetaryBody(void);
 extern void GetPlanetOrMoonName(char* buf, uint16_t bufsize);
 
 extern void PlanetOrbitMenu(void);
 extern void SaveSolarSysLocation(void);
 
-extern uint8_t PickClosestHabitable(SOLARSYS_STATE* solarSys);
+extern uint8_t PickClosestHabitable(SolarSystemState* solarSys);
 
 #if 0 //defined(__cplusplus)
 }

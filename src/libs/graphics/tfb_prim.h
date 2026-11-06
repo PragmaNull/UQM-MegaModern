@@ -20,12 +20,12 @@
 #include "tfb_draw.h"
 
 
-void TFB_Prim_Line(LINE*, Color, DrawMode, GFXPOINT ctxOrigin, uint8_t thickness);
-void TFB_Prim_Point(GFXPOINT*, Color, DrawMode, GFXPOINT ctxOrigin, bool scaled);
-void TFB_Prim_Rect(GFXRECT*, Color, DrawMode, GFXPOINT ctxOrigin, bool scaled);
-void TFB_Prim_FillRect(GFXRECT*, Color, DrawMode, GFXPOINT ctxOrigin);
-void TFB_Prim_Stamp(STAMP*, DrawMode, GFXPOINT ctxOrigin, bool unscaled);
-void TFB_Prim_StampFill(STAMP*, Color, DrawMode, GFXPOINT ctxOrigin, bool unscaled);
-void TFB_Prim_FontChar(GFXPOINT charOrigin, TFB_Char* fontChar,
-					   TFB_Image* backing, DrawMode, GFXPOINT ctxOrigin);
+void TFB_Prim_Line(GfxLine*, Color, DrawMode, GfxPoint ctxOrigin, uint8_t thickness);
+void TFB_Prim_Point(GfxPoint*, Color, DrawMode, GfxPoint ctxOrigin, bool scaled);
+void TFB_Prim_Rect(GfxRect*, Color, DrawMode, GfxPoint ctxOrigin, bool scaled);
+void TFB_Prim_FillRect(GfxRect*, Color, DrawMode, GfxPoint ctxOrigin);
+void TFB_Prim_Stamp(GfxStamp*, DrawMode, GfxPoint ctxOrigin, bool unscaled);
+void TFB_Prim_StampFill(GfxStamp*, Color, DrawMode, GfxPoint ctxOrigin, bool unscaled);
+void TFB_Prim_FontChar(GfxPoint charOrigin, TFB_Char* fontChar,
+					   TFB_Image* backing, DrawMode, GfxPoint ctxOrigin);
 void TFB_Prim_MaskFrame(FRAME layer, FRAME base, DrawMode mode, Color* fill);

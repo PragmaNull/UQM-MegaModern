@@ -32,15 +32,15 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateDruuge_generateName(const SOLARSYS_STATE*,
-										const PLANET_DESC* world);
-static bool GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* world);
-static uint16_t GenerateDruuge_generateEnergy(const SOLARSYS_STATE*,
-											  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys,
-										PLANET_DESC* world, uint16_t whichNode);
+static bool GenerateDruuge_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateDruuge_generateName(const SolarSystemState*,
+										const SystemPlanet* world);
+static bool GenerateDruuge_generateOrbital(SolarSystemState* solarSys,
+										   SystemPlanet* world);
+static uint16_t GenerateDruuge_generateEnergy(const SolarSystemState*,
+											  const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateDruuge_pickupEnergy(SolarSystemState* solarSys,
+										SystemPlanet* world, uint16_t whichNode);
 
 
 const GenerateFunctions generateDruugeFunctions = {
@@ -60,10 +60,10 @@ const GenerateFunctions generateDruugeFunctions = {
 };
 
 
-static bool GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateDruuge_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pPlanet {};
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -97,8 +97,8 @@ static bool GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
-										const PLANET_DESC* world)
+static bool GenerateDruuge_generateName(const SolarSystemState* solarSys,
+										const SystemPlanet* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -106,7 +106,7 @@ static bool GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
 		&& IsHomeworldKnown(DRUUGE_HOME))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const SystemPlanet pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
@@ -118,8 +118,8 @@ static bool GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* world)
+static bool GenerateDruuge_generateOrbital(SolarSystemState* solarSys,
+										   SystemPlanet* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -170,7 +170,7 @@ static bool GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+static bool GenerateDruuge_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 										uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -193,8 +193,8 @@ static bool GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* w
 	return false;
 }
 
-static uint16_t GenerateDruuge_generateEnergy(const SOLARSYS_STATE* solarSys,
-											  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateDruuge_generateEnergy(const SolarSystemState* solarSys,
+											  const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

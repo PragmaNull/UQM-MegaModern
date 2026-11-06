@@ -49,9 +49,9 @@
 #include "uqm/random/GameSeed.h"
 #include "uqm/setupsettings.h"
 
-struct SETUP_MENU_STATE
+struct SetupMenuState
 {
-	bool (*InputFunc)(struct SETUP_MENU_STATE* pInputState);
+	bool (*InputFunc)(struct SetupMenuState* pInputState);
 
 	bool initialized;
 	int anim_frame_count;
@@ -60,23 +60,23 @@ struct SETUP_MENU_STATE
 
 static SOUND_REF testSounds;
 
-static bool DoSetupMenu(SETUP_MENU_STATE* pInputState);
-static WIDGET *current, *next;
+static bool DoSetupMenu(SetupMenuState* pInputState);
+static Widget *current, *next;
 static uqstl::unique_ptr<uqm::MenuWidgets> menuWidgets {};
 
 static uqstl::optional<uqm::MenuDefinition> menuDefinition {};
 static bool mainMenuMusicChanged {};
 
 // One screen for each menu of the menu definition, in the same order.
-static uqstl::vector<WIDGET_MENU_SCREEN> menus {};
-static WIDGET_BUTTON backButton {};
-static WIDGET_BUTTON exitButton {};
-static WIDGET_LABEL spacer {};
-static WIDGET_LABEL pressToEdit {};
+static uqstl::vector<WidgetMenuScreen> menus {};
+static WidgetButton backButton {};
+static WidgetButton exitButton {};
+static WidgetLabel spacer {};
+static WidgetLabel pressToEdit {};
 static uqstl::vector<const char*> pressToEditLines {};
-static WIDGET_SLIDER gammaSlider {};
-static WIDGET_TEXTENTRY layoutName {};
-static WIDGET_CONTROLENTRY controlentries[NUM_KEYS] {};
+static WidgetSlider gammaSlider {};
+static WidgetTextEntry layoutName {};
+static WidgetControlEntry controlentries[NUM_KEYS] {};
 static constexpr const char* c_controlNames[NUM_KEYS] {"up", "down", "left", "right", "weapon", "special", "escape", "thrust"};
 
 // The control template that the Edit Controls menu shows.
@@ -108,14 +108,14 @@ struct NewGameSettings final : uqm::SettingsRegistry
 };
 static uqstl::unique_ptr<NewGameSettings> newGameSettings {};
 static bool newGameStarted {};
-static WIDGET_BUTTON randomSeedButton {};
+static WidgetButton randomSeedButton {};
 static const uqstl::string c_noLabel {};
 static const uqstl::vector<uqstl::string> c_noTooltip {};
 
 static FRAME setup_frame = nullptr;
 
 static void populate_gamma(void);
-static int OnTextEntryEvent(WIDGET_TEXTENTRY* widget);
+static int OnTextEntryEvent(WidgetTextEntry* widget);
 
 // Start with reasonable gamma bounds. These will get updated
 // as we find out the actual bounds.
@@ -128,17 +128,17 @@ static constexpr auto GammaCurveB {2.1972f};
 static float minGammaX;
 static float maxGammaX;
 
-static WIDGET* find_menu(uqstl::string_view id)
+static Widget* find_menu(uqstl::string_view id)
 {
 	const uqm::MenuDef* const menu {menuDefinition->find(id)};
 	if (menu == nullptr)
 	{
 		return nullptr;
 	}
-	return (WIDGET*)(&menus[static_cast<size_t>(menu - menuDefinition->menus.data())]);
+	return (Widget*)(&menus[static_cast<size_t>(menu - menuDefinition->menus.data())]);
 }
 
-static int quit_main_menu(WIDGET* self, int event)
+static int quit_main_menu(Widget* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -149,7 +149,7 @@ static int quit_main_menu(WIDGET* self, int event)
 	return false;
 }
 
-static int quit_sub_menu(WIDGET* self, int event)
+static int quit_sub_menu(Widget* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -162,7 +162,7 @@ static int quit_sub_menu(WIDGET* self, int event)
 	return false;
 }
 
-static int start_new_game(WIDGET* self, int event)
+static int start_new_game(Widget* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -174,7 +174,7 @@ static int start_new_game(WIDGET* self, int event)
 	return false;
 }
 
-static int cancel_new_game(WIDGET* self, int event)
+static int cancel_new_game(Widget* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -186,7 +186,7 @@ static int cancel_new_game(WIDGET* self, int event)
 	return false;
 }
 
-static int random_seed(WIDGET* self, int event)
+static int random_seed(Widget* self, int event)
 {
 	if (event != WIDGET_EVENT_SELECT)
 	{
@@ -238,14 +238,14 @@ static void populate_editkeys(int templat)
 	}
 }
 
-static void rename_template(WIDGET_TEXTENTRY* self)
+static void rename_template(WidgetTextEntry* self)
 {
 	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value);
 }
 
 static constexpr auto MenuFrameRate {(c_gameSecond / 20)};
 
-static bool DoSetupMenu(SETUP_MENU_STATE* pInputState)
+static bool DoSetupMenu(SetupMenuState* pInputState)
 {
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
@@ -327,9 +327,9 @@ static void redraw_menu(void)
 	UnbatchGraphics();
 }
 
-static bool OnTextEntryChange(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryChange(TextEntryState* pTES)
 {
-	WIDGET_TEXTENTRY* widget = (WIDGET_TEXTENTRY*)pTES->CbParam;
+	WidgetTextEntry* widget = (WidgetTextEntry*)pTES->CbParam;
 
 	widget->cursor_pos = pTES->CursorPos;
 	if (pTES->JoystickMode)
@@ -348,7 +348,7 @@ static bool OnTextEntryChange(TEXTENTRY_STATE* pTES)
 	return true; // allow change
 }
 
-static bool OnTextEntryFrame(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryFrame(TextEntryState* pTES)
 {
 	redraw_menu();
 
@@ -358,9 +358,9 @@ static bool OnTextEntryFrame(TEXTENTRY_STATE* pTES)
 	return true; // continue
 }
 
-static int OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
+static int OnTextEntryEvent(WidgetTextEntry* widget)
 { // Going to edit the text
-	TEXTENTRY_STATE tes;
+	TextEntryState tes;
 	char revert_buf[256];
 
 	// position cursor at the end of text
@@ -463,9 +463,9 @@ static void updateGammaBounds(bool useUpper)
 	}
 }
 
-static int gamma_HandleEventSlider(WIDGET* _self, int event)
+static int gamma_HandleEventSlider(Widget* _self, int event)
 {
-	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
+	WidgetSlider* self = (WidgetSlider*)_self;
 	const int prevValue = self->value;
 	float gamma {NAN};
 	bool set {};
@@ -528,9 +528,9 @@ static void populate_gamma(void)
 	gammaSlider.value = gammaToSlider(gamma);
 }
 
-static void gamma_DrawValue(WIDGET_SLIDER* self, int x, int y)
+static void gamma_DrawValue(WidgetSlider* self, int x, int y)
 {
-	TEXT t;
+	GfxText t;
 	char buf[16] {};
 	float gamma = sliderToGamma(self->value);
 	fmt::format_to_sz_n(buf, "{:.4}", gamma);
@@ -544,7 +544,7 @@ static void gamma_DrawValue(WIDGET_SLIDER* self, int x, int y)
 	font_DrawText(&t);
 }
 
-static void rebind_control(WIDGET_CONTROLENTRY* widget)
+static void rebind_control(WidgetControlEntry* widget)
 {
 	const int templat = editTemplate;
 	const int control = widget->controlindex;
@@ -557,7 +557,7 @@ static void rebind_control(WIDGET_CONTROLENTRY* widget)
 	FlushInput();
 }
 
-static void clear_control(WIDGET_CONTROLENTRY* widget)
+static void clear_control(WidgetControlEntry* widget)
 {
 	const int templat = editTemplate;
 	const int control = widget->controlindex;
@@ -567,7 +567,7 @@ static void clear_control(WIDGET_CONTROLENTRY* widget)
 	populate_editkeys(templat);
 }
 
-static int count_widgets(WIDGET** widgets)
+static int count_widgets(Widget** widgets)
 {
 	int count {};
 
@@ -578,7 +578,7 @@ static int count_widgets(WIDGET** widgets)
 
 static bool open_menu(uqstl::string_view id)
 {
-	WIDGET* menu {find_menu(id)};
+	Widget* menu {find_menu(id)};
 	if (menu == nullptr)
 	{
 		return false;
@@ -651,7 +651,7 @@ static void init_shared_widgets(void)
 
 	for (int i {0}; i < NUM_KEYS; i++)
 	{
-		WIDGET_CONTROLENTRY& entry {controlentries[i]};
+		WidgetControlEntry& entry {controlentries[i]};
 		entry = {};
 		entry.tag = WIDGET_TYPE_CONTROLENTRY;
 		entry.handleEvent = Widget_HandleEventControlEntry;
@@ -734,22 +734,22 @@ static void init_widgets(void)
 	hooks.openMenu = open_menu;
 	hooks.textEntrySelect = OnTextEntryEvent;
 	uqm::MenuWidgets::SharedWidgets shared {};
-	shared.spacer = (WIDGET*)(&spacer);
-	shared.back = (WIDGET*)(&backButton);
-	shared.exit = (WIDGET*)(&exitButton);
+	shared.spacer = (Widget*)(&spacer);
+	shared.back = (Widget*)(&backButton);
+	shared.exit = (Widget*)(&exitButton);
 	shared.legacy = {
-		{"gamma",	  (WIDGET*)(&gammaSlider)	 },
-		{"layoutName", (WIDGET*)(&layoutName)		 },
-		{"randomSeed", (WIDGET*)(&randomSeedButton)},
+		{"gamma",	  (Widget*)(&gammaSlider)	 },
+		{"layoutName", (Widget*)(&layoutName)		 },
+		{"randomSeed", (Widget*)(&randomSeedButton)},
 	};
 	for (int i {0}; i < NUM_KEYS; i++)
 	{
-		shared.legacy[uqstl::string {"control."} + c_controlNames[i]] = (WIDGET*)(&controlentries[i]);
+		shared.legacy[uqstl::string {"control."} + c_controlNames[i]] = (Widget*)(&controlentries[i]);
 	}
 	uqm::SettingsRegistry& settings {menuMode == MenuMode::NewGame ? static_cast<uqm::SettingsRegistry&>(*newGameSettings) : uqm::UQMOptions::edit()};
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(settings, shared, uqstl::move(hooks));
 
-	menus.assign(menuDefinition->menus.size(), WIDGET_MENU_SCREEN {});
+	menus.assign(menuDefinition->menus.size(), WidgetMenuScreen {});
 	for (auto&& [menu, screen] : uqstl::views::zip(menuDefinition->menus, menus))
 	{
 		screen.tag = WIDGET_TYPE_MENU_SCREEN;
@@ -797,45 +797,45 @@ static void dump_setup_menu(void)
 		return;
 	}
 
-	const auto& menu {*reinterpret_cast<const WIDGET_MENU_SCREEN*>(current)};
+	const auto& menu {*reinterpret_cast<const WidgetMenuScreen*>(current)};
 	uqm::log::info("Menu: {}", menu.subtitle ? menu.subtitle : "");
 	for (int i {0}; i < menu.num_children; ++i)
 	{
-		const WIDGET* child {menu.child[i]};
+		const Widget* child {menu.child[i]};
 		const char marker {i == menu.highlighted ? '>' : ' '};
 		switch (child->tag)
 		{
 			case WIDGET_TYPE_CHOICE:
 				{
-					const auto& choice {*reinterpret_cast<const WIDGET_CHOICE*>(child)};
+					const auto& choice {*reinterpret_cast<const WidgetChoice*>(child)};
 					const bool valid {choice.selected >= 0 && choice.selected < choice.numopts};
 					uqm::log::info("{} {}: {}", marker, choice.category, valid ? choice.options[choice.selected].optname : "?");
 					break;
 				}
 			case WIDGET_TYPE_SLIDER:
 				{
-					const auto& slider {*reinterpret_cast<const WIDGET_SLIDER*>(child)};
+					const auto& slider {*reinterpret_cast<const WidgetSlider*>(child)};
 					uqm::log::info("{} {}: {}", marker, slider.category, slider.value);
 					break;
 				}
 			case WIDGET_TYPE_BUTTON:
-				uqm::log::info("{} [{}]", marker, reinterpret_cast<const WIDGET_BUTTON*>(child)->name);
+				uqm::log::info("{} [{}]", marker, reinterpret_cast<const WidgetButton*>(child)->name);
 				break;
 			case WIDGET_TYPE_LABEL:
 				{
-					const auto& label {*reinterpret_cast<const WIDGET_LABEL*>(child)};
+					const auto& label {*reinterpret_cast<const WidgetLabel*>(child)};
 					uqm::log::info("{} -- {}", marker, label.line_count > 0 ? label.lines[0] : "");
 					break;
 				}
 			case WIDGET_TYPE_TEXTENTRY:
 				{
-					const auto& entry {*reinterpret_cast<const WIDGET_TEXTENTRY*>(child)};
+					const auto& entry {*reinterpret_cast<const WidgetTextEntry*>(child)};
 					uqm::log::info("{} {}: \"{}\"", marker, entry.category, entry.value);
 					break;
 				}
 			case WIDGET_TYPE_CONTROLENTRY:
 				{
-					const auto& entry {*reinterpret_cast<const WIDGET_CONTROLENTRY*>(child)};
+					const auto& entry {*reinterpret_cast<const WidgetControlEntry*>(child)};
 					uqm::log::info("{} {}: {} | {}", marker, entry.category, entry.controlname[0], entry.controlname[1]);
 					break;
 				}
@@ -956,7 +956,7 @@ static void apply_settings(void)
 
 void SetupMenu(void)
 {
-	SETUP_MENU_STATE s;
+	SetupMenuState s;
 
 	s.InputFunc = DoSetupMenu;
 	s.initialized = false;
@@ -984,7 +984,7 @@ uqstl::optional<uqm::GameSeed> NewGameMenu(void)
 	menuMode = MenuMode::NewGame;
 	newGameStarted = false;
 
-	SETUP_MENU_STATE s;
+	SetupMenuState s;
 	s.InputFunc = DoSetupMenu;
 	s.initialized = false;
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);

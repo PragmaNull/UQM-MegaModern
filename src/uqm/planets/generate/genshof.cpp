@@ -30,16 +30,16 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateShofixti_reinitNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* planet);
-static bool GenerateShofixti_generateName(const SOLARSYS_STATE*,
-										  const PLANET_DESC* world);
-static bool GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
-											 PLANET_DESC* world);
+static bool GenerateShofixti_initNpcs(SolarSystemState* solarSys);
+static bool GenerateShofixti_reinitNpcs(SolarSystemState* solarSys);
+static bool GenerateShofixti_uninitNpcs(SolarSystemState* solarSys);
+static bool GenerateShofixti_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateShofixti_generateMoons(SolarSystemState* solarSys,
+										   SystemPlanet* planet);
+static bool GenerateShofixti_generateName(const SolarSystemState*,
+										  const SystemPlanet* world);
+static bool GenerateShofixti_generateOrbital(SolarSystemState* solarSys,
+											 SystemPlanet* world);
 
 static void check_old_shofixti(void);
 
@@ -61,7 +61,7 @@ const GenerateFunctions generateShofixtiFunctions = {
 };
 
 
-static bool GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_initNpcs(SolarSystemState* solarSys)
 {
 	if (!uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED)
 		&& (!uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA)
@@ -83,7 +83,7 @@ static bool GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 										  &uqm::gameState().game().npc_built_ship_q, 1);
 			if (hStarShip)
 			{ /* Set old Shofixti name; his brother if Tanaka died */
-				SHIP_FRAGMENT* FragPtr = LockShipFrag(
+				ShipFragment* FragPtr = LockShipFrag(
 					&uqm::gameState().game().npc_built_ship_q, hStarShip);
 				/* Name Tanaka or Katana (+1) */
 				FragPtr->captains_name_index =
@@ -106,7 +106,7 @@ static bool GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateShofixti_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_reinitNpcs(SolarSystemState* solarSys)
 {
 	GenerateDefault_reinitNpcs(solarSys);
 	check_old_shofixti();
@@ -115,7 +115,7 @@ static bool GenerateShofixti_reinitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_uninitNpcs(SolarSystemState* solarSys)
 {
 	if (uqm::gameState().game().BattleGroupRef
 		&& !uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED)
@@ -142,9 +142,9 @@ static bool GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys)
 
 static constexpr auto NumPlanets {6};
 
-static bool GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 	uint16_t i {};
 
 	pSunDesc->PlanetByte = 0;
@@ -155,7 +155,7 @@ static bool GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 		pSunDesc->NumPlanets = NumPlanets;
 		for (i = 0; i < NumPlanets; ++i)
 		{
-			PLANET_DESC* pCurDesc = &solarSys->PlanetDesc[i];
+			SystemPlanet* pCurDesc = &solarSys->PlanetDesc[i];
 
 			pCurDesc->NumPlanets = 0;
 			if (i < (NumPlanets >> 1))
@@ -224,15 +224,15 @@ static bool GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* planet)
+static bool GenerateShofixti_generateMoons(SolarSystemState* solarSys,
+										   SystemPlanet* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
 	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
-		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
+		SystemPlanet* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		pMoonDesc->data_index = HIERARCHY_STARBASE;
 	}
@@ -240,15 +240,15 @@ static bool GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
-										  const PLANET_DESC* world)
+static bool GenerateShofixti_generateName(const SolarSystemState* solarSys,
+										  const SystemPlanet* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const SystemPlanet pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
@@ -260,8 +260,8 @@ static bool GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
-											 PLANET_DESC* world)
+static bool GenerateShofixti_generateOrbital(SolarSystemState* solarSys,
+											 SystemPlanet* world)
 {
 	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
@@ -308,7 +308,7 @@ static void check_old_shofixti(void)
 		return; // still nothing to check
 	}
 
-	IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+	InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == SHOFIXTI_SHIP

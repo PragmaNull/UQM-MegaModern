@@ -27,7 +27,7 @@
 
 static MUSIC_REF curMusicRef;
 static MUSIC_REF curSpeechRef;
-static MUSIC_POSITION resumeMusicArray[PATH_MAX];
+static MusicPosition resumeMusicArray[PATH_MAX];
 
 void PLRPlaySong(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
 {
@@ -286,7 +286,7 @@ bool _ReleaseMusicData(void* data)
 // For music resume option
 void SetMusicPosition(void)
 {
-	MUSIC_POSITION temp;
+	MusicPosition temp;
 
 	if (!uqm::UQMOptions::read().musicResume || uqm::currentActivity() & CHECK_ABORT
 		|| !PLRPlaying((MUSIC_REF)~0))

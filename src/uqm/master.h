@@ -26,28 +26,28 @@ extern "C" {
 
 typedef HLINK HMASTERSHIP;
 
-struct MASTER_SHIP_INFO
+struct MasterShipInfo
 {
-	// LINK elements; must be first
+	// QueueLink elements; must be first
 	HMASTERSHIP pred;
 	HMASTERSHIP succ;
 
 	SPECIES_ID SpeciesID;
 
-	SHIP_INFO ShipInfo;
-	FLEET_STUFF Fleet;
-	// FLEET_STUFF is only necessary here because avail_race_q
+	ShipInfoDesc ShipInfo;
+	FleetStatus Fleet;
+	// FleetStatus is only necessary here because avail_race_q
 	// is initialized in part from master_q (kinda hacky)
 };
 
-extern QUEUE master_q;
+extern Queue master_q;
 /* List of ships available in SuperMelee;
-		 * queue element is MASTER_SHIP_INFO */
+		 * queue Element is MasterShipInfo */
 
-static inline MASTER_SHIP_INFO* LockMasterShip(const QUEUE* pq, HMASTERSHIP h)
+static inline MasterShipInfo* LockMasterShip(const Queue* pq, HMASTERSHIP h)
 {
-	assert(GetLinkSize(pq) == sizeof(MASTER_SHIP_INFO));
-	return (MASTER_SHIP_INFO*)LockLink(pq, h);
+	assert(GetLinkSize(pq) == sizeof(MasterShipInfo));
+	return (MasterShipInfo*)LockLink(pq, h);
 }
 
 constexpr auto UnlockMasterShip(const auto& pq, const auto& h) { return UnlockLink(pq, h); }

@@ -34,7 +34,7 @@
 
 ChecksumBuffer localChecksumBuffer;
 
-void crc_processEXTENT(crc_State* state, const EXTENT* val)
+void crc_processEXTENT(crc_State* state, const GfxExtent* val)
 {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processEXTENT().");
@@ -46,7 +46,7 @@ void crc_processEXTENT(crc_State* state, const EXTENT* val)
 #endif
 }
 
-void crc_processVELOCITY_DESC(crc_State* state, const VELOCITY_DESC* val)
+void crc_processVELOCITY_DESC(crc_State* state, const VelocityDesc* val)
 {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processVELOCITY_DESC().");
@@ -61,7 +61,7 @@ void crc_processVELOCITY_DESC(crc_State* state, const VELOCITY_DESC* val)
 #endif
 }
 
-void crc_processPOINT(crc_State* state, const GFXPOINT* val)
+void crc_processPOINT(crc_State* state, const GfxPoint* val)
 {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processPOINT().");
@@ -74,7 +74,7 @@ void crc_processPOINT(crc_State* state, const GFXPOINT* val)
 }
 
 #if 0
-void crc_processSTAMP(crc_State *state, const STAMP *val) {
+void crc_processSTAMP(crc_State *state, const GfxStamp *val) {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processSTAMP().");
 #endif
@@ -85,7 +85,7 @@ void crc_processSTAMP(crc_State *state, const STAMP *val) {
 #endif
 }
 
-void crc_processINTERSECT_CONTROL(crc_State *state, const INTERSECT_CONTROL *val) {
+void crc_processINTERSECT_CONTROL(crc_State *state, const IntersectInfo *val) {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processINTERSECT_CONTROL().");
 #endif
@@ -97,19 +97,19 @@ void crc_processINTERSECT_CONTROL(crc_State *state, const INTERSECT_CONTROL *val
 }
 #endif
 
-void crc_processSTATE(crc_State* state, const STATE* val)
+void crc_processSTATE(crc_State* state, const ElementState* val)
 {
 	crc_processPOINT(state, &val->location);
 }
 
-void crc_processELEMENT(crc_State* state, const ELEMENT* val)
+void crc_processELEMENT(crc_State* state, const Element* val)
 {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processELEMENT().");
 #endif
 	if (val->state_flags & BackgroundObject)
 	{
-		// The element never influences the state of other elements,
+		// The Element never influences the state of other elements,
 		// and is to be excluded from checksums.
 #ifdef DUMP_CRC_OPS
 		crc_log("      BACKGROUND_OBJECT element omited");
@@ -140,19 +140,19 @@ void crc_processDispQueue(crc_State* state)
 	size_t i = 0;
 	crc_log("START crc_processDispQueue().");
 #endif
-	for (HELEMENT element {GetHeadElement()}; element != 0; element = nextElement)
+	for (HELEMENT hElement {GetHeadElement()}; hElement != 0; hElement = nextElement)
 	{
-		ELEMENT* elementPtr {};
+		Element* elementPtr {};
 
 #ifdef DUMP_CRC_OPS
 		crc_log("===== disp_q[{}]:", i);
 #endif
-		LockElement(element, &elementPtr);
+		LockElement(hElement, &elementPtr);
 
 		crc_processELEMENT(state, elementPtr);
 
 		nextElement = GetSuccElement(elementPtr);
-		UnlockElement(element);
+		UnlockElement(hElement);
 #ifdef DUMP_CRC_OPS
 		i++;
 #endif

@@ -29,22 +29,22 @@ extern "C" {
 #endif
 
 // Each queue has a fixed table of elements. The size of encounter_q sets
-// the maximum number of HyperSpace encounter globes.
+// the maximum number of HyperSpace Encounter globes.
 
 typedef void* QUEUE_HANDLE;
 
 typedef uint16_t OBJ_SIZE;
 typedef QUEUE_HANDLE HLINK;
 
-struct LINK
+struct QueueLink
 {
-	// Every queue element of any queue must have these
+	// Every queue Element of any queue must have these
 	// two as the first members
 	HLINK pred;
 	HLINK succ;
 };
 
-struct QUEUE
+struct Queue
 {
 	HLINK head;
 	HLINK tail;
@@ -55,19 +55,19 @@ struct QUEUE
 };
 
 
-extern HLINK AllocLink(QUEUE* pq);
-extern void FreeLink(QUEUE* pq, HLINK hLink);
+extern HLINK AllocLink(Queue* pq);
+extern void FreeLink(Queue* pq, HLINK hLink);
 
-static inline LINK* LockLink(const QUEUE* pq, HLINK h)
+static inline QueueLink* LockLink(const Queue* pq, HLINK h)
 {
 	if (h) // Apparently, h==0 is OK
 	{	   // Make sure the link is actually in our queue!
 		assert(pq->pq_tab && (uint8_t*)h >= pq->pq_tab && (uint8_t*)h < pq->pq_tab + pq->object_size * pq->num_objects);
 	}
-	return (LINK*)h;
+	return (QueueLink*)h;
 }
 
-static inline void UnlockLink(const QUEUE* pq, HLINK h)
+static inline void UnlockLink(const Queue* pq, HLINK h)
 {
 	if (h) // Apparently, h==0 is OK
 	{	   // Make sure the link is actually in our queue!
@@ -78,7 +78,7 @@ static inline void UnlockLink(const QUEUE* pq, HLINK h)
 constexpr auto GetFreeList(const auto& pq) { return (pq)->free_list; }
 constexpr auto SetFreeList(const auto& pq, const auto& h) { return (pq)->free_list = (h); }
 constexpr auto AllocQueueTab(const auto& pq, const auto& n) { return ((pq)->pq_tab = new uint8_t[(uint16_t)(pq)->object_size * (uint16_t)((pq)->num_objects = (uint8_t)(n))]); }
-inline void FreeQueueTab(QUEUE* pq)
+inline void FreeQueueTab(Queue* pq)
 {
 	delete[] pq->pq_tab;
 	pq->pq_tab = nullptr;
@@ -97,24 +97,24 @@ constexpr auto _SetPredLink(const auto& lpE, const auto& h) { return ((lpE)->pre
 constexpr auto _GetSuccLink(const auto& lpE) { return ((lpE)->succ); }
 constexpr auto _SetSuccLink(const auto& lpE, const auto& h) { return ((lpE)->succ = (h)); }
 
-extern bool InitQueue(QUEUE* pq, uint16_t num_elements, OBJ_SIZE size);
-extern bool UninitQueue(QUEUE* pq);
-extern void ReinitQueue(QUEUE* pq);
-extern void PutQueue(QUEUE* pq, HLINK hLink);
-extern void InsertQueue(QUEUE* pq, HLINK hLink, HLINK hRefLink);
-extern void RemoveQueue(QUEUE* pq, HLINK hLink);
-extern uint16_t CountLinks(QUEUE* pq);
-void ForAllLinks(QUEUE* pq, void (*callback)(LINK*, void*), void* arg);
+extern bool InitQueue(Queue* pq, uint16_t num_elements, OBJ_SIZE size);
+extern bool UninitQueue(Queue* pq);
+extern void ReinitQueue(Queue* pq);
+extern void PutQueue(Queue* pq, HLINK hLink);
+extern void InsertQueue(Queue* pq, HLINK hLink, HLINK hRefLink);
+extern void RemoveQueue(Queue* pq, HLINK hLink);
+extern uint16_t CountLinks(Queue* pq);
+void ForAllLinks(Queue* pq, void (*callback)(QueueLink*, void*), void* arg);
 
 namespace uqm
 {
 
-// A QUEUE that owns its table of links. Code that takes a QUEUE* can use it.
-class LinkQueue : public QUEUE
+// A Queue that owns its table of links. Code that takes a Queue* can use it.
+class LinkQueue : public Queue
 {
 public:
 	LinkQueue() noexcept
-		: QUEUE {}
+		: Queue {}
 	{
 	}
 
@@ -141,7 +141,7 @@ public:
 
 	friend void swap(LinkQueue& first, LinkQueue& second) noexcept
 	{
-		uqstl::swap(static_cast<QUEUE&>(first), static_cast<QUEUE&>(second));
+		uqstl::swap(static_cast<Queue&>(first), static_cast<Queue&>(second));
 	}
 };
 

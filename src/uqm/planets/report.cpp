@@ -49,8 +49,8 @@ static void ClearReportArea(int16_t startx)
 {
 	uint16_t x {};
 	uint16_t y {};
-	GFXRECT r;
-	STAMP s;
+	GfxRect r;
+	GfxStamp s;
 
 	if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::PC)
 	{
@@ -96,9 +96,9 @@ static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLe
 	int end_page_len {};
 	char end_page_buf[200] {};
 	uqm::UniChar last_c = 0;
-	GFXRECT r;
-	GFXRECT contextRect;
-	TEXT t;
+	GfxRect r;
+	GfxRect contextRect;
+	GfxText t;
 	Color fgcolor;
 	int16_t startx {};
 
@@ -354,7 +354,7 @@ static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLe
 void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 {
 	bool ownContext {};
-	STAMP saveStamp;
+	GfxStamp saveStamp;
 
 #ifdef DEBUG
 	if (disableInteractivity)
@@ -384,7 +384,7 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 
 		uqm::lua().beginComm(nullptr, NullResource);
 		uqstl::late_constructed<uqstl::string> interpolatedReport {};
-		const PLANET_INFO& planetInfo {pSolarSysState->SysInfo.PlanetInfo};
+		const PlanetData& planetInfo {pSolarSysState->SysInfo.PlanetInfo};
 		uqstl::string_view report {planetInfo.DiscoveryStrings->text(planetInfo.DiscoveryIndex)};
 		if (uqm::UQMLua::needsInterpolate(report.data()))
 		{

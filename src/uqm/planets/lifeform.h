@@ -65,12 +65,12 @@ inline constexpr auto ZexBeauty {NumCreatureTypes + 2};
 
 inline constexpr auto CreatureAware {(uint8_t)(1 << 7)};
 
-struct LIFEFORM_DESC
+struct LifeformDesc
 {
 	uint8_t Attributes, ValueAndHitPoints;
 };
 
-extern LIFEFORM_DESC CreatureData[];
+extern LifeformDesc CreatureData[];
 
 #if 0 //defined(__cplusplus)
 }

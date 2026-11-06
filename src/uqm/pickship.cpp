@@ -43,7 +43,7 @@ static auto FlagshipWidth() { return ResScale(22); }
 static auto FlagshipHeight() { return ResScale(48); }
 
 FRAME PickFrame;
-GFXPOINT frameOrigin;
+GfxPoint frameOrigin;
 
 void InitPickFrame(void)
 {
@@ -57,11 +57,11 @@ void DestroyPickFrame(void)
 	PickFrame = 0;
 }
 
-void RepairPickFrame(GFXRECT* pRect, uint16_t frame)
+void RepairPickFrame(GfxRect* pRect, uint16_t frame)
 {
-	GFXRECT OldRect;
-	STAMP s;
-	GFXRECT r;
+	GfxRect OldRect;
+	GfxStamp s;
+	GfxRect r;
 
 	GetContextClipRect(&OldRect);
 
@@ -79,10 +79,10 @@ void RepairPickFrame(GFXRECT* pRect, uint16_t frame)
 	SetContextClipRect(&OldRect);
 }
 
-static bool DoPickBattleShip(MENU_STATE* pMS)
+static bool DoPickBattleShip(MenuState* pMS)
 {
-	GFXRECT r {};
-	TEXT t {};
+	GfxRect r {};
+	GfxText t {};
 	int dx = 0;
 	int dy = 0;
 
@@ -140,7 +140,7 @@ static bool DoPickBattleShip(MENU_STATE* pMS)
 			uint16_t ship_index;		 // NOLINT(cppcoreguidelines-init-variables)
 			HSTARSHIP hBattleShip;		 // NOLINT(cppcoreguidelines-init-variables)
 			HSTARSHIP hNextShip;		 // NOLINT(cppcoreguidelines-init-variables)
-			const STARSHIP* StarShipPtr; // NOLINT(cppcoreguidelines-init-variables)
+			const Starship* StarShipPtr; // NOLINT(cppcoreguidelines-init-variables)
 
 			if (new_col < 0)
 			{
@@ -336,7 +336,7 @@ ChangeSelection:
 
 static HSTARSHIP GetArmadaStarShip(void)
 {
-	GFXRECT pick_r;
+	GfxRect pick_r;
 	HSTARSHIP hBattleShip {};
 
 	if (battle_counter[1] == 0)
@@ -352,22 +352,22 @@ static HSTARSHIP GetArmadaStarShip(void)
 	DrawArmadaPickShip(false, &pick_r);
 
 	{
-		MENU_STATE MenuState;
+		MenuState menuState;
 
-		MenuState.InputFunc = DoPickBattleShip;
-		MenuState.Initialized = false;
-		MenuState.first_item.x = NumPickShipColumns >> 1;
-		MenuState.first_item.y = 0;
-		MenuState.CurFrame = 0;
-		MenuState.flash_rect1.corner = pick_r.corner;
-		MenuState.flash_rect1.extent.width = 0;
+		menuState.InputFunc = DoPickBattleShip;
+		menuState.Initialized = false;
+		menuState.first_item.x = NumPickShipColumns >> 1;
+		menuState.first_item.y = 0;
+		menuState.CurFrame = 0;
+		menuState.flash_rect1.corner = pick_r.corner;
+		menuState.flash_rect1.extent.width = 0;
 
 		SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
-		DoInput(&MenuState, false);
+		DoInput(&menuState, false);
 
 		SetFlashRect(nullptr, false);
 
-		hBattleShip = (HSTARSHIP)MenuState.CurFrame;
+		hBattleShip = (HSTARSHIP)menuState.CurFrame;
 	}
 
 	if (hBattleShip)
@@ -391,7 +391,7 @@ static HSTARSHIP GetArmadaStarShip(void)
 static constexpr auto RunAwayFuelCost {(5 * FuelTankScale)};
 
 // Get the next ship to use.
-HSTARSHIP GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
+HSTARSHIP GetEncounterStarShip(Starship* LastStarShipPtr, uint16_t which_player)
 {
 	if (inHQSpace())
 	{
@@ -456,7 +456,7 @@ HSTARSHIP GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 			if (FleetIsInfinite(which_player))
 			{
 				if (LastStarShipPtr != 0)
-				{ // The current STARSHIP is reused for the next one;
+				{ // The current Starship is reused for the next one;
 					// update with new info
 					// XXX: Note that if Syreen had a homeworld you could
 					//   fight, all Syreen ships there would be crewed to
@@ -482,15 +482,15 @@ HSTARSHIP GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 	}
 }
 
-void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
+void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 {
 	HSTARSHIP hBattleShip {};
 	HSTARSHIP hNextShip {};
-	const STARSHIP* StarShipPtr {};
-	GFXRECT r;
-	GFXRECT pick_r;
-	STAMP s;
-	TEXT t;
+	const Starship* StarShipPtr {};
+	GfxRect r;
+	GfxRect pick_r;
+	GfxStamp s;
+	GfxText t;
 
 	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 

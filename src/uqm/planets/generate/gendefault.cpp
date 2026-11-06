@@ -48,7 +48,7 @@ const GenerateFunctions generateDefaultFunctions = {
 };
 
 
-bool GenerateDefault_initNpcs(SOLARSYS_STATE* solarSys)
+bool GenerateDefault_initNpcs(SolarSystemState* solarSys)
 {
 	if (!GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp))
 	{
@@ -65,7 +65,7 @@ bool GenerateDefault_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-bool GenerateDefault_reinitNpcs(SOLARSYS_STATE* solarSys)
+bool GenerateDefault_reinitNpcs(SolarSystemState* solarSys)
 {
 	GetGroupInfo(GroupsRandom, GroupLoadIp);
 	// This is not a great place to do the Yehat rebellion check, but
@@ -78,7 +78,7 @@ bool GenerateDefault_reinitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-bool GenerateDefault_uninitNpcs(SOLARSYS_STATE* solarSys)
+bool GenerateDefault_uninitNpcs(SolarSystemState* solarSys)
 {
 	PutGroupInfo(GroupsRandom, GroupSaveIp);
 	ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
@@ -88,21 +88,21 @@ bool GenerateDefault_uninitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-bool GenerateDefault_generatePlanets(SOLARSYS_STATE* solarSys)
+bool GenerateDefault_generatePlanets(SolarSystemState* solarSys)
 {
 	FillOrbits(solarSys, (uint8_t)~0, solarSys->PlanetDesc, false);
 	GeneratePlanets(solarSys);
 	return true;
 }
 
-bool GenerateDefault_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
+bool GenerateDefault_generateMoons(SolarSystemState* solarSys, SystemPlanet* planet)
 {
 	FillOrbits(solarSys, planet->NumPlanets, solarSys->MoonDesc, false);
 	return true;
 }
 
-bool GenerateDefault_generateName(const SOLARSYS_STATE* solarSys,
-								  const PLANET_DESC* world)
+bool GenerateDefault_generateName(const SolarSystemState* solarSys,
+								  const SystemPlanet* world)
 {
 	const uint16_t i = planetIndex(solarSys, world);
 	uqm::utf8StringCopy(uqm::gameState().sis().PlanetName, sizeof(uqm::gameState().sis().PlanetName),
@@ -112,7 +112,7 @@ bool GenerateDefault_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+bool GenerateDefault_generateOrbital(SolarSystemState* solarSys, SystemPlanet* world)
 {
 #ifdef DEBUG_SOLARSYS
 	if (worldIsPlanet(solarSys, world))
@@ -128,7 +128,7 @@ bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* worl
 	}
 #endif /* DEBUG_SOLARSYS */
 
-	SYSTEM_INFO* sysInfo {&solarSys->SysInfo};
+	SolarSystemInfo* sysInfo {&solarSys->SysInfo};
 
 	DoPlanetaryAnalysis(sysInfo, world);
 	uint32_t rand_val {SysGenRNG->seed()};
@@ -146,14 +146,14 @@ bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* worl
 	return true;
 }
 
-uint16_t GenerateDefault_generateMinerals(const SOLARSYS_STATE* solarSys,
-										  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateMinerals(const SolarSystemState* solarSys,
+										  const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	return GenerateMineralDeposits(&solarSys->SysInfo, whichNode, info);
 	(void)world;
 }
 
-bool GenerateDefault_pickupMinerals(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+bool GenerateDefault_pickupMinerals(SolarSystemState* solarSys, SystemPlanet* world,
 									uint16_t whichNode)
 {
 	// Minerals do not need any extra handling as of now
@@ -163,8 +163,8 @@ bool GenerateDefault_pickupMinerals(SOLARSYS_STATE* solarSys, PLANET_DESC* world
 	return true;
 }
 
-uint16_t GenerateDefault_generateEnergy(const SOLARSYS_STATE* solarSys,
-										const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateEnergy(const SolarSystemState* solarSys,
+										const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	(void)whichNode;
 	(void)solarSys;
@@ -173,7 +173,7 @@ uint16_t GenerateDefault_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-bool GenerateDefault_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+bool GenerateDefault_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 								  uint16_t whichNode)
 {
 	// This should never be called since every energy node needs
@@ -185,14 +185,14 @@ bool GenerateDefault_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-uint16_t GenerateDefault_generateLife(const SOLARSYS_STATE* solarSys,
-									  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateLife(const SolarSystemState* solarSys,
+									  const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	return GenerateLifeForms(&solarSys->SysInfo, whichNode, info);
 	(void)world;
 }
 
-bool GenerateDefault_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+bool GenerateDefault_pickupLife(SolarSystemState* solarSys, SystemPlanet* world,
 								uint16_t whichNode)
 {
 	// Bio does not need any extra handling as of now
@@ -202,16 +202,16 @@ bool GenerateDefault_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return true;
 }
 
-uint16_t GenerateDefault_generateArtifact(const SOLARSYS_STATE* solarSys,
-										  uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateArtifact(const SolarSystemState* solarSys,
+										  uint16_t whichNode, SurfaceNode* info)
 {
 	// Generate an energy node at a random location
 	return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN, 1, 0,
 							   whichNode, info);
 }
 
-uint16_t GenerateDefault_generateRuins(const SOLARSYS_STATE* solarSys,
-									   uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateRuins(const SolarSystemState* solarSys,
+									   uint16_t whichNode, SurfaceNode* info)
 {
 	// Generate a standard spread of city ruins of a destroyed civilization
 	return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN,
@@ -225,9 +225,9 @@ static inline void runLanderReport(void)
 	BatchGraphics();
 }
 
-bool GenerateDefault_landerReport(SOLARSYS_STATE* solarSys)
+bool GenerateDefault_landerReport(SolarSystemState* solarSys)
 {
-	PLANET_INFO* planetInfo = &solarSys->SysInfo.PlanetInfo;
+	PlanetData* planetInfo = &solarSys->SysInfo.PlanetInfo;
 
 	if (!planetInfo->DiscoveryStrings)
 	{
@@ -246,9 +246,9 @@ bool GenerateDefault_landerReport(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-bool GenerateDefault_landerReportCycle(SOLARSYS_STATE* solarSys)
+bool GenerateDefault_landerReportCycle(SolarSystemState* solarSys)
 {
-	PLANET_INFO* planetInfo = &solarSys->SysInfo.PlanetInfo;
+	PlanetData* planetInfo = &solarSys->SysInfo.PlanetInfo;
 
 	if (!planetInfo->DiscoveryStrings)
 	{
@@ -266,10 +266,10 @@ bool GenerateDefault_landerReportCycle(SOLARSYS_STATE* solarSys)
 }
 
 // NB. This function modifies the RNG state.
-void GeneratePlanets(SOLARSYS_STATE* solarSys)
+void GeneratePlanets(SolarSystemState* solarSys)
 {
 	uint16_t i {};
-	PLANET_DESC* planet {};
+	SystemPlanet* planet {};
 
 	for (i = solarSys->SunDesc[0].NumPlanets,
 		planet = &solarSys->PlanetDesc[0];
@@ -360,9 +360,9 @@ uint8_t GenerateWorlds(uint8_t whichType)
 
 static constexpr auto DwarfGasgDist {ScaleRadius(12)};
 
-void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
+void GenerateGasGiantRanged(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 	uint8_t i {};
 	const uint32_t rand = SysGenRNG->seed();
 
@@ -383,7 +383,7 @@ void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 		i += rand % (pSunDesc->NumPlanets - i);
 	}
 	pSunDesc->PlanetByte = i;
-	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
+	SystemPlanet* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	pPlanet->data_index = GenerateWorlds(OnlyGas);
 
@@ -460,7 +460,7 @@ uint8_t GenerateNumberOfPlanets(uint8_t minimum)
 }
 
 // "Random PlanetByte Generator"
-uint8_t PlanetByteGen(PLANET_DESC* pPDesc)
+uint8_t PlanetByteGen(SystemPlanet* pPDesc)
 {
 	return SysGenRNG->next() % pPDesc->NumPlanets;
 }
@@ -473,9 +473,9 @@ static void check_yehat_rebellion(void)
 	// XXX: Is there a better way to do this? I could not find one.
 	//   When you talk to a Yehat ship (YEHAT_SHIP) and start the rebellion,
 	//   there is no battle following the comm. There is *never* a battle in
-	//   an encounter with Rebels, but the group race_id (YEHAT_REBEL_SHIP)
+	//   an Encounter with Rebels, but the group race_id (YEHAT_REBEL_SHIP)
 	//   is different from Royalists (YEHAT_SHIP). There is *always* a battle
-	//   in an encounter with Royalists.
+	//   in an Encounter with Royalists.
 	// TRANSLATION: "If the civil war has not started yet, or the player
 	//   battled a ship -- bail."
 	if (!uqm::gameState().flag(uqm::GameFlag::YEHAT_CIVIL_WAR) || EncounterRace >= 0)
@@ -488,7 +488,7 @@ static void check_yehat_rebellion(void)
 	for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q); hGroup;
 		 hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr = LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
+		InterplanetaryGroup* GroupPtr = LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 		hNextGroup = _GetSuccLink(GroupPtr);
 		// IGNORE_FLAGSHIP was set in ipdisp.c:ip_group_collision()
 		// during a collision with the flagship.

@@ -27,7 +27,7 @@
 #include <stdlib.h>
 
 
-struct XFORM_CONTROL
+struct ColorTransformControl
 {
 	int CMapIndex; // -1 means unused
 	COLORMAPPTR CMapPtr;
@@ -41,7 +41,7 @@ static constexpr auto MaxXforms {16};
 static struct
 {
 	uqm::Mutex Lock;
-	XFORM_CONTROL TaskControl[MaxXforms] UQM_GUARDED_BY(Lock);
+	ColorTransformControl TaskControl[MaxXforms] UQM_GUARDED_BY(Lock);
 	int Highest UQM_GUARDED_BY(Lock);
 	// 'pending' is Highest >= 0
 } XFormControl;
@@ -429,7 +429,7 @@ bool XFormColorMap_step(void)
 
 	for (int x {0}; x <= XFormControl.Highest; ++x)
 	{
-		XFORM_CONTROL* control = &XFormControl.TaskControl[x];
+		ColorTransformControl* control = &XFormControl.TaskControl[x];
 		const int index = control->CMapIndex;
 		const int TicksLeft {static_cast<int>((control->EndTime - Now).count())};
 		TFB_ColorMap* curmap {};
@@ -544,7 +544,7 @@ static TimeCount XFormPLUT(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 		finish_colormap_xform(x);
 	}
 	// take next unused one
-	XFORM_CONTROL* control {&XFormControl.TaskControl[x]};
+	ColorTransformControl* control {&XFormControl.TaskControl[x]};
 	if (x > XFormControl.Highest)
 	{
 		XFormControl.Highest = x;

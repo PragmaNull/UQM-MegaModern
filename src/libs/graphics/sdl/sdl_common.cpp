@@ -59,12 +59,12 @@ static uqstl::atomic<bool> abortFlag {false};
 
 uqm::GfxFlags g_gfxFlags {uqm::GfxFlags::None};
 
-TFB_GRAPHICS_BACKEND* graphics_backend = nullptr;
+TFB_GraphicsBackend* graphics_backend = nullptr;
 
 uqstl::atomic<int> QuitPosted {0};
 uqstl::atomic<int> GameActive {1}; // Track the SDL_ACTIVEEVENT state SDL_APPACTIVE
 
-static inline bool IsWholeScreen(GFXRECT* r)
+static inline bool IsWholeScreen(GfxRect* r)
 {
 	return (bool)(r->corner.x == 0 && r->corner.y == 0 && r->extent.width == CanvasWidth && r->extent.height == CanvasHeight);
 }
@@ -168,7 +168,7 @@ void TFB_ProcessEvents()
 static bool system_box_active = false;
 static SDL_Rect system_box;
 
-void SetSystemRect(const GFXRECT* r)
+void SetSystemRect(const GfxRect* r)
 {
 	system_box_active = true;
 	system_box.x = r->corner.x;
@@ -610,7 +610,7 @@ void UnInit_Screen(SDL_Surface** screen)
 	*screen = nullptr;
 }
 
-void TFB_UploadTransitionScreen(GFXRECT* pRect)
+void TFB_UploadTransitionScreen(GfxRect* pRect)
 {
 	graphics_backend->uploadTransitionScreen();
 

@@ -56,7 +56,7 @@ static inline uint16_t CalcHalfBaseVariance(uint16_t base)
 	return CalcFromBase(base, (base >> 1) + 1);
 }
 
-static void CalcSysInfo(SYSTEM_INFO* SysInfoPtr)
+static void CalcSysInfo(SolarSystemInfo* SysInfoPtr)
 {
 	SysInfoPtr->StarSize = pSolarSysState->SunDesc[0].data_index;
 	switch (StarColor(CurStarDescPtr()->Type))
@@ -98,7 +98,7 @@ static void CalcSysInfo(SYSTEM_INFO* SysInfoPtr)
 	}
 }
 
-static uint16_t GeneratePlanetComposition(PLANET_INFO* PlanetInfoPtr, int16_t SurfaceTemp,
+static uint16_t GeneratePlanetComposition(PlanetData* PlanetInfoPtr, int16_t SurfaceTemp,
 										  int16_t radius)
 {
 	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
@@ -181,7 +181,7 @@ static constexpr auto HotBonus {200};
 // calculating the actual temperature (when landing or scanning), but not
 // when determining the colors of the drawn orbits. (Thanks to James Scott
 // for this insight.)
-static int16_t CalcTemp(SYSTEM_INFO* SysInfoPtr, int16_t radius)
+static int16_t CalcTemp(SolarSystemInfo* SysInfoPtr, int16_t radius)
 {
 	int16_t centigrade {};
 
@@ -216,7 +216,7 @@ static int16_t CalcTemp(SYSTEM_INFO* SysInfoPtr, int16_t radius)
 static constexpr auto NumTosses {10};
 static constexpr auto TiltRange {180};
 
-static uint16_t CalcRotation(PLANET_INFO* PlanetInfoPtr)
+static uint16_t CalcRotation(PlanetData* PlanetInfoPtr)
 {
 	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
 	{
@@ -246,7 +246,7 @@ static int16_t CalcTilt(void)
 	return (tilt);
 }
 
-uint16_t CalcGravity(const PLANET_INFO* PlanetInfoPtr)
+uint16_t CalcGravity(const PlanetData* PlanetInfoPtr)
 {
 	return (uint32_t)PlanetInfoPtr->PlanetDensity * PlanetInfoPtr->PlanetRadius
 		 / 100;
@@ -275,7 +275,7 @@ static uint16_t CalcTectonics(uint16_t base, uint16_t temp)
 }
 
 // This code moved from planets/surface.c:CalcLifeForms()
-static int CalcLifeChance(const PLANET_INFO* PlanetInfoPtr)
+static int CalcLifeChance(const PlanetData* PlanetInfoPtr)
 {
 	int16_t life_var = 0;
 
@@ -436,7 +436,7 @@ static constexpr auto MinGasRadius {300};
 static constexpr auto MaxGasRadius {1500};
 
 // Sets the SysGenRNG to the required state first.
-void DoPlanetaryAnalysis(SYSTEM_INFO* SysInfoPtr, PLANET_DESC* pPlanetDesc)
+void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr, SystemPlanet* pPlanetDesc)
 {
 	assert((pPlanetDesc->data_index & ~WORLD_TYPE_SPECIAL)
 		   < NUMBER_OF_PLANET_TYPES);

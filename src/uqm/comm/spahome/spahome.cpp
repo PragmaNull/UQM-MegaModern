@@ -25,7 +25,7 @@
 #include "uqm/gameev.h"
 
 
-static LOCDATA spahome_desc =
+static ConversationData spahome_desc =
 	{
 		SPATHI_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -224,7 +224,7 @@ static LOCDATA spahome_desc =
 		nullptr,
 };
 
-static FILTER_DESC spahome_filters =
+static AnimFilterSet spahome_filters =
 	{
 		1, /* Number of filters */
 		{
@@ -1097,7 +1097,7 @@ static void post_spahome_enc(void)
 	}
 }
 
-LOCDATA* init_spahome_comm()
+ConversationData* init_spahome_comm()
 {
 	spahome_desc.init_encounter_func = Intro;
 	spahome_desc.post_encounter_func = post_spahome_enc;
@@ -1123,7 +1123,7 @@ LOCDATA* init_spahome_comm()
 		setSegue(Segue_hostile);
 	}
 
-	LOCDATA* retval {&spahome_desc};
+	ConversationData* retval {&spahome_desc};
 
 	return (retval);
 }

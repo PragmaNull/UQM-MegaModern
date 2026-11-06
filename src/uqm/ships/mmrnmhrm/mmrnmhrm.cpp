@@ -66,9 +66,9 @@ static constexpr auto SpecialEnergyCost {MaxEnergy};
 static constexpr auto SpecialWait {0};
 static constexpr auto YwingSpecialWait {0};
 
-static RACE_DESC mmrnmhrm_desc =
+static RaceDesc mmrnmhrm_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "xform",
 		 FiresFore | ImmediateWeapon,
 		 19, /* Super Melee cost */
@@ -79,7 +79,7 @@ static RACE_DESC mmrnmhrm_desc =
 		 MmrnmhrmMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			0, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
@@ -139,20 +139,20 @@ static RACE_DESC mmrnmhrm_desc =
 };
 
 // Private per-instance ship data
-typedef CHARACTERISTIC_STUFF MMRNMHRM_DATA;
+typedef ShipCharacteristics MMRNMHRM_DATA;
 
 // Local typedef
 typedef MMRNMHRM_DATA CustomShipData_t;
 
 // Retrieve race-specific ship data from a race desc
-static CustomShipData_t* GetCustomShipData(RACE_DESC* pRaceDesc)
+static CustomShipData_t* GetCustomShipData(RaceDesc* pRaceDesc)
 {
 	return (CustomShipData_t*)pRaceDesc->data;
 }
 
 // Set the race-specific data in a race desc
 // (Re)Allocates its own storage for the data.
-static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
+static void SetCustomShipData(RaceDesc* pRaceDesc, const CustomShipData_t* data)
 {
 	if (pRaceDesc->data == data)
 	{
@@ -171,7 +171,7 @@ static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data
 	}
 }
 
-static void missile_preprocess(ELEMENT* ElementPtr)
+static void missile_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -195,18 +195,18 @@ static void missile_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								  uint16_t ConcernCounter)
 {
 	bool CanTransform {};
-	STARSHIP* StarShipPtr {};
-	STARSHIP* EnemyStarShipPtr = nullptr;
+	Starship* StarShipPtr {};
+	Starship* EnemyStarShipPtr = nullptr;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	CanTransform = (bool)(StarShipPtr->special_counter == 0
 						  && StarShipPtr->RaceDescPtr->ship_info.energy_level >= StarShipPtr->RaceDescPtr->characteristics.special_energy_cost);
 
-	const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
@@ -298,8 +298,8 @@ static void mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConc
 	}
 }
 
-static void twin_laser_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-								 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void twin_laser_collision(Element* ElementPtr0, GfxPoint* pPt0,
+								 Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (!(ElementPtr1->state_flags & PlayerShip)
 		|| !elementsOfSamePlayer(ElementPtr0, ElementPtr1))
@@ -308,14 +308,14 @@ static void twin_laser_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static uint16_t initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
+static uint16_t initialize_dual_weapons(Element* ShipPtr, HELEMENT WeaponArray[])
 {
 	int16_t cx {};
 	int16_t cy {};
 	uint16_t angle {};
 	int32_t offs_x {};
 	int32_t offs_y {};
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	const uint16_t facing {StarShipPtr->ShipFacing};
@@ -327,8 +327,8 @@ static uint16_t initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[]
 	{
 		int16_t ex {};
 		int16_t ey {};
-		LASER_BLOCK LaserBlock;
-		ELEMENT* LaserPtr {};
+		LaserDesc LaserBlock;
+		Element* LaserPtr {};
 
 		LaserBlock.sender = ShipPtr->playerNr;
 		LaserBlock.flags = 0;
@@ -365,8 +365,8 @@ static uint16_t initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[]
 	}
 	else
 	{
-		MISSILE_BLOCK TorpBlock;
-		ELEMENT* TorpPtr {};
+		MissileDesc TorpBlock;
+		Element* TorpPtr {};
 
 		TorpBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 		TorpBlock.sender = ShipPtr->playerNr;
@@ -407,9 +407,9 @@ static uint16_t initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[]
 	return (2);
 }
 
-static void mmrnmhrm_postprocess(ELEMENT* ElementPtr)
+static void mmrnmhrm_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	/* take care of transform effect */
@@ -464,9 +464,9 @@ static void mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void mmrnmhrm_preprocess(ELEMENT* ElementPtr)
+static void mmrnmhrm_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -501,15 +501,15 @@ static void mmrnmhrm_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void uninit_mmrnmhrm(RACE_DESC* pRaceDesc)
+static void uninit_mmrnmhrm(RaceDesc* pRaceDesc)
 {
 	SetCustomShipData(pRaceDesc, nullptr);
 }
 
-RACE_DESC* init_mmrnmhrm(void)
+RaceDesc* init_mmrnmhrm(void)
 {
 	// The caller of this func will copy the struct
-	static RACE_DESC new_mmrnmhrm_desc;
+	static RaceDesc new_mmrnmhrm_desc;
 	MMRNMHRM_DATA otherwing_desc;
 
 	if (IsHd())
@@ -547,7 +547,7 @@ RACE_DESC* init_mmrnmhrm(void)
 
 	SetCustomShipData(&new_mmrnmhrm_desc, &otherwing_desc);
 
-	RACE_DESC* RaceDescPtr {&new_mmrnmhrm_desc};
+	RaceDesc* RaceDescPtr {&new_mmrnmhrm_desc};
 
 	return (RaceDescPtr);
 }

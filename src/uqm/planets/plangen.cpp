@@ -87,18 +87,18 @@ static constexpr auto AaWeightBits {16};
 // BW: Moved to planets.h
 // typedef struct
 // {
-// 	GFXPOINT p[4];
+// 	GfxPoint p[4];
 // 	uint32_t m[4];
-// } MAP3D_POINT;
+// } MapPoint3D;
 
 // BW: dynamically allocated in the orbit structure
 // JMS_GFX: Changed initialization to constant numbers since Diameter is
 // now variably defined The value 330 is the value that's reached at the
 // biggest resolution, 4x.
-// MAP3D_POINT map_rotate[330][330];
-// //MAP3D_POINT map_rotate[Diameter][Diameter];
+// MapPoint3D map_rotate[330][330];
+// //MapPoint3D map_rotate[Diameter][Diameter];
 
-struct POINT3
+struct Point3D
 {
 	double x, y, z;
 };
@@ -256,7 +256,7 @@ void AdjustColor(Color* c, uint16_t scan, uint16_t height, uint16_t width, int8_
 	}
 }
 
-RESOURCE GetAltColorMap(PLANET_DESC* pPlanetDesc)
+RESOURCE GetAltColorMap(SystemPlanet* pPlanetDesc)
 {
 	switch (pPlanetDesc->data_index)
 	{
@@ -303,13 +303,13 @@ RESOURCE GetAltColorMap(PLANET_DESC* pPlanetDesc)
 	}
 }
 
-static void ExpandLevelMasks(PLANET_ORBIT* Orbit)
+static void ExpandLevelMasks(PlanetOrbit* Orbit)
 { // Expand mask frame to avoid null spaces
 	uint16_t spherespanx {};
 	int16_t width {};
 	int16_t height {};
 	uint32_t halfBound {};
-	const PLANET_INFO* PlanetInfo {};
+	const PlanetData* PlanetInfo {};
 
 	PlanetInfo = &pSolarSysState->SysInfo.PlanetInfo;
 	spherespanx = Orbit->SphereFrame->Bounds.width;
@@ -378,11 +378,11 @@ static void RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	uint16_t i {};
 	int16_t base {};
 	int16_t d {};
-	GFXPOINT pt;
-	PRIMITIVE BatchArray[NumBatchPoints];
+	GfxPoint pt;
+	Primitive BatchArray[NumBatchPoints];
 	const int8_t* pSrc {};
-	GFXPOINT oldOrigin;
-	GFXRECT ClipRect;
+	GfxPoint oldOrigin;
+	GfxRect ClipRect;
 	int16_t num_frames = 3;
 	const int16_t* level_tab {};
 
@@ -394,7 +394,7 @@ static void RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	const int16_t w {mask->Bounds.width};
 	const int16_t h {mask->Bounds.height};
 
-	PRIMITIVE* pBatch {&BatchArray[0]};
+	Primitive* pBatch {&BatchArray[0]};
 	for (i = 0; i < NumBatchPoints; ++i, ++pBatch)
 	{
 		SetPrimNextLink(pBatch, i + 1);
@@ -415,7 +415,7 @@ static void RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 		base = PlanDataPtr->base_elevation;
 	}
 
-	const XLAT_DESC* xlatDesc {(const XLAT_DESC*)pSolarSysState->XlatPtr};
+	const PlanetColorTranslation* xlatDesc {(const PlanetColorTranslation*)pSolarSysState->XlatPtr};
 	level_tab = (const int16_t*)xlatDesc->level_tab;
 
 	while (num_frames > 0)
@@ -513,7 +513,7 @@ static void RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 		base = PlanDataPtr->base_elevation;
 	}
 
-	const XLAT_DESC* xlatDesc {(const XLAT_DESC*)pSolarSysState->XlatPtr};
+	const PlanetColorTranslation* xlatDesc {(const PlanetColorTranslation*)pSolarSysState->XlatPtr};
 	xlat_tab = (const uint8_t*)xlatDesc->xlat_tab;
 
 	if (scanColors == nullptr)
@@ -566,26 +566,26 @@ static void RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 	WriteFramePixelColors(DstFrame, map, w, h);
 }
 
-static inline void P3mult(POINT3* res, POINT3* vec, double cnst)
+static inline void P3mult(Point3D* res, Point3D* vec, double cnst)
 {
 	res->x = vec->x * cnst;
 	res->y = vec->y * cnst;
 	res->z = vec->z * cnst;
 }
 
-static inline void P3sub(POINT3* res, POINT3* v1, POINT3* v2)
+static inline void P3sub(Point3D* res, Point3D* v1, Point3D* v2)
 {
 	res->x = v1->x - v2->x;
 	res->y = v1->y - v2->y;
 	res->z = v1->z - v2->z;
 }
 
-static inline double P3dot(POINT3* v1, POINT3* v2)
+static inline double P3dot(Point3D* v1, Point3D* v2)
 {
 	return (v1->x * v2->x + v1->y * v2->y + v1->z * v2->z);
 }
 
-static inline void P3norm(POINT3* res, POINT3* vec)
+static inline void P3norm(Point3D* res, Point3D* vec)
 {
 	const double mag = sqrt(P3dot(vec, vec));
 	P3mult(res, vec, 1 / mag);
@@ -598,10 +598,10 @@ static constexpr auto Mshi {2};
 
 // GenerateSphereMask builds a shadow map for the rotating planet
 //  loc indicates the planet's position relative to the sun
-static void GenerateSphereMask(GFXPOINT loc, uint16_t radius)
+static void GenerateSphereMask(GfxPoint loc, uint16_t radius)
 {
-	GFXPOINT pt;
-	POINT3 light;
+	GfxPoint pt;
+	Point3D light;
 	double lrad {NAN};
 	const uint32_t step = 1 << DiffuseBits;
 	int y {};
@@ -628,7 +628,7 @@ static void GenerateSphereMask(GFXPOINT loc, uint16_t radius)
 			const uint32_t x_2 = x * x;
 			const uint32_t rad_2 = x_2 + y_2;
 			uint32_t diff_int = 0;
-			POINT3 norm;
+			Point3D norm;
 			double diff {NAN};
 
 			if (rad_2 < radius_thres)
@@ -652,8 +652,8 @@ static void GenerateSphereMask(GFXPOINT loc, uint16_t radius)
 				//  surfaces, like balls (of which planets are not)
 				//  This is the Phong equation
 				double fb, spec;
-				POINT3 rvec;
-				POINT3 view;
+				Point3D rvec;
+				Point3D view;
 
 				// always view along the z-axis
 				// ideally use a view point, and have the view change
@@ -703,7 +703,7 @@ static void GenerateSphereMask(GFXPOINT loc, uint16_t radius)
 //  4 points around the 'ideal' point at x,y
 //  the concept is to compute the weight based on the
 //  distance from the integer location points to the ideal point
-static void create_aa_points(MAP3D_POINT* ppt, double x, double y, uint16_t height)
+static void create_aa_points(MapPoint3D* ppt, double x, double y, uint16_t height)
 {
 	double deltax {NAN};
 	double deltay {NAN};
@@ -861,7 +861,7 @@ static void CreateSphereTiltMap(int angle, uint16_t height, uint16_t radius)
 			double rad_2 {NAN};
 			double xa {NAN};
 			double ya {NAN};
-			MAP3D_POINT* ppt =
+			MapPoint3D* ppt =
 				&pSolarSysState->Orbit.map_rotate[y + radius]
 												 [x + radius];
 
@@ -930,7 +930,7 @@ static FRAME CreateShieldMask(uint16_t radius)
 	int x {};
 	int y {};
 	FRAME ShieldFrame {};
-	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	const uint16_t shieldradius = ShieldRadius() * radius / Radius();
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
 
@@ -1011,7 +1011,7 @@ static FRAME CreateShieldMask(uint16_t radius)
 
 FRAME SaveBackFrame(uint16_t radius)
 {
-	GFXRECT r;
+	GfxRect r;
 	const uint16_t shieldradius = ShieldRadius() * radius / Radius();
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
 
@@ -1053,7 +1053,7 @@ static inline int shield_level(int offset)
 void SetShieldThrobEffect(FRAME ShieldFrame, int offset, FRAME ThrobFrame)
 {
 	int i {};
-	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	Color* pix {};
 
 	const int level {shield_level(offset)};
@@ -1091,7 +1091,7 @@ void SetShieldThrobEffect(FRAME ShieldFrame, int offset, FRAME ThrobFrame)
 	SetFrameHot(ThrobFrame, GetFrameHot(ShieldFrame));
 }
 
-void Draw3DOShield(STAMP ShieldFrame)
+void Draw3DOShield(GfxStamp ShieldFrame)
 {
 	static uint8_t i;
 	static uint8_t cr;
@@ -1129,7 +1129,7 @@ static void ApplyShieldTint(void)
 	DrawMode mode;
 	DrawMode oldMode;
 	Color tint;
-	GFXRECT r;
+	GfxRect r;
 
 	// TopoFrame will be permanently changed
 	FRAME oldFrame {SetContextFGFrame(pSolarSysState->TopoFrame)};
@@ -1212,11 +1212,11 @@ static inline int get_map_elev(int8_t* elevs, int x, int y, int offset, uint16_t
 // offset is effectively the angle of rotation around the planet's axis
 // We use the SDL routines to directly write to the SDL_Surface to improve
 // performance
-void RenderPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
+void RenderPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset,
 						bool shielded, bool doThrob, uint16_t width, uint16_t height,
 						uint16_t radius)
 {
-	GFXPOINT pt;
+	GfxPoint pt;
 	Color clear;
 	int x {};
 	int y {};
@@ -1255,7 +1255,7 @@ void RenderPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 			Color c;
 			const uint32_t diffus = Orbit->light_diff[pt.y][pt.x];
 			int i {};
-			MAP3D_POINT* ppt = &Orbit->map_rotate[pt.y][pt.x];
+			MapPoint3D* ppt = &Orbit->map_rotate[pt.y][pt.x];
 			int lvf {}; // light variance factor
 
 			if (diffus == 0)
@@ -1371,7 +1371,7 @@ void RenderPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 #endif
 }
 
-void RenderDOSPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset)
+void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset)
 {
 	if (!Orbit->TopoMask)
 	{
@@ -1383,8 +1383,8 @@ void RenderDOSPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset)
 		uint16_t y {};
 		const int16_t width = MaskFrame->Bounds.width;
 		const int16_t height = Orbit->TopoMask->Bounds.height;
-		GFXRECT r;
-		const PLANET_INFO* PlanetInfo = &pSolarSysState->SysInfo.PlanetInfo;
+		GfxRect r;
+		const PlanetData* PlanetInfo = &pSolarSysState->SysInfo.PlanetInfo;
 
 		r.corner.y = 0;
 		r.corner.x = offset;
@@ -1396,7 +1396,7 @@ void RenderDOSPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset)
 
 		if (PlanetInfo->AxialTilt != 0)
 		{ // We need to tilt the frame
-			STAMP s;
+			GfxStamp s;
 			FRAME baseframe {};
 			FRAME rotFrame {};
 			DrawMode oldMode;
@@ -1460,13 +1460,13 @@ void RenderDOSPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset)
 	}
 }
 
-void Render3DOPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
+void Render3DOPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset,
 						   uint16_t rotwidth, uint16_t height)
 {
 	int x {};
 	int y {};
 	Color clear;
-	GFXPOINT pt;
+	GfxPoint pt;
 	const uint16_t spherespanx = height;
 	const uint16_t radius = (spherespanx >> 1) - IfHd(2);
 	const uint16_t tworadius = radius << 1;
@@ -1482,7 +1482,7 @@ void Render3DOPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 		for (pt.x = 0, x = -radius; pt.x <= tworadius; ++pt.x, ++x, ++c,
 			++shade)
 		{
-			const MAP3D_POINT* ppt = &Orbit->map_rotate[pt.y][pt.x];
+			const MapPoint3D* ppt = &Orbit->map_rotate[pt.y][pt.x];
 
 			if (ppt->m[0] == 0 || shade->r == 0xFF)
 			{ // exact pixel from the topo map
@@ -1548,7 +1548,7 @@ static void DitherMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 	}
 }
 
-static void MakeCrater(GFXRECT* pRect, int8_t* DepthArray, int16_t rim_delta, int16_t crater_delta, bool SetDepth, uint16_t width)
+static void MakeCrater(GfxRect* pRect, int8_t* DepthArray, int16_t rim_delta, int16_t crater_delta, bool SetDepth, uint16_t width)
 {
 	int16_t lf_x {};
 	int16_t rt_x {};
@@ -1750,8 +1750,8 @@ static void MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 					   uint16_t height)
 {
 	uint16_t i {};
-	GFXRECT storm_r[MaxStorms];
-	GFXRECT* pstorm_r {};
+	GfxRect storm_r[MaxStorms];
+	GfxRect* pstorm_r {};
 
 	pstorm_r = &storm_r[i = storm_count];
 	while (i--)
@@ -1885,7 +1885,7 @@ static void MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 	}
 }
 
-static void MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t depth_delta)
+static void MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GfxRect* pRect, int16_t depth_delta)
 {
 	int16_t last_y {};
 	int16_t next_y {};
@@ -1928,7 +1928,7 @@ static void MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect,
 		}
 		else
 		{
-			GFXRECT r;
+			GfxRect r;
 
 			cur_y = next_y
 				  + ((band_height - 2) >> 1)
@@ -2033,7 +2033,7 @@ static void ValidateMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 
 static void planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 {
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	const uint16_t spherespanx = height;
 	const uint16_t shieldradius = (height >> 1) * ShieldRadius() / Radius();
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
@@ -2101,7 +2101,7 @@ static void planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 			Orbit->light_diff = new uint32_t*[diameter];
 		}
 
-		Orbit->map_rotate = new MAP3D_POINT*[diameter];
+		Orbit->map_rotate = new MapPoint3D*[diameter];
 
 		for (i = 0; i < diameter; i++)
 		{
@@ -2109,7 +2109,7 @@ static void planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 			{
 				Orbit->light_diff[i] = new uint32_t[diameter];
 			}
-			Orbit->map_rotate[i] = new MAP3D_POINT[diameter];
+			Orbit->map_rotate[i] = new MapPoint3D[diameter];
 		}
 
 		if (use3DOSpheres)
@@ -2601,8 +2601,8 @@ static void GenerateLightMap(int8_t* pTopo, int w, int h)
 	}
 }
 
-void load_color_resources(PLANET_DESC* pPlanetDesc,
-						  const PlanetFrame* PlanDataPtr, PLANET_INFO* PlanetInfo,
+void load_color_resources(SystemPlanet* pPlanetDesc,
+						  const PlanetFrame* PlanDataPtr, PlanetData* PlanetInfo,
 						  bool dosshielded, bool LoadCustomColorTable)
 {
 	if (LoadCustomColorTable)
@@ -2637,10 +2637,10 @@ void load_color_resources(PLANET_DESC* pPlanetDesc,
 	pSolarSysState->XlatPtr = pSolarSysState->XlatTable->bytes(xlatIndex).data();
 }
 
-void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit,
+void generate_surface_frame(uint16_t width, uint16_t height, PlanetOrbit* Orbit,
 							const PlanetFrame* PlanDataPtr)
 { // Generate planet surface elevation data and look
-	GFXRECT r;
+	GfxRect r;
 	uint16_t i {};
 
 	r.corner.x = r.corner.y = 0;
@@ -2665,7 +2665,7 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 
 			for (i = 0; i < PlanDataPtr->num_blemishes; ++i)
 			{
-				GFXRECT crater_r;
+				GfxRect crater_r;
 
 				uint16_t loword {uqm::lowWord(SysGenRNG->next())};
 				switch (uqm::highByte(loword) & 31)
@@ -2731,10 +2731,10 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 					 Orbit->lpTopoData, width, height, false, nullptr);
 }
 
-void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
+void GetPlanetTopography(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame)
 {
-	const PLANET_INFO* PlanetInfo = &pSolarSysState->SysInfo.PlanetInfo;
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	const PlanetData* PlanetInfo = &pSolarSysState->SysInfo.PlanetInfo;
+	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	uint16_t width {};
 	uint16_t height {};
 	const bool shielded = (pPlanetDesc->data_index & PLANET_SHIELDED);
@@ -2789,13 +2789,13 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 }
 
 // Sets the SysGenRNG to the required state first.
-void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
+void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 						   uint16_t width, uint16_t height)
 {
-	PLANET_INFO* PlanetInfo = &pSolarSysState->SysInfo.PlanetInfo;
-	GFXPOINT loc;
+	PlanetData* PlanetInfo = &pSolarSysState->SysInfo.PlanetInfo;
+	GfxPoint loc;
 	GFXCONTEXT TopoContext {};
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	bool SurfDef = false;
 	const bool shielded = (pPlanetDesc->data_index & PLANET_SHIELDED) != 0;
 	uint16_t spherespanx {};

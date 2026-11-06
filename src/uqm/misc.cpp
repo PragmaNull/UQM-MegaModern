@@ -35,12 +35,12 @@
 
 void spawn_planet(void)
 {
-	GFXPOINT pt = MAKE_POINT(0, 0);
+	GfxPoint pt = MAKE_POINT(0, 0);
 
 	HELEMENT hPlanetElement {AllocElement()};
 	if (hPlanetElement)
 	{
-		ELEMENT* PlanetElementPtr {};
+		Element* PlanetElementPtr {};
 		extern FRAME planet[];
 
 		LockElement(hPlanetElement, &PlanetElementPtr);
@@ -70,7 +70,7 @@ void spawn_planet(void)
 				PlanetElementPtr->current.image.farray[0];
 			PlanetElementPtr->collision_func = collision;
 			PlanetElementPtr->postprocess_func =
-				(void (*)(struct element* ElementPtr))CalculateGravity;
+				(void (*)(struct Element* ElementPtr))CalculateGravity;
 			ZeroVelocityComponents(&PlanetElementPtr->velocity);
 			do
 			{
@@ -103,12 +103,12 @@ void spawn_planet(void)
 
 extern FRAME asteroid[];
 
-static void spawn_rubble(ELEMENT* AsteroidElementPtr)
+static void spawn_rubble(Element* AsteroidElementPtr)
 {
 	HELEMENT hRubbleElement {AllocElement()};
 	if (hRubbleElement)
 	{
-		ELEMENT* RubbleElementPtr {};
+		Element* RubbleElementPtr {};
 
 		PutElement(hRubbleElement);
 		LockElement(hRubbleElement, &RubbleElementPtr);
@@ -136,7 +136,7 @@ static void spawn_rubble(ELEMENT* AsteroidElementPtr)
 	}
 }
 
-static void asteroid_preprocess(ELEMENT* ElementPtr)
+static void asteroid_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -170,7 +170,7 @@ static void asteroid_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-void spawn_asteroid(ELEMENT* ElementPtr)
+void spawn_asteroid(Element* ElementPtr)
 {
 	HELEMENT hAsteroidElement {};
 
@@ -185,7 +185,7 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		ELEMENT* AsteroidElementPtr {};
+		Element* AsteroidElementPtr {};
 		uint16_t val {};
 
 		LockElement(hAsteroidElement, &AsteroidElementPtr);
@@ -251,7 +251,7 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 	}
 }
 
-void do_damage(ELEMENT* ElementPtr, int16_t damage)
+void do_damage(Element* ElementPtr, int16_t damage)
 {
 	// God Mode, borrowed from the UQM-HdResolutionFactor debug invincibility code
 	if (antiCheat(ElementPtr, false, uqm::GodModeFlags::NoDamage))
@@ -283,7 +283,7 @@ void do_damage(ELEMENT* ElementPtr, int16_t damage)
 
 static constexpr auto CrewColorLowIntensity {BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)};
 static constexpr auto CrewColorHighIntensity {BuildColor(MakeRgb15(0x0A, 0x1E, 0x0A), 0x0A)};
-void crew_preprocess(ELEMENT* ElementPtr)
+void crew_preprocess(Element* ElementPtr)
 {
 	HELEMENT hTarget {};
 
@@ -299,7 +299,7 @@ void crew_preprocess(ELEMENT* ElementPtr)
 	hTarget = ElementPtr->hTarget;
 	if (hTarget == 0)
 	{
-		STARSHIP* StarShipPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		if (StarShipPtr && StarShipPtr->RaceDescPtr->ship_info.crew_level)
@@ -319,7 +319,7 @@ void crew_preprocess(ELEMENT* ElementPtr)
 			return ResScale(ScaledOne);
 		};
 		int16_t delta {};
-		ELEMENT* ShipPtr {};
+		Element* ShipPtr {};
 
 		LockElement(hTarget, &ShipPtr);
 		delta = ShipPtr->current.location.x
@@ -348,14 +348,14 @@ void crew_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-void crew_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+void crew_collision(Element* ElementPtr0, GfxPoint* pPt0,
+					Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if ((ElementPtr1->state_flags & PlayerShip)
 		&& ElementPtr1->life_span >= NormalLife
 		&& ElementPtr0->hit_points > 0)
 	{
-		STARSHIP* StarShipPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		if (!(StarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune))
@@ -374,16 +374,16 @@ void crew_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 static constexpr auto CrewLife {300};
 
-void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
+void AbandonShip(Element* ShipPtr, Element* TargetPtr,
 				 uint16_t crew_loss)
 {
 	int16_t dx {};
 	int16_t dy {};
 	uint16_t direction {};
-	GFXRECT r;
-	STARSHIP* StarShipPtr {};
+	GfxRect r;
+	Starship* StarShipPtr {};
 	HELEMENT hCrew {};
-	INTERSECT_CONTROL ShipIntersect;
+	IntersectInfo ShipIntersect;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune)
@@ -412,7 +412,7 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 
 	while (crew_loss-- && (hCrew = AllocElement()))
 	{
-		ELEMENT* CrewPtr {};
+		Element* CrewPtr {};
 
 		DeltaCrew(ShipPtr, -1);
 
@@ -445,7 +445,7 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 		CrewPtr->hTarget = StarShipPtr->hShip;
 
 		{
-			INTERSECT_CONTROL CrewIntersect;
+			IntersectInfo CrewIntersect;
 
 			ShipIntersect.IntersectStamp.origin =
 				ShipPtr->IntersectControl.EndPoint;

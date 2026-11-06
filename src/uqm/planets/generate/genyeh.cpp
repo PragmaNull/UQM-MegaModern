@@ -28,13 +28,13 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateYehat_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateYehat_generateOrbital(SOLARSYS_STATE* solarSys,
-										  PLANET_DESC* world);
-static uint16_t GenerateYehat_generateEnergy(const SOLARSYS_STATE*,
-											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateYehat_pickupEnergy(SOLARSYS_STATE* solarSys,
-									   PLANET_DESC* world, uint16_t whichNode);
+static bool GenerateYehat_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateYehat_generateOrbital(SolarSystemState* solarSys,
+										  SystemPlanet* world);
+static uint16_t GenerateYehat_generateEnergy(const SolarSystemState*,
+											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateYehat_pickupEnergy(SolarSystemState* solarSys,
+									   SystemPlanet* world, uint16_t whichNode);
 
 
 const GenerateFunctions generateYehatFunctions = {
@@ -54,10 +54,10 @@ const GenerateFunctions generateYehatFunctions = {
 };
 
 
-static bool GenerateYehat_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateYehat_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -85,8 +85,8 @@ static bool GenerateYehat_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateYehat_generateOrbital(SOLARSYS_STATE* solarSys,
-										  PLANET_DESC* world)
+static bool GenerateYehat_generateOrbital(SolarSystemState* solarSys,
+										  SystemPlanet* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -126,8 +126,8 @@ static bool GenerateYehat_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t GenerateYehat_generateEnergy(const SOLARSYS_STATE* solarSys,
-											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateYehat_generateEnergy(const SolarSystemState* solarSys,
+											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -137,7 +137,7 @@ static uint16_t GenerateYehat_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool GenerateYehat_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+static bool GenerateYehat_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 									   uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))

@@ -27,7 +27,7 @@
 #include "uqm/units.h"
 #include "uqm/util.h"
 
-WIDGET* widget_focus = nullptr;
+Widget* widget_focus = nullptr;
 
 /* Some basic color defines */
 static constexpr auto WidgetActiveColor {MenuHighlightColor};
@@ -89,7 +89,7 @@ void ReleaseArrows(void)
 	}
 }
 
-void DrawShadowedBox(GFXRECT* r, Color bg, Color dark, Color medium)
+void DrawShadowedBox(GfxRect* r, Color bg, Color dark, Color medium)
 { // Dialog box
 	DrawStarConBox(r, ResScale(2), dark, medium, true, bg, true,
 				   Transparent);
@@ -97,13 +97,13 @@ void DrawShadowedBox(GFXRECT* r, Color bg, Color dark, Color medium)
 
 // windowRect, if not nullptr, will be filled with the dimensions of the
 // window drawn.
-void DrawLabelAsWindow(WIDGET_LABEL* label, GFXRECT* windowRect)
+void DrawLabelAsWindow(WidgetLabel* label, GfxRect* windowRect)
 {
 	const Color oldfg = SetContextForeGroundColor(WidgetDialogTextColor);
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 	int i {};
 	int win_w {};
 	int win_h {};
@@ -114,7 +114,7 @@ void DrawLabelAsWindow(WIDGET_LABEL* label, GFXRECT* windowRect)
 	}
 
 	/* Compute the dimensions of the label */
-	win_h = label->height((WIDGET*)label) + ResScale(16);
+	win_h = label->height((Widget*)label) + ResScale(16);
 	win_w = 0;
 	for (i = 0; i < label->line_count; i++)
 	{
@@ -188,11 +188,11 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 {
 	// This functions draws the text at the bottom of the screen
 	// which explains what the current option does.
-	GFXRECT r;
+	GfxRect r;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	const Color oldtext = SetContextForeGroundColor(WidgetTooltipColor);
-	TEXT t;
+	GfxText t;
 	const char* amperBang = "&!";
 	const size_t abSize = strlen(amperBang);
 	bool warning = false;
@@ -242,20 +242,20 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 	SetContextForeGroundColor(oldtext);
 }
 
-void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
+void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 { // Main menu function that draws backgroung and all widgets
-	GFXRECT r;
+	GfxRect r;
 	Color title;
 	Color oldtext;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
+	GfxText t;
 	int widget_index {};
 	int height {};
 	int widget_y {};
 	int on_screen {};
 
-	WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
+	WidgetMenuScreen* self = (WidgetMenuScreen*)_self;
 
 	if (!offset_b)
 	{
@@ -293,7 +293,7 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 		 widget_index++)
 	{ // Calculate overall height until we hit top limit
 		// (more widgets can't fit the page)
-		WIDGET* child = self->child[widget_index];
+		Widget* child = self->child[widget_index];
 		if (widget_index <= Onscreen())
 		{
 			height += (*child->height)(child);
@@ -354,7 +354,7 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 		}
 		if (self->num_children > Onscreen())
 		{ // Arrows (blue to the right)
-			STAMP arr;
+			GfxStamp arr;
 
 			arr.origin.x = ResScale(290);
 
@@ -383,7 +383,7 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 
 	for (widget_index = offset_t; widget_index < on_screen; widget_index++)
 	{
-		WIDGET* c = self->child[widget_index];
+		Widget* c = self->child[widget_index];
 		(*c->draw)(c, 0, widget_y);
 		widget_y += (*c->height)(c) + ResScale(5);
 	}
@@ -399,9 +399,9 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 	(void)y;
 }
 
-void Widget_DrawChoice(WIDGET* _self, int x, int y)
+void Widget_DrawChoice(Widget* _self, int x, int y)
 { // Choice drawer
-	const WIDGET_CHOICE* self = (WIDGET_CHOICE*)_self;
+	const WidgetChoice* self = (WidgetChoice*)_self;
 	Color oldtext;
 	Color default_color;
 	Color selected;
@@ -410,7 +410,7 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 	Color canbe;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
+	GfxText t;
 	int i {};
 
 	if (cur_font)
@@ -465,7 +465,7 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 				font_DrawText(&t); // Draw only 1 option name at a time
 
 				{ // Arrows around widget option
-					STAMP arr;
+					GfxStamp arr;
 
 					arr.origin.x = font_GetTextRect(&t).corner.x
 								 - ResScale(10);
@@ -485,7 +485,7 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 				}
 
 				{ // Navigation Dots
-					GFXRECT d;
+					GfxRect d;
 
 					d.extent.width = ResScale(4);
 					d.extent.height = ResScale(1);
@@ -520,15 +520,15 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 	SetContextForeGroundColor(oldtext);
 }
 
-void Widget_DrawButton(WIDGET* _self, int x, int y)
+void Widget_DrawButton(Widget* _self, int x, int y)
 { // Several buttons for navigation
-	WIDGET_BUTTON* self = (WIDGET_BUTTON*)_self;
+	WidgetButton* self = (WidgetButton*)_self;
 	Color oldtext;
 	Color inactive;
 	Color selected;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
+	GfxText t;
 
 	if (cur_font)
 	{
@@ -561,14 +561,14 @@ void Widget_DrawButton(WIDGET* _self, int x, int y)
 	(void)x;
 }
 
-void Widget_DrawLabel(WIDGET* _self, int x, int y)
+void Widget_DrawLabel(Widget* _self, int x, int y)
 { // Special labels
-	const WIDGET_LABEL* self = (WIDGET_LABEL*)_self;
+	const WidgetLabel* self = (WidgetLabel*)_self;
 	const Color oldtext = SetContextForeGroundColor(WidgetLabelColor);
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
-	GFXRECT r;
+	GfxText t;
+	GfxRect r;
 	const char* amperScore = "&_";
 	const char* amperBang = "&!";
 	const size_t asSize = strlen(amperScore);
@@ -629,16 +629,16 @@ void Widget_DrawLabel(WIDGET* _self, int x, int y)
 	(void)x;
 }
 
-void Widget_DrawSlider(WIDGET* _self, int x, int y)
+void Widget_DrawSlider(Widget* _self, int x, int y)
 { // SFX slider
-	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
+	WidgetSlider* self = (WidgetSlider*)_self;
 	Color oldtext;
 	Color default_color;
 	Color selected;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
-	GFXRECT r;
+	GfxText t;
+	GfxRect r;
 	const int tick = (CanvasWidth - x) / 8;
 
 	if (cur_font)
@@ -691,9 +691,9 @@ void Widget_DrawSlider(WIDGET* _self, int x, int y)
 	SetContextForeGroundColor(oldtext);
 }
 
-void Widget_Slider_DrawValue(WIDGET_SLIDER* self, int x, int y)
+void Widget_Slider_DrawValue(WidgetSlider* self, int x, int y)
 { // Number from 0 to 100 near slider
-	TEXT t;
+	GfxText t;
 	char buffer[16] {};
 
 	fmt::format_to_n(buffer, sizeof(buffer) - 1, "{}", self->value);
@@ -707,9 +707,9 @@ void Widget_Slider_DrawValue(WIDGET_SLIDER* self, int x, int y)
 	font_DrawText(&t);
 }
 
-void Widget_Slider_DrawPercentageValue(WIDGET_SLIDER* self, int x, int y)
+void Widget_Slider_DrawPercentageValue(WidgetSlider* self, int x, int y)
 { // Number from 0% to 100% near slider
-	TEXT t;
+	GfxText t;
 	char buffer[16] {};
 
 	fmt::format_to_n(buffer, sizeof(buffer) - 1, "{}%", self->value);
@@ -723,9 +723,9 @@ void Widget_Slider_DrawPercentageValue(WIDGET_SLIDER* self, int x, int y)
 	font_DrawText(&t);
 }
 
-void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
+void Widget_DrawTextEntry(Widget* _self, int x, int y)
 { // Custom seed and key layout name
-	WIDGET_TEXTENTRY* self = (WIDGET_TEXTENTRY*)_self;
+	WidgetTextEntry* self = (WidgetTextEntry*)_self;
 	Color oldtext;
 	Color inactive;
 	Color default_color;
@@ -733,7 +733,7 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 	Color editing;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
+	GfxText t;
 
 	if (cur_font)
 	{
@@ -790,9 +790,9 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 	else
 	{ // editing state
 		uint16_t i {};
-		GFXRECT text_r;
+		GfxRect text_r;
 		uint8_t char_deltas[WidgetTextentryWidth];
-		GFXRECT r;
+		GfxRect r;
 		int16_t leading {};
 
 		t.baseline.x = Rstep();
@@ -886,15 +886,15 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 	SetContextForeGroundColor(oldtext);
 }
 
-void Widget_DrawControlEntry(WIDGET* _self, int x, int y)
+void Widget_DrawControlEntry(Widget* _self, int x, int y)
 { // mappable key name in controls setup
-	WIDGET_CONTROLENTRY* self = (WIDGET_CONTROLENTRY*)_self;
+	WidgetControlEntry* self = (WidgetControlEntry*)_self;
 	Color oldtext;
 	Color default_color;
 	Color selected;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	TEXT t;
+	GfxText t;
 
 	if (cur_font)
 	{
@@ -951,59 +951,59 @@ void Widget_DrawControlEntry(WIDGET* _self, int x, int y)
 	SetContextForeGroundColor(oldtext);
 }
 
-int Widget_HeightChoice(WIDGET* _self)
+int Widget_HeightChoice(Widget* _self)
 {
 	(void)_self;
 	return ResScale(8); //effectively 1 column
 }
 
-int Widget_HeightFullScreen(WIDGET* _self)
+int Widget_HeightFullScreen(Widget* _self)
 {
 	(void)_self;
 	return CanvasHeight;
 }
 
-int Widget_HeightOneLine(WIDGET* _self)
+int Widget_HeightOneLine(Widget* _self)
 {
 	(void)_self;
 	return ResScale(8);
 }
 
-int Widget_HeightLabel(WIDGET* _self)
+int Widget_HeightLabel(Widget* _self)
 {
-	const WIDGET_LABEL* self = (WIDGET_LABEL*)_self;
+	const WidgetLabel* self = (WidgetLabel*)_self;
 	return self->line_count * ResScale(8);
 }
 
-int Widget_WidthFullScreen(WIDGET* _self)
+int Widget_WidthFullScreen(Widget* _self)
 {
 	(void)_self;
 	return CanvasWidth;
 }
 
-int Widget_ReceiveFocusSimple(WIDGET* _self, int event)
+int Widget_ReceiveFocusSimple(Widget* _self, int event)
 {
 	widget_focus = _self;
 	(void)event;
 	return true;
 }
 
-int Widget_ReceiveFocusChoice(WIDGET* _self, int event)
+int Widget_ReceiveFocusChoice(Widget* _self, int event)
 {
-	WIDGET_CHOICE* self = (WIDGET_CHOICE*)_self;
+	WidgetChoice* self = (WidgetChoice*)_self;
 	widget_focus = _self;
 	self->highlighted = self->selected;
 	(void)event;
 	return true;
 }
 
-int Widget_ReceiveFocusControlEntry(WIDGET* _self, int event)
+int Widget_ReceiveFocusControlEntry(Widget* _self, int event)
 {
-	WIDGET_CONTROLENTRY* self = (WIDGET_CONTROLENTRY*)_self;
+	WidgetControlEntry* self = (WidgetControlEntry*)_self;
 	int oldval = 0;
 	if (widget_focus->tag == WIDGET_TYPE_CONTROLENTRY)
 	{
-		oldval = ((WIDGET_CONTROLENTRY*)widget_focus)->highlighted;
+		oldval = ((WidgetControlEntry*)widget_focus)->highlighted;
 	}
 	widget_focus = _self;
 	self->highlighted = oldval;
@@ -1011,9 +1011,9 @@ int Widget_ReceiveFocusControlEntry(WIDGET* _self, int event)
 	return true;
 }
 
-int Widget_ReceiveFocusMenuScreen(WIDGET* _self, int event)
+int Widget_ReceiveFocusMenuScreen(Widget* _self, int event)
 {
-	WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
+	WidgetMenuScreen* self = (WidgetMenuScreen*)_self;
 	int x {};
 	int last_x {};
 	int dx {};
@@ -1036,13 +1036,13 @@ int Widget_ReceiveFocusMenuScreen(WIDGET* _self, int event)
 	else
 	{
 		/* Leave highlighted value the same */
-		WIDGET* child = self->child[self->highlighted];
+		Widget* child = self->child[self->highlighted];
 		child->receiveFocus(child, event);
 		return true;
 	}
 	for (; x != last_x; x += dx)
 	{
-		WIDGET* child = self->child[x];
+		Widget* child = self->child[x];
 		if ((*child->receiveFocus)(child, event))
 		{
 			self->highlighted = x;
@@ -1052,23 +1052,23 @@ int Widget_ReceiveFocusMenuScreen(WIDGET* _self, int event)
 	return false;
 }
 
-int Widget_ReceiveFocusRefuseFocus(WIDGET* self, int event)
+int Widget_ReceiveFocusRefuseFocus(Widget* self, int event)
 {
 	(void)self;
 	(void)event;
 	return false;
 }
 
-int Widget_HandleEventIgnoreAll(WIDGET* self, int event)
+int Widget_HandleEventIgnoreAll(Widget* self, int event)
 {
 	(void)event;
 	(void)self;
 	return false;
 }
 
-int Widget_HandleEventChoice(WIDGET* _self, int event)
+int Widget_HandleEventChoice(Widget* _self, int event)
 {
-	WIDGET_CHOICE* self = (WIDGET_CHOICE*)_self;
+	WidgetChoice* self = (WidgetChoice*)_self;
 	switch (event)
 	{
 		case WIDGET_EVENT_LEFT:
@@ -1100,9 +1100,9 @@ int Widget_HandleEventChoice(WIDGET* _self, int event)
 	}
 }
 
-int Widget_HandleEventSlider(WIDGET* _self, int event)
+int Widget_HandleEventSlider(Widget* _self, int event)
 {
-	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
+	WidgetSlider* self = (WidgetSlider*)_self;
 	switch (event)
 	{
 		case WIDGET_EVENT_LEFT:
@@ -1132,9 +1132,9 @@ int Widget_HandleEventSlider(WIDGET* _self, int event)
 	}
 }
 
-int Widget_HandleEventMenuScreen(WIDGET* _self, int event)
+int Widget_HandleEventMenuScreen(Widget* _self, int event)
 {
-	WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
+	WidgetMenuScreen* self = (WidgetMenuScreen*)_self;
 	int x {};
 	int last_x {};
 	int dx {};
@@ -1147,7 +1147,7 @@ int Widget_HandleEventMenuScreen(WIDGET* _self, int event)
 			dx = 1;
 			break;
 		case WIDGET_EVENT_CANCEL:
-			/* On cancel, shift focus to last element and send a SELECT. */
+			/* On cancel, shift focus to last Element and send a SELECT. */
 			self->highlighted = self->num_children - 1;
 			widget_focus = self->child[self->highlighted];
 			return (widget_focus->handleEvent)(widget_focus, WIDGET_EVENT_SELECT);
@@ -1158,7 +1158,7 @@ int Widget_HandleEventMenuScreen(WIDGET* _self, int event)
 	x = self->highlighted + dx;
 	while (x != last_x)
 	{
-		WIDGET* child {};
+		Widget* child {};
 		if (x == -1)
 		{
 			x = self->num_children - 1;
@@ -1178,9 +1178,9 @@ int Widget_HandleEventMenuScreen(WIDGET* _self, int event)
 	return false;
 }
 
-int Widget_HandleEventTextEntry(WIDGET* _self, int event)
+int Widget_HandleEventTextEntry(Widget* _self, int event)
 {
-	WIDGET_TEXTENTRY* self = (WIDGET_TEXTENTRY*)_self;
+	WidgetTextEntry* self = (WidgetTextEntry*)_self;
 	if (event == WIDGET_EVENT_SELECT)
 	{
 		if (!self->handleEventSelect)
@@ -1192,9 +1192,9 @@ int Widget_HandleEventTextEntry(WIDGET* _self, int event)
 	return false;
 }
 
-int Widget_HandleEventControlEntry(WIDGET* _self, int event)
+int Widget_HandleEventControlEntry(Widget* _self, int event)
 {
-	WIDGET_CONTROLENTRY* self = (WIDGET_CONTROLENTRY*)_self;
+	WidgetControlEntry* self = (WidgetControlEntry*)_self;
 	if (event == WIDGET_EVENT_SELECT)
 	{
 		if (self->onChange)
@@ -1221,7 +1221,7 @@ int Widget_HandleEventControlEntry(WIDGET* _self, int event)
 
 int Widget_Event(int event)
 {
-	WIDGET* widget = widget_focus;
+	Widget* widget = widget_focus;
 	while (widget != nullptr)
 	{
 		if ((*widget->handleEvent)(widget, event))

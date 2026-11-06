@@ -385,7 +385,7 @@ static int luaUqm_comm_setCustomBaseline(lua_State* luaState)
 	const int alignment =
 		luaL_checkoption(luaState, 4, "ALIGN_LEFT", textAlign);
 
-	SetCustomBaseLine(lineNumber, GFXPOINT {(int16_t)baselineX, (int16_t)baselineY},
+	SetCustomBaseLine(lineNumber, GfxPoint {(int16_t)baselineX, (int16_t)baselineY},
 					  (TEXT_ALIGN)alignment);
 
 	lua_pushstring(luaState, "");
@@ -521,7 +521,7 @@ static int luaUqm_comm_getConstellation(lua_State* luaState)
 		return 1;
 	}
 	char dialog[256];
-	const STAR_DESC* SDPtr = FindNearestConstellation(star_array, plot_map[plot_id].star_pt);
+	const StarDesc* SDPtr = FindNearestConstellation(star_array, plot_map[plot_id].star_pt);
 	fmt::format_to_sz_n(dialog, "{}",
 						GameString(SDPtr->Postfix));
 	CheckCase(prime_text, dialog);

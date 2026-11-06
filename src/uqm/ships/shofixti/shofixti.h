@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_shofixti(void);
+RaceDesc* init_shofixti(void);
 
 #if 0 //defined(__cplusplus)
 }

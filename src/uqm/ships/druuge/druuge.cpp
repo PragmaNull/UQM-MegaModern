@@ -52,9 +52,9 @@ static constexpr auto SpecialWait {30};
 static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 static auto MissileRangeHd() { return (MissileSpeedHd() * MissileLife); }
 
-static RACE_DESC druuge_desc =
+static RaceDesc druuge_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "mauler",
 		 FiresFore,
 		 17, /* Super Melee cost */
@@ -65,7 +65,7 @@ static RACE_DESC druuge_desc =
 		 DruugeMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			1400 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -124,8 +124,8 @@ static RACE_DESC druuge_desc =
 		0, /* CodeRef */
 };
 
-static void cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void cannon_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							 Element* ElementPtr1, GfxPoint* pPt1)
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 
@@ -136,7 +136,7 @@ static void cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		uint16_t angle {};
 		int16_t cur_delta_x {};
 		int16_t cur_delta_y {};
-		STARSHIP* StarShipPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		StarShipPtr->cur_status_flags &=
@@ -161,10 +161,10 @@ static void cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static uint16_t initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
+static uint16_t initialize_cannon(Element* ShipPtr, HELEMENT CannonArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -185,7 +185,7 @@ static uint16_t initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
 
 	if (CannonArray[0])
 	{
-		ELEMENT* CannonPtr {};
+		Element* CannonPtr {};
 
 		LockElement(CannonArray[0], &CannonPtr);
 		CannonPtr->collision_func = cannon_collision;
@@ -195,16 +195,16 @@ static uint16_t initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
 	return (1);
 }
 
-static void druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								uint16_t ConcernCounter)
 {
 	uint16_t ship_flags = 0;
-	STARSHIP* StarShipPtr {};
-	STARSHIP* EnemyStarShipPtr = nullptr;
+	Starship* StarShipPtr {};
+	Starship* EnemyStarShipPtr = nullptr;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed)
 	{
 		lpEvalDesc->MoveState = ENTICE;
@@ -254,9 +254,9 @@ static void druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcer
 	}
 }
 
-static void druuge_postprocess(ELEMENT* ElementPtr)
+static void druuge_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	/* if just fired cannon */
@@ -287,9 +287,9 @@ static void druuge_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void druuge_preprocess(ELEMENT* ElementPtr)
+static void druuge_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->cur_status_flags & SpecialFlag)
@@ -317,7 +317,7 @@ static void druuge_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_druuge(void)
+RaceDesc* init_druuge(void)
 {
 	if (IsHd())
 	{
@@ -337,7 +337,7 @@ RACE_DESC* init_druuge(void)
 	druuge_desc.init_weapon_func = initialize_cannon;
 	druuge_desc.cyborg_control.intelligence_func = druuge_intelligence;
 
-	RACE_DESC* RaceDescPtr {&druuge_desc};
+	RaceDesc* RaceDescPtr {&druuge_desc};
 
 	return (RaceDescPtr);
 }

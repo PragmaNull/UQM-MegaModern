@@ -63,9 +63,9 @@ static constexpr auto GasDamage {3};
 static constexpr auto GasAltDamage {50};
 static constexpr auto NumGasClouds {16};
 
-static RACE_DESC black_urquan_desc =
+static RaceDesc black_urquan_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "marauder",
 		 FiresFore,
 		 30, /* Super Melee cost */
@@ -76,7 +76,7 @@ static RACE_DESC black_urquan_desc =
 		 KohrAhMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			2666 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -137,10 +137,10 @@ static RACE_DESC black_urquan_desc =
 
 static constexpr auto LastSpinIndex {1};
 
-static void spin_preprocess(ELEMENT* ElementPtr)
+static void spin_preprocess(Element* ElementPtr)
 {
-	ELEMENT* ShipPtr {};
-	STARSHIP* StarShipPtr {};
+	Element* ShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	LockElement(StarShipPtr->hShip, &ShipPtr);
@@ -179,7 +179,7 @@ static void spin_preprocess(ELEMENT* ElementPtr)
 	UnlockElement(StarShipPtr->hShip);
 }
 
-static void buzztrack_preprocess(ELEMENT* ElementPtr)
+static void buzztrack_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->thrust_wait)
 	{
@@ -198,7 +198,7 @@ static void buzztrack_preprocess(ELEMENT* ElementPtr)
 		{
 			int16_t delta_x {};
 			int16_t delta_y {};
-			ELEMENT* eptr {};
+			Element* eptr {};
 
 			LockElement(ElementPtr->hTarget, &eptr);
 			delta_x = eptr->current.location.x
@@ -241,7 +241,7 @@ static void buzztrack_preprocess(ELEMENT* ElementPtr)
 	spin_preprocess(ElementPtr);
 }
 
-static void decelerate_preprocess(ELEMENT* ElementPtr)
+static void decelerate_preprocess(Element* ElementPtr)
 {
 	int32_t dx {};
 	int32_t dy {};
@@ -258,15 +258,15 @@ static void decelerate_preprocess(ELEMENT* ElementPtr)
 	spin_preprocess(ElementPtr);
 }
 
-static void splinter_preprocess(ELEMENT* ElementPtr)
+static void splinter_preprocess(Element* ElementPtr)
 {
 	ElementPtr->next.image.frame =
 		IncFrameIndex(ElementPtr->current.image.frame);
 	ElementPtr->state_flags |= Changing;
 }
 
-static void buzzsaw_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void buzzsaw_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							  Element* ElementPtr1, GfxPoint* pPt1)
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 
@@ -282,9 +282,9 @@ static void buzzsaw_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void buzzsaw_preprocess(ELEMENT* ElementPtr)
+static void buzzsaw_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (!(StarShipPtr->cur_status_flags & WeaponFlag))
@@ -296,14 +296,14 @@ static void buzzsaw_preprocess(ELEMENT* ElementPtr)
 	spin_preprocess(ElementPtr);
 }
 
-static void buzzsaw_postprocess(ELEMENT* ElementPtr)
+static void buzzsaw_postprocess(Element* ElementPtr)
 {
 	ElementPtr->postprocess_func = 0;
 	HELEMENT hElement {AllocElement()};
 	if (hElement)
 	{
-		ELEMENT* ListElementPtr {};
-		STARSHIP* StarShipPtr {};
+		Element* ListElementPtr {};
+		Starship* StarShipPtr {};
 
 		LockElement(hElement, &ListElementPtr);
 		const uint16_t primIndex {ListElementPtr->PrimIndex};
@@ -328,10 +328,10 @@ static void buzzsaw_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t initialize_buzzsaw(ELEMENT* ShipPtr, HELEMENT SawArray[])
+static uint16_t initialize_buzzsaw(Element* ShipPtr, HELEMENT SawArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -352,7 +352,7 @@ static uint16_t initialize_buzzsaw(ELEMENT* ShipPtr, HELEMENT SawArray[])
 
 	if (SawArray[0])
 	{
-		ELEMENT* SawPtr {};
+		Element* SawPtr {};
 
 		LockElement(SawArray[0], &SawPtr);
 		SawPtr->turn_wait = SawRate;
@@ -365,12 +365,12 @@ static uint16_t initialize_buzzsaw(ELEMENT* ShipPtr, HELEMENT SawArray[])
 	return (1);
 }
 
-static void black_urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 									  uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == ENTICE
 		&& (lpEvalDesc->ObjectPtr->state_flags & CrewObject)
@@ -398,7 +398,7 @@ static void black_urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOf
 	{
 		HELEMENT h {};
 		HELEMENT hNext {};
-		ELEMENT* BuzzSawPtr {};
+		Element* BuzzSawPtr {};
 
 		h = (StarShipPtr->old_status_flags & WeaponFlag) ?
 				GetSuccElement(ShipPtr) :
@@ -458,7 +458,7 @@ static void black_urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOf
 	}
 }
 
-static void gas_cloud_preprocess(ELEMENT* ElementPtr)
+static void gas_cloud_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait)
 	{
@@ -474,8 +474,8 @@ static void gas_cloud_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void gas_cloud_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void gas_cloud_collision(Element* ElementPtr0, GfxPoint* pPt0,
+								Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (ElementPtr1->state_flags & PlayerShip)
 	{
@@ -489,12 +489,12 @@ static void gas_cloud_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
-static void spawn_gas_cloud(ELEMENT* ElementPtr)
+static void spawn_gas_cloud(Element* ElementPtr)
 {
 	int32_t dx {};
 	int32_t dy {};
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	MissileBlock.cx = ElementPtr->next.location.x;
@@ -521,7 +521,7 @@ static void spawn_gas_cloud(ELEMENT* ElementPtr)
 		HELEMENT hGasCloud {initialize_missile(&MissileBlock)};
 		if (hGasCloud)
 		{
-			ELEMENT* GasCloudPtr {};
+			Element* GasCloudPtr {};
 
 			LockElement(hGasCloud, &GasCloudPtr);
 			SetElementStarShip(GasCloudPtr, StarShipPtr);
@@ -535,9 +535,9 @@ static void spawn_gas_cloud(ELEMENT* ElementPtr)
 	}
 }
 
-static void black_urquan_postprocess(ELEMENT* ElementPtr)
+static void black_urquan_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
@@ -554,9 +554,9 @@ static void black_urquan_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void black_urquan_preprocess(ELEMENT* ElementPtr)
+static void black_urquan_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	/* no spinning disks */
@@ -569,7 +569,7 @@ static void black_urquan_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_black_urquan(void)
+RaceDesc* init_black_urquan(void)
 {
 	if (IsHd())
 	{
@@ -590,7 +590,7 @@ RACE_DESC* init_black_urquan(void)
 	black_urquan_desc.init_weapon_func = initialize_buzzsaw;
 	black_urquan_desc.cyborg_control.intelligence_func = black_urquan_intelligence;
 
-	RACE_DESC* RaceDescPtr {&black_urquan_desc};
+	RaceDesc* RaceDescPtr {&black_urquan_desc};
 
 	return (RaceDescPtr);
 }

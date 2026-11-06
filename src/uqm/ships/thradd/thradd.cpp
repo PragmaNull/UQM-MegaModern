@@ -63,9 +63,9 @@ static auto StationarySpeed() { return WorldToVelocity(DisplayToWorld(ResScale(4
 static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 
-static RACE_DESC thraddash_desc =
+static RaceDesc thraddash_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "torch",
 		 FiresFore,
 		 10, /* Super Melee cost */
@@ -76,7 +76,7 @@ static RACE_DESC thraddash_desc =
 		 ThraddashMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			833 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -135,13 +135,13 @@ static RACE_DESC thraddash_desc =
 		0, /* CodeRef */
 };
 
-static void thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void thraddash_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								   uint16_t ConcernCounter)
 {
 
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		int32_t dx {};
@@ -235,7 +235,7 @@ static void thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfCon
 	}
 }
 
-static void flame_napalm_preprocess(ELEMENT* ElementPtr)
+static void flame_napalm_preprocess(Element* ElementPtr)
 {
 	ZeroVelocityComponents(&ElementPtr->velocity);
 
@@ -279,10 +279,10 @@ static void flame_napalm_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
+static uint16_t initialize_horn(Element* ShipPtr, HELEMENT HornArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -303,9 +303,9 @@ static uint16_t initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 	return (1);
 }
 
-static void thraddash_preprocess(ELEMENT* ElementPtr)
+static void thraddash_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (!(StarShipPtr->cur_status_flags & SpecialFlag))
@@ -353,7 +353,7 @@ static void thraddash_preprocess(ELEMENT* ElementPtr)
 		StarShipPtr->RaceDescPtr->characteristics.max_thrust = max_thrust;
 
 		{
-			MISSILE_BLOCK MissileBlock;
+			MissileDesc MissileBlock;
 
 			MissileBlock.cx = ElementPtr->next.location.x;
 			MissileBlock.cy = ElementPtr->next.location.y;
@@ -375,7 +375,7 @@ static void thraddash_preprocess(ELEMENT* ElementPtr)
 			hTrailElement = initialize_missile(&MissileBlock);
 			if (hTrailElement)
 			{
-				ELEMENT* TrailElementPtr {};
+				Element* TrailElementPtr {};
 
 				LockElement(hTrailElement, &TrailElementPtr);
 				SetElementStarShip(TrailElementPtr, StarShipPtr);
@@ -408,7 +408,7 @@ static void thraddash_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_thraddash(void)
+RaceDesc* init_thraddash(void)
 {
 	if (IsHd())
 	{
@@ -428,7 +428,7 @@ RACE_DESC* init_thraddash(void)
 	thraddash_desc.init_weapon_func = initialize_horn;
 	thraddash_desc.cyborg_control.intelligence_func = thraddash_intelligence;
 
-	RACE_DESC* RaceDescPtr {&thraddash_desc};
+	RaceDesc* RaceDescPtr {&thraddash_desc};
 
 	return (RaceDescPtr);
 }

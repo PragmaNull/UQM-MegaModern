@@ -25,14 +25,14 @@
 #include "supermelee/melee.h"
 
 
-QUEUE master_q;
+Queue master_q;
 static int master_ship_seed = 0;
 
 void LoadMasterShipList(void (*YieldProcessing)(void))
 {
 	SPECIES_ID s_id = ARILOU_ID;
 	uint16_t num_entries {LAST_MELEE_ID - ARILOU_ID + 1};
-	InitQueue(&master_q, num_entries, sizeof(MASTER_SHIP_INFO));
+	InitQueue(&master_q, num_entries, sizeof(MasterShipInfo));
 	while (num_entries--)
 	{
 		HMASTERSHIP hStarShip {};
@@ -51,9 +51,9 @@ void LoadMasterShipList(void (*YieldProcessing)(void))
 			YieldProcessing();
 		}
 
-		MASTER_SHIP_INFO* BuiltPtr {LockMasterShip(&master_q, hBuiltShip)};
+		MasterShipInfo* BuiltPtr {LockMasterShip(&master_q, hBuiltShip)};
 		BuiltPtr->SpeciesID = postIncSpeciesId_HACK(s_id);
-		RACE_DESC* RDPtr {load_ship(BuiltPtr->SpeciesID, false)};
+		RaceDesc* RDPtr {load_ship(BuiltPtr->SpeciesID, false)};
 		if (!RDPtr)
 		{
 			UnlockMasterShip(&master_q, hBuiltShip);
@@ -61,7 +61,7 @@ void LoadMasterShipList(void (*YieldProcessing)(void))
 		}
 
 		// Grab a copy of loaded icons, strings and info
-		// XXX: SHIP_INFO implicitly referenced here
+		// XXX: ShipInfoDesc implicitly referenced here
 		BuiltPtr->ShipInfo = RDPtr->ship_info;
 		BuiltPtr->Fleet = RDPtr->fleet;
 		free_ship(RDPtr, false, false);
@@ -74,7 +74,7 @@ void LoadMasterShipList(void (*YieldProcessing)(void))
 		for (hStarShip = GetHeadLink(&master_q);
 			 hStarShip; hStarShip = hNextShip)
 		{
-			const MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hStarShip)};
+			const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hStarShip)};
 			hNextShip = _GetSuccLink(MasterPtr);
 			const char* curName {MasterPtr->ShipInfo.race_strings->text(2)};
 			UnlockMasterShip(&master_q, hStarShip);
@@ -98,7 +98,7 @@ void FreeMasterShipList(void)
 	for (hStarShip = GetHeadLink(&master_q);
 		 hStarShip != 0; hStarShip = hNextShip)
 	{
-		const MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hStarShip)};
+		const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hStarShip)};
 		hNextShip = _GetSuccLink(MasterPtr);
 
 		DestroyDrawable(ReleaseDrawable(MasterPtr->ShipInfo.melee_icon));
@@ -131,7 +131,7 @@ HMASTERSHIP FindMasterShip(SPECIES_ID ship_ref)
 	{
 		SPECIES_ID ref;
 
-		const MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hStarShip)};
+		const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hStarShip)};
 		hNextShip = _GetSuccLink(MasterPtr);
 		ref = MasterPtr->SpeciesID;
 		UnlockMasterShip(&master_q, hStarShip);
@@ -156,7 +156,7 @@ int FindMasterShipIndex(SPECIES_ID ship_ref)
 	{
 		SPECIES_ID ref;
 
-		const MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hStarShip)};
+		const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hStarShip)};
 		hNextShip = _GetSuccLink(MasterPtr);
 		ref = MasterPtr->SpeciesID;
 		UnlockMasterShip(&master_q, hStarShip);
@@ -178,7 +178,7 @@ uint16_t GetShipCostFromIndex(unsigned Index)
 		return 0;
 	}
 
-	const MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
+	const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 	const uint16_t val {MasterPtr->ShipInfo.ship_cost};
 	UnlockMasterShip(&master_q, hMasterShip);
 
@@ -193,7 +193,7 @@ FRAME GetShipIconsFromIndex(unsigned Index)
 		return 0;
 	}
 
-	const MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
+	const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 	FRAME val {MasterPtr->ShipInfo.icons};
 	UnlockMasterShip(&master_q, hMasterShip);
 
@@ -208,7 +208,7 @@ FRAME GetShipMeleeIconsFromIndex(unsigned Index)
 		return 0;
 	}
 
-	const MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
+	const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 	FRAME val {MasterPtr->ShipInfo.melee_icon};
 	UnlockMasterShip(&master_q, hMasterShip);
 

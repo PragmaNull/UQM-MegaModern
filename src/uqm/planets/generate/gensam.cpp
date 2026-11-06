@@ -35,20 +35,20 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
-										  PLANET_DESC* planet);
-static bool GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* world);
+static bool GenerateSaMatra_initNpcs(SolarSystemState* solarSys);
+static bool GenerateSaMatra_reinitNpcs(SolarSystemState* solarSys);
+static bool GenerateSaMatra_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateSaMatra_generateMoons(SolarSystemState* solarSys,
+										  SystemPlanet* planet);
+static bool GenerateSaMatra_generateOrbital(SolarSystemState* solarSys,
+											SystemPlanet* world);
 static uint16_t GenerateSaMatra_generateEnergy(
-	const SOLARSYS_STATE* solarSys, const PLANET_DESC* world,
-	uint16_t whichNode, NODE_INFO* info);
-static bool GenerateSaMatra_pickupEnergy(SOLARSYS_STATE* solarSys,
-										 PLANET_DESC* world, uint16_t whichNode);
+	const SolarSystemState* solarSys, const SystemPlanet* world,
+	uint16_t whichNode, SurfaceNode* info);
+static bool GenerateSaMatra_pickupEnergy(SolarSystemState* solarSys,
+										 SystemPlanet* world, uint16_t whichNode);
 
-static void BuildUrquanGuard(SOLARSYS_STATE* solarSys);
+static void BuildUrquanGuard(SolarSystemState* solarSys);
 
 
 const GenerateFunctions generateSaMatraFunctions = {
@@ -68,7 +68,7 @@ const GenerateFunctions generateSaMatraFunctions = {
 };
 
 
-static bool GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSaMatra_initNpcs(SolarSystemState* solarSys)
 {
 	if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 	{
@@ -92,7 +92,7 @@ static bool GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSaMatra_reinitNpcs(SolarSystemState* solarSys)
 {
 	bool GuardEngaged {};
 	HIPGROUP hGroup {};
@@ -109,7 +109,7 @@ static bool GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 		for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q);
 			 hGroup; hGroup = hNextGroup)
 		{
-			IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+			InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 			hNextGroup = _GetSuccLink(GroupPtr);
 
 			if (uqm::gameState().flag(uqm::GameFlag::URQUAN_MESSED_UP))
@@ -134,7 +134,7 @@ static bool GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 		if (GuardEngaged)
 		{
 			uint16_t angle {};
-			GFXPOINT org;
+			GfxPoint org;
 
 			org = planetOuterLocation(solarSys->SunDesc[0].PlanetByte);
 			angle = ARCTAN(uqm::flagship().ipLocation.x - org.x,
@@ -150,10 +150,10 @@ static bool GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSaMatra_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -244,8 +244,8 @@ static bool GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
-										  PLANET_DESC* planet)
+static bool GenerateSaMatra_generateMoons(SolarSystemState* solarSys,
+										  SystemPlanet* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -254,7 +254,7 @@ static bool GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
 		uint16_t angle {};
 		uint32_t rand_val {};
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
-		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
+		SystemPlanet* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 		{
@@ -283,8 +283,8 @@ static bool GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* world)
+static bool GenerateSaMatra_generateOrbital(SolarSystemState* solarSys,
+											SystemPlanet* world)
 {
 	/* Samatra */
 	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
@@ -423,13 +423,13 @@ static bool GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 static constexpr auto NumUrquanGuards0 {12};
 static constexpr auto NumUrquanGuards1 {4};
 
-static void BuildUrquanGuard(SOLARSYS_STATE* solarSys)
+static void BuildUrquanGuard(SolarSystemState* solarSys)
 {
 	uint8_t ship1 {};
 	uint8_t ship2 {};
 	uint8_t b0 {};
 	uint8_t b1 {};
-	GFXPOINT org;
+	GfxPoint org;
 	HIPGROUP hNextGroup {};
 
 	uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS);
@@ -490,7 +490,7 @@ static void BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 			b1 += FullCircle / (NumUrquanGuards0 + NumUrquanGuards1);
 		}
 
-		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 		GroupPtr->task = ON_STATION | IGNORE_FLAGSHIP;
 		GroupPtr->sys_loc = 0;
@@ -507,7 +507,7 @@ static void BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		 b0 < NumUrquanGuards1;
 		 ++b0, b1 += FullCircle / NumUrquanGuards1)
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 		GroupPtr->task = ON_STATION | IGNORE_FLAGSHIP;
 		GroupPtr->sys_loc = 0;
@@ -523,8 +523,8 @@ static void BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 	(void)solarSys;
 }
 
-static uint16_t GenerateSaMatra_generateEnergy(const SOLARSYS_STATE* solarSys,
-											   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSaMatra_generateEnergy(const SolarSystemState* solarSys,
+											   const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (IsExtended()
 		&& CurStarDescPtr()->Index == DESTROYED_STARBASE_DEFINED
@@ -536,7 +536,7 @@ static uint16_t GenerateSaMatra_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool GenerateSaMatra_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+static bool GenerateSaMatra_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 										 uint16_t whichNode)
 {
 	if (IsExtended()

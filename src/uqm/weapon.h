@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-struct LASER_BLOCK
+struct LaserDesc
 {
 	int16_t cx, cy, ex, ey;
 	ELEMENT_FLAGS flags;
@@ -36,7 +36,7 @@ struct LASER_BLOCK
 	Color color;
 };
 
-struct MISSILE_BLOCK
+struct MissileDesc
 {
 	int16_t cx, cy;
 	ELEMENT_FLAGS flags;
@@ -44,21 +44,21 @@ struct MISSILE_BLOCK
 	int16_t pixoffs, speed, hit_points, damage;
 	uint16_t face, index, life;
 	FRAME* farray;
-	void (*preprocess_func)(ELEMENT* ElementPtr);
+	void (*preprocess_func)(Element* ElementPtr);
 	int16_t blast_offs;
 };
 
-extern HELEMENT initialize_laser(LASER_BLOCK* pLaserBlock);
-extern HELEMENT initialize_missile(MISSILE_BLOCK* pMissileBlock);
-extern HELEMENT weapon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-								 ELEMENT* ElementPtr1, GFXPOINT* pPt1);
-extern int16_t TrackShip(ELEMENT* Tracker, uint16_t* pfacing);
-extern void Untarget(ELEMENT* ElementPtr);
+extern HELEMENT initialize_laser(LaserDesc* pLaserBlock);
+extern HELEMENT initialize_missile(MissileDesc* pMissileBlock);
+extern HELEMENT weapon_collision(Element* ElementPtr0, GfxPoint* pPt0,
+								 Element* ElementPtr1, GfxPoint* pPt1);
+extern int16_t TrackShip(Element* Tracker, uint16_t* pfacing);
+extern void Untarget(Element* ElementPtr);
 
 inline constexpr auto ModifyImage {(1 << 0)};
 inline constexpr auto ModifySwap {(1 << 1)};
 
-extern FRAME ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
+extern FRAME ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
 							  uint8_t modify_flags);
 
 #if 0 //defined(__cplusplus)

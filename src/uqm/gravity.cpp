@@ -27,7 +27,7 @@
 static auto DifuseGravity() { return ResScale(175); } // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
 static auto MaxMagnitude() { return ResScale(6); }	  // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
 
-bool CalculateGravity(ELEMENT* ElementPtr)
+bool CalculateGravity(Element* ElementPtr)
 {
 	bool HasGravity {};
 	HELEMENT hTestElement {};
@@ -40,7 +40,7 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 		 hTestElement != 0; hTestElement = hSuccElement)
 	{
 		bool TestHasGravity {};
-		ELEMENT* TestElementPtr {};
+		Element* TestElementPtr {};
 
 		LockElement(hTestElement, &TestElementPtr);
 		if (TestElementPtr != ElementPtr
@@ -145,7 +145,7 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 												Sine(angle, WorldToVelocity(ResScale(1))));
 						if (TestElementPtr->state_flags & PlayerShip)
 						{
-							STARSHIP* StarShipPtr {};
+							Starship* StarShipPtr {};
 
 							GetElementStarShip(TestElementPtr, &StarShipPtr);
 							StarShipPtr->cur_status_flags &= ~ShipAtMaxSpeed;
@@ -163,11 +163,11 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 	return (retval);
 }
 
-bool TimeSpaceMatterConflict(ELEMENT* ElementPtr)
+bool TimeSpaceMatterConflict(Element* ElementPtr)
 {
 	HELEMENT hTestElement {};
 	HELEMENT hSuccElement {};
-	INTERSECT_CONTROL ElementControl;
+	IntersectInfo ElementControl;
 
 	ElementControl.IntersectStamp.origin.x =
 		WorldToDisplay(ElementPtr->current.location.x);
@@ -180,7 +180,7 @@ bool TimeSpaceMatterConflict(ELEMENT* ElementPtr)
 	for (hTestElement = GetHeadElement();
 		 hTestElement != 0; hTestElement = hSuccElement)
 	{
-		ELEMENT* TestElementPtr {};
+		Element* TestElementPtr {};
 
 		LockElement(hTestElement, &TestElementPtr);
 		hSuccElement = GetSuccElement(TestElementPtr);
@@ -189,7 +189,7 @@ bool TimeSpaceMatterConflict(ELEMENT* ElementPtr)
 				/* ship in transition */
 				|| (TestElementPtr->state_flags & PlayerShip)))
 		{
-			INTERSECT_CONTROL TestElementControl;
+			IntersectInfo TestElementControl;
 
 			TestElementControl.IntersectStamp.origin.x =
 				WorldToDisplay(TestElementPtr->current.location.x);

@@ -51,7 +51,7 @@ static void CreateRadar(void)
 {
 	if (RadarContext == 0)
 	{
-		GFXRECT r;
+		GfxRect r;
 
 		RadarContext = CreateContext("RadarContext");
 		GFXCONTEXT OldContext {SetContext(RadarContext)};
@@ -105,7 +105,7 @@ bool LoadSC2Data(void)
 	return true;
 }
 
-static void copyFleetInfo(FLEET_INFO* dst, SHIP_INFO* src, FLEET_STUFF* fleet)
+static void copyFleetInfo(FleetInfo* dst, ShipInfoDesc* src, FleetStatus* fleet)
 {
 	// other leading fields are irrelevant
 	dst->crew_level = src->crew_level;
@@ -124,12 +124,12 @@ static void copyFleetInfo(FLEET_INFO* dst, SHIP_INFO* src, FLEET_STUFF* fleet)
 void LoadFleetInfo(void)
 { /* Yehat Rebels and Ur-Quan probe */
 	const uint16_t num_ships = LAST_MELEE_ID - ARILOU_ID + 1 + 2;
-	uqm::gameState().game().avail_race_q.reset(num_ships, sizeof(FLEET_INFO));
+	uqm::gameState().game().avail_race_q.reset(num_ships, sizeof(FleetInfo));
 	SPECIES_ID ship_ref = (SPECIES_ID)(ARILOU_ID - 1);
 	for (int i = 0; i < num_ships; ++i)
 	{
 		HFLEETINFO hFleet {};
-		FLEET_INFO* FleetPtr {};
+		FleetInfo* FleetPtr {};
 
 		if (i < num_ships - 2)
 		{
@@ -155,7 +155,7 @@ void LoadFleetInfo(void)
 		if (i < num_ships - 1)
 		{
 			HMASTERSHIP hMasterShip {FindMasterShip(ship_ref)};
-			MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
+			MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 			// Grab a copy of loaded icons and strings (not owned)
 			copyFleetInfo(FleetPtr, &MasterPtr->ShipInfo,
 						  &MasterPtr->Fleet);
@@ -210,8 +210,8 @@ void LoadFleetInfo(void)
 		else
 		{
 			// Ur-Quan probe.
-			RACE_DESC* RDPtr = load_ship(FleetPtr->SpeciesID,
-										 false);
+			RaceDesc* RDPtr = load_ship(FleetPtr->SpeciesID,
+										false);
 			if (RDPtr)
 			{ // Grab a copy of loaded icons and strings
 				copyFleetInfo(FleetPtr, &RDPtr->ship_info,
@@ -377,11 +377,11 @@ bool InitGameStructures(void)
 
 	loadGameCheats();
 
-	uqm::gameState().game().stowed_ship_q.reset(MaxStowedShips, sizeof(SHIP_FRAGMENT));
-	uqm::gameState().game().built_ship_q.reset(MaxBuiltShips, sizeof(SHIP_FRAGMENT));
-	uqm::gameState().game().npc_built_ship_q.reset(MaxShipsPerSide, sizeof(SHIP_FRAGMENT));
-	uqm::gameState().game().ip_group_q.reset(MaxBattleGroups, sizeof(IP_GROUP));
-	uqm::gameState().game().encounter_q.reset(MaxEncounters, sizeof(ENCOUNTER));
+	uqm::gameState().game().stowed_ship_q.reset(MaxStowedShips, sizeof(ShipFragment));
+	uqm::gameState().game().built_ship_q.reset(MaxBuiltShips, sizeof(ShipFragment));
+	uqm::gameState().game().npc_built_ship_q.reset(MaxShipsPerSide, sizeof(ShipFragment));
+	uqm::gameState().game().ip_group_q.reset(MaxBattleGroups, sizeof(InterplanetaryGroup));
+	uqm::gameState().game().encounter_q.reset(MaxEncounters, sizeof(Encounter));
 
 	uqm::currentActivity() = IN_INTERPLANETARY | START_INTERPLANETARY;
 
@@ -463,7 +463,7 @@ void UninitGameStructures(void)
 	HFLEETINFO hStarShip {GetTailLink(&uqm::gameState().game().avail_race_q)};
 	if (hStarShip)
 	{
-		const FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
+		const FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 		DestroyDrawable(ReleaseDrawable(FleetPtr->melee_icon));
 		DestroyDrawable(ReleaseDrawable(FleetPtr->icons));
 		delete FleetPtr->race_strings;

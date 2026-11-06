@@ -28,7 +28,7 @@
 #include "uqm/lua/UQMLua.h"
 
 
-static LOCDATA druuge_desc =
+static ConversationData druuge_desc =
 	{
 		DRUUGE_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -1035,7 +1035,7 @@ static void post_druuge_enc(void)
 	}
 }
 
-LOCDATA* init_druuge_comm(void)
+ConversationData* init_druuge_comm(void)
 {
 	SlaveryCount = 0;
 	AttemptedSalvage = false;
@@ -1060,7 +1060,7 @@ LOCDATA* init_druuge_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&druuge_desc};
+	ConversationData* retval {&druuge_desc};
 
 	return (retval);
 }

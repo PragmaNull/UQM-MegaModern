@@ -77,7 +77,7 @@ static uint16_t melnorme_tens_names[] =
 		ENUMERATE_EIGHTY,
 		ENUMERATE_NINETY};
 
-const static NUMBER_SPEECH_DESC melnorme_numbers_english =
+const static NumberSpeechDesc melnorme_numbers_english =
 	{
 		5, /* NumDigits */
 		{
@@ -122,7 +122,7 @@ const static NUMBER_SPEECH_DESC melnorme_numbers_english =
 				0					  /* CommonIndex - not used */
 			}}
 };
-static LOCDATA melnorme_desc =
+static ConversationData melnorme_desc =
 	{
 		MELNORME_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -622,7 +622,7 @@ static uint16_t ShipWorth(void)
 }
 
 static uint16_t rescue_fuel;
-static SIS_STATE SIS_copy;
+static FlagshipData SIS_copy;
 
 // Extract method to return the response string index
 // for stripping a given module.
@@ -2177,7 +2177,7 @@ static void post_melnorme_enc(void)
 	DrawStatusMessage(nullptr);
 }
 
-LOCDATA* init_melnorme_comm(void)
+ConversationData* init_melnorme_comm(void)
 {
 	melnorme_desc.init_encounter_func = Intro;
 	melnorme_desc.post_encounter_func = post_melnorme_enc;
@@ -2199,7 +2199,7 @@ LOCDATA* init_melnorme_comm(void)
 
 	setSegue(Segue_peace);
 	AskedToBuy = false;
-	LOCDATA* retval {&melnorme_desc};
+	ConversationData* retval {&melnorme_desc};
 
 	return (retval);
 }

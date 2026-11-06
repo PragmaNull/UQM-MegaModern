@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_syreen(void);
+RaceDesc* init_syreen(void);
 
 #if 0 //defined(__cplusplus)
 }

@@ -161,9 +161,9 @@ DRAWABLE CreateDisplay(CREATE_FLAGS CreateFlags, int16_t* pwidth, int16_t* pheig
 
 DRAWABLE AllocDrawable(uint16_t n)
 {
-	auto* Drawable {new DRAWABLE_DESC {}};
-	Drawable->Frame.assign(n, FRAME_DESC {});
-	for (FRAME_DESC& F : Drawable->Frame)
+	auto* Drawable {new DrawableDesc {}};
+	Drawable->Frame.assign(n, FrameDesc {});
+	for (FrameDesc& F : Drawable->Frame)
 	{
 		F.parent = Drawable;
 	}
@@ -227,7 +227,7 @@ bool DestroyDrawable(DRAWABLE Drawable)
 	return (false);
 }
 
-bool GetFrameRect(FRAME FramePtr, GFXRECT* pRect)
+bool GetFrameRect(FRAME FramePtr, GfxRect* pRect)
 {
 	if (FramePtr)
 	{
@@ -332,7 +332,7 @@ void SetFrameTransparentColor(FRAME frame, Color color)
 	TFB_DrawCanvas_SetTransparentColor(img->NormalImg, color, false);
 }
 
-Color GetFramePixel(FRAME frame, GFXPOINT pixelPt)
+Color GetFramePixel(FRAME frame, GfxPoint pixelPt)
 {
 	Color ret;
 
@@ -398,10 +398,10 @@ static FRAME makeMatchingIndexedFrame(FRAME frame, int width, int height)
 
 // Creates an new DRAWABLE containing a copy of specified FRAME's rect
 // Source FRAME must not be a ScreenDrawable
-DRAWABLE CopyFrameRect(FRAME frame, const GFXRECT* area)
+DRAWABLE CopyFrameRect(FRAME frame, const GfxRect* area)
 {
 	FRAME newFrame {};
-	const GFXPOINT nullPt = MAKE_POINT(0, 0);
+	const GfxPoint nullPt = MAKE_POINT(0, 0);
 
 	if (!frame)
 	{
@@ -426,7 +426,7 @@ DRAWABLE CopyFrameRect(FRAME frame, const GFXRECT* area)
 // Source FRAME must not be a ScreenDrawable
 DRAWABLE CloneFrame(FRAME frame)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	if (!frame)
 	{

@@ -21,7 +21,7 @@
 #include "strings.h"
 #include "uqm/lua/UQMLua.h"
 
-static LOCDATA urquan_desc =
+static ConversationData urquan_desc =
 	{
 		URQUAN_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -601,7 +601,7 @@ static void post_urquan_enc(void)
 	uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HYPNOTIZED, static_cast<uint32_t>(0));
 }
 
-LOCDATA* init_urquan_comm(void)
+ConversationData* init_urquan_comm(void)
 {
 	urquan_desc.init_encounter_func = Intro;
 	urquan_desc.post_encounter_func = post_urquan_enc;
@@ -640,7 +640,7 @@ LOCDATA* init_urquan_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&urquan_desc};
+	ConversationData* retval {&urquan_desc};
 
 	return (retval);
 }

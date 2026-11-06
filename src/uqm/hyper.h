@@ -48,7 +48,7 @@ extern void MoveSIS(int32_t* pdx, int32_t* pdy);
 
 extern void FreeHyperData(void);
 extern void check_hyperspace_encounter(void);
-extern bool hyper_transition(ELEMENT* ElementPtr);
+extern bool hyper_transition(Element* ElementPtr);
 
 extern void HyperspaceMenu(void);
 extern void SaveSisHyperState(void);

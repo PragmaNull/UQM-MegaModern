@@ -68,7 +68,7 @@ static constexpr auto CommAnimRate {(c_gameSecond / 40)};
 
 static GFXCONTEXT AnimContext;
 
-LOCDATA CommData;
+ConversationData CommData;
 char shared_phrase_buf[2048];
 FONT ComputerFont;
 
@@ -82,58 +82,58 @@ bool cwLock = false; // To avoid drawing over comWindow if JumpTrack() is called
 uint8_t altResFlags = 0;
 static uint16_t fadeIndex;
 
-struct RESPONSE_ENTRY
+struct ResponseEntry
 {
 	RESPONSE_REF response_ref;
-	TEXT response_text;
+	GfxText response_text;
 	RESPONSE_FUNC response_func;
 	// The response text after Lua interpolation, if it needed that.
 	uqstl::string allocedResponse;
 };
 
-struct ENCOUNTER_STATE
+struct CommEncounterState
 {
-	bool (*InputFunc)(struct ENCOUNTER_STATE* pES);
+	bool (*InputFunc)(struct CommEncounterState* pES);
 
 	uint16_t Initialized;
 	TimeCount NextTime; // framerate control
 	uint8_t num_responses;
 	uint8_t cur_response;
 	uint8_t top_response;
-	RESPONSE_ENTRY response_list[MaxResponses];
+	ResponseEntry response_list[MaxResponses];
 
 	char phrase_buf[1024];
 };
 
 // Required to set custom baseline per one sentence
-struct CUSTOM_BASELINE
+struct CustomBaseline
 {
 	uint16_t index;
-	GFXPOINT baseline;
+	GfxPoint baseline;
 	TEXT_ALIGN align;
-	struct CUSTOM_BASELINE* next;
+	struct CustomBaseline* next;
 };
 
-static CUSTOM_BASELINE* head_node; // Head node of custom baseline list
-static CUSTOM_BASELINE* cur_node;  // not null if current sentence number has been found in the list
+static CustomBaseline* head_node; // Head node of custom baseline list
+static CustomBaseline* cur_node;  // not null if current sentence number has been found in the list
 
 // Used to disable/enable talking animation
 // Better than current because it works with rewind
 static bool haveTalkingLock = false;
 static uint16_t startSentence, endSentence;
 
-static ENCOUNTER_STATE* pCurInputState;
+static CommEncounterState* pCurInputState;
 
 static bool clear_subtitles;
 static bool next_page = false;
-static TEXT SubtitleText;
+static GfxText SubtitleText;
 const static char* last_subtitle;
 
 static GFXCONTEXT TextCacheContext;
 static FRAME TextCacheFrame;
 
 
-GFXRECT CommWndRect = {
+GfxRect CommWndRect = {
 	// default values; actually inited by HailAlien()
 	{0, 0},
 	{0, 0}  //was {SisOrgX(), SisOrgY()},
@@ -149,7 +149,7 @@ static bool PauseSubtitles(bool force);
 /* _count_lines - sees how many lines a given input string would take to
  * display given the line wrapping information
  */
-static int _count_lines(TEXT* pText)
+static int _count_lines(GfxText* pText)
 {
 	int16_t text_width {};
 	const char* pStr {};
@@ -175,11 +175,11 @@ static int _count_lines(TEXT* pText)
 // status == -2: draw non-highlighted player dialog option
 // status == -4: use current context, and baseline from pTextIn
 // status ==  1:  draw alien speech; subtitle cache is used
-static int16_t add_text(int status, TEXT* pTextIn)
+static int16_t add_text(int status, GfxText* pTextIn)
 {
 	uint16_t numchars {};
-	TEXT locText;
-	TEXT* pText {};
+	GfxText locText;
+	GfxText* pText {};
 	int16_t leading {};
 	const char* pStr {};
 	int16_t text_width {};
@@ -187,7 +187,7 @@ static int16_t add_text(int status, TEXT* pTextIn)
 	static int16_t last_baseline;
 	bool eol {};
 	GFXCONTEXT OldContext = nullptr;
-	GFXRECT arrow;
+	GfxRect arrow;
 
 	BatchGraphics();
 
@@ -199,7 +199,7 @@ static int16_t add_text(int status, TEXT* pTextIn)
 		if (last_subtitle == pTextIn->pStr)
 		{
 			// draws cached subtitle
-			STAMP s;
+			GfxStamp s;
 
 			s.origin.x = 0;
 			s.origin.y = 0;
@@ -377,7 +377,7 @@ static int16_t add_text(int status, TEXT* pTextIn)
 
 	if (status == 1)
 	{
-		STAMP s;
+		GfxStamp s;
 
 		// We were drawing to cache -- flush to screen
 		SetContext(OldContext);
@@ -467,12 +467,12 @@ void ReleaseTalkingAnim(void)
 // be fitted.
 // true is returned if a complete line fitted
 // false otherwise
-bool getLineWithinWidth(TEXT* pText, const char** startNext,
+bool getLineWithinWidth(GfxText* pText, const char** startNext,
 						int16_t maxWidth, uint16_t maxChars)
 {
 	// The end of the line of text has been reached.
 	// We cannot add any more words.
-	GFXRECT rect;
+	GfxRect rect;
 	const char* wordStart {};
 
 	//GetContextClipRect (&rect);
@@ -528,10 +528,10 @@ bool getLineWithinWidth(TEXT* pText, const char** startNext,
 	}
 }
 
-void DrawCommBorder(GFXRECT r)
+void DrawCommBorder(GfxRect r)
 {
-	GFXRECT clipRect;
-	GFXRECT oldClipRect;
+	GfxRect clipRect;
+	GfxRect oldClipRect;
 
 	GetContextClipRect(&oldClipRect);
 
@@ -569,7 +569,7 @@ static void DrawSISComWindow(void)
 
 	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
-		GFXRECT r;
+		GfxRect r;
 
 		OldContext = SetContext(SpaceContext);
 
@@ -606,7 +606,7 @@ void uninit_communication(void)
 	// now a no-op
 }
 
-static void RefreshResponsesSpecial(ENCOUNTER_STATE* pES)
+static void RefreshResponsesSpecial(CommEncounterState* pES)
 { // PC style repsonses
 	int16_t y {};
 	uint8_t response {};
@@ -639,12 +639,12 @@ static void RefreshResponsesSpecial(ENCOUNTER_STATE* pES)
 	UnbatchGraphics();
 }
 
-static void RefreshResponses(ENCOUNTER_STATE* pES)
+static void RefreshResponses(CommEncounterState* pES)
 {
 	int16_t y {};
 	uint8_t response {};
 	int16_t leading {};
-	STAMP s;
+	GfxStamp s;
 
 
 	SetContext(SpaceContext);
@@ -687,7 +687,7 @@ static void RefreshResponses(ENCOUNTER_STATE* pES)
 	}
 	if (s.frame)
 	{
-		GFXRECT r;
+		GfxRect r;
 
 		GetFrameRect(s.frame, &r);
 		s.origin.x = SisScreenWidth() - r.extent.width - ResScale(1);
@@ -705,7 +705,7 @@ static void FeedbackPlayerPhrase(char* pStr)
 	DrawSISComWindow();
 	if (pStr[0])
 	{
-		TEXT ct;
+		GfxText ct;
 
 		ct.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 		ct.baseline.y = SliderY() + SliderHeight() + ResScale(13);
@@ -806,7 +806,7 @@ void UpdateDuty(bool talk)
 	UpdateSpeechGraphics();
 }
 
-GFXRECT DarkModeRect[6];
+GfxRect DarkModeRect[6];
 
 void InitUIRects(bool state)
 {
@@ -919,11 +919,11 @@ static void UpdateCommGraphics(void)
 	FadePlayerUI();
 }
 
-// Derived from INPUT_STATE_DESC
-struct TALKING_STATE
+// Derived from InputStateDesc
+struct TalkingState
 {
 	// Fields required by DoInput()
-	bool (*InputFunc)(struct TALKING_STATE*);
+	bool (*InputFunc)(struct TalkingState*);
 
 	TimeCount NextTime; // framerate control
 	uint16_t waitTrack;
@@ -932,7 +932,7 @@ struct TALKING_STATE
 	bool ended;
 };
 
-static bool DoTalkSegue(TALKING_STATE* pTS)
+static bool DoTalkSegue(TalkingState* pTS)
 {
 	bool left = false;
 	bool right = false;
@@ -1121,7 +1121,7 @@ static void runCommAnimFrame(void)
 
 static bool TalkSegue(uint16_t wait_track)
 {
-	TALKING_STATE talkingState;
+	TalkingState talkingState;
 
 	// Transition animation to talking state, if necessary
 	if (wantTalkingAnim() && haveTalkingAnim())
@@ -1191,7 +1191,7 @@ static void CommIntroTransition(void)
 	}
 	else if (curIntroMode == CIM_CROSSFADE_SPACE)
 	{
-		GFXRECT r;
+		GfxRect r;
 		r.corner.x = SisOrgX();
 		r.corner.y = SisOrgY();
 		r.extent.width = SisScreenWidth();
@@ -1268,10 +1268,10 @@ void AlienTalkSegue(uint16_t wait_track)
 }
 
 
-struct SUMMARY_STATE
+struct ConversationSummaryState
 {
 	// standard state required by DoInput
-	bool (*InputFunc)(struct SUMMARY_STATE* pSS);
+	bool (*InputFunc)(struct ConversationSummaryState* pSS);
 
 	// extended state
 	bool Initialized;
@@ -1294,7 +1294,7 @@ static void remove_char_from_string(char* str, const char c)
 	*pw = '\0';
 }
 
-static bool DoConvSummary(SUMMARY_STATE* pSS)
+static bool DoConvSummary(ConversationSummaryState* pSS)
 {
 	const auto DeltaYSummary = [&] {
 		return ResScale(8);
@@ -1331,8 +1331,8 @@ static bool DoConvSummary(SUMMARY_STATE* pSS)
 	}
 	else if (pSS->PrintNext)
 	{ // print the next page
-		GFXRECT r;
-		TEXT t;
+		GfxRect r;
+		GfxText t;
 		int row {};
 
 		r.corner.x = 0;
@@ -1423,7 +1423,7 @@ static bool DoConvSummary(SUMMARY_STATE* pSS)
 
 		if (row >= MaxSummRows() && (pSS->NextSub || pSS->LeftOver))
 		{ // draw *MORE*
-			TEXT mt;
+			GfxText mt;
 			char buffer[128];
 
 			mt.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
@@ -1455,7 +1455,7 @@ static bool DoConvSummary(SUMMARY_STATE* pSS)
 	return true; // keep going
 }
 
-static void ClearResponses(ENCOUNTER_STATE* pES)
+static void ClearResponses(CommEncounterState* pES)
 {
 	for (size_t responseI {0}; responseI < MaxResponses; responseI++)
 	{
@@ -1464,9 +1464,9 @@ static void ClearResponses(ENCOUNTER_STATE* pES)
 }
 
 // Called when the player presses the select button on a response.
-static void SelectResponse(ENCOUNTER_STATE* pES)
+static void SelectResponse(CommEncounterState* pES)
 {
-	const TEXT* response_text =
+	const GfxText* response_text =
 		&pES->response_list[pES->cur_response].response_text;
 	uqm::utf8StringCopy(pES->phrase_buf, sizeof pES->phrase_buf,
 						response_text->pStr);
@@ -1502,9 +1502,9 @@ static void SelectResponse(ENCOUNTER_STATE* pES)
 }
 
 // Called when the player presses the cancel button in comm.
-static void SelectConversationSummary(ENCOUNTER_STATE* pES)
+static void SelectConversationSummary(CommEncounterState* pES)
 {
-	SUMMARY_STATE SummaryState;
+	ConversationSummaryState SummaryState;
 
 	if (pES)
 	{
@@ -1521,7 +1521,7 @@ static void SelectConversationSummary(ENCOUNTER_STATE* pES)
 	clear_subtitles = true;
 }
 
-static void SelectReplay(ENCOUNTER_STATE* pES)
+static void SelectReplay(CommEncounterState* pES)
 {
 	FadeMusic(BackgroundVol(), c_gameSecond);
 	if (pES)
@@ -1532,7 +1532,7 @@ static void SelectReplay(ENCOUNTER_STATE* pES)
 	TalkSegue(0);
 }
 
-static void PlayerResponseInput(ENCOUNTER_STATE* pES)
+static void PlayerResponseInput(CommEncounterState* pES)
 {
 	uint8_t response {};
 
@@ -1607,17 +1607,17 @@ static void PlayerResponseInput(ENCOUNTER_STATE* pES)
 	}
 }
 
-// Derived from INPUT_STATE_DESC
-struct LAST_REPLAY_STATE
+// Derived from InputStateDesc
+struct LastReplayState
 {
 	// Fields required by DoInput()
-	bool (*InputFunc)(struct LAST_REPLAY_STATE*);
+	bool (*InputFunc)(struct LastReplayState*);
 
 	TimeCount NextTime; // framerate control
 	TimeCount TimeOut;
 };
 
-static bool DoLastReplay(LAST_REPLAY_STATE* pLRS)
+static bool DoLastReplay(LastReplayState* pLRS)
 {
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -1651,7 +1651,7 @@ static bool DoLastReplay(LAST_REPLAY_STATE* pLRS)
 	return true;
 }
 
-static bool DoCommunication(ENCOUNTER_STATE* pES)
+static bool DoCommunication(CommEncounterState* pES)
 {
 	if (!IsDarkMode)
 	{
@@ -1673,7 +1673,7 @@ static bool DoCommunication(ENCOUNTER_STATE* pES)
 	{
 		// The player doesn't get a chance to say anything,
 		// but can still review alien's last phrases.
-		LAST_REPLAY_STATE replayState;
+		LastReplayState replayState;
 
 		memset(&replayState, 0, sizeof replayState);
 		replayState.TimeOut = FadeMusic(0, c_gameSecond * 3) + c_gameSecond / 60;
@@ -1712,7 +1712,7 @@ static bool DoCommunication(ENCOUNTER_STATE* pES)
 void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
 					  char* ConstructStr)
 {
-	ENCOUNTER_STATE* pES = pCurInputState;
+	CommEncounterState* pES = pCurInputState;
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -1725,7 +1725,7 @@ void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
 		pES->top_response = (uint8_t)~0;
 	}
 
-	RESPONSE_ENTRY* pEntry {&pES->response_list[pES->num_responses]};
+	ResponseEntry* pEntry {&pES->response_list[pES->num_responses]};
 	pEntry->response_ref = R;
 	pEntry->response_text.pStr = ConstructStr;
 	if (pEntry->response_text.pStr)
@@ -1812,7 +1812,7 @@ void SetUpCommData(void)
 
 static void HailAlien(void)
 {
-	ENCOUNTER_STATE ES {};
+	CommEncounterState ES {};
 	FONT PlayerFont {};
 	Color TextBack;
 
@@ -1878,7 +1878,7 @@ static void HailAlien(void)
 	FONT OldFont {SetContextFont(PlayerFont)};
 
 	{
-		GFXRECT r;
+		GfxRect r;
 
 		AnimContext = CreateContext("AnimContext");
 		SetContext(AnimContext);
@@ -1901,7 +1901,7 @@ static void HailAlien(void)
 		}
 		else
 		{
-			const GFXPOINT Log = MAKE_POINT(LogxToUniverse(uqm::gameState().sis().log_x),
+			const GfxPoint Log = MAKE_POINT(LogxToUniverse(uqm::gameState().sis().log_x),
 											LogyToUniverse(uqm::gameState().sis().log_y));
 
 			r.corner.x = SisOrgX();
@@ -1983,7 +1983,7 @@ static void HailAlien(void)
 	altResFlags &= ~UseAltAll;
 
 	// Some support code tests either of these to see if the
-	// game is currently in comm or encounter
+	// game is currently in comm or Encounter
 	CommData.ConversationPhrasesRes = 0;
 	CommData.ConversationPhrases = 0;
 	pCurInputState = 0;
@@ -1998,7 +1998,7 @@ void SetCommIntroMode(CommIntroMode newMode, TimePeriod howLong)
 uint16_t InitCommunication(CONVERSATION which_comm)
 {
 	uint16_t status {};
-	const LOCDATA* LocDataPtr {};
+	const ConversationData* LocDataPtr {};
 
 #ifdef DEBUG
 	if (disableInteractivity)
@@ -2199,7 +2199,7 @@ void RaceCommunication(void)
 	uint16_t i {};
 	uint16_t status {};
 	HSHIPFRAG hStarShip {};
-	const SHIP_FRAGMENT* FragPtr {};
+	const ShipFragment* FragPtr {};
 	HENCOUNTER hEncounter = 0;
 	const auto& RaceComm {RaceConversations};
 
@@ -2263,9 +2263,9 @@ void RaceCommunication(void)
 		else
 		{
 			/* Encounter with a black globe in HS, prepare enemy ship list */
-			ENCOUNTER* EncounterPtr {};
+			Encounter* EncounterPtr {};
 
-			// The encounter globe that the flagship collided with is moved
+			// The Encounter globe that the flagship collided with is moved
 			// to the head of the queue in hyper.c:cleanup_hyperspace()
 			hEncounter = GetHeadEncounter();
 			LockEncounter(hEncounter, &EncounterPtr);
@@ -2278,8 +2278,8 @@ void RaceCommunication(void)
 			}
 
 			// XXX: Bug: CurStarDescPtr() was abused to point within
-			//    an ENCOUNTER struct, which is immediately unlocked
-			//CurStarDescPtr() = (STAR_DESC*)&EncounterPtr->SD;
+			//    an Encounter struct, which is immediately unlocked
+			//CurStarDescPtr() = (StarDesc*)&EncounterPtr->SD;
 			UnlockEncounter(hEncounter);
 		}
 	}
@@ -2313,9 +2313,9 @@ void RaceCommunication(void)
 	}
 	else if (hEncounter)
 	{
-		/* Update HSpace encounter info, ships lefts, etc. */
+		/* Update HSpace Encounter info, ships lefts, etc. */
 		uint8_t NumShips {};
-		ENCOUNTER* EncounterPtr {};
+		Encounter* EncounterPtr {};
 
 		LockEncounter(hEncounter, &EncounterPtr);
 
@@ -2330,8 +2330,8 @@ void RaceCommunication(void)
 		for (uint8_t i {0}; i < NumShips; ++i)
 		{
 			HSHIPFRAG hStarShip {GetStarShipFromIndex(&uqm::gameState().game().npc_built_ship_q, i)};
-			const SHIP_FRAGMENT* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
-			BRIEF_SHIP_INFO* BSIPtr {&EncounterPtr->ShipList[i]};
+			const ShipFragment* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
+			BriefShipInfo* BSIPtr {&EncounterPtr->ShipList[i]};
 			BSIPtr->race_id = FragPtr->race_id;
 			BSIPtr->crew_level = FragPtr->crew_level;
 			BSIPtr->max_crew = FragPtr->max_crew;
@@ -2346,7 +2346,7 @@ void RaceCommunication(void)
 
 static void RedrawSubtitles(void)
 {
-	TEXT t;
+	GfxText t;
 
 	if (!uqm::UQMOptions::read().subtitles)
 	{
@@ -2399,7 +2399,7 @@ static bool PauseSubtitles(bool force)
 
 static void CheckSubtitles(bool really)
 {
-	GFXPOINT baseline;
+	GfxPoint baseline;
 	TEXT_ALIGN align;
 	uint16_t num {};
 
@@ -2473,11 +2473,11 @@ void RedrawSISComWindow(void)
 	DrawSISComWindow();
 }
 
-void SetCustomBaseLine(uint16_t sentence, GFXPOINT bl, TEXT_ALIGN align)
+void SetCustomBaseLine(uint16_t sentence, GfxPoint bl, TEXT_ALIGN align)
 { // Add custom baseline to the list
-	CUSTOM_BASELINE* sPtr {};
+	CustomBaseline* sPtr {};
 
-	CUSTOM_BASELINE* cur {new CUSTOM_BASELINE {}};
+	CustomBaseline* cur {new CustomBaseline {}};
 	cur->index = sentence;
 	cur->baseline.x = ResScale(bl.x);
 	cur->baseline.y = ResScale(bl.y);
@@ -2500,14 +2500,14 @@ void SetCustomBaseLine(uint16_t sentence, GFXPOINT bl, TEXT_ALIGN align)
 
 void FlushCustomBaseLine(void)
 { // Free List, called at SelectResponce and Race uninit func (syreen.c for now)
-	CUSTOM_BASELINE* next {};
+	CustomBaseline* next {};
 
 	if (head_node == nullptr)
 	{
 		return;
 	}
 
-	CUSTOM_BASELINE* cur {head_node};
+	CustomBaseline* cur {head_node};
 	while (cur != nullptr)
 	{
 		next = cur->next;

@@ -52,12 +52,12 @@ struct melee_load_state
 	// Number of entries in the view.
 };
 
-void InitMeleeLoadState(MELEE_STATE* pMS);
-void UninitMeleeLoadState(MELEE_STATE* pMS);
+void InitMeleeLoadState(MeleeState* pMS);
+void UninitMeleeLoadState(MeleeState* pMS);
 
-bool DoLoadTeam(MELEE_STATE* pMS);
-bool DoSaveTeam(MELEE_STATE* pMS);
-void LoadTeamList(MELEE_STATE* pMS);
+bool DoLoadTeam(MeleeState* pMS);
+bool DoSaveTeam(MeleeState* pMS);
+void LoadTeamList(MeleeState* pMS);
 
 #if 0 //defined(__cplusplus)
 }

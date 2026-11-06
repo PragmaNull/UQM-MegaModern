@@ -29,7 +29,7 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static LOCDATA yehat_desc =
+static ConversationData yehat_desc =
 	{
 		YEHAT_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -724,7 +724,7 @@ static void post_yehat_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_yehat_comm(void)
+ConversationData* init_yehat_comm(void)
 {
 	yehat_desc.init_encounter_func = Intro;
 	yehat_desc.post_encounter_func = post_yehat_enc;
@@ -746,7 +746,7 @@ LOCDATA* init_yehat_comm(void)
 	{
 		setSegue(Segue_peace);
 	}
-	LOCDATA* retval {&yehat_desc};
+	ConversationData* retval {&yehat_desc};
 
 	return (retval);
 }

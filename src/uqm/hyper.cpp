@@ -144,35 +144,35 @@ static inline int16_t RaceHyperSpeed(RACE_ID Index)
  * so you can see who's chasing you.
  */
 /*static void
-decorate_vortex (ELEMENT *ElementPtr)
+decorate_vortex (Element *ElementPtr)
 {
 	HENCOUNTER hEncounter, hNextEncounter;
 	FRAME f = nullptr;
 	static FRAME vortex_ships[NUM_AVAILABLE_RACES];
 
-	// The element is still spawning, nothing to do yet
+	// The Element is still spawning, nothing to do yet
 	if (ElementPtr->death_func)
 		return;
 
-	// The element doesn't know what kind of ship it is, that
-	// info is stored in the encounter queue.  I'm guessing this
+	// The Element doesn't know what kind of ship it is, that
+	// info is stored in the Encounter queue.  I'm guessing this
 	// needs refactoring
 	for (hEncounter = GetHeadEncounter ();
 		hEncounter != 0; hEncounter = hNextEncounter)
 	{
-		ENCOUNTER *EncounterPtr;
+		Encounter *EncounterPtr;
 
 		LockEncounter (hEncounter, &EncounterPtr);
 		hNextEncounter = GetSuccEncounter (EncounterPtr);
 		if (EncounterPtr->hElement)
 		{
-			ELEMENT *EncounterElementPtr;
+			Element *EncounterElementPtr;
 
 			LockElement (EncounterPtr->hElement, &EncounterElementPtr);
 			if (EncounterElementPtr == ElementPtr)
 			{
 				HFLEETINFO hFleet;
-				FLEET_INFO *FleetPtr;
+				FleetInfo *FleetPtr;
 
 				if (vortex_ships[EncounterPtr->race_id])
 				{
@@ -202,7 +202,7 @@ decorate_vortex (ELEMENT *ElementPtr)
 					{
 						GFXCONTEXT tmp, old;
 						Color trans;
-						STAMP s;
+						GfxStamp s;
 
 						vortex_ships[EncounterPtr->race_id] =
 								CaptureDrawable (
@@ -226,7 +226,7 @@ decorate_vortex (ELEMENT *ElementPtr)
 								vortex_ships[EncounterPtr->race_id], trans
 							);
 
-						// the original element
+						// the original Element
 						s.frame = ElementPtr->current.image.frame;
 						s.origin = GetFrameHot (s.frame);
 						DrawStamp (&s);
@@ -295,7 +295,7 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 		for (hElement = GetTailElement();
 			 hElement != 0; hElement = hNextElement)
 		{
-			ELEMENT* ElementPtr {};
+			Element* ElementPtr {};
 
 			LockElement(hElement, &ElementPtr);
 
@@ -366,7 +366,7 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 void check_hyperspace_encounter(void)
 {
 	uint8_t Type {};
-	GFXPOINT universe;
+	GfxPoint universe;
 	HFLEETINFO hStarShip {};
 	HFLEETINFO hNextShip {};
 	const auto& EncounterPercent {RaceHyperspacePercent};
@@ -377,7 +377,7 @@ void check_hyperspace_encounter(void)
 		 hStarShip && (uqm::currentActivity() & IN_BATTLE);
 		 hStarShip = hNextShip, ++Type)
 	{
-		const FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
+		const FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 		hNextShip = _GetSuccLink(FleetPtr);
 
 		uint16_t encounter_radius {FleetPtr->actual_strength};
@@ -386,7 +386,7 @@ void check_hyperspace_encounter(void)
 			int16_t dx {};
 			int16_t dy {};
 			HENCOUNTER hEncounter {};
-			ENCOUNTER* EncounterPtr {};
+			Encounter* EncounterPtr {};
 
 			uint8_t encounter_flags {0};
 			uint16_t percent {EncounterPercent[Type]};
@@ -491,7 +491,7 @@ void check_hyperspace_encounter(void)
 				&& (uint32_t)dx * dx + (uint32_t)dy * dy < (uint32_t)encounter_radius * encounter_radius
 				&& ((uint16_t)uqm::random().next() % 100) < percent)
 			{
-				// Ship spawned for encounter.
+				// Ship spawned for Encounter.
 				hEncounter = AllocEncounter();
 				if (hEncounter)
 				{
@@ -635,7 +635,7 @@ bool FreeHyperspace(void)
 	return true;
 }
 
-static void ElementToUniverse(ELEMENT* ElementPtr, GFXPOINT* pPt)
+static void ElementToUniverse(Element* ElementPtr, GfxPoint* pPt)
 {
 	int32_t log_x {};
 	int32_t log_y {};
@@ -656,19 +656,19 @@ static void cleanup_hyperspace(void)
 	for (hEncounter = GetHeadEncounter();
 		 hEncounter != 0; hEncounter = hNextEncounter)
 	{
-		ENCOUNTER* EncounterPtr {};
+		Encounter* EncounterPtr {};
 
 		LockEncounter(hEncounter, &EncounterPtr);
 		hNextEncounter = GetSuccEncounter(EncounterPtr);
 		if (EncounterPtr->hElement)
 		{
-			ELEMENT* ElementPtr {};
+			Element* ElementPtr {};
 
 			LockElement(EncounterPtr->hElement, &ElementPtr);
 
 			if (ElementPtr->hTarget)
-			{ // This is the encounter that collided with flagship
-				// Move the encounter to the head of the queue so that
+			{ // This is the Encounter that collided with flagship
+				// Move the Encounter to the head of the queue so that
 				// comm.c:RaceCommunication() gets the right one.
 				RemoveEncounter(hEncounter);
 				InsertEncounter(hEncounter, GetHeadEncounter());
@@ -688,7 +688,7 @@ typedef enum
 	ARILOU_SPACE_TRANSITION
 } TRANSITION_TYPE;
 
-static void InterplanetaryTransition(ELEMENT* ElementPtr)
+static void InterplanetaryTransition(Element* ElementPtr)
 {
 	uqm::flagship().ipPlanet = 0;
 	uqm::flagship().inOrbit = 0;
@@ -702,7 +702,7 @@ static void InterplanetaryTransition(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		GFXPOINT pt;
+		GfxPoint pt;
 		uint16_t KnownQSPortals = uqm::gameState().flag(uqm::GameFlag::KNOW_QS_PORTAL);
 
 		uqm::flagship().autopilot.clear();
@@ -712,7 +712,7 @@ static void InterplanetaryTransition(ELEMENT* ElementPtr)
 
 		// JMS: Debugging helpers
 		/*{
-			STAR_DESC *SDPtr, *SDPtr2;
+			StarDesc *SDPtr, *SDPtr2;
 			SDPtr = CurStarDescPtr();
 			SDPtr2 = FindStar (nullptr, &pt, 500, 500);
 			uqm::log::debug( "SDPtr.x {}, SDPtr.y {} SDPtr2.x {}, "
@@ -737,7 +737,7 @@ static void InterplanetaryTransition(ELEMENT* ElementPtr)
 			// one of the permanent portals.
 			uint16_t index {};
 			// JSD - portal_map can be used to find the exit point
-			//const GFXPOINT portal_pt[] =
+			//const GfxPoint portal_pt[] =
 			//		QUASISPACE_PORTALS_HYPERSPACE_ENDPOINTS;
 
 			index = CurStarDescPtr() - &star_array[NumSolarSystems + 1];
@@ -809,15 +809,15 @@ static void ArilouSpaceTransition(void)
 	}
 }
 
-static void unhyper_transition(ELEMENT* ElementPtr)
+static void unhyper_transition(Element* ElementPtr)
 {
 	// JMS: If leaving interplanetary on autopilot, always arrive HS with
 	// the ship's nose pointed into correct direction.
 	if (uqm::UQMOptions::read().smartAutoPilot
 		&& (uqm::flagship().autopilot.hasTarget()))
 	{
-		STARSHIP* StarShipPtr {};
-		GFXPOINT universe;
+		Starship* StarShipPtr {};
+		GfxPoint universe;
 		int16_t facing {};
 		int32_t udx = 0;
 		int32_t udy = 0;
@@ -873,13 +873,13 @@ static void unhyper_transition(ELEMENT* ElementPtr)
 						 frame_index);
 }
 
-static void init_transition(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
+static void init_transition(Element* ElementPtr0, Element* ElementPtr1,
 							TRANSITION_TYPE which_transition)
 {
 	int16_t dx {};
 	int16_t dy {};
 	int16_t num_turns {};
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	dx = WorldToVelocity(ElementPtr0->next.location.x
 						 - ElementPtr1->next.location.x);
@@ -907,8 +907,8 @@ static void init_transition(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 
 void DoAdvancedAutoPilot(void)
 {
-	const GFXPOINT QuasiPilot = LoadAdvancedQuasiPilot();
-	const GFXPOINT SavedPilot = LoadAdvancedAutoPilot();
+	const GfxPoint QuasiPilot = LoadAdvancedQuasiPilot();
+	const GfxPoint SavedPilot = LoadAdvancedAutoPilot();
 
 	if (!ValidPoint(SavedPilot))
 	{
@@ -940,7 +940,7 @@ void DoAdvancedAutoPilot(void)
 	ZeroAdvancedQuasiPilot();
 }
 
-bool hyper_transition(ELEMENT* ElementPtr)
+bool hyper_transition(Element* ElementPtr)
 {
 	if (ElementPtr->state_flags & Appearing)
 	{
@@ -958,7 +958,7 @@ bool hyper_transition(ELEMENT* ElementPtr)
 		else
 		{
 			ElementPtr->preprocess_func =
-				(void (*)(struct element* ElementPtr))hyper_transition;
+				(void (*)(struct Element* ElementPtr))hyper_transition;
 			ElementPtr->postprocess_func = nullptr;
 			ElementPtr->state_flags |= Nonsolid;
 			ElementPtr->next.image.frame =
@@ -972,8 +972,8 @@ bool hyper_transition(ELEMENT* ElementPtr)
 		// with the ship's nose pointed into correct direction.
 		if (uqm::UQMOptions::read().smartAutoPilot && ValidPoint(uqm::flagship().autopilot.target()))
 		{
-			STARSHIP* StarShipPtr {};
-			GFXPOINT universe;
+			Starship* StarShipPtr {};
+			GfxPoint universe;
 			int16_t facing {};
 			int32_t udx = 0;
 			int32_t udy = 0;
@@ -993,7 +993,7 @@ bool hyper_transition(ELEMENT* ElementPtr)
 		uint16_t frame_index {GetFrameIndex(ElementPtr->current.image.frame)};
 		if (frame_index-- <= AngleToFacing(FullCircle))
 		{
-			STARSHIP* StarShipPtr {};
+			Starship* StarShipPtr {};
 
 			if (frame_index == AngleToFacing(FullCircle) - 1)
 			{
@@ -1035,20 +1035,20 @@ bool hyper_transition(ELEMENT* ElementPtr)
 	return true;
 }
 
-static void hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void hyper_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if ((ElementPtr1->state_flags & PlayerShip)
 		&& uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER) == 0)
 	{
 		int16_t dx {};
 		int16_t dy {};
-		GFXPOINT pt;
-		STARSHIP* StarShipPtr {};
+		GfxPoint pt;
+		Starship* StarShipPtr {};
 
 		ElementToUniverse(ElementPtr0, &pt);
 
-		STAR_DESC* SDPtr {FindStar(nullptr, &pt, 5, 5)};
+		StarDesc* SDPtr {FindStar(nullptr, &pt, 5, 5)};
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		GetCurrentVelocityComponents(&ElementPtr1->velocity, &dx, &dy);
@@ -1075,7 +1075,7 @@ static void hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static void hyper_death(ELEMENT* ElementPtr)
+static void hyper_death(Element* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & DefyPhysics)
 		&& (uqm::currentActivity() & IN_BATTLE))
@@ -1084,7 +1084,7 @@ static void hyper_death(ELEMENT* ElementPtr)
 	}
 }
 
-static void arilou_space_death(ELEMENT* ElementPtr)
+static void arilou_space_death(Element* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & DefyPhysics)
 		|| uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_COUNTER) == 0)
@@ -1100,8 +1100,8 @@ static void arilou_space_death(ELEMENT* ElementPtr)
 	}
 }
 
-static void arilou_space_collision(ELEMENT* ElementPtr0,
-								   GFXPOINT* pPt0, ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void arilou_space_collision(Element* ElementPtr0,
+								   GfxPoint* pPt0, Element* ElementPtr1, GfxPoint* pPt1)
 {
 	uint16_t which_side {};
 
@@ -1129,12 +1129,12 @@ static void arilou_space_collision(ELEMENT* ElementPtr0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static HELEMENT AllocHyperElement(const GFXPOINT* elem_pt)
+static HELEMENT AllocHyperElement(const GfxPoint* elem_pt)
 {
 	HELEMENT hHyperSpaceElement {AllocElement()};
 	if (hHyperSpaceElement)
 	{
-		ELEMENT* HyperSpaceElementPtr {};
+		Element* HyperSpaceElementPtr {};
 
 		LockElement(hHyperSpaceElement, &HyperSpaceElementPtr);
 		HyperSpaceElementPtr->playerNr = NeutralPlayerNum;
@@ -1173,7 +1173,7 @@ static void AddAmbientElement(void)
 	{
 		int16_t dx {};
 		int16_t dy {};
-		ELEMENT* HyperSpaceElementPtr {};
+		Element* HyperSpaceElementPtr {};
 
 		LockElement(hHyperSpaceElement, &HyperSpaceElementPtr);
 		HyperSpaceElementPtr->playerNr = NeutralPlayerNum;
@@ -1236,7 +1236,7 @@ static auto TrCompensation() { return (AnimatedHyperspace() ? 8 : 0); } // Kruze
 // standard option it stars count down every other frame, effectively adding 8 frames of waiting
 
 // Kruzen: preprocess func for animated hole
-static void encounter_animation(ELEMENT* ElementPtr)
+static void encounter_animation(Element* ElementPtr)
 {
 	const uint16_t f_index = GetFrameIndex(ElementPtr->current.image.frame);
 
@@ -1252,7 +1252,7 @@ static void encounter_animation(ELEMENT* ElementPtr)
 	}
 }
 
-static void encounter_transition(ELEMENT* ElementPtr)
+static void encounter_transition(Element* ElementPtr)
 {
 	ElementPtr->state_flags &= ~Disappearing;
 	ElementPtr->life_span = 1;
@@ -1300,13 +1300,13 @@ static HELEMENT getSisElement(void)
 		return nullptr;
 	}
 
-	const STARSHIP* StarShipPtr {LockStarShip(&race_q[RpgPlayerNum], hSis)};
+	const Starship* StarShipPtr {LockStarShip(&race_q[RpgPlayerNum], hSis)};
 	hShip = StarShipPtr->hShip;
 	UnlockStarShip(&race_q[RpgPlayerNum], hSis);
 
 #ifdef DEBUG
 	{
-		ELEMENT* ElementPtr;
+		Element* ElementPtr;
 		LockElement(hShip, &ElementPtr);
 		assert(ElementPtr->state_flags & PlayerShip);
 		UnlockElement(hShip);
@@ -1316,8 +1316,8 @@ static HELEMENT getSisElement(void)
 	return hShip;
 }
 
-static void encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void encounter_collision(Element* ElementPtr0, GfxPoint* pPt0,
+								Element* ElementPtr1, GfxPoint* pPt1)
 {
 	HENCOUNTER hEncounter {};
 	HENCOUNTER hNextEncounter {};
@@ -1334,13 +1334,13 @@ static void encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	for (hEncounter = GetHeadEncounter();
 		 hEncounter != 0; hEncounter = hNextEncounter)
 	{
-		ENCOUNTER* EncounterPtr {};
+		Encounter* EncounterPtr {};
 
 		LockEncounter(hEncounter, &EncounterPtr);
 		hNextEncounter = GetSuccEncounter(EncounterPtr);
 		if (EncounterPtr->hElement)
 		{
-			ELEMENT* ElementPtr {};
+			Element* ElementPtr {};
 
 			LockElement(EncounterPtr->hElement, &ElementPtr);
 			ElementPtr->state_flags |= Nonsolid | IgnoreSimilar;
@@ -1349,7 +1349,7 @@ static void encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		UnlockEncounter(hEncounter);
 	}
 
-	// Mark this element as collided with flagship
+	// Mark this Element as collided with flagship
 	// XXX: We could simply set hTarget to 1 or to ElementPtr1,
 	//   but that would be too hacky ;)
 	ElementPtr0->hTarget = getSisElement();
@@ -1359,10 +1359,10 @@ static void encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static HELEMENT AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
+static HELEMENT AddEncounterElement(Encounter* EncounterPtr, GfxPoint* puniverse)
 {
 	bool NewEncounter {};
-	GFXPOINT enc_pt;
+	GfxPoint enc_pt;
 
 	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) >= 2)
 	{
@@ -1417,10 +1417,10 @@ static HELEMENT AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse
 		EncounterPtr->num_ships = NumShips;
 		for (i = 0; i < NumShips; ++i)
 		{
-			BRIEF_SHIP_INFO* BSIPtr = &EncounterPtr->ShipList[i];
+			BriefShipInfo* BSIPtr = &EncounterPtr->ShipList[i];
 			HFLEETINFO hStarShip =
 				GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, Type);
-			const FLEET_INFO* FleetPtr =
+			const FleetInfo* FleetPtr =
 				LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 			BSIPtr->race_id = Type;
 			BSIPtr->crew_level = FleetPtr->crew_level;
@@ -1466,7 +1466,7 @@ static HELEMENT AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse
 	HELEMENT hElement {AllocHyperElement(&enc_pt)};
 	if (hElement)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 
@@ -1532,7 +1532,7 @@ static void DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	int16_t sy {};
 	int16_t ex {};
 	int16_t ey {};
-	GFXRECT r;
+	GfxRect r;
 
 	ClearDrawable();
 	SetContextForeGroundColor(
@@ -1600,11 +1600,11 @@ static void DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 
 static constexpr auto EncounterTrackWait {3};
 
-// Returns false if the encounter is to be removed.
-static bool ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
-							 int16_t ox, int16_t oy, STAMP* stamp)
+// Returns false if the Encounter is to be removed.
+static bool ProcessEncounter(Encounter* EncounterPtr, GfxPoint* puniverse,
+							 int16_t ox, int16_t oy, GfxStamp* stamp)
 {
-	ELEMENT* ElementPtr {};
+	Element* ElementPtr {};
 	int16_t ex {};
 	int16_t ey {};
 
@@ -1652,8 +1652,8 @@ static bool ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 			--ElementPtr->thrust_wait;
 		}
 		else if (!ElementPtr->hTarget)
-		{ // This is an encounter that did not collide with flagship
-			// The colliding encounter does not move
+		{ // This is an Encounter that did not collide with flagship
+			// The colliding Encounter does not move
 			uint16_t cur_facing {};
 			uint16_t delta_facing {};
 
@@ -1794,9 +1794,9 @@ static bool ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 	return true;
 }
 
-static void ProcessEncounters(GFXPOINT* puniverse, int16_t ox, int16_t oy)
+static void ProcessEncounters(GfxPoint* puniverse, int16_t ox, int16_t oy)
 {
-	STAMP stamp;
+	GfxStamp stamp;
 	HENCOUNTER hEncounter {};
 	HENCOUNTER hNextEncounter {};
 
@@ -1804,7 +1804,7 @@ static void ProcessEncounters(GFXPOINT* puniverse, int16_t ox, int16_t oy)
 	for (hEncounter = GetHeadEncounter();
 		 hEncounter; hEncounter = hNextEncounter)
 	{
-		ENCOUNTER* EncounterPtr {};
+		Encounter* EncounterPtr {};
 
 		LockEncounter(hEncounter, &EncounterPtr);
 		hNextEncounter = GetSuccEncounter(EncounterPtr);
@@ -1853,16 +1853,16 @@ void SeedUniverse(void)
 	int16_t portalCounter {};
 	int16_t arilouSpaceCounter {};
 	int16_t arilouSpaceSide {};
-	GFXPOINT universe;
+	GfxPoint universe;
 	FRAME star_frame {};
-	STAMP s;
-	STAR_DESC* SDPtr {};
+	GfxStamp s;
+	StarDesc* SDPtr {};
 	HELEMENT hHyperSpaceElement {};
-	ELEMENT* HyperSpaceElementPtr {};
+	Element* HyperSpaceElementPtr {};
 	int32_t lx {};
 	int32_t ly {};
-	GFXRECT frameRect;
-	DEXTENT img_log;
+	GfxRect frameRect;
+	LargeExtent img_log;
 
 	static uint16_t frameCounter = 0; // BW
 
@@ -1922,8 +1922,8 @@ void SeedUniverse(void)
 	portalCounter = uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER);
 	if (portalCounter || arilouSpaceCounter)
 	{
-		STAR_DESC SD[2];
-		// This array is filled with the STAR_DESC's of
+		StarDesc SD[2];
+		// This array is filled with the StarDesc's of
 		// QuasiSpace portals that need to be taken into account.
 		// i is set to the number of active portals (max 2).
 
@@ -1931,7 +1931,7 @@ void SeedUniverse(void)
 		if (portalCounter)
 		{
 			// A player-created QuasiSpace portal is opening.
-			static GFXPOINT portal_pt;
+			static GfxPoint portal_pt;
 
 			if (AnimatedHyperspace())
 			{
@@ -2216,7 +2216,7 @@ void SeedUniverse(void)
 	frameCounter = (frameCounter + 1) & 0x1F;
 }
 
-static bool DoHyperspaceMenu(MENU_STATE* pMS)
+static bool DoHyperspaceMenu(MenuState* pMS)
 {
 	bool select = PulsedInputState.menu[KEY_MENU_SELECT];
 
@@ -2290,7 +2290,7 @@ static bool DoHyperspaceMenu(MENU_STATE* pMS)
 void HyperspaceMenu(void)
 {
 	Color OldColor;
-	MENU_STATE MenuState;
+	MenuState menuState;
 
 	UnbatchGraphics();
 
@@ -2298,16 +2298,16 @@ void HyperspaceMenu(void)
 	OldColor = SetContextBackGroundColor(BlackColor);
 
 
-	memset(&MenuState, 0, sizeof(MenuState));
-	MenuState.InputFunc = DoHyperspaceMenu;
-	MenuState.Initialized = true;
-	MenuState.CurState = STARMAP;
+	memset(&menuState, 0, sizeof(menuState));
+	menuState.InputFunc = DoHyperspaceMenu;
+	menuState.Initialized = true;
+	menuState.CurState = STARMAP;
 
 	DrawMenuStateStrings(PM_STARMAP, STARMAP);
 	SetFlashRect(SfrMenu3do(), false);
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
-	DoInput(&MenuState, true);
+	DoInput(&menuState, true);
 
 	SetFlashRect(nullptr, false);
 
@@ -2331,13 +2331,13 @@ void HyperspaceMenu(void)
 
 void SaveSisHyperState(void)
 {
-	ELEMENT* ElementPtr {};
-	STARSHIP* StarShipPtr {};
+	Element* ElementPtr {};
+	Starship* StarShipPtr {};
 
 	// Update 'GLOBAL (ShipFacing)' to the direction the flagship is facing
 	HELEMENT hSisElement {getSisElement()};
 	if (!hSisElement)
-	{ // Happens when saving a game from Hyperspace encounter screen
+	{ // Happens when saving a game from Hyperspace Encounter screen
 		return;
 	}
 	//if (ElementPtr->state_flags & PlayerShip)

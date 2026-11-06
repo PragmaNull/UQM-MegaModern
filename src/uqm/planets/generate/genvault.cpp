@@ -29,13 +29,13 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
-										  PLANET_DESC* world);
-static uint16_t GenerateVault_generateEnergy(const SOLARSYS_STATE*,
-											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateVault_pickupEnergy(SOLARSYS_STATE* solarSys,
-									   PLANET_DESC* world, uint16_t whichNode);
+static bool GenerateVault_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateVault_generateOrbital(SolarSystemState* solarSys,
+										  SystemPlanet* world);
+static uint16_t GenerateVault_generateEnergy(const SolarSystemState*,
+											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateVault_pickupEnergy(SolarSystemState* solarSys,
+									   SystemPlanet* world, uint16_t whichNode);
 
 
 const GenerateFunctions generateVaultFunctions = {
@@ -54,16 +54,16 @@ const GenerateFunctions generateVaultFunctions = {
 	/* .pickupLife       = */ GenerateDefault_pickupLife,
 };
 
-static bool GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateVault_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	pSunDesc->PlanetByte = 0;
 	pSunDesc->MoonByte = 0;
 
-	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
+	SystemPlanet* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	if (uqm::isStarSeed())
 	{
@@ -89,8 +89,8 @@ static bool GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
-										  PLANET_DESC* world)
+static bool GenerateVault_generateOrbital(SolarSystemState* solarSys,
+										  SystemPlanet* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
@@ -155,8 +155,8 @@ static bool GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t GenerateVault_generateEnergy(const SOLARSYS_STATE* solarSys,
-											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateVault_generateEnergy(const SolarSystemState* solarSys,
+											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
@@ -167,7 +167,7 @@ static uint16_t GenerateVault_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool GenerateVault_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+static bool GenerateVault_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 									   uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))

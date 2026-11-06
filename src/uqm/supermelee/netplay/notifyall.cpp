@@ -20,7 +20,7 @@
 #include "notify.h"
 
 // Notify the network connections of a team name change.
-void Netplay_NotifyAll_setTeamName(MELEE_STATE* pMS, size_t playerNr)
+void Netplay_NotifyAll_setTeamName(MeleeState* pMS, size_t playerNr)
 {
 	const char* name {MeleeSetup_getTeamName(pMS->meleeSetup, playerNr)};
 	const size_t len {strlen(name)};
@@ -48,7 +48,7 @@ void Netplay_NotifyAll_setTeamName(MELEE_STATE* pMS, size_t playerNr)
 }
 
 // Notify the network connections of the configuration of a fleet.
-void Netplay_NotifyAll_setFleet(MELEE_STATE* pMS, size_t playerNr)
+void Netplay_NotifyAll_setFleet(MeleeState* pMS, size_t playerNr)
 {
 	const MeleeSetup* setup = pMS->meleeSetup;
 	const MeleeShip* ships = MeleeSetup_getFleet(setup, playerNr);
@@ -77,7 +77,7 @@ void Netplay_NotifyAll_setFleet(MELEE_STATE* pMS, size_t playerNr)
 }
 
 // Notify the network of a change in the configuration of a fleet.
-void Netplay_NotifyAll_setShip(MELEE_STATE* pMS, size_t playerNr, size_t index)
+void Netplay_NotifyAll_setShip(MeleeState* pMS, size_t playerNr, size_t index)
 {
 	const MeleeSetup* setup = pMS->meleeSetup;
 	const MeleeShip ship = MeleeSetup_getShip(

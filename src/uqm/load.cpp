@@ -203,7 +203,7 @@ private:
 	bool m_ok {true};
 };
 
-void LoadShipFragment(SaveReader& reader, yyjson_val* obj, SHIP_FRAGMENT& frag)
+void LoadShipFragment(SaveReader& reader, yyjson_val* obj, ShipFragment& frag)
 {
 	reader.get(obj, "captains_name_index", frag.captains_name_index);
 	reader.get(obj, "race_id", frag.race_id);
@@ -214,7 +214,7 @@ void LoadShipFragment(SaveReader& reader, yyjson_val* obj, SHIP_FRAGMENT& frag)
 	reader.get(obj, "max_energy", frag.max_energy);
 }
 
-void LoadIpGroup(SaveReader& reader, yyjson_val* obj, IP_GROUP& group)
+void LoadIpGroup(SaveReader& reader, yyjson_val* obj, InterplanetaryGroup& group)
 {
 	reader.get(obj, "group_counter", group.group_counter);
 	reader.get(obj, "race_id", group.race_id);
@@ -227,7 +227,7 @@ void LoadIpGroup(SaveReader& reader, yyjson_val* obj, IP_GROUP& group)
 	reader.getPoint(obj, "loc", group.loc.x, group.loc.y);
 }
 
-void LoadShipQueue(SaveReader& reader, yyjson_val* root, const char* key, QUEUE* pQueue)
+void LoadShipQueue(SaveReader& reader, yyjson_val* root, const char* key, Queue* pQueue)
 {
 	size_t index {};
 	size_t count {};
@@ -243,13 +243,13 @@ void LoadShipQueue(SaveReader& reader, yyjson_val* root, const char* key, QUEUE*
 			return;
 		}
 
-		SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hStarShip)};
+		ShipFragment* FragPtr {LockShipFrag(pQueue, hStarShip)};
 		LoadShipFragment(reader, item, *FragPtr);
 		UnlockShipFrag(pQueue, hStarShip);
 	}
 }
 
-void LoadRaceQueue(SaveReader& reader, yyjson_val* root, QUEUE* pQueue)
+void LoadRaceQueue(SaveReader& reader, yyjson_val* root, Queue* pQueue)
 {
 	size_t index {};
 	size_t count {};
@@ -265,7 +265,7 @@ void LoadRaceQueue(SaveReader& reader, yyjson_val* root, QUEUE* pQueue)
 			return;
 		}
 
-		FLEET_INFO* FleetPtr {LockFleetInfo(pQueue, hStarShip)};
+		FleetInfo* FleetPtr {LockFleetInfo(pQueue, hStarShip)};
 		reader.get(item, "allied_state", FleetPtr->allied_state);
 		if (FleetPtr->allied_state > 2)
 		{
@@ -288,7 +288,7 @@ void LoadRaceQueue(SaveReader& reader, yyjson_val* root, QUEUE* pQueue)
 	}
 }
 
-void LoadGroupQueue(SaveReader& reader, yyjson_val* root, QUEUE* pQueue)
+void LoadGroupQueue(SaveReader& reader, yyjson_val* root, Queue* pQueue)
 {
 	size_t index {};
 	size_t count {};
@@ -296,23 +296,23 @@ void LoadGroupQueue(SaveReader& reader, yyjson_val* root, QUEUE* pQueue)
 	yyjson_arr_foreach(reader.optionalArray(root, "ipGroupQueue"), index, count, item)
 	{
 		const HIPGROUP hGroup {BuildGroup(pQueue, 0)};
-		IP_GROUP* GroupPtr {LockIpGroup(pQueue, hGroup)};
+		InterplanetaryGroup* GroupPtr {LockIpGroup(pQueue, hGroup)};
 		LoadIpGroup(reader, item, *GroupPtr);
 		UnlockIpGroup(pQueue, hGroup);
 	}
 }
 
-void LoadEncounter(SaveReader& reader, yyjson_val* obj, ENCOUNTER& encounter)
+void LoadEncounter(SaveReader& reader, yyjson_val* obj, Encounter& Encounter)
 {
-	encounter.pred = 0;
-	encounter.succ = 0;
-	encounter.hElement = 0;
-	reader.get(obj, "transition_state", encounter.transition_state);
-	reader.getPoint(obj, "origin", encounter.origin.x, encounter.origin.y);
-	reader.get(obj, "radius", encounter.radius);
-	reader.getPoint(obj, "loc_pt", encounter.loc_pt.x, encounter.loc_pt.y);
-	reader.get(obj, "race_id", encounter.race_id);
-	reader.get(obj, "flags", encounter.flags);
+	Encounter.pred = 0;
+	Encounter.succ = 0;
+	Encounter.hElement = 0;
+	reader.get(obj, "transition_state", Encounter.transition_state);
+	reader.getPoint(obj, "origin", Encounter.origin.x, Encounter.origin.y);
+	reader.get(obj, "radius", Encounter.radius);
+	reader.getPoint(obj, "loc_pt", Encounter.loc_pt.x, Encounter.loc_pt.y);
+	reader.get(obj, "race_id", Encounter.race_id);
+	reader.get(obj, "flags", Encounter.flags);
 
 	yyjson_val* ships {yyjson_obj_get(obj, "ships")};
 	if (!yyjson_is_arr(ships) || yyjson_arr_size(ships) > MaxHyperShips)
@@ -320,23 +320,23 @@ void LoadEncounter(SaveReader& reader, yyjson_val* obj, ENCOUNTER& encounter)
 		reader.fail("ships");
 		return;
 	}
-	encounter.num_ships = static_cast<uint8_t>(yyjson_arr_size(ships));
+	Encounter.num_ships = static_cast<uint8_t>(yyjson_arr_size(ships));
 	size_t index {};
 	size_t count {};
 	yyjson_val* ship {};
 	yyjson_arr_foreach(ships, index, count, ship)
 	{
-		BRIEF_SHIP_INFO& ShipInfo {encounter.ShipList[index]};
+		BriefShipInfo& ShipInfo {Encounter.ShipList[index]};
 		reader.get(ship, "race_id", ShipInfo.race_id);
 		reader.get(ship, "crew_level", ShipInfo.crew_level);
 		reader.get(ship, "max_crew", ShipInfo.max_crew);
 		reader.get(ship, "max_energy", ShipInfo.max_energy);
 	}
 
-	reader.getPoint(obj, "log", encounter.log_x, encounter.log_y);
+	reader.getPoint(obj, "log", Encounter.log_x, Encounter.log_y);
 	// Let's make savegames work even between different resolution modes.
-	encounter.log_x <<= resolutionFactor;
-	encounter.log_y <<= resolutionFactor;
+	Encounter.log_x <<= resolutionFactor;
+	Encounter.log_y <<= resolutionFactor;
 }
 
 void LoadEncounters(SaveReader& reader, yyjson_val* root)
@@ -347,9 +347,9 @@ void LoadEncounters(SaveReader& reader, yyjson_val* root)
 	yyjson_arr_foreach(reader.optionalArray(root, "encounters"), index, count, item)
 	{
 		const HENCOUNTER hEncounter {AllocEncounter()};
-		ENCOUNTER* EncounterPtr {};
+		Encounter* EncounterPtr {};
 		LockEncounter(hEncounter, &EncounterPtr);
-		*EncounterPtr = ENCOUNTER {};
+		*EncounterPtr = Encounter {};
 		LoadEncounter(reader, item, *EncounterPtr);
 		UnlockEncounter(hEncounter);
 		PutEncounter(hEncounter);
@@ -364,7 +364,7 @@ void LoadEvents(SaveReader& reader, yyjson_val* root)
 	yyjson_arr_foreach(reader.optionalArray(root, "events"), index, count, item)
 	{
 		const HEVENT hEvent {AllocEvent()};
-		EVENT* EventPtr {};
+		GameEvent* EventPtr {};
 		bool DeCleanse {false};
 		LockEvent(hEvent, &EventPtr);
 
@@ -441,7 +441,7 @@ void LoadGameStateFlags(SaveReader& reader, yyjson_val* root, uqm::GameState& ga
 
 void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameState)
 {
-	GAME_STATE& GS {gameState.game()};
+	GameData& GS {gameState.game()};
 	yyjson_val* state {reader.object(root, "globalState")};
 	reader.get(state, "glob_flags", uqm::globalFlags());
 	reader.get(state, "CrewCost", GS.CrewCost);
@@ -451,7 +451,7 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameSta
 	reader.get(state, "CurrentActivity", uqm::currentActivity());
 	LoadClockState(reader, state, gameState.clock());
 	uqm::FlagshipState& flagship {gameState.flagship()};
-	GFXPOINT autopilot {};
+	GfxPoint autopilot {};
 	reader.getPoint(state, "autopilot", autopilot.x, autopilot.y);
 	flagship.autopilot.setTarget(autopilot);
 	reader.getPoint(state, "ip_location", flagship.ipLocation.x, flagship.ipLocation.y);
@@ -464,7 +464,7 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameSta
 	flagship.shipStamp.origin.x <<= resolutionFactor;
 	flagship.shipStamp.origin.y <<= resolutionFactor;
 
-	VELOCITY_DESC& velocity {flagship.velocity};
+	VelocityDesc& velocity {flagship.velocity};
 	yyjson_val* velocityObj {reader.object(state, "velocity")};
 	reader.get(velocityObj, "TravelAngle", velocity.TravelAngle);
 	reader.getPoint(velocityObj, "vector", velocity.vector.width, velocity.vector.height);
@@ -487,7 +487,7 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameSta
 	LoadGameStateFlags(reader, root, gameState);
 }
 
-void LoadSisState(SaveReader& reader, yyjson_val* obj, SIS_STATE& SS)
+void LoadSisState(SaveReader& reader, yyjson_val* obj, FlagshipData& SS)
 {
 	yyjson_val* sis {reader.object(obj, "sis")};
 	reader.getPoint(sis, "log", SS.log_x, SS.log_y);
@@ -515,7 +515,7 @@ void LoadSisState(SaveReader& reader, yyjson_val* obj, SIS_STATE& SS)
 	SS.log_y <<= resolutionFactor;
 }
 
-void LoadSummary(SaveReader& reader, yyjson_val* root, SUMMARY_DESC& Summ)
+void LoadSummary(SaveReader& reader, yyjson_val* root, SaveSummaryData& Summ)
 {
 	yyjson_val* summary {reader.object(root, "summary")};
 	reader.getString(summary, "SaveName", Summ.SaveName);
@@ -536,7 +536,7 @@ void LoadSummary(SaveReader& reader, yyjson_val* root, SUMMARY_DESC& Summ)
 	IndependantResFactor = Summ.res_factor;
 }
 
-void LoadStarDesc(SaveReader& reader, yyjson_val* root, STAR_DESC& SD)
+void LoadStarDesc(SaveReader& reader, yyjson_val* root, StarDesc& SD)
 {
 	yyjson_val* star {reader.object(root, "starDesc")};
 	reader.getPoint(star, "star_pt", SD.star_pt.x, SD.star_pt.y);
@@ -554,7 +554,7 @@ void LoadScanInfo(SaveReader& reader, yyjson_val* root)
 		return;
 	}
 
-	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "wb")};
+	GameStateFile* fp {OpenStateFile(StarinfoFile, "wb")};
 	if (fp)
 	{
 		size_t index {};
@@ -575,10 +575,10 @@ void LoadScanInfo(SaveReader& reader, yyjson_val* root)
 
 void LoadGroupList(SaveReader& reader, yyjson_val* groupList)
 {
-	GAME_STATE_FILE* fp {OpenStateFile(RandgrpinfoFile, "rb")};
+	GameStateFile* fp {OpenStateFile(RandgrpinfoFile, "rb")};
 	if (fp)
 	{
-		GROUP_HEADER h;
+		BattleGroupHeader h;
 		uint8_t LastEnc {};
 		ReadGroupHeader(fp, &h);
 		/* There's only supposed to be one of these, so group 0 should be
@@ -606,7 +606,7 @@ void LoadGroupList(SaveReader& reader, yyjson_val* groupList)
 		yyjson_arr_foreach(groups, index, count, item)
 		{
 			uint8_t race_outer {};
-			IP_GROUP ip {};
+			InterplanetaryGroup ip {};
 			reader.get(item, "race_outer", race_outer);
 			LoadIpGroup(reader, item, ip);
 
@@ -675,14 +675,14 @@ void SetBattleGroupOffset(int encounterIndex, uint32_t offset)
 
 void LoadBattleGroup(SaveReader& reader, yyjson_val* battleGroup)
 {
-	GAME_STATE_FILE* fp {};
-	GROUP_HEADER h {};
-	uint32_t encounter {};
+	GameStateFile* fp {};
+	BattleGroupHeader h {};
+	uint32_t Encounter {};
 	uint32_t offset {};
 	bool current {reader.getBool(battleGroup, "current")};
 
-	reader.get(battleGroup, "encounter", encounter);
-	if (encounter)
+	reader.get(battleGroup, "encounter", Encounter);
+	if (Encounter)
 	{
 		/* This is a defined group, so it's new */
 		fp = OpenStateFile(DefgrpinfoFile, "rb");
@@ -747,7 +747,7 @@ void LoadBattleGroup(SaveReader& reader, yyjson_val* battleGroup)
 		yyjson_arr_foreach(ships, shipIndex, shipCount, ship)
 		{
 			uint8_t race_outer {};
-			SHIP_FRAGMENT sf {};
+			ShipFragment sf {};
 			reader.get(ship, "race_outer", race_outer);
 			LoadShipFragment(reader, ship, sf);
 
@@ -761,9 +761,9 @@ void LoadBattleGroup(SaveReader& reader, yyjson_val* battleGroup)
 	WriteGroupHeader(fp, &h);
 	CloseStateFile(fp);
 	/* And update the gamestate accordingly, if we're a defined group. */
-	if (encounter)
+	if (Encounter)
 	{
-		SetBattleGroupOffset(encounter, offset);
+		SetBattleGroupOffset(Encounter, offset);
 		if (current)
 		{
 			uqm::gameState().game().BattleGroupRef = offset;
@@ -803,7 +803,7 @@ void LoadGroups(SaveReader& reader, yyjson_val* root)
 
 } // namespace
 
-bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
+bool LoadGame(uint16_t which_game, SaveSummaryData* SummPtr)
 {
 	const uqstl::string file {saveFileName(which_game)};
 	const auto json {uqm::readTextFile(uqm::saveDir(), file.c_str())};
@@ -825,7 +825,7 @@ bool LoadGameFile(const char* path)
 	return LoadGameFromJson(*text, path, nullptr);
 }
 
-bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_DESC* SummPtr)
+bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SaveSummaryData* SummPtr)
 {
 	yyjson_read_err err {};
 	const uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)> doc {
@@ -847,7 +847,7 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 		return false;
 	}
 
-	SUMMARY_DESC loc_sd {};
+	SaveSummaryData loc_sd {};
 	LoadSummary(reader, root, loc_sd);
 	if (!reader.ok())
 	{
@@ -895,7 +895,7 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	LoadScanInfo(reader, root);
 	LoadGroups(reader, root);
 
-	STAR_DESC SD {};
+	StarDesc SD {};
 	LoadStarDesc(reader, root, SD);
 	loadGameCheats();
 	if (!reader.ok())

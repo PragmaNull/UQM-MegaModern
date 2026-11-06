@@ -50,9 +50,9 @@ static constexpr auto HyperLife {5};
 // HdResolutionFactor Values
 static auto LaserRangeHd() { return ResScale(LaserRangeSd); }
 
-static RACE_DESC arilou_desc =
+static RaceDesc arilou_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "skiff",
 		 /* FiresFore | */ ImmediateWeapon,
 		 16, /* Super Melee cost */
@@ -63,7 +63,7 @@ static RACE_DESC arilou_desc =
 		 ArilouMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			250 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -122,12 +122,12 @@ static RACE_DESC arilou_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_autoaim_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
+static uint16_t initialize_autoaim_laser(Element* ShipPtr, HELEMENT LaserArray[])
 {
 	uint16_t orig_facing {};
 	int16_t delta_facing {};
-	STARSHIP* StarShipPtr {};
-	LASER_BLOCK LaserBlock;
+	Starship* StarShipPtr {};
+	LaserDesc LaserBlock;
 	const uint16_t LaserRange = chooseIfHd(LaserRangeSd, LaserRangeHd());
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -151,10 +151,10 @@ static uint16_t initialize_autoaim_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[]
 	return (1);
 }
 
-static void arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void arilou_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state |= ThrustFlag;
@@ -166,11 +166,11 @@ static void arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcer
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
 
-		const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+		const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 6)
 		{
 			bool IsTrackingWeapon {};
-			STARSHIP* EnemyStarShipPtr {};
+			Starship* EnemyStarShipPtr {};
 
 			GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 			if (((EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
@@ -203,9 +203,9 @@ static void arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcer
 	}
 }
 
-static void arilou_preprocess(ELEMENT* ElementPtr)
+static void arilou_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (!(ElementPtr->state_flags & Nonsolid))
@@ -320,7 +320,7 @@ static void arilou_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_arilou(void)
+RaceDesc* init_arilou(void)
 {
 	if (IsHd())
 	{
@@ -339,7 +339,7 @@ RACE_DESC* init_arilou(void)
 	arilou_desc.init_weapon_func = initialize_autoaim_laser;
 	arilou_desc.cyborg_control.intelligence_func = arilou_intelligence;
 
-	RACE_DESC* RaceDescPtr {&arilou_desc};
+	RaceDesc* RaceDescPtr {&arilou_desc};
 
 	return (RaceDescPtr);
 }

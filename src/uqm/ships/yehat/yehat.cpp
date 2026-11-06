@@ -53,9 +53,9 @@ static constexpr auto ShieldLife {10};
 // HdResolutionFactor
 static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
-static RACE_DESC yehat_desc =
+static RaceDesc yehat_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "terminator",
 		 FiresFore | ShieldDefense,
 		 23, /* Super Melee cost */
@@ -66,7 +66,7 @@ static RACE_DESC yehat_desc =
 		 YehatMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			750 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -125,10 +125,10 @@ static RACE_DESC yehat_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missiles(Element* ShipPtr, HELEMENT MissileArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
@@ -157,13 +157,13 @@ static uint16_t initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileA
 	return (2);
 }
 
-static void yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 							   uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	int16_t ShieldStatus {-1};
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
 	{
 		ShieldStatus = 0;
@@ -227,7 +227,7 @@ static void yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern
 
 	if ((lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX])->ObjectPtr)
 	{
-		STARSHIP* EnemyStarShipPtr {};
+		Starship* EnemyStarShipPtr {};
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
@@ -243,11 +243,11 @@ static void yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern
 */
 }
 
-static void yehat_postprocess(ELEMENT* ElementPtr)
+static void yehat_postprocess(Element* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & Nonsolid))
 	{
-		STARSHIP* StarShipPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		/* take care of shield effect */
@@ -283,7 +283,7 @@ static void yehat_postprocess(ELEMENT* ElementPtr)
 
 			if (hShipElement = AllocElement())
 			{
-				ELEMENT* ShipElementPtr;
+				Element* ShipElementPtr;
 
 				InsertElement(hShipElement, GetSuccElement(ElementPtr));
 				LockElement(hShipElement, &ShipElementPtr);
@@ -317,11 +317,11 @@ static void yehat_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void yehat_preprocess(ELEMENT* ElementPtr)
+static void yehat_preprocess(Element* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & Appearing))
 	{
-		STARSHIP* StarShipPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		if ((ElementPtr->life_span > NormalLife
@@ -368,7 +368,7 @@ static void yehat_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_yehat(void)
+RaceDesc* init_yehat(void)
 {
 	if (IsHd())
 	{
@@ -389,7 +389,7 @@ RACE_DESC* init_yehat(void)
 	yehat_desc.init_weapon_func = initialize_standard_missiles;
 	yehat_desc.cyborg_control.intelligence_func = yehat_intelligence;
 
-	RACE_DESC* RaceDescPtr {&yehat_desc};
+	RaceDesc* RaceDescPtr {&yehat_desc};
 
 	return (RaceDescPtr);
 }

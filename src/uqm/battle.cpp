@@ -74,9 +74,9 @@ bool RunAwayAllowed(void)
 			&& (isDifficulty(uqm::Difficulty::Easy) || !uqm::gameState().flag(uqm::GameFlag::BOMB_CARRIER)));
 }
 
-static void DoRunAway(STARSHIP* StarShipPtr)
+static void DoRunAway(Starship* StarShipPtr)
 {
-	ELEMENT* ElementPtr {};
+	Element* ElementPtr {};
 
 	LockElement(StarShipPtr->hShip, &ElementPtr);
 	if (GetPrimType(&DisplayArray[ElementPtr->PrimIndex]) == STAMP_PRIM
@@ -143,7 +143,7 @@ static void setupBattleInputOrder(void)
 #endif
 }
 
-BATTLE_INPUT_STATE frameInputHuman(HumanInputContext* context, STARSHIP* StarShipPtr)
+BATTLE_INPUT_STATE frameInputHuman(HumanInputContext* context, Starship* StarShipPtr)
 {
 	(void)StarShipPtr;
 	return CurrentInputToBattleInput(context->playerNr);
@@ -168,7 +168,7 @@ static void ProcessInput(void)
 		{
 			BATTLE_INPUT_STATE InputState {};
 
-			STARSHIP* StarShipPtr {LockStarShip(&race_q[cur_player], hBattleShip)};
+			Starship* StarShipPtr {LockStarShip(&race_q[cur_player], hBattleShip)};
 			hNextShip = _GetSuccLink(StarShipPtr);
 
 			if (StarShipPtr->hShip)
@@ -293,10 +293,10 @@ void FreeBattleSong(void)
 	BattleRef = 0;
 }
 
-static bool DoBattle(BATTLE_STATE* bs)
+static bool DoBattle(BattleState* bs)
 {
 	extern uint16_t nth_frame;
-	GFXRECT r;
+	GfxRect r;
 
 	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 
@@ -452,7 +452,7 @@ bool Battle(BattleFrameCallback* callback)
 
 	if (num_ships)
 	{
-		BATTLE_STATE bs;
+		BattleState bs;
 
 		uqm::currentActivity() |= IN_BATTLE;
 		battle_counter[0] = CountLinks(&race_q[0]);

@@ -31,15 +31,15 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
-static bool GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys,
-										PLANET_DESC* planet);
-static bool GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
-										  PLANET_DESC* world);
-static uint16_t GenerateChmmr_generateEnergy(const SOLARSYS_STATE*,
-											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateChmmr_pickupEnergy(SOLARSYS_STATE* solarSys,
-									   PLANET_DESC* world, uint16_t whichNode);
+static bool GenerateChmmr_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateChmmr_generateMoons(SolarSystemState* solarSys,
+										SystemPlanet* planet);
+static bool GenerateChmmr_generateOrbital(SolarSystemState* solarSys,
+										  SystemPlanet* world);
+static uint16_t GenerateChmmr_generateEnergy(const SolarSystemState*,
+											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateChmmr_pickupEnergy(SolarSystemState* solarSys,
+									   SystemPlanet* world, uint16_t whichNode);
 
 
 const GenerateFunctions generateChmmrFunctions = {
@@ -59,10 +59,10 @@ const GenerateFunctions generateChmmrFunctions = {
 };
 
 
-static bool GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateChmmr_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pPlanet {};
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED)
 	{
@@ -135,7 +135,7 @@ static bool GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
+static bool GenerateChmmr_generateMoons(SolarSystemState* solarSys, SystemPlanet* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -144,7 +144,7 @@ static bool GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* p
 	{
 		uint16_t angle {};
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
-		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
+		SystemPlanet* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		if (!RaceDead(CHMMR_SHIP))
 		{
@@ -166,8 +166,8 @@ static bool GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* p
 	return true;
 }
 
-static bool GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
-										  PLANET_DESC* world)
+static bool GenerateChmmr_generateOrbital(SolarSystemState* solarSys,
+										  SystemPlanet* world)
 {
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -306,8 +306,8 @@ static bool GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t GenerateChmmr_generateEnergy(const SOLARSYS_STATE* solarSys,
-											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateChmmr_generateEnergy(const SolarSystemState* solarSys,
+											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
@@ -328,7 +328,7 @@ static uint16_t GenerateChmmr_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool GenerateChmmr_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+static bool GenerateChmmr_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 									   uint16_t whichNode)
 {
 

@@ -26,7 +26,7 @@
 // JSD Changed the way RAINBOW#_DEFINED works
 inline constexpr auto VortexScale {20};
 
-static constexpr STAR_DESC StarmapArray[] =
+static constexpr StarDesc StarmapArray[] =
 	{
 		//                           postfix name index (like 'Normae')
 		//                         prefix name index (like 'Alpha')   |
@@ -620,7 +620,7 @@ static constexpr STAR_DESC StarmapArray[] =
 		{{MaxXUniverse << 1, MaxYUniverse << 1}, 0, 0, 0, 0},
 };
 
-static constexpr GFXPOINT ConstellationsArray[] =
+static constexpr GfxPoint ConstellationsArray[] =
 	{
 		/* Crateris */
 		{6014,			   5632			   },

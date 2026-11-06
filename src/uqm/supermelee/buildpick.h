@@ -11,14 +11,14 @@ extern "C" {
 
 void BuildBuildPickFrame(void);
 void DestroyBuildPickFrame(void);
-bool BuildPickShip(MELEE_STATE* pMS);
-void GetBuildPickFrameRect(GFXRECT* r);
-void GetToolTipFrameRect(GFXRECT* r);
+bool BuildPickShip(MeleeState* pMS);
+void GetBuildPickFrameRect(GfxRect* r);
+void GetToolTipFrameRect(GfxRect* r);
 
-void DrawPickFrame(MELEE_STATE* pMS);
+void DrawPickFrame(MeleeState* pMS);
 void DrawPickIcon(MeleeShip ship, bool DrawErase);
 
-void DrawTooltip(SHIP_INFO* SIPtr);
+void DrawTooltip(ShipInfoDesc* SIPtr);
 
 #if 0 //defined(__cplusplus)
 }

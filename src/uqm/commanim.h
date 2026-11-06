@@ -89,7 +89,7 @@ inline constexpr auto OneShotAnim {TalkIntro};
 // disabled after they run once.
 
 
-struct ANIMATION_DESC
+struct AnimationDesc
 {
 	uint16_t StartIndex;
 	// Index of the first image (for image animation) or
@@ -140,9 +140,9 @@ typedef enum
 } ANIM_TYPE;
 
 // Describes an active animation.
-struct SEQUENCE
+struct AnimSequence
 {
-	ANIMATION_DESC* ADPtr;
+	AnimationDesc* ADPtr;
 	uint32_t Alarm;
 	ANIM_DIR Direction;
 	uint16_t CurIndex;
@@ -153,7 +153,7 @@ struct SEQUENCE
 };
 #endif
 
-typedef struct SEQUENCE SEQUENCE;
+struct AnimSequence;
 
 // Kruzen: HdResolutionFactor filters that are layered on top
 // and all stuff needed.
@@ -174,7 +174,7 @@ inline constexpr auto FilterDisabled {(1 << 3)};
 inline constexpr auto SwitchOffAnims {(1 << 4)};
 inline constexpr auto SwitchOnAnims {(1 << 5)};
 
-struct FILTER
+struct AnimFilter
 {
 	uint8_t ColorIndex;
 	// Index of filter color in color
@@ -197,23 +197,23 @@ struct FILTER
 	// Any possible flags
 };
 
-struct FILTER_DESC
+struct AnimFilterSet
 {
 	uint8_t NumFilters;
 
-	FILTER FilterArray[MaxFilters];
+	AnimFilter FilterArray[MaxFilters];
 };
 
-extern FILTER_DESC FilterData;
+extern AnimFilterSet FilterData;
 
 // Returns true if there was an animation change
-extern bool DrawAlienFrame(SEQUENCE* pSeq, uint16_t Num, bool fullRedraw);
+extern bool DrawAlienFrame(AnimSequence* pSeq, uint16_t Num, bool fullRedraw);
 extern void InitCommAnimations(void);
 extern bool ProcessCommAnimations(bool fullRedraw, bool paused);
 extern void ShutYourMouth(void);
 extern void SwitchSequences(bool enableAll);
 extern void RunOneTimeSequence(uint16_t animIndex, uint16_t flags);
-extern void EngageFilters(FILTER_DESC* f_desc);
+extern void EngageFilters(AnimFilterSet* f_desc);
 extern void DisengageFilters(void);
 
 #if 0 //defined(__cplusplus)

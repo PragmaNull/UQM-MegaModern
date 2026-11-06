@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_ilwrath(void);
+RaceDesc* init_ilwrath(void);
 
 #if 0 //defined(__cplusplus)
 }

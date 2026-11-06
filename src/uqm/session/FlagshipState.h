@@ -20,12 +20,12 @@ public:
 	}
 
 	// The target. Both coordinates are -1 if there is no target.
-	[[nodiscard]] GFXPOINT target() const noexcept
+	[[nodiscard]] GfxPoint target() const noexcept
 	{
 		return m_target;
 	}
 
-	void setTarget(GFXPOINT target) noexcept
+	void setTarget(GfxPoint target) noexcept
 	{
 		m_target = target;
 	}
@@ -37,22 +37,22 @@ public:
 
 private:
 	static constexpr int16_t c_none {-1};
-	GFXPOINT m_target {c_none, c_none};
+	GfxPoint m_target {c_none, c_none};
 };
 
 struct FlagshipState
 {
 	Autopilot autopilot {};
 	// The location in the star system, in interplanetary units.
-	GFXPOINT ipLocation {};
-	STAMP shipStamp {};
+	GfxPoint ipLocation {};
+	GfxStamp shipStamp {};
 	// The facing of the ship plus 1, or 0 if the ship does not enter a star system again.
 	uint16_t shipFacing {};
 	// The planet that the flagship is at, plus 1. 0 if it is at no planet.
 	uint8_t ipPlanet {};
 	// The world that the flagship orbits: 1 for the planet, more for its moons. 0 if it is not in orbit.
 	uint8_t inOrbit {};
-	VELOCITY_DESC velocity {};
+	VelocityDesc velocity {};
 };
 
 } // namespace uqm

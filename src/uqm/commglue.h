@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-extern LOCDATA CommData;
+extern ConversationData CommData;
 extern char shared_phrase_buf[2048];
 
 constexpr auto PlayerSaid(const auto& r, const auto& i) { return ((r) == (i)); }
@@ -75,63 +75,63 @@ Segue getSegue(void);
 extern RESPONSE_REF phraseIdStrToNum(const char* phraseId);
 extern const char* phraseIdNumToStr(RESPONSE_REF response);
 
-extern LOCDATA* init_race(CONVERSATION comm_id);
+extern ConversationData* init_race(CONVERSATION comm_id);
 
-extern LOCDATA* init_arilou_comm(void);
+extern ConversationData* init_arilou_comm(void);
 
-extern LOCDATA* init_blackurq_comm(void);
+extern ConversationData* init_blackurq_comm(void);
 
-extern LOCDATA* init_chmmr_comm(void);
+extern ConversationData* init_chmmr_comm(void);
 
-extern LOCDATA* init_commander_comm(void);
+extern ConversationData* init_commander_comm(void);
 
-extern LOCDATA* init_druuge_comm(void);
+extern ConversationData* init_druuge_comm(void);
 
-extern LOCDATA* init_ilwrath_comm(void);
+extern ConversationData* init_ilwrath_comm(void);
 
-extern LOCDATA* init_melnorme_comm(void);
+extern ConversationData* init_melnorme_comm(void);
 
-extern LOCDATA* init_mycon_comm(void);
+extern ConversationData* init_mycon_comm(void);
 
-extern LOCDATA* init_orz_comm(void);
+extern ConversationData* init_orz_comm(void);
 
-extern LOCDATA* init_pkunk_comm(void);
+extern ConversationData* init_pkunk_comm(void);
 
-extern LOCDATA* init_rebel_yehat_comm(void);
+extern ConversationData* init_rebel_yehat_comm(void);
 
-extern LOCDATA* init_shofixti_comm(void);
+extern ConversationData* init_shofixti_comm(void);
 
-extern LOCDATA* init_slyland_comm(void);
+extern ConversationData* init_slyland_comm(void);
 
-extern LOCDATA* init_slylandro_comm(void);
+extern ConversationData* init_slylandro_comm(void);
 
-extern LOCDATA* init_spahome_comm(void);
+extern ConversationData* init_spahome_comm(void);
 
-extern LOCDATA* init_spathi_comm(void);
+extern ConversationData* init_spathi_comm(void);
 
-extern LOCDATA* init_starbase_comm(void);
+extern ConversationData* init_starbase_comm(void);
 
-extern LOCDATA* init_supox_comm(void);
+extern ConversationData* init_supox_comm(void);
 
-extern LOCDATA* init_syreen_comm(void);
+extern ConversationData* init_syreen_comm(void);
 
-extern LOCDATA* init_talkpet_comm(void);
+extern ConversationData* init_talkpet_comm(void);
 
-extern LOCDATA* init_thradd_comm(void);
+extern ConversationData* init_thradd_comm(void);
 
-extern LOCDATA* init_umgah_comm(void);
+extern ConversationData* init_umgah_comm(void);
 
-extern LOCDATA* init_urquan_comm(void);
+extern ConversationData* init_urquan_comm(void);
 
-extern LOCDATA* init_utwig_comm(void);
+extern ConversationData* init_utwig_comm(void);
 
-extern LOCDATA* init_vux_comm(void);
+extern ConversationData* init_vux_comm(void);
 
-extern LOCDATA* init_yehat_comm(void);
+extern ConversationData* init_yehat_comm(void);
 
-extern LOCDATA* init_zoqfot_comm(void);
+extern ConversationData* init_zoqfot_comm(void);
 
-extern LOCDATA* init_umgah_comm(void);
+extern ConversationData* init_umgah_comm(void);
 
 inline constexpr auto MaxInterpolate {8192}; // the max length we can robo-interpolate
 inline constexpr auto MaxClipname {128};	 // e.g. "pkunk-004c.ogg"

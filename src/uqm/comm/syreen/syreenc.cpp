@@ -25,7 +25,7 @@
 #include "uqm/setup.h"
 
 
-static LOCDATA syreen_desc =
+static ConversationData syreen_desc =
 	{
 		SYREEN_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -235,7 +235,7 @@ static LOCDATA syreen_desc =
 		nullptr,
 };
 
-static FILTER_DESC syreen_filters =
+static AnimFilterSet syreen_filters =
 	{
 		1, /* Number of filters */
 		{
@@ -895,7 +895,7 @@ static void PlanAmbush(RESPONSE_REF R)
 	{
 		HFLEETINFO hSyreen =
 			GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, SYREEN_SHIP);
-		FLEET_INFO* SyreenPtr =
+		FleetInfo* SyreenPtr =
 			LockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
 
 		if (SyreenPtr)
@@ -903,7 +903,7 @@ static void PlanAmbush(RESPONSE_REF R)
 			SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
 			SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
 			StartSphereTracking(SYREEN_SHIP);
-			const GFXPOINT loc = SeedFleetLocation(SyreenPtr, plot_map,
+			const GfxPoint loc = SeedFleetLocation(SyreenPtr, plot_map,
 												   MYCON_TRAP_DEFINED);
 			SetRaceDest(SYREEN_SHIP, loc.x, loc.y, 15, (uint8_t)~0);
 		}
@@ -1065,7 +1065,7 @@ static void post_syreen_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_syreen_comm(void)
+ConversationData* init_syreen_comm(void)
 {
 	syreen_desc.init_encounter_func = Intro;
 	syreen_desc.post_encounter_func = post_syreen_enc;
@@ -1080,7 +1080,7 @@ LOCDATA* init_syreen_comm(void)
 	syreen_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	setSegue(Segue_peace);
-	LOCDATA* retval {&syreen_desc};
+	ConversationData* retval {&syreen_desc};
 
 	return (retval);
 }

@@ -39,7 +39,7 @@ static void TellMission(RESPONSE_REF R);
 static void SellMinerals(RESPONSE_REF R);
 
 
-static LOCDATA commander_desc =
+static ConversationData commander_desc =
 	{
 		COMMANDER_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -2168,7 +2168,7 @@ static void post_starbase_enc(void)
 	}
 }
 
-LOCDATA* init_starbase_comm()
+ConversationData* init_starbase_comm()
 {
 	commander_desc.init_encounter_func = Intro;
 	commander_desc.post_encounter_func = post_starbase_enc;
@@ -2193,7 +2193,7 @@ LOCDATA* init_starbase_comm()
 
 	CurBulletinMask = 0;
 	setSegue(Segue_peace);
-	LOCDATA* retval {&commander_desc};
+	ConversationData* retval {&commander_desc};
 
 	return (retval);
 }

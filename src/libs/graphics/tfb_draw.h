@@ -53,15 +53,15 @@ struct TFB_Image
 	int last_scale;
 	uqm::TFBScaleMode last_scale_type;
 	Color last_fill;
-	EXTENT extent;
+	GfxExtent extent;
 	uqm::RecursiveMutex mutex;
 	bool dirty;
 };
 
 struct TFB_Char
 {
-	EXTENT extent;
-	EXTENT disp;
+	GfxExtent extent;
+	GfxExtent disp;
 	// Display extent
 	HOT_SPOT HotSpot;
 	uint8_t* data;
@@ -84,16 +84,16 @@ struct TFB_PixelFormat
 
 void TFB_DrawScreen_Line(int x1, int y1, int x2, int y2, Color color,
 						 DrawMode, SCREEN dest, uint8_t thickness);
-void TFB_DrawScreen_Rect(GFXRECT* rect, Color, DrawMode, SCREEN dest);
+void TFB_DrawScreen_Rect(GfxRect* rect, Color, DrawMode, SCREEN dest);
 void TFB_DrawScreen_Image(TFB_Image* img, int x, int y, int scale,
 						  uqm::TFBScaleMode scaleMode, TFB_ColorMap*, DrawMode, SCREEN dest);
-void TFB_DrawScreen_Copy(const GFXRECT* r, SCREEN src, SCREEN dest);
+void TFB_DrawScreen_Copy(const GfxRect* r, SCREEN src, SCREEN dest);
 void TFB_DrawScreen_FilledImage(TFB_Image* img, int x, int y, int scale,
 								uqm::TFBScaleMode scaleMode, Color, DrawMode, SCREEN dest);
 void TFB_DrawScreen_FontChar(TFB_Char*, TFB_Image* backing, int x, int y,
 							 DrawMode, SCREEN dest);
 
-void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GFXRECT* r, SCREEN src);
+void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GfxRect* r, SCREEN src);
 void TFB_DrawScreen_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx,
 							  int hoty);
 void TFB_DrawScreen_DeleteImage(TFB_Image* img);
@@ -109,14 +109,14 @@ void TFB_DrawImage_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx,
 							 int hoty);
 void TFB_DrawImage_Delete(TFB_Image* image);
 void TFB_DrawImage_FixScaling(TFB_Image* image, int scaleTarget, uqm::TFBScaleMode type);
-bool TFB_DrawImage_Intersect(TFB_Image* img1, GFXPOINT img1org,
-							 TFB_Image* img2, GFXPOINT img2org, const GFXRECT* interRect);
-void TFB_DrawImage_CopyRect(TFB_Image* source, const GFXRECT* srcRect,
-							TFB_Image* target, GFXPOINT dstPt);
+bool TFB_DrawImage_Intersect(TFB_Image* img1, GfxPoint img1org,
+							 TFB_Image* img2, GfxPoint img2org, const GfxRect* interRect);
+void TFB_DrawImage_CopyRect(TFB_Image* source, const GfxRect* srcRect,
+							TFB_Image* target, GfxPoint dstPt);
 
 void TFB_DrawImage_Line(int x1, int y1, int x2, int y2, Color color,
 						DrawMode, TFB_Image* target, uint8_t thickness);
-void TFB_DrawImage_Rect(GFXRECT* rect, Color, DrawMode, TFB_Image* target);
+void TFB_DrawImage_Rect(GfxRect* rect, Color, DrawMode, TFB_Image* target);
 void TFB_DrawImage_Image(TFB_Image* img, int x, int y, int scale,
 						 uqm::TFBScaleMode scaleMode, TFB_ColorMap*, DrawMode, TFB_Image* target);
 void TFB_DrawImage_FilledImage(TFB_Image* img, int x, int y, int scale,
@@ -136,34 +136,34 @@ TFB_Canvas TFB_DrawCanvas_New_RotationTarget(TFB_Canvas src, int angle);
 TFB_Canvas TFB_DrawCanvas_ToScreenFormat(TFB_Canvas canvas);
 bool TFB_DrawCanvas_IsPaletted(TFB_Canvas canvas);
 void TFB_DrawCanvas_Rescale_Nearest(TFB_Canvas src, TFB_Canvas dst,
-									int scale, HOT_SPOT* src_hs, EXTENT* size, HOT_SPOT* dst_hs);
+									int scale, HOT_SPOT* src_hs, GfxExtent* size, HOT_SPOT* dst_hs);
 void TFB_DrawCanvas_Rescale_Bilinear(TFB_Canvas src, TFB_Canvas dst,
-									 int scale, HOT_SPOT* src_hs, EXTENT* size, HOT_SPOT* dst_hs);
+									 int scale, HOT_SPOT* src_hs, GfxExtent* size, HOT_SPOT* dst_hs);
 void TFB_DrawCanvas_Rescale_Trilinear(TFB_Canvas src, TFB_Canvas mipmap,
 									  TFB_Canvas dst, int scale, HOT_SPOT* src_hs, HOT_SPOT* mm_hs,
-									  EXTENT* size, HOT_SPOT* dst_hs);
+									  GfxExtent* size, HOT_SPOT* dst_hs);
 void TFB_DrawCanvas_GetScaledExtent(TFB_Canvas src_canvas, HOT_SPOT* src_hs,
 									TFB_Canvas src_mipmap, HOT_SPOT* mm_hs,
-									int scale, int type, EXTENT* size, HOT_SPOT* hs);
+									int scale, int type, GfxExtent* size, HOT_SPOT* hs);
 void TFB_DrawCanvas_Rotate(TFB_Canvas src, TFB_Canvas dst, int angle,
-						   EXTENT size);
-void TFB_DrawCanvas_GetRotatedExtent(TFB_Canvas src, int angle, EXTENT* size);
-void TFB_DrawCanvas_GetExtent(TFB_Canvas canvas, EXTENT* size);
-void TFB_DrawCanvas_SetClipRect(TFB_Canvas canvas, const GFXRECT* clipRect);
+						   GfxExtent size);
+void TFB_DrawCanvas_GetRotatedExtent(TFB_Canvas src, int angle, GfxExtent* size);
+void TFB_DrawCanvas_GetExtent(TFB_Canvas canvas, GfxExtent* size);
+void TFB_DrawCanvas_SetClipRect(TFB_Canvas canvas, const GfxRect* clipRect);
 
 void TFB_DrawCanvas_Delete(TFB_Canvas canvas);
 
 void TFB_DrawCanvas_Line(int x1, int y1, int x2, int y2, Color color,
 						 DrawMode, TFB_Canvas target, uint8_t thickness);
-void TFB_DrawCanvas_Rect(GFXRECT* rect, Color, DrawMode, TFB_Canvas target);
+void TFB_DrawCanvas_Rect(GfxRect* rect, Color, DrawMode, TFB_Canvas target);
 void TFB_DrawCanvas_Image(TFB_Image* img, int x, int y, int scale,
 						  uqm::TFBScaleMode scaleMode, TFB_ColorMap*, DrawMode, TFB_Canvas target);
 void TFB_DrawCanvas_FilledImage(TFB_Image* img, int x, int y, int scale,
 								uqm::TFBScaleMode scaleMode, Color, DrawMode, TFB_Canvas target);
 void TFB_DrawCanvas_FontChar(TFB_Char*, TFB_Image* backing, int x, int y,
 							 DrawMode, TFB_Canvas target);
-void TFB_DrawCanvas_CopyRect(TFB_Canvas source, const GFXRECT* srcRect,
-							 TFB_Canvas target, GFXPOINT dstPt);
+void TFB_DrawCanvas_CopyRect(TFB_Canvas source, const GfxRect* srcRect,
+							 TFB_Canvas target, GfxPoint dstPt);
 void TFB_DrawCanvas_MaskImage(TFB_Image* img, DrawMode mode, TFB_Canvas target, Color* fill);
 
 bool TFB_DrawCanvas_GetFontCharData(TFB_Canvas canvas, uint8_t* outData,
@@ -185,8 +185,8 @@ void TFB_DrawCanvas_GetScreenFormat(TFB_PixelFormat* fmt);
 int TFB_DrawCanvas_GetStride(TFB_Canvas canvas);
 void* TFB_DrawCanvas_GetLine(TFB_Canvas canvas, int line);
 Color TFB_DrawCanvas_GetPixel(TFB_Canvas canvas, int x, int y);
-bool TFB_DrawCanvas_Intersect(TFB_Canvas canvas1, GFXPOINT c1org,
-							  TFB_Canvas canvas2, GFXPOINT c2org, const GFXRECT* interRect);
+bool TFB_DrawCanvas_Intersect(TFB_Canvas canvas1, GfxPoint c1org,
+							  TFB_Canvas canvas2, GfxPoint c2org, const GfxRect* interRect);
 
 bool TFB_DrawCanvas_GetPixelColors(TFB_Canvas, Color* pixels,
 								   int width, int height);

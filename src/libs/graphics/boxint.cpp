@@ -18,7 +18,7 @@
 
 #include "gfxintrn.h"
 
-INTERSECT_CODE BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
+INTERSECT_CODE BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* pinter)
 {
 	int16_t x1 {};
 	int16_t delta {};
@@ -91,7 +91,7 @@ INTERSECT_CODE BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 	return ((INTERSECT_CODE)0);
 }
 
-void BoxUnion(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* punion)
+void BoxUnion(GfxRect* pr1, GfxRect* pr2, GfxRect* punion)
 {
 #if NEVER // Part of lower FIXME.
 	int16_t x2, y2, w2, h2;
@@ -111,7 +111,7 @@ void BoxUnion(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* punion)
 
 
 #if NEVER // FIXME - I think this is broken, but keeping it around for reference
-	// FIXME - just in case.
+		  // FIXME - just in case.
 
 #if 1 /* alter based on 0 widths */
 

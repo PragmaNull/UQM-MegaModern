@@ -80,9 +80,9 @@ static constexpr auto GateHits {100};
 static auto GeneratorHits() { return difficultyCase(12, 15, 18); }
 static constexpr auto MaxGenerators {8};
 
-static RACE_DESC samatra_desc =
+static RaceDesc samatra_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "samatra",
 		 /* FiresFore | */ ImmediateWeapon | CrewImmune,
 		 16, /* Super Melee cost */
@@ -93,7 +93,7 @@ static RACE_DESC samatra_desc =
 		 NullResource,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			0, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
@@ -152,9 +152,9 @@ static RACE_DESC samatra_desc =
 		0, /* CodeRef */
 };
 
-static HELEMENT spawn_comet(ELEMENT* ElementPtr);
+static HELEMENT spawn_comet(Element* ElementPtr);
 
-static void comet_preprocess(ELEMENT* ElementPtr)
+static void comet_preprocess(Element* ElementPtr)
 {
 	uint16_t frame_index {};
 
@@ -165,7 +165,7 @@ static void comet_preprocess(ELEMENT* ElementPtr)
 		{
 			int16_t cur_delta_x {};
 			int16_t cur_delta_y {};
-			STARSHIP* StarShipPtr {};
+			Starship* StarShipPtr {};
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 			++StarShipPtr->RaceDescPtr->characteristics.weapon_wait;
@@ -186,8 +186,8 @@ static void comet_preprocess(ELEMENT* ElementPtr)
 	ElementPtr->state_flags |= Changing;
 }
 
-static void comet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void comet_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (ElementPtr1->playerNr == RpgPlayerNum)
 	{
@@ -220,7 +220,7 @@ static void comet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 		if (ElementPtr0->state_flags & Disappearing)
 		{
-			STARSHIP* StarShipPtr {};
+			Starship* StarShipPtr {};
 
 			GetElementStarShip(ElementPtr0, &StarShipPtr);
 			--StarShipPtr->RaceDescPtr->characteristics.weapon_wait;
@@ -228,10 +228,10 @@ static void comet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static HELEMENT spawn_comet(ELEMENT* ElementPtr)
+static HELEMENT spawn_comet(Element* ElementPtr)
 {
-	MISSILE_BLOCK MissileBlock;
-	STARSHIP* StarShipPtr {};
+	MissileDesc MissileBlock;
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	MissileBlock.cx = ElementPtr->next.location.x;
@@ -252,7 +252,7 @@ static HELEMENT spawn_comet(ELEMENT* ElementPtr)
 
 	if (hComet)
 	{
-		ELEMENT* CometPtr {};
+		Element* CometPtr {};
 
 		PutElement(hComet);
 
@@ -300,7 +300,7 @@ static HELEMENT spawn_comet(ELEMENT* ElementPtr)
 	return (hComet);
 }
 
-static void turret_preprocess(ELEMENT* ElementPtr)
+static void turret_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -317,12 +317,12 @@ static void turret_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void gate_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-						   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void gate_collision(Element* ElementPtr0, GfxPoint* pPt0,
+						   Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (ElementPtr1->playerNr == RpgPlayerNum)
 	{
-		STARSHIP* StarShipPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr0, &StarShipPtr);
 		if (StarShipPtr->RaceDescPtr->characteristics.max_thrust == 0)
@@ -366,9 +366,9 @@ static void gate_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void gate_preprocess(ELEMENT* ElementPtr)
+static void gate_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->RaceDescPtr->characteristics.max_thrust == 0)
@@ -400,11 +400,11 @@ static void gate_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void generator_death(ELEMENT* ElementPtr)
+static void generator_death(Element* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & FiniteLife))
 	{
-		STARSHIP* StarShipPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		--StarShipPtr->RaceDescPtr->characteristics.max_thrust;
@@ -437,7 +437,7 @@ static void generator_death(ELEMENT* ElementPtr)
 	}
 }
 
-static void generator_preprocess(ELEMENT* ElementPtr)
+static void generator_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -456,8 +456,8 @@ static void generator_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void generator_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void generator_collision(Element* ElementPtr0, GfxPoint* pPt0,
+								Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (!(ElementPtr1->state_flags & FiniteLife))
 	{
@@ -467,9 +467,9 @@ static void generator_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static void sentinel_preprocess(ELEMENT* ElementPtr)
+static void sentinel_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	++StarShipPtr->RaceDescPtr->characteristics.special_wait;
@@ -531,8 +531,8 @@ static void sentinel_preprocess(ELEMENT* ElementPtr)
 			int32_t delta_y0 {};
 			int32_t delta_x1 {};
 			int32_t delta_y1 {};
-			ELEMENT* ShipPtr {};
-			ELEMENT* EnemyShipPtr {};
+			Element* ShipPtr {};
+			Element* EnemyShipPtr {};
 
 			LockElement(ElementPtr->hTarget, &EnemyShipPtr);
 
@@ -568,8 +568,8 @@ static void sentinel_preprocess(ELEMENT* ElementPtr)
 			uint16_t num_frames {};
 			int32_t delta_x {};
 			int32_t delta_y {};
-			ELEMENT* TargetPtr {};
-			VELOCITY_DESC TargetVelocity;
+			Element* TargetPtr {};
+			VelocityDesc TargetVelocity;
 
 			LockElement(hTarget, &TargetPtr);
 
@@ -624,11 +624,11 @@ static void sentinel_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void sentinel_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void sentinel_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							   Element* ElementPtr1, GfxPoint* pPt1)
 {
 	uint16_t angle {};
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	if (ElementPtr1->playerNr == NpcPlayerNum)
 	{
@@ -726,7 +726,7 @@ static void sentinel_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			--StarShipPtr->RaceDescPtr->characteristics.special_wait;
 			if (hBlastElement)
 			{
-				ELEMENT* BlastElementPtr {};
+				Element* BlastElementPtr {};
 
 				LockElement(hBlastElement, &BlastElementPtr);
 				BlastElementPtr->life_span = 7;
@@ -739,15 +739,15 @@ static void sentinel_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void samatra_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void samatra_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								 uint16_t ConcernCounter)
 {
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 }
 
-static void samatra_postprocess(ELEMENT* ElementPtr)
+static void samatra_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->RaceDescPtr->characteristics.max_thrust)
@@ -769,7 +769,7 @@ static void samatra_postprocess(ELEMENT* ElementPtr)
 		if (StarShipPtr->special_counter == 0
 			&& StarShipPtr->RaceDescPtr->characteristics.special_wait < MaxSentinels())
 		{
-			MISSILE_BLOCK MissileBlock;
+			MissileDesc MissileBlock;
 
 			MissileBlock.cx = ElementPtr->next.location.x;
 			MissileBlock.cy = ElementPtr->next.location.y;
@@ -789,7 +789,7 @@ static void samatra_postprocess(ELEMENT* ElementPtr)
 
 			if (hSentinel)
 			{
-				ELEMENT* SentinelPtr {};
+				Element* SentinelPtr {};
 
 				LockElement(hSentinel, &SentinelPtr);
 				SentinelPtr->collision_func = sentinel_collision;
@@ -805,9 +805,9 @@ static void samatra_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void samatra_preprocess(ELEMENT* ElementPtr)
+static void samatra_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	StarShipPtr->RaceDescPtr->characteristics.weapon_wait = 0;
@@ -819,7 +819,7 @@ static void samatra_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		GFXPOINT offs_orig[8] =
+		GfxPoint offs_orig[8] =
 			{
 				{-127 - 9, -53 + 18},
 				{-38 - 9,  -88 + 18},
@@ -831,7 +831,7 @@ static void samatra_preprocess(ELEMENT* ElementPtr)
 				{-136 - 9, 29 + 18 },
 		};
 
-		GFXPOINT offs_hd[] =
+		GfxPoint offs_hd[] =
 			{
 				{-544 + 44, -140 - 16},
 				{-188 + 38, -280 - 20},
@@ -843,7 +843,7 @@ static void samatra_preprocess(ELEMENT* ElementPtr)
 				{-580 + 32, 188 - 24 },
 		};
 
-		const GFXPOINT* offs {chooseIfHd<GFXPOINT*>(offs_orig, offs_hd)};
+		const GfxPoint* offs {chooseIfHd<GfxPoint*>(offs_orig, offs_hd)};
 
 		for (StarShipPtr->RaceDescPtr->characteristics.max_thrust = 0;
 			 StarShipPtr->RaceDescPtr->characteristics.max_thrust < MaxGenerators;
@@ -852,7 +852,7 @@ static void samatra_preprocess(ELEMENT* ElementPtr)
 			HELEMENT hGenerator {AllocElement()};
 			if (hGenerator)
 			{
-				ELEMENT* GeneratorPtr {};
+				Element* GeneratorPtr {};
 
 				LockElement(hGenerator, &GeneratorPtr);
 				GeneratorPtr->hit_points = GeneratorHits();
@@ -893,7 +893,7 @@ static void samatra_preprocess(ELEMENT* ElementPtr)
 			HELEMENT hTurret {AllocElement()};
 			if (hTurret)
 			{
-				ELEMENT* TurretPtr {};
+				Element* TurretPtr {};
 
 				LockElement(hTurret, &TurretPtr);
 				TurretPtr->hit_points = 1;
@@ -924,7 +924,7 @@ static void samatra_preprocess(ELEMENT* ElementPtr)
 			HELEMENT hGate {AllocElement()};
 			if (hGate)
 			{
-				ELEMENT* GatePtr {};
+				Element* GatePtr {};
 
 				LockElement(hGate, &GatePtr);
 				GatePtr->hit_points = GateHits;
@@ -959,13 +959,13 @@ static void samatra_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_samatra(void)
+RaceDesc* init_samatra(void)
 {
 	samatra_desc.preprocess_func = samatra_preprocess;
 	samatra_desc.postprocess_func = samatra_postprocess;
 	samatra_desc.cyborg_control.intelligence_func = samatra_intelligence;
 
-	RACE_DESC* RaceDescPtr {&samatra_desc};
+	RaceDesc* RaceDescPtr {&samatra_desc};
 
 	return (RaceDescPtr);
 }

@@ -34,7 +34,7 @@
 static FRAME scope_frame;
 static int scope_init = 0;
 static FRAME scopeWork;
-static EXTENT scopeSize;
+static GfxExtent scopeSize;
 static uqstl::vector<uint8_t> scopeData {};
 bool oscillDisabled = false;
 
@@ -43,7 +43,7 @@ void InitOscilloscope(FRAME scopeBg)
 	scope_frame = scopeBg;
 	if (!scope_init)
 	{
-		const EXTENT size = GetFrameBounds(scope_frame);
+		const GfxExtent size = GetFrameBounds(scope_frame);
 
 		scopeWork = CaptureDrawable(CreateDrawable(
 			WantPixmap | MappedToDisplay,
@@ -93,7 +93,7 @@ uint8_t ScaleHeightByVolume(uint8_t scope_data, bool toScale)
 
 static constexpr auto DimPercentage {0.77};
 
-void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toScale)
+void DrawOscilloscopeLines(GfxStamp* s, uint8_t* scope_data, bool nonStop, bool toScale)
 {
 	int i {};
 	Color scopeColor;
@@ -127,7 +127,7 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 	{
 		for (i = 0; i < scopeSize.width - 1; ++i)
 		{
-			LINE line;
+			GfxLine line;
 
 			line.first.x = ResScale(i);
 			line.first.y = ResScale(ScaleHeightByVolume(scope_data[i],
@@ -140,7 +140,7 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 	}
 	else
 	{
-		LINE line;
+		GfxLine line;
 
 		line.first.x = 0;
 		line.first.y = ResScale((scopeSize.height / 2));
@@ -157,7 +157,7 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 // draws the oscilloscope
 void DrawOscilloscope(void)
 {
-	STAMP s;
+	GfxStamp s;
 	uint8_t* const scope_data {scopeData.data()};
 
 	if (oscillDisabled)
@@ -194,7 +194,7 @@ void DrawOscilloscope(void)
 
 void FlattenOscilloscope(void)
 {
-	STAMP s;
+	GfxStamp s;
 
 	GFXCONTEXT OldContext {SetContext(RadarContext)};
 
@@ -204,8 +204,8 @@ void FlattenOscilloscope(void)
 	SetContext(OldContext);
 }
 
-static STAMP sliderStamp;
-static STAMP buttonStamp;
+static GfxStamp sliderStamp;
+static GfxStamp buttonStamp;
 static bool sliderChanged = false;
 int sliderSpace; // slider width - button width
 bool sliderDisabled = false;
@@ -223,8 +223,8 @@ bool sliderDisabled = false;
 
 void InitSlider(int x, int y, int width, FRAME sliderFrame, FRAME buttonFrame)
 {
-	const EXTENT sliderSize = GetFrameBounds(sliderFrame);
-	const EXTENT buttonSize = GetFrameBounds(buttonFrame);
+	const GfxExtent sliderSize = GetFrameBounds(sliderFrame);
+	const GfxExtent buttonSize = GetFrameBounds(buttonFrame);
 
 	sliderStamp.origin.x = x;
 	sliderStamp.origin.y = y;

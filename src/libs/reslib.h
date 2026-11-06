@@ -29,8 +29,8 @@
 extern "C" {
 #endif
 
-typedef struct resource_index_desc RESOURCE_INDEX_DESC;
-typedef RESOURCE_INDEX_DESC* RESOURCE_INDEX;
+struct ResourceIndexDesc;
+typedef ResourceIndexDesc* RESOURCE_INDEX;
 
 const typedef char* RESOURCE;
 

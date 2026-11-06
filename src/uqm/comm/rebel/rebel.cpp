@@ -24,7 +24,7 @@
 #include "uqm/build.h"
 
 
-static LOCDATA yehat_desc =
+static ConversationData yehat_desc =
 	{
 		YEHAT_REBEL_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -474,7 +474,7 @@ static void post_yehat_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_rebel_yehat_comm(void)
+ConversationData* init_rebel_yehat_comm(void)
 {
 	yehat_desc.init_encounter_func = Intro;
 	yehat_desc.post_encounter_func = post_yehat_enc;
@@ -492,7 +492,7 @@ LOCDATA* init_rebel_yehat_comm(void)
 	altResFlags |= UseAltSong;
 
 	setSegue(Segue_peace);
-	LOCDATA* retval {&yehat_desc};
+	ConversationData* retval {&yehat_desc};
 
 	return (retval);
 }

@@ -36,15 +36,15 @@ inline constexpr auto NumCaptainsNames {16};
 
 constexpr auto PickCaptainName() { return (((uint16_t)uqm::random().next() & (NumCaptainsNames - 1)) + NameOffset); }
 
-extern HLINK Build(QUEUE* pQueue, SPECIES_ID SpeciesID);
-extern HSHIPFRAG CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue,
+extern HLINK Build(Queue* pQueue, SPECIES_ID SpeciesID);
+extern HSHIPFRAG CloneShipFragment(RACE_ID shipIndex, Queue* pDstQueue,
 								   uint16_t crew_level);
-extern HLINK GetStarShipFromIndex(QUEUE* pShipQ, uint16_t Index);
+extern HLINK GetStarShipFromIndex(Queue* pShipQ, uint16_t Index);
 extern HFLEETINFO GetSeededFleetFromIndex(uint16_t Index);
 extern HSHIPFRAG GetEscortByStarShipIndex(uint16_t index);
-extern uint8_t NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID);
+extern uint8_t NameCaptain(Queue* pQueue, SPECIES_ID SpeciesID);
 
-extern uint16_t GetIndexFromStarShip(QUEUE* pShipQ, HLINK hStarShip);
+extern uint16_t GetIndexFromStarShip(Queue* pShipQ, HLINK hStarShip);
 extern int SetEscortCrewComplement(RACE_ID which_ship, uint16_t crew_level,
 								   uint8_t captain);
 
@@ -68,17 +68,17 @@ extern bool RaceDead(RACE_ID race);
 extern uint16_t RemoveSomeEscortShips(RACE_ID race, uint16_t count);
 extern uint16_t RemoveEscortShips(RACE_ID race);
 
-extern RACE_DESC* load_ship(SPECIES_ID SpeciesID, bool LoadBattleData);
-extern void free_ship(RACE_DESC* RaceDescPtr, bool FreeIconData,
+extern RaceDesc* load_ship(SPECIES_ID SpeciesID, bool LoadBattleData);
+extern void free_ship(RaceDesc* RaceDescPtr, bool FreeIconData,
 					  bool FreeBattleData);
 extern void loadGameCheats(void);
 // WarEraStrength gives the hard coded strength values (formerly an array)
 extern uint16_t WarEraStrength(SPECIES_ID SpeciesID);
 // SeedFleetLocation moves the fleet to the plot location specified in visit.
-extern GFXPOINT SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap,
+extern GfxPoint SeedFleetLocation(FleetInfo* FleetPtr, PlotLocation* plotmap,
 								  uint16_t visit);
 // SeedFleet does initial fleet placement for StarSeed
-extern void SeedFleet(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap);
+extern void SeedFleet(FleetInfo* FleetPtr, PlotLocation* plotmap);
 // SeedShip handles ship seeding, used in build.c to handle the load window
 extern SPECIES_ID SeedShip(SPECIES_ID SpeciesID, bool loadWindow);
 extern bool legacySave;

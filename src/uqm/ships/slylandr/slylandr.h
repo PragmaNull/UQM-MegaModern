@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_slylandro(void);
+RaceDesc* init_slylandro(void);
 
 #if 0 //defined(__cplusplus)
 }

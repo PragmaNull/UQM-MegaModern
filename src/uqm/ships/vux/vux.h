@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_vux(void);
+RaceDesc* init_vux(void);
 
 #if 0 //defined(__cplusplus)
 }

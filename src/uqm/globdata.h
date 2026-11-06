@@ -34,7 +34,7 @@
 // many languages require various plural forms
 // for digit names like "hundred"
 // possibly needs reworking for others
-struct SPEECH_DIGITNAME
+struct SpeechDigitName
 {
 	// an array of these structs must be in ascending remainder order
 	// terminate the array with Divider == 0
@@ -49,7 +49,7 @@ struct SPEECH_DIGITNAME
 	uint16_t StrIndex;
 };
 
-struct SPEECH_DIGIT
+struct SpeechDigit
 {
 	// digit divider, i.e. 1, 10, 100, etc.
 	int Divider;
@@ -65,7 +65,7 @@ struct SPEECH_DIGIT
 	uint16_t* StrDigits;
 	// digit Names, can be nullptr, in which case
 	// CommonNameIndex is used
-	SPEECH_DIGITNAME* Names;
+	SpeechDigitName* Names;
 	// common digit name string table index
 	// i.e. "hundred" in English
 	uint16_t CommonNameIndex;
@@ -74,21 +74,21 @@ struct SPEECH_DIGIT
 // this accomodates up to "billions" in english
 inline constexpr auto MaxSpeechDigits {7};
 
-struct NUMBER_SPEECH_DESC
+struct NumberSpeechDesc
 {
 	// slots used in Digits array
 	uint16_t NumDigits;
 	// slots for each digit in numbers
 	// teens is exception
 	// 0-9, 10-19, ..20-90, ..100-900, etc.
-	SPEECH_DIGIT Digits[MaxSpeechDigits];
+	SpeechDigit Digits[MaxSpeechDigits];
 };
-const typedef NUMBER_SPEECH_DESC* NUMBER_SPEECH;
+const typedef NumberSpeechDesc* NUMBER_SPEECH;
 
 typedef uint32_t LDAS_FLAGS;
 
 
-// BW: had to move that from commglue.h to here because now LOCDATA features it
+// BW: had to move that from commglue.h to here because now ConversationData features it
 typedef enum
 {
 	ARILOU_CONVERSATION,
@@ -122,14 +122,14 @@ typedef enum
 	NUM_CONVERSATIONS,
 } CONVERSATION;
 
-struct ALT_RESOURCE
+struct AlienAltResources
 {
 	RESOURCE AlienFrameRes;
 	RESOURCE AlienColorMapRes;
 	RESOURCE AlienSongRes;
 };
 
-struct LOCDATA
+struct ConversationData
 {
 	CONVERSATION AlienConv;
 	void (*init_encounter_func)(void);
@@ -137,31 +137,31 @@ struct LOCDATA
 	void (*post_encounter_func)(void);
 	/* Called when leaving communications or combat normally */
 	uint16_t (*uninit_encounter_func)(void);
-	/* Called when encounter is done for cleanup */
+	/* Called when Encounter is done for cleanup */
 
 	RESOURCE AlienFrameRes;
 	RESOURCE AlienFontRes;
 	Color AlienTextFColor, AlienTextBColor;
-	GFXPOINT AlienTextBaseline;
+	GfxPoint AlienTextBaseline;
 	uint16_t AlienTextWidth;
 	TEXT_ALIGN AlienTextAlign;
 	TEXT_VALIGN AlienTextValign;
 	RESOURCE AlienColorMapRes;
 	RESOURCE AlienSongRes;
-	ALT_RESOURCE AltRes;
+	AlienAltResources AltRes;
 
 	RESOURCE ConversationPhrasesRes;
 
 	uint16_t NumAnimations;
-	ANIMATION_DESC AlienAmbientArray[MaxAnimations];
+	AnimationDesc AlienAmbientArray[MaxAnimations];
 
 	// Transition animation to/from talking state;
 	// the first frame is neutral (sort of like YoyoAnim)
-	ANIMATION_DESC AlienTransitionDesc;
+	AnimationDesc AlienTransitionDesc;
 	// Talking animation, like RandomAnim, except random frames
 	// always alternate with a neutral frame;
 	// the first frame is neutral
-	ANIMATION_DESC AlienTalkDesc;
+	AnimationDesc AlienTalkDesc;
 
 	NUMBER_SPEECH AlienNumberSpeech;
 
@@ -210,7 +210,7 @@ enum
 inline auto YearsToKohrahVictory() { return (uqm::UQMOptions::read().deCleansing ? 100 : 4); }
 
 
-// Values for GAME_STATE.glob_flags:
+// Values for GameData.glob_flags:
 inline constexpr auto ReadSpeedMask {((1 << 3) - 1)};
 inline constexpr auto NumReadSpeeds {5};
 inline constexpr auto CombatSpeedShift {6};
@@ -371,13 +371,13 @@ inline auto StorageQ() { return (uqm::UQMOptions::read().shipStore || isDifficul
 // The stored value for no location. The location states are 16 bits; they hold int16_t coordinates.
 constexpr uint16_t c_noLocation {0xffff};
 
-static inline GFXPOINT LoadLastLoc(void)
+static inline GfxPoint LoadLastLoc(void)
 {
-	return GFXPOINT {(int16_t)uqm::gameState().flag(uqm::GameFlag::LAST_LOCATION_X),
+	return GfxPoint {(int16_t)uqm::gameState().flag(uqm::GameFlag::LAST_LOCATION_X),
 					 (int16_t)uqm::gameState().flag(uqm::GameFlag::LAST_LOCATION_Y)};
 }
 
-static inline void SaveLastLoc(GFXPOINT pt)
+static inline void SaveLastLoc(GfxPoint pt)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_X, static_cast<uint32_t>(static_cast<uint16_t>(pt.x)));
 	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_Y, static_cast<uint32_t>(static_cast<uint16_t>(pt.y)));
@@ -389,25 +389,25 @@ static inline void ZeroLastLoc(void)
 	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_Y, static_cast<uint32_t>(c_noLocation));
 }
 
-static inline GFXPOINT LoadAdvancedQuasiPilot(void)
+static inline GfxPoint LoadAdvancedQuasiPilot(void)
 {
-	return GFXPOINT {(int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_X),
+	return GfxPoint {(int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_X),
 					 (int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_Y)};
 }
 
-static inline GFXPOINT LoadAdvancedAutoPilot(void)
+static inline GfxPoint LoadAdvancedAutoPilot(void)
 {
-	return GFXPOINT {(int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_X),
+	return GfxPoint {(int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_X),
 					 (int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_Y)};
 }
 
-static inline void SaveAdvancedQuasiPilot(GFXPOINT pt)
+static inline void SaveAdvancedQuasiPilot(GfxPoint pt)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_X, static_cast<uint32_t>(static_cast<uint16_t>(pt.x)));
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_Y, static_cast<uint32_t>(static_cast<uint16_t>(pt.y)));
 }
 
-static inline void SaveAdvancedAutoPilot(GFXPOINT pt)
+static inline void SaveAdvancedAutoPilot(GfxPoint pt)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_X, static_cast<uint32_t>(static_cast<uint16_t>(pt.x)));
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_Y, static_cast<uint32_t>(static_cast<uint16_t>(pt.y)));

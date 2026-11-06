@@ -27,14 +27,14 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateColony_initNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
-										 PLANET_DESC* planet);
-static bool GenerateColony_generateName(const SOLARSYS_STATE*,
-										const PLANET_DESC* world);
-static bool GenerateColony_generateOrbital(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* world);
+static bool GenerateColony_initNpcs(SolarSystemState* solarSys);
+static bool GenerateColony_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateColony_generateMoons(SolarSystemState* solarSys,
+										 SystemPlanet* planet);
+static bool GenerateColony_generateName(const SolarSystemState*,
+										const SystemPlanet* world);
+static bool GenerateColony_generateOrbital(SolarSystemState* solarSys,
+										   SystemPlanet* world);
 
 
 const GenerateFunctions generateColonyFunctions = {
@@ -54,7 +54,7 @@ const GenerateFunctions generateColonyFunctions = {
 };
 
 
-static bool GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateColony_initNpcs(SolarSystemState* solarSys)
 {
 	HIPGROUP hGroup {};
 
@@ -75,7 +75,7 @@ static bool GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte + 1;
 
-		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		GroupPtr->task = IN_ORBIT;
 		GroupPtr->sys_loc = PlanetByte;	 /* orbitting colony */
 		GroupPtr->dest_loc = PlanetByte; /* orbitting colony */
@@ -88,12 +88,12 @@ static bool GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateColony_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 
 	pSunDesc->PlanetByte = 0;
-	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
+	SystemPlanet* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	FillOrbits(solarSys, (uint8_t)~0, pPlanet, false);
 
@@ -127,8 +127,8 @@ static bool GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
-										 PLANET_DESC* planet)
+static bool GenerateColony_generateMoons(SolarSystemState* solarSys,
+										 SystemPlanet* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -146,15 +146,15 @@ static bool GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateColony_generateName(const SOLARSYS_STATE* solarSys,
-										const PLANET_DESC* world)
+static bool GenerateColony_generateName(const SolarSystemState* solarSys,
+										const SystemPlanet* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const SystemPlanet pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
@@ -166,8 +166,8 @@ static bool GenerateColony_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateColony_generateOrbital(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* world)
+static bool GenerateColony_generateOrbital(SolarSystemState* solarSys,
+										   SystemPlanet* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

@@ -34,16 +34,16 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys,
-										PLANET_DESC* world);
-static uint16_t GenerateVux_generateEnergy(const SOLARSYS_STATE*,
-										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static uint16_t GenerateVux_generateLife(const SOLARSYS_STATE*,
-										 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateVux_pickupEnergy(SOLARSYS_STATE*, PLANET_DESC* world,
+static bool GenerateVux_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateVux_generateOrbital(SolarSystemState* solarSys,
+										SystemPlanet* world);
+static uint16_t GenerateVux_generateEnergy(const SolarSystemState*,
+										   const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static uint16_t GenerateVux_generateLife(const SolarSystemState*,
+										 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateVux_pickupEnergy(SolarSystemState*, SystemPlanet* world,
 									 uint16_t whichNode);
-static bool GenerateVux_pickupLife(SOLARSYS_STATE*, PLANET_DESC* world,
+static bool GenerateVux_pickupLife(SolarSystemState*, SystemPlanet* world,
 								   uint16_t whichNode);
 
 
@@ -64,14 +64,14 @@ const GenerateFunctions generateVuxFunctions = {
 };
 
 
-static bool GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateVux_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	pSunDesc->PlanetByte = 0;
-	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
+	SystemPlanet* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	if (uqm::isOriginalSeed())
 	{
@@ -139,7 +139,7 @@ static bool GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GenerateVux_generateOrbital(SolarSystemState* solarSys, SystemPlanet* world)
 {
 	if ((matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		 && (CurStarDescPtr()->Index == VUX_DEFINED
@@ -231,8 +231,8 @@ static bool GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* w
 	return true;
 }
 
-static uint16_t GenerateVux_generateEnergy(const SOLARSYS_STATE* solarSys,
-										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateVux_generateEnergy(const SolarSystemState* solarSys,
+										   const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -262,7 +262,7 @@ static uint16_t GenerateVux_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+static bool GenerateVux_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 									 uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
@@ -293,8 +293,8 @@ static bool GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* worl
 
 static auto LifeBool() { return (IsExtended() && uqm::gameState().flag(uqm::GameFlag::VUX_BEAST)); }
 
-static uint16_t GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
-										 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateVux_generateLife(const SolarSystemState* solarSys,
+										 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -337,7 +337,7 @@ static uint16_t GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
 	return GenerateDefault_generateLife(solarSys, world, whichNode, info);
 }
 
-static bool GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+static bool GenerateVux_pickupLife(SolarSystemState* solarSys, SystemPlanet* world,
 								   uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == VUX_BEAST_DEFINED

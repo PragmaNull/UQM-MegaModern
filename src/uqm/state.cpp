@@ -28,7 +28,7 @@ static constexpr auto StarBufsize {(NumSolarSystems * sizeof(uint32_t) + 3800 * 
 #endif
 #include <memory.h>
 
-uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void)
+uqstl::array<GameStateFile, NUM_STATE_FILES> MakeStateFiles(void)
 {
 	// In the order StarinfoFile, RandgrpinfoFile, DefgrpinfoFile.
 	return {
@@ -41,14 +41,14 @@ uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void)
 }
 
 
-GAME_STATE_FILE* OpenStateFile(int stateFile, const char* mode)
+GameStateFile* OpenStateFile(int stateFile, const char* mode)
 {
 	if (stateFile < 0 || stateFile >= NUM_STATE_FILES)
 	{
 		return nullptr;
 	}
 
-	GAME_STATE_FILE* fp {&uqm::gameState().stateFile(stateFile)};
+	GameStateFile* fp {&uqm::gameState().stateFile(stateFile)};
 	fp->open_count++;
 	if (fp->open_count > 1)
 	{
@@ -87,7 +87,7 @@ GAME_STATE_FILE* OpenStateFile(int stateFile, const char* mode)
 	return fp;
 }
 
-void CloseStateFile(GAME_STATE_FILE* fp)
+void CloseStateFile(GameStateFile* fp)
 {
 	fp->ptr = 0;
 	fp->open_count--;
@@ -107,7 +107,7 @@ void DeleteStateFile(int stateFile)
 		return;
 	}
 
-	GAME_STATE_FILE* fp {&uqm::gameState().stateFile(stateFile)};
+	GameStateFile* fp {&uqm::gameState().stateFile(stateFile)};
 	if (fp->open_count != 0)
 	{
 		uqm::log::warn("WARNING: "
@@ -120,12 +120,12 @@ void DeleteStateFile(int stateFile)
 	fp->data = {};
 }
 
-uint32_t LengthStateFile(GAME_STATE_FILE* fp)
+uint32_t LengthStateFile(GameStateFile* fp)
 {
 	return fp->used;
 }
 
-int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* fp)
+int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GameStateFile* fp)
 {
 	uint32_t bytes = size * count;
 
@@ -147,7 +147,7 @@ int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* f
 	return (bytes / size);
 }
 
-int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* fp)
+int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GameStateFile* fp)
 {
 	const uint32_t bytes = size * count;
 
@@ -181,7 +181,7 @@ int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_
 	return (bytes / size);
 }
 
-int SeekStateFile(GAME_STATE_FILE* fp, long offset, int whence)
+int SeekStateFile(GameStateFile* fp, long offset, int whence)
 {
 	if (whence == SEEK_CUR)
 	{
@@ -204,11 +204,11 @@ int SeekStateFile(GAME_STATE_FILE* fp, long offset, int whence)
 
 void InitPlanetInfo(void)
 {
-	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "wb")};
+	GameStateFile* fp {OpenStateFile(StarinfoFile, "wb")};
 	if (fp)
 	{
 		// Set record offsets for all stars to 0 (not present)
-		const STAR_DESC* pSD {&star_array[0]};
+		const StarDesc* pSD {&star_array[0]};
 		do
 		{
 			swrite_32(fp, 0);
@@ -248,7 +248,7 @@ void GetPlanetInfo(void)
 		}
 	}
 
-	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "rb")};
+	GameStateFile* fp {OpenStateFile(StarinfoFile, "rb")};
 	if (fp)
 	{
 		uint16_t planet_index {};
@@ -306,7 +306,7 @@ void GetPlanetInfo(void)
 
 void PutPlanetInfo(void)
 {
-	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "r+b")};
+	GameStateFile* fp {OpenStateFile(StarinfoFile, "r+b")};
 	if (fp)
 	{
 		uint16_t i {};

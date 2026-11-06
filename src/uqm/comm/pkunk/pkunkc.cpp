@@ -24,7 +24,7 @@
 #include "uqm/gameev.h"
 
 
-static LOCDATA pkunk_desc =
+static ConversationData pkunk_desc =
 	{
 		PKUNK_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -1168,7 +1168,7 @@ static void post_pkunk_enc(void)
 	}
 }
 
-LOCDATA* init_pkunk_comm(void)
+ConversationData* init_pkunk_comm(void)
 {
 	pkunk_desc.init_encounter_func = Intro;
 	pkunk_desc.post_encounter_func = post_pkunk_enc;
@@ -1193,7 +1193,7 @@ LOCDATA* init_pkunk_comm(void)
 		// Ask the player whether to attack or talk.
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&pkunk_desc};
+	ConversationData* retval {&pkunk_desc};
 
 	return (retval);
 }

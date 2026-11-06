@@ -35,9 +35,9 @@ extern "C" {
 // just before the display queue is drawn
 typedef void(BattleFrameCallback)(void);
 
-struct BATTLE_STATE
+struct BattleState
 {
-	bool (*InputFunc)(struct BATTLE_STATE* pInputState);
+	bool (*InputFunc)(struct BattleState* pInputState);
 	bool first_time;
 	TimeCount NextTime;
 	BattleFrameCallback* frame_cb;

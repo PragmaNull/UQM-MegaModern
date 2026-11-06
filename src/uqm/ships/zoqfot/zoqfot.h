@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_zoqfotpik(void);
+RaceDesc* init_zoqfotpik(void);
 
 #if 0 //defined(__cplusplus)
 }

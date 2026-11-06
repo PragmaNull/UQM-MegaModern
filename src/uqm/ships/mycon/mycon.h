@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_mycon(void);
+RaceDesc* init_mycon(void);
 
 #if 0 //defined(__cplusplus)
 }

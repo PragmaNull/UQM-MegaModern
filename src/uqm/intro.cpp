@@ -42,7 +42,7 @@
 
 static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands);
 
-struct PRESENTATION_INPUT_STATE
+struct PresentationInputState
 {
 	/* standard state required by DoInput */
 	bool (*InputFunc)(void* pInputState);
@@ -67,9 +67,9 @@ struct PRESENTATION_INPUT_STATE
 	Color TextBackColor;
 	uqm::SlideTextAlign TextVPos;
 	bool TextTraced;
-	GFXRECT clip_r;
-	GFXRECT tfade_r;
-	TEXT TextLines[uqm::c_slideshowMaxFadeInLines];
+	GfxRect clip_r;
+	GfxRect tfade_r;
+	GfxText TextLines[uqm::c_slideshowMaxFadeInLines];
 	uint16_t LinesCount;
 	char Buffer[512];
 	int MovieFrame;
@@ -77,26 +77,26 @@ struct PRESENTATION_INPUT_STATE
 	TimePeriod InterframeDelay;
 
 	// For DOS Spins
-	GFXRECT StatBox;
+	GfxRect StatBox;
 	uint16_t NumSpinStat;
-	GFXRECT GetRect;
+	GfxRect GetRect;
 	uint16_t CurrentFrameIndex;
 	bool HaveFrame;
 	bool Skip;
 };
 
-struct SPINANIM_INPUT_STATE
+struct SpinAnimInputState
 {
 	/* standard state required by DoInput */
 	bool (*InputFunc)(void* pInputState);
 
 	/* Spinanim state */
-	STAMP anim;
+	GfxStamp anim;
 	TimeCount last_time;
 	int debounce;
 };
 
-struct VIDEO_INPUT_STATE
+struct VideoInputState
 {
 	// standard state required by DoInput
 	bool (*InputFunc)(void* pInputState);
@@ -111,7 +111,7 @@ static Color commandColor(const uqm::SlideCommand& cmd)
 	return BuildColorRgba(cmd.color[0], cmd.color[1], cmd.color[2], 0xff);
 }
 
-static bool DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t FadeType)
+static bool DoFadeScreen(PresentationInputState* pPIS, int msecs, uint8_t FadeType)
 {
 	pPIS->TimeOut = FadeScreen((ScreenFadeType)FadeType, msecs * c_gameSecond / 1000)
 				  + c_gameSecond / 10;
@@ -119,7 +119,7 @@ static bool DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t Fade
 	return true;
 }
 
-static void DrawTextEffect(TEXT* pText, Color Fore, Color Back, bool traced)
+static void DrawTextEffect(GfxText* pText, Color Fore, Color Back, bool traced)
 {
 	if (traced)
 	{
@@ -132,7 +132,7 @@ static void DrawTextEffect(TEXT* pText, Color Fore, Color Back, bool traced)
 	}
 }
 
-static void Present_BatchGraphics(PRESENTATION_INPUT_STATE* pPIS)
+static void Present_BatchGraphics(PresentationInputState* pPIS)
 {
 	if (!pPIS->Batched)
 	{
@@ -141,7 +141,7 @@ static void Present_BatchGraphics(PRESENTATION_INPUT_STATE* pPIS)
 	}
 }
 
-static void Present_UnbatchGraphics(PRESENTATION_INPUT_STATE* pPIS, bool bYield)
+static void Present_UnbatchGraphics(PresentationInputState* pPIS, bool bYield)
 {
 	if (pPIS->Batched)
 	{
@@ -154,7 +154,7 @@ static void Present_UnbatchGraphics(PRESENTATION_INPUT_STATE* pPIS, bool bYield)
 	}
 }
 
-static void Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
+static void Present_GenerateSIS(PresentationInputState* pPIS)
 {
 	const auto ModuleYofsP = [&] {
 		return -(ResScale(79) + IfHd(33));
@@ -172,8 +172,8 @@ static void Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 		return ModuleTopX();
 	};
 	FRAME SisFrame {};
-	STAMP s;
-	GFXRECT r;
+	GfxStamp s;
+	GfxRect r;
 	HOT_SPOT hs;
 	int slot {};
 	uint16_t piece {};
@@ -273,7 +273,7 @@ static void Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 
 static void DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
 {
-	TEXT Text;
+	GfxText Text;
 
 	Text.pStr = buf;
 	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
@@ -284,7 +284,7 @@ static void DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool
 	font_DrawText_Fade(&Text, repair, skip);
 }
 
-static void DoSpinLine(LINE* l, Color front, Color back, bool* skip)
+static void DoSpinLine(GfxLine* l, Color front, Color back, bool* skip)
 {
 	if (!*skip)
 	{
@@ -297,7 +297,7 @@ static void DoSpinLine(LINE* l, Color front, Color back, bool* skip)
 	DrawLine(l, ResScale(1));
 }
 
-static void DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
+static void DoSpinStatBox(GfxRect* r, Color front, Color back, bool* skip)
 {
 	if (!*skip)
 	{
@@ -311,11 +311,11 @@ static void DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
 static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Color front, Color back,
 					   bool* skip)
 {
-	TEXT Text;
+	GfxText Text;
 	uint16_t i {};
-	GFXRECT sq;
-	GFXPOINT c;
-	GFXRECT chd;
+	GfxRect sq;
+	GfxPoint c;
+	GfxRect chd;
 
 	sq.corner.x = x + ResScale(63);
 	sq.corner.y = y - ResScale(5);
@@ -399,9 +399,9 @@ static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_
 	}
 }
 
-static void Present_DrawMovieFrame(PRESENTATION_INPUT_STATE* pPIS)
+static void Present_DrawMovieFrame(PresentationInputState* pPIS)
 {
-	STAMP s;
+	GfxStamp s;
 
 	s.origin.x = 0;
 	s.origin.y = 0;
@@ -421,7 +421,7 @@ static bool ShowPresentationFile(const char* name)
 	return ShowSlidePresentation(*commands);
 }
 
-struct SHIPMAP
+struct IntroShip
 {
 	SPECIES_ID sID;	   // The ship SPECIES_ID, a second index
 	char ditty[256];   // The ditty string (file name)
@@ -431,7 +431,7 @@ struct SHIPMAP
 	uint16_t width;	   // The SD pixel width of the race name
 };
 
-const static SHIPMAP ship_map[] = {
+const static IntroShip ship_map[] = {
 	{ARILOU_ID,		"arilou",	  "ARILOULALEELAY", " SKIFF",		  2,	 123},
 	{CHMMR_ID,	   "chmmr",		"CHMMR",			 " AVATAR",		2,   50 },
 	{EARTHLING_ID,  "earthling",	"EARTHLING",		 " CRUISER",		 130, 79 },
@@ -669,7 +669,7 @@ SeedTextSpinPassThru:
 
 static bool DoPresentation(void* pIS)
 {
-	PRESENTATION_INPUT_STATE* pPIS = (PRESENTATION_INPUT_STATE*)pIS;
+	PresentationInputState* pPIS = (PresentationInputState*)pIS;
 
 	if (PulsedInputState.menu[KEY_MENU_CANCEL]
 		|| (uqm::currentActivity() & CHECK_ABORT))
@@ -888,7 +888,7 @@ static bool DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::Text:
 				{ /* simple text draw */
-					TEXT t;
+					GfxText t;
 
 					t.align = ALIGN_CENTER;
 					t.pStr = cmd.text.c_str();
@@ -982,7 +982,7 @@ static bool DoPresentation(void* pIS)
 					if (cmd.filled > 9 || (cmd.filled + cmd.empty) > 9)
 					{
 						char buf[sizeof(pPIS->Buffer) + 12];
-						TEXT t;
+						GfxText t;
 
 						uqm::log::warn("SPINSTAT: Stats exceed max "
 									   "values '{}'",
@@ -1103,7 +1103,7 @@ static bool DoPresentation(void* pIS)
 				{ /* draw a graphic */
 					const bool drawSis {cmd.op == uqm::SlideOp::DrawSis};
 					const int angle {cmd.angle};
-					STAMP s;
+					GfxStamp s;
 
 					if (!drawSis)
 					{ /* draw stamp by index */
@@ -1182,7 +1182,7 @@ static bool DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::Line:
 				{ /* draw simple line */
-					LINE l;
+					GfxLine l;
 
 					l.first.x = ResScale(cmd.x);
 					l.first.y = ResScale(cmd.y);
@@ -1203,7 +1203,7 @@ static bool DoPresentation(void* pIS)
 					{
 						SeedLineSpin(&x1, &y1, &x2, &y2);
 					}
-					LINE l;
+					GfxLine l;
 
 					x1 <<= resolutionFactor;
 					x2 <<= resolutionFactor;
@@ -1295,7 +1295,7 @@ static bool DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::Animate:
 				{ /* basic frame animation */
-					STAMP s;
+					GfxStamp s;
 					int loops = 0;
 					uint16_t index = 0;
 					TimeCount Now;
@@ -1353,8 +1353,8 @@ static bool DoPresentation(void* pIS)
 
 static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 {
-	GFXRECT OldRect;
-	PRESENTATION_INPUT_STATE pis;
+	GfxRect OldRect;
+	PresentationInputState pis;
 
 	memset(&pis, 0, sizeof(pis));
 	pis.Commands = &commands;
@@ -1398,7 +1398,7 @@ static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& comman
 
 static bool DoVideoInput(void* pIS)
 {
-	const VIDEO_INPUT_STATE* pVIS = (VIDEO_INPUT_STATE*)pIS;
+	const VideoInputState* pVIS = (VideoInputState*)pIS;
 
 	if (!PlayingLegacyVideo(pVIS->CurVideo))
 	{ // Video probably finished
@@ -1458,7 +1458,7 @@ static void FadeClearScreen(void)
 
 static bool ShowLegacyVideo(LEGACY_VIDEO vid)
 {
-	VIDEO_INPUT_STATE vis;
+	VideoInputState vis;
 
 	FadeClearScreen();
 

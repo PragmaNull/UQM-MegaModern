@@ -11,16 +11,16 @@ namespace uqm
 
 struct MenuWidgets::BoundChoice
 {
-	WIDGET_CHOICE widget {};
+	WidgetChoice widget {};
 	MenuWidgets* owner {};
 	SettingBase* setting {};
 	MenuItemDef item {};
-	uqstl::vector<CHOICE_OPTION> options {};
+	uqstl::vector<ChoiceOption> options {};
 };
 
 struct MenuWidgets::BoundSlider
 {
-	WIDGET_SLIDER widget {};
+	WidgetSlider widget {};
 	MenuWidgets* owner {};
 	SettingBase* setting {};
 	MenuItemDef item {};
@@ -28,7 +28,7 @@ struct MenuWidgets::BoundSlider
 
 struct MenuWidgets::BoundText
 {
-	WIDGET_TEXTENTRY widget {};
+	WidgetTextEntry widget {};
 	MenuWidgets* owner {};
 	SettingBase* setting {};
 	MenuItemDef item {};
@@ -36,14 +36,14 @@ struct MenuWidgets::BoundText
 
 struct MenuWidgets::MenuButton
 {
-	WIDGET_BUTTON widget {};
+	WidgetButton widget {};
 	MenuWidgets* owner {};
 	MenuItemDef item {};
 };
 
 struct MenuWidgets::Heading
 {
-	WIDGET_LABEL widget {};
+	WidgetLabel widget {};
 	MenuItemDef item {};
 	uqstl::vector<const char*> lines {};
 };
@@ -54,7 +54,7 @@ namespace
 // The widget callbacks get only the widget, so the bindings are found by widget address.
 uqstl::map<const void*, void*> s_bindings {};
 
-void showText(WIDGET_TEXTENTRY& widget, const SettingBase& setting)
+void showText(WidgetTextEntry& widget, const SettingBase& setting)
 {
 	const uqstl::string text {setting.valueText()};
 	const size_t length {uqstl::min(text.size(), static_cast<size_t>(widget.maxlen))};
@@ -99,16 +99,16 @@ MenuWidgets::~MenuWidgets()
 	}
 }
 
-WIDGET** MenuWidgets::build(const MenuDef& menu)
+Widget** MenuWidgets::build(const MenuDef& menu)
 {
-	auto& list {*m_lists.emplace_back(uqstl::make_unique<uqstl::vector<WIDGET*>>())};
+	auto& list {*m_lists.emplace_back(uqstl::make_unique<uqstl::vector<Widget*>>())};
 	for (const MenuItemDef& item : menu.items)
 	{
 		if (!isAvailable(item))
 		{
 			continue;
 		}
-		WIDGET* widget {};
+		Widget* widget {};
 		switch (item.kind)
 		{
 			case MenuItemKind::Spacer:
@@ -177,7 +177,7 @@ int MenuWidgets::selectedOption(const BoundChoice& choice) const
 	return 0;
 }
 
-WIDGET* MenuWidgets::buildLegacy(const MenuDef& menu, const MenuItemDef& item)
+Widget* MenuWidgets::buildLegacy(const MenuDef& menu, const MenuItemDef& item)
 {
 	const auto found {m_shared.legacy.find(item.widget)};
 	if (found == m_shared.legacy.end())
@@ -189,7 +189,7 @@ WIDGET* MenuWidgets::buildLegacy(const MenuDef& menu, const MenuItemDef& item)
 		return nullptr;
 	}
 
-	WIDGET* widget {found->second};
+	Widget* widget {found->second};
 	if (item.label.empty())
 	{
 		return widget;
@@ -199,22 +199,22 @@ WIDGET* MenuWidgets::buildLegacy(const MenuDef& menu, const MenuItemDef& item)
 	switch (widget->tag)
 	{
 		case WIDGET_TYPE_CHOICE:
-			reinterpret_cast<WIDGET_CHOICE*>(widget)->category = label;
+			reinterpret_cast<WidgetChoice*>(widget)->category = label;
 			break;
 		case WIDGET_TYPE_SLIDER:
-			reinterpret_cast<WIDGET_SLIDER*>(widget)->category = label;
-			fillTooltip(reinterpret_cast<WIDGET_SLIDER*>(widget)->tooltip, stored.tooltip);
+			reinterpret_cast<WidgetSlider*>(widget)->category = label;
+			fillTooltip(reinterpret_cast<WidgetSlider*>(widget)->tooltip, stored.tooltip);
 			break;
 		case WIDGET_TYPE_TEXTENTRY:
-			reinterpret_cast<WIDGET_TEXTENTRY*>(widget)->category = label;
-			fillTooltip(reinterpret_cast<WIDGET_TEXTENTRY*>(widget)->tooltip, stored.tooltip);
+			reinterpret_cast<WidgetTextEntry*>(widget)->category = label;
+			fillTooltip(reinterpret_cast<WidgetTextEntry*>(widget)->tooltip, stored.tooltip);
 			break;
 		case WIDGET_TYPE_CONTROLENTRY:
-			reinterpret_cast<WIDGET_CONTROLENTRY*>(widget)->category = label;
+			reinterpret_cast<WidgetControlEntry*>(widget)->category = label;
 			break;
 		case WIDGET_TYPE_BUTTON:
-			reinterpret_cast<WIDGET_BUTTON*>(widget)->name = label;
-			fillTooltip(reinterpret_cast<WIDGET_BUTTON*>(widget)->tooltip, stored.tooltip);
+			reinterpret_cast<WidgetButton*>(widget)->name = label;
+			fillTooltip(reinterpret_cast<WidgetButton*>(widget)->tooltip, stored.tooltip);
 			break;
 		default:
 			uqm::log::error("Menu '{}': widget '{}' has no label.", menu.id, item.widget);
@@ -223,7 +223,7 @@ WIDGET* MenuWidgets::buildLegacy(const MenuDef& menu, const MenuItemDef& item)
 	return widget;
 }
 
-WIDGET* MenuWidgets::buildChoice(const MenuDef& menu, const MenuItemDef& item)
+Widget* MenuWidgets::buildChoice(const MenuDef& menu, const MenuItemDef& item)
 {
 	SettingBase* setting {};
 	if (item.state.empty())
@@ -255,14 +255,14 @@ WIDGET* MenuWidgets::buildChoice(const MenuDef& menu, const MenuItemDef& item)
 				label = supplied;
 			}
 		}
-		CHOICE_OPTION widgetOption {label, {}};
+		ChoiceOption widgetOption {label, {}};
 		fillTooltip(widgetOption.tooltip, option.tooltip);
 		choice.options.push_back(widgetOption);
 	}
 
 	const int selected {selectedOption(choice)};
 
-	WIDGET_CHOICE& widget {choice.widget};
+	WidgetChoice& widget {choice.widget};
 	widget.tag = WIDGET_TYPE_CHOICE;
 	widget.handleEvent = Widget_HandleEventChoice;
 	widget.receiveFocus = Widget_ReceiveFocusChoice;
@@ -278,10 +278,10 @@ WIDGET* MenuWidgets::buildChoice(const MenuDef& menu, const MenuItemDef& item)
 	widget.onChange = onChoiceChanged;
 
 	s_bindings[&widget] = &choice;
-	return reinterpret_cast<WIDGET*>(&widget);
+	return reinterpret_cast<Widget*>(&widget);
 }
 
-WIDGET* MenuWidgets::buildSlider(const MenuDef& menu, const MenuItemDef& item)
+Widget* MenuWidgets::buildSlider(const MenuDef& menu, const MenuItemDef& item)
 {
 	SettingBase* setting {m_settings.find(item.setting)};
 	if (setting == nullptr)
@@ -295,7 +295,7 @@ WIDGET* MenuWidgets::buildSlider(const MenuDef& menu, const MenuItemDef& item)
 	slider.setting = setting;
 	slider.item = item;
 
-	WIDGET_SLIDER& widget {slider.widget};
+	WidgetSlider& widget {slider.widget};
 	widget.tag = WIDGET_TYPE_SLIDER;
 	widget.handleEvent = Widget_HandleEventSlider;
 	widget.receiveFocus = Widget_ReceiveFocusSimple;
@@ -312,10 +312,10 @@ WIDGET* MenuWidgets::buildSlider(const MenuDef& menu, const MenuItemDef& item)
 	widget.onChange = onSliderChanged;
 
 	s_bindings[&widget] = &slider;
-	return reinterpret_cast<WIDGET*>(&widget);
+	return reinterpret_cast<Widget*>(&widget);
 }
 
-WIDGET* MenuWidgets::buildText(const MenuDef& menu, const MenuItemDef& item)
+Widget* MenuWidgets::buildText(const MenuDef& menu, const MenuItemDef& item)
 {
 	SettingBase* setting {m_settings.find(item.setting)};
 	if (setting == nullptr)
@@ -329,7 +329,7 @@ WIDGET* MenuWidgets::buildText(const MenuDef& menu, const MenuItemDef& item)
 	text.setting = setting;
 	text.item = item;
 
-	WIDGET_TEXTENTRY& widget {text.widget};
+	WidgetTextEntry& widget {text.widget};
 	widget.tag = WIDGET_TYPE_TEXTENTRY;
 	widget.handleEvent = Widget_HandleEventTextEntry;
 	widget.receiveFocus = Widget_ReceiveFocusSimple;
@@ -346,20 +346,20 @@ WIDGET* MenuWidgets::buildText(const MenuDef& menu, const MenuItemDef& item)
 	showText(widget, *setting);
 
 	s_bindings[&widget] = &text;
-	return reinterpret_cast<WIDGET*>(&widget);
+	return reinterpret_cast<Widget*>(&widget);
 }
 
-WIDGET* MenuWidgets::buildMenuButton(const MenuItemDef& item)
+Widget* MenuWidgets::buildMenuButton(const MenuItemDef& item)
 {
 	auto& button {*m_menuButtons.emplace_back(uqstl::make_unique<MenuButton>())};
 	button.owner = this;
 	button.item = item;
 
-	WIDGET_BUTTON& widget {button.widget};
+	WidgetButton& widget {button.widget};
 	initButtonWidget(widget, button.item.label, button.item.tooltip, onMenuButtonEvent);
 
 	s_bindings[&widget] = &button;
-	return reinterpret_cast<WIDGET*>(&widget);
+	return reinterpret_cast<Widget*>(&widget);
 }
 
 void MenuWidgets::refresh()
@@ -380,7 +380,7 @@ void MenuWidgets::refresh()
 	}
 }
 
-WIDGET* MenuWidgets::buildHeading(const MenuItemDef& item)
+Widget* MenuWidgets::buildHeading(const MenuItemDef& item)
 {
 	auto& heading {*m_headings.emplace_back(uqstl::make_unique<Heading>())};
 	heading.item = item;
@@ -389,12 +389,12 @@ WIDGET* MenuWidgets::buildHeading(const MenuItemDef& item)
 		heading.lines.push_back(line.c_str());
 	}
 
-	WIDGET_LABEL& widget {heading.widget};
+	WidgetLabel& widget {heading.widget};
 	initLabelWidget(widget, heading.lines);
-	return reinterpret_cast<WIDGET*>(&widget);
+	return reinterpret_cast<Widget*>(&widget);
 }
 
-void initButtonWidget(WIDGET_BUTTON& widget, const uqstl::string& name, const uqstl::vector<uqstl::string>& tooltip, int (*handler)(WIDGET*, int))
+void initButtonWidget(WidgetButton& widget, const uqstl::string& name, const uqstl::vector<uqstl::string>& tooltip, int (*handler)(Widget*, int))
 {
 	widget = {};
 	widget.tag = WIDGET_TYPE_BUTTON;
@@ -407,7 +407,7 @@ void initButtonWidget(WIDGET_BUTTON& widget, const uqstl::string& name, const uq
 	fillTooltip(widget.tooltip, tooltip);
 }
 
-void initLabelWidget(WIDGET_LABEL& widget, uqstl::vector<const char*>& lines)
+void initLabelWidget(WidgetLabel& widget, uqstl::vector<const char*>& lines)
 {
 	widget = {};
 	widget.tag = WIDGET_TYPE_LABEL;
@@ -435,7 +435,7 @@ bool MenuWidgets::applyChange(SettingBase& setting, uqstl::string_view text)
 	return true;
 }
 
-void MenuWidgets::onChoiceChanged(WIDGET_CHOICE* self, int oldValue)
+void MenuWidgets::onChoiceChanged(WidgetChoice* self, int oldValue)
 {
 	const auto found {s_bindings.find(self)};
 	if (found == s_bindings.end())
@@ -480,7 +480,7 @@ void MenuWidgets::onChoiceChanged(WIDGET_CHOICE* self, int oldValue)
 	}
 }
 
-void MenuWidgets::onTextChanged(WIDGET_TEXTENTRY* self)
+void MenuWidgets::onTextChanged(WidgetTextEntry* self)
 {
 	const auto found {s_bindings.find(self)};
 	if (found == s_bindings.end())
@@ -492,7 +492,7 @@ void MenuWidgets::onTextChanged(WIDGET_TEXTENTRY* self)
 	showText(*self, *text.setting);
 }
 
-int MenuWidgets::onMenuButtonEvent(WIDGET* self, int event)
+int MenuWidgets::onMenuButtonEvent(Widget* self, int event)
 {
 	if (event != WIDGET_EVENT_SELECT)
 	{
@@ -512,7 +512,7 @@ int MenuWidgets::onMenuButtonEvent(WIDGET* self, int event)
 	return true;
 }
 
-void MenuWidgets::onSliderChanged(WIDGET_SLIDER* self)
+void MenuWidgets::onSliderChanged(WidgetSlider* self)
 {
 	const auto found {s_bindings.find(self)};
 	if (found == s_bindings.end())

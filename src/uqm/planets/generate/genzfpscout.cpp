@@ -23,8 +23,8 @@
 #include "../../state.h"
 
 
-static bool GenerateZoqFotPikScout_initNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateZoqFotPikScout_reinitNpcs(SOLARSYS_STATE* solarSys);
+static bool GenerateZoqFotPikScout_initNpcs(SolarSystemState* solarSys);
+static bool GenerateZoqFotPikScout_reinitNpcs(SolarSystemState* solarSys);
 
 
 const GenerateFunctions generateZoqFotPikScoutFunctions = {
@@ -44,7 +44,7 @@ const GenerateFunctions generateZoqFotPikScoutFunctions = {
 };
 
 
-static bool GenerateZoqFotPikScout_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateZoqFotPikScout_initNpcs(SolarSystemState* solarSys)
 {
 	if (!uqm::gameState().flag(uqm::GameFlag::MET_ZOQFOT))
 	{
@@ -64,7 +64,7 @@ static bool GenerateZoqFotPikScout_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateZoqFotPikScout_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateZoqFotPikScout_reinitNpcs(SolarSystemState* solarSys)
 {
 	GenerateDefault_reinitNpcs(solarSys);
 
@@ -79,7 +79,7 @@ static bool GenerateZoqFotPikScout_reinitNpcs(SOLARSYS_STATE* solarSys)
 		return true; // still nothing to check
 	}
 
-	IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+	InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == ZOQFOTPIK_SHIP

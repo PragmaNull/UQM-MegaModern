@@ -40,9 +40,9 @@ void TFB_DrawScreen_Line(int x1, int y1, int x2, int y2, Color color,
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_Rect(GFXRECT* rect, Color color, DrawMode mode, SCREEN dest)
+void TFB_DrawScreen_Rect(GfxRect* rect, Color color, DrawMode mode, SCREEN dest)
 {
-	GFXRECT locRect;
+	GfxRect locRect;
 	TFB_DrawCommand DC;
 
 	if (!rect)
@@ -114,7 +114,7 @@ void TFB_DrawScreen_FontChar(TFB_Char* fontChar, TFB_Image* backing,
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GFXRECT* r, SCREEN src)
+void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GfxRect* r, SCREEN src)
 {
 	TFB_DrawCommand DC;
 
@@ -126,9 +126,9 @@ void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GFXRECT* r, SCREEN src)
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_Copy(const GFXRECT* r, SCREEN src, SCREEN dest)
+void TFB_DrawScreen_Copy(const GfxRect* r, SCREEN src, SCREEN dest)
 {
-	GFXRECT locRect;
+	GfxRect locRect;
 	TFB_DrawCommand DC;
 
 	if (!r)
@@ -229,7 +229,7 @@ void TFB_DrawImage_Line(int x1, int y1, int x2, int y2, Color color,
 	target->dirty = true;
 }
 
-void TFB_DrawImage_Rect(GFXRECT* rect, Color color, DrawMode mode, TFB_Image* target)
+void TFB_DrawImage_Rect(GfxRect* rect, Color color, DrawMode mode, TFB_Image* target)
 {
 	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_Rect(rect, color, mode, target->NormalImg);
@@ -322,7 +322,7 @@ TFB_Image* TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 TFB_Image* TFB_DrawImage_New_Rotated(TFB_Image* img, int angle)
 {
 	TFB_Canvas dst {};
-	EXTENT size;
+	GfxExtent size;
 	TFB_Image* newimg {};
 
 	/* sanity check */
@@ -437,8 +437,8 @@ void TFB_DrawImage_FixScaling(TFB_Image* image, int scaleTarget, uqm::TFBScaleMo
 	}
 }
 
-bool TFB_DrawImage_Intersect(TFB_Image* img1, GFXPOINT img1org,
-							 TFB_Image* img2, GFXPOINT img2org, const GFXRECT* interRect)
+bool TFB_DrawImage_Intersect(TFB_Image* img1, GfxPoint img1org,
+							 TFB_Image* img2, GfxPoint img2org, const GfxRect* interRect)
 {
 	const uqm::LockGuard lock1 {img1->mutex};
 	const uqm::LockGuard lock2 {img2->mutex};
@@ -446,8 +446,8 @@ bool TFB_DrawImage_Intersect(TFB_Image* img1, GFXPOINT img1org,
 									img2->NormalImg, img2org, interRect);
 }
 
-void TFB_DrawImage_CopyRect(TFB_Image* source, const GFXRECT* srcRect,
-							TFB_Image* target, GFXPOINT dstPt)
+void TFB_DrawImage_CopyRect(TFB_Image* source, const GfxRect* srcRect,
+							TFB_Image* target, GfxPoint dstPt)
 {
 	const uqm::LockGuard sourceLock {source->mutex};
 	const uqm::LockGuard targetLock {target->mutex};

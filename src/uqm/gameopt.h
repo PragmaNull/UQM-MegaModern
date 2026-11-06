@@ -23,7 +23,7 @@
 extern "C" {
 #endif
 
-extern void ConfirmSaveLoad(STAMP* MsgStamp);
+extern void ConfirmSaveLoad(GfxStamp* MsgStamp);
 extern bool GameOptions(void);
 
 typedef void(NamingCallback)(void);

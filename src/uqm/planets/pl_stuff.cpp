@@ -45,8 +45,8 @@ static int rotheight;
 
 void DrawCurrentPlanetSphere(void)
 {
-	STAMP s;
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	GfxStamp s;
+	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	GFXCONTEXT oldContext = SetContext(PlanetContext);
 
 	s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
@@ -120,8 +120,8 @@ void DrawCurrentPlanetSphere(void)
 // Draw the planet sphere and any extra graphic (like a shield) if present
 void DrawPlanetSphere(int x, int y, bool back)
 {
-	STAMP s;
-	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	GfxStamp s;
+	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 
 	BatchGraphics();
 	// Draw background on static image and not during zoom
@@ -162,7 +162,7 @@ void DrawDefaultPlanetSphere(void)
 
 void RerenderPlanetSphere(void)
 {
-	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 
 	if (uqm::UQMOptions::read().tintPlanSphere != uqm::EmulationMode::PC)
 	{
@@ -193,7 +193,7 @@ void RerenderPlanetSphere(void)
 void InitSphereRotation(int direction, bool shielded, uint16_t width,
 						uint16_t height)
 {
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 
 	rotwidth = width;
 	rotheight = height;
@@ -223,7 +223,7 @@ void InitSphereRotation(int direction, bool shielded, uint16_t width,
 
 void UninitSphereRotation(void)
 {
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 
 	if (Orbit->WorkFrame)
 	{
@@ -235,7 +235,7 @@ void UninitSphereRotation(void)
 
 void PrepareNextRotationFrame(void)
 {
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 
 	// Generate the next rotation frame
 	// We alternate between the frames because we do not call
@@ -295,9 +295,9 @@ void PrepareNextRotationFrame(void)
 	}
 }
 
-void PrepareNextRotationFrameForIP(PLANET_DESC* pPlanetDesc, int16_t frameCounter)
+void PrepareNextRotationFrameForIP(SystemPlanet* pPlanetDesc, int16_t frameCounter)
 {
-	PLANET_ORBIT* Orbit = &pPlanetDesc->orbit;
+	PlanetOrbit* Orbit = &pPlanetDesc->orbit;
 	const int oldPointIndex = pPlanetDesc->rotPointIndex;
 	// Go to next point, taking care of wraparounds
 
@@ -382,13 +382,13 @@ static constexpr auto ZoomTime {(GameTicksPerSecond * 6 / 5)};
 // when entering orbit
 void ZoomInPlanetSphere(void)
 {
-	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	const int base = GscaleIdentity;
 	int oldScale {};
 	int frameCount {};
 	int zoomCorner {};
-	GFXRECT frameRect;
-	GFXRECT repairRect;
+	GfxRect frameRect;
+	GfxRect repairRect;
 	TimeCount NextTime;
 	TimeCount Now;
 	TimeCount RenderNextTime;
@@ -414,7 +414,7 @@ void ZoomInPlanetSphere(void)
 	for (int i {0}; i <= frameCount; ++i)
 	{
 		double scale {NAN};
-		GFXPOINT pt;
+		GfxPoint pt;
 
 		Now = GetTimeCounter();
 		NextTime = Now + (c_gameSecond / ZoomRate());
@@ -468,7 +468,7 @@ void ZoomInPlanetSphere(void)
 
 static constexpr auto PlanetRotationFps {(c_gameSecond / 60)};
 
-void RotatePlanetSphere(bool keepRate, STAMP* onTop)
+void RotatePlanetSphere(bool keepRate, GfxStamp* onTop)
 {
 	static TimeCount NextTime;
 	static TimeCount OutNextTime;
@@ -507,11 +507,11 @@ void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 
 static void renderTintFrame(Color tintColor)
 {
-	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	DrawMode mode;
 	DrawMode oldMode;
-	STAMP s;
-	GFXRECT r;
+	GfxStamp s;
+	GfxRect r;
 	double is_red {NAN};
 
 	if (sameColor(BrightRedColor, tintColor))
@@ -548,7 +548,7 @@ static void renderTintFrame(Color tintColor)
 
 void DrawPCScanTint(uint16_t scan)
 {
-	STAMP s;
+	GfxStamp s;
 
 	s.origin.x = 0;
 	s.origin.y = 0;
@@ -563,8 +563,8 @@ void DrawPCScanTint(uint16_t scan)
 // tintColor.a is ignored
 void DrawPlanet(int tintY, Color tintColor)
 {
-	STAMP s;
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	GfxStamp s;
+	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 
 	s.origin.x = 0;
 	s.origin.y = 0;
@@ -594,9 +594,9 @@ void DrawPlanet(int tintY, Color tintColor)
 
 		if (tintY >= 0)
 		{ // tinted piece showing, draw tinted piece
-			GFXRECT oldClipRect;
-			GFXRECT clipRect;
-			GFXRECT edge;
+			GfxRect oldClipRect;
+			GfxRect clipRect;
+			GfxRect edge;
 			uint16_t i {};
 
 			// adjust cliprect to confine the tint

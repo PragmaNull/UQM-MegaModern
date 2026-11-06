@@ -29,7 +29,7 @@ GFXCONTEXT* contextEnd = &firstContext;
 // Where to put the next context.
 #endif
 
-PRIMITIVE _locPrim;
+Primitive _locPrim;
 
 FONT _CurFontPtr;
 
@@ -78,7 +78,7 @@ GFXCONTEXT CreateContextAux(const char* name)
 GFXCONTEXT CreateContextAux(void)
 #endif /* !defined(DEBUG) */
 {
-	GFXCONTEXT NewContext {new CONTEXT_DESC {}};
+	GFXCONTEXT NewContext {new GraphicsContextDesc {}};
 	if (NewContext)
 	{
 		/* initialize context */
@@ -238,9 +238,9 @@ DrawMode GetContextDrawMode(void)
 }
 
 // Returns a rect based at 0,0 and the size of context foreground frame
-static inline GFXRECT _get_context_fg_rect(void)
+static inline GfxRect _get_context_fg_rect(void)
 {
-	GFXRECT r = {
+	GfxRect r = {
 		{0, 0},
 		{0, 0}
 	  };
@@ -251,7 +251,7 @@ static inline GFXRECT _get_context_fg_rect(void)
 	return r;
 }
 
-bool SetContextClipRect(GFXRECT* lpRect)
+bool SetContextClipRect(GfxRect* lpRect)
 {
 	if (!ContextActive())
 	{
@@ -277,7 +277,7 @@ bool SetContextClipRect(GFXRECT* lpRect)
 	return true;
 }
 
-bool GetContextClipRect(GFXRECT* lpRect)
+bool GetContextClipRect(GfxRect* lpRect)
 {
 	if (!ContextActive())
 	{
@@ -294,7 +294,7 @@ bool GetContextClipRect(GFXRECT* lpRect)
 	return (bool)(_pCurContext->ClipRect.extent.width != 0);
 }
 
-GFXPOINT SetContextOrigin(GFXPOINT orgOffset)
+GfxPoint SetContextOrigin(GfxPoint orgOffset)
 {
 	// XXX: This is a hack, kind of. But that's what the original did.
 	return SetFrameHot(_CurFramePtr, orgOffset);
@@ -357,7 +357,7 @@ void FixContextFontEffect(void)
 	}
 	else
 	{ // solid color backing
-		GFXRECT r = {
+		GfxRect r = {
 			{0, 0},
 			{w, h}
 		  };
@@ -372,11 +372,11 @@ void FixContextFontEffect(void)
 
 // 'area' may be nullptr to copy the entire GFXCONTEXT cliprect
 // 'area' is relative to the GFXCONTEXT cliprect
-DRAWABLE CopyContextRect(const GFXRECT* area)
+DRAWABLE CopyContextRect(const GfxRect* area)
 {
-	GFXRECT clipRect;
-	GFXRECT fgRect;
-	GFXRECT r;
+	GfxRect clipRect;
+	GfxRect fgRect;
+	GfxRect r;
 
 	if (!ContextActive() || !_CurFramePtr)
 	{

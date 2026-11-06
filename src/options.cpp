@@ -106,7 +106,7 @@ uqstl::vector<uint32_t> g_addonList {};
 
 namespace uqm
 {
-INPUT_TEMPLATE input_templates[6];
+InputTemplate input_templates[6];
 
 uqm::io::FileSystem& gameFileSystem()
 {
@@ -148,7 +148,7 @@ static void mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, 
 static void mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative);
 
 // Looks for a file 'file' in all 'numLocs' locations from 'locs'.
-// returns the first element from locs where 'file' is found.
+// returns the first Element from locs where 'file' is found.
 // If there is no matching location, nullptr will be returned and
 // errno will be set to 'ENOENT'.
 // Entries from 'locs' that together with 'file' are longer than

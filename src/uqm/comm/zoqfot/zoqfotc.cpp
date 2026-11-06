@@ -38,7 +38,7 @@ static constexpr auto PikTalkIndex {29};
 static constexpr auto PikTalkFrames {2};
 static constexpr auto FotToPik {26};
 
-static LOCDATA zoqfot_desc =
+static ConversationData zoqfot_desc =
 	{
 		ZOQFOTPIK_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -973,7 +973,7 @@ static void post_zoqfot_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_zoqfot_comm(void)
+ConversationData* init_zoqfot_comm(void)
 {
 	zoqfot_desc.init_encounter_func = Intro;
 	zoqfot_desc.post_encounter_func = post_zoqfot_enc;
@@ -995,7 +995,7 @@ LOCDATA* init_zoqfot_comm(void)
 		setSegue(Segue_hostile);
 	}
 
-	LOCDATA* retval {&zoqfot_desc};
+	ConversationData* retval {&zoqfot_desc};
 
 	return (retval);
 }

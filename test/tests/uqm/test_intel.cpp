@@ -27,7 +27,7 @@ protected:
 		// Reset god mode flags
 		m_godModes = GodModeFlags::None;
 
-		// Initialize test element
+		// Initialize test Element
 		m_testElement = {};
 		m_testElement.playerNr = 0;
 	}
@@ -40,7 +40,7 @@ protected:
 		m_godModes = GodModeFlags::None;
 	}
 
-	ELEMENT m_testElement {};
+	Element m_testElement {};
 	PlayerControlFlags m_playerControl[NumPlayers] {};
 	GodModeFlags m_godModes {};
 };
@@ -89,7 +89,7 @@ TEST_F(AntiCheatTest, AntiCheat_WrongGodModeFlag_ReturnsFalse)
 
 TEST_F(AntiCheatTest, AntiCheat_Player0AI_ElementPlayer1_SwapFalse_ReturnsTrue)
 {
-	// Arrange: Player 0 is AI, element belongs to player 1, no swap
+	// Arrange: Player 0 is AI, Element belongs to player 1, no swap
 	m_playerControl[0] = ComputerControlFlags;
 	m_playerControl[1] = PlayerControlFlags::Human;
 	m_godModes = GodModeFlags::InfiniteBattery;
@@ -101,19 +101,19 @@ TEST_F(AntiCheatTest, AntiCheat_Player0AI_ElementPlayer1_SwapFalse_ReturnsTrue)
 
 TEST_F(AntiCheatTest, AntiCheat_Player0AI_ElementPlayer0_SwapFalse_ReturnsFalse)
 {
-	// Arrange: Player 0 is AI, element belongs to player 0, no swap
+	// Arrange: Player 0 is AI, Element belongs to player 0, no swap
 	m_playerControl[0] = ComputerControlFlags;
 	m_playerControl[1] = PlayerControlFlags::Human;
 	m_godModes = GodModeFlags::InfiniteBattery;
 	m_testElement.playerNr = 0;
 
-	// Act & Assert: Should not allow cheat (AI's own element)
+	// Act & Assert: Should not allow cheat (AI's own Element)
 	EXPECT_FALSE(antiCheatImpl(&m_testElement, false, GodModeFlags::InfiniteBattery, m_playerControl, m_godModes));
 }
 
 TEST_F(AntiCheatTest, AntiCheat_Player1AI_ElementPlayer0_SwapFalse_ReturnsTrue)
 {
-	// Arrange: Player 1 is AI, element belongs to player 0, no swap
+	// Arrange: Player 1 is AI, Element belongs to player 0, no swap
 	m_playerControl[0] = PlayerControlFlags::Human;
 	m_playerControl[1] = ComputerControlFlags;
 	m_godModes = GodModeFlags::InfiniteBattery;
@@ -125,19 +125,19 @@ TEST_F(AntiCheatTest, AntiCheat_Player1AI_ElementPlayer0_SwapFalse_ReturnsTrue)
 
 TEST_F(AntiCheatTest, AntiCheat_Player1AI_ElementPlayer1_SwapFalse_ReturnsFalse)
 {
-	// Arrange: Player 1 is AI, element belongs to player 1, no swap
+	// Arrange: Player 1 is AI, Element belongs to player 1, no swap
 	m_playerControl[0] = PlayerControlFlags::Human;
 	m_playerControl[1] = ComputerControlFlags;
 	m_godModes = GodModeFlags::InfiniteBattery;
 	m_testElement.playerNr = 1;
 
-	// Act & Assert: Should not allow cheat (AI's own element)
+	// Act & Assert: Should not allow cheat (AI's own Element)
 	EXPECT_FALSE(antiCheatImpl(&m_testElement, false, GodModeFlags::InfiniteBattery, m_playerControl, m_godModes));
 }
 
 TEST_F(AntiCheatTest, AntiCheat_Player0AI_ElementPlayer0_SwapTrue_ReturnsTrue)
 {
-	// Arrange: Player 0 is AI, element belongs to player 0, swap enabled
+	// Arrange: Player 0 is AI, Element belongs to player 0, swap enabled
 	m_playerControl[0] = ComputerControlFlags;
 	m_playerControl[1] = PlayerControlFlags::Human;
 	m_godModes = GodModeFlags::InfiniteBattery;
@@ -149,31 +149,31 @@ TEST_F(AntiCheatTest, AntiCheat_Player0AI_ElementPlayer0_SwapTrue_ReturnsTrue)
 
 TEST_F(AntiCheatTest, AntiCheat_Player0AI_ElementPlayer1_SwapTrue_ReturnsFalse)
 {
-	// Arrange: Player 0 is AI, element belongs to player 1, swap enabled
+	// Arrange: Player 0 is AI, Element belongs to player 1, swap enabled
 	m_playerControl[0] = ComputerControlFlags;
 	m_playerControl[1] = PlayerControlFlags::Human;
 	m_godModes = GodModeFlags::InfiniteBattery;
 	m_testElement.playerNr = 1;
 
-	// Act & Assert: With swap, player 1 maps to AI's own element
+	// Act & Assert: With swap, player 1 maps to AI's own Element
 	EXPECT_FALSE(antiCheatImpl(&m_testElement, true, GodModeFlags::InfiniteBattery, m_playerControl, m_godModes));
 }
 
 TEST_F(AntiCheatTest, AntiCheat_Player1AI_ElementPlayer0_SwapTrue_ReturnsFalse)
 {
-	// Arrange: Player 1 is AI, element belongs to player 0, swap enabled
+	// Arrange: Player 1 is AI, Element belongs to player 0, swap enabled
 	m_playerControl[0] = PlayerControlFlags::Human;
 	m_playerControl[1] = ComputerControlFlags;
 	m_godModes = GodModeFlags::InfiniteBattery;
 	m_testElement.playerNr = 0;
 
-	// Act & Assert: With swap, player 0 maps to AI's own element
+	// Act & Assert: With swap, player 0 maps to AI's own Element
 	EXPECT_FALSE(antiCheatImpl(&m_testElement, true, GodModeFlags::InfiniteBattery, m_playerControl, m_godModes));
 }
 
 TEST_F(AntiCheatTest, AntiCheat_Player1AI_ElementPlayer1_SwapTrue_ReturnsTrue)
 {
-	// Arrange: Player 1 is AI, element belongs to player 1, swap enabled
+	// Arrange: Player 1 is AI, Element belongs to player 1, swap enabled
 	m_playerControl[0] = PlayerControlFlags::Human;
 	m_playerControl[1] = ComputerControlFlags;
 	m_godModes = GodModeFlags::InfiniteBattery;
@@ -414,11 +414,11 @@ TEST_F(AntiCheatTest, Consistency_AntiCheatVsAntiCheatAlt)
 	// antiCheatAlt should return true for human vs AI
 	EXPECT_TRUE(antiCheatAltImpl(GodModeFlags::InfiniteBattery, m_playerControl, m_godModes));
 
-	// antiCheat should return true when element belongs to human player
+	// antiCheat should return true when Element belongs to human player
 	m_testElement.playerNr = 1;
 	EXPECT_TRUE(antiCheatImpl(&m_testElement, false, GodModeFlags::InfiniteBattery, m_playerControl, m_godModes));
 
-	// antiCheat should return false when element belongs to AI player
+	// antiCheat should return false when Element belongs to AI player
 	m_testElement.playerNr = 0;
 	EXPECT_FALSE(antiCheatImpl(&m_testElement, false, GodModeFlags::InfiniteBattery, m_playerControl, m_godModes));
 }

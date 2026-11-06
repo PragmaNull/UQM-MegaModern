@@ -65,16 +65,16 @@ typedef enum
 	NUM_STARMAPS
 } CURRENT_STARMAP_SHOWN;
 
-struct NAMEPLATE
+struct Nameplate
 {
-	GFXRECT rect;
-	TEXT text;
+	GfxRect rect;
+	GfxText text;
 	uint8_t index;
 };
 
-static void SwapPlates(NAMEPLATE* n1, NAMEPLATE* n2)
+static void SwapPlates(Nameplate* n1, Nameplate* n2)
 {
-	const NAMEPLATE temp = *n1;
+	const Nameplate temp = *n1;
 	*n1 = *n2;
 	*n2 = temp;
 }
@@ -83,8 +83,8 @@ static constexpr auto IgnoreMovingSoi {(1 << 5)};
 static constexpr auto PreDeathSoi {(1 << 6)};
 static constexpr auto DeathSoi {(1 << 7)};
 
-static GFXPOINT cursorLoc;
-static GFXPOINT mapOrigin;
+static GfxPoint cursorLoc;
+static GfxPoint mapOrigin;
 static int zoomLevel;
 static FRAME StarMapFrame;
 static CURRENT_STARMAP_SHOWN which_starmap;
@@ -185,12 +185,12 @@ constexpr auto UniverseToDispy2(const auto& uy) { return (IsHd() ? universeToDis
 
 static bool transition_pending;
 
-static void flashCurrentLocation(GFXPOINT* where, bool force)
+static void flashCurrentLocation(GfxPoint* where, bool force)
 {
 	static bool redraw = false;
 	static uint8_t c = 0;
 	static int val = -2;
-	static GFXPOINT universe;
+	static GfxPoint universe;
 	static TimeCount NextTime {};
 
 	if (where)
@@ -214,7 +214,7 @@ static void flashCurrentLocation(GFXPOINT* where, bool force)
 	if (force || redraw)
 	{
 		Color OldColor;
-		STAMP s;
+		GfxStamp s;
 
 		GFXCONTEXT OldContext {SetContext(SpaceContext)};
 
@@ -234,7 +234,7 @@ static void flashCurrentLocation(GFXPOINT* where, bool force)
 
 static void DrawCursor(int16_t curs_x, int16_t curs_y)
 {
-	STAMP s;
+	GfxStamp s;
 
 	s.origin.x = curs_x;
 	s.origin.y = curs_y;
@@ -243,9 +243,9 @@ static void DrawCursor(int16_t curs_x, int16_t curs_y)
 	DrawStamp(&s);
 }
 
-static void DrawMarker(GFXPOINT dest, uint8_t type)
+static void DrawMarker(GfxPoint dest, uint8_t type)
 {
-	STAMP s;
+	GfxStamp s;
 
 	if (type > 2)
 	{
@@ -260,7 +260,7 @@ static void DrawMarker(GFXPOINT dest, uint8_t type)
 	DrawStamp(&s);
 }
 
-static void DrawAutoPilot(GFXPOINT* pDstPt)
+static void DrawAutoPilot(GfxPoint* pDstPt)
 {
 	int16_t dx {};
 	int16_t dy {};
@@ -270,8 +270,8 @@ static void DrawAutoPilot(GFXPOINT* pDstPt)
 	int16_t yerror {};
 	int16_t cycle {};
 	int16_t delta {};
-	GFXPOINT pt;
-	STAMP s;
+	GfxPoint pt;
+	GfxStamp s;
 
 	if (!inHQSpace())
 	{
@@ -358,7 +358,7 @@ static void DrawAutoPilot(GFXPOINT* pDstPt)
 	}
 }
 
-static void GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
+static void GetSphereRect(FleetInfo* FleetPtr, GfxRect* pRect, GfxRect* pRepairRect)
 {
 	const long diameter {(long)(FleetPtr->known_strength * SphereRadiusIncrement)};
 	pRect->extent.width = UniverseToDispx(diameter)
@@ -388,7 +388,7 @@ static void GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepair
 	pRect->corner.y -= pRect->extent.height >> 1;
 
 	{
-		TEXT t;
+		GfxText t;
 
 		t.baseline.x = pRect->corner.x + (pRect->extent.width >> 1);
 		t.baseline.y = pRect->corner.y + (pRect->extent.height >> 1)
@@ -426,10 +426,10 @@ static void GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepair
 }
 
 // For showing the War-Era situation in starmap
-static void GetWarEraSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
+static void GetWarEraSphereRect(FleetInfo* FleetPtr, GfxRect* pRect, GfxRect* pRepairRect)
 {
 	const long diameter = (long)(WarEraStrength(FleetPtr->SpeciesID) * SphereRadiusIncrement);
-	const GFXPOINT loc = SeedFleetLocation(FleetPtr, plot_map, WAR_ERA);
+	const GfxPoint loc = SeedFleetLocation(FleetPtr, plot_map, WAR_ERA);
 
 	pRect->extent.width = UniverseToDispx(diameter)
 						- UniverseToDispx(0);
@@ -480,10 +480,10 @@ static void GetWarEraSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* p
 	pRepairRect->extent.height += ResScale(1);
 }
 
-static unsigned int FuelRequiredTo(GFXPOINT dest)
+static unsigned int FuelRequiredTo(GfxPoint dest)
 {
 	uint16_t fuel_required {};
-	GFXPOINT pt;
+	GfxPoint pt;
 
 	if (!inHQSpace())
 	{
@@ -514,29 +514,29 @@ static unsigned int FuelRequiredTo(GFXPOINT dest)
 // Begin Malin's fuel to Sol ellipse code. Edited by Kruzen
 constexpr auto MathRound(const auto& X) { return ((X) + ((int)((X) + 0.5) > (X) ? 1 : 0)); }
 
-GFXPOINT GetPointOfEllipse(double a, double b, double radian)
+GfxPoint GetPointOfEllipse(double a, double b, double radian)
 {
 	const double t[2] = {a * cos(radian), b * sin(radian)};
-	return GFXPOINT {(int16_t)MathRound(t[0]), (int16_t)MathRound(t[1])};
+	return GfxPoint {(int16_t)MathRound(t[0]), (int16_t)MathRound(t[1])};
 }
 
-GFXPOINT ShiftPoint(GFXPOINT p, GFXPOINT s)
+GfxPoint ShiftPoint(GfxPoint p, GfxPoint s)
 {
 	return p + s;
 }
 
-GFXPOINT RotatePoint(GFXPOINT p, GFXPOINT Pivot, double radian)
+GfxPoint RotatePoint(GfxPoint p, GfxPoint Pivot, double radian)
 {
 	const double d[2] = {static_cast<double>(p.x - Pivot.x), static_cast<double>(p.y - Pivot.y)};
 	const double cosine[2] = {cos(radian), sin(radian)};
 	const double x = Pivot.x + (d[0] * cosine[0] - d[1] * cosine[1]);
 	const double y = Pivot.y + (d[0] * cosine[1] + d[1] * cosine[0]);
 
-	return GFXPOINT {(int16_t)MathRound(x), (int16_t)MathRound(y)};
+	return GfxPoint {(int16_t)MathRound(x), (int16_t)MathRound(y)};
 }
 
 // Kruzen: Merged together with overflow check. Functions above are redundant
-GFXPOINT CalcEllipsePoint(double a, double b, double rad_one, double rad_two, GFXPOINT Pivot)
+GfxPoint CalcEllipsePoint(double a, double b, double rad_one, double rad_two, GfxPoint Pivot)
 {
 	const double q[2] = {a * cos(rad_one), b * sin(rad_one)};
 	const double w[2] = {MathRound(q[0]) + Pivot.x, MathRound(q[1]) + Pivot.y};
@@ -566,10 +566,10 @@ GFXPOINT CalcEllipsePoint(double a, double b, double rad_one, double rad_two, GF
 		y = -32768.0;
 	}
 
-	return GFXPOINT {UniverseToDispx2(x), UniverseToDispy2(y)};
+	return GfxPoint {UniverseToDispx2(x), UniverseToDispy2(y)};
 }
 
-bool onScreen(LINE* l, bool ignoreX, bool ignoreY)
+bool onScreen(GfxLine* l, bool ignoreX, bool ignoreY)
 {
 	return !((l->first.x < 0 && l->second.x < 0 && !ignoreX)
 			 || (l->first.x >= SisScreenWidth()
@@ -582,22 +582,22 @@ bool onScreen(LINE* l, bool ignoreX, bool ignoreY)
 static void DrawNoReturnZone(void)
 {
 	double dist {NAN};
-	GFXPOINT sol;
-	GFXPOINT sis;
+	GfxPoint sol;
+	GfxPoint sis;
 	const double halfFuel = uqm::gameState().sis().FuelOnBoard / 2;
 
 	sol = plot_map[SOL_DEFINED].star_pt;
-	sis = GFXPOINT {(int16_t)LogxToUniverse(uqm::gameState().sis().log_x),
+	sis = GfxPoint {(int16_t)LogxToUniverse(uqm::gameState().sis().log_x),
 					(int16_t)LogyToUniverse(uqm::gameState().sis().log_y)};
 
 	dist = (double)FuelRequiredTo(sol) / 2;
 
 	if (dist <= halfFuel)
 	{ // do not draw ellipse when fuel is not enough to reach Sol
-		GFXPOINT curr;
-		GFXPOINT center;
-		GFXPOINT rmax_y;
-		GFXPOINT rmin_y;
+		GfxPoint curr;
+		GfxPoint center;
+		GfxPoint rmax_y;
+		GfxPoint rmin_y;
 		double i {NAN};
 		double Step {NAN};
 		double ry {NAN};
@@ -611,8 +611,8 @@ static void DrawNoReturnZone(void)
 		center = MAKE_POINT((sis.x + sol.x) / 2, (sis.y + sol.y) / 2);
 		rotation = atan2(sol.y - sis.y, sol.x - sis.x);
 
-		rmax_y = GFXPOINT {-1, -1};
-		rmin_y = GFXPOINT {(int16_t)SisScreenWidth(), (int16_t)SisScreenHeight()};
+		rmax_y = GfxPoint {-1, -1};
+		rmin_y = GfxPoint {(int16_t)SisScreenWidth(), (int16_t)SisScreenHeight()};
 
 		for (i = 0; i < M_PI * 2; i += Step)
 		{
@@ -630,9 +630,9 @@ static void DrawNoReturnZone(void)
 
 		if (rmax_y.y >= 0 || rmin_y.y < SisScreenHeight())
 		{ // If the ellipse is completely off screen - drop it
-			LINE L;
-			LINE tempLine;
-			GFXPOINT prev = CalcEllipsePoint(halfFuel, ry, i - Step, rotation, center);
+			GfxLine L;
+			GfxLine tempLine;
+			GfxPoint prev = CalcEllipsePoint(halfFuel, ry, i - Step, rotation, center);
 			int16_t dy {};
 			const double err = ((double)rmax_y.x - (double)rmin_y.x)
 							 / ((double)rmax_y.y - (double)rmin_y.y);
@@ -657,7 +657,7 @@ static void DrawNoReturnZone(void)
 					&& onScreen(&tempLine, true,
 								false))
 				{
-					LINE L2;
+					GfxLine L2;
 					int16_t iter {};
 					const double y_err = ((double)L.first.x - (double)prev.x)
 									   / ((double)L.first.y - (double)prev.y);
@@ -694,8 +694,8 @@ static void DrawNoReturnZone(void)
 	}
 }
 
-static void GetFuelRect(DRECT* r, int32_t diameter, GFXPOINT corner)
-{ // Operating with DRECT because of overflows in HdResolutionFactor on max zoom
+static void GetFuelRect(LargeRect* r, int32_t diameter, GfxPoint corner)
+{ // Operating with LargeRect because of overflows in HdResolutionFactor on max zoom
 	int32_t x {};
 	int32_t y {};
 	int32_t width {};
@@ -747,8 +747,8 @@ static void GetFuelRect(DRECT* r, int32_t diameter, GFXPOINT corner)
 
 static void DrawFuelCircle(bool secondary)
 {
-	DRECT r;
-	GFXPOINT corner;
+	LargeRect r;
+	GfxPoint corner;
 	Color OldColor;
 	uint32_t OnBoardFuel = uqm::gameState().sis().FuelOnBoard;
 
@@ -806,12 +806,12 @@ static void DrawFuelCircle(bool secondary)
 DrawFuelEllipse ()
 {
 	Color OldColor;
-	GFXPOINT center, sol, sis;
+	GfxPoint center, sol, sis;
 	double ry, dist, angle;
 	double halfFuel = GLOBAL_SIS (FuelOnBoard) / 2;
 
-	sol = (GFXPOINT){ SOL_X, SOL_Y };
-	sis = (GFXPOINT){ LogxToUniverse (GLOBAL_SIS (log_x)),
+	sol = (GfxPoint){ SOL_X, SOL_Y };
+	sis = (GfxPoint){ LogxToUniverse (GLOBAL_SIS (log_x)),
 			LogyToUniverse (GLOBAL_SIS (log_y)) };
 
 	dist = FuelRequiredTo (sol) / 2;
@@ -1021,7 +1021,7 @@ void setStarMarked(const int star_index, const char* marker_state)
 	DSetGameState(markerBuf(starIndex, marker_state), starData);
 }
 
-static int16_t CheckTextsIntersect(GFXRECT* curr, GFXRECT* prev)
+static int16_t CheckTextsIntersect(GfxRect* curr, GfxRect* prev)
 {
 	if (((curr->corner.x + curr->extent.width) <= prev->corner.x) || ((prev->corner.x + prev->extent.width) <= curr->corner.x))
 	{
@@ -1036,7 +1036,7 @@ static int16_t CheckTextsIntersect(GFXRECT* curr, GFXRECT* prev)
 	return ((prev->extent.height + ResScale(1)) - abs(curr->corner.y - prev->corner.y));
 }
 
-static void AdjustTextRect(GFXRECT* r, TEXT* t)
+static void AdjustTextRect(GfxRect* r, GfxText* t)
 {
 	int16_t offs {};
 	if (r->corner.x <= 0)
@@ -1069,7 +1069,7 @@ static void AdjustTextRect(GFXRECT* r, TEXT* t)
 	}
 }
 
-static void DrawRaceName(TEXT* t, Color* c)
+static void DrawRaceName(GfxText* t, Color* c)
 {
 	// The text color is slightly lighter than the color of
 	// the SoI.
@@ -1149,19 +1149,19 @@ Color RaceColor(uint16_t index)
 
 static constexpr auto GridDelta {500};
 
-static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
+static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 {
 	int16_t i {};
 	uint16_t which_space {};
 	// long diameter;
-	GFXRECT r;
-	GFXRECT old_r;
-	GFXPOINT oldOrigin = {0, 0};
-	STAMP s;
-	const STAR_DESC* SDPtr {};
+	GfxRect r;
+	GfxRect old_r;
+	GfxPoint oldOrigin = {0, 0};
+	GfxStamp s;
+	const StarDesc* SDPtr {};
 	bool draw_cursor {};
 
-	if (pClipRect == (GFXRECT*)-1)
+	if (pClipRect == (GfxRect*)-1)
 	{
 		pClipRect = 0;
 		draw_cursor = false;
@@ -1274,19 +1274,19 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 		const uint16_t race_index = (race_update & 0x1F) - 1;
 		HFLEETINFO hStarShip {};
 		HFLEETINFO hNextShip {};
-		NAMEPLATE nameplate[26];
+		Nameplate nameplate[26];
 		uint8_t currMax = 0;
 
 		for (index = 0,
 			hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 			 hStarShip != 0; ++index, hStarShip = hNextShip)
 		{
-			FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
+			FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 			hNextShip = _GetSuccLink(FleetPtr);
 
 			if ((FleetPtr->known_strength && which_starmap != WAR_ERA_STARMAP) || (which_starmap == WAR_ERA_STARMAP && WarEraStrength(FleetPtr->SpeciesID) && index < NUM_BUILDABLE_SHIPS))
 			{
-				GFXRECT repair_r;
+				GfxRect repair_r;
 
 				if (which_starmap == WAR_ERA_STARMAP)
 				{
@@ -1312,7 +1312,7 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 								   > pClipRect->corner.y)))
 				{
 					Color c;
-					TEXT t;
+					GfxText t;
 					char yehat_rebels[] {"+Yehat+"};
 
 					c = RaceColor(index);
@@ -1326,7 +1326,7 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 					}
 
 					{
-						DRECT dr = RECT_TO_DRECT(r);
+						LargeRect dr = RECT_TO_DRECT(r);
 						DrawOval(&dr, 0, IsHd());
 					}
 
@@ -1394,8 +1394,8 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 			}
 			else if (index == race_index && race_update & (PreDeathSoi | DeathSoi))
 			{ // Kruzen: SoI is dead, but we need to fade nameplate
-				TEXT t;
-				GFXRECT repair_r;
+				GfxText t;
+				GfxRect repair_r;
 
 				t.CharCount = (uint16_t)~0;
 				t.pStr = FleetPtr->race_strings->text(1);
@@ -1423,7 +1423,7 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 			uint8_t k {};
 			bool swapped {};
 			int16_t offs {};
-			TEXT t;
+			GfxText t;
 			Color c;
 			uint8_t mid = currMax;
 
@@ -1538,7 +1538,7 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 			{
 				for (k = 0; k < 32; k++)
 				{
-					TEXT t;
+					GfxText t;
 					char pStr[7];
 					pStr[0] = (i / 16 ? '1' : '0');
 					pStr[1] = (i % 16 > 9 ? i % 16 - 10 + 'A' : i % 16 + '0');
@@ -1560,9 +1560,9 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 		}
 #else
 		Color oldColor;
-		LINE l;
+		GfxLine l;
 		const uint8_t c = 0x3F + IfHd(0x11);
-		const GFXPOINT* CNPtr {&constel_array[0]};
+		const GfxPoint* CNPtr {&constel_array[0]};
 
 		oldColor = SetContextForeGroundColor(
 			BuildColorRgba(c, c, c, 0xFF));
@@ -1601,7 +1601,7 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 			{
 				continue;
 			}
-			TEXT t;
+			GfxText t;
 			char pStr[2];
 			pStr[0] = 'A' + i;
 			pStr[1] = 0;
@@ -1716,7 +1716,7 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	if (race_update == 0
 		&& uqm::flagship().autopilot.hasTarget())
 	{
-		GFXPOINT target {uqm::flagship().autopilot.target()};
+		GfxPoint target {uqm::flagship().autopilot.target()};
 		DrawAutoPilot(&target);
 		if (IsHd())
 		{
@@ -1751,7 +1751,7 @@ static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 static void EraseCursor(int16_t curs_x, int16_t curs_y)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	GetFrameRect(StarMapFrame, &r);
 
@@ -1819,12 +1819,12 @@ static void ZoomStarMap(int16_t dir)
 	}
 }
 
-static void UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
+static void UpdateCursorLocation(int sx, int sy, const GfxPoint* newpt)
 { // Kruzen: OrigSisScreenWidth()/HEIGHT for viewport follows cursor mode
 	// We're scaling the result of s.origin afterwards, but calculating
 	// everything in SD values. So we can use max zoom in HdResolutionFactor
-	STAMP s;
-	GFXPOINT pt;
+	GfxStamp s;
+	GfxPoint pt;
 
 	pt.x = OrigUniverseToDispx(cursorLoc.x);
 	pt.y = OrigUniverseToDispy(cursorLoc.y);
@@ -1904,7 +1904,7 @@ static void UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
 
 static constexpr auto CursorInfoBufsize {256};
 
-int starIndex(GFXPOINT starPt)
+int starIndex(GfxPoint starPt)
 {
 	uint16_t i {};
 
@@ -1922,9 +1922,9 @@ int starIndex(GFXPOINT starPt)
 static void UpdateCursorInfo(std::span<char> prevbuf)
 {
 	char buf[CursorInfoBufsize] {};
-	GFXPOINT pt;
-	STAR_DESC* SDPtr {};
-	STAR_DESC* BestSDPtr {};
+	GfxPoint pt;
+	StarDesc* SDPtr {};
+	StarDesc* BestSDPtr {};
 
 	if (which_starmap == NORMAL_STARMAP)
 	{ // "(Star Search: F6 | Toggle Maps: F7)"
@@ -1979,7 +1979,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			// We then use that to construct the exit point name.
 			// This means quasi star array must have rigidly ordered Postfix.
 			// portal_map[whichPortal].star_pt - coords of the exit
-			//                  nearest_star - STAR_DESC* of nearest constell.
+			//                  nearest_star - StarDesc* of nearest constell.
 			char starnameBuf[CursorInfoBufsize] = "";
 			uqm::utf8StringCopy(starnameBuf, sizeof(starnameBuf), GameString(portal_map[whichPortal].nearest_star->Postfix));
 			// Abbreviate names longer than 11 at the 10th (or less)
@@ -2032,7 +2032,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 
 	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE))
 	{
-		GFXPOINT ari_pt;
+		GfxPoint ari_pt;
 
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
@@ -2131,10 +2131,10 @@ static void UpdateFuelRequirement(void)
 
 static constexpr auto StarSearchBufsize {256};
 
-struct STAR_SEARCH_STATE
+struct StarSearchState
 {
 	// TODO: pMS field is probably not needed anymore
-	MENU_STATE* pMS;
+	MenuState* pMS;
 	char Text[StarSearchBufsize];
 	char LastText[StarSearchBufsize];
 	TimeCount LastChangeTime;
@@ -2154,8 +2154,8 @@ struct STAR_SEARCH_STATE
 
 static bool starNameLess(int index1, int index2)
 {
-	const STAR_DESC& star1 {star_array[index1]};
-	const STAR_DESC& star2 {star_array[index2]};
+	const StarDesc& star1 {star_array[index1]};
+	const StarDesc& star2 {star_array[index2]};
 	if (star1.Postfix != star2.Postfix)
 	{
 		return uqm::utf8StringCompare(GameString(star1.Postfix), GameString(star2.Postfix)) < 0;
@@ -2163,14 +2163,14 @@ static bool starNameLess(int index1, int index2)
 	return star1.Prefix < star2.Prefix;
 }
 
-static void SortStarsOnName(STAR_SEARCH_STATE* pSS)
+static void SortStarsOnName(StarSearchState* pSS)
 {
 	int* const sorted {pSS->SortedStars};
 	uqstl::iota(sorted, sorted + NumSolarSystems, 0);
 	uqstl::sort(sorted, sorted + NumSolarSystems, starNameLess);
 }
 
-static void SplitStarName(STAR_SEARCH_STATE* pSS)
+static void SplitStarName(StarSearchState* pSS)
 {
 	char* buf = pSS->Buffer;
 	char* next {};
@@ -2233,7 +2233,7 @@ static inline int SkipStarCluster(int* sortedStars, int istar)
 	return istar;
 }
 
-static int FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
+static int FindNextStarIndex(StarSearchState* pSS, int from, bool WithinClust)
 {
 	int i {};
 
@@ -2244,7 +2244,7 @@ static int FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 
 	for (i = from; i < NumSolarSystems; ++i)
 	{
-		const STAR_DESC* SDPtr = &star_array[pSS->SortedStars[i]];
+		const StarDesc* SDPtr = &star_array[pSS->SortedStars[i]];
 		char FullName[StarSearchBufsize];
 		const char* ClusterName = GameString(SDPtr->Postfix);
 		const char* sptr {};
@@ -2333,13 +2333,13 @@ static int FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 	return (i < NumSolarSystems) ? i : -1;
 }
 
-static void DrawMatchedStarName(TEXTENTRY_STATE* pTES)
+static void DrawMatchedStarName(TextEntryState* pTES)
 {
-	STAR_SEARCH_STATE* pSS = (STAR_SEARCH_STATE*)pTES->CbParam;
+	StarSearchState* pSS = (StarSearchState*)pTES->CbParam;
 	char buf[StarSearchBufsize] {};
 	int16_t ExPos = 0;
 	int16_t CurPos = -1;
-	const STAR_DESC* SDPtr = &star_array[pSS->SortedStars[pSS->CurIndex]];
+	const StarDesc* SDPtr = &star_array[pSS->SortedStars[pSS->CurIndex]];
 	uint16_t flags {};
 
 	if (pSS->SingleClust || pSS->SingleMatch)
@@ -2371,7 +2371,7 @@ static void DrawMatchedStarName(TEXTENTRY_STATE* pTES)
 	DrawHyperCoords(cursorLoc);
 }
 
-static void MatchNextStar(STAR_SEARCH_STATE* pSS, bool Reset)
+static void MatchNextStar(StarSearchState* pSS, bool Reset)
 {
 	if (Reset)
 	{
@@ -2417,9 +2417,9 @@ static void MatchNextStar(STAR_SEARCH_STATE* pSS, bool Reset)
 	}
 }
 
-static bool OnStarNameChange(TEXTENTRY_STATE* pTES)
+static bool OnStarNameChange(TextEntryState* pTES)
 {
-	STAR_SEARCH_STATE* pSS = (STAR_SEARCH_STATE*)pTES->CbParam;
+	StarSearchState* pSS = (StarSearchState*)pTES->CbParam;
 	uint16_t flags {};
 	bool ret = true;
 
@@ -2452,7 +2452,7 @@ static bool OnStarNameChange(TEXTENTRY_STATE* pTES)
 	else
 	{
 		// move the cursor to the found star
-		const STAR_DESC* SDPtr {&star_array[pSS->SortedStars[pSS->CurIndex]]};
+		const StarDesc* SDPtr {&star_array[pSS->SortedStars[pSS->CurIndex]]};
 		UpdateCursorLocation(0, 0, &SDPtr->star_pt);
 
 		DrawMatchedStarName(pTES);
@@ -2462,9 +2462,9 @@ static bool OnStarNameChange(TEXTENTRY_STATE* pTES)
 	return ret;
 }
 
-static bool OnStarNameFrame(TEXTENTRY_STATE* pTES)
+static bool OnStarNameFrame(TextEntryState* pTES)
 {
-	STAR_SEARCH_STATE* pSS = (STAR_SEARCH_STATE*)pTES->CbParam;
+	StarSearchState* pSS = (StarSearchState*)pTES->CbParam;
 
 	if (PulsedInputState.menu[KEY_MENU_NEXT])
 	{ // search for next match
@@ -2481,7 +2481,7 @@ static bool OnStarNameFrame(TEXTENTRY_STATE* pTES)
 		}
 
 		// move the cursor to the found star
-		const STAR_DESC* SDPtr {&star_array[pSS->SortedStars[pSS->CurIndex]]};
+		const StarDesc* SDPtr {&star_array[pSS->SortedStars[pSS->CurIndex]]};
 		UpdateCursorLocation(0, 0, &SDPtr->star_pt);
 
 		DrawMatchedStarName(pTES);
@@ -2528,11 +2528,11 @@ bool coords_only(char* s)
 	return i == j && countD <= 2 && countC == 1;
 }
 
-static bool DoStarSearch(MENU_STATE* pMS)
+static bool DoStarSearch(MenuState* pMS)
 {
-	TEXTENTRY_STATE tes;
-	STAR_SEARCH_STATE searchState {};
-	STAR_SEARCH_STATE* pss {&searchState};
+	TextEntryState tes;
+	StarSearchState searchState {};
+	StarSearchState* pss {&searchState};
 
 	DrawSISMessageEx("", 0, 0, DsmeSetfr);
 
@@ -2560,7 +2560,7 @@ static bool DoStarSearch(MENU_STATE* pMS)
 
 	if (coords_only(tes.BaseStr))
 	{
-		GFXPOINT coord;
+		GfxPoint coord;
 
 		{
 			uqstl::vector<uqstl::string> parts;
@@ -2616,9 +2616,9 @@ static void AdvancedAutoPilot(void)
 	const uint16_t portalFuelCost {difficultyCase<uint16_t>(5, 20, 20)};
 	// (Based on the Python QuasiSpace Calculator by Lukrative525
 	// https://www.reddit.com/r/starcontrol/comments/zpyhkc/quasispace_calculator/
-	GFXPOINT current_position;
-	const GFXPOINT destination = uqm::flagship().autopilot.target();
-	GFXPOINT portal_coordinates;
+	GfxPoint current_position;
+	const GfxPoint destination = uqm::flagship().autopilot.target();
+	GfxPoint portal_coordinates;
 	double distance {NAN};
 	double fuel_no_portal {NAN};
 	double fuel_with_portal {NAN};
@@ -2678,7 +2678,7 @@ static constexpr auto MinAccelDelay {(c_gameSecond / 60)};
 static constexpr auto MaxAccelDelay {(c_gameSecond / 8)};
 static constexpr auto StepAccelDelay {(c_gameSecond / 120)};
 
-static bool DoMoveCursor(MENU_STATE* pMS)
+static bool DoMoveCursor(MenuState* pMS)
 {
 	static char last_buf[CursorInfoBufsize];
 	const TimeCount TimeIn {GetTimeCounter()};
@@ -2687,7 +2687,7 @@ static bool DoMoveCursor(MENU_STATE* pMS)
 
 	if (!pMS->Initialized)
 	{
-		GFXPOINT universe;
+		GfxPoint universe;
 
 		pMS->Initialized = true;
 		pMS->InputFunc = DoMoveCursor;
@@ -2775,7 +2775,7 @@ static bool DoMoveCursor(MENU_STATE* pMS)
 
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{ // HyperSpace search
-			const GFXPOINT oldpt = cursorLoc;
+			const GfxPoint oldpt = cursorLoc;
 
 			if (!DoStarSearch(pMS))
 			{ // search failed or canceled - return cursor
@@ -2935,9 +2935,9 @@ static bool DoMoveCursor(MENU_STATE* pMS)
 	return !(uqm::currentActivity() & CHECK_ABORT);
 }
 
-static void RepairMap(uint16_t update_race, GFXRECT* pLastRect, GFXRECT* pNextRect)
+static void RepairMap(uint16_t update_race, GfxRect* pLastRect, GfxRect* pNextRect)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	/* make a rect big enough for text */
 	r.extent.width = 50;
@@ -3010,7 +3010,7 @@ static void UpdateMap(void)
 		hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 		 hStarShip; ++index, hStarShip = hNextShip)
 	{
-		FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
+		FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 		hNextShip = _GetSuccLink(FleetPtr);
 
 		if (ButtonState)
@@ -3030,10 +3030,10 @@ static void UpdateMap(void)
 			int16_t dx {};
 			int16_t dy {};
 			int16_t delta {};
-			GFXRECT r;
-			GFXRECT last_r;
-			GFXRECT temp_r0;
-			GFXRECT temp_r1;
+			GfxRect r;
+			GfxRect last_r;
+			GfxRect temp_r0;
+			GfxRect temp_r1;
 			uint16_t str {};
 
 			dx = FleetPtr->loc.x - FleetPtr->known_loc.x;
@@ -3239,9 +3239,9 @@ auto ifGamepad(T gamepadValue, T keyboardValue = {0})
 static void DrawStarmapHelper(void)
 {
 
-	STAMP s;
-	TEXT t;
-	GFXRECT r;
+	GfxStamp s;
+	GfxText t;
+	GfxRect r;
 	int16_t leading {};
 
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
@@ -3367,12 +3367,12 @@ static void DrawStarmapHelper(void)
 
 bool StarMap(void)
 {
-	MENU_STATE MenuState;
-	GFXPOINT universe;
+	MenuState menuState;
+	GfxPoint universe;
 	//FRAME OldFrame;
-	GFXRECT clip_r;
+	GfxRect clip_r;
 
-	memset(&MenuState, 0, sizeof(MenuState));
+	memset(&menuState, 0, sizeof(menuState));
 
 	which_starmap = NORMAL_STARMAP;
 
@@ -3409,8 +3409,8 @@ bool StarMap(void)
 		}
 	}
 
-	MenuState.InputFunc = DoMoveCursor;
-	MenuState.Initialized = false;
+	menuState.InputFunc = DoMoveCursor;
+	menuState.Initialized = false;
 
 	transition_pending = true;
 	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
@@ -3432,7 +3432,7 @@ bool StarMap(void)
 		DrawStarmapHelper();
 	}
 
-	DrawStarMap(0, (GFXRECT*)-1);
+	DrawStarMap(0, (GfxRect*)-1);
 	transition_pending = false;
 
 	BatchGraphics();
@@ -3448,7 +3448,7 @@ bool StarMap(void)
 	SetMenuRepeatDelay(MinAccelDelay, MaxAccelDelay, StepAccelDelay,
 					   true);
 
-	DoInput(&MenuState, false);
+	DoInput(&menuState, false);
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	SetDefaultMenuRepeatDelay();

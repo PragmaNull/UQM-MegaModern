@@ -47,7 +47,7 @@ static void GetLegacyVideoData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	uqm::log::info("\t'{}' -- video, audio '{}', speech '{}', loop frame {}", video, audio != nullptr ? audio : "", speech != nullptr ? speech : "",
 				   loop ? fmt::format("{}", loopFrame) : "none");
 
-	resdata->ptr = new LEGACY_VIDEO_DESC {video, audio != nullptr ? audio : "", speech != nullptr ? speech : "", loopFrame};
+	resdata->ptr = new LegacyVideoDesc {video, audio != nullptr ? audio : "", speech != nullptr ? speech : "", loopFrame};
 }
 
 bool InstallVideoResType(void)

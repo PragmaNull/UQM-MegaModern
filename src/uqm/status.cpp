@@ -44,12 +44,12 @@ void InitStatusOffsets(void)
 	status_y_offsets[1] = BadGuyYoffs;	  // top player
 }
 
-bool animIsInTransition(CAPTAIN_STUFF* CSPtr)
+bool animIsInTransition(CaptainGraphics* CSPtr)
 {
 	return (CSPtr->thrust_offset & 1) || (CSPtr->weapon_offset & 1) || (CSPtr->special_offset & 1) || (CSPtr->tl_offset & 1) || (CSPtr->tr_offset & 1);
 }
 
-static uint8_t CalculateAnimOffsets(CAPTAIN_STUFF* CSPtr,
+static uint8_t CalculateAnimOffsets(CaptainGraphics* CSPtr,
 									STATUS_FLAGS delta_status_flags, STATUS_FLAGS cur_status_flags)
 {
 	uint8_t redraw_flag = 0;
@@ -147,10 +147,10 @@ static uint8_t CalculateAnimOffsets(CAPTAIN_STUFF* CSPtr,
 	return redraw_flag;
 }
 
-static void DrawCaptainWindowAnimation(CAPTAIN_STUFF* CSPtr, int16_t y,
+static void DrawCaptainWindowAnimation(CaptainGraphics* CSPtr, int16_t y,
 									   uint8_t redraw_flag)
 {
-	STAMP Stamp;
+	GfxStamp Stamp;
 
 	Stamp.origin.x = CaptainXoffs();
 	Stamp.origin.y = y + CaptainYoffs();
@@ -203,7 +203,7 @@ static void DrawCaptainWindowAnimation(CAPTAIN_STUFF* CSPtr, int16_t y,
 
 static void DrawCaptainWindowFrame(FRAME fr, int16_t y)
 {
-	STAMP Stamp;
+	GfxStamp Stamp;
 
 	Stamp.origin.x = CaptainXoffs();
 	Stamp.origin.y = y + CaptainYoffs();
@@ -214,11 +214,11 @@ static void DrawCaptainWindowFrame(FRAME fr, int16_t y)
 }
 
 /*static void
-CaptainsWindow (CAPTAIN_STUFF *CSPtr, int16_t y,
+CaptainsWindow (CaptainGraphics *CSPtr, int16_t y,
 		STATUS_FLAGS delta_status_flags, STATUS_FLAGS cur_status_flags,
 		uint16_t Pass)
 {// Kruzen: og method. now redundant
-	STAMP Stamp;
+	GfxStamp Stamp;
 
 	Stamp.origin.x = CaptainXoffs();
 	Stamp.origin.y = y + CaptainYoffs();
@@ -302,10 +302,10 @@ CaptainsWindow (CAPTAIN_STUFF *CSPtr, int16_t y,
 
 static constexpr auto MaxCrewDigits {3};
 
-void DrawBattleCrewAmount(SHIP_INFO* ShipInfoPtr, int16_t y_offs)
+void DrawBattleCrewAmount(ShipInfoDesc* ShipInfoPtr, int16_t y_offs)
 {
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 	char buf[40] {};
 
 	t.baseline.x = BattleCrewX() + ResScale(MenuBool(2, 4));
@@ -327,13 +327,13 @@ void DrawBattleCrewAmount(SHIP_INFO* ShipInfoPtr, int16_t y_offs)
 	font_DrawText(&t);
 }
 
-void DrawCaptainsWindow(STARSHIP* StarShipPtr)
+void DrawCaptainsWindow(Starship* StarShipPtr)
 {
 	int16_t y {};
-	GFXRECT r;
-	STAMP s;
+	GfxRect r;
+	GfxStamp s;
 
-	RACE_DESC* RDPtr {StarShipPtr->RaceDescPtr};
+	RaceDesc* RDPtr {StarShipPtr->RaceDescPtr};
 	FRAME Frame {RDPtr->ship_data.captain_control.background};
 	if (Frame)
 	{
@@ -446,7 +446,7 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 	if (StarShipPtr->captains_name_index == 0
 		&& StarShipPtr->playerNr == RpgPlayerNum)
 	{ // This is SIS
-		TEXT t;
+		GfxText t;
 
 		t.baseline.x = StatusWidth() >> 1;
 		t.baseline.y = y + ResScale(6);
@@ -469,9 +469,9 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 	UnbatchGraphics();
 }
 
-bool DeltaEnergy(ELEMENT* ElementPtr, int16_t energy_delta)
+bool DeltaEnergy(Element* ElementPtr, int16_t energy_delta)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	bool retval {true};
 
@@ -481,7 +481,7 @@ bool DeltaEnergy(ELEMENT* ElementPtr, int16_t energy_delta)
 	}
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	SHIP_INFO* ShipInfoPtr {&StarShipPtr->RaceDescPtr->ship_info};
+	ShipInfoDesc* ShipInfoPtr {&StarShipPtr->RaceDescPtr->ship_info};
 	if (energy_delta >= 0)
 	{
 		if ((uint8_t)(ShipInfoPtr->energy_level + (uint8_t)energy_delta) > ShipInfoPtr->max_energy)
@@ -515,11 +515,11 @@ bool DeltaEnergy(ELEMENT* ElementPtr, int16_t energy_delta)
 	return (retval);
 }
 
-bool DeltaCrew(ELEMENT* ElementPtr, int16_t crew_delta)
+bool DeltaCrew(Element* ElementPtr, int16_t crew_delta)
 {
 	bool retval {};
-	STARSHIP* StarShipPtr {};
-	SHIP_INFO* ShipInfoPtr {};
+	Starship* StarShipPtr {};
+	ShipInfoDesc* ShipInfoPtr {};
 
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
 		&& ElementPtr->playerNr == NpcPlayerNum)
@@ -559,9 +559,9 @@ bool DeltaCrew(ELEMENT* ElementPtr, int16_t crew_delta)
 	return (retval);
 }
 
-void PreProcessStatus(ELEMENT* ShipPtr)
+void PreProcessStatus(Element* ShipPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->captains_name_index
@@ -575,7 +575,7 @@ void PreProcessStatus(ELEMENT* ShipPtr)
 		old_status_flags = StarShipPtr->old_status_flags;
 		old_status_flags ^= cur_status_flags;
 
-		CAPTAIN_STUFF* CSPtr {&StarShipPtr->RaceDescPtr->ship_data.captain_control};
+		CaptainGraphics* CSPtr {&StarShipPtr->RaceDescPtr->ship_data.captain_control};
 		old_status_flags &= (LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag);
 		if (old_status_flags || animIsInTransition(CSPtr))
 		{
@@ -590,9 +590,9 @@ void PreProcessStatus(ELEMENT* ShipPtr)
 	}
 }
 
-void PostProcessStatus(ELEMENT* ShipPtr)
+void PostProcessStatus(Element* ShipPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->captains_name_index
@@ -619,14 +619,14 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 				uint8_t i {};
 				uint8_t j {};
 				Color c;
-				GFXRECT r;
+				GfxRect r;
 
 				i = (uint8_t)(NumExplosionFrames * 3 - 1) - ShipPtr->life_span;
 
 				if (cur_status_flags & ShofixtiExplosion && i == 0)
 				{ // Special case: Instead of first orange rectangle we will draw the last
 					// frame from captain avatars (used for shofixti glory device)
-					const CAPTAIN_STUFF* CSPtr {&StarShipPtr->RaceDescPtr->ship_data.captain_control};
+					const CaptainGraphics* CSPtr {&StarShipPtr->RaceDescPtr->ship_data.captain_control};
 
 					cur_status_flags &= ~ShofixtiExplosion;
 					DrawCaptainWindowFrame(DecFrameIndex(CSPtr->background), y);

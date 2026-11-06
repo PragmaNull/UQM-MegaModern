@@ -55,7 +55,7 @@ extern void BuildGroups(void);
 extern void findRaceSOI(void);
 
 // A file in memory that holds a part of the game state.
-struct GAME_STATE_FILE
+struct GameStateFile
 {
 	const char* symname {};
 	uint32_t size_hint {};
@@ -69,7 +69,7 @@ struct GAME_STATE_FILE
 inline constexpr int NUM_STATE_FILES {3};
 
 // Returns the state files of a new game, empty.
-[[nodiscard]] uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void);
+[[nodiscard]] uqstl::array<GameStateFile, NUM_STATE_FILES> MakeStateFiles(void);
 
 inline constexpr auto StarinfoFile {0};
 //"starinfo.dat"
@@ -87,15 +87,15 @@ typedef enum
 	DEFGRPINFO
 } INFO_TYPE;
 
-GAME_STATE_FILE* OpenStateFile(int stateFile, const char* mode);
-void CloseStateFile(GAME_STATE_FILE* fp);
+GameStateFile* OpenStateFile(int stateFile, const char* mode);
+void CloseStateFile(GameStateFile* fp);
 void DeleteStateFile(int stateFile);
-uint32_t LengthStateFile(GAME_STATE_FILE* fp);
-int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* fp);
-int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* fp);
-int SeekStateFile(GAME_STATE_FILE* fp, long offset, int whence);
+uint32_t LengthStateFile(GameStateFile* fp);
+int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GameStateFile* fp);
+int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GameStateFile* fp);
+int SeekStateFile(GameStateFile* fp, long offset, int whence);
 
-static inline uint16_t sread_8(GAME_STATE_FILE* fp, uint8_t* v)
+static inline uint16_t sread_8(GameStateFile* fp, uint8_t* v)
 {
 	uint8_t t {};
 	if (!v) /* read value ignored */
@@ -105,7 +105,7 @@ static inline uint16_t sread_8(GAME_STATE_FILE* fp, uint8_t* v)
 	return ReadStateFile(v, 1, 1, fp);
 }
 
-static inline uint16_t sread_16(GAME_STATE_FILE* fp, uint16_t* v)
+static inline uint16_t sread_16(GameStateFile* fp, uint16_t* v)
 {
 	uint16_t t {};
 	if (!v) /* read value ignored */
@@ -115,7 +115,7 @@ static inline uint16_t sread_16(GAME_STATE_FILE* fp, uint16_t* v)
 	return ReadStateFile(v, 2, 1, fp);
 }
 
-static inline uint16_t sread_16s(GAME_STATE_FILE* fp, int16_t* v)
+static inline uint16_t sread_16s(GameStateFile* fp, int16_t* v)
 {
 	uint16_t t {};
 	const uint16_t ret {sread_16(fp, &t)};
@@ -127,7 +127,7 @@ static inline uint16_t sread_16s(GAME_STATE_FILE* fp, int16_t* v)
 	return ret;
 }
 
-static inline uint16_t sread_32(GAME_STATE_FILE* fp, uint32_t* v)
+static inline uint16_t sread_32(GameStateFile* fp, uint32_t* v)
 {
 	uint32_t t {};
 	if (!v) /* read value ignored */
@@ -137,7 +137,7 @@ static inline uint16_t sread_32(GAME_STATE_FILE* fp, uint32_t* v)
 	return ReadStateFile(v, 4, 1, fp);
 }
 
-static inline uint16_t sread_a32(GAME_STATE_FILE* fp, uint32_t* ar, uint16_t count)
+static inline uint16_t sread_a32(GameStateFile* fp, uint32_t* ar, uint16_t count)
 {
 	assert(ar != nullptr);
 
@@ -151,22 +151,22 @@ static inline uint16_t sread_a32(GAME_STATE_FILE* fp, uint32_t* ar, uint16_t cou
 	return 1;
 }
 
-static inline uint16_t swrite_8(GAME_STATE_FILE* fp, uint8_t v)
+static inline uint16_t swrite_8(GameStateFile* fp, uint8_t v)
 {
 	return WriteStateFile(&v, 1, 1, fp);
 }
 
-static inline uint16_t swrite_16(GAME_STATE_FILE* fp, uint16_t v)
+static inline uint16_t swrite_16(GameStateFile* fp, uint16_t v)
 {
 	return WriteStateFile(&v, 2, 1, fp);
 }
 
-static inline uint16_t swrite_32(GAME_STATE_FILE* fp, uint32_t v)
+static inline uint16_t swrite_32(GameStateFile* fp, uint32_t v)
 {
 	return WriteStateFile(&v, 4, 1, fp);
 }
 
-static inline uint16_t swrite_a32(GAME_STATE_FILE* fp, const uint32_t* ar, uint16_t count)
+static inline uint16_t swrite_a32(GameStateFile* fp, const uint32_t* ar, uint16_t count)
 {
 	for (; count > 0; --count, ++ar)
 	{

@@ -34,22 +34,22 @@
 #include <stdlib.h>
 
 // JMS_GFX: These exist to prevent the leftover red borders of the rostered ships in hi-res.
-static GFXRECT savedShipFrame_r;
-static STAMP savedShipFrame;
+static GfxRect savedShipFrame_r;
+static GfxStamp savedShipFrame;
 
 // Ship icon positions in status display around the flagship
 const auto& ship_pos {SupportShipPts};
 
-struct ROSTER_STATE
+struct RosterState
 {
 	// Ship icon positions split into (lower half) left and right (upper)
 	// and sorted in the Y coord. These are used for navigation around the
 	// escort positions.
-	GFXPOINT shipPos[MaxBuiltShips];
+	GfxPoint shipPos[MaxBuiltShips];
 	uint16_t count;
 	// Number of ships
 
-	GFXPOINT curShipPt;
+	GfxPoint curShipPt;
 	// Location of the currently selected escort
 	FRAME curShipFrame;
 	// Icon of the currently selected escort
@@ -58,11 +58,11 @@ struct ROSTER_STATE
 	// enough that it does not require a real sub-menu.
 };
 
-static SHIP_FRAGMENT* LockSupportShip(ROSTER_STATE*, HSHIPFRAG* phFrag);
+static ShipFragment* LockSupportShip(RosterState*, HSHIPFRAG* phFrag);
 
-static void drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
+static void drawSupportShip(RosterState* rosterState, bool filled, bool saveFrame)
 {
-	STAMP s;
+	GfxStamp s;
 
 	if (!rosterState->curShipFrame)
 	{
@@ -97,12 +97,12 @@ static void drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFra
 	}
 }
 
-static void getSupportShipIcon(ROSTER_STATE* rosterState)
+static void getSupportShipIcon(RosterState* rosterState)
 {
 	HSHIPFRAG hShipFrag {};
 
 	rosterState->curShipFrame = nullptr;
-	const SHIP_FRAGMENT* ShipFragPtr {LockSupportShip(rosterState, &hShipFrag)};
+	const ShipFragment* ShipFragPtr {LockSupportShip(rosterState, &hShipFrag)};
 	if (!ShipFragPtr)
 	{
 		return;
@@ -112,7 +112,7 @@ static void getSupportShipIcon(ROSTER_STATE* rosterState)
 	UnlockShipFrag(&uqm::gameState().game().built_ship_q, hShipFrag);
 }
 
-static void flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
+static void flashSupportShip(RosterState* rosterState, bool saveFrame)
 {
 	static Color c = BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x24);
 	static TimeCount NextTime {};
@@ -149,9 +149,9 @@ static void flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 	}
 }
 
-static SHIP_FRAGMENT* LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
+static ShipFragment* LockSupportShip(RosterState* rosterState, HSHIPFRAG* phFrag)
 {
-	const GFXPOINT* pship_pos {};
+	const GfxPoint* pship_pos {};
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
 
@@ -161,7 +161,7 @@ static SHIP_FRAGMENT* LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFr
 		pship_pos = ship_pos;
 		 hStarShip; hStarShip = hNextShip, ++pship_pos)
 	{
-		SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
+		ShipFragment* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
 
 		if (pointsEqual(*pship_pos, rosterState->curShipPt))
 		{
@@ -178,21 +178,21 @@ static SHIP_FRAGMENT* LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFr
 
 static void flashSupportShipCrew(void)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	SetContext(StatusContext);
 	GetStatusMessageRect(&r);
 	SetFlashRect(&r, false);
 }
 
-static bool DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
+static bool DeltaSupportCrew(RosterState* rosterState, int16_t crew_delta)
 {
 	bool ret = false;
 	char buf[40] {};
 	HFLEETINFO hTemplate {};
 	HSHIPFRAG hShipFrag {};
 
-	SHIP_FRAGMENT* StarShipPtr {LockSupportShip(rosterState, &hShipFrag)};
+	ShipFragment* StarShipPtr {LockSupportShip(rosterState, &hShipFrag)};
 	if (!StarShipPtr)
 	{
 		return false;
@@ -200,7 +200,7 @@ static bool DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 
 	hTemplate = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q,
 									 StarShipPtr->race_id);
-	FLEET_INFO* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hTemplate)};
+	FleetInfo* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hTemplate)};
 
 	StarShipPtr->crew_level += crew_delta;
 
@@ -242,23 +242,23 @@ static bool DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 	return ret;
 }
 
-static void drawModifiedSupportShip(ROSTER_STATE* rosterState)
+static void drawModifiedSupportShip(RosterState* rosterState)
 {
 	SetContext(StatusContext);
 	SetContextForeGroundColor(RosterModifyShipColor);
 	drawSupportShip(rosterState, true, false);
 }
 
-static void selectSupportShip(ROSTER_STATE* rosterState, uint16_t shipIndex)
+static void selectSupportShip(RosterState* rosterState, uint16_t shipIndex)
 {
 	rosterState->curShipPt = rosterState->shipPos[shipIndex];
 	getSupportShipIcon(rosterState);
 	DeltaSupportCrew(rosterState, 0);
 }
 
-static bool DoModifyRoster(MENU_STATE* pMS)
+static bool DoModifyRoster(MenuState* pMS)
 {
-	ROSTER_STATE* rosterState = (ROSTER_STATE*)pMS->privData;
+	RosterState* rosterState = (RosterState*)pMS->privData;
 	bool select {};
 	bool cancel {};
 	bool up {};
@@ -344,7 +344,7 @@ static bool DoModifyRoster(MENU_STATE* pMS)
 	}
 	else
 	{
-		const GFXPOINT* pship_pos = rosterState->shipPos;
+		const GfxPoint* pship_pos = rosterState->shipPos;
 		const uint16_t top_right = (rosterState->count + 1) >> 1;
 
 		uint16_t NewState {pMS->CurState};
@@ -449,36 +449,36 @@ static bool DoModifyRoster(MENU_STATE* pMS)
 
 bool RosterMenu(void)
 {
-	MENU_STATE MenuState;
-	ROSTER_STATE RosterState;
+	MenuState menuState;
+	RosterState rosterState;
 
-	memset(&MenuState, 0, sizeof MenuState);
-	MenuState.privData = &RosterState;
+	memset(&menuState, 0, sizeof menuState);
+	menuState.privData = &rosterState;
 
-	memset(&RosterState, 0, sizeof RosterState);
+	memset(&rosterState, 0, sizeof rosterState);
 
-	RosterState.count = CountLinks(&uqm::gameState().game().built_ship_q);
-	if (!RosterState.count)
+	rosterState.count = CountLinks(&uqm::gameState().game().built_ship_q);
+	if (!rosterState.count)
 	{
 		return false;
 	}
 
 	// Get the escort positions we will use and sort on X then Y
-	assert(sizeof(RosterState.shipPos) == sizeof(ship_pos));
-	memcpy(RosterState.shipPos, ship_pos, sizeof(ship_pos));
-	uqstl::sort(RosterState.shipPos, RosterState.shipPos + RosterState.count, [](const GFXPOINT& a, const GFXPOINT& b) {
+	assert(sizeof(rosterState.shipPos) == sizeof(ship_pos));
+	memcpy(rosterState.shipPos, ship_pos, sizeof(ship_pos));
+	uqstl::sort(rosterState.shipPos, rosterState.shipPos + rosterState.count, [](const GfxPoint& a, const GfxPoint& b) {
 		// Ships on the left in the lower half, and ordered on Y
 		return a.x != b.x ? a.x < b.x : a.y < b.y;
 	});
 
 	SetContext(StatusContext);
-	selectSupportShip(&RosterState, MenuState.CurState);
+	selectSupportShip(&rosterState, menuState.CurState);
 
 	// JMS_GFX: Remember the location of the first ship to be able to erase
 	// the red junk from around it after rostering.
 	if (IsHd())
 	{
-		drawSupportShip(&RosterState, true, true);
+		drawSupportShip(&rosterState, true, true);
 	}
 
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
@@ -488,8 +488,8 @@ bool RosterMenu(void)
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
-	MenuState.InputFunc = DoModifyRoster;
-	DoInput(&MenuState, true);
+	menuState.InputFunc = DoModifyRoster;
+	DoInput(&menuState, true);
 
 	SetContext(StatusContext);
 
@@ -502,7 +502,7 @@ bool RosterMenu(void)
 	}
 	else // In Original mode we just draw the icon.
 	{
-		drawSupportShip(&RosterState, false, false);
+		drawSupportShip(&rosterState, false, false);
 	}
 
 	DrawStatusMessage(nullptr);

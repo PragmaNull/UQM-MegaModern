@@ -24,7 +24,7 @@
 #include "uqm/lua/UQMLua.h"
 
 
-static LOCDATA spathi_desc =
+static ConversationData spathi_desc =
 	{
 		SPATHI_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -931,7 +931,7 @@ static void post_spathi_enc(void)
 	}
 }
 
-LOCDATA* init_spathi_comm(void)
+ConversationData* init_spathi_comm(void)
 {
 	spathi_desc.init_encounter_func = Intro;
 	spathi_desc.post_encounter_func = post_spathi_enc;
@@ -959,7 +959,7 @@ LOCDATA* init_spathi_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&spathi_desc};
+	ConversationData* retval {&spathi_desc};
 
 	return (retval);
 }

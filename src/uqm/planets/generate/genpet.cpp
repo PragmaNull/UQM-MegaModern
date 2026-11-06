@@ -32,13 +32,13 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
-											   PLANET_DESC* world);
-static uint16_t GenerateTalkingPet_generateEnergy(const SOLARSYS_STATE*,
-												  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateTalkingPet_pickupEnergy(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* world, uint16_t whichNode);
+static bool GenerateTalkingPet_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateTalkingPet_generateOrbital(SolarSystemState* solarSys,
+											   SystemPlanet* world);
+static uint16_t GenerateTalkingPet_generateEnergy(const SolarSystemState*,
+												  const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateTalkingPet_pickupEnergy(SolarSystemState* solarSys,
+											SystemPlanet* world, uint16_t whichNode);
 
 static void ZapToUrquanEncounter(void);
 
@@ -60,10 +60,10 @@ const GenerateFunctions generateTalkingPetFunctions = {
 };
 
 
-static bool GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateTalkingPet_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pPlanet {};
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -90,8 +90,8 @@ static bool GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
-											   PLANET_DESC* world)
+static bool GenerateTalkingPet_generateOrbital(SolarSystemState* solarSys,
+											   SystemPlanet* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& (uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES)
@@ -176,8 +176,8 @@ static bool GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t GenerateTalkingPet_generateEnergy(const SOLARSYS_STATE* solarSys,
-												  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateTalkingPet_generateEnergy(const SolarSystemState* solarSys,
+												  const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -187,8 +187,8 @@ static uint16_t GenerateTalkingPet_generateEnergy(const SOLARSYS_STATE* solarSys
 	return 0;
 }
 
-static bool GenerateTalkingPet_pickupEnergy(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* world, uint16_t whichNode)
+static bool GenerateTalkingPet_pickupEnergy(SolarSystemState* solarSys,
+											SystemPlanet* world, uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -212,7 +212,7 @@ static void ZapToUrquanEncounter(void)
 	{
 		int16_t dx {};
 		int16_t dy {};
-		ENCOUNTER* EncounterPtr {};
+		Encounter* EncounterPtr {};
 		HFLEETINFO hStarShip {};
 
 		LockEncounter(hEncounter, &EncounterPtr);
@@ -227,20 +227,20 @@ static void ZapToUrquanEncounter(void)
 
 		hStarShip = GetStarShipFromIndex(
 			&uqm::gameState().game().avail_race_q, URQUAN_SHIP);
-		const FLEET_INFO* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
+		const FleetInfo* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 		EncounterPtr->origin = TemplatePtr->loc;
 		EncounterPtr->radius = TemplatePtr->actual_strength;
 		EncounterPtr->race_id = URQUAN_SHIP;
 		EncounterPtr->num_ships = 1;
 		EncounterPtr->flags = OneShotEncounter;
-		BRIEF_SHIP_INFO* BSIPtr {&EncounterPtr->ShipList[0]};
+		BriefShipInfo* BSIPtr {&EncounterPtr->ShipList[0]};
 		BSIPtr->race_id = URQUAN_SHIP;
 		BSIPtr->crew_level = TemplatePtr->crew_level;
 		BSIPtr->max_crew = TemplatePtr->max_crew;
 		BSIPtr->max_energy = TemplatePtr->max_energy;
 
 		HFLEETINFO hUmgah = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, UMGAH_SHIP);
-		FLEET_INFO* UmgahPtr =
+		FleetInfo* UmgahPtr =
 			LockFleetInfo(&uqm::gameState().game().avail_race_q, hUmgah);
 
 		EncounterPtr->loc_pt = SeedFleetLocation(UmgahPtr, plot_map, SAMATRA_DEFINED);

@@ -31,54 +31,54 @@
 
 
 static TimeCount LastTime;
-static SEQUENCE Sequences[MaxAnimations + 2];
+static AnimSequence Sequences[MaxAnimations + 2];
 // 2 extra for Talk and Transition animations
 static uint32_t ActiveMask;
 // Bit mask of all animations that are currently active.
 // Bit 'i' is set if the animation with index 'i' is active.
-static ANIMATION_DESC TalkDesc;
-static ANIMATION_DESC TransitDesc;
-static SEQUENCE* Talk;
-static SEQUENCE* Transit;
+static AnimationDesc TalkDesc;
+static AnimationDesc TransitDesc;
+static AnimSequence* Talk;
+static AnimSequence* Transit;
 static uint16_t FirstAmbient;
 static uint16_t TotalSequences;
 static bool doFullRedraw = false;
 
 //stuff for Alpha animation in HdResolutionFactor
 bool filterEnabled = false;
-FILTER_DESC FilterData;
+AnimFilterSet FilterData;
 
 static inline int16_t getAlphaChannel(uint8_t index)
 {
 	return (int16_t)GetColorMapColor(CommColormapIndex, index).r;
 }
 
-static inline uint32_t randomFrameRate(SEQUENCE* pSeq)
+static inline uint32_t randomFrameRate(AnimSequence* pSeq)
 {
-	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 	return ADPtr->BaseFrameRate + uqm::random().next() % (ADPtr->RandomFrameRate + 1);
 }
 
-static inline uint32_t randomRestartRate(SEQUENCE* pSeq)
+static inline uint32_t randomRestartRate(AnimSequence* pSeq)
 {
-	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 	return ADPtr->BaseRestartRate + uqm::random().next() % (ADPtr->RandomRestartRate + 1);
 }
 
-static inline uint16_t randomFrameIndex(SEQUENCE* pSeq, uint16_t from)
+static inline uint16_t randomFrameIndex(AnimSequence* pSeq, uint16_t from)
 {
-	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 	return from + uqm::random().next() % (ADPtr->NumFrames - from);
 }
 
-static void SetupAmbientSequences(SEQUENCE* pSeq, uint16_t Num)
+static void SetupAmbientSequences(AnimSequence* pSeq, uint16_t Num)
 {
 	for (uint16_t i {0}; i < Num; ++i, ++pSeq)
 	{
-		ANIMATION_DESC* ADPtr = &CommData.AlienAmbientArray[i];
+		AnimationDesc* ADPtr = &CommData.AlienAmbientArray[i];
 
 		memset(pSeq, 0, sizeof(*pSeq));
 
@@ -114,7 +114,7 @@ static void SetupAmbientSequences(SEQUENCE* pSeq, uint16_t Num)
 	}
 }
 
-static void SetupTalkSequence(SEQUENCE* pSeq, ANIMATION_DESC* ADPtr)
+static void SetupTalkSequence(AnimSequence* pSeq, AnimationDesc* ADPtr)
 {
 	memset(pSeq, 0, sizeof(*pSeq));
 	// Initially disabled, and until needed
@@ -123,9 +123,9 @@ static void SetupTalkSequence(SEQUENCE* pSeq, ANIMATION_DESC* ADPtr)
 	pSeq->AnimType = PICTURE_ANIM;
 }
 
-static inline bool animAtNeutralIndex(SEQUENCE* pSeq)
+static inline bool animAtNeutralIndex(AnimSequence* pSeq)
 {
-	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 	if (ADPtr->AnimFlags & CircularAnim)
 	{ // CircularAnim's neutral frame is the last
@@ -137,18 +137,18 @@ static inline bool animAtNeutralIndex(SEQUENCE* pSeq)
 	}
 }
 
-static inline bool conflictsWithTalkingAnim(SEQUENCE* pSeq)
+static inline bool conflictsWithTalkingAnim(AnimSequence* pSeq)
 {
-	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 	return ADPtr->AnimFlags & CommData.AlienTalkDesc.AnimFlags & WaitTalking;
 }
 
-static void ProcessColormapAnims(SEQUENCE* pSeq, uint16_t Num)
+static void ProcessColormapAnims(AnimSequence* pSeq, uint16_t Num)
 {
 	for (uint16_t i {0}; i < Num; ++i, ++pSeq)
 	{
-		const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+		const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 		if ((ADPtr->AnimFlags & AnimDisabled)
 			|| pSeq->AnimType != COLOR_ANIM
@@ -163,10 +163,10 @@ static void ProcessColormapAnims(SEQUENCE* pSeq, uint16_t Num)
 	}
 }
 
-static bool AdvanceAmbientSequence(SEQUENCE* pSeq)
+static bool AdvanceAmbientSequence(AnimSequence* pSeq)
 {
 	bool active {};
-	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 	--pSeq->FramesLeft;
 	// YoyoAnim does not actually end until it comes back
@@ -224,7 +224,7 @@ static bool AdvanceAmbientSequence(SEQUENCE* pSeq)
 	return active;
 }
 
-static void ResetSequence(SEQUENCE* pSeq)
+static void ResetSequence(AnimSequence* pSeq)
 {
 	// Reset the animation and cause a redraw of the neutral frame,
 	// assuming it is not AnimDisabled
@@ -234,12 +234,12 @@ static void ResetSequence(SEQUENCE* pSeq)
 	pSeq->Change = true;
 }
 
-static void AdvanceTalkingSequence(SEQUENCE* pSeq, uint32_t ElapsedTicks)
+static void AdvanceTalkingSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 {
 	// We use the actual descriptor for flags processing and
 	// a copied one for drawing. A copied one is updated only
 	// when it is safe to do so.
-	ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	AnimationDesc* ADPtr = pSeq->ADPtr;
 
 	if (pSeq->Direction == NO_DIR)
 	{ // just starting now
@@ -286,13 +286,13 @@ static void AdvanceTalkingSequence(SEQUENCE* pSeq, uint32_t ElapsedTicks)
 	}
 }
 
-static bool AdvanceTransitSequence(SEQUENCE* pSeq, uint32_t ElapsedTicks)
+static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 {
 	bool done = false;
 	// We use the actual descriptor for flags processing and
 	// a copied one for drawing. A copied one is updated only
 	// when it is safe to do so.
-	ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	AnimationDesc* ADPtr = pSeq->ADPtr;
 
 	if (pSeq->Direction == NO_DIR)
 	{					 // just starting now
@@ -419,10 +419,10 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 
 		// Process ambient animations
 		uint32_t NextActiveMask {ActiveMask};
-		SEQUENCE* pSeq {Sequences + FirstAmbient};
+		AnimSequence* pSeq {Sequences + FirstAmbient};
 		for (i = 0; i < CommData.NumAnimations; ++i, ++pSeq)
 		{
-			const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+			const AnimationDesc* ADPtr = pSeq->ADPtr;
 			const uint32_t ActiveBit = 1L << i;
 
 			if (ADPtr->AnimFlags & AnimDisabled)
@@ -568,7 +568,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 		pSeq = Sequences + FirstAmbient;
 		for (i = 0; i < CommData.NumAnimations; ++i, ++pSeq)
 		{
-			ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+			AnimationDesc* ADPtr = pSeq->ADPtr;
 			const uint32_t ActiveBit = 1L << i;
 
 			if (ADPtr->AnimFlags & AnimDisabled)
@@ -602,7 +602,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 	}
 }
 
-static void ApplyFilterToStamp(STAMP s)
+static void ApplyFilterToStamp(GfxStamp s)
 {
 	for (uint16_t i {0}; i < FilterData.NumFilters; i++)
 	{
@@ -610,7 +610,7 @@ static void ApplyFilterToStamp(STAMP s)
 		DrawMode oldMode;
 		Color oldColor;
 		Color FGColor;
-		const FILTER* FTPtr = &FilterData.FilterArray[i];
+		const AnimFilter* FTPtr = &FilterData.FilterArray[i];
 
 		if (FTPtr->Flags & FilterDisabled)
 		{
@@ -642,10 +642,10 @@ static void ApplyFilterToStamp(STAMP s)
 	}
 }
 
-bool DrawAlienFrame(SEQUENCE* Sequences, uint16_t Num, bool fullRedraw)
+bool DrawAlienFrame(AnimSequence* Sequences, uint16_t Num, bool fullRedraw)
 {
 	int i {};
-	STAMP s;
+	GfxStamp s;
 	bool Change = false;
 
 	BatchGraphics();
@@ -662,7 +662,7 @@ bool DrawAlienFrame(SEQUENCE* Sequences, uint16_t Num, bool fullRedraw)
 		// Draw any static frames (has to be in reverse)
 		for (i = CommData.NumAnimations - 1; i >= 0; --i)
 		{
-			ANIMATION_DESC* ADPtr = &CommData.AlienAmbientArray[i];
+			AnimationDesc* ADPtr = &CommData.AlienAmbientArray[i];
 
 			if (ADPtr->AnimFlags & AnimMask)
 			{
@@ -684,8 +684,8 @@ bool DrawAlienFrame(SEQUENCE* Sequences, uint16_t Num, bool fullRedraw)
 	{ // Draw the animation sequences (has to be in reverse)
 		for (i = Num - 1; i >= 0; --i)
 		{
-			SEQUENCE* pSeq = &Sequences[i];
-			const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+			AnimSequence* pSeq = &Sequences[i];
+			const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 			if ((ADPtr->AnimFlags & AnimDisabled)
 				|| pSeq->AnimType != PICTURE_ANIM)
@@ -730,7 +730,7 @@ bool DrawAlienFrame(SEQUENCE* Sequences, uint16_t Num, bool fullRedraw)
 			Color oldColor;
 			Color FGColor;
 			int16_t factor {};
-			const FILTER* FTPtr = &FilterData.FilterArray[i];
+			const AnimFilter* FTPtr = &FilterData.FilterArray[i];
 
 			if (FTPtr->Flags & FilterDisabled)
 			{
@@ -774,7 +774,7 @@ bool DrawAlienFrame(SEQUENCE* Sequences, uint16_t Num, bool fullRedraw)
 
 				if (FTPtr->FrameIndex == -1)
 				{ // Don't have frame - draw rect on top of everything
-					GFXRECT r;
+					GfxRect r;
 
 					GetContextClipRect(&r);
 					r.corner.x = r.corner.y = 0;
@@ -885,7 +885,7 @@ void RunOneTimeSequence(uint16_t animIndex, uint16_t flags)
 	}
 }
 
-void EngageFilters(FILTER_DESC* f_desc)
+void EngageFilters(AnimFilterSet* f_desc)
 {
 	if (!f_desc)
 	{

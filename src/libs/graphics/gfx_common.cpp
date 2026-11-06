@@ -53,12 +53,12 @@ uqstl::atomic<int> TransitionAmount {255};
 static int gscale = GscaleIdentity;
 static uqm::TFBScaleMode gscale_mode = uqm::TFBScaleMode::Nearest;
 
-void DrawFromExtraScreen(GFXRECT* r)
+void DrawFromExtraScreen(GfxRect* r)
 {
 	TFB_DrawScreen_Copy(r, TFB_SCREEN_EXTRA, TFB_SCREEN_MAIN);
 }
 
-void LoadIntoExtraScreen(GFXRECT* r)
+void LoadIntoExtraScreen(GfxRect* r)
 {
 	TFB_DrawScreen_Copy(r, TFB_SCREEN_MAIN, TFB_SCREEN_EXTRA);
 }
@@ -111,14 +111,14 @@ void FlushGraphics(void)
 }
 
 
-void SetTransitionSource(const GFXRECT* pRect)
+void SetTransitionSource(const GfxRect* pRect)
 {
 	TFB_DrawScreen_Copy(nullptr, TFB_SCREEN_MAIN, TFB_SCREEN_TRANSITION);
 	(void)pRect; /* Satisfying compiler (unused parameter) */
 }
 
 // ScreenTransition() is synchronous (does not return until transition done)
-void ScreenTransition(uqm::EmulationMode transType, const GFXRECT* pRect)
+void ScreenTransition(uqm::EmulationMode transType, const GfxRect* pRect)
 {
 	static constexpr TimePeriod Duration {c_gameSecond * 31 / 60};
 	TimeCount startTime;
@@ -128,7 +128,7 @@ void ScreenTransition(uqm::EmulationMode transType, const GFXRECT* pRect)
 		return;
 	}
 
-	TFB_UploadTransitionScreen((GFXRECT*)pRect);
+	TFB_UploadTransitionScreen((GfxRect*)pRect);
 
 	TransitionAmount = 0;
 	FlushGraphics();

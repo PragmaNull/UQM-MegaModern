@@ -19,8 +19,8 @@
 #ifndef UQM_ENCOUNT_H_
 #define UQM_ENCOUNT_H_
 
-typedef struct brief_ship_info BRIEF_SHIP_INFO;
-typedef struct encounter ENCOUNTER;
+struct BriefShipInfo;
+struct Encounter;
 
 // XXX: temporary, for CONVERSATION
 #include "commglue.h"
@@ -39,7 +39,7 @@ typedef HLINK HENCOUNTER;
 
 inline constexpr auto MaxHyperShips {7};
 
-// ENCOUNTER.flags
+// Encounter.flags
 // XXX: Currently, the flags are combined with num_ships into a single uint8_t
 //   in the savegames: num_ships occupy the low nibble and flags the high one.
 //   Bits 4 and 5 are available for more flags in the savegames,
@@ -48,7 +48,7 @@ inline constexpr auto OneShotEncounter {(1 << 7)};
 inline constexpr auto EncounterReforming {(1 << 6)};
 
 
-struct brief_ship_info
+struct BriefShipInfo
 {
 	// The only field actually used right now is crew_level
 	uint8_t race_id;
@@ -57,23 +57,23 @@ struct brief_ship_info
 	uint8_t max_energy;
 };
 
-struct encounter
+struct Encounter
 {
-	// LINK elements; must be first
+	// QueueLink elements; must be first
 	HENCOUNTER pred, succ;
 
 	HELEMENT hElement;
 
 	int16_t transition_state;
-	GFXPOINT origin;
+	GfxPoint origin;
 	uint16_t radius;
 	uint8_t race_id;
 	uint8_t num_ships;
 	uint8_t flags;
-	// See ENCOUNTER.flags above
-	GFXPOINT loc_pt;
+	// See Encounter.flags above
+	GfxPoint loc_pt;
 
-	BRIEF_SHIP_INFO ShipList[MaxHyperShips];
+	BriefShipInfo ShipList[MaxHyperShips];
 	// Only the crew_level member is currently used
 
 	int32_t log_x, log_y;
@@ -84,9 +84,9 @@ constexpr auto PutEncounter(const auto& h) { return PutQueue(&uqm::gameState().g
 constexpr auto InsertEncounter(const auto& h, const auto& i) { return InsertQueue(&uqm::gameState().game().encounter_q, h, i); }
 constexpr auto GetHeadEncounter() { return GetHeadLink(&uqm::gameState().game().encounter_q); }
 
-inline void LockEncounter(HENCOUNTER h, ENCOUNTER** ppe)
+inline void LockEncounter(HENCOUNTER h, Encounter** ppe)
 {
-	*ppe = reinterpret_cast<ENCOUNTER*>(LockLink(&uqm::gameState().game().encounter_q, h));
+	*ppe = reinterpret_cast<Encounter*>(LockLink(&uqm::gameState().game().encounter_q, h));
 }
 constexpr auto UnlockEncounter(const auto& h) { return UnlockLink(&uqm::gameState().game().encounter_q, h); }
 constexpr auto RemoveEncounter(const auto& h) { return RemoveQueue(&uqm::gameState().game().encounter_q, h); }
@@ -105,7 +105,7 @@ extern void BuildBattle(uint16_t which_player);
 extern uint16_t InitEncounter(void);
 extern uint16_t UninitEncounter(void);
 extern bool FleetIsInfinite(uint16_t playerNr);
-extern void UpdateShipFragCrew(STARSHIP*);
+extern void UpdateShipFragCrew(Starship*);
 
 extern void SetBattlePlanet(void);
 

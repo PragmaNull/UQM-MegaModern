@@ -28,7 +28,7 @@
 #include <stdio.h>
 
 
-BATTLE_INPUT_STATE computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
+BATTLE_INPUT_STATE computer_intelligence(ComputerInputContext* context, Starship* StarShipPtr)
 {
 	BATTLE_INPUT_STATE InputState {};
 

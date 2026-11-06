@@ -472,7 +472,7 @@ static constexpr auto GiantGasgDist {ScaleRadius(13)};
 static constexpr auto SupergiantRockDist {ScaleRadius(16)};
 static constexpr auto SupergiantGasgDist {ScaleRadius(33)};
 
-void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
+void ComputeSpeed(SystemPlanet* planet, bool GeneratingMoons,
 				  uint16_t rand_val)
 {
 	//BW : empiric values, which would give roughly correct
@@ -498,8 +498,8 @@ void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
 	}
 }
 
-void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
-				PLANET_DESC* pBaseDesc, bool TypesDefined)
+void FillOrbits(SolarSystemState* system, uint8_t NumPlanets,
+				SystemPlanet* pBaseDesc, bool TypesDefined)
 { /* Generate Planets in orbit around star */
 	uint8_t MaxPlanet {};
 	uint32_t loopCounter = 0;
@@ -526,7 +526,7 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 		pBaseDesc = system->PlanetDesc;
 	}
 
-	PLANET_DESC* pPD {pBaseDesc};
+	SystemPlanet* pPD {pBaseDesc};
 	const uint16_t StarSize {system->SunDesc[0].data_index};
 	const uint8_t starColor {StarColor(CurStarDescPtr()->Type)};
 
@@ -567,7 +567,7 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 		uint32_t rand_val {};
 		uint32_t min_radius {};
 		int16_t delta_r {};
-		const PLANET_DESC* pLocPD {};
+		const SystemPlanet* pLocPD {};
 
 		do
 		{
@@ -692,7 +692,7 @@ RelocatePlanet:
 			{
 				if (pBaseDesc[i].radius > pBaseDesc[j].radius)
 				{
-					PLANET_DESC temp;
+					SystemPlanet temp;
 
 					temp = pBaseDesc[i];
 					pBaseDesc[i] = pBaseDesc[j];
@@ -703,7 +703,7 @@ RelocatePlanet:
 	}
 }
 
-uint8_t PickClosestHabitable(SOLARSYS_STATE* solarSys)
+uint8_t PickClosestHabitable(SolarSystemState* solarSys)
 {
 	const int16_t hRangesD[NUM_STAR_COLORS][2] = {
 		{860,  1790}, // blue
@@ -726,11 +726,11 @@ uint8_t PickClosestHabitable(SOLARSYS_STATE* solarSys)
 	int16_t hRangeMax = 0;
 	int16_t hRangeMed = 0;
 	uint8_t pByte = 0;
-	PLANET_DESC* pPlanet {};
+	SystemPlanet* pPlanet {};
 	const uint32_t rand = SysGenRNG->seed();
 
 	uint8_t numPlanets {solarSys->SunDesc[0].NumPlanets};
-	PLANET_DESC* pPD {solarSys->PlanetDesc};
+	SystemPlanet* pPD {solarSys->PlanetDesc};
 
 	const uint8_t starColor {StarColor(CurStarDescPtr()->Type)};
 	const uint8_t starType {StarType(CurStarDescPtr()->Type)};
@@ -820,7 +820,7 @@ uint8_t PickClosestHabitable(SOLARSYS_STATE* solarSys)
 	return pByte;
 }
 
-bool CheckForHabitable(SOLARSYS_STATE* solarSys)
+bool CheckForHabitable(SolarSystemState* solarSys)
 {
 	const int16_t HabitableRanges[NUM_STAR_COLORS][2] = {
 		{853,  1790}, // blue
@@ -846,7 +846,7 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 		starColor = ORANGE_BODY;
 	}
 
-	PLANET_DESC* pPD {solarSys->PlanetDesc};
+	SystemPlanet* pPD {solarSys->PlanetDesc};
 	const int16_t oldRadius {pPD[planetByte].radius};
 
 	const int16_t habitableRangeMin {HabitableRanges[starColor][0]};
@@ -958,7 +958,7 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 	//		{
 	//			if (solarSys->PlanetDesc[i].radius > solarSys->PlanetDesc[j].radius)
 	//			{
-	//				PLANET_DESC temp;
+	//				SystemPlanet temp;
 
 	//				temp = solarSys->PlanetDesc[i];
 	//				solarSys->PlanetDesc[i] = solarSys->PlanetDesc[j];

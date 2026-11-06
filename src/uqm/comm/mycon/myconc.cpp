@@ -27,7 +27,7 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static LOCDATA mycon_desc =
+static ConversationData mycon_desc =
 	{
 		MYCON_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -685,7 +685,7 @@ static void post_mycon_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_mycon_comm(void)
+ConversationData* init_mycon_comm(void)
 {
 	mycon_desc.init_encounter_func = Intro;
 	mycon_desc.post_encounter_func = post_mycon_enc;
@@ -707,7 +707,7 @@ LOCDATA* init_mycon_comm(void)
 	{
 		setSegue(Segue_peace);
 	}
-	LOCDATA* retval {&mycon_desc};
+	ConversationData* retval {&mycon_desc};
 
 	return (retval);
 }

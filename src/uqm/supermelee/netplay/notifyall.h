@@ -28,9 +28,9 @@
 extern "C" {
 #endif
 
-void Netplay_NotifyAll_setTeamName(MELEE_STATE* pMS, size_t playerNr);
-void Netplay_NotifyAll_setFleet(MELEE_STATE* pMS, size_t playerNr);
-void Netplay_NotifyAll_setShip(MELEE_STATE* pMS, size_t playerNr,
+void Netplay_NotifyAll_setTeamName(MeleeState* pMS, size_t playerNr);
+void Netplay_NotifyAll_setFleet(MeleeState* pMS, size_t playerNr);
+void Netplay_NotifyAll_setShip(MeleeState* pMS, size_t playerNr,
 							   size_t index);
 
 bool Netplay_NotifyAll_inputDelay(size_t delay);

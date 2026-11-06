@@ -34,8 +34,8 @@ static constexpr auto BuildpickFrameOffset {27};
 
 void BuildBuildPickFrame(void)
 {
-	STAMP s;
-	GFXRECT r;
+	GfxStamp s;
+	GfxRect r;
 	GFXCONTEXT OldContext = SetContext(OffScreenContext);
 
 	// create team building ship selection box
@@ -88,12 +88,12 @@ Color GetShipFlashColor(void)
 }
 
 // Draw part of the frame underneath the ship (removes artifacts in HdResolutionFactor)
-void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
+void RepairBuildPickFrame(GfxRect* pRect, GfxPoint* origin)
 {
-	GFXRECT r;
-	GFXRECT OldRect;
-	GFXPOINT oldOrigin;
-	STAMP s;
+	GfxRect r;
+	GfxRect OldRect;
+	GfxPoint oldOrigin;
+	GfxStamp s;
 
 	r.corner.x = origin->x;
 	r.corner.y = origin->y;
@@ -127,8 +127,8 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 // Draw a ship icon in the ship selection popup.
 void DrawPickIcon(MeleeShip ship, bool DrawErase)
 {
-	STAMP s;
-	GFXRECT r;
+	GfxStamp s;
+	GfxRect r;
 
 	GetFrameRect(BuildPickFrame, &r);
 
@@ -159,7 +159,7 @@ void DrawPickIcon(MeleeShip ship, bool DrawErase)
 
 static void DrawTooltipBox(void)
 {
-	STAMP s;
+	GfxStamp s;
 
 	s.origin.x = s.origin.y = 0;
 	s.frame = SetAbsFrameIndex(MeleeFrame, TtipFrameOffset);
@@ -167,7 +167,7 @@ static void DrawTooltipBox(void)
 	DrawStamp(&s);
 }
 
-void GetToolTipFrameRect(GFXRECT* r)
+void GetToolTipFrameRect(GfxRect* r)
 {
 	GetFrameRect(SetAbsFrameIndex(MeleeFrame, TtipFrameOffset), r);
 }
@@ -175,12 +175,12 @@ void GetToolTipFrameRect(GFXRECT* r)
 static constexpr auto RaceNameOffset {0};
 static constexpr auto RaceShipOffset {3};
 
-void DrawTooltip(SHIP_INFO* SIPtr)
+void DrawTooltip(ShipInfoDesc* SIPtr)
 {
 	char buf[PATH_MAX] {};
-	TEXT Text;
+	GfxText Text;
 	Color oldColor;
-	GFXRECT r;
+	GfxRect r;
 
 	GetToolTipFrameRect(&r);
 
@@ -229,13 +229,13 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 	SetContext(oldContext);
 }
 
-void DrawPickFrame(MELEE_STATE* pMS)
+void DrawPickFrame(MeleeState* pMS)
 {
-	GFXRECT r;
-	GFXRECT r0;
-	GFXRECT r1;
-	GFXRECT ship_r;
-	STAMP s;
+	GfxRect r;
+	GfxRect r0;
+	GfxRect r1;
+	GfxRect ship_r;
+	GfxStamp s;
 
 	GetShipBox(&r0, 0, 0, 0),
 		GetShipBox(&r1, 1, NumMeleeRows - 1, NumMeleeColumns() - 1),
@@ -268,12 +268,12 @@ void DrawPickFrame(MELEE_STATE* pMS)
 	}
 }
 
-void GetBuildPickFrameRect(GFXRECT* r)
+void GetBuildPickFrameRect(GfxRect* r)
 {
 	GetFrameRect(BuildPickFrame, r);
 }
 
-static bool DoPickShip(MELEE_STATE* pMS)
+static bool DoPickShip(MeleeState* pMS)
 {
 	const TimeCount TimeIn {GetTimeCounter()};
 
@@ -373,7 +373,7 @@ static bool DoPickShip(MELEE_STATE* pMS)
 // been cancelled or if the general abort key was pressed (in which case
 // 'uqm::currentActivity() & CHECK_ABORT' is true as usual.
 // If a ship was selected, pMS->currentShip is set to the selected ship.
-bool BuildPickShip(MELEE_STATE* pMS)
+bool BuildPickShip(MeleeState* pMS)
 {
 	FlushInput();
 

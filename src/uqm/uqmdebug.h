@@ -35,7 +35,7 @@ extern bool DebugKeyPressed;
 void doInstantMove(void);
 
 // Find a player ship. Setting playerNr to non-0 is only meaningful in battle.
-STARSHIP* findPlayerShip(int16_t playerNr);
+Starship* findPlayerShip(int16_t playerNr);
 
 // Resets the energy of the first player (the bottom one) to its maximum.
 void resetEnergyBattle(void);
@@ -69,7 +69,7 @@ void forwardToNextEvent(bool skipHEE);
 // Must be called on the Starcon2Main thread.
 void dumpEvents(FILE* out);
 // Describe one event.
-void dumpEvent(FILE* out, const EVENT* eventPtr);
+void dumpEvent(FILE* out, const GameEvent* eventPtr);
 // Get the name of one event.
 const char* eventName(uint8_t func_index);
 // Get the name of one race.
@@ -90,32 +90,32 @@ void showSpheres(bool Animated);
 void activateAllShips(void);
 
 // Call a function for all stars.
-void forAllStars(void (*callback)(STAR_DESC*, void*), void* arg);
+void forAllStars(void (*callback)(StarDesc*, void*), void* arg);
 // Call a function for all planets in a star system.
-void forAllPlanets(STAR_DESC* star, SOLARSYS_STATE* system,
-				   void (*callback)(STAR_DESC*, SOLARSYS_STATE*, PLANET_DESC*,
+void forAllPlanets(StarDesc* star, SolarSystemState* system,
+				   void (*callback)(StarDesc*, SolarSystemState*, SystemPlanet*,
 									void*),
 				   void* arg);
 // Call a function for all moons of a planet.
-void forAllMoons(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
-				 void (*callback)(STAR_DESC*, SOLARSYS_STATE*, PLANET_DESC*,
-								  PLANET_DESC*, void*),
+void forAllMoons(StarDesc* star, SolarSystemState* system, SystemPlanet* planet,
+				 void (*callback)(StarDesc*, SolarSystemState*, SystemPlanet*,
+								  SystemPlanet*, void*),
 				 void* arg);
 
 // Argument to UniverseRecurse()
 struct UniverseRecurseArg
 {
-	void (*systemFuncPre)(const STAR_DESC* star,
-						  const SOLARSYS_STATE* system, void* arg);
+	void (*systemFuncPre)(const StarDesc* star,
+						  const SolarSystemState* system, void* arg);
 	// Called for each system prior to recursing to its planets.
-	void (*systemFuncPost)(const STAR_DESC* star,
-						   const SOLARSYS_STATE* system, void* arg);
+	void (*systemFuncPost)(const StarDesc* star,
+						   const SolarSystemState* system, void* arg);
 	// Called for each system after recursing to its planets.
-	void (*planetFuncPre)(const PLANET_DESC* planet, void* arg);
+	void (*planetFuncPre)(const SystemPlanet* planet, void* arg);
 	// Called for each planet prior to recursing to its moons.
-	void (*planetFuncPost)(const PLANET_DESC* planet, void* arg);
+	void (*planetFuncPost)(const SystemPlanet* planet, void* arg);
 	// Called for each planet after recursing to its moons.
-	void (*moonFunc)(const PLANET_DESC* moon, void* arg);
+	void (*moonFunc)(const SystemPlanet* moon, void* arg);
 	// Called for each moon.
 	void* arg;
 	// User data.
@@ -130,8 +130,8 @@ void dumpUniverse(FILE* out);
 // Must be called on the Starcon2Main thread.
 void dumpUniverseToFile(void);
 // Describe one star system.
-void dumpSystem(FILE* out, const STAR_DESC* star,
-				const SOLARSYS_STATE* system);
+void dumpSystem(FILE* out, const StarDesc* star,
+				const SolarSystemState* system);
 // Get a star color as a string.
 const char* bodyColorString(uint8_t col);
 // Get a star type as a string.
@@ -139,23 +139,23 @@ const char* starTypeString(uint8_t type);
 // Get a string describing special presence in the star system.
 const char* starPresenceString(uint8_t index);
 // Get a list describing all planets in a star.
-void dumpPlanets(FILE* out, const STAR_DESC* star);
+void dumpPlanets(FILE* out, const StarDesc* star);
 // Describe one planet.
-void dumpPlanet(FILE* out, const PLANET_DESC* planet);
+void dumpPlanet(FILE* out, const SystemPlanet* planet);
 // Describe one moon.
-void dumpMoon(FILE* out, const PLANET_DESC* moon);
+void dumpMoon(FILE* out, const SystemPlanet* moon);
 // Calculate the total value of all minerals on a world.
-uint16_t calculateMineralValue(const SOLARSYS_STATE* system,
-							   const PLANET_DESC* world);
+uint16_t calculateMineralValue(const SolarSystemState* system,
+							   const SystemPlanet* world);
 // Determine how much of each mineral type is present on a world
-void generateMineralIndex(const SOLARSYS_STATE* system,
-						  const PLANET_DESC* world, uint16_t minerals[]);
+void generateMineralIndex(const SolarSystemState* system,
+						  const SystemPlanet* world, uint16_t minerals[]);
 // Calculate the total value of all bio on a world.
-uint16_t calculateBioValue(const SOLARSYS_STATE* system,
-						   const PLANET_DESC* world);
+uint16_t calculateBioValue(const SolarSystemState* system,
+						   const SystemPlanet* world);
 // Determine how much of each mineral type is present on a world
-void generateBioIndex(const SOLARSYS_STATE* system,
-					  const PLANET_DESC* world, uint16_t bio[]);
+void generateBioIndex(const SolarSystemState* system,
+					  const SystemPlanet* world, uint16_t bio[]);
 
 // Tally the resources for each star system.
 // Must be called on the Starcon2Main thread.
@@ -200,7 +200,7 @@ void dumpStrings(FILE* out);
 // Must be called on the Starcon2Main thread.
 void debugContexts(void);
 
-void printWorld(const PLANET_DESC* world);
+void printWorld(const SystemPlanet* world);
 
 
 // To add some day:

@@ -202,7 +202,7 @@ static HSTARSHIP BuildSIS(void)
 	{
 		return 0;
 	}
-	STARSHIP* StarShipPtr {LockStarShip(&race_q[0], hStarShip)};
+	Starship* StarShipPtr {LockStarShip(&race_q[0], hStarShip)};
 	StarShipPtr->playerNr = RpgPlayerNum;
 	StarShipPtr->captains_name_index = 0;
 	UnlockStarShip(&race_q[0], hStarShip);
@@ -237,7 +237,7 @@ int16_t InitShips(void)
 	else
 	{
 		uint16_t i {};
-		GFXRECT r;
+		GfxRect r;
 
 		SetContext(SpaceContext);
 
@@ -295,7 +295,7 @@ static uint16_t CountCrewElements(void)
 	for (hElement = GetHeadElement();
 		 hElement != 0; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
@@ -315,7 +315,7 @@ void UninitShips(void)
 	int i {};
 	HELEMENT hElement {};
 	HELEMENT hNextElement {};
-	STARSHIP* SPtr[NumPlayers];
+	Starship* SPtr[NumPlayers];
 
 	StopSound();
 
@@ -332,14 +332,14 @@ void UninitShips(void)
 	for (hElement = GetHeadElement();
 		 hElement != 0; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
 		if ((ElementPtr->state_flags & PlayerShip)
 			|| ElementPtr->death_func == new_ship)
 		{
-			STARSHIP* StarShipPtr {};
+			Starship* StarShipPtr {};
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -376,7 +376,7 @@ void UninitShips(void)
 	{
 		// Encounter battle in full game.
 		//   Record the crew left in the last ship standing. The crew left
-		//   is first recorded into STARSHIP.crew_level just a few lines
+		//   is first recorded into Starship.crew_level just a few lines
 		//   above here.
 		for (i = NumPlayers - 1; i >= 0; --i)
 		{

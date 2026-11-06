@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_umgah(void);
+RaceDesc* init_umgah(void);
 
 #if 0 //defined(__cplusplus)
 }

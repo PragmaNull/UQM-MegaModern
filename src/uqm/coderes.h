@@ -31,7 +31,7 @@ extern void* CaptureCodeRes(void* hCode, void* pData, void** ppLocData);
 extern void* ReleaseCodeRes(void* CodeRef);
 extern bool DestroyCodeRes(void* hCode);
 
-struct CODE_REF
+struct CodeResRef
 {
 	uint16_t size;
 };

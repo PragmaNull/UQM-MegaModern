@@ -92,7 +92,7 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 	for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q);
 		 hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		if (GroupPtr->race_id != which_race)
@@ -201,20 +201,20 @@ FRAME Ywing = NullResource;
 static constexpr auto TrackWait {5};
 static constexpr auto OrbitSpeed {60};
 
-static void ip_group_preprocess(ELEMENT* ElementPtr)
+static void ip_group_preprocess(Element* ElementPtr)
 {
 	uint8_t task {};
 	uint8_t group_loc {};
-	GFXPOINT dest_pt;
+	GfxPoint dest_pt;
 	int16_t vdx {};
 	int16_t vdy {};
-	IP_GROUP* GroupPtr {};
+	InterplanetaryGroup* GroupPtr {};
 
-	ELEMENT* EPtr {ElementPtr};
+	Element* EPtr {ElementPtr};
 	EPtr->state_flags &= ~(Disappearing | Nonsolid); // "I'm not quite dead"
 	++EPtr->life_span;								 // so that it will 'die' again next time
 
-	*(&GroupPtr) = (IP_GROUP*)(EPtr)->pParent;
+	*(&GroupPtr) = (InterplanetaryGroup*)(EPtr)->pParent;
 	group_loc = GroupPtr->sys_loc; // save old location
 	DisplayArray[EPtr->PrimIndex].Object.Point = GroupPtr->loc;
 
@@ -373,7 +373,7 @@ static void ip_group_preprocess(ELEMENT* ElementPtr)
 			else
 			{
 				uint16_t orbit_dist {};
-				GFXPOINT org;
+				GfxPoint org;
 
 				isOrbiting = true;
 				if (task != ON_STATION)
@@ -553,7 +553,7 @@ CheckGetAway:
 				}
 				else
 				{
-					GFXPOINT entryPt;
+					GfxPoint entryPt;
 
 					if (target_loc == GroupPtr->dest_loc)
 					{
@@ -655,7 +655,7 @@ CheckGetAway:
 				// reforming
 				int16_t delta_x {};
 				int16_t delta_y {};
-				GFXPOINT sis_pt;
+				GfxPoint sis_pt;
 
 				sis_pt = displayToLocation(
 					uqm::flagship().shipStamp.origin, radius);
@@ -712,8 +712,8 @@ CheckGetAway:
 	EPtr->state_flags |= Changing;
 }
 
-static void flag_ship_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void flag_ship_collision(Element* ElementPtr0, GfxPoint* pPt0,
+								Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (uqm::currentActivity() & START_ENCOUNTER)
 	{
@@ -721,12 +721,12 @@ static void flag_ship_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 
 	if (!(ElementPtr1->state_flags & Collision))
-	{ // The other element's collision has not been processed yet
-		// Defer starting the encounter until it is.
+	{ // The other Element's collision has not been processed yet
+		// Defer starting the Encounter until it is.
 		ElementPtr0->state_flags |= Collision | Nonsolid;
 	}
 	else
-	{ // Both element's collisions have now been processed
+	{ // Both Element's collisions have now been processed
 		ElementPtr1->state_flags &= ~Collision;
 		uqm::currentActivity() |= START_ENCOUNTER;
 	}
@@ -734,10 +734,10 @@ static void flag_ship_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static void ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void ip_group_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							   Element* ElementPtr1, GfxPoint* pPt1)
 {
-	IP_GROUP* GroupPtr {};
+	InterplanetaryGroup* GroupPtr {};
 	void* OtherPtr {};
 
 	if (uqm::currentActivity() & START_ENCOUNTER)
@@ -745,7 +745,7 @@ static void ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		return; // ignore the rest of the collisions
 	}
 
-	*(&GroupPtr) = (IP_GROUP*)(ElementPtr0)->pParent;
+	*(&GroupPtr) = (InterplanetaryGroup*)(ElementPtr0)->pParent;
 	OtherPtr = ElementPtr1->pParent;
 
 	if (!(uqm::flagship().autopilot.target().x == ~0 && uqm::flagship().autopilot.target().y == ~0)
@@ -778,18 +778,18 @@ static void ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 		GroupPtr->task |= REFORM_GROUP;
 		GroupPtr->group_counter = 100;
-		// Send "all clear" for the time being. After the encounter, if
+		// Send "all clear" for the time being. After the Encounter, if
 		// the player battles the group, the "intercept" notify will be
 		// resent.
 		NotifyOthers(GroupPtr->race_id, IpnlAllClear);
 
 		if (!(ElementPtr1->state_flags & Collision))
-		{ // The other element's collision has not been processed yet
-			// Defer starting the encounter until it is.
+		{ // The other Element's collision has not been processed yet
+			// Defer starting the Encounter until it is.
 			ElementPtr0->state_flags |= Collision | Nonsolid;
 		}
 		else
-		{ // Both element's collisions have now been processed
+		{ // Both Element's collisions have now been processed
 			ElementPtr1->state_flags &= ~Collision;
 			uqm::currentActivity() |= START_ENCOUNTER;
 		}
@@ -798,12 +798,12 @@ static void ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static void spawn_ip_group(IP_GROUP* GroupPtr)
+static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 {
 	HELEMENT hIPSHIPElement {AllocElement()};
 	if (hIPSHIPElement)
 	{
-		ELEMENT* IPSHIPElementPtr {};
+		Element* IPSHIPElementPtr {};
 
 		LockElement(hIPSHIPElement, &IPSHIPElementPtr);
 		// Must have mass_points for collisions to work
@@ -838,7 +838,7 @@ static void spawn_ip_group(IP_GROUP* GroupPtr)
 		}
 		if (uqm::currentSeed().ships)
 		{
-			const FLEET_INFO* TemplatePtr = nullptr;
+			const FleetInfo* TemplatePtr = nullptr;
 			HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, GroupPtr->race_id)};
 			if (hFleet)
 			{
@@ -900,7 +900,7 @@ static void spawn_ip_group(IP_GROUP* GroupPtr)
 		IPSHIPElementPtr->collision_func = ip_group_collision;
 
 		{
-			GFXPOINT pt;
+			GfxPoint pt;
 
 			const int16_t radius {zoomRadiusForLocation(GroupPtr->sys_loc)};
 			pt = locationToDisplay(GroupPtr->loc, radius);
@@ -929,7 +929,7 @@ static void spawn_ip_group(IP_GROUP* GroupPtr)
 
 static constexpr auto FlipWait {42};
 
-static void flag_ship_preprocess(ELEMENT* ElementPtr)
+static void flag_ship_preprocess(Element* ElementPtr)
 {
 	if (--ElementPtr->thrust_wait == 0)
 	/* juggle list after flagship */
@@ -939,7 +939,7 @@ static void flag_ship_preprocess(ELEMENT* ElementPtr)
 		if ((hSuccElement = GetSuccElement(ElementPtr))
 			&& hSuccElement != GetTailElement())
 		{
-			ELEMENT* TailPtr {};
+			Element* TailPtr {};
 
 			LockElement(GetTailElement(), &TailPtr);
 			HELEMENT hPredElement {_GetPredLink(TailPtr)};
@@ -958,7 +958,7 @@ static void flag_ship_preprocess(ELEMENT* ElementPtr)
 		uint8_t ec {};
 		int16_t vdx {};
 		int16_t vdy {};
-		GFXPOINT pt;
+		GfxPoint pt;
 
 		GetCurrentVelocityComponents(&uqm::flagship().velocity, &vdx, &vdy);
 
@@ -1030,7 +1030,7 @@ static void flag_ship_preprocess(ELEMENT* ElementPtr)
 static void AdjustInitialPosition(void)
 { // Corrects SIS position - rounding error, described in
 	// EnterPlanetOrbit() in solarsys.c
-	GFXPOINT pt;
+	GfxPoint pt;
 
 	const uint8_t flagship_loc {getFlagshipLocation()};
 	const int16_t radius {zoomRadiusForLocation(flagship_loc)};
@@ -1050,7 +1050,7 @@ static void spawn_flag_ship(void)
 	HELEMENT hFlagShipElement {AllocElement()};
 	if (hFlagShipElement)
 	{
-		ELEMENT* FlagShipElementPtr {};
+		Element* FlagShipElementPtr {};
 
 		LockElement(hFlagShipElement, &FlagShipElementPtr);
 		FlagShipElementPtr->hit_points = 1;
@@ -1105,7 +1105,7 @@ void DoMissions(void)
 	for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q);
 		 hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		if (GroupPtr->in_system

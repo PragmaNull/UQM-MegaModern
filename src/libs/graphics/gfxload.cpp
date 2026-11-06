@@ -81,7 +81,7 @@ static void process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame*
 	       every corner of the image
 		 */
 		Color color = {0xff, 0xff, 0xff, 0xff};
-		GFXRECT r = {
+		GfxRect r = {
 			{0, 0},
 			{1, 1}
 		  };
@@ -196,7 +196,7 @@ bool _ReleaseCelData(void* handle)
 		return (false);
 	}
 
-	for (FRAME_DESC& frame : DrawablePtr->Frame)
+	for (FrameDesc& frame : DrawablePtr->Frame)
 	{
 		if (TFB_Image * img {frame.image})
 		{
@@ -256,7 +256,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 	for (int dirEntryI {0}; dirEntryI < static_cast<int>(fontDir.size()); dirEntryI++)
 	{
 		unsigned int charIndex {};
-		EXTENT size;
+		GfxExtent size;
 
 		const char* char_name = fontDir[dirEntryI].c_str();
 
@@ -297,7 +297,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		numBCDs++;
 	}
 
-	fontPtr = new FONT_DESC {};
+	fontPtr = new FontDesc {};
 	if (fontPtr == nullptr)
 	{
 		goto err;
@@ -342,7 +342,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 	{
 		size_t startBCD = 0;
 		uqm::UniChar pageStart {};
-		FONT_PAGE** pageEndPtr = &fontPtr->fontPages;
+		FontPage** pageEndPtr = &fontPtr->fontPages;
 		while (startBCD < numBCDs)
 		{
 			// Process one character page.
@@ -357,7 +357,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 			{
 				const int numChars = bcds[endBCD - 1].index + 1
 								   - bcds[startBCD].index;
-				FONT_PAGE* page = AllocFontPage(numChars);
+				FontPage* page = AllocFontPage(numChars);
 				page->pageStart = pageStart;
 				page->firstChar = bcds[startBCD].index;
 				page->numChars = numChars;
@@ -432,9 +432,9 @@ bool _ReleaseFontData(void* handle)
 	}
 
 	{
-		FONT_PAGE* nextPage {};
+		FontPage* nextPage {};
 
-		for (FONT_PAGE* page {font->fontPages}; page != nullptr; page = nextPage)
+		for (FontPage* page {font->fontPages}; page != nullptr; page = nextPage)
 		{
 			for (size_t charI {0}; charI < page->numChars; charI++)
 			{

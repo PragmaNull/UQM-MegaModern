@@ -95,7 +95,7 @@ inline constexpr auto EndStarbaseStringBase {(TdoStarbaseStringBase + NUM_PURCHA
 extern uqm::StringTablePtr GameStrings;
 inline auto GameString(auto i) { return GameStrings->text(i); }
 
-extern void SetCursorRect(GFXRECT* r, GFXCONTEXT context);
+extern void SetCursorRect(GfxRect* r, GFXCONTEXT context);
 extern void FlushCursorRect(void);
 void SetCursorFlashBlock(bool state);
 

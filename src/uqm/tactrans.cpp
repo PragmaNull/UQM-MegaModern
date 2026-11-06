@@ -45,22 +45,22 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static void cleanup_dead_ship(ELEMENT* ElementPtr);
+static void cleanup_dead_ship(Element* ElementPtr);
 
 static bool dittyIsPlaying;
-static STARSHIP* winnerStarShip;
+static Starship* winnerStarShip;
 // Indicates which ship is the winner of the current battle.
 // The winner will be last to pick the next ship.
 
 
-bool OpponentAlive(STARSHIP* TestStarShipPtr)
+bool OpponentAlive(Starship* TestStarShipPtr)
 {
 	HELEMENT hSuccElement {};
 
 	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hSuccElement)
 	{
-		ELEMENT* ElementPtr {};
-		STARSHIP* StarShipPtr {};
+		Element* ElementPtr {};
+		Starship* StarShipPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hSuccElement = GetSuccElement(ElementPtr);
@@ -77,7 +77,7 @@ bool OpponentAlive(STARSHIP* TestStarShipPtr)
 	return true;
 }
 
-static void PlayDitty(STARSHIP* ship)
+static void PlayDitty(Starship* ship)
 {
 	PlayMusic(ship->RaceDescPtr->ship_data.victory_ditty, false, 3);
 	dittyIsPlaying = true;
@@ -276,7 +276,7 @@ static inline bool readyForBattleEnd(void)
 #endif /* defined (NETPLAY) */
 }
 
-static void preprocess_dead_ship(ELEMENT* DeadShipPtr)
+static void preprocess_dead_ship(Element* DeadShipPtr)
 {
 	SuppressSounds();
 	(void)DeadShipPtr; // unused argument
@@ -284,9 +284,9 @@ static void preprocess_dead_ship(ELEMENT* DeadShipPtr)
 
 static constexpr auto MinDittyFrameCount {((c_gameSecond * 3) / BattleFrameRateTicks)};
 
-void cleanup_dead_ship(ELEMENT* DeadShipPtr)
+void cleanup_dead_ship(Element* DeadShipPtr)
 {
-	STARSHIP* DeadStarShipPtr {};
+	Starship* DeadStarShipPtr {};
 
 	SuppressSounds();
 
@@ -306,24 +306,24 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 
 		for (hElement = GetHeadElement(); hElement; hElement = hSuccElement)
 		{
-			ELEMENT* ElementPtr {};
-			STARSHIP* StarShipPtr {};
+			Element* ElementPtr {};
+			Starship* StarShipPtr {};
 
 			LockElement(hElement, &ElementPtr);
 			hSuccElement = GetSuccElement(ElementPtr);
 			GetElementStarShip(ElementPtr, &StarShipPtr);
-			// Get the STARSHIP that this ELEMENT belongs to.
+			// Get the Starship that this Element belongs to.
 
 			if (StarShipPtr == DeadStarShipPtr)
 			{
-				// This element belongs to the dead ship; it may be the
-				// ship's own element.
+				// This Element belongs to the dead ship; it may be the
+				// ship's own Element.
 				SetElementStarShip(ElementPtr, 0);
 
 				if (!(ElementPtr->state_flags & CrewObject)
 					|| ElementPtr->preprocess_func != crew_preprocess)
 				{
-					// Set the element up for deletion.
+					// Set the Element up for deletion.
 					SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 								NoPrim);
 					ElementPtr->life_span = 0;
@@ -372,11 +372,11 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 	}
 }
 
-static void setMinShipLifeSpan(ELEMENT* ship, uint16_t life_span)
+static void setMinShipLifeSpan(Element* ship, uint16_t life_span)
 {
 	if (ship->death_func == new_ship)
 	{ // The ship has finished exploding or warping out, and now
-		// we can work with the remaining element
+		// we can work with the remaining Element
 		assert(ship->state_flags & FiniteLife);
 		assert(!(ship->state_flags & Disappearing));
 		if (ship->life_span < life_span)
@@ -386,18 +386,18 @@ static void setMinShipLifeSpan(ELEMENT* ship, uint16_t life_span)
 	}
 }
 
-static void setMinStarShipLifeSpan(STARSHIP* starShip, uint16_t life_span)
+static void setMinStarShipLifeSpan(Starship* starShip, uint16_t life_span)
 {
-	ELEMENT* ship {};
+	Element* ship {};
 
 	LockElement(starShip->hShip, &ship);
 	setMinShipLifeSpan(ship, life_span);
 	UnlockElement(starShip->hShip);
 }
 
-static void checkOtherShipLifeSpan(ELEMENT* deadShip)
+static void checkOtherShipLifeSpan(Element* deadShip)
 {
-	STARSHIP* deadStarShip {};
+	Starship* deadStarShip {};
 
 	GetElementStarShip(deadShip, &deadStarShip);
 
@@ -416,17 +416,17 @@ static void checkOtherShipLifeSpan(ELEMENT* deadShip)
 		// long as this ship.
 		for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 		{
-			ELEMENT* element {};
-			STARSHIP* starShip {};
+			Element* Element {};
+			Starship* starShip {};
 
-			LockElement(hElement, &element);
-			hNextElement = GetSuccElement(element);
-			GetElementStarShip(element, &starShip);
+			LockElement(hElement, &Element);
+			hNextElement = GetSuccElement(Element);
+			GetElementStarShip(Element, &starShip);
 
-			if (starShip != nullptr && element != deadShip
+			if (starShip != nullptr && Element != deadShip
 				&& starShip->RaceDescPtr->ship_info.crew_level == 0)
 			{ // This is another dead ship
-				setMinShipLifeSpan(element, deadShip->life_span);
+				setMinShipLifeSpan(Element, deadShip->life_span);
 			}
 
 			UnlockElement(hElement);
@@ -434,10 +434,10 @@ static void checkOtherShipLifeSpan(ELEMENT* deadShip)
 	}
 }
 
-// This function is called when dead ship element's life_span reaches 0
-void new_ship(ELEMENT* DeadShipPtr)
+// This function is called when dead ship Element's life_span reaches 0
+void new_ship(Element* DeadShipPtr)
 {
-	STARSHIP* DeadStarShipPtr {};
+	Starship* DeadStarShipPtr {};
 
 	GetElementStarShip(DeadShipPtr, &DeadStarShipPtr);
 
@@ -536,7 +536,7 @@ void new_ship(ELEMENT* DeadShipPtr)
 	}
 }
 
-static void explosion_preprocess(ELEMENT* ShipPtr)
+static void explosion_preprocess(Element* ShipPtr)
 {
 	uint8_t i {};
 
@@ -579,7 +579,7 @@ static void explosion_preprocess(ELEMENT* ShipPtr)
 		{
 			uint16_t angle {};
 			uint16_t dist {};
-			ELEMENT* ElementPtr {};
+			Element* ElementPtr {};
 			extern FRAME explosion[];
 
 			PutElement(hElement);
@@ -619,15 +619,15 @@ void StopAllBattleMusic(void)
 	StopMusic();
 }
 
-STARSHIP* FindAliveStarShip(ELEMENT* deadShip)
+Starship* FindAliveStarShip(Element* deadShip)
 {
-	STARSHIP* aliveShip = nullptr;
+	Starship* aliveShip = nullptr;
 	HELEMENT hNextElement {};
 
 	// Find the remaining ship, if any, and see if it is still alive.
 	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		if ((ElementPtr->state_flags & PlayerShip)
@@ -654,12 +654,12 @@ STARSHIP* FindAliveStarShip(ELEMENT* deadShip)
 	return aliveShip;
 }
 
-STARSHIP* GetWinnerStarShip(void)
+Starship* GetWinnerStarShip(void)
 {
 	return winnerStarShip;
 }
 
-void SetWinnerStarShip(STARSHIP* winner)
+void SetWinnerStarShip(Starship* winner)
 {
 	if (winner == nullptr)
 	{
@@ -677,9 +677,9 @@ void SetWinnerStarShip(STARSHIP* winner)
 	}
 }
 
-void RecordShipDeath(ELEMENT* deadShip)
+void RecordShipDeath(Element* deadShip)
 {
-	STARSHIP* deadStarShip {};
+	Starship* deadStarShip {};
 
 	GetElementStarShip(deadShip, &deadStarShip);
 	assert(deadStarShip != nullptr);
@@ -698,9 +698,9 @@ void RecordShipDeath(ELEMENT* deadShip)
 	}
 }
 
-void StartShipExplosion(ELEMENT* ShipPtr, bool playSound)
+void StartShipExplosion(Element* ShipPtr, bool playSound)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
@@ -727,9 +727,9 @@ void StartShipExplosion(ELEMENT* ShipPtr, bool playSound)
 	}
 }
 
-void ship_death(ELEMENT* ShipPtr)
+void ship_death(Element* ShipPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
@@ -743,16 +743,16 @@ void ship_death(ELEMENT* ShipPtr)
 
 	StartShipExplosion(ShipPtr, true);
 
-	STARSHIP* winner {FindAliveStarShip(ShipPtr)};
+	Starship* winner {FindAliveStarShip(ShipPtr)};
 	SetWinnerStarShip(winner);
 	RecordShipDeath(ShipPtr);
 }
 
 static constexpr auto StartIonColor {BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A)};
 
-// Called from the death_func of an element for an ion trail pixel, or a
+// Called from the death_func of an Element for an ion trail pixel, or a
 // ship shadow (when warping in/out).
-static void cycle_ion_trail(ELEMENT* ElementPtr)
+static void cycle_ion_trail(Element* ElementPtr)
 {
 	const static Color colorTab[] =
 		{
@@ -784,12 +784,12 @@ static void cycle_ion_trail(ELEMENT* ElementPtr)
 
 		ElementPtr->state_flags &= ~Disappearing;
 		ElementPtr->state_flags |= Changing;
-	} // else, the element disappears.
+	} // else, the Element disappears.
 }
 
 static constexpr auto IonLife {1};
 
-void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
+void spawn_ion_trail(Element* ElementPtr, int16_t x_offset, int16_t y_offset)
 {
 	assert(ElementPtr->state_flags & PlayerShip);
 
@@ -797,9 +797,9 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 	if (hIonElement)
 	{
 		uint16_t angle {};
-		GFXRECT r;
-		ELEMENT* IonElementPtr {};
-		STARSHIP* StarShipPtr {};
+		GfxRect r;
+		Element* IonElementPtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		angle = FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle;
@@ -812,7 +812,7 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 		IonElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
 		IonElementPtr->thrust_wait = IonLife;
 		IonElementPtr->life_span = IonElementPtr->thrust_wait;
-		// When the element "dies", in the death_func
+		// When the Element "dies", in the death_func
 		// 'cycle_ion_trail', it is given new life a number of
 		// times, by setting life_span to thrust_wait.
 
@@ -861,7 +861,7 @@ static constexpr auto TransitionLife {1};
 // Preprocess function for spawning a ship into or out of battle.
 // Used when a new ship warps in, or a ship escapes by warping out, but not
 // when a Pkunk ship is reborn.
-void ship_transition(ELEMENT* ElementPtr)
+void ship_transition(Element* ElementPtr)
 {
 	if (ElementPtr->state_flags & PlayerShip)
 	{
@@ -901,8 +901,8 @@ void ship_transition(ELEMENT* ElementPtr)
 
 	{
 		HELEMENT hShipImage {};
-		ELEMENT* ShipImagePtr {};
-		STARSHIP* StarShipPtr {};
+		Element* ShipImagePtr {};
+		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		LockElement(StarShipPtr->hShip, &ShipImagePtr);
@@ -927,7 +927,7 @@ void ship_transition(ELEMENT* ElementPtr)
 			ShipImagePtr->state_flags = Appearing | FiniteLife | Nonsolid;
 			ShipImagePtr->thrust_wait = TransitionLife;
 			ShipImagePtr->life_span = ShipImagePtr->thrust_wait;
-			// When the element "dies", in the death_func
+			// When the Element "dies", in the death_func
 			// 'cycle_ion_trail', it is given new life a number of
 			// times, by setting life_span to thrust_wait.
 			SetPrimType(&DisplayArray[ShipImagePtr->PrimIndex],
@@ -948,7 +948,7 @@ void ship_transition(ELEMENT* ElementPtr)
 			else if (ElementPtr->crew_level)
 			{
 				// JMS_GFX: Circumventing overflows by using temp variables
-				// instead of subtracting straight from the GFXPOINT sized
+				// instead of subtracting straight from the GfxPoint sized
 				// ShipImagePtr->current.location.
 				const int32_t temp_x = (int32_t)ShipImagePtr->current.location.x - Cosine(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
 				const int32_t temp_y = (int32_t)ShipImagePtr->current.location.y - Sine(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
@@ -967,9 +967,9 @@ void ship_transition(ELEMENT* ElementPtr)
 	}
 }
 
-void flee_preprocess(ELEMENT* ElementPtr)
+void flee_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	if (--ElementPtr->turn_wait == 0)
 	{

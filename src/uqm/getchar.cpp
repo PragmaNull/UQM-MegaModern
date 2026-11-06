@@ -32,7 +32,7 @@
 // for bool TextEntry3DO
 #include "gameopt.h"
 
-static GFXRECT cursor;
+static GfxRect cursor;
 static GFXCONTEXT curContext;
 static bool block = false;
 
@@ -87,7 +87,7 @@ static int JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
 	return (i < setsize) ? i : -1;
 }
 
-static int JoyCharIsLower(const joy_char_t* ch, TEXTENTRY_STATE* pTES)
+static int JoyCharIsLower(const joy_char_t* ch, TextEntryState* pTES)
 {
 	return 0 <= JoyCharFindIn(ch, pTES->JoyLower.data(), pTES->JoyRegLength);
 }
@@ -103,7 +103,7 @@ static void JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
 }
 
 static void JoyCharToUpper(joy_char_t* outch, const joy_char_t* ch,
-						   TEXTENTRY_STATE* pTES)
+						   TextEntryState* pTES)
 {
 	*outch = *ch;
 	JoyCharSwitchReg(outch, pTES->JoyLower.data(), pTES->JoyUpper.data(),
@@ -111,7 +111,7 @@ static void JoyCharToUpper(joy_char_t* outch, const joy_char_t* ch,
 }
 
 static void JoyCharToLower(joy_char_t* outch, const joy_char_t* ch,
-						   TEXTENTRY_STATE* pTES)
+						   TextEntryState* pTES)
 {
 	*outch = *ch;
 	JoyCharSwitchReg(outch, pTES->JoyUpper.data(), pTES->JoyLower.data(),
@@ -123,7 +123,7 @@ void SetCursorFlashBlock(bool state)
 	block = state;
 }
 
-void SetCursorRect(GFXRECT* r, GFXCONTEXT context)
+void SetCursorRect(GfxRect* r, GFXCONTEXT context)
 {
 	cursor = *r;
 	curContext = context;
@@ -154,7 +154,7 @@ static void FlashCursor(void)
 
 		if (curContext == OffScreenContext)
 		{
-			GFXRECT r;
+			GfxRect r;
 
 			r.corner.x = SisOrgX() + ResScale(1);
 			r.corner.y = SisOrgY() - SisMessageHeight();
@@ -173,7 +173,7 @@ static void FlashCursor(void)
 	}
 }
 
-bool DoTextEntry(TEXTENTRY_STATE* pTES)
+bool DoTextEntry(TextEntryState* pTES)
 {
 	int len {};
 	bool changed = false;

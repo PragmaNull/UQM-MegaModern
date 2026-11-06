@@ -30,7 +30,7 @@
 #include "libs/math/Random.h"
 #include "uqm/random/UQMRandom.h"
 
-static LOCDATA commander_desc =
+static ConversationData commander_desc =
 	{
 		COMMANDER_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -134,7 +134,7 @@ static LOCDATA commander_desc =
 		nullptr,
 };
 
-static FILTER_DESC commander_filters =
+static AnimFilterSet commander_filters =
 	{
 		2, /* Number of filters */
 		{
@@ -830,7 +830,7 @@ static void post_commander_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_commander_comm()
+ConversationData* init_commander_comm()
 {
 	commander_desc.init_encounter_func = Intro;
 	commander_desc.post_encounter_func = post_commander_enc;
@@ -857,7 +857,7 @@ LOCDATA* init_commander_comm()
 	commander_desc.AlienTextBaseline.y = ResScale(20);
 
 	setSegue(Segue_peace);
-	LOCDATA* retval {&commander_desc};
+	ConversationData* retval {&commander_desc};
 
 	return (retval);
 }

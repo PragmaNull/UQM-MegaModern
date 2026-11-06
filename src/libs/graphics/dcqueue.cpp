@@ -311,7 +311,7 @@ void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand)
 	if (DrawCommand->Type <= TFB_DRAWCOMMANDTYPE_COPYTOIMAGE
 		&& _CurFramePtr->Type == ScreenDrawable)
 	{
-		static GFXRECT scissor_rect;
+		static GfxRect scissor_rect;
 
 		// Set the clipping region.
 		// We allow drawing with no current context set, so the whole screen
@@ -390,7 +390,7 @@ static void computeFPS(int* fps, int* renderFps)
 // Draws text on the FPS canvas. The text starts at x.
 static void drawFPSText(uqstl::string_view text, int x, int y, Color color)
 {
-	GFXRECT tr;
+	GfxRect tr;
 	int16_t w {};
 	int16_t h {};
 
@@ -608,7 +608,7 @@ void TFB_FlushGraphics(void)
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{
-						GFXRECT r;
+						GfxRect r;
 
 						r.corner.x = x - DC_char->HotSpot.x;
 						r.corner.y = y - DC_char->HotSpot.y;
@@ -627,7 +627,7 @@ void TFB_FlushGraphics(void)
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{
-						GFXRECT r;
+						GfxRect r;
 						r.corner.x = uqstl::min(cmd->x1, cmd->x2);
 						r.corner.y = uqstl::min(cmd->y1, cmd->y2);
 						r.extent.width = abs(cmd->x1 - cmd->x2) + cmd->thickness;
@@ -676,7 +676,7 @@ void TFB_FlushGraphics(void)
 				{
 					const TFB_DrawCommand_CopyToImage* cmd = &DC.data.copytoimage;
 					TFB_Image* DC_image = cmd->image;
-					const GFXPOINT dstPt = {0, 0};
+					const GfxPoint dstPt = {0, 0};
 
 					if (DC_image == 0)
 					{
@@ -694,7 +694,7 @@ void TFB_FlushGraphics(void)
 			case TFB_DRAWCOMMANDTYPE_COPY:
 				{
 					const TFB_DrawCommand_Copy* cmd = &DC.data.copy;
-					const GFXRECT r = cmd->rect;
+					const GfxRect r = cmd->rect;
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{

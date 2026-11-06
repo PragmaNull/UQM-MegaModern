@@ -101,7 +101,7 @@ static void register_menu_controls(int index)
 	int i {1};
 	while (true)
 	{
-		VCONTROL_GESTURE g;
+		VControlGesture g;
 
 		fmt::format_to_sz_n(buf, "menu.{}.{}", menu_res_names[index], i);
 
@@ -115,7 +115,7 @@ static void register_menu_controls(int index)
 	}
 }
 
-static uqstl::vector<VCONTROL_GESTURE> controls {};
+static uqstl::vector<VControlGesture> controls {};
 
 static constexpr const char* c_keyConfigFile {"keys.json"};
 
@@ -184,7 +184,7 @@ static void register_flight_controls(void)
 		{
 			for (k = 0; k < MaxFlightAlternates; k++)
 			{
-				VCONTROL_GESTURE* g = ControlPtr(i, j, k);
+				VControlGesture* g = ControlPtr(i, j, k);
 				fmt::format_to_sz_n(buf, "keys.{}.{}.{}", i + 1,
 									flight_res_names[j], k + 1);
 				if (!res_IsString(buf))
@@ -210,7 +210,7 @@ static void initKeyConfig(void)
 		exit(EXIT_FAILURE);
 	}
 
-	controls.assign(static_cast<size_t>(num_templ) * num_flight * MaxFlightAlternates, VCONTROL_GESTURE {});
+	controls.assign(static_cast<size_t>(num_templ) * num_flight * MaxFlightAlternates, VControlGesture {});
 
 	/* First, load in the menu keys */
 	LoadResourceIndex(uqm::contentDir(), "menu.key.json", "menu.");
@@ -511,7 +511,7 @@ void TFB_ResetControls(void)
 void InterrogateInputState(int templat, int control, int index, char* buffer,
 						   int maxlen)
 {
-	VCONTROL_GESTURE* g = ControlPtr(templat, control, index);
+	VControlGesture* g = ControlPtr(templat, control, index);
 
 	const uqgsl::czstring xbx_buttons[SDL_GAMEPAD_BUTTON_COUNT] =
 		{
@@ -606,7 +606,7 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 
 void RemoveInputState(int templat, int control, int index)
 {
-	VCONTROL_GESTURE* g = ControlPtr(templat, control, index);
+	VControlGesture* g = ControlPtr(templat, control, index);
 	char keybuf[40] {};
 
 	if (templat >= num_templ || control >= num_flight
@@ -629,7 +629,7 @@ void RemoveInputState(int templat, int control, int index)
 
 void RebindInputState(int templat, int control, int index)
 {
-	VCONTROL_GESTURE g;
+	VControlGesture g;
 	char keybuf[40] {};
 	char valbuf[40] {};
 

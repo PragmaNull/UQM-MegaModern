@@ -83,7 +83,7 @@ void compare(yyjson_val* loaded, yyjson_val* saved, const uqstl::string& path, u
 
 [[nodiscard]] bool roundTrip(const uqstl::string& path, const uqstl::string& text)
 {
-	SUMMARY_DESC summary {};
+	SaveSummaryData summary {};
 	if (!LoadGameFromJson(text, path, &summary))
 	{
 		return false;

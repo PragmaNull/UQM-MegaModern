@@ -129,7 +129,7 @@ extern TimeCount FadeMusic(uint8_t end_vol, TimePeriod TimeInterval);
 extern uint8_t GetCurrMusicVol(void);
 
 // For music resume option
-struct MUSIC_POSITION
+struct MusicPosition
 {
 	uint32_t filename_hash;
 	uint32_t position;
@@ -141,13 +141,13 @@ extern bool OkayToResume(void);
 extern uint32_t GetMusicPosition(void);
 extern void ResetMusicResume(void);
 
-static inline void print_mp(const MUSIC_POSITION mp)
+static inline void print_mp(const MusicPosition mp)
 {
 	fmt::print("filename_hash: {:#X}, position: {}, last_played: {}\n",
 			   mp.filename_hash, mp.position, mp.last_played.time_since_epoch().count());
 }
 
-static inline void print_mp_array(const MUSIC_POSITION mp_array[], const uint16_t num_items)
+static inline void print_mp_array(const MusicPosition mp_array[], const uint16_t num_items)
 {
 	//system ("cls");
 	fmt::print("--------------------\n\n");

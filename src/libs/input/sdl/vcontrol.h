@@ -41,7 +41,7 @@ typedef enum
 	NUM_VCONTROL_GESTURES
 } VCONTROL_GESTURE_TYPE;
 
-struct VCONTROL_GESTURE
+struct VControlGesture
 {
 	VCONTROL_GESTURE_TYPE type;
 	union
@@ -64,8 +64,8 @@ struct VCONTROL_GESTURE
 };
 
 /* Control of bindings */
-int VControl_AddGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target);
-void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target);
+int VControl_AddGestureBinding(VControlGesture* g, uqstl::atomic<int>* target);
+void VControl_RemoveGestureBinding(VControlGesture* g, uqstl::atomic<int>* target);
 
 int VControl_AddKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target);
 void VControl_RemoveKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target);
@@ -99,14 +99,14 @@ void VControl_ProcessJoyAxis(int port, int axis, int value);
 void VControl_ResetInput(void);
 
 /* Translate between gestures and string representations thereof. */
-void VControl_ParseGesture(VCONTROL_GESTURE* g, const char* spec);
-size_t VControl_DumpGesture(uqstl::span<char> buf, VCONTROL_GESTURE* g);
+void VControl_ParseGesture(VControlGesture* g, const char* spec);
+size_t VControl_DumpGesture(uqstl::span<char> buf, VControlGesture* g);
 
 /* Tracking the "last interesting gesture."  Used to poll to find new
    control keys. */
 
 void VControl_ClearGesture(void);
-int VControl_GetLastGesture(VCONTROL_GESTURE* g);
+int VControl_GetLastGesture(VControlGesture* g);
 
 /* Constants for handling the "Start bit."  If a gesture is made, and
  * then ends, within a single frame, it will still, for one frame,

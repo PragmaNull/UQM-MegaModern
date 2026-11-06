@@ -197,16 +197,16 @@ inline constexpr auto NumberOfGasGiants {(LAST_GAS_GIANT - FIRST_GAS_GIANT + 1)}
 // TODO: This struct is highly alignment and padding dependent and
 //   should not be used! The data is loaded as binary from files and
 //   cast to this struct.
-struct XLAT_DESC
+struct PlanetColorTranslation
 {
 	const int16_t level_tab[3];
 	const uint8_t xlat_tab[256];
 };
 
-struct ELEMENT_ENTRY
+struct ElementDeposit
 {
 	uint8_t ElementType;
-	/* Index of this element in element_array */
+	/* Index of this Element in element_array */
 	uint8_t Density;
 	/* bits 0-3: quantity of the deposits (maximum number of
 			 *           deposits), one of Few, Moderate, or Numerous
@@ -243,7 +243,7 @@ struct PlanetFrame
 			 * bits 4-7: atmosphere, one of LIGHT, MEDIUM, HEAVY, or
 			 *           (no define for this) super thick.
 			 */
-	ELEMENT_ENTRY UsefulElements[NumUsefulElements];
+	ElementDeposit UsefulElements[NumUsefulElements];
 	/* Minerals on the planet */
 
 	RESOURCE CMapInstance;
@@ -258,7 +258,7 @@ struct PlanetFrame
 	int16_t base_elevation;
 };
 
-struct PLANET_INFO
+struct PlanetData
 {
 	int16_t AxialTilt;
 	uint16_t Tectonics;
@@ -303,7 +303,7 @@ enum
 	SUPER_DENSITY
 };
 
-extern uint16_t CalcGravity(const PLANET_INFO*);
+extern uint16_t CalcGravity(const PlanetData*);
 
 inline constexpr auto EarthAtmosphere {50};
 

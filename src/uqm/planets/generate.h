@@ -48,32 +48,32 @@ extern "C" {
 
 // Any of these functions returning true means that the action has been
 // handled, and that the default function should not be called.
-typedef bool (*InitNpcsFunction)(SOLARSYS_STATE* solarSys);
-typedef bool (*ReinitNpcsFunction)(SOLARSYS_STATE* solarSys);
-typedef bool (*UninitNpcsFunction)(SOLARSYS_STATE* solarSys);
-typedef bool (*GeneratePlanetsFunction)(SOLARSYS_STATE* solarSys);
-typedef bool (*GenerateMoonsFunction)(SOLARSYS_STATE* solarSys,
-									  PLANET_DESC* planet);
-typedef bool (*GenerateOrbitalFunction)(SOLARSYS_STATE* solarSys,
-										PLANET_DESC* world);
-typedef bool (*GenerateNameFunction)(const SOLARSYS_STATE*,
-									 const PLANET_DESC* world);
+typedef bool (*InitNpcsFunction)(SolarSystemState* solarSys);
+typedef bool (*ReinitNpcsFunction)(SolarSystemState* solarSys);
+typedef bool (*UninitNpcsFunction)(SolarSystemState* solarSys);
+typedef bool (*GeneratePlanetsFunction)(SolarSystemState* solarSys);
+typedef bool (*GenerateMoonsFunction)(SolarSystemState* solarSys,
+									  SystemPlanet* planet);
+typedef bool (*GenerateOrbitalFunction)(SolarSystemState* solarSys,
+										SystemPlanet* world);
+typedef bool (*GenerateNameFunction)(const SolarSystemState*,
+									 const SystemPlanet* world);
 // The following functions return the number of objects being generated
 // (or the index of the current object in some cases)
-typedef uint16_t (*GenerateMineralsFunction)(const SOLARSYS_STATE*,
-											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-typedef uint16_t (*GenerateEnergyFunction)(const SOLARSYS_STATE*,
-										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-typedef uint16_t (*GenerateLifeFunction)(const SOLARSYS_STATE*,
-										 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
+typedef uint16_t (*GenerateMineralsFunction)(const SolarSystemState*,
+											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+typedef uint16_t (*GenerateEnergyFunction)(const SolarSystemState*,
+										   const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+typedef uint16_t (*GenerateLifeFunction)(const SolarSystemState*,
+										 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
 // The following functions return true if the node should be removed
 // from the surface, i.e. picked up.
-typedef bool (*PickupMineralsFunction)(SOLARSYS_STATE* solarSys,
-									   PLANET_DESC* world, uint16_t whichNode);
-typedef bool (*PickupEnergyFunction)(SOLARSYS_STATE* solarSys,
-									 PLANET_DESC* world, uint16_t whichNode);
-typedef bool (*PickupLifeFunction)(SOLARSYS_STATE* solarSys,
-								   PLANET_DESC* world, uint16_t whichNode);
+typedef bool (*PickupMineralsFunction)(SolarSystemState* solarSys,
+									   SystemPlanet* world, uint16_t whichNode);
+typedef bool (*PickupEnergyFunction)(SolarSystemState* solarSys,
+									 SystemPlanet* world, uint16_t whichNode);
+typedef bool (*PickupLifeFunction)(SolarSystemState* solarSys,
+								   SystemPlanet* world, uint16_t whichNode);
 
 
 struct GenerateFunctions

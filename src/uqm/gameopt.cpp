@@ -60,11 +60,11 @@ uint8_t OutfitOrShipyard = 0;
 bool SaveOrLoad = false;
 bool TextEntry3DO = false;
 
-void ConfirmSaveLoad(STAMP* MsgStamp)
+void ConfirmSaveLoad(GfxStamp* MsgStamp)
 {
-	GFXRECT r;
-	GFXRECT clip_r;
-	TEXT t;
+	GfxRect r;
+	GfxRect clip_r;
+	GfxText t;
 
 	SetContextFont(StarConFont);
 	GetContextClipRect(&clip_r);
@@ -245,8 +245,8 @@ static constexpr auto DdshsBlockcur {2};
 static bool DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 						   uint16_t state)
 {
-	GFXRECT r;
-	TEXT lf;
+	GfxRect r;
+	GfxText lf;
 	Color BackGround;
 	Color ForeGround;
 	FONT Font {};
@@ -307,7 +307,7 @@ static bool DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 	}
 	else
 	{ // editing state
-		GFXRECT text_r;
+		GfxRect text_r;
 		uint8_t char_deltas[SisNameSize];
 
 		TextRect(&lf, &text_r, char_deltas);
@@ -395,7 +395,7 @@ static bool DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 	return (true);
 }
 
-static bool OnNameChange(TEXTENTRY_STATE* pTES)
+static bool OnNameChange(TextEntryState* pTES)
 {
 	const bool nameCaptain = (bool)pTES->CbParam;
 	uint16_t hl = DdshsEdit;
@@ -411,7 +411,7 @@ static bool OnNameChange(TEXTENTRY_STATE* pTES)
 static void NameCaptainOrShip(bool nameCaptain, bool gamestart)
 {
 	char buf[SisNameSize] = "";
-	TEXTENTRY_STATE tes;
+	TextEntryState tes;
 	char* Setting {};
 	uint16_t CursPos = 0;
 
@@ -484,8 +484,8 @@ static void NameCaptainOrShip(bool nameCaptain, bool gamestart)
 
 static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameIndex)
 {
-	GFXRECT r;
-	TEXT lf;
+	GfxRect r;
+	GfxText lf;
 	Color BackGround;
 	Color ForeGround;
 	char fullStr[256] {};
@@ -525,7 +525,7 @@ static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, ui
 
 	if (!(state & DdshsEdit))
 	{
-		TEXT t;
+		GfxText t;
 
 		SetContextForeGroundColor(BlackColor);
 		DrawFilledRectangle(&r);
@@ -541,7 +541,7 @@ static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, ui
 	else
 	{ // editing state
 		uint16_t FullCursorPos {};
-		GFXRECT text_r;
+		GfxRect text_r;
 		uint8_t char_deltas[256];
 
 		TextRect(&lf, &text_r, char_deltas);
@@ -603,7 +603,7 @@ static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, ui
 	return (true);
 }
 
-static bool OnSaveNameChange(TEXTENTRY_STATE* pTES)
+static bool OnSaveNameChange(TextEntryState* pTES)
 {
 	uint16_t hl = DdshsEdit;
 	const uint16_t* gameIndex = (uint16_t*)pTES->CbParam;
@@ -618,10 +618,10 @@ static bool OnSaveNameChange(TEXTENTRY_STATE* pTES)
 
 static bool NameSaveGame(uint16_t gameIndex, char* buf)
 {
-	TEXTENTRY_STATE tes;
+	TextEntryState tes;
 	const uint16_t CursPos = (uint16_t)strlen(buf);
 	uint16_t gIndex {gameIndex};
-	GFXRECT r;
+	GfxRect r;
 
 	DrawSaveNameString(buf, CursPos, DdshsEdit, gameIndex);
 
@@ -674,7 +674,7 @@ void SetNamingCallback(NamingCallback* callback)
 	namingCB = callback;
 }
 
-static bool DoSettings(MENU_STATE* pMS)
+static bool DoSettings(MenuState* pMS)
 {
 	uint8_t cur_speed {};
 	uint8_t read_speed {};
@@ -800,33 +800,33 @@ static bool DoSettings(MENU_STATE* pMS)
 
 void SettingsMenu(bool NameFlagship)
 {
-	MENU_STATE MenuState;
+	MenuState menuState;
 
-	memset(&MenuState, 0, sizeof MenuState);
+	memset(&menuState, 0, sizeof menuState);
 
 	if (NewGameInit)
 	{
-		MenuState.CurState = !NameFlagship ?
+		menuState.CurState = !NameFlagship ?
 								 CHANGE_CAPTAIN_SETTING :
 								 CHANGE_SHIP_SETTING;
 	}
 	else
 	{
-		MenuState.CurState = SOUND_ON_SETTING;
+		menuState.CurState = SOUND_ON_SETTING;
 	}
 
-	DrawMenuStateStrings(PM_SOUND_ON, MenuState.CurState);
-	FeedbackSetting(MenuState.CurState);
+	DrawMenuStateStrings(PM_SOUND_ON, menuState.CurState);
+	FeedbackSetting(menuState.CurState);
 
-	MenuState.InputFunc = DoSettings;
-	DoInput(&MenuState, false);
+	menuState.InputFunc = DoSettings;
+	DoInput(&menuState, false);
 
 	DrawStatusMessage(nullptr);
 }
 
-struct PICK_GAME_STATE
+struct PickGameState
 {
-	SUMMARY_DESC summary[MaxSavedGames];
+	SaveSummaryData summary[MaxSavedGames];
 	bool saving;
 	// true when saving, false when loading
 	bool success;
@@ -834,9 +834,9 @@ struct PICK_GAME_STATE
 	FRAME SummaryFrame;
 };
 
-static void DrawLines(GFXPOINT pt, int16_t width)
+static void DrawLines(GfxPoint pt, int16_t width)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	// Top Bar
 	r.corner = pt;
@@ -858,18 +858,18 @@ static void DrawLines(GFXPOINT pt, int16_t width)
 	DrawFilledRectangle(&r);
 }
 
-static GFXPOINT SCL_POINT(GFXPOINT pt)
+static GfxPoint SCL_POINT(GfxPoint pt)
 {
-	GFXPOINT point;
+	GfxPoint point;
 
 	point.x = ResScale(pt.x);
 	point.y = ResScale(pt.y);
 	return point;
 }
 
-static void DrawLabel(GFXPOINT pt, int16_t width, uint32_t gamestr)
+static void DrawLabel(GfxPoint pt, int16_t width, uint32_t gamestr)
 {
-	TEXT t;
+	GfxText t;
 	char buf[256];
 	int16_t leading {};
 	Color OldColor;
@@ -901,9 +901,9 @@ static auto SummLabelRightX() { return (158 - SafeNum(20)); }
 static constexpr auto SummLabelRightW {72};
 static constexpr auto SummLabelTopY {5};
 
-static void DrawAllLabels(GFXRECT rect)
+static void DrawAllLabels(GfxRect rect)
 {
-	GFXPOINT pt;
+	GfxPoint pt;
 	int16_t width {};
 	Color OldColor;
 
@@ -945,10 +945,10 @@ static void DrawAllLabels(GFXRECT rect)
 	DrawLabel(pt, width, LABEL_STRING_BASE + 8); // CREDITS
 }
 
-static void DrawBlankSavegameDisplay(PICK_GAME_STATE* pickState)
+static void DrawBlankSavegameDisplay(PickGameState* pickState)
 {
-	STAMP s;
-	GFXRECT rect;
+	GfxStamp s;
+	GfxRect rect;
 
 	s.origin.x = 0;
 	s.origin.y = 0;
@@ -963,10 +963,10 @@ static void DrawBlankSavegameDisplay(PICK_GAME_STATE* pickState)
 	DrawAllLabels(rect);
 }
 
-static void DrawSaveLoad(PICK_GAME_STATE* pickState)
+static void DrawSaveLoad(PickGameState* pickState)
 {
-	STAMP s;
-	GFXRECT r;
+	GfxStamp s;
+	GfxRect r;
 
 	s.frame = SetAbsFrameIndex(pickState->SummaryFrame,
 							   GetFrameCount(pickState->SummaryFrame) - 2);
@@ -992,11 +992,11 @@ static void DrawSaveLoad(PICK_GAME_STATE* pickState)
 	DrawStamp(&s);
 }
 
-static void DrawSaveLoadText(PICK_GAME_STATE* pickState)
+static void DrawSaveLoadText(PickGameState* pickState)
 {
-	GFXRECT r;
+	GfxRect r;
 	Color OldColor;
-	TEXT text;
+	GfxText text;
 	char buf[256];
 	int16_t leading {};
 
@@ -1045,11 +1045,11 @@ static void DrawSaveLoadText(PICK_GAME_STATE* pickState)
 
 static constexpr auto NumColors {9};
 
-static void DrawSavegameCargo(SIS_STATE* sisState)
+static void DrawSavegameCargo(FlagshipData* sisState)
 {
 	uint16_t i {};
-	STAMP s;
-	TEXT t;
+	GfxStamp s;
+	GfxText t;
 	char buf[40];
 	const auto& cargo_color {CargoColorTable};
 	const auto ElementOrgY = [&] {
@@ -1066,20 +1066,20 @@ static void DrawSavegameCargo(SIS_STATE* sisState)
 	BatchGraphics();
 	SetContextFont(StarConFont);
 
-	// setup element icons
+	// setup Element icons
 	s.frame = SetAbsFrameIndex(MiscDataFrame,
 							   (NumScandotTransitions << 1) + 3);
 	s.origin.x = ResScale(7) + SummaryXOffs() - SummarySideOffs()
 			   + NsafeNumScl(3);
 	s.origin.y = ElementOrgY();
-	// setup element amounts
+	// setup Element amounts
 	t.baseline.x = ResScale(33) + SummaryXOffs() - SummarySideOffs()
 				 + NsafeNumScl(3);
 	t.baseline.y = ElementOrgY() + ResScale(3);
 	t.align = ALIGN_RIGHT;
 	t.pStr = buf;
 
-	// draw element icons and amounts
+	// draw Element icons and amounts
 	for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
 	{
 		if (i == NUM_ELEMENT_CATEGORIES / 2)
@@ -1089,11 +1089,11 @@ static void DrawSavegameCargo(SIS_STATE* sisState)
 			t.baseline.x += ElementSpacingX();
 			t.baseline.y = ElementOrgY() + ResScale(3);
 		}
-		// draw element icon
+		// draw Element icon
 		DrawStamp(&s);
 		s.frame = SetRelFrameIndex(s.frame, 5);
 		s.origin.y += ElementSpacingY();
-		// print element amount
+		// print Element amount
 		SetContextForeGroundColor(cargo_color[i]);
 		fmt::format_to_sz_n(buf, "{}", sisState->ElementAmounts[i]);
 		t.CharCount = (uint16_t)~0;
@@ -1119,13 +1119,13 @@ static void DrawSavegameCargo(SIS_STATE* sisState)
 
 static void DrawEmptySlot(void)
 {
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 	char buf[256];
 	Color oldfg;
 	uint8_t stroke {};
-	GFXPOINT offset;
-	GFXPOINT t_baseline;
+	GfxPoint offset;
+	GfxPoint t_baseline;
 	int16_t leading {};
 
 	r.corner.x = ResScale(1);
@@ -1206,13 +1206,13 @@ static void DrawEmptySlot(void)
 	SetContextForeGroundColor(oldfg);
 }
 
-static void DrawBombPodText(STAMP* s)
+static void DrawBombPodText(GfxStamp* s)
 {
-	TEXT t;
+	GfxText t;
 	char buf[256];
 	int16_t leading {};
 	Color OldColor;
-	GFXRECT r;
+	GfxRect r;
 	int16_t og_baseline_x = 0;
 
 	if (!strlen(GameString(LABEL_STRING_BASE + 9))
@@ -1284,12 +1284,12 @@ static void DrawBombPodText(STAMP* s)
 
 static void DrawNoLimit(void)
 {
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 	Color oldfg;
 	uint8_t stroke {};
-	GFXPOINT offset;
-	GFXPOINT t_baseline;
+	GfxPoint offset;
+	GfxPoint t_baseline;
 	int16_t leading {};
 
 	r.corner.x = ResScale(137) + SummaryXOffs() + SummarySideOffs();
@@ -1351,11 +1351,11 @@ static void DrawNoLimit(void)
 	SetContextFont(OldFont);
 }
 
-static void DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
+static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 {
-	SUMMARY_DESC* pSD = pickState->summary + gameIndex;
-	GFXRECT r;
-	STAMP s;
+	SaveSummaryData* pSD = pickState->summary + gameIndex;
+	GfxRect r;
+	GfxStamp s;
 
 	BatchGraphics();
 
@@ -1364,19 +1364,19 @@ static void DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 	if (pSD->year_index == 0)
 	{
 		// Unused save slot, draw 'Empty Game' message.
-		DrawSaveInfo(SIS_STATE {0});
+		DrawSaveInfo(FlagshipData {0});
 		DrawEmptySlot();
 	}
 	else
 	{
 		// Game slot used, draw information about save game.
 		uint16_t i {};
-		GFXRECT OldRect;
-		TEXT t;
+		GfxRect OldRect;
+		GfxText t;
 		uqm::LinkQueue player_built_q {};
-		SIS_STATE SaveSS;
+		FlagshipData SaveSS;
 		char buf[256];
-		GFXPOINT starPt;
+		GfxPoint starPt;
 
 		// Save the states because we will hack them
 		SaveSS = uqm::gameState().sis();
@@ -1398,7 +1398,7 @@ static void DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 
 		DrawSaveInfo(uqm::gameState().sis());
 		swap(player_built_q, uqm::gameState().game().built_ship_q);
-		uqm::gameState().game().built_ship_q.reset(MaxBuiltShips, sizeof(SHIP_FRAGMENT));
+		uqm::gameState().game().built_ship_q.reset(MaxBuiltShips, sizeof(ShipFragment));
 		for (i = 0; i < pSD->NumShips; ++i)
 		{
 			CloneShipFragment(
@@ -1503,7 +1503,7 @@ static void DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 
 					QuasiState = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE);
 					uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(0));
-					const STAR_DESC* SDPtr {FindStar(nullptr, &starPt, 1, 1)};
+					const StarDesc* SDPtr {FindStar(nullptr, &starPt, 1, 1)};
 					uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(QuasiState));
 					if (SDPtr)
 					{
@@ -1590,8 +1590,8 @@ static void DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 
 static void TruncateSaveName(uqstl::span<char> buf, int16_t maxWidth, bool naming)
 {
-	TEXT t;
-	GFXRECT r;
+	GfxText t;
+	GfxRect r;
 
 	t.pStr = buf.data();
 
@@ -1616,10 +1616,10 @@ static void TruncateSaveName(uqstl::span<char> buf, int16_t maxWidth, bool namin
 	}
 }
 
-static void DrawGameSelection(PICK_GAME_STATE* pickState, uint16_t selSlot)
+static void DrawGameSelection(PickGameState* pickState, uint16_t selSlot)
 {
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 	uint16_t i {};
 	uint16_t curSlot {};
 	char buf[256];
@@ -1651,7 +1651,7 @@ static void DrawGameSelection(PICK_GAME_STATE* pickState, uint16_t selSlot)
 	for (i = 0; i < SavesPerPage() && curSlot < MaxSavedGames;
 		 ++i, ++curSlot)
 	{
-		SUMMARY_DESC* desc = &pickState->summary[curSlot];
+		SaveSummaryData* desc = &pickState->summary[curSlot];
 
 		SetContextForeGroundColor(
 			(curSlot == selSlot) ? Selected : UnSelected);
@@ -1699,7 +1699,7 @@ static void DrawGameSelection(PICK_GAME_STATE* pickState, uint16_t selSlot)
 	UnbatchGraphics();
 }
 
-static void RedrawPickDisplay(PICK_GAME_STATE* pickState, uint16_t selSlot)
+static void RedrawPickDisplay(PickGameState* pickState, uint16_t selSlot)
 {
 	BatchGraphics();
 	DrawBlankSavegameDisplay(pickState);
@@ -1708,7 +1708,7 @@ static void RedrawPickDisplay(PICK_GAME_STATE* pickState, uint16_t selSlot)
 	UnbatchGraphics();
 }
 
-static void LoadGameDescriptions(SUMMARY_DESC* pSD)
+static void LoadGameDescriptions(SaveSummaryData* pSD)
 {
 	for (uint16_t i {0}; i < MaxSavedGames; ++i, ++pSD)
 	{
@@ -1719,11 +1719,11 @@ static void LoadGameDescriptions(SUMMARY_DESC* pSD)
 	}
 }
 
-static bool DoPickGame(MENU_STATE* pMS)
+static bool DoPickGame(MenuState* pMS)
 {
-	PICK_GAME_STATE* pickState = (PICK_GAME_STATE*)pMS->privData;
+	PickGameState* pickState = (PickGameState*)pMS->privData;
 	uint8_t NewState {};
-	const SUMMARY_DESC* pSD {};
+	const SaveSummaryData* pSD {};
 	const TimeCount TimeIn {GetTimeCounter()};
 
 	if (uqm::currentActivity() & CHECK_ABORT)
@@ -1839,12 +1839,12 @@ static bool DoPickGame(MENU_STATE* pMS)
 	return true;
 }
 
-static bool SaveLoadGame(PICK_GAME_STATE* pickState, uint16_t gameIndex, bool* canceled_by_user)
+static bool SaveLoadGame(PickGameState* pickState, uint16_t gameIndex, bool* canceled_by_user)
 {
-	SUMMARY_DESC* desc = pickState->summary + gameIndex;
-	STAMP saveStamp;
+	SaveSummaryData* desc = pickState->summary + gameIndex;
+	GfxStamp saveStamp;
 	bool success {};
-	GFXRECT r;
+	GfxRect r;
 
 	GetContextClipRect(&r);
 
@@ -1890,20 +1890,20 @@ static bool SaveLoadGame(PICK_GAME_STATE* pickState, uint16_t gameIndex, bool* c
 
 static bool PickGame(bool saving, bool fromMainMenu)
 {
-	MENU_STATE MenuState;
-	PICK_GAME_STATE pickState;
-	GFXRECT DlgRect;
-	STAMP DlgStamp;
+	MenuState menuState;
+	PickGameState pickState;
+	GfxRect DlgRect;
+	GfxStamp DlgStamp;
 	TimeCount TimeOut;
 
 	memset(&pickState, 0, sizeof pickState);
 	pickState.saving = saving;
 	pickState.SummaryFrame = SetAbsFrameIndex(PlayFrame, 44);
 
-	memset(&MenuState, 0, sizeof MenuState);
-	MenuState.privData = &pickState;
+	memset(&menuState, 0, sizeof menuState);
+	menuState.privData = &pickState;
 	// select the last used slot
-	MenuState.CurState = lastUsedSlot;
+	menuState.CurState = lastUsedSlot;
 
 	TimeOut = FadeMusic(0, c_gameSecond / 2);
 
@@ -1930,7 +1930,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 
 	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
-	RedrawPickDisplay(&pickState, MenuState.CurState);
+	RedrawPickDisplay(&pickState, menuState.CurState);
 
 	if (fromMainMenu)
 	{
@@ -1939,7 +1939,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 	}
 	else
 	{
-		GFXRECT ctxRect;
+		GfxRect ctxRect;
 
 		GetContextClipRect(&ctxRect);
 		ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &ctxRect);
@@ -1948,7 +1948,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 
 	SetMenuSounds(MenuSoundArrows | MenuSoundPage,
 				  0);
-	MenuState.InputFunc = DoPickGame;
+	menuState.InputFunc = DoPickGame;
 
 	// Save/load retry loop
 	while (1)
@@ -1956,15 +1956,15 @@ static bool PickGame(bool saving, bool fromMainMenu)
 		bool canceled_by_user = false;
 
 		pickState.success = false;
-		DoInput(&MenuState, true);
+		DoInput(&menuState, true);
 		if (!pickState.success)
 		{
 			break; // canceled
 		}
 
-		lastUsedSlot = MenuState.CurState;
+		lastUsedSlot = menuState.CurState;
 
-		if (SaveLoadGame(&pickState, MenuState.CurState, &canceled_by_user))
+		if (SaveLoadGame(&pickState, menuState.CurState, &canceled_by_user))
 		{
 			break; // all good
 		}
@@ -1978,7 +1978,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 
 		// reload and redraw everything
 		LoadGameDescriptions(pickState.summary);
-		RedrawPickDisplay(&pickState, MenuState.CurState);
+		RedrawPickDisplay(&pickState, menuState.CurState);
 	}
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
@@ -1990,11 +1990,11 @@ static bool PickGame(bool saving, bool fromMainMenu)
 
 	if (pickState.success)
 	{
-		SUMMARY_DESC* pSD = pickState.summary + MenuState.CurState;
+		SaveSummaryData* pSD = pickState.summary + menuState.CurState;
 
 		uqm::log::info(saving ? "Saving > " : "Loading > ");
 		uqm::log::info("Name: {}", pSD->SaveName);
-		uqm::log::info("Slot: {}", MenuState.CurState);
+		uqm::log::info("Slot: {}", menuState.CurState);
 		uqm::log::info("Seed Type: {}", toString(uqm::currentSeed().type));
 		uqm::log::info("Seed: {}", uqm::gameState().sis().Seed);
 		uqm::log::info("Difficulty: {:s}", getDifficulty());
@@ -2060,7 +2060,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 	return pickState.success;
 }
 
-static bool DoGameOptions(MENU_STATE* pMS)
+static bool DoGameOptions(MenuState* pMS)
 {
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -2118,9 +2118,9 @@ static bool DoGameOptions(MENU_STATE* pMS)
 // Returns true when the owner menu should continue
 bool GameOptions(void)
 {
-	MENU_STATE MenuState;
+	MenuState menuState;
 
-	memset(&MenuState, 0, sizeof MenuState);
+	memset(&menuState, 0, sizeof menuState);
 
 	if (LastActivity == CHECK_LOAD)
 	{ // Selected LOAD from main menu
@@ -2149,15 +2149,15 @@ bool GameOptions(void)
 	const bool inStarbase {uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0};
 	const uint8_t outfitOrShipyard {OutfitOrShipyard};
 
-	MenuState.CurState = SAVE_GAME;
-	DrawMenuStateStrings(PM_SAVE_GAME, MenuState.CurState);
+	menuState.CurState = SAVE_GAME;
+	DrawMenuStateStrings(PM_SAVE_GAME, menuState.CurState);
 	DrawSeedMessage();
 
 	SetFlashRect(SfrMenu3do(), false);
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
-	MenuState.InputFunc = DoGameOptions;
-	DoInput(&MenuState, true);
+	menuState.InputFunc = DoGameOptions;
+	DoInput(&menuState, true);
 	SetFlashRect(nullptr, false);
 
 	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))

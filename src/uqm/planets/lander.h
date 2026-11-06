@@ -35,7 +35,7 @@ inline constexpr auto MagShift {2};
 
 inline constexpr auto NumTextFrames {32};
 
-struct NODE_DATA
+struct LanderNodeData
 {
 	uint8_t NumNodesGrabbed;
 	uint8_t NodeType[32];
@@ -44,7 +44,7 @@ struct NODE_DATA
 
 // XXX: This is a private type now. Move it to lander.c?
 //   We may also want to merge it with LanderInputState.
-struct PLANETSIDE_DESC
+struct PlanetsideDesc
 {
 	bool InTransit;
 	// Landing on or taking of from a planet.
@@ -57,7 +57,7 @@ struct PLANETSIDE_DESC
 
 	uint16_t NumFrames;
 	char AmountBuf[40];
-	TEXT MineralText[3];
+	GfxText MineralText[3];
 
 	Color ColorCycle[NumTextFrames >> 1];
 
@@ -65,12 +65,12 @@ struct PLANETSIDE_DESC
 	uint8_t WeatherChance;
 	uint8_t FireChance;
 
-	NODE_DATA NodeData;
+	LanderNodeData NodeData;
 };
 
 extern MUSIC_REF LanderMusic;
 
-extern void PlanetSide(GFXPOINT planetLoc);
+extern void PlanetSide(GfxPoint planetLoc);
 extern void DoDiscoveryReport(SOUND_REF ReadOutSounds);
 extern uint8_t SetPlanetMusic(uint8_t planet_type);
 extern void LoadLanderData(void);
@@ -78,14 +78,14 @@ extern void FreeLanderData(void);
 
 extern void MaskLanderGraphics(void);
 
-extern void object_animation(ELEMENT* ElementPtr);
+extern void object_animation(Element* ElementPtr);
 
 extern void SetLanderTakeoff(void);
 extern bool KillLanderCrewSeq(uint16_t numKilled, TimePeriod period);
 
 extern unsigned GetThermalHazardRating(int temp);
 
-// ELEMENT.playerNr constants
+// Element.playerNr constants
 enum
 {
 	PS_HUMAN_PLAYER,

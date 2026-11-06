@@ -24,7 +24,7 @@
 #include "uqm/build.h"
 
 
-static LOCDATA supox_desc =
+static ConversationData supox_desc =
 	{
 		SUPOX_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -747,7 +747,7 @@ static void post_supox_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_supox_comm(void)
+ConversationData* init_supox_comm(void)
 {
 	supox_desc.init_encounter_func = Intro;
 	supox_desc.post_encounter_func = post_supox_enc;
@@ -770,7 +770,7 @@ LOCDATA* init_supox_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&supox_desc};
+	ConversationData* retval {&supox_desc};
 
 	return (retval);
 }

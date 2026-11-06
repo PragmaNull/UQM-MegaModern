@@ -91,7 +91,7 @@ namespace uqm
 
 /* These get edited by TEXTENTRY widgets, so they should have room to
  * hold as much as one of them allows by default. */
-struct INPUT_TEMPLATE
+struct InputTemplate
 {
 	char name[30];
 
@@ -101,7 +101,7 @@ struct INPUT_TEMPLATE
 	 * can actually ditch much of VControl. */
 };
 
-extern INPUT_TEMPLATE input_templates[6];
+extern InputTemplate input_templates[6];
 
 void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirName, uqgsl::czstring execFile);
 // Returns the expanded config dir path, or an empty string if the path is not valid.

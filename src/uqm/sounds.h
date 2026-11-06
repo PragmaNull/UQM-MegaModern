@@ -76,16 +76,16 @@ extern void GetMenuSounds(MENU_SOUND_FLAGS* sound_0,
 						  MENU_SOUND_FLAGS* sound_1);
 
 extern void PlaySound(SOUND S, SoundPosition Pos,
-					  ELEMENT* PositionalObject, uint8_t Priority);
+					  Element* PositionalObject, uint8_t Priority);
 extern void PlayMenuSound(MENU_SOUND_EFFECT S);
-extern void ProcessSound(SOUND Sound, ELEMENT* PositionalObject);
+extern void ProcessSound(SOUND Sound, Element* PositionalObject);
 // Removes the queued sounds, and ignores new sounds until FlushSounds().
 extern void SuppressSounds(void);
-extern SoundPosition CalcSoundPosition(ELEMENT* ElementPtr);
+extern SoundPosition CalcSoundPosition(Element* ElementPtr);
 extern SoundPosition NotPositional(void);
 extern void UpdateSoundPositions(void);
 extern void FlushSounds(void);
-extern void RemoveSoundsForObject(ELEMENT* PosObj);
+extern void RemoveSoundsForObject(Element* PosObj);
 
 #if 0 //defined(__cplusplus)
 }

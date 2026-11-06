@@ -34,21 +34,21 @@ bool battleEndReadyComputer(ComputerInputContext* context);
 bool battleEndReadyNetwork(NetworkInputContext* context);
 #endif
 
-extern void ship_transition(ELEMENT* ElementPtr);
-extern bool OpponentAlive(STARSHIP* TestStarShipPtr);
-extern void new_ship(ELEMENT* ElementPtr);
-extern void ship_death(ELEMENT* ShipPtr);
-extern void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x, int16_t y);
-extern void flee_preprocess(ELEMENT* ElementPtr);
+extern void ship_transition(Element* ElementPtr);
+extern bool OpponentAlive(Starship* TestStarShipPtr);
+extern void new_ship(Element* ElementPtr);
+extern void ship_death(Element* ShipPtr);
+extern void spawn_ion_trail(Element* ElementPtr, int16_t x, int16_t y);
+extern void flee_preprocess(Element* ElementPtr);
 
 extern void StopDitty(void);
 extern void ResetWinnerStarShip(void);
 extern void StopAllBattleMusic(void);
-extern STARSHIP* FindAliveStarShip(ELEMENT* deadShip);
-extern STARSHIP* GetWinnerStarShip(void);
-extern void SetWinnerStarShip(STARSHIP* winner);
-extern void RecordShipDeath(ELEMENT* deadShip);
-extern void StartShipExplosion(ELEMENT* ShipPtr, bool playSound);
+extern Starship* FindAliveStarShip(Element* deadShip);
+extern Starship* GetWinnerStarShip(void);
+extern void SetWinnerStarShip(Starship* winner);
+extern void RecordShipDeath(Element* deadShip);
+extern void StartShipExplosion(Element* ShipPtr, bool playSound);
 
 #if 0 //defined(__cplusplus)
 }

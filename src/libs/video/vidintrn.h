@@ -24,14 +24,14 @@
 #include "libs/vidlib.h"
 #include "libs/time/timelib.h"
 
-struct legacy_video_desc
+struct LegacyVideoDesc
 {
 	// The audio and speech names are empty if the video has none.
 	uqstl::string video, audio, speech;
 	uint32_t loop;
 };
 
-typedef struct legacy_video_desc LEGACY_VIDEO_DESC;
+struct LegacyVideoDesc;
 
 struct legacy_video_ref
 {

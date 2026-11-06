@@ -25,9 +25,9 @@ SOUND_REF GameSounds;
 static constexpr auto MaxSounds {8};
 static uint8_t num_sounds = 0;
 static SOUND sound_buf[MaxSounds];
-static ELEMENT* sound_posobj[MaxSounds];
+static Element* sound_posobj[MaxSounds];
 
-void PlaySound(SOUND S, SoundPosition Pos, ELEMENT* PositionalObject,
+void PlaySound(SOUND S, SoundPosition Pos, Element* PositionalObject,
 			   uint8_t Priority)
 {
 	uint8_t chan {};
@@ -93,7 +93,7 @@ void SuppressSounds(void)
 	num_sounds = MaxSounds;
 }
 
-void ProcessSound(SOUND Sound, ELEMENT* PositionalObject)
+void ProcessSound(SOUND Sound, Element* PositionalObject)
 {
 	if (num_sounds < MaxSounds)
 	{
@@ -102,7 +102,7 @@ void ProcessSound(SOUND Sound, ELEMENT* PositionalObject)
 	}
 }
 
-SoundPosition CalcSoundPosition(ELEMENT* ElementPtr)
+SoundPosition CalcSoundPosition(Element* ElementPtr)
 {
 	SoundPosition pos;
 
@@ -150,7 +150,7 @@ void UpdateSoundPositions(void)
 			continue;
 		}
 
-		ELEMENT* posobj {(ELEMENT*)GetPositionalObject(i)};
+		Element* posobj {(Element*)GetPositionalObject(i)};
 		if (posobj != nullptr)
 		{
 			SoundPosition pos;
@@ -168,7 +168,7 @@ void FlushSounds(void)
 	if (num_sounds > 0)
 	{
 		const SOUND* pSound {sound_buf};
-		ELEMENT* const* pSoundPosObj {sound_posobj};
+		Element* const* pSoundPosObj {sound_posobj};
 		do
 		{
 			const SoundPosition pos = CalcSoundPosition(*pSoundPosObj);
@@ -178,7 +178,7 @@ void FlushSounds(void)
 	}
 }
 
-void RemoveSoundsForObject(ELEMENT* PosObj)
+void RemoveSoundsForObject(Element* PosObj)
 {
 	int i {};
 

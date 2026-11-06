@@ -53,9 +53,9 @@ static constexpr auto SpecialWait {0};
 // HdResolutionFactor
 static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
-static RACE_DESC supox_desc =
+static RaceDesc supox_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "blade",
 		 FiresFore,
 		 16, /* Super Melee cost */
@@ -66,7 +66,7 @@ static RACE_DESC supox_desc =
 		 SupoxMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			333 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
@@ -125,14 +125,14 @@ static RACE_DESC supox_desc =
 		0, /* CodeRef */
 };
 
-static void supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 							   uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->special_counter || lpEvalDesc->ObjectPtr == 0)
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
@@ -204,10 +204,10 @@ static void supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern
 	}
 }
 
-static uint16_t initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
+static uint16_t initialize_horn(Element* ShipPtr, HELEMENT HornArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -227,9 +227,9 @@ static uint16_t initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 	return (1);
 }
 
-static void supox_preprocess(ELEMENT* ElementPtr)
+static void supox_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
@@ -297,7 +297,7 @@ static void supox_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC* init_supox(void)
+RaceDesc* init_supox(void)
 {
 	if (IsHd())
 	{
@@ -317,7 +317,7 @@ RACE_DESC* init_supox(void)
 	supox_desc.init_weapon_func = initialize_horn;
 	supox_desc.cyborg_control.intelligence_func = supox_intelligence;
 
-	RACE_DESC* RaceDescPtr {&supox_desc};
+	RaceDesc* RaceDescPtr {&supox_desc};
 
 	return (RaceDescPtr);
 }

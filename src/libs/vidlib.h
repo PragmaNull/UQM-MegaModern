@@ -35,7 +35,7 @@ typedef enum
 } VIDEO_TYPE;
 
 typedef struct TFB_VideoClip* VIDEO_REF;
-typedef struct legacy_video_desc* LEGACY_VIDEO;
+typedef struct LegacyVideoDesc* LEGACY_VIDEO;
 typedef struct legacy_video_ref* LEGACY_VIDEO_REF;
 
 extern bool InstallVideoResType(void);

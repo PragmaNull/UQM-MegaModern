@@ -30,16 +30,16 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateZoqFotPik_initNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* planet);
-static bool GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
-											  PLANET_DESC* world);
-static uint16_t GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE*,
-												 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateZoqFotPik_pickupEnergy(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* world, uint16_t whichNode);
+static bool GenerateZoqFotPik_initNpcs(SolarSystemState* solarSys);
+static bool GenerateZoqFotPik_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateZoqFotPik_generateMoons(SolarSystemState* solarSys,
+											SystemPlanet* planet);
+static bool GenerateZoqFotPik_generateOrbital(SolarSystemState* solarSys,
+											  SystemPlanet* world);
+static uint16_t GenerateZoqFotPik_generateEnergy(const SolarSystemState*,
+												 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateZoqFotPik_pickupEnergy(SolarSystemState* solarSys,
+										   SystemPlanet* world, uint16_t whichNode);
 
 
 const GenerateFunctions generateZoqFotPikFunctions = {
@@ -59,7 +59,7 @@ const GenerateFunctions generateZoqFotPikFunctions = {
 };
 
 
-static bool GenerateZoqFotPik_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateZoqFotPik_initNpcs(SolarSystemState* solarSys)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS) != 1)
 	{
@@ -74,10 +74,10 @@ static bool GenerateZoqFotPik_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateZoqFotPik_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -134,8 +134,8 @@ static bool GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* planet)
+static bool GenerateZoqFotPik_generateMoons(SolarSystemState* solarSys,
+											SystemPlanet* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -144,7 +144,7 @@ static bool GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
 		&& IsExtended())
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
-		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
+		SystemPlanet* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		pMoonDesc->data_index = GenerateHabitableWorld();
 	}
@@ -152,8 +152,8 @@ static bool GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
-											  PLANET_DESC* world)
+static bool GenerateZoqFotPik_generateOrbital(SolarSystemState* solarSys,
+											  SystemPlanet* world)
 {
 	if (CurStarDescPtr()->Index == ZOQFOT_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -243,7 +243,7 @@ static bool GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		const uint32_t rand = SysGenRNG->seed();
-		PLANET_INFO* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
+		PlanetData* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		PlanetInfo->Weather = 1;
 		PlanetInfo->Tectonics = 1;
@@ -255,7 +255,7 @@ static bool GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& IsExtended() && !isDifficulty(uqm::Difficulty::Hard))
 	{
 		const uint32_t rand = SysGenRNG->seed();
-		PLANET_INFO* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
+		PlanetData* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		PlanetInfo->Weather = 1;
 		PlanetInfo->Tectonics = 1;
@@ -267,8 +267,8 @@ static bool GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 
 static constexpr auto NumRuins {4};
 
-static uint16_t GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE* solarSys,
-												 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateZoqFotPik_generateEnergy(const SolarSystemState* solarSys,
+												 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -300,8 +300,8 @@ static uint16_t GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool GenerateZoqFotPik_pickupEnergy(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* world, uint16_t whichNode)
+static bool GenerateZoqFotPik_pickupEnergy(SolarSystemState* solarSys,
+										   SystemPlanet* world, uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& CurStarDescPtr()->Index != ZOQ_COLONY2_DEFINED)

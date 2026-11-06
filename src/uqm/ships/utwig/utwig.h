@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-RACE_DESC* init_utwig(void);
+RaceDesc* init_utwig(void);
 
 #if 0 //defined(__cplusplus)
 }

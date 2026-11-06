@@ -56,9 +56,9 @@ static constexpr auto BlazerTurnWait {1};
 static constexpr auto BlazerDamage {3};
 static constexpr auto BlazerMass {1};
 
-static RACE_DESC androsynth_desc =
+static RaceDesc androsynth_desc =
 	{
-		{/* SHIP_INFO */
+		{/* ShipInfoDesc */
 		 "guardian",
 		 FiresFore | SeekingWeapon,
 		 15, /* Super Melee cost */
@@ -69,7 +69,7 @@ static RACE_DESC androsynth_desc =
 		 AndrosynthMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
-			/* FLEET_STUFF */
+			/* FleetStatus */
 			0, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
@@ -78,7 +78,7 @@ static RACE_DESC androsynth_desc =
 			},
 		 },
 		{
-			/* CHARACTERISTIC_STUFF */
+			/* ShipCharacteristics */
 			MaxThrust,
 			ThrustIncrement,
 			EnergyRegeneration,
@@ -91,7 +91,7 @@ static RACE_DESC androsynth_desc =
 			SpecialWait,
 			ShipMass,
 		 },
-		{/* DATA_STUFF */
+		{/* ShipResources */
 		 {
 			 AndrosynthBigMaskPmapAnim,
 			 AndrosynthMedMaskPmapAnim,
@@ -118,7 +118,7 @@ static RACE_DESC androsynth_desc =
 		 nullptr,
 		 nullptr},
 		{
-			/* INTEL_STUFF */
+			/* ShipIntelligence */
 			0,
 			LongRangeWeapon >> 2,
 			nullptr,
@@ -133,23 +133,23 @@ static RACE_DESC androsynth_desc =
 
 
 // Private per-instance ship data
-struct ANDROSYNTH_DATA
+struct AndrosynthData
 {
 	ElementCollisionFunc* collision_func;
 };
 
 // Local typedef
-typedef ANDROSYNTH_DATA CustomShipData_t;
+typedef AndrosynthData CustomShipData_t;
 
 // Retrieve race-specific ship data from a race desc
-static CustomShipData_t* GetCustomShipData(RACE_DESC* pRaceDesc)
+static CustomShipData_t* GetCustomShipData(RaceDesc* pRaceDesc)
 {
 	return (CustomShipData_t*)pRaceDesc->data;
 }
 
 // Set the race-specific data in a race desc
 // (Re)Allocates its own storage for the data.
-static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
+static void SetCustomShipData(RaceDesc* pRaceDesc, const CustomShipData_t* data)
 {
 	if (pRaceDesc->data == data)
 	{
@@ -168,8 +168,8 @@ static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data
 	}
 }
 
-static void blazer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-							 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void blazer_collision(Element* ElementPtr0, GfxPoint* pPt0,
+							 Element* ElementPtr1, GfxPoint* pPt1)
 {
 	const uint16_t old_crew_level {ElementPtr0->crew_level};
 	const uint16_t old_life {ElementPtr0->life_span};
@@ -186,7 +186,7 @@ static void blazer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
-static void bubble_preprocess(ELEMENT* ElementPtr)
+static void bubble_preprocess(Element* ElementPtr)
 {
 	uint8_t turn_wait {};
 
@@ -236,10 +236,10 @@ static void bubble_preprocess(ELEMENT* ElementPtr)
 	ElementPtr->turn_wait = uqm::makeByte(turn_wait, thrust_wait);
 }
 
-static uint16_t initialize_bubble(ELEMENT* ShipPtr, HELEMENT BubbleArray[])
+static uint16_t initialize_bubble(Element* ShipPtr, HELEMENT BubbleArray[])
 {
-	STARSHIP* StarShipPtr {};
-	MISSILE_BLOCK MissileBlock;
+	Starship* StarShipPtr {};
+	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
@@ -260,7 +260,7 @@ static uint16_t initialize_bubble(ELEMENT* ShipPtr, HELEMENT BubbleArray[])
 
 	if (BubbleArray[0])
 	{
-		ELEMENT* BubblePtr {};
+		Element* BubblePtr {};
 
 		LockElement(BubbleArray[0], &BubblePtr);
 		BubblePtr->turn_wait = 0;
@@ -270,14 +270,14 @@ static uint16_t initialize_bubble(ELEMENT* ShipPtr, HELEMENT BubbleArray[])
 	return (1);
 }
 
-static void androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 									uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	/* in blazer form */
 	if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 	{
@@ -299,7 +299,7 @@ static void androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfCo
 	}
 	else
 	{
-		STARSHIP* pEnemyStarShip = nullptr;
+		Starship* pEnemyStarShip = nullptr;
 
 		lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
 		if (lpEvalDesc->ObjectPtr)
@@ -378,9 +378,9 @@ static void androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfCo
 	}
 }
 
-static void androsynth_postprocess(ELEMENT* ElementPtr)
+static void androsynth_postprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	/* take care of blazer effect */
@@ -409,7 +409,7 @@ static void androsynth_postprocess(ELEMENT* ElementPtr)
 				/* Save the current collision func because we were not the
 				 * ones who set it */
 				{
-					const ANDROSYNTH_DATA shipData = {ElementPtr->collision_func};
+					const AndrosynthData shipData = {ElementPtr->collision_func};
 					SetCustomShipData(StarShipPtr->RaceDescPtr, &shipData);
 					ElementPtr->collision_func = blazer_collision;
 				}
@@ -440,9 +440,9 @@ static void androsynth_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void androsynth_preprocess(ELEMENT* ElementPtr)
+static void androsynth_preprocess(Element* ElementPtr)
 {
-	STARSHIP* StarShipPtr {};
+	Starship* StarShipPtr {};
 	STATUS_FLAGS cur_status_flags {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -536,13 +536,13 @@ static void androsynth_preprocess(ELEMENT* ElementPtr)
 }
 
 //static void
-//uninit_androsynth (RACE_DESC *pRaceDesc)
+//uninit_androsynth (RaceDesc *pRaceDesc)
 //{
 //	SetCustomShipData (pRaceDesc, nullptr);
 //}
 
 
-RACE_DESC* init_androsynth(void)
+RaceDesc* init_androsynth(void)
 {
 	if (IsHd())
 	{
@@ -564,7 +564,7 @@ RACE_DESC* init_androsynth(void)
 	androsynth_desc.init_weapon_func = initialize_bubble;
 	androsynth_desc.cyborg_control.intelligence_func = androsynth_intelligence;
 
-	RACE_DESC* RaceDescPtr {&androsynth_desc};
+	RaceDesc* RaceDescPtr {&androsynth_desc};
 
 	return (RaceDescPtr);
 }

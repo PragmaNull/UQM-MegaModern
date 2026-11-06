@@ -26,7 +26,7 @@
 
 //#define DEBUG_COLLIDE
 
-void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
+void collide(Element* ElementPtr0, Element* ElementPtr1)
 {
 	int16_t speed {};
 	int16_t dx0 {};
@@ -112,7 +112,7 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 		{
 			if (ElementPtr0->state_flags & PlayerShip)
 			{
-				STARSHIP* StarShipPtr {};
+				Starship* StarShipPtr {};
 
 				GetElementStarShip(ElementPtr0, &StarShipPtr);
 				StarShipPtr->cur_status_flags &=
@@ -159,7 +159,7 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 		{
 			if (ElementPtr1->state_flags & PlayerShip)
 			{
-				STARSHIP* StarShipPtr {};
+				Starship* StarShipPtr {};
 
 				GetElementStarShip(ElementPtr1, &StarShipPtr);
 				StarShipPtr->cur_status_flags &=

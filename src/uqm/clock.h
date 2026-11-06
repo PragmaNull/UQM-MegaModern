@@ -32,9 +32,9 @@ inline constexpr auto ClockFrameRate {(c_gameSecond / ClockBaseFramerate)};
 
 typedef HLINK HEVENT;
 
-struct EVENT
+struct GameEvent
 {
-	// LINK elements; must be first
+	// QueueLink elements; must be first
 	HEVENT pred, succ;
 
 	uint8_t day_index, month_index;
@@ -52,8 +52,8 @@ HEVENT AllocEvent();
 void PutEvent(HEVENT h);
 void UnlockEvent(HEVENT h);
 void FreeEvent(HEVENT h);
-void ForAllEvents(void (*callback)(LINK*, void*), void* arg);
-void LockEvent(HEVENT h, EVENT** ppe);
+void ForAllEvents(void (*callback)(QueueLink*, void*), void* arg);
+void LockEvent(HEVENT h, GameEvent** ppe);
 constexpr auto GetSuccEvent(const auto& l) { return _GetSuccLink(l); }
 
 // Rates are in seconds per game day
@@ -76,7 +76,7 @@ extern HEVENT AddEvent(EVENT_TYPE type, uint16_t month_index, uint16_t day_index
 extern void EventHandler(uint8_t selector);
 extern void GameClockTick(void);
 extern void MoveGameClockDays(uint16_t days);
-// Moves the date to the first event, and runs the events on the way. Can go past the hyperspace encounter events.
+// Moves the date to the first event, and runs the events on the way. Can go past the hyperspace Encounter events.
 void MoveGameClockToNextEvent(bool skipHyperspaceEncounters);
 
 // The lock/unlock/running functions are for debugging use only

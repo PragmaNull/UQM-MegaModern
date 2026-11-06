@@ -49,8 +49,8 @@ static auto TextBaseline() { return ResScale(6); }
 
 void ShowRemainingCapacity(void)
 {
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 	char buf[40];
 
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
@@ -89,23 +89,23 @@ void ShowRemainingCapacity(void)
 	SetContext(OldContext);
 }
 
-static void DrawElementAmount(uint16_t element, bool selected)
+static void DrawElementAmount(uint16_t Element, bool selected)
 {
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 	char buf[40];
 
 	r.corner.x = ElementSelOrgX();
 	r.extent.width = ElementSelWidth();
 	r.extent.height = ElementSpacingY() - ResScale(2);
 
-	if (element == NUM_ELEMENT_CATEGORIES)
+	if (Element == NUM_ELEMENT_CATEGORIES)
 	{
 		r.corner.y = BioOrgY();
 	}
 	else
 	{
-		r.corner.y = ElementOrgY() + (element * ElementSpacingY());
+		r.corner.y = ElementOrgY() + (Element * ElementSpacingY());
 	}
 
 	// draw line background
@@ -118,25 +118,25 @@ static void DrawElementAmount(uint16_t element, bool selected)
 	t.pStr = buf;
 	t.baseline.y = r.corner.y + TextBaseline();
 
-	if (element == NUM_ELEMENT_CATEGORIES)
+	if (Element == NUM_ELEMENT_CATEGORIES)
 	{ // Bio
 		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().TotalBioMass);
 	}
 	else
 	{ // Element
-		// print element's worth
+		// print Element's worth
 		SetContextForeGroundColor(selected ?
 									  CargoSelectedWorthColor :
 									  CargoWorthColor);
 		t.baseline.x = ElementCol1();
-		fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().ElementWorth[element]);
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().ElementWorth[Element]);
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 
-		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().ElementAmounts[element]);
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().ElementAmounts[Element]);
 	}
 
-	// print the element/bio amount
+	// print the Element/bio amount
 	SetContextForeGroundColor(selected ?
 								  CargoSelectedAmountColor :
 								  CargoAmountColor);
@@ -147,9 +147,9 @@ static void DrawElementAmount(uint16_t element, bool selected)
 
 static void DrawCargoDisplay(void)
 {
-	STAMP s;
-	TEXT t;
-	GFXRECT r;
+	GfxStamp s;
+	GfxText t;
+	GfxRect r;
 	int16_t cy {};
 
 	r.corner.x = ResScale(2);
@@ -197,7 +197,7 @@ static void DrawCargoDisplay(void)
 
 	cy = ElementOrgY();
 
-	// print element column headings
+	// print Element column headings
 	t.align = ALIGN_RIGHT;
 	t.baseline.y = cy - ResScale(1);
 	t.CharCount = (uint16_t)~0;
@@ -211,15 +211,15 @@ static void DrawCargoDisplay(void)
 	t.pStr = "#";
 	font_DrawText(&t);
 
-	// draw element icons and print amounts
+	// draw Element icons and print amounts
 	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i, cy += ElementSpacingY())
 	{
-		// erase background under an element icon
+		// erase background under an Element icon
 		SetContextForeGroundColor(BlackColor);
 		r.corner.y = cy;
 		DrawFilledRectangle(&r);
 
-		// draw an element icon
+		// draw an Element icon
 		s.origin.y = r.corner.y + ResRecenter(r.extent.height);
 		DrawStamp(&s);
 		s.frame = SetRelFrameIndex(s.frame, 5);
@@ -282,12 +282,12 @@ void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 	}
 
 	if (OldElement != NewElement)
-	{ // unselect the previous element
+	{ // unselect the previous Element
 		DrawElementAmount(OldElement, false);
 	}
 
 	if (NewElement != (uint8_t)~0)
-	{ // select the new element
+	{ // select the new Element
 		DrawElementAmount(NewElement, true);
 	}
 
@@ -295,16 +295,16 @@ void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 	SetContext(OldContext);
 }
 
-static void DrawElementDescription(uint16_t element)
+static void DrawElementDescription(uint16_t Element)
 {
-	DrawStatusMessage(GameString(element + (CARGO_STRING_BASE + 2)));
+	DrawStatusMessage(GameString(Element + (CARGO_STRING_BASE + 2)));
 }
 
 void DrawRainbowPlanet(uint16_t planet)
 {
-	STAMP s;
-	TEXT t;
-	GFXRECT r;
+	GfxStamp s;
+	GfxText t;
+	GfxRect r;
 	char buf[40];
 
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
@@ -405,7 +405,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	SetContext(OldContext);
 }
 
-static bool DoDiscardCargo(MENU_STATE* pMS)
+static bool DoDiscardCargo(MenuState* pMS)
 {
 	uint8_t NewState {};
 	bool select {};
@@ -436,7 +436,7 @@ static bool DoDiscardCargo(MENU_STATE* pMS)
 			ShowRemainingCapacity();
 		}
 		else
-		{ // no element left in cargo hold
+		{ // no Element left in cargo hold
 			PlayMenuSound(MENU_SOUND_FAILURE);
 		}
 	}
@@ -473,13 +473,13 @@ static bool DoDiscardCargo(MENU_STATE* pMS)
 
 void CargoMenu(void)
 {
-	MENU_STATE MenuState;
+	MenuState menuState;
 
-	memset(&MenuState, 0, sizeof MenuState);
+	memset(&menuState, 0, sizeof menuState);
 
 	// draw the initial cargo display
-	DrawCargoStrings((uint8_t)~0, MenuState.CurState);
-	DrawElementDescription(MenuState.CurState);
+	DrawCargoStrings((uint8_t)~0, menuState.CurState);
+	DrawElementDescription(menuState.CurState);
 
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
@@ -488,8 +488,8 @@ void CargoMenu(void)
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
-	MenuState.InputFunc = DoDiscardCargo;
-	DoInput(&MenuState, true);
+	menuState.InputFunc = DoDiscardCargo;
+	DoInput(&menuState, true);
 
 	// erase the cargo display
 	ClearSISRect(DrawSisDisplay);

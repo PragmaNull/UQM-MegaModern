@@ -22,9 +22,9 @@
 #include "uqm/globdata.h"
 
 
-static bool GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateTrap_generateOrbital(SOLARSYS_STATE* solarSys,
-										 PLANET_DESC* world);
+static bool GenerateTrap_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateTrap_generateOrbital(SolarSystemState* solarSys,
+										 SystemPlanet* world);
 
 
 const GenerateFunctions generateTrapFunctions = {
@@ -44,10 +44,10 @@ const GenerateFunctions generateTrapFunctions = {
 };
 
 
-static bool GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateTrap_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -75,7 +75,7 @@ static bool GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateTrap_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GenerateTrap_generateOrbital(SolarSystemState* solarSys, SystemPlanet* world)
 {
 	GenerateDefault_generateOrbital(solarSys, world);
 

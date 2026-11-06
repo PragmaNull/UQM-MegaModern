@@ -35,7 +35,7 @@
 
 static RESOURCE_INDEX allocResourceIndex(void)
 {
-	auto* ndx {new RESOURCE_INDEX_DESC {}};
+	auto* ndx {new ResourceIndexDesc {}};
 	ndx->map = new uqstl::unordered_map<uqstl::string, ResourceDesc*>();
 	return ndx;
 }

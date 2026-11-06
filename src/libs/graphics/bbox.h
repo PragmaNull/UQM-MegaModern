@@ -29,19 +29,19 @@
 struct TFB_BoundingBox
 {
 	int valid;		// If zero, the next point registered becomes the region
-	GFXRECT region; // The actual modified rectangle
-	GFXRECT clip;	// Points outside of this rectangle are pushed to
+	GfxRect region; // The actual modified rectangle
+	GfxRect clip;	// Points outside of this rectangle are pushed to
 					// the closest border point
 };
 
 extern TFB_BoundingBox TFB_BBox;
 
 void TFB_BBox_RegisterPoint(int x, int y);
-void TFB_BBox_RegisterRect(const GFXRECT* r);
+void TFB_BBox_RegisterRect(const GfxRect* r);
 void TFB_BBox_RegisterCanvas(TFB_Canvas c, int x, int y);
 
 void TFB_BBox_Init(int width, int height);
 void TFB_BBox_Reset(void);
-void TFB_BBox_SetClipRect(const GFXRECT* r);
+void TFB_BBox_SetClipRect(const GfxRect* r);
 
 #endif /* BBOX_H_INCL__ */

@@ -31,13 +31,13 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
-											   PLANET_DESC* world);
-static uint16_t GenerateAndrosynth_generateEnergy(const SOLARSYS_STATE*,
-												  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateAndrosynth_pickupEnergy(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* world, uint16_t whichNode);
+static bool GenerateAndrosynth_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateAndrosynth_generateOrbital(SolarSystemState* solarSys,
+											   SystemPlanet* world);
+static uint16_t GenerateAndrosynth_generateEnergy(const SolarSystemState*,
+												  const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateAndrosynth_pickupEnergy(SolarSystemState* solarSys,
+											SystemPlanet* world, uint16_t whichNode);
 
 
 const GenerateFunctions generateAndrosynthFunctions = {
@@ -57,10 +57,10 @@ const GenerateFunctions generateAndrosynthFunctions = {
 };
 
 
-static bool GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateAndrosynth_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -105,8 +105,8 @@ static bool GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
-											   PLANET_DESC* world)
+static bool GenerateAndrosynth_generateOrbital(SolarSystemState* solarSys,
+											   SystemPlanet* world)
 {
 	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -173,12 +173,12 @@ static bool GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateAndrosynth_pickupEnergy(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* world, uint16_t whichNode)
+static bool GenerateAndrosynth_pickupEnergy(SolarSystemState* solarSys,
+											SystemPlanet* world, uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		PLANET_INFO* planetInfo = &solarSys->SysInfo.PlanetInfo;
+		PlanetData* planetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		// Ruins previously visited are marked in the upper 16 bits
 		if (isNodeRetrieved(planetInfo, ENERGY_SCAN, whichNode + 16))
@@ -215,8 +215,8 @@ static bool GenerateAndrosynth_pickupEnergy(SOLARSYS_STATE* solarSys,
 	return false;
 }
 
-static uint16_t GenerateAndrosynth_generateEnergy(const SOLARSYS_STATE* solarSys,
-												  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateAndrosynth_generateEnergy(const SolarSystemState* solarSys,
+												  const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

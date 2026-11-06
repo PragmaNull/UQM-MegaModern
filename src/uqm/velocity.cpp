@@ -24,7 +24,7 @@
 
 constexpr auto VelocityRemainder(const auto& v) { return ((v) & (VelocityScale - 1)); }
 
-void GetCurrentVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t* pdy)
+void GetCurrentVelocityComponents(VelocityDesc* velocityptr, int16_t* pdx, int16_t* pdy)
 {
 	*pdx = WorldToVelocity(velocityptr->vector.width)
 		 + (velocityptr->fract.width - (int16_t)uqm::highByte(velocityptr->incr.width));
@@ -32,7 +32,7 @@ void GetCurrentVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int1
 		 + (velocityptr->fract.height - (int16_t)uqm::highByte(velocityptr->incr.height));
 }
 
-void GetCurrentVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, int32_t* pdy)
+void GetCurrentVelocityComponentsSdword(VelocityDesc* velocityptr, int32_t* pdx, int32_t* pdy)
 {
 	*pdx = WorldToVelocity(velocityptr->vector.width)
 		 + ((int32_t)velocityptr->fract.width - (int32_t)uqm::highByte(velocityptr->incr.width));
@@ -40,7 +40,7 @@ void GetCurrentVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx
 		 + ((int32_t)velocityptr->fract.height - (int32_t)uqm::highByte(velocityptr->incr.height));
 }
 
-void GetNextVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t* pdy, uint16_t num_frames)
+void GetNextVelocityComponents(VelocityDesc* velocityptr, int16_t* pdx, int16_t* pdy, uint16_t num_frames)
 {
 	uint16_t e {(uint16_t)((uint16_t)velocityptr->error.width + ((uint16_t)velocityptr->fract.width * num_frames))};
 
@@ -60,7 +60,7 @@ void GetNextVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t
 }
 
 // JMS_GFX: New function to prevent overflows in hi-res.
-void GetNextVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, int32_t* pdy, uint32_t num_frames)
+void GetNextVelocityComponentsSdword(VelocityDesc* velocityptr, int32_t* pdx, int32_t* pdy, uint32_t num_frames)
 {
 	uint32_t e {(uint32_t)((uint32_t)velocityptr->error.width + ((uint32_t)velocityptr->fract.width * num_frames))};
 
@@ -80,7 +80,7 @@ void GetNextVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, i
 }
 
 // JMS_GFX: Preventing overflows in hi-res: The int32_t in this function's parameters was int16_t.
-void SetVelocityVector(VELOCITY_DESC* velocityptr, int32_t magnitude, uint16_t facing)
+void SetVelocityVector(VelocityDesc* velocityptr, int32_t magnitude, uint16_t facing)
 {
 	uint16_t angle {};
 	int16_t dx {};
@@ -122,7 +122,7 @@ void SetVelocityVector(VELOCITY_DESC* velocityptr, int32_t magnitude, uint16_t f
 }
 
 // JMS_GFX: Preventing overflows in hi-res: The SDWORDs in this function's parameters were SIZEs.
-void SetVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy)
+void SetVelocityComponents(VelocityDesc* velocityptr, int32_t dx, int32_t dy)
 {
 	uint16_t angle {};
 
@@ -166,7 +166,7 @@ void SetVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy)
 }
 
 // JMS_GFX: Preventing overflows in hi-res: The SDWORDs in this function's parameters were SIZEs.
-void DeltaVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy)
+void DeltaVelocityComponents(VelocityDesc* velocityptr, int32_t dx, int32_t dy)
 {
 
 	dx += WorldToVelocity(velocityptr->vector.width)

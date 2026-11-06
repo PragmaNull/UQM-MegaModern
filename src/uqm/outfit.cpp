@@ -52,7 +52,7 @@ enum
 	OUTFIT_DOFUEL
 };
 
-GFXPOINT lander_pos[MaxLanders];
+GfxPoint lander_pos[MaxLanders];
 FONT ModuleFont;
 
 static void InitializeDOSLanderPos(void)
@@ -91,7 +91,7 @@ static auto TextSpacingY() { return ResScale(7); }
 
 static constexpr auto MaxVisModules {5};
 
-struct MODULES_STATE
+struct ModulesMenuState
 {
 	uint8_t list[NUM_PURCHASE_MODULES];
 	// List of all modules player has
@@ -101,12 +101,12 @@ struct MODULES_STATE
 	// Index of the top module displayed
 };
 
-MODULES_STATE ModuleState;
+ModulesMenuState ModuleState;
 
 static void DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 {
-	GFXRECT r;
-	TEXT t;
+	GfxRect r;
+	GfxText t;
 	char buf[10];
 
 	t.align = ALIGN_LEFT;
@@ -163,10 +163,10 @@ static void DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 	}
 }
 
-static void DrawModuleDisplay(MODULES_STATE* modState)
+static void DrawModuleDisplay(ModulesMenuState* modState)
 {
-	TEXT t;
-	GFXRECT r;
+	GfxText t;
+	GfxRect r;
 
 	r.corner.x = ResScale(2);
 	r.corner.y = ResScale(20);
@@ -208,7 +208,7 @@ static void DrawModuleDisplay(MODULES_STATE* modState)
 	}
 }
 
-static void DrawModules(MODULES_STATE* modState, uint16_t NewItem)
+static void DrawModules(ModulesMenuState* modState, uint16_t NewItem)
 {
 	GFXCONTEXT OldContext = SetContext(StatusContext);
 
@@ -232,7 +232,7 @@ static void ManipulateModules(int16_t NewState)
 		return;
 	}
 
-	MODULES_STATE* modState {&ModuleState};
+	ModulesMenuState* modState {&ModuleState};
 	NewTop = modState->topIndex;
 
 	if (NewState > NUM_PURCHASE_MODULES)
@@ -268,11 +268,11 @@ int16_t InventoryModules(uint8_t* pModuleMap, uint16_t Size)
 	return ModulesOnBoard;
 }
 
-static void DrawModuleMenuText(GFXRECT* r, int Index)
+static void DrawModuleMenuText(GfxRect* r, int Index)
 {
-	TEXT text;
+	GfxText text;
 	int16_t leading {};
-	GFXRECT block;
+	GfxRect block;
 	char buf[256];
 
 	if (IsDos() || !strlen(GameString(TdoStarbaseStringBase + Index)))
@@ -323,10 +323,10 @@ static void DrawModuleMenuText(GFXRECT* r, int Index)
 	}
 }
 
-static void DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
+static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 {
-	GFXRECT r;
-	STAMP s;
+	GfxRect r;
+	GfxStamp s;
 
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	GetContextClipRect(&r);
@@ -353,7 +353,7 @@ static void DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 
 	if (IsDos())
 	{
-		GFXRECT dosRect;
+		GfxRect dosRect;
 
 		dosRect.corner.x = ResScale(2);
 		dosRect.corner.y = RadarY() - ResScale(1);
@@ -395,7 +395,7 @@ static void DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 	}
 	else if (pMS->CurFrame)
 	{
-		TEXT t;
+		GfxText t;
 		char buf[40] {};
 
 		// Draw the module image.
@@ -454,12 +454,12 @@ static void RedistributeFuel(void)
 	SetContext(OldContext);
 }
 
-static void DrawEscapePodText(GFXRECT rect)
+static void DrawEscapePodText(GfxRect rect)
 {
-	TEXT text;
+	GfxText text;
 	Color OldColor;
 	int16_t leading {};
-	GFXRECT block;
+	GfxRect block;
 	char buf[256];
 
 	if (!strlen(GameString(EndStarbaseStringBase + 1)))
@@ -517,11 +517,11 @@ static void DrawEscapePodText(GFXRECT rect)
 	SetContextForeGroundColor(OldColor);
 }
 
-static void DrawNoLandersText(GFXRECT rect)
+static void DrawNoLandersText(GfxRect rect)
 {
-	TEXT text;
+	GfxText text;
 	Color OldColor;
-	GFXRECT block;
+	GfxRect block;
 
 	if (IsDos() || !strlen(GameString(EndStarbaseStringBase)))
 	{
@@ -557,14 +557,14 @@ static auto LanderX() { return (ResScale(24) - SafePad()); }
 static auto LanderY() { return ResScale(67); }
 static auto LanderWidth() { return ResScale(15); }
 
-static void DisplayLanders(MENU_STATE* pMS)
+static void DisplayLanders(MenuState* pMS)
 {
-	STAMP s;
+	GfxStamp s;
 
 	s.frame = pMS->ModuleFrame;
 	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 3)
 	{
-		GFXRECT rect;
+		GfxRect rect;
 		s.origin.x = -SafeX();
 		s.origin.y = 0;
 		s.frame = SetAbsFrameIndex(pMS->ModuleFrame,
@@ -616,7 +616,7 @@ static void DisplayLanders(MENU_STATE* pMS)
 	}
 }
 
-static bool DoInstallModule(MENU_STATE* pMS)
+static bool DoInstallModule(MenuState* pMS)
 {
 	uint8_t new_slot_piece {};
 	uint8_t old_slot_piece {};
@@ -1224,7 +1224,7 @@ static void ChangeFuelQuantity(void)
 	}
 
 	{ // Make fuel gauge flash.
-		GFXRECT r;
+		GfxRect r;
 		GFXCONTEXT oldContext = SetContext(StatusContext);
 		GetGaugeRect(&r, false);
 		SetFlashRect(&r, false);
@@ -1238,7 +1238,7 @@ static void onNamingDone(void)
 	DrawFlagshipName(false, false);
 }
 
-bool DoOutfit(MENU_STATE* pMS)
+bool DoOutfit(MenuState* pMS)
 {
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -1257,7 +1257,7 @@ bool DoOutfit(MENU_STATE* pMS)
 
 		{
 			uint16_t num_frames {};
-			STAMP s;
+			GfxStamp s;
 
 			if (!IsDos())
 			{
@@ -1419,7 +1419,7 @@ ExitOutfit:
 		{
 			case OUTFIT_FUEL:
 				{
-					GFXRECT r;
+					GfxRect r;
 					DrawMenuStateStrings(PM_FUEL, pMS->CurState);
 					pMS->CurState = OUTFIT_DOFUEL;
 					SetContext(StatusContext);

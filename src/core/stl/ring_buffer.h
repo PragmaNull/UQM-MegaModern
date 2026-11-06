@@ -49,7 +49,7 @@ public:
 	[[nodiscard]] constexpr bool empty() const noexcept { return m_size == 0; }
 	[[nodiscard]] constexpr bool full() const noexcept { return m_size == N; }
 
-	// Overwrites oldest element if buffer is full
+	// Overwrites oldest Element if buffer is full
 	void push_back(const T& value)
 	{
 		at(m_tail) = value;
@@ -231,7 +231,7 @@ protected:
 
 private:
 	array<T, N> m_buffer {};
-	size_type m_head {0}; // index of oldest element
+	size_type m_head {0}; // index of oldest Element
 	size_type m_tail {0}; // index of next insertion
 	size_type m_size {0};
 };

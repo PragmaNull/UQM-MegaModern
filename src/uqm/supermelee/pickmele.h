@@ -17,14 +17,14 @@
 #ifndef UQM_SUPERMELEE_PICKMELE_H_
 #define UQM_SUPERMELEE_PICKMELE_H_
 
-typedef struct getmelee_struct GETMELEE_STATE;
+struct PickMeleeState;
 
 #include "uqm/races.h"
 #include "uqm/battlecontrols.h"
 #include "meleesetup.h"
 #include "core/misc/bittricks.h"
 
-void MeleeShipDeath(STARSHIP*);
+void MeleeShipDeath(Starship*);
 void BuildPickMeleeFrame(void);
 void DestroyPickMeleeFrame(void);
 void FillPickMeleeFrame(MeleeSetup* setup);
@@ -32,13 +32,13 @@ void MeleeGameOver(void);
 bool GetInitialMeleeStarShips(HSTARSHIP* result);
 bool GetNextMeleeStarShip(uint16_t which_player, HSTARSHIP* result);
 
-bool updateMeleeSelection(GETMELEE_STATE* gms, uint16_t player, uint16_t ship);
+bool updateMeleeSelection(PickMeleeState* gms, uint16_t player, uint16_t ship);
 
-bool selectShipHuman(HumanInputContext* context, GETMELEE_STATE* gms);
+bool selectShipHuman(HumanInputContext* context, PickMeleeState* gms);
 bool selectShipComputer(ComputerInputContext* context,
-						GETMELEE_STATE* gms);
+						PickMeleeState* gms);
 #ifdef NETPLAY
-bool selectShipNetwork(NetworkInputContext* context, GETMELEE_STATE* gms);
+bool selectShipNetwork(NetworkInputContext* context, PickMeleeState* gms);
 #endif /* NETPLAY */
 
 #ifdef PICKMELE_INTERNAL
@@ -48,9 +48,9 @@ bool selectShipNetwork(NetworkInputContext* context, GETMELEE_STATE* gms);
 #include "../init.h"
 
 
-struct getmelee_struct
+struct PickMeleeState
 {
-	bool (*InputFunc)(struct getmelee_struct* pInputState);
+	bool (*InputFunc)(struct PickMeleeState* pInputState);
 
 	bool Initialized;
 
@@ -80,7 +80,7 @@ struct getmelee_struct
 	} player[NumPlayers];
 };
 
-bool setShipSelected(GETMELEE_STATE* gms, uint16_t playerI, uint16_t choice,
+bool setShipSelected(PickMeleeState* gms, uint16_t playerI, uint16_t choice,
 					 bool reportNetwork);
 
 

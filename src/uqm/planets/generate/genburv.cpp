@@ -26,15 +26,15 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* planet);
-static bool GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
-											  PLANET_DESC* world);
-static uint16_t GenerateBurvixese_generateEnergy(const SOLARSYS_STATE*,
-												 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateBurvixese_pickupEnergy(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* world, uint16_t whichNode);
+static bool GenerateBurvixese_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateBurvixese_generateMoons(SolarSystemState* solarSys,
+											SystemPlanet* planet);
+static bool GenerateBurvixese_generateOrbital(SolarSystemState* solarSys,
+											  SystemPlanet* world);
+static uint16_t GenerateBurvixese_generateEnergy(const SolarSystemState*,
+												 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateBurvixese_pickupEnergy(SolarSystemState* solarSys,
+										   SystemPlanet* world, uint16_t whichNode);
 
 
 const GenerateFunctions generateBurvixeseFunctions = {
@@ -54,10 +54,10 @@ const GenerateFunctions generateBurvixeseFunctions = {
 };
 
 
-static bool GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateBurvixese_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pPlanet {};
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pPlanet {};
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 
 	pSunDesc->MoonByte = 0;
 	pSunDesc->PlanetByte = 0;
@@ -99,8 +99,8 @@ static bool GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
-											PLANET_DESC* planet)
+static bool GenerateBurvixese_generateMoons(SolarSystemState* solarSys,
+											SystemPlanet* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -112,7 +112,7 @@ static bool GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
 	if (matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
-		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
+		SystemPlanet* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 		uint16_t angle {};
 
 		pMoonDesc->data_index = SELENIC_WORLD;
@@ -128,8 +128,8 @@ static bool GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
-											  PLANET_DESC* world)
+static bool GenerateBurvixese_generateOrbital(SolarSystemState* solarSys,
+											  SystemPlanet* world)
 {
 	DoPlanetaryAnalysis(&solarSys->SysInfo, world);
 	uint32_t rand_val {SysGenRNG->seed()};
@@ -179,8 +179,8 @@ static bool GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t GenerateBurvixese_generateEnergy(const SOLARSYS_STATE* solarSys,
-												 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateBurvixese_generateEnergy(const SolarSystemState* solarSys,
+												 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -203,8 +203,8 @@ static uint16_t GenerateBurvixese_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool GenerateBurvixese_pickupEnergy(SOLARSYS_STATE* solarSys,
-										   PLANET_DESC* world, uint16_t whichNode)
+static bool GenerateBurvixese_pickupEnergy(SolarSystemState* solarSys,
+										   SystemPlanet* world, uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

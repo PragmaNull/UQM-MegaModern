@@ -65,9 +65,9 @@ extern FONT SlabFont;
 extern FONT SquareFont;
 extern FONT PlayMenuFont;
 
-extern QUEUE race_q[];
+extern Queue race_q[];
 /* Array of lists of ships involved in a battle, one queue per side;
-		 * queue element is STARSHIP */
+		 * queue Element is Starship */
 
 
 extern bool solTexturesPresent;

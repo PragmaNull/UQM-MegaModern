@@ -24,7 +24,7 @@
 #include "uqm/build.h"
 
 
-static LOCDATA umgah_desc =
+static ConversationData umgah_desc =
 	{
 		UMGAH_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -786,7 +786,7 @@ static void post_umgah_enc(void)
 	}
 }
 
-LOCDATA* init_umgah_comm(void)
+ConversationData* init_umgah_comm(void)
 {
 	umgah_desc.init_encounter_func = Intro;
 	umgah_desc.post_encounter_func = post_umgah_enc;
@@ -809,7 +809,7 @@ LOCDATA* init_umgah_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&umgah_desc};
+	ConversationData* retval {&umgah_desc};
 
 	return (retval);
 }

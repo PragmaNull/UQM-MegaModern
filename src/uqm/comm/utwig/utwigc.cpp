@@ -25,7 +25,7 @@
 #include "uqm/gameev.h"
 
 
-static LOCDATA utwig_desc =
+static ConversationData utwig_desc =
 	{
 		UTWIG_CONVERSATION, /* AlienConv */
 		nullptr, /* init_encounter_func */
@@ -1045,7 +1045,7 @@ static void post_utwig_enc(void)
 	// nothing defined so far
 }
 
-LOCDATA* init_utwig_comm(void)
+ConversationData* init_utwig_comm(void)
 {
 	utwig_desc.init_encounter_func = Intro;
 	utwig_desc.post_encounter_func = post_utwig_enc;
@@ -1075,7 +1075,7 @@ LOCDATA* init_utwig_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	LOCDATA* retval {&utwig_desc};
+	ConversationData* retval {&utwig_desc};
 
 	return (retval);
 }

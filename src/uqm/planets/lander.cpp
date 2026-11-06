@@ -58,7 +58,7 @@
 static constexpr auto PlanetSideRate {(c_gameSecond / 42)};
 
 
-// This is a derived type from INPUT_STATE_DESC.
+// This is a derived type from InputStateDesc.
 typedef struct LanderInputState LanderInputState;
 struct LanderInputState
 {
@@ -77,7 +77,7 @@ MUSIC_REF LanderMusic;
 static GFXCONTEXT PCLanderContext;
 static MUSIC_REF OrbitMusic[NumOrbitThemes];
 
-LIFEFORM_DESC CreatureData[] =
+LifeformDesc CreatureData[] =
 	{
 		{SpeedMotionless | DangerHarmless,							   uqm::makeByte(1, 1) },
 		// Roto-Dendron
@@ -179,7 +179,7 @@ static constexpr auto AddAtEnd {(1 << 4)};
 static auto LanderSpeedDenom() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 14 : 10); }
 
 static uint8_t lander_flags;
-static GFXPOINT curLanderLoc;
+static GfxPoint curLanderLoc;
 static int crew_left;
 static int shieldHit;
 // which shield was hit, assuming it helped
@@ -187,22 +187,22 @@ static int damage_index;
 // number of lander damage frames left
 static int explosion_index;
 // lander explosion progression. Semantics are similar to an
-// inverse of ELEMENT.life_span
+// inverse of Element.life_span
 static int turn_wait;
-// thus named for similar semantics to ELEMENT.turn_wait
+// thus named for similar semantics to Element.turn_wait
 static int weapon_wait;
-// semantics similar to STARSHIP.weapon_counter
+// semantics similar to Starship.weapon_counter
 
-// TODO: We may want to make the PLANETSIDE_DESC fields into static vars
-static PLANETSIDE_DESC* planetSideDesc;
+// TODO: We may want to make the PlanetsideDesc fields into static vars
+static PlanetsideDesc* planetSideDesc;
 
-EXTENT MapSurface;
+GfxExtent MapSurface;
 
 static constexpr auto OnTheGround {0};
 
 GFXCONTEXT CreatePCLanderContext(void)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	// PCLanderContext rect is relative to SpaceContext
 	GFXCONTEXT oldContext {SetContext(SpaceContext)};
@@ -297,12 +297,12 @@ static Color DamageColorCycle(Color c, uint16_t i)
 
 static HELEMENT AddGroundDisaster(uint16_t which_disaster);
 
-void object_animation(ELEMENT* ElementPtr)
+void object_animation(Element* ElementPtr)
 {
 	uint16_t frame_index {};
 	uint16_t angle {};
 
-	PRIMITIVE* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
+	Primitive* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (GetPrimType(pPrim) == STAMPFILL_PRIM
 		&& !((ElementPtr->state_flags & FiniteLife)
 			 && ElementPtr->mass_points == EARTHQUAKE_DISASTER))
@@ -388,7 +388,7 @@ void object_animation(ELEMENT* ElementPtr)
 				hLavaElement = AddGroundDisaster(LAVASPOT_DISASTER);
 				if (hLavaElement)
 				{
-					ELEMENT* LavaElementPtr {};
+					Element* LavaElementPtr {};
 
 					angle = FacingToAngle(ElementPtr->facing);
 					LockElement(hLavaElement, &LavaElementPtr);
@@ -571,7 +571,7 @@ static auto NumCrewRows() { return (is3DO(uqm::UQMOptions::read().landerStyle) ?
 
 static void DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 {
-	STAMP s;
+	GfxStamp s;
 	GFXCONTEXT OldContext {};
 
 	if (crew_delta > 0)
@@ -634,11 +634,11 @@ static void DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 	SetContext(OldContext);
 }
 
-static void FillLanderHold(PLANETSIDE_DESC* pPSD, uint16_t scan, uint16_t NumRetrieved)
+static void FillLanderHold(PlanetsideDesc* pPSD, uint16_t scan, uint16_t NumRetrieved)
 {
 	uint16_t start_count {};
 	uint16_t tmpholdint {};
-	STAMP s;
+	GfxStamp s;
 	GFXCONTEXT OldContext {};
 
 	PlaySound(GetSound(LanderSounds, LANDER_PICKUP),
@@ -708,9 +708,9 @@ static void FillLanderHold(PLANETSIDE_DESC* pPSD, uint16_t scan, uint16_t NumRet
 }
 
 // returns true iff the node was picked up.
-static bool pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
-					   ELEMENT* ElementPtr, const INTERSECT_CONTROL* LanderControl,
-					   const INTERSECT_CONTROL* ElementControl, uint16_t Scan)
+static bool pickupNode(PlanetsideDesc* pPSD, uint16_t NumRetrieved,
+					   Element* ElementPtr, const IntersectInfo* LanderControl,
+					   const IntersectInfo* ElementControl, uint16_t Scan)
 {
 	char ch {};
 	uint16_t Max {};
@@ -763,7 +763,7 @@ static bool pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 			if ((oldsize > 22 && ElementPtr->mass_points <= 22)
 				|| (oldsize > 15 && ElementPtr->mass_points <= 15))
 			{
-				PRIMITIVE* pPrim = &DisplayArray[ElementPtr->PrimIndex];
+				Primitive* pPrim = &DisplayArray[ElementPtr->PrimIndex];
 				uint8_t gfx_index_change = 0;
 
 				if (oldsize > 22 && ElementPtr->mass_points <= 15)
@@ -850,14 +850,14 @@ static bool pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 	return (PartialPickup ? false : true);
 }
 
-static void ExplodeCritter(ELEMENT* ElementPtr)
+static void ExplodeCritter(Element* ElementPtr)
 {
 	int16_t temp_which_node {};
 
 	HELEMENT hExplosionElement {AllocElement()};
 	if (hExplosionElement)
 	{
-		ELEMENT* ExplosionElementPtr {};
+		Element* ExplosionElementPtr {};
 		LockElement(hExplosionElement, &ExplosionElementPtr);
 
 		ExplosionElementPtr->mass_points = DeathExplosion;
@@ -914,8 +914,8 @@ static void ExplodeCritter(ELEMENT* ElementPtr)
 	}
 }
 
-static void shotCreature(ELEMENT* ElementPtr, uint8_t value,
-						 INTERSECT_CONTROL* LanderControl, PRIMITIVE* pPrim)
+static void shotCreature(Element* ElementPtr, uint8_t value,
+						 IntersectInfo* LanderControl, Primitive* pPrim)
 {
 	if (ElementPtr->hit_points == 0)
 	{
@@ -974,11 +974,11 @@ static void DrawRadarArea(void)
 
 static void CheckObjectCollision(uint16_t index)
 {
-	INTERSECT_CONTROL LanderControl;
+	IntersectInfo LanderControl;
 	DRAWABLE LanderHandle {};
-	PRIMITIVE* pPrim {};
-	const PRIMITIVE* pLanderPrim {};
-	PLANETSIDE_DESC* pPSD = planetSideDesc;
+	Primitive* pPrim {};
+	const Primitive* pLanderPrim {};
+	PlanetsideDesc* pPSD = planetSideDesc;
 
 	if (index != EndOfList)
 	{
@@ -1001,7 +1001,7 @@ static void CheckObjectCollision(uint16_t index)
 
 	for (; index != EndOfList; index = GetPredLink(GetPrimLinks(pPrim)))
 	{
-		INTERSECT_CONTROL ElementControl;
+		IntersectInfo ElementControl;
 		HELEMENT hElement {};
 		HELEMENT hNextElement {};
 
@@ -1025,7 +1025,7 @@ static void CheckObjectCollision(uint16_t index)
 		for (hElement = GetHeadElement(); hElement;
 			 hElement = hNextElement)
 		{
-			ELEMENT* ElementPtr {};
+			Element* ElementPtr {};
 
 			LockElement(hElement, &ElementPtr);
 			hNextElement = GetSuccElement(ElementPtr);
@@ -1172,9 +1172,9 @@ static void CheckObjectCollision(uint16_t index)
 
 static constexpr auto NumCycles {8};
 
-static void lightning_process(ELEMENT* ElementPtr)
+static void lightning_process(Element* ElementPtr)
 {
-	PRIMITIVE* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
+	Primitive* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (uqm::lowNibble(ElementPtr->turn_wait))
 	{
 		--ElementPtr->turn_wait;
@@ -1235,7 +1235,7 @@ static void AddLightning(void)
 	if (hLightningElement)
 	{
 		uint32_t rand_val {};
-		ELEMENT* LightningElementPtr {};
+		Element* LightningElementPtr {};
 
 		LockElement(hLightningElement, &LightningElementPtr);
 
@@ -1297,11 +1297,11 @@ static HELEMENT AddGroundDisaster(uint16_t which_disaster)
 	HELEMENT hGroundDisasterElement {AllocElement()};
 	if (hGroundDisasterElement)
 	{
-		ELEMENT* GroundDisasterElementPtr {};
+		Element* GroundDisasterElementPtr {};
 
 		LockElement(hGroundDisasterElement, &GroundDisasterElementPtr);
 
-		PRIMITIVE* pPrim {&DisplayArray[GroundDisasterElementPtr->PrimIndex]};
+		Primitive* pPrim {&DisplayArray[GroundDisasterElementPtr->PrimIndex]};
 		GroundDisasterElementPtr->mass_points = which_disaster;
 		GroundDisasterElementPtr->playerNr = PS_NON_PLAYER;
 		GroundDisasterElementPtr->state_flags = FiniteLife;
@@ -1354,16 +1354,16 @@ static HELEMENT AddGroundDisaster(uint16_t which_disaster)
 	return (hGroundDisasterElement);
 }
 
-// This function replaces the ELEMENT manipulations typically done by
+// This function replaces the Element manipulations typically done by
 // PreProcess() and PostProcess() in process.c. Lander code does not
 // call RedrawQueue() & Co and thus does not reap the benefits (or curses,
 // depending how you look at it) of automatic flags processing.
 static void BuildObjectList(void)
 {
-	GFXPOINT org;
+	GfxPoint org;
 	HELEMENT hElement {};
 	HELEMENT hNextElement {};
-	const PLANETSIDE_DESC* pPSD = planetSideDesc;
+	const PlanetsideDesc* pPSD = planetSideDesc;
 
 	DisplayLinks = uqm::makeDword(EndOfList, EndOfList);
 
@@ -1393,7 +1393,7 @@ static void BuildObjectList(void)
 	{
 		int16_t dx {};
 		int16_t dy {};
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 
@@ -1459,7 +1459,7 @@ static void BuildObjectList(void)
 		}
 
 		{
-			PRIMITIVE* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
+			Primitive* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
 			pPrim->Object.Stamp.origin.x =
 				ElementPtr->next.location.x
 				- org.x + (MapSurface.width >> 1);
@@ -1499,10 +1499,10 @@ static void BuildObjectList(void)
 
 static void ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 {
-	GFXPOINT new_pt;
-	STAMP lander_s;
-	STAMP shadow_s;
-	STAMP shield_s;
+	GfxPoint new_pt;
+	GfxStamp lander_s;
+	GfxStamp shadow_s;
+	GfxStamp shield_s;
 	GFXCONTEXT OldContext {};
 
 	new_pt.y = curLanderLoc.y + dy;
@@ -1547,7 +1547,7 @@ static void ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 	// Display planet area, accounting for horizontal wrapping if
 	// near the edges.
 	{
-		STAMP s;
+		GfxStamp s;
 
 		ClearDrawable();
 		s.origin.x = -new_pt.x + (MapSurface.width >> 1);
@@ -1624,7 +1624,7 @@ static void ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 	}
 
 	{
-		PLANETSIDE_DESC* pPSD = planetSideDesc;
+		PlanetsideDesc* pPSD = planetSideDesc;
 		if (pPSD->NumFrames)
 		{
 			--pPSD->NumFrames;
@@ -1694,8 +1694,8 @@ static void animationInterframe(TimeCount* TimeIn, uint16_t periods)
 
 static void AnimateLaunch(FRAME farray, bool isLanding)
 {
-	GFXRECT r;
-	STAMP s;
+	GfxRect r;
+	GfxStamp s;
 	static TimeCount NextTime;
 	static TimeCount psNextTime;
 	TimeCount Now;
@@ -1751,7 +1751,7 @@ static void AnimateLaunch(FRAME farray, bool isLanding)
 static void AnimateLanderWarmup(void)
 {
 	int16_t num_crew {};
-	STAMP s;
+	GfxStamp s;
 	//GFXCONTEXT OldContext; unused
 	TimeCount TimeIn = GetTimeCounter();
 
@@ -1837,7 +1837,7 @@ static void AnimateLanderWarmup(void)
 			  NotPositional(), nullptr, GameSoundPriority + 1);
 }
 
-static void InitPlanetSide(GFXPOINT pt)
+static void InitPlanetSide(GfxPoint pt)
 {
 	// Adjust landing location by a random jitter.
 	const auto RandomMiss = [&] {
@@ -1892,7 +1892,7 @@ static void InitPlanetSide(GFXPOINT pt)
 	}
 
 	{
-		GFXRECT r;
+		GfxRect r;
 
 		GetContextClipRect(&r);
 
@@ -1900,7 +1900,7 @@ static void InitPlanetSide(GFXPOINT pt)
 		BatchGraphics();
 
 		{
-			STAMP s;
+			GfxStamp s;
 
 			// Note - This code is the same as in ScrollPlanetSize,
 			// Display planet area, accounting for horizontal wrapping if
@@ -1935,7 +1935,7 @@ static void LanderFire(int16_t facing)
 {
 	int16_t wdx {};
 	int16_t wdy {};
-	ELEMENT* WeaponElementPtr {};
+	Element* WeaponElementPtr {};
 	uint16_t angle {};
 
 	HELEMENT hWeaponElement {AllocElement()};
@@ -1983,10 +1983,10 @@ static void LanderFire(int16_t facing)
 			  NotPositional(), nullptr, GameSoundPriority);
 }
 
-static void put_node(ELEMENT* ElementPtr)
+static void put_node(Element* ElementPtr)
 {
-	ELEMENT* NodeElementPtr {};
-	NODE_INFO info;
+	Element* NodeElementPtr {};
+	SurfaceNode info;
 
 	HELEMENT hNodeElement {AllocElement()};
 	if (!hNodeElement)
@@ -2046,7 +2046,7 @@ static void put_node(ELEMENT* ElementPtr)
 	PutElement(hNodeElement);
 }
 
-static void spawn_node(ELEMENT* ElementPtr)
+static void spawn_node(Element* ElementPtr)
 {
 	if (ElementPtr->next.location.y < 0)
 	{
@@ -2061,7 +2061,7 @@ static void spawn_node(ELEMENT* ElementPtr)
 
 	if (ElementPtr->life_span > 0)
 	{
-		ELEMENT* NodeElementPtr {};
+		Element* NodeElementPtr {};
 		int16_t arc {};
 		const uint16_t half_dist = ElementPtr->life_span >> 1;
 
@@ -2104,7 +2104,7 @@ static void LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amo
 	uint16_t dist {};
 	uint16_t deposit_quality_fine {};
 	uint16_t deposit_quality_gross {};
-	ELEMENT* NodeElementPtr {};
+	Element* NodeElementPtr {};
 
 	HELEMENT hNodeElement {AllocElement()};
 	if (hNodeElement == nullptr)
@@ -2164,7 +2164,7 @@ static void ScatterDeposits(void)
 {
 	uint16_t numDeposits {};
 	uint8_t NumNodesGrabbed {};
-	const PLANETSIDE_DESC* pPSD = planetSideDesc;
+	const PlanetsideDesc* pPSD = planetSideDesc;
 
 	if (!uqm::UQMOptions::read().scatterElements)
 	{
@@ -2198,7 +2198,7 @@ static void ScatterDeposits(void)
 
 static bool LanderExplosion(void)
 {
-	ELEMENT* ExplosionElementPtr {};
+	Element* ExplosionElementPtr {};
 
 	HELEMENT hExplosionElement {AllocElement()};
 	if (!hExplosionElement)
@@ -2302,7 +2302,7 @@ static bool DoPlanetSide(LanderInputState* pMS)
 		{ // Start the explosion animation
 			if (LanderExplosion())
 			{
-				// Advance the state only once we've got the element
+				// Advance the state only once we've got the Element
 				++explosion_index;
 			}
 			else
@@ -2524,7 +2524,7 @@ uint8_t SetPlanetMusic(uint8_t planet_type)
 static void ReturnToOrbit(void)
 {
 	GFXCONTEXT OldContext {};
-	GFXRECT r;
+	GfxRect r;
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
 	{
@@ -2543,7 +2543,7 @@ static void ReturnToOrbit(void)
 	}
 	else
 	{
-		GFXRECT b;
+		GfxRect b;
 		OldContext = SetContext(RadarContext);
 		GetContextClipRect(&r);
 		b = r;
@@ -2734,11 +2734,11 @@ static uint8_t GetHazardChance(int hazardType, unsigned HazardRating)
 	return 0;
 }
 
-void PlanetSide(GFXPOINT planetLoc)
+void PlanetSide(GfxPoint planetLoc)
 {
 	int16_t index {};
 	LanderInputState landerInputState;
-	PLANETSIDE_DESC PSD;
+	PlanetsideDesc PSD;
 
 	memset(&PSD, 0, sizeof(PSD));
 	PSD.InTransit = true;
@@ -2884,7 +2884,7 @@ void PlanetSide(GFXPOINT planetLoc)
 		for (hElement = GetHeadElement();
 			 hElement; hElement = hNextElement)
 		{
-			ELEMENT* ElementPtr {};
+			Element* ElementPtr {};
 
 			LockElement(hElement, &ElementPtr);
 			hNextElement = _GetSuccLink(ElementPtr);
@@ -2907,8 +2907,8 @@ void PlanetSide(GFXPOINT planetLoc)
 
 static void DrawMinDatText(void)
 {
-	TEXT text;
-	GFXRECT rect;
+	GfxText text;
+	GfxRect rect;
 	Color OldColor;
 
 	if (!strlen(GameString(STATUS_STRING_BASE + 20)) || !strlen(GameString(STATUS_STRING_BASE + 21)))
@@ -2947,7 +2947,7 @@ static void DrawMinDatText(void)
 
 void InitLander(uint8_t LanderFlags)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	SetContext(RadarContext);
 	BatchGraphics();
@@ -2964,7 +2964,7 @@ void InitLander(uint8_t LanderFlags)
 		uint8_t ShieldFlags {};
 		uint8_t capacity_shift {};
 		uint16_t free_space {};
-		STAMP s;
+		GfxStamp s;
 
 		s.origin.x = 0; /* set up powered-down lander */
 		s.origin.y = 0;
@@ -3060,7 +3060,7 @@ void InitLander(uint8_t LanderFlags)
 
 void InitPCLander(bool Loading)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	SetContext(GetPCLanderContext(nullptr));
 
@@ -3081,7 +3081,7 @@ void InitPCLander(bool Loading)
 		uint8_t ShieldFlags {};
 		uint8_t capacity_shift {};
 		uint16_t free_space {};
-		STAMP s;
+		GfxStamp s;
 
 		s.frame = SetAbsFrameIndex(LanderFrame[7], 32);
 		s.origin = MAKE_POINT(0, 0);

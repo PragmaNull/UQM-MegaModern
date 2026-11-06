@@ -26,18 +26,18 @@
 extern "C" {
 #endif
 
-extern void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth,
+extern void DrawStarConBox(GfxRect* pRect, int16_t BorderWidth,
 						   Color TopLeftColor, Color BottomRightColor, bool FillInterior,
 						   Color InteriorColor, bool CreateCorners, Color CornerColor);
 extern void DrawBorderPadding(uint32_t videoWidth);
 extern void DrawRadarBorder(void);
 extern uint32_t SeedRandomNumbers(void);
 
-extern void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color,
+extern void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color,
 							int type, int custom);
 
 // saveRect can be nullptr to save the entire context frame
-extern STAMP SaveContextFrame(const GFXRECT* saveRect);
+extern GfxStamp SaveContextFrame(const GfxRect* saveRect);
 
 extern uint32_t get_fuel_to_sol(void);
 extern void DrawFlagStatDisplay(const char* str);

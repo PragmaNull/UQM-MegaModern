@@ -27,12 +27,12 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
-static bool GenerateRainbowWorld_initNpcs(SOLARSYS_STATE* solarSys);
+static bool GenerateRainbowWorld_initNpcs(SolarSystemState* solarSys);
 static bool GenerateRainbowWorld_generatePlanets(
-	SOLARSYS_STATE* solarSys);
-static bool GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
-												 PLANET_DESC* world);
-static void GenerateSlylandro(SOLARSYS_STATE* solarSys);
+	SolarSystemState* solarSys);
+static bool GenerateRainbowWorld_generateOrbital(SolarSystemState* solarSys,
+												 SystemPlanet* world);
+static void GenerateSlylandro(SolarSystemState* solarSys);
 
 const GenerateFunctions generateRainbowWorldFunctions = {
 	/* .initNpcs         = */ GenerateRainbowWorld_initNpcs,
@@ -50,7 +50,7 @@ const GenerateFunctions generateRainbowWorldFunctions = {
 	/* .pickupLife       = */ GenerateDefault_pickupLife,
 };
 
-static bool GenerateRainbowWorld_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateRainbowWorld_initNpcs(SolarSystemState* solarSys)
 {
 	if (isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER) > 0)
 	{
@@ -64,14 +64,14 @@ static bool GenerateRainbowWorld_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateRainbowWorld_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateRainbowWorld_generatePlanets(SolarSystemState* solarSys)
 {
-	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
+	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	pSunDesc->PlanetByte = 0;
-	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
+	SystemPlanet* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	pPlanet->data_index = RAINBOW_WORLD;
 
@@ -96,8 +96,8 @@ static bool GenerateRainbowWorld_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
-												 PLANET_DESC* world)
+static bool GenerateRainbowWorld_generateOrbital(SolarSystemState* solarSys,
+												 SystemPlanet* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& CurStarDescPtr()->Index >= RAINBOW0_DEFINED
@@ -118,7 +118,7 @@ static bool GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static void GenerateSlylandro(SOLARSYS_STATE* solarSys)
+static void GenerateSlylandro(SolarSystemState* solarSys)
 {
 	HIPGROUP hGroup {};
 	HIPGROUP hNextGroup {};
@@ -149,7 +149,7 @@ static void GenerateSlylandro(SOLARSYS_STATE* solarSys)
 	for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q);
 		 hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		GroupPtr->task = IN_ORBIT;

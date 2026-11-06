@@ -72,7 +72,7 @@ void doInstantMove(void)
 	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
 		// If there's a solar system at the destination, enter it.
-		GFXPOINT target {uqm::flagship().autopilot.target()};
+		GfxPoint target {uqm::flagship().autopilot.target()};
 		CurStarDescPtr() = FindStar(0, &target, 0, 0);
 		if (CurStarDescPtr())
 		{
@@ -94,20 +94,20 @@ void doInstantMove(void)
 }
 
 // playerNr should be 0 or 1
-STARSHIP* findPlayerShip(int16_t playerNr)
+Starship* findPlayerShip(int16_t playerNr)
 {
 	HELEMENT hNextElement {};
 
 	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
 
 		if ((ElementPtr->state_flags & PlayerShip) && ElementPtr->playerNr == playerNr)
 		{
-			STARSHIP* StarShipPtr {};
+			Starship* StarShipPtr {};
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 			UnlockElement(hElement);
 			return StarShipPtr;
@@ -122,7 +122,7 @@ STARSHIP* findPlayerShip(int16_t playerNr)
 
 void resetEnergyBattle(void)
 {
-	const STARSHIP* StarShipPtr {};
+	const Starship* StarShipPtr {};
 	uint16_t delta {};
 
 	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
@@ -151,14 +151,14 @@ void resetEnergyBattle(void)
 	delta = StarShipPtr->RaceDescPtr->ship_info.max_energy - StarShipPtr->RaceDescPtr->ship_info.energy_level;
 
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
-	DeltaEnergy((ELEMENT*)StarShipPtr->hShip, delta);
+	DeltaEnergy((Element*)StarShipPtr->hShip, delta);
 	SetContext(OldContext);
 }
 
 // Kills the opponent of the player controlled ship
 static void scuttleOpponent(void)
 {
-	const STARSHIP* StarShipPtr {};
+	const Starship* StarShipPtr {};
 	uint16_t delta {};
 	GFXCONTEXT OldContext {};
 
@@ -190,17 +190,17 @@ static void scuttleOpponent(void)
 	if (delta > 0)
 	{
 		OldContext = SetContext(StatusContext);
-		DeltaCrew((ELEMENT*)StarShipPtr->hShip, -delta);
+		DeltaCrew((Element*)StarShipPtr->hShip, -delta);
 		SetContext(OldContext);
-		ship_death((ELEMENT*)StarShipPtr->hShip);
+		ship_death((Element*)StarShipPtr->hShip);
 	}
 }
 
 // Zeroes out all ship's velocity, freezing them in their tracks
 static void HaltShips(void)
 {
-	const STARSHIP* StarShipPtr {};
-	ELEMENT* ElementPtr {};
+	const Starship* StarShipPtr {};
+	Element* ElementPtr {};
 
 	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
@@ -224,27 +224,27 @@ static void HaltShips(void)
 
 #if defined(DEBUG) || defined(USE_DEBUG_KEY)
 
-static void dumpEventCallback(const EVENT* eventPtr, void* arg);
+static void dumpEventCallback(const GameEvent* eventPtr, void* arg);
 
-static void starRecurse(STAR_DESC* star, void* arg);
-static void planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system,
-						  PLANET_DESC* planet, void* arg);
-static void moonRecurse(STAR_DESC* star, SOLARSYS_STATE* system,
-						PLANET_DESC* planet, PLANET_DESC* moon, void* arg);
+static void starRecurse(StarDesc* star, void* arg);
+static void planetRecurse(StarDesc* star, SolarSystemState* system,
+						  SystemPlanet* planet, void* arg);
+static void moonRecurse(StarDesc* star, SolarSystemState* system,
+						SystemPlanet* planet, SystemPlanet* moon, void* arg);
 
-static void dumpSystemCallback(const STAR_DESC* star,
-							   const SOLARSYS_STATE* system, void* arg);
-static void dumpPlanetCallback(const PLANET_DESC* planet, void* arg);
-static void dumpMoonCallback(const PLANET_DESC* moon, void* arg);
-static void dumpWorld(FILE* out, const PLANET_DESC* world);
+static void dumpSystemCallback(const StarDesc* star,
+							   const SolarSystemState* system, void* arg);
+static void dumpPlanetCallback(const SystemPlanet* planet, void* arg);
+static void dumpMoonCallback(const SystemPlanet* moon, void* arg);
+static void dumpWorld(FILE* out, const SystemPlanet* world);
 
 typedef struct TallyResourcesArg TallyResourcesArg;
-static void tallySystemPreCallback(const STAR_DESC* star, const SOLARSYS_STATE* system, void* arg);
-static void tallySystemPostCallback(const STAR_DESC* star, const SOLARSYS_STATE* system, void* arg);
-static void tallyPlanetCallback(const PLANET_DESC* planet, void* arg);
-static void tallyMoonCallback(const PLANET_DESC* moon, void* arg);
+static void tallySystemPreCallback(const StarDesc* star, const SolarSystemState* system, void* arg);
+static void tallySystemPostCallback(const StarDesc* star, const SolarSystemState* system, void* arg);
+static void tallyPlanetCallback(const SystemPlanet* planet, void* arg);
+static void tallyMoonCallback(const SystemPlanet* moon, void* arg);
 static void tallyResourcesWorld(TallyResourcesArg* arg,
-								const PLANET_DESC* world);
+								const SystemPlanet* world);
 
 static void dumpPlanetTypeCallback(int index, const PlanetFrame* planet,
 								   void* arg);
@@ -474,13 +474,13 @@ const char* raceName(uint8_t func_index)
 	}
 }
 
-static void dumpEventCallback(const EVENT* eventPtr, void* arg)
+static void dumpEventCallback(const GameEvent* eventPtr, void* arg)
 {
 	FILE* out = (FILE*)arg;
 	dumpEvent(out, eventPtr);
 }
 
-void dumpEvent(FILE* out, const EVENT* eventPtr)
+void dumpEvent(FILE* out, const GameEvent* eventPtr)
 {
 	fmt::print(out, "{:4}/{:02}/{:02}: {}\n",
 			   eventPtr->year_index,
@@ -492,7 +492,7 @@ void dumpEvent(FILE* out, const EVENT* eventPtr)
 void dumpEvents(FILE* out)
 {
 	LockGameClock();
-	ForAllEvents(reinterpret_cast<void (*)(LINK*, void*)>(dumpEventCallback), out);
+	ForAllEvents(reinterpret_cast<void (*)(QueueLink*, void*)>(dumpEventCallback), out);
 	UnlockGameClock();
 }
 
@@ -662,7 +662,7 @@ void clearEscorts(void)
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q);
 		 hStarShip; hStarShip = hNextShip)
 	{
-		SHIP_FRAGMENT* StarShipPtr;
+		ShipFragment* StarShipPtr;
 
 		StarShipPtr = LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 		hNextShip = _GetSuccLink(StarShipPtr);
@@ -684,9 +684,9 @@ void clearEscorts(void)
 static HELEMENT findFlagshipElement (void)
 {
 	HELEMENT hElement, hNextElement;
-	ELEMENT *ElementPtr;
+	Element *ElementPtr;
 
-	// Find the ship element.
+	// Find the ship Element.
 	for (hElement = GetTailElement (); hElement != 0;
 			hElement = hNextElement)
 	{
@@ -726,7 +726,7 @@ void showSpheres(bool Animated)
 		for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 			 hStarShip != nullptr; hStarShip = hNextShip)
 		{
-			FLEET_INFO* FleetPtr;
+			FleetInfo* FleetPtr;
 
 			FleetPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 			hNextShip = _GetSuccLink(FleetPtr);
@@ -745,11 +745,11 @@ void showSpheres(bool Animated)
 	{
 		HFLEETINFO hSyreen = GetStarShipFromIndex(
 			&uqm::gameState().game().avail_race_q, SYREEN_SHIP);
-		FLEET_INFO* SyreenPtr = LockFleetInfo(
+		FleetInfo* SyreenPtr = LockFleetInfo(
 			&uqm::gameState().game().avail_race_q, hSyreen);
 		HFLEETINFO hChmmr = GetStarShipFromIndex(
 			&uqm::gameState().game().avail_race_q, CHMMR_SHIP);
-		FLEET_INFO* ChmmrPtr = LockFleetInfo(
+		FleetInfo* ChmmrPtr = LockFleetInfo(
 			&uqm::gameState().game().avail_race_q, hChmmr);
 
 		SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
@@ -774,7 +774,7 @@ void activateAllShips(void)
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 		 hStarShip != nullptr; hStarShip = hNextShip)
 	{
-		FLEET_INFO* FleetPtr;
+		FleetInfo* FleetPtr;
 
 		FleetPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 		hNextShip = _GetSuccLink(FleetPtr);
@@ -791,7 +791,7 @@ void activateAllShips(void)
 
 ////////////////////////////////////////////////////////////////////////////
 
-void forAllStars(void (*callback)(STAR_DESC*, void*), void* arg)
+void forAllStars(void (*callback)(StarDesc*, void*), void* arg)
 {
 	int i;
 
@@ -801,7 +801,7 @@ void forAllStars(void (*callback)(STAR_DESC*, void*), void* arg)
 	}
 }
 
-void forAllPlanets(STAR_DESC* star, SOLARSYS_STATE* system, void (*callback)(STAR_DESC*, SOLARSYS_STATE*, PLANET_DESC*, void*), void* arg)
+void forAllPlanets(StarDesc* star, SolarSystemState* system, void (*callback)(StarDesc*, SolarSystemState*, SystemPlanet*, void*), void* arg)
 {
 	uint16_t i;
 
@@ -814,9 +814,9 @@ void forAllPlanets(STAR_DESC* star, SOLARSYS_STATE* system, void (*callback)(STA
 	}
 }
 
-void forAllMoons(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
-				 void (*callback)(STAR_DESC*, SOLARSYS_STATE*, PLANET_DESC*,
-								  PLANET_DESC*, void*),
+void forAllMoons(StarDesc* star, SolarSystemState* system, SystemPlanet* planet,
+				 void (*callback)(StarDesc*, SolarSystemState*, SystemPlanet*,
+								  SystemPlanet*, void*),
 				 void* arg)
 {
 	uint16_t i;
@@ -858,13 +858,13 @@ void UniverseRecurse(UniverseRecurseArg* universeRecurseArg)
 	UnlockGameClock();
 }
 
-static void starRecurse(STAR_DESC* star, void* arg)
+static void starRecurse(StarDesc* star, void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
-	SOLARSYS_STATE SolarSysState {};
-	SOLARSYS_STATE* oldPSolarSysState = pSolarSysState;
-	STAR_DESC* oldStarDescPtr = CurStarDescPtr();
+	SolarSystemState SolarSysState {};
+	SolarSystemState* oldPSolarSysState = pSolarSysState;
+	StarDesc* oldStarDescPtr = CurStarDescPtr();
 	CurStarDescPtr() = star;
 
 	SysGenRNGDebug->reseed(GetRandomSeedForStar(star));
@@ -904,7 +904,7 @@ static void starRecurse(STAR_DESC* star, void* arg)
 	CurStarDescPtr() = oldStarDescPtr;
 }
 
-static void planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
+static void planetRecurse(StarDesc* star, SolarSystemState* system, SystemPlanet* planet,
 						  void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
@@ -949,8 +949,8 @@ static void planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* 
 	}
 }
 
-static void moonRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
-						PLANET_DESC* moon, void* arg)
+static void moonRecurse(StarDesc* star, SolarSystemState* system, SystemPlanet* planet,
+						SystemPlanet* moon, void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
@@ -1025,14 +1025,14 @@ void dumpUniverseToFile(void)
 	// in particular for special planet generation.
 }
 
-static void dumpSystemCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
+static void dumpSystemCallback(const StarDesc* star, const SolarSystemState* system,
 							   void* arg)
 {
 	FILE* out = ((DumpUniverseArg*)arg)->out;
 	dumpSystem(out, star, system);
 }
 
-void dumpSystem(FILE* out, const STAR_DESC* star, const SOLARSYS_STATE* system)
+void dumpSystem(FILE* out, const StarDesc* star, const SolarSystemState* system)
 {
 	char name[256];
 	char buf[40];
@@ -1225,13 +1225,13 @@ const char* starPresenceString(uint8_t index)
 	}
 }
 
-static void dumpPlanetCallback(const PLANET_DESC* planet, void* arg)
+static void dumpPlanetCallback(const SystemPlanet* planet, void* arg)
 {
 	FILE* out = ((DumpUniverseArg*)arg)->out;
 	dumpPlanet(out, planet);
 }
 
-void dumpPlanet(FILE* out, const PLANET_DESC* planet)
+void dumpPlanet(FILE* out, const SystemPlanet* planet)
 {
 	(*pSolarSysState->genFuncs->generateName)(pSolarSysState, planet);
 	fmt::print(out, "- {:>37}  {}\n", uqm::gameState().sis().PlanetName,
@@ -1239,13 +1239,13 @@ void dumpPlanet(FILE* out, const PLANET_DESC* planet)
 	dumpWorld(out, planet);
 }
 
-static void dumpMoonCallback(const PLANET_DESC* moon, void* arg)
+static void dumpMoonCallback(const SystemPlanet* moon, void* arg)
 {
 	FILE* out = ((DumpUniverseArg*)arg)->out;
 	dumpMoon(out, moon);
 }
 
-void dumpMoon(FILE* out, const PLANET_DESC* moon)
+void dumpMoon(FILE* out, const SystemPlanet* moon)
 {
 	const char* typeStr;
 
@@ -1275,9 +1275,9 @@ void dumpMoon(FILE* out, const PLANET_DESC* moon)
 	dumpWorld(out, moon);
 }
 
-static void dumpWorld(FILE* out, const PLANET_DESC* world)
+static void dumpWorld(FILE* out, const SystemPlanet* world)
 {
-	PLANET_INFO* info;
+	PlanetData* info;
 
 	if (world->data_index == HIERARCHY_STARBASE)
 	{
@@ -1323,11 +1323,11 @@ static void dumpWorld(FILE* out, const PLANET_DESC* world)
 			   calculateMineralValue(pSolarSysState, world));
 }
 
-void printWorld(const PLANET_DESC* world)
+void printWorld(const SystemPlanet* world)
 {
-	PLANET_INFO* info;
+	PlanetData* info;
 	char buf[200] {};
-	GFXPOINT universe = CurStarDescPtr()->star_pt;
+	GfxPoint universe = CurStarDescPtr()->star_pt;
 
 	if (world->data_index == HIERARCHY_STARBASE
 		|| world->data_index == SA_MATRA
@@ -1389,7 +1389,7 @@ void printWorld(const PLANET_DESC* world)
 	fmt::print(fp, "____________________________________\n\n");
 }
 
-uint16_t calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
+uint16_t calculateBioValue(const SolarSystemState* system, const SystemPlanet* world)
 {
 	uint16_t result;
 	uint16_t numBio;
@@ -1403,14 +1403,14 @@ uint16_t calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* worl
 	result = 0;
 	for (i = 0; i < numBio; i++)
 	{
-		NODE_INFO info;
+		SurfaceNode info;
 		callGenerateForScanType(system, world, i, BIOLOGICAL_SCAN, &info);
 		result += BioCreditValueDefault * uqm::lowNibble(CreatureData[info.type].ValueAndHitPoints);
 	}
 	return result;
 }
 
-void generateBioIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world,
+void generateBioIndex(const SolarSystemState* system, const SystemPlanet* world,
 					  uint16_t bio[])
 {
 	uint16_t numBio;
@@ -1428,13 +1428,13 @@ void generateBioIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world,
 
 	for (i = 0; i < numBio; i++)
 	{
-		NODE_INFO info;
+		SurfaceNode info;
 		callGenerateForScanType(system, world, i, BIOLOGICAL_SCAN, &info);
 		bio[info.type]++;
 	}
 }
 
-uint16_t calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
+uint16_t calculateMineralValue(const SolarSystemState* system, const SystemPlanet* world)
 {
 	uint16_t result;
 	uint16_t numDeposits;
@@ -1448,14 +1448,14 @@ uint16_t calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* 
 	result = 0;
 	for (i = 0; i < numDeposits; i++)
 	{
-		NODE_INFO info;
+		SurfaceNode info;
 		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
 		result += uqm::highByte(info.density) * uqm::gameState().game().ElementWorth[ElementCategory(info.type)];
 	}
 	return result;
 }
 
-void generateMineralIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world,
+void generateMineralIndex(const SolarSystemState* system, const SystemPlanet* world,
 						  uint16_t minerals[])
 {
 	uint16_t numDeposits;
@@ -1473,7 +1473,7 @@ void generateMineralIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world
 
 	for (i = 0; i < numDeposits; i++)
 	{
-		NODE_INFO info;
+		SurfaceNode info;
 		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
 		minerals[ElementCategory(info.type)] += uqm::highByte(info.density);
 	}
@@ -1528,7 +1528,7 @@ void tallyResourcesToFile(void)
 	// in particular for special planet generation.
 }
 
-static void tallySystemPreCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
+static void tallySystemPreCallback(const StarDesc* star, const SolarSystemState* system,
 								   void* arg)
 {
 	TallyResourcesArg* tallyResourcesArg = (TallyResourcesArg*)arg;
@@ -1539,7 +1539,7 @@ static void tallySystemPreCallback(const STAR_DESC* star, const SOLARSYS_STATE* 
 	(void)system; /* satisfy compiler */
 }
 
-static void tallySystemPostCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
+static void tallySystemPostCallback(const StarDesc* star, const SolarSystemState* system,
 									void* arg)
 {
 	char name[256];
@@ -1554,17 +1554,17 @@ static void tallySystemPostCallback(const STAR_DESC* star, const SOLARSYS_STATE*
 	(void)system; /* satisfy compiler */
 }
 
-static void tallyPlanetCallback(const PLANET_DESC* planet, void* arg)
+static void tallyPlanetCallback(const SystemPlanet* planet, void* arg)
 {
 	tallyResourcesWorld((TallyResourcesArg*)arg, planet);
 }
 
-static void tallyMoonCallback(const PLANET_DESC* moon, void* arg)
+static void tallyMoonCallback(const SystemPlanet* moon, void* arg)
 {
 	tallyResourcesWorld((TallyResourcesArg*)arg, moon);
 }
 
-static void tallyResourcesWorld(TallyResourcesArg* arg, const PLANET_DESC* world)
+static void tallyResourcesWorld(TallyResourcesArg* arg, const SystemPlanet* world)
 {
 	if (world->data_index == HIERARCHY_STARBASE)
 	{
@@ -1644,7 +1644,7 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 			   densityString(uqm::lowNibble(planetType->AtmoAndDensity)));
 	for (i = 0; i < NumUsefulElements; i++)
 	{
-		const ELEMENT_ENTRY* entry;
+		const ElementDeposit* entry;
 		entry = &planetType->UsefulElements[i];
 		if (entry->Density == 0)
 		{
@@ -1797,7 +1797,7 @@ const char* depositQualityString(uint8_t quality)
 
 void resetCrewBattle(void)
 {
-	STARSHIP* StarShipPtr;
+	Starship* StarShipPtr;
 	uint16_t delta;
 	GFXCONTEXT OldContext;
 
@@ -1815,7 +1815,7 @@ void resetCrewBattle(void)
 	delta = StarShipPtr->RaceDescPtr->ship_info.max_crew - StarShipPtr->RaceDescPtr->ship_info.crew_level;
 
 	OldContext = SetContext(StatusContext);
-	DeltaCrew((ELEMENT*)StarShipPtr->hShip, delta);
+	DeltaCrew((Element*)StarShipPtr->hShip, delta);
 	SetContext(OldContext);
 }
 
@@ -1985,10 +1985,10 @@ static void drawContext(GFXCONTEXT context, double hue /* no pun intended */)
 	Color lineCol;
 	Color textCol;
 	//bool haveClippingRect; unused
-	GFXRECT rect;
-	LINE line;
-	TEXT text;
-	GFXPOINT p1, p2, p3, p4;
+	GfxRect rect;
+	GfxLine line;
+	GfxText text;
+	GfxPoint p1, p2, p3, p4;
 
 	//drawFrame = GetContextFGFrame (); unused
 	rectCol = hsvaToRgba(hue, 1.0, 0.5, 100);
@@ -2035,7 +2035,7 @@ static void drawContext(GFXCONTEXT context, double hue /* no pun intended */)
 	line.second = p3;
 	DrawLine(&line, 1);
 	// Gimme C'99! So I can do:
-	//     DrawLine ((LINE) { .first = p1, .second = p2 })
+	//     DrawLine ((GfxLine) { .first = p1, .second = p2 })
 
 	oldFont = SetContextFont(TinyFont);
 	SetContextForeGroundColor(textCol);
@@ -2055,7 +2055,7 @@ static void drawContext(GFXCONTEXT context, double hue /* no pun intended */)
 
 static void describeContext(FILE* out, const GFXCONTEXT context)
 {
-	GFXRECT rect;
+	GfxRect rect;
 	GFXCONTEXT oldContext = SetContext(context);
 
 	GetContextClipRect(&rect);
@@ -2071,16 +2071,16 @@ static void describeContext(FILE* out, const GFXCONTEXT context)
 }
 
 
-struct WAIT_STATE
+struct WaitState
 {
 	// standard state required by DoInput
-	bool (*InputFunc)(struct WAIT_STATE* self);
+	bool (*InputFunc)(struct WaitState* self);
 };
 
 
 // Maybe move to elsewhere, where it can be reused?
 static bool
-waitForKey(struct WAIT_STATE* self)
+waitForKey(struct WaitState* self)
 {
 	if (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])
 	{
@@ -2099,7 +2099,7 @@ getScreen(void)
 {
 	GFXCONTEXT oldContext = SetContext(ScreenContext);
 	FRAME savedFrame;
-	GFXRECT screenRect;
+	GfxRect screenRect;
 
 	screenRect.corner.x = 0;
 	screenRect.corner.y = 0;
@@ -2113,7 +2113,7 @@ getScreen(void)
 
 static void putScreen(FRAME savedFrame)
 {
-	STAMP stamp;
+	GfxStamp stamp;
 
 	GFXCONTEXT oldContext = SetContext(ScreenContext);
 
@@ -2196,7 +2196,7 @@ void debugContexts(void)
 
 	// Wait for a key:
 	{
-		WAIT_STATE state;
+		WaitState state;
 		state.InputFunc = waitForKey;
 		DoInput(&state, true);
 	}

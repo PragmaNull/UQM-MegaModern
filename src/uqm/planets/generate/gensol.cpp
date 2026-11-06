@@ -34,23 +34,23 @@
 #include <math.h>
 #include "uqm/random/UQMRandom.h"
 
-static bool GenerateSol_initNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys);
-static bool GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys);
-static bool GenerateSol_generateMoons(SOLARSYS_STATE* solarSys,
-									  PLANET_DESC* planet);
-static bool GenerateSol_generateName(const SOLARSYS_STATE*,
-									 const PLANET_DESC* world);
-static bool GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys,
-										PLANET_DESC* world);
-static uint16_t GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
-											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static uint16_t GenerateSol_generateEnergy(const SOLARSYS_STATE*,
-										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static uint16_t GenerateSol_generateLife(const SOLARSYS_STATE*,
-										 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO*);
-static bool GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys,
-									 PLANET_DESC* world, uint16_t whichNode);
+static bool GenerateSol_initNpcs(SolarSystemState* solarSys);
+static bool GenerateSol_reinitNpcs(SolarSystemState* solarSys);
+static bool GenerateSol_generatePlanets(SolarSystemState* solarSys);
+static bool GenerateSol_generateMoons(SolarSystemState* solarSys,
+									  SystemPlanet* planet);
+static bool GenerateSol_generateName(const SolarSystemState*,
+									 const SystemPlanet* world);
+static bool GenerateSol_generateOrbital(SolarSystemState* solarSys,
+										SystemPlanet* world);
+static uint16_t GenerateSol_generateMinerals(const SolarSystemState* solarSys,
+											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static uint16_t GenerateSol_generateEnergy(const SolarSystemState*,
+										   const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static uint16_t GenerateSol_generateLife(const SolarSystemState*,
+										 const SystemPlanet* world, uint16_t whichNode, SurfaceNode*);
+static bool GenerateSol_pickupEnergy(SolarSystemState* solarSys,
+									 SystemPlanet* world, uint16_t whichNode);
 
 static int init_probe(void);
 static void check_probe(void);
@@ -73,7 +73,7 @@ const GenerateFunctions generateSolFunctions = {
 };
 
 
-static bool GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSol_initNpcs(SolarSystemState* solarSys)
 {
 	if (uqm::UQMOptions::read().headStart)
 	{
@@ -101,7 +101,7 @@ static bool GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSol_reinitNpcs(SolarSystemState* solarSys)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) != 3)
 	{
@@ -119,14 +119,14 @@ static bool GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
 
 static constexpr auto SolSeed {334241042L};
 
-static bool GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSol_generatePlanets(SolarSystemState* solarSys)
 {
 	SysGenRNG->reseed(SolSeed + (uqm::isStarSeed() ? uqm::currentSeed().value : 0));
 
 	solarSys->SunDesc[0].NumPlanets = 9;
 	for (uint16_t planetI {0}; planetI < 9; ++planetI)
 	{
-		PLANET_DESC* pCurDesc = &solarSys->PlanetDesc[planetI];
+		SystemPlanet* pCurDesc = &solarSys->PlanetDesc[planetI];
 
 		pCurDesc->rand_seed = SysGenRNG->next();
 		const uint32_t rand_val {pCurDesc->rand_seed};
@@ -195,7 +195,7 @@ static bool GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
+static bool GenerateSol_generateMoons(SolarSystemState* solarSys, SystemPlanet* planet)
 {
 	uint32_t rand_val {};
 
@@ -267,8 +267,8 @@ static bool GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* pla
 	return true;
 }
 
-static bool GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
-									 const PLANET_DESC* world)
+static bool GenerateSol_generateName(const SolarSystemState* solarSys,
+									 const SystemPlanet* world)
 {
 	const uint16_t planetNr = planetIndex(solarSys, world);
 
@@ -280,7 +280,7 @@ static bool GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GenerateSol_generateOrbital(SolarSystemState* solarSys, SystemPlanet* world)
 {
 	uint32_t rand_val {};
 	uint16_t planetNr {};
@@ -653,8 +653,8 @@ static bool GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* w
 	return true;
 }
 
-static uint16_t GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
-											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSol_generateMinerals(const SolarSystemState* solarSys,
+											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (IsExtended() && matchWorld(solarSys, world, 8, 0))
 	{
@@ -675,8 +675,8 @@ static uint16_t GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
 }
 
 
-static uint16_t GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
-										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSol_generateEnergy(const SolarSystemState* solarSys,
+										   const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (matchWorld(solarSys, world, 8, MatchPlanet))
 	{
@@ -723,7 +723,7 @@ static uint16_t GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 
 static constexpr auto FwiffoFrags {8};
 
-static bool GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+static bool GenerateSol_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 									 uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, 8, MatchPlanet))
@@ -772,8 +772,8 @@ static bool GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* worl
 	return false;
 }
 
-static uint16_t GenerateSol_generateLife(const SOLARSYS_STATE* solarSys,
-										 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSol_generateLife(const SolarSystemState* solarSys,
+										 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
 	if (matchWorld(solarSys, world, 2, 1))
 	{
@@ -794,7 +794,7 @@ static int init_probe(void)
 		&& GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp)
 		&& (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q)))
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		GroupPtr->task = IN_ORBIT;
 		GroupPtr->sys_loc = 2 + 1;	/* orbitting earth */
 		GroupPtr->dest_loc = 2 + 1; /* orbitting earth */
@@ -824,7 +824,7 @@ static void check_probe(void)
 		return; // still nothing to check
 	}
 
-	IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
+	InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == URQUAN_DRONE_SHIP

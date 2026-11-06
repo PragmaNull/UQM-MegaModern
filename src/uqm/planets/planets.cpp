@@ -61,7 +61,7 @@ bool useDosSpheres = false;
 bool use3DOSpheres = false;
 uint8_t OrbitNum = 0;
 
-void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
+void DestroyOrbitStruct(PlanetOrbit* Orbit, int16_t height)
 {
 	DestroyDrawable(ReleaseDrawable(Orbit->TopoZoomFrame));
 	Orbit->TopoZoomFrame = 0;
@@ -161,7 +161,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 static void CreatePlanetContext(void)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	assert(PlanetContext == nullptr);
 
@@ -195,7 +195,7 @@ void DrawScannedObjects(bool Reversed)
 	for (hElement = Reversed ? GetTailElement() : GetHeadElement();
 		 hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr {};
+		Element* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = Reversed ?
@@ -204,7 +204,7 @@ void DrawScannedObjects(bool Reversed)
 
 		if (ElementPtr->state_flags & Appearing)
 		{
-			STAMP s;
+			GfxStamp s;
 
 			s.origin = ElementPtr->current.location;
 			s.frame = ElementPtr->next.image.frame;
@@ -217,9 +217,9 @@ void DrawScannedObjects(bool Reversed)
 
 void DrawPlanetSurfaceBorder(void)
 {
-	GFXRECT oldClipRect;
-	GFXRECT clipRect;
-	GFXRECT r;
+	GfxRect oldClipRect;
+	GfxRect clipRect;
+	GfxRect r;
 
 	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&oldClipRect);
@@ -316,9 +316,9 @@ typedef enum
 
 } DRAW_ORBITAL_MODE;
 
-static void DrawEnterOrbitText(GFXRECT rect)
+static void DrawEnterOrbitText(GfxRect rect)
 {
-	TEXT text;
+	GfxText text;
 	FRAME OldFontEffect {};
 	int16_t leading {};
 	char buf[256];
@@ -362,7 +362,7 @@ static void DrawEnterOrbitText(GFXRECT rect)
 
 void DrawOrbitMapGraphic(void)
 {
-	STAMP s;
+	GfxStamp s;
 
 	SetContext(GetScanContext(nullptr));
 
@@ -389,7 +389,7 @@ void DrawOrbitMapGraphic(void)
 
 		if (HaveString)
 		{
-			GFXRECT rect;
+			GfxRect rect;
 
 			GetFrameRect(s.frame, &rect);
 			rect.corner.x += s.origin.x;
@@ -407,9 +407,9 @@ void DrawOrbitMapGraphic(void)
 #if 0
 	if (never)
 	{
-		STAMP ss;
-		PLANET_DESC *pPlanetDesc;
-		PLANET_ORBIT *Orbit = &pSolarSysState->Orbit;
+		GfxStamp ss;
+		SystemPlanet *pPlanetDesc;
+		PlanetOrbit *Orbit = &pSolarSysState->Orbit;
 		int PlanetScale = chooseIfHd (319, 512);
 		int PlanetRescale = 1275;
 
@@ -432,7 +432,7 @@ void DrawOrbitMapGraphic(void)
 
 static void DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 {
-	GFXRECT r;
+	GfxRect r;
 
 	SetContext(SpaceContext);
 	GetContextClipRect(&r);
@@ -521,7 +521,7 @@ void LoadPlanet(FRAME SurfDefFrame)
 	StopMusic();
 
 	sleep = GetTimeCounter() + (c_gameSecond * 6 / 5);
-	PLANET_DESC* pPlanetDesc {pSolarSysState->pOrbitalDesc};
+	SystemPlanet* pPlanetDesc {pSolarSysState->pOrbitalDesc};
 
 	if (WaitMode)
 	{
@@ -563,7 +563,7 @@ void LoadPlanet(FRAME SurfDefFrame)
 
 void FreePlanet(void)
 {
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 
 	UninitSphereRotation();
 
@@ -611,14 +611,14 @@ void FreePlanet(void)
 	use3DOSpheres = false;
 }
 
-void LoadStdLanderFont(PLANET_INFO* info)
+void LoadStdLanderFont(PlanetData* info)
 {
 	info->LanderFont = LoadFont(LanderFontRes);
 	info->LanderFontEff = CaptureDrawable(
 		LoadGraphic(LanderFonteffPmapAnimRes));
 }
 
-void FreeLanderFont(PLANET_INFO* info)
+void FreeLanderFont(PlanetData* info)
 {
 	DestroyFont(info->LanderFont);
 	info->LanderFont = nullptr;
@@ -626,7 +626,7 @@ void FreeLanderFont(PLANET_INFO* info)
 	info->LanderFontEff = nullptr;
 }
 
-static bool DoPlanetOrbit(MENU_STATE* pMS)
+static bool DoPlanetOrbit(MenuState* pMS)
 {
 	bool select = (bool)PulsedInputState.menu[KEY_MENU_SELECT];
 
@@ -636,7 +636,7 @@ static bool DoPlanetOrbit(MENU_STATE* pMS)
 		return false;
 	}
 
-	// XXX: pMS actually refers to pSolarSysState->MenuState
+	// XXX: pMS actually refers to pSolarSysState->menuState
 	const bool handled {DoMenuChooser(pMS, PM_SCAN)};
 	if (handled)
 	{
@@ -736,18 +736,18 @@ static void on_input_frame(void)
 
 void PlanetOrbitMenu(void)
 {
-	MENU_STATE MenuState;
+	MenuState menuState;
 
-	memset(&MenuState, 0, sizeof MenuState);
+	memset(&menuState, 0, sizeof menuState);
 
 	SetFlashRect(SfrMenu3do(), false);
 
-	MenuState.CurState = SCAN;
+	menuState.CurState = SCAN;
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	InputFrameCallback* oldCallback {SetInputCallback(on_input_frame)};
 
-	MenuState.InputFunc = DoPlanetOrbit;
-	DoInput(&MenuState, true);
+	menuState.InputFunc = DoPlanetOrbit;
+	DoInput(&menuState, true);
 
 	SetInputCallback(oldCallback);
 
