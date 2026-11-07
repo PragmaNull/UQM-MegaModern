@@ -19,6 +19,7 @@
 #include "core/log/log.h"
 #include "core/stl/chrono.h"
 #include "core/stl/condition_variable.h"
+#include "core/stl/optional.h"
 #include "core/stl/thread.h"
 #include "core/string/StringUtils.h"
 #include "core/thread/Mutex.h"
@@ -139,13 +140,43 @@ static int DCQ_FullSize(void)
 	return DrawCommandQueue.FullSize;
 }
 
-// Holds the DCQ lock until Unlock_DCQ, so the analysis cannot check it.
-void Lock_DCQ(int slots) UQM_NO_THREAD_SAFETY_ANALYSIS
+namespace
+{
+
+// Holds the DCQ lock from construction to destruction.
+class UQM_SCOPED_CAPABILITY DcqGuard
+{
+public:
+	DcqGuard() UQM_ACQUIRE(s_dcqMutex)
+	{
+		lockDcq();
+	}
+
+	// Waits until the queue has space for 'slots' commands.
+	explicit DcqGuard(int slots) UQM_ACQUIRE(s_dcqMutex)
+	{
+		lockDcqWithSpace(slots);
+	}
+
+	~DcqGuard() UQM_RELEASE()
+	{
+		unlockDcq();
+	}
+
+	DcqGuard(const DcqGuard&) = delete;
+	DcqGuard& operator=(const DcqGuard&) = delete;
+};
+
+} // namespace
+
+DcqLock::DcqLock(int slots)
+	UQM_NO_THREAD_SAFETY_ANALYSIS
 {
 	lockDcqWithSpace(slots);
 }
 
-void Unlock_DCQ(void) UQM_NO_THREAD_SAFETY_ANALYSIS
+DcqLock::~DcqLock()
+	UQM_NO_THREAD_SAFETY_ANALYSIS
 {
 	unlockDcq();
 }
@@ -172,20 +203,18 @@ static void Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
 
 void TFB_BatchGraphics(void)
 {
-	lockDcq();
+	const DcqGuard lock {};
 	DrawCommandQueue.Batching++;
-	unlockDcq();
 }
 
 void TFB_UnbatchGraphics(void)
 {
-	lockDcq();
+	const DcqGuard lock {};
 	if (DrawCommandQueue.Batching)
 	{
 		DrawCommandQueue.Batching--;
 	}
 	Synchronize_DCQ();
-	unlockDcq();
 }
 
 // Cancel all pending batch operations, making them unbatched.  This will
@@ -193,10 +222,9 @@ void TFB_UnbatchGraphics(void)
 // batching problems from freezing the game.
 void TFB_BatchReset(void)
 {
-	lockDcq();
+	const DcqGuard lock {};
 	DrawCommandQueue.Batching = 0;
 	Synchronize_DCQ();
-	unlockDcq();
 }
 
 
@@ -204,14 +232,15 @@ void TFB_BatchReset(void)
 
 void Init_DrawCommandQueue(void)
 {
-	lockDcq();
-	DrawCommandQueue.Back = 0;
-	DrawCommandQueue.Front = 0;
-	DrawCommandQueue.InsertionPoint = 0;
-	DrawCommandQueue.Batching = 0;
-	DrawCommandQueue.FullSize = 0;
-	DrawCommandQueue.Size = 0;
-	unlockDcq();
+	{
+		const DcqGuard lock {};
+		DrawCommandQueue.Back = 0;
+		DrawCommandQueue.Front = 0;
+		DrawCommandQueue.InsertionPoint = 0;
+		DrawCommandQueue.Batching = 0;
+		DrawCommandQueue.FullSize = 0;
+		DrawCommandQueue.Size = 0;
+	}
 
 	TFB_BBox_Init(CanvasWidth, CanvasHeight);
 }
@@ -222,23 +251,21 @@ void Uninit_DrawCommandQueue(void)
 
 void TFB_DrawCommandQueue_Push(tfb::DrawCommand* Command)
 {
-	lockDcqWithSpace(1);
+	const DcqGuard lock {1};
 	DCQ[DrawCommandQueue.InsertionPoint] = *Command;
 	DrawCommandQueue.InsertionPoint = (DrawCommandQueue.InsertionPoint + 1)
 									% DcqMax;
 	DrawCommandQueue.FullSize++;
 	Synchronize_DCQ();
-	unlockDcq();
 }
 
 int TFB_DrawCommandQueue_Pop(tfb::DrawCommand* target)
 {
-	lockDcq();
+	const DcqGuard lock {};
 
 	if (DrawCommandQueue.Size == 0)
 	{
-		unlockDcq();
-		return (0);
+		return 0;
 	}
 
 	if (DrawCommandQueue.Front == DrawCommandQueue.Back && DrawCommandQueue.Size != DcqMax)
@@ -246,8 +273,7 @@ int TFB_DrawCommandQueue_Pop(tfb::DrawCommand* target)
 		uqm::log::debug("Augh!  Assertion failure in DCQ!  "
 						"Front == Back, Size != DCQ_MAX");
 		DrawCommandQueue.Size = 0;
-		unlockDcq();
-		return (0);
+		return 0;
 	}
 
 	*target = DCQ[DrawCommandQueue.Front];
@@ -255,21 +281,18 @@ int TFB_DrawCommandQueue_Pop(tfb::DrawCommand* target)
 
 	DrawCommandQueue.Size--;
 	DrawCommandQueue.FullSize--;
-	unlockDcq();
-
 	return 1;
 }
 
 void TFB_DrawCommandQueue_Clear()
 {
-	lockDcq();
+	const DcqGuard lock {};
 	DrawCommandQueue.Size = 0;
 	DrawCommandQueue.Front = 0;
 	DrawCommandQueue.Back = 0;
 	DrawCommandQueue.Batching = 0;
 	DrawCommandQueue.FullSize = 0;
 	DrawCommandQueue.InsertionPoint = 0;
-	unlockDcq();
 }
 
 static void checkExclusiveThread(tfb::DrawCommand* DrawCommand)
@@ -487,7 +510,8 @@ void TFB_FlushGraphics(void)
 	}
 
 	int commands_handled {0};
-	bool livelock_deterrence {false};
+	// Holds the queue lock while the renderer empties the queue.
+	uqstl::optional<DcqLock> livelockLock {};
 
 	if (DCQ_FullSize() > DcqForceBreakSize)
 	{
@@ -496,8 +520,7 @@ void TFB_FlushGraphics(void)
 
 	if (DCQ_Size() > DcqForceSlowdownSize)
 	{
-		Lock_DCQ(-1);
-		livelock_deterrence = true;
+		livelockLock.emplace(-1);
 	}
 
 	TFB_BBox_Reset();
@@ -513,12 +536,9 @@ void TFB_FlushGraphics(void)
 		}
 
 		++commands_handled;
-		if (!livelock_deterrence && commands_handled + DCQ_Size() > DcqLivelockMax)
+		if (!livelockLock && commands_handled + DCQ_Size() > DcqLivelockMax)
 		{
-			// log_add (log_Debug, "Initiating livelock deterrence!");
-			livelock_deterrence = true;
-
-			Lock_DCQ(-1);
+			livelockLock.emplace(-1);
 		}
 
 		switch (DC.Type)
@@ -760,10 +780,7 @@ void TFB_FlushGraphics(void)
 		}
 	}
 
-	if (livelock_deterrence)
-	{
-		Unlock_DCQ();
-	}
+	livelockLock.reset();
 
 	if (showFps)
 	{
@@ -780,7 +797,7 @@ void TFB_FlushGraphics(void)
 
 void TFB_PurgeDanglingGraphics(void)
 {
-	Lock_DCQ(-1);
+	const DcqLock lock {-1};
 
 	for (;;)
 	{
@@ -823,5 +840,4 @@ void TFB_PurgeDanglingGraphics(void)
 				break;
 		}
 	}
-	Unlock_DCQ();
 }

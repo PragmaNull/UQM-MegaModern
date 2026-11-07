@@ -41,29 +41,12 @@ static CallbackLink* callbacks UQM_GUARDED_BY(callbackListLock);
 static CallbackLink** callbacksEnd UQM_GUARDED_BY(callbackListLock);
 static CallbackLink* const* callbacksProcessEnd UQM_GUARDED_BY(callbackListLock);
 
-static inline void CallbackList_lock(void) UQM_ACQUIRE(callbackListLock)
-{
-	callbackListLock.lock();
-}
-
-static inline void CallbackList_unlock(void) UQM_RELEASE(callbackListLock)
-{
-	callbackListLock.unlock();
-}
-
-#if 0
-static inline bool CallbackList_isLocked(void) {
-	// TODO
-}
-#endif
-
 void Callback_init(void)
 {
-	CallbackList_lock();
+	const uqm::LockGuard lock {callbackListLock};
 	callbacks = nullptr;
 	callbacksEnd = &callbacks;
 	callbacksProcessEnd = &callbacks;
-	CallbackList_unlock();
 }
 
 void Callback_uninit(void)
@@ -79,10 +62,9 @@ CallbackID Callback_add(CallbackFunction callback, CallbackArg arg)
 	link->arg = arg;
 	link->next = nullptr;
 
-	CallbackList_lock();
+	const uqm::LockGuard lock {callbackListLock};
 	*callbacksEnd = link;
 	callbacksEnd = &link->next;
-	CallbackList_unlock();
 	return (CallbackID)link;
 }
 
@@ -94,7 +76,6 @@ static void CallbackLink_delete(CallbackLink* link)
 
 static CallbackLink** CallbackLink_find(CallbackLink* link) UQM_REQUIRES(callbackListLock)
 {
-	//assert(CallbackList_isLocked());
 	for (CallbackLink** ptr {&callbacks}; *ptr != nullptr; ptr = &(*ptr)->next)
 	{
 		if (*ptr == link)
@@ -105,16 +86,14 @@ static CallbackLink** CallbackLink_find(CallbackLink* link) UQM_REQUIRES(callbac
 	return nullptr;
 }
 
-bool Callback_remove(CallbackID id)
+// Removes 'link' from the queue. Returns false if 'link' is not in the queue.
+static bool CallbackLink_unlink(CallbackLink* link)
 {
-	CallbackLink* link = (CallbackLink*)id;
-
-	CallbackList_lock();
+	const uqm::LockGuard lock {callbackListLock};
 
 	CallbackLink** linkPtr {CallbackLink_find(link)};
 	if (linkPtr == nullptr)
 	{
-		CallbackList_unlock();
 		return false;
 	}
 
@@ -127,9 +106,16 @@ bool Callback_remove(CallbackID id)
 		callbacksProcessEnd = linkPtr;
 	}
 	*linkPtr = (*linkPtr)->next;
+	return true;
+}
 
-	CallbackList_unlock();
-
+bool Callback_remove(CallbackID id)
+{
+	CallbackLink* link = (CallbackLink*)id;
+	if (!CallbackLink_unlink(link))
+	{
+		return false;
+	}
 	CallbackLink_delete(link);
 	return true;
 }
@@ -137,6 +123,30 @@ bool Callback_remove(CallbackID id)
 static inline void CallbackLink_doCallback(CallbackLink* link)
 {
 	(link->callback)(link->arg);
+}
+
+// Removes the first callback from the queue and returns it. Returns nullptr if no callback before
+// 'callbacksProcessEnd' is left.
+static CallbackLink* CallbackList_popForProcess()
+{
+	const uqm::LockGuard lock {callbackListLock};
+	if (callbacksProcessEnd == &callbacks)
+	{
+		return nullptr;
+	}
+	assert(callbacks != nullptr);
+	// If callbacks == nullptr, then callbacksProcessEnd == &callbacks
+	CallbackLink* const link {callbacks};
+	callbacks = link->next;
+	if (callbacksEnd == &link->next)
+	{
+		callbacksEnd = &callbacks;
+	}
+	if (callbacksProcessEnd == &link->next)
+	{
+		callbacksProcessEnd = &callbacks;
+	}
+	return link;
 }
 
 // Call all queued callbacks currently in the queue. Callbacks queued
@@ -150,38 +160,17 @@ static inline void CallbackLink_doCallback(CallbackLink* link)
 //     callback function called by Callback_process() itself.
 void Callback_process(void)
 {
-	CallbackLink* link {};
-
 	// We set 'callbacksProcessEnd' to callbacksEnd. Callbacks added
 	// from inside a callback function will be placed after
 	// callbacksProcessEnd, and will hence not be processed this
 	// call of Callback_process().
-	CallbackList_lock();
-	callbacksProcessEnd = callbacksEnd;
-	CallbackList_unlock();
-
-	for (;;)
 	{
-		CallbackList_lock();
-		if (callbacksProcessEnd == &callbacks)
-		{
-			CallbackList_unlock();
-			break;
-		}
-		assert(callbacks != nullptr);
-		// If callbacks == nullptr, then callbacksProcessEnd == &callbacks
-		link = callbacks;
-		callbacks = link->next;
-		if (callbacksEnd == &link->next)
-		{
-			callbacksEnd = &callbacks;
-		}
-		if (callbacksProcessEnd == &link->next)
-		{
-			callbacksProcessEnd = &callbacks;
-		}
-		CallbackList_unlock();
+		const uqm::LockGuard lock {callbackListLock};
+		callbacksProcessEnd = callbacksEnd;
+	}
 
+	while (CallbackLink* const link {CallbackList_popForProcess()})
+	{
 		CallbackLink_doCallback(link);
 		CallbackLink_delete(link);
 	}
@@ -189,9 +178,6 @@ void Callback_process(void)
 
 bool Callback_haveMore(void)
 {
-	CallbackList_lock();
-	const bool result {(callbacks != nullptr)};
-	CallbackList_unlock();
-
-	return result;
+	const uqm::LockGuard lock {callbackListLock};
+	return callbacks != nullptr;
 }

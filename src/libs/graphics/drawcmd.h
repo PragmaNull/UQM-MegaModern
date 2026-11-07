@@ -206,8 +206,15 @@ void TFB_DrawCommandQueue_Clear(void);
 
 void TFB_EnqueueDrawCommand(tfb::DrawCommand* DrawCommand);
 
-void Lock_DCQ(int slots);
+// Holds the draw command queue lock after the queue has space for 'slots' commands.
+class DcqLock
+{
+public:
+	explicit DcqLock(int slots);
+	~DcqLock();
 
-void Unlock_DCQ(void);
+	DcqLock(const DcqLock&) = delete;
+	DcqLock& operator=(const DcqLock&) = delete;
+};
 
 #endif // UQM_LIBS_GRAPHICS_DRAWCMD_H
