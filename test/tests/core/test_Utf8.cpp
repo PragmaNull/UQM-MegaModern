@@ -132,13 +132,13 @@ TEST(Utf8Test, SkipChars)
 TEST(Utf8Test, CopyDoesNotSplitCharacters)
 {
 	uqstl::array<char, 4> buffer {};
-	EXPECT_EQ(utf8StringCopy(buffer.data(), sizeof(buffer), "ab\xc3\xa4"), buffer.data());
+	EXPECT_EQ(utf8StringCopy(buffer, "ab\xc3\xa4"), buffer.data());
 	EXPECT_STREQ(buffer.data(), "ab");
 
-	EXPECT_EQ(utf8StringCopy(buffer.data(), sizeof(buffer), "abc"), buffer.data());
+	EXPECT_EQ(utf8StringCopy(buffer, "abc"), buffer.data());
 	EXPECT_STREQ(buffer.data(), "abc");
 
-	EXPECT_EQ(utf8StringCopy(buffer.data(), 0, "abc"), nullptr);
+	EXPECT_EQ(utf8StringCopy({buffer.data(), 0}, "abc"), nullptr);
 }
 
 TEST(Utf8Test, GetStringFromChar_Encodes)

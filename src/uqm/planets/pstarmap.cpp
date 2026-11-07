@@ -1933,11 +1933,11 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 
 	if (which_starmap == StarmapView::NormalStarmap)
 	{ // "(Star Search: F6 | Toggle Maps: F7)"
-		uqm::utf8StringCopy(buf.data(), sizeof(buf), GameString(GameStringBase::FeedbackString + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())));
+		uqm::utf8StringCopy(buf, GameString(GameStringBase::FeedbackString + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())));
 	}
 	else
 	{
-		uqm::utf8StringCopy(buf.data(), sizeof(buf),
+		uqm::utf8StringCopy(buf,
 							GameString(GameStringBase::FeedbackString + 3 + *which_starmap));
 	}
 
@@ -1969,7 +1969,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			&& !(uqm::gameState().flag(uqm::GameFlag::KNOW_QS_PORTAL) & (1 << whichPortal)))
 		{
 			// "UNKNOWN" string
-			uqm::utf8StringCopy(buf.data(), sizeof(buf),
+			uqm::utf8StringCopy(buf,
 								GameString(GameStringBase::StarString + 132));
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) < 2 || whichPortal == NumHyperVortices)
@@ -1986,7 +1986,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			// portal_map[whichPortal].star_pt - coords of the exit
 			//                  nearest_star - StarDesc* of nearest constell.
 			uqstl::array<char, CursorInfoBufsize> starnameBuf {};
-			uqm::utf8StringCopy(starnameBuf.data(), sizeof(starnameBuf), GameString(portal_map[whichPortal].nearest_star->Postfix));
+			uqm::utf8StringCopy(starnameBuf, GameString(portal_map[whichPortal].nearest_star->Postfix));
 			// Abbreviate names longer than 11 at the 10th (or less)
 			// non-vowel character.
 			if (strlen(starnameBuf.data()) > 11)
@@ -2053,7 +2053,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			&& UniverseToDispy(ari_pt.y) == pt.y)
 		{
 			cursorLoc = ari_pt;
-			uqm::utf8StringCopy(buf.data(), sizeof(buf),
+			uqm::utf8StringCopy(buf,
 								GameString(GameStringBase::StarString + 132));
 		}
 	}
@@ -2072,7 +2072,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			{
 				uqstl::array<char, CursorInfoBufsize> visBuf {};
 
-				uqm::utf8StringCopy(visBuf.data(), sizeof(visBuf), buf.data());
+				uqm::utf8StringCopy(visBuf, buf.data());
 				// This is how you get rid of compiler warnings over string
 				// length:  %.30s where "30" is a limit.  Enjoy. ~JSD~
 				//snprintf(buf, sizeof buf, "%c %.251s %c", '(', visBuf, ')');

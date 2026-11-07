@@ -244,7 +244,7 @@ static void DrawControlText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 
 	GetContextFontLeading(&leading);
 
-	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(GameStringBase::MeleeString + ButtonText(which_icon)));
 
 	t.align = TextAlign::Center;
@@ -289,7 +289,7 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 
 	GetContextFontLeading(&leading);
 
-	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(GameStringBase::MeleeString + ButtonText(which_icon)));
 
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
@@ -331,7 +331,7 @@ static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 
 	GetFrameRect(stamp.frame, &r);
 
-	uqm::utf8StringCopy(buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(GameStringBase::MeleeString + ButtonText(which_icon)));
 
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
@@ -358,7 +358,7 @@ static void DrawVerticalText(const char* str, GfxPoint point)
 
 	t.baseline = point;
 
-	uqm::utf8StringCopy(buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						AlignText((const char*)AddPadd(
 									  (const char*)str, &leading),
 								  &t.baseline.x));
@@ -464,7 +464,7 @@ static void DrawTeamPickerText(GfxStamp stamp)
 
 	for (i = 0; i < 3; i++)
 	{ // Check if we actually have text to print
-		uqm::utf8StringCopy(buf.data(), sizeof(buf),
+		uqm::utf8StringCopy(buf,
 							GameString(GameStringBase::MeleeString + 20 + i));
 
 		if (!strlen(buf.data()))
@@ -491,7 +491,7 @@ static void DrawTeamPickerText(GfxStamp stamp)
 
 	DrawStamp(&s);
 
-	uqm::utf8StringCopy(buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(GameStringBase::MeleeString + 20));
 
 	t.baseline.x = r.extent.width + pt.x + TpPadding();
@@ -517,7 +517,7 @@ static void DrawTeamPickerText(GfxStamp stamp)
 				   + ResScale(1);
 		DrawStamp(&s);
 
-		uqm::utf8StringCopy(buf.data(), sizeof(buf),
+		uqm::utf8StringCopy(buf,
 							GameString(GameStringBase::MeleeString + 21 + i));
 		t.baseline.x = s.origin.x + r.extent.width + TpPadding();
 		t.CharCount = (uint16_t)~0;

@@ -185,8 +185,7 @@ void BuildBattle(uint16_t which_player)
 
 						if (selector == PlanetType::SaMatra)
 						{
-							uqm::utf8StringCopy(uqm::gameState().sis().PlanetName.data(),
-												sizeof(uqm::gameState().sis().PlanetName),
+							uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 												GameString(GameStringBase::PlanetNumber + 32));
 							DrawSISTitle(
 								GameString(GameStringBase::PlanetNumber + 32));
@@ -735,7 +734,7 @@ uint16_t UninitEncounter(void)
 
 								SetContextFont(isPC(uqm::UQMOptions::read().whichFonts) ? TinyFont : TinyFontBold);
 
-								uqm::utf8StringCopy(buf.data(), sizeof buf,
+								uqm::utf8StringCopy(buf,
 													uqm::toUpperUtf8(FragPtr->race_strings->text(0)).c_str());
 
 								t.baseline.x = scavenge_r.corner.x + ResScale(100);

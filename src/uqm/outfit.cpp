@@ -303,7 +303,7 @@ static void DrawModuleMenuText(GfxRect* r, int Index)
 	text.baseline.y = r->corner.y + leading - ResScale(1);
 	const int16_t og_baseline_x {text.baseline.x};
 
-	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(TdoStarbaseStringBase + Index));
 
 	text.align = TextAlign::Center;
@@ -493,7 +493,7 @@ static void DrawEscapePodText(GfxRect rect)
 
 	const int16_t og_baseline_x {text.baseline.x};
 
-	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(EndStarbaseStringBase + 1));
 
 	text.align = TextAlign::Center;

@@ -318,7 +318,7 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 			}
 			else
 			{
-				uqm::utf8StringCopy(buf.data(), sizeof(buf),
+				uqm::utf8StringCopy(buf,
 									SIPtr->race_strings->text(StarShipPtr->captains_name_index));
 
 				if (is3DO(uqm::UQMOptions::read().whichMenu))

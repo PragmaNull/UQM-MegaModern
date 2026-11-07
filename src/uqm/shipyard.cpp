@@ -465,8 +465,7 @@ static void showRemainingCrew(void)
 	t.align = TextAlign::Left;
 	t.CharCount = (uint16_t)~0;
 	t.pStr = buf.data();
-	uqm::utf8StringCopy(
-		buf.data(), sizeof(buf), GameString(GameStringBase::StarbaseString + 6));
+	uqm::utf8StringCopy(buf, GameString(GameStringBase::StarbaseString + 6));
 	// Remaining Crew:
 
 	font_DrawText(&t);
@@ -484,8 +483,7 @@ static void showRemainingCrew(void)
 	}
 	else if (remaining_crew == 0)
 	{
-		uqm::utf8StringCopy(
-			buf.data(), sizeof(buf), GameString(GameStringBase::StarbaseString + 7));
+		uqm::utf8StringCopy(buf, GameString(GameStringBase::StarbaseString + 7));
 		// Cdr. Hayes
 	}
 	else
@@ -647,8 +645,7 @@ static void showRemainingPoints(int delta)
 	// Draw the "Fleet Points: " text
 	r = font_GetTextRect(&t);
 	t.baseline.x -= r.extent.width;
-	uqm::utf8StringCopy(
-		buf.data(), sizeof(buf), GameString(GameStringBase::StarbaseString + 8));
+	uqm::utf8StringCopy(buf, GameString(GameStringBase::StarbaseString + 8));
 	// Fleet Points:
 
 	SetContextForeGroundColor(BlueprintColor);
@@ -786,9 +783,9 @@ static void DrawShipyardShipText(GfxRect* r, int Index)
 		LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 	MasterShipHandle hMasterShip = FindMasterShip(FleetPtr->SpeciesID);
 	const MasterShipInfo* ShipPtr = LockMasterShip(&master_q, hMasterShip);
-	uqm::utf8StringCopy((char*)&race_name, sizeof(race_name),
+	uqm::utf8StringCopy({(char*)&race_name, sizeof(race_name)},
 						ShipPtr->ShipInfo.race_strings->text(ShipPtr->ShipInfo.race_strings->size() - 3));
-	uqm::utf8StringCopy((char*)&ship_name, sizeof(ship_name),
+	uqm::utf8StringCopy({(char*)&ship_name, sizeof(ship_name)},
 						ShipPtr->ShipInfo.race_strings->text(ShipPtr->ShipInfo.race_strings->size() - 2));
 	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 	UnlockMasterShip(&master_q, hMasterShip);
@@ -1043,9 +1040,8 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 			r = font_GetTextRect(&t);
 			t.baseline.x -= r.extent.width;
 
-			uqm::utf8StringCopy(
-				buf.data(), sizeof(buf),
-				GameString(GameStringBase::StarbaseString + 9)); // FP:
+			uqm::utf8StringCopy(buf,
+								GameString(GameStringBase::StarbaseString + 9)); // FP:
 			SetContextForeGroundColor(BrightBlueColor);
 			font_DrawText(&t);
 		}
@@ -1105,7 +1101,7 @@ static void ShowShipCrew(ShipFragment* StarShipPtr, const GfxRect* pRect)
 	}
 	else if (StarShipPtr->crew_level == 0)
 	{
-		uqm::utf8StringCopy(buf.data(), sizeof(buf),
+		uqm::utf8StringCopy(buf,
 							GameString(GameStringBase::StarbaseString + 5));
 	}
 	else

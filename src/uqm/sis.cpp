@@ -205,7 +205,7 @@ void DrawSaveInfo(FlagshipData SisState)
 
 	if (SisState.SaveVersion > 0)
 	{
-		uqm::utf8StringCopy(TempVer.data(), sizeof(TempVer),
+		uqm::utf8StringCopy(TempVer,
 							GameString(GameStringBase::SavegameString + 4
 									   + SisState.SaveVersion));
 	}
@@ -227,11 +227,11 @@ void DrawSaveInfo(FlagshipData SisState)
 
 		if (SisState.Extended)
 		{
-			uqm::utf8StringCopy(TempExt.data(), sizeof(TempExt),
+			uqm::utf8StringCopy(TempExt,
 								GameString(GameStringBase::MainmenuString + 59));
 		}
 
-		uqm::utf8StringCopy(TempDiff.data(), sizeof(TempDiff),
+		uqm::utf8StringCopy(TempDiff,
 							GameString(GameStringBase::MainmenuString + 56
 									   + static_cast<int>(SisState.Difficulty)));
 
@@ -303,10 +303,8 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 						&& (Log.x == ArilouHomeX
 							&& Log.y == ArilouHomeY))
 					{
-						uqm::utf8StringCopy(
-							uqm::gameState().sis().PlanetName.data(),
-							sizeof uqm::gameState().sis().PlanetName,
-							GameString(GameStringBase::StarString + 148));
+						uqm::utf8StringCopy({uqm::gameState().sis().PlanetName.data(), sizeof uqm::gameState().sis().PlanetName},
+											GameString(GameStringBase::StarString + 148));
 						// "Falayalaralfali"
 					}
 				}
@@ -335,7 +333,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		{
 			uqstl::array<char, 100> buf;
 
-			uqm::utf8StringCopy(buf.data(), sizeof(buf), pStr);
+			uqm::utf8StringCopy(buf, pStr);
 			replaceChar(buf.data(), UnicharSpace, UnicharTab);
 
 			t.pStr = buf.data();
@@ -626,7 +624,7 @@ void DrawStatusMessage(const char* pStr)
 
 		SetContextFont(TinyFontBold);
 
-		uqm::utf8StringCopy(buf.data(), sizeof(buf), pStr);
+		uqm::utf8StringCopy(buf, pStr);
 		replaceChar(buf.data(), UnicharSpace, UnicharTab);
 
 		t.pStr = buf.data();
@@ -732,7 +730,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 		t.pStr = buf.data();
 		fmt::format_to_sz_n(buf, "{} {}",
 							GameString(GameStringBase::NamingString + 1), uqm::gameState().sis().ShipName.data());
-		uqm::utf8StringCopy(buf.data(), sizeof buf, uqm::toUpperUtf8(buf.data()).c_str());
+		uqm::utf8StringCopy(buf, uqm::toUpperUtf8(buf.data()).c_str());
 
 		if (IsHd())
 		{

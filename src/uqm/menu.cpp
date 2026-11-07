@@ -138,7 +138,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 				(i - (MenuString::ChangeCaptain - MenuString::ReadVerySlow)) :
 				i;
 
-		uqm::utf8StringCopy(buf.data(), sizeof buf,
+		uqm::utf8StringCopy(buf,
 							(i == MenuString::Fuel) ? pm_fuel_str.data() :
 							(i == MenuString::Crew) ? pm_crew_str.data() :
 													  GameString(GameStringBase::MainmenuString + j));

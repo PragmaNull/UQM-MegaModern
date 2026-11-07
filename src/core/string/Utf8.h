@@ -35,7 +35,7 @@ inline char* skipUTF8Chars(char* str, size_t count)
 
 // Copies 'src' to 'dst' and adds '\0'. Does not cut a character in two.
 // Returns nullptr if 'size' is 0.
-char* utf8StringCopy(char* dst, size_t size, uqstl::string_view src);
+char* utf8StringCopy(uqstl::span<char> dst, uqstl::string_view src);
 int utf8StringCompare(uqstl::string_view str1, uqstl::string_view str2);
 
 // Encodes 'ch' into 'out' without '\0'. Returns the number of bytes,

@@ -568,7 +568,7 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 	}
 
 	linespun = true;
-	uqm::utf8StringCopy(buf, size, ship_map[raceID].race.data());
+	uqm::utf8StringCopy({buf, size}, ship_map[raceID].race.data());
 	buf += strlen(ship_map[raceID].race.data()) * sizeof(char);
 
 	switch (ship_map[shipID].sID)
@@ -651,7 +651,7 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 			if (ship_map[raceID].width > 80)
 			{
 				const char* pad = (IsHd() ? "\n   " : "\n       ");
-				uqm::utf8StringCopy(buf, size, pad);
+				uqm::utf8StringCopy({buf, size}, pad);
 				buf += strlen(pad) * sizeof(char);
 			}
 			break;
@@ -659,15 +659,15 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 			break;
 	}
 
-	uqm::utf8StringCopy(buf, size, ship_map[shipID].ship.data());
+	uqm::utf8StringCopy({buf, size}, ship_map[shipID].ship.data());
 	return;
 
 SeedTextSpinSkipLine:
-	uqm::utf8StringCopy(buf, size, "");
+	uqm::utf8StringCopy({buf, size}, "");
 	return;
 
 SeedTextSpinPassThru:
-	uqm::utf8StringCopy(buf, size, str);
+	uqm::utf8StringCopy({buf, size}, str);
 	return;
 }
 
@@ -915,7 +915,7 @@ static bool DoPresentation(void* pIS)
 					}
 					else
 					{
-						uqm::utf8StringCopy(pPIS->Buffer.data(), sizeof(pPIS->Buffer),
+						uqm::utf8StringCopy(pPIS->Buffer,
 											cmd.text.c_str());
 					}
 					x <<= resolutionFactor;

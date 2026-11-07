@@ -450,11 +450,11 @@ static void NameCaptainOrShip(bool nameCaptain, bool gamestart)
 
 	if (DoTextEntry(&tes))
 	{
-		uqm::utf8StringCopy(Setting, tes.MaxSize, buf.data());
+		uqm::utf8StringCopy({Setting, static_cast<size_t>(tes.MaxSize)}, buf.data());
 	}
 	else
 	{
-		uqm::utf8StringCopy(buf.data(), sizeof(buf), Setting);
+		uqm::utf8StringCopy(buf, Setting);
 	}
 
 	// If the Captain and/or Flagship text entries are blank
@@ -881,7 +881,7 @@ static void DrawLabel(GfxPoint pt, int16_t width, uint32_t gamestr)
 
 	DrawLines(SCL_POINT(pt), ResScale(width));
 
-	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf), GameString(gamestr));
+	uqm::utf8StringCopy(buf, GameString(gamestr));
 
 	FontRef OldFont {SetContextFont(LabelFont)};
 	OldColor = SetContextForeGroundColor(SummTextColor);
@@ -1035,7 +1035,7 @@ static void DrawSaveLoadText(PickGameState* pickState)
 	text.baseline.x = ResScale(OrigSisScreenWidth() / 2);
 	text.baseline.y = ResScale(5) + SaveLoadY() + SafeBoolScl(2, 1);
 
-	uqm::utf8StringCopy(buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(GameStringBase::LabelString + (3 - pickState->saving)));
 
 	text.align = TextAlign::Center;
@@ -1147,7 +1147,7 @@ static void DrawEmptySlot(void)
 	t.baseline.x = SisScreenWidth() >> 1;
 	t.baseline.y = ResScale(66);
 
-	uqm::utf8StringCopy(buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(GameStringBase::LabelString + 1)); // EMPTY SLOT
 
 	t.align = TextAlign::Center;
@@ -1237,7 +1237,7 @@ static void DrawBombPodText(GfxStamp* s)
 	r.extent.height = ResScale(29);
 	DrawFilledRectangle(&r);
 
-	uqm::utf8StringCopy(buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(GameStringBase::LabelString + 9));
 	// AMPLIFIED PRECURSOR BOMB
 
@@ -1264,7 +1264,7 @@ static void DrawBombPodText(GfxStamp* s)
 	SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 
-	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
+	uqm::utf8StringCopy(buf,
 						GameString(GameStringBase::LabelString + 10));
 	// ESCAPE POD
 
@@ -1522,11 +1522,11 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 				buf[0] = '\0';
 				break;
 			case ActivityKind::InHyperspace:
-				uqm::utf8StringCopy(buf.data(), sizeof(buf),
+				uqm::utf8StringCopy(buf,
 									GameString(GameStringBase::NavigationString + 0));
 				break;
 			case ActivityKind::InQuasispace:
-				uqm::utf8StringCopy(buf.data(), sizeof(buf),
+				uqm::utf8StringCopy(buf,
 									GameString(GameStringBase::NavigationString + 1));
 				break;
 		}

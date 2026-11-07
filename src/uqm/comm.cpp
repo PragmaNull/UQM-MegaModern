@@ -1470,7 +1470,7 @@ static void SelectResponse(CommEncounterState* pES)
 {
 	const GfxText* response_text =
 		&pES->response_list[pES->cur_response].response_text;
-	uqm::utf8StringCopy(pES->phrase_buf.data(), sizeof pES->phrase_buf,
+	uqm::utf8StringCopy(pES->phrase_buf,
 						response_text->pStr);
 
 	if (!uqm::UQMOptions::read().useSpeech && uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC)

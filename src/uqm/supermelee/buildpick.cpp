@@ -208,7 +208,7 @@ void DrawTooltip(ShipInfoDesc* SIPtr)
 
 	SetContextForeGroundColor(TooltipColorDescFront);
 
-	uqm::utf8StringCopy(buf.data(), sizeof buf,
+	uqm::utf8StringCopy(buf,
 						SIPtr->race_strings->text(SIPtr->race_strings->size() - 1));
 	Text.baseline.y += ResScale(2);
 

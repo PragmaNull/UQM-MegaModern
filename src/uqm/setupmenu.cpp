@@ -371,7 +371,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 	redraw_menu();
 
 	// make a backup copy for revert on cancel
-	uqm::utf8StringCopy(revert_buf.data(), sizeof(revert_buf), widget->value.data());
+	uqm::utf8StringCopy(revert_buf, widget->value.data());
 
 	// text entry setup
 	tes.Initialized = false;
@@ -386,7 +386,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::Select);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
-		uqm::utf8StringCopy(widget->value.data(), widget->maxlen, revert_buf.data());
+		uqm::utf8StringCopy({widget->value.data(), static_cast<size_t>(widget->maxlen)}, revert_buf.data());
 	}
 	else
 	{

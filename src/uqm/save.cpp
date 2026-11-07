@@ -409,8 +409,7 @@ static void PrepareSummary(SaveSummaryData* SummPtr, const char* name)
 			}
 			break;
 		case ActivityKind::InLastBattle:
-			uqm::utf8StringCopy(SummPtr->SS.PlanetName.data(),
-								sizeof(SummPtr->SS.PlanetName),
+			uqm::utf8StringCopy(SummPtr->SS.PlanetName,
 								GameString(GameStringBase::PlanetNumber + 32)); // Sa-Matra
 			break;
 		default:

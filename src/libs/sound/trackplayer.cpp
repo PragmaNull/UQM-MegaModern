@@ -534,7 +534,7 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 	{ // Adding a new track
 		int num_timestamps = 0;
 
-		uqm::utf8StringCopy(last_track_name.data(), sizeof(last_track_name), TrackName);
+		uqm::utf8StringCopy(last_track_name, TrackName);
 
 		num_pages = SplitSubPages(TrackText, pages.data(), time_stamps.data(), MaxPages);
 		if (num_pages == 0)

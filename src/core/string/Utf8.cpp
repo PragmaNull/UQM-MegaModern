@@ -122,14 +122,14 @@ const char* skipUTF8Chars(const char* str, size_t count)
 	return str;
 }
 
-char* utf8StringCopy(char* dst, size_t size, uqstl::string_view src)
+char* utf8StringCopy(uqstl::span<char> dst, uqstl::string_view src)
 {
-	if (size == 0)
+	if (dst.empty())
 	{
 		return nullptr;
 	}
 
-	size_t length {uqstl::min(src.size(), size - 1)};
+	size_t length {uqstl::min(src.size(), dst.size() - 1)};
 	if (length < src.size())
 	{
 		// Do not end in the middle of a character.
@@ -138,9 +138,9 @@ char* utf8StringCopy(char* dst, size_t size, uqstl::string_view src)
 			--length;
 		}
 	}
-	src.copy(dst, length);
+	src.copy(dst.data(), length);
 	dst[length] = '\0';
-	return dst;
+	return dst.data();
 }
 
 int utf8StringCompare(uqstl::string_view str1, uqstl::string_view str2)

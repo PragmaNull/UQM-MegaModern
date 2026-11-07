@@ -100,8 +100,7 @@ static bool GenerateSupox_generateName(const SolarSystemState* solarSys,
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const SystemPlanet pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName.data(),
-							sizeof(uqm::gameState().sis().PlanetName),
+		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							GameString(GameStringBase::PlanetNumber + 38));
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));

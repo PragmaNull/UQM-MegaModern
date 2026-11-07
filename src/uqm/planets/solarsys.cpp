@@ -3013,12 +3013,12 @@ void GetPlanetOrMoonName(char* buf, uint16_t bufsize)
 	const char* named {GetNamedPlanetaryBody()};
 	if (named)
 	{
-		uqm::utf8StringCopy(buf, bufsize, named);
+		uqm::utf8StringCopy({buf, bufsize}, named);
 		return;
 	}
 
 	// Either not named or we already have a name
-	uqm::utf8StringCopy(buf, bufsize, uqm::gameState().sis().PlanetName.data());
+	uqm::utf8StringCopy({buf, bufsize}, uqm::gameState().sis().PlanetName.data());
 
 	if (!playerInSolarSystem() || !playerInInnerSystem()
 		|| worldIsPlanet(pSolarSysState, pSolarSysState->pOrbitalDesc)
