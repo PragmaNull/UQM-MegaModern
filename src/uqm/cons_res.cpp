@@ -93,10 +93,10 @@ void load_gravity_well(uint8_t selector)
 
 void free_gravity_well(void)
 {
-	for (uint16_t i {0}; i < NumViews; ++i)
+	for (auto& drawable : planet)
 	{
-		DestroyDrawable(ReleaseDrawable(planet[i]));
-		planet[i] = 0;
+		DestroyDrawable(ReleaseDrawable(drawable));
+		drawable = 0;
 	}
 }
 

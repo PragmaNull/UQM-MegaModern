@@ -320,19 +320,19 @@ bool InitGameStructures(void)
 			break;
 	}
 
-	for (i = 0; i < NumDriveSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); ++i)
 	{
 		uqm::gameState().sis().DriveSlots[i] = ModuleType::EmptyDriveSlot;
 	}
 	uqm::gameState().sis().DriveSlots[5] =
 		uqm::gameState().sis().DriveSlots[6] = ModuleType::FusionThruster;
-	for (i = 0; i < NumJetSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().JetSlots.size(); ++i)
 	{
 		uqm::gameState().sis().JetSlots[i] = ModuleType::EmptyJetSlot;
 	}
 	uqm::gameState().sis().JetSlots[0] =
 		uqm::gameState().sis().JetSlots[6] = ModuleType::TurningJets;
-	for (i = 0; i < NumModuleSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().ModuleSlots.size(); ++i)
 	{
 		uqm::gameState().sis().ModuleSlots[i] = ModuleType::EmptyModuleSlot;
 	}
@@ -491,7 +491,7 @@ void SeedDEBUG()
 	uint16_t decisec {};
 	clock_t start_clock {};
 	bool myRNG = false;
-	for (decisec = 0; decisec < 100; decisec++)
+	for (decisec = 0; decisec < histogram.size(); decisec++)
 	{
 		histogram[decisec] = 0;
 	}

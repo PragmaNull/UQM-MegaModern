@@ -190,15 +190,15 @@ int32_t openAL_Init(audio_Driver* driver, AudioFlags flags)
 	alListenerfv(AL_VELOCITY, listenerVel.data());
 	alListenerfv(AL_ORIENTATION, listenerOri.data());
 
-	for (int i {0}; i < NumSoundsources; ++i)
+	for (auto& source : soundSource)
 	{
 		uqstl::array<float, 3> zero {0.0f, 0.0f, 0.0f};
 
-		audio_GenSources(1, &soundSource[i].handle);
-		alSourcei(soundSource[i].handle, AL_LOOPING, AL_FALSE);
-		alSourcefv(soundSource[i].handle, AL_POSITION, defaultPos.data());
-		alSourcefv(soundSource[i].handle, AL_VELOCITY, zero.data());
-		alSourcefv(soundSource[i].handle, AL_DIRECTION, zero.data());
+		audio_GenSources(1, &source.handle);
+		alSourcei(source.handle, AL_LOOPING, AL_FALSE);
+		alSourcefv(source.handle, AL_POSITION, defaultPos.data());
+		alSourcefv(source.handle, AL_VELOCITY, zero.data());
+		alSourcefv(source.handle, AL_DIRECTION, zero.data());
 	}
 
 	if (InitStreamDecoder())

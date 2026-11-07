@@ -2657,9 +2657,9 @@ void Melee(void)
 
 #ifdef NETPLAY
 		{
-			for (uint16_t player {0}; player < NumPlayers; player++)
+			for (auto& netConnection : netConnections)
 			{
-				netConnections[player] = nullptr;
+				netConnection = nullptr;
 			}
 		}
 #endif

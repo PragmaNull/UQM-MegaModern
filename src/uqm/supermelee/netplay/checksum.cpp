@@ -201,9 +201,9 @@ void crc_processState(crc_State* state)
 
 void initChecksumBuffers(void)
 {
-	for (size_t player {0}; player < NumPlayers; player++)
+	for (auto& netConnection : netConnections)
 	{
-		NetConnection* conn {netConnections[player]};
+		NetConnection* conn {netConnection};
 		if (conn == nullptr)
 		{
 			continue;
@@ -220,9 +220,9 @@ void initChecksumBuffers(void)
 
 void uninitChecksumBuffers(void)
 {
-	for (size_t player {0}; player < NumPlayers; player++)
+	for (auto& netConnection : netConnections)
 	{
-		NetConnection* conn {netConnections[player]};
+		NetConnection* conn {netConnection};
 		if (conn == nullptr)
 		{
 			continue;
@@ -266,11 +266,11 @@ bool verifyChecksums(BattleFrameCounter frameNr)
 		return false;
 	}
 
-	for (size_t player {0}; player < NumPlayers; player++)
+	for (auto& netConnection : netConnections)
 	{
 		Checksum remoteChecksum {};
 
-		NetConnection* conn {netConnections[player]};
+		NetConnection* conn {netConnection};
 		if (conn == nullptr)
 		{
 			continue;

@@ -512,7 +512,7 @@ static void SaveProblemMessage(GfxStamp* MsgStamp)
 	SetContextForeGroundColor(
 		isPC(uqm::UQMOptions::read().whichFonts) ? WhiteColor : LtgrayColor);
 
-	for (i = 0; i < MaxMsgLines; ++i)
+	for (i = 0; i < ppStr.size(); ++i)
 	{
 		t.pStr = ppStr[i];
 		if (*t.pStr == '\0')

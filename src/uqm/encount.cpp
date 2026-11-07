@@ -963,9 +963,9 @@ uint16_t UninitEncounter(void)
 				*RaceId::Ilwrath,
 				*RaceId::Slylandro};
 
-			for (uint8_t j {0}; j < std::size(bannedShip); j++)
+			for (const uint8_t banned : bannedShip)
 			{
-				if (bannedShip[j] == EncounterRace)
+				if (banned == EncounterRace)
 				{
 					isBanned = true;
 					break;

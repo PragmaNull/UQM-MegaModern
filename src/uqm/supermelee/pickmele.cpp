@@ -951,10 +951,8 @@ bool updateMeleeSelection(PickMeleeState* gms, uint16_t playerI, uint16_t ship)
 
 static void reportShipSelected(PickMeleeState* gms, uint16_t index)
 {
-	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
+	for (auto conn : netConnections)
 	{
-		NetConnection* conn = netConnections[playerI];
-
 		if (conn == nullptr)
 		{
 			continue;

@@ -319,7 +319,7 @@ void UninitShips(void)
 
 	UninitSpace();
 
-	for (i = 0; i < NumPlayers; ++i)
+	for (i = 0; i < SPtr.size(); ++i)
 	{
 		SPtr[i] = 0;
 	}
@@ -388,7 +388,7 @@ void UninitShips(void)
 	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InEncounter)
 	{
 		// Remove any ships left from the race queue.
-		for (i = 0; i < NumPlayers; i++)
+		for (i = 0; i < race_q.size(); i++)
 		{
 			ReinitQueue(&race_q[i]);
 		}

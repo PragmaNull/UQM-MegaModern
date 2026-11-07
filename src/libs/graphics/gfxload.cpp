@@ -253,12 +253,12 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 	bcds.resize(fontDir.size());
 
 	// Load the surfaces for all dir Entries
-	for (int dirEntryI {0}; dirEntryI < static_cast<int>(fontDir.size()); dirEntryI++)
+	for (const auto& dirEntry : fontDir)
 	{
 		unsigned int charIndex {};
 		GfxExtent size;
 
-		const char* char_name = fontDir[dirEntryI].c_str();
+		const char* char_name = dirEntry.c_str();
 
 		if (strcmp(char_name, cfg_name) == 0)
 		{

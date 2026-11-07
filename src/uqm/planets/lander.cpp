@@ -2463,7 +2463,7 @@ void FreeLanderData(void)
 		return;
 	}
 
-	for (i = 0; i < NumOrbitThemes; ++i)
+	for (i = 0; i < OrbitMusic.size(); ++i)
 	{
 		DestroyMusic(OrbitMusic[i]);
 		OrbitMusic[i] = 0;

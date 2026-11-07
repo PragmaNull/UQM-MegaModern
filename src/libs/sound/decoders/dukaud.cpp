@@ -198,9 +198,9 @@ static void decode_nibbles(uqstl::span<int16_t> output, int32_t channels,
 	step[0] = adpcm_step[index[0]];
 	step[1] = adpcm_step[index[1]];
 
-	for (int32_t i {0}; i < output.size(); i++)
+	for (int16_t& sample : output)
 	{
-		delta = output[i];
+		delta = sample;
 
 		index[channel_number] += adpcm_index[delta];
 		index[channel_number] = uqstl::clamp(index[channel_number], 0, 88);
@@ -230,7 +230,7 @@ static void decode_nibbles(uqstl::span<int16_t> output, int32_t channels,
 		}
 
 		predictors[channel_number] = uqstl::clamp(predictors[channel_number], -32768, 32767);
-		output[i] = predictors[channel_number];
+		sample = predictors[channel_number];
 		step[channel_number] = adpcm_step[index[channel_number]];
 
 		// toggle channel

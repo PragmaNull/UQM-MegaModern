@@ -574,11 +574,11 @@ void FreePlanet(void)
 
 	StopMusic();
 
-	for (uint16_t i {0}; i < std::size(pSolarSysState->PlanetSideFrame); ++i)
+	for (auto& frame : pSolarSysState->PlanetSideFrame)
 	{
 		DestroyDrawable(
-			ReleaseDrawable(pSolarSysState->PlanetSideFrame[i]));
-		pSolarSysState->PlanetSideFrame[i] = 0;
+			ReleaseDrawable(frame));
+		frame = 0;
 	}
 
 	//    FreeLanderData ();

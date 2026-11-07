@@ -85,7 +85,7 @@ private:
 
 } // namespace
 
-static tfb::DrawCommand DCQ[DcqMax] UQM_GUARDED_BY(s_dcqMutex);
+static uqstl::array<tfb::DrawCommand, DcqMax> DCQ UQM_GUARDED_BY(s_dcqMutex);
 
 static tfb::DrawCommandQueue DrawCommandQueue UQM_GUARDED_BY(s_dcqMutex);
 

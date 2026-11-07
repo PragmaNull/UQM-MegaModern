@@ -212,9 +212,9 @@ int32_t mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Sound decoders initialized.");
 
 	*driver = mixSDL_Driver;
-	for (int i {0}; i < NumSoundsources; ++i)
+	for (auto& source : soundSource)
 	{
-		audio_GenSources(1, &soundSource[i].handle);
+		audio_GenSources(1, &source.handle);
 	}
 
 	if (InitStreamDecoder())

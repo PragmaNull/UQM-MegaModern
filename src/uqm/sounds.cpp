@@ -41,7 +41,7 @@ void PlaySound(SoundRef S, SoundPosition Pos, Element* PositionalObject,
 		return;
 	}
 
-	for (chan = 0; chan < NumFxChannels; ++chan)
+	for (chan = 0; chan < channel.size(); ++chan)
 	{
 		if (S == channel[chan])
 		{

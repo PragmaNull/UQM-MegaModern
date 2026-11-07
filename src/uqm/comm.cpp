@@ -1459,9 +1459,9 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 
 static void ClearResponses(CommEncounterState* pES)
 {
-	for (size_t responseI {0}; responseI < MaxResponses; responseI++)
+	for (auto& response : pES->response_list)
 	{
-		pES->response_list[responseI].allocedResponse.clear();
+		response.allocedResponse.clear();
 	}
 }
 

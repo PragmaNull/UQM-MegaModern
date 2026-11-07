@@ -812,7 +812,7 @@ void DrawFlagshipStats(void)
 	num_dynamos = 0;
 	num_shivas = 0;
 
-	for (i = 0; i < NumModuleSlots; i++)
+	for (i = 0; i < uqm::gameState().sis().ModuleSlots.size(); i++)
 	{
 		switch (uqm::gameState().sis().ModuleSlots[i])
 		{
@@ -839,7 +839,7 @@ void DrawFlagshipStats(void)
 		}
 	}
 
-	for (i = 0; i < NumDriveSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); ++i)
 	{
 		if (uqm::gameState().sis().DriveSlots[i] == ModuleType::FusionThruster)
 		{
@@ -847,7 +847,7 @@ void DrawFlagshipStats(void)
 		}
 	}
 
-	for (i = 0; i < NumJetSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().JetSlots.size(); ++i)
 	{
 		if (uqm::gameState().sis().JetSlots[i] == ModuleType::TurningJets)
 		{
@@ -1211,9 +1211,9 @@ static void DrawThrusters(void)
 
 	s.origin.x = ResScale(1);
 	s.origin.y = 0;
-	for (uint16_t i {0}; i < NumDriveSlots; ++i)
+	for (auto& slot : uqm::gameState().sis().DriveSlots)
 	{
-		const ModuleType which_piece {uqm::gameState().sis().DriveSlots[i]};
+		const ModuleType which_piece {slot};
 		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 0);
@@ -1232,9 +1232,9 @@ static void DrawTurningJets(void)
 
 	s.origin.x = ResScale(1);
 	s.origin.y = 0;
-	for (uint16_t i {0}; i < NumJetSlots; ++i)
+	for (auto& slot : uqm::gameState().sis().JetSlots)
 	{
-		const ModuleType which_piece {uqm::gameState().sis().JetSlots[i]};
+		const ModuleType which_piece {slot};
 		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 1);
@@ -1254,9 +1254,9 @@ static void DrawModules(void)
 	// This properly centers the modules.
 	s.origin.x = ResScale(1);
 	s.origin.y = ResScale(1);
-	for (uint16_t i {0}; i < NumModuleSlots; ++i)
+	for (auto& slot : uqm::gameState().sis().ModuleSlots)
 	{
-		const ModuleType which_piece {uqm::gameState().sis().ModuleSlots[i]};
+		const ModuleType which_piece {slot};
 		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 2);
@@ -1545,9 +1545,9 @@ uint16_t GetCrewPodCapacity(void)
 {
 	uint16_t capacity = 0;
 
-	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
+	for (auto& slot : uqm::gameState().sis().ModuleSlots)
 	{
-		const ModuleType moduleType {uqm::gameState().sis().ModuleSlots[slotI]};
+		const ModuleType moduleType {slot};
 		capacity += GetModuleCrewCapacity(*moduleType);
 	}
 
@@ -1646,9 +1646,9 @@ uint16_t GetStorageBayCapacity(void)
 {
 	uint16_t capacity = 0;
 
-	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
+	for (auto& slot : uqm::gameState().sis().ModuleSlots)
 	{
-		const ModuleType moduleType {uqm::gameState().sis().ModuleSlots[slotI]};
+		const ModuleType moduleType {slot};
 		capacity += GetModuleStorageCapacity(*moduleType);
 	}
 
@@ -1752,9 +1752,9 @@ uint32_t GetFuelTankCapacity(void)
 {
 	uint32_t capacity = FuelReserve;
 
-	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
+	for (auto& slot : uqm::gameState().sis().ModuleSlots)
 	{
-		const ModuleType moduleType {uqm::gameState().sis().ModuleSlots[slotI]};
+		const ModuleType moduleType {slot};
 		capacity += GetModuleFuelCapacity(*moduleType);
 	}
 
@@ -1847,7 +1847,7 @@ uint16_t CountSISPieces(uint8_t piece_type)
 	uint16_t num_pieces {0};
 	if (piece_type == ModuleType::FusionThruster)
 	{
-		for (i = 0; i < NumDriveSlots; ++i)
+		for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); ++i)
 		{
 			if (uqm::gameState().sis().DriveSlots[i] == piece_type)
 			{
@@ -1857,7 +1857,7 @@ uint16_t CountSISPieces(uint8_t piece_type)
 	}
 	else if (piece_type == ModuleType::TurningJets)
 	{
-		for (i = 0; i < NumJetSlots; ++i)
+		for (i = 0; i < uqm::gameState().sis().JetSlots.size(); ++i)
 		{
 			if (uqm::gameState().sis().JetSlots[i] == piece_type)
 			{
@@ -1867,7 +1867,7 @@ uint16_t CountSISPieces(uint8_t piece_type)
 	}
 	else
 	{
-		for (i = 0; i < NumModuleSlots; ++i)
+		for (i = 0; i < uqm::gameState().sis().ModuleSlots.size(); ++i)
 		{
 			if (uqm::gameState().sis().ModuleSlots[i] == piece_type)
 			{

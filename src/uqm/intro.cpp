@@ -1389,9 +1389,9 @@ static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& comman
 	DestroyMusic(pis.musicRef);
 	DestroyDrawable(ReleaseDrawable(pis.RotatedFrame));
 	DestroyDrawable(ReleaseDrawable(pis.Frame));
-	for (int i {0}; i < uqm::c_slideshowMaxFonts; ++i)
+	for (auto& font : pis.Fonts)
 	{
-		DestroyFont(pis.Fonts[i]);
+		DestroyFont(font);
 	}
 
 	SetContextFont(OldFont);

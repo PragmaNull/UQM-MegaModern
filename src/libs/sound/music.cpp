@@ -305,24 +305,24 @@ void SetMusicPosition(void)
 	temp.position = PLRGetPos();
 	temp.last_played = GetTimeCounter();
 
-	for (int i {0}; i < PATH_MAX; ++i)
+	for (auto& entry : resumeMusicArray)
 	{
 		// print_mp_array (resumeMusicArray, 9); // For debugging purposes
 
-		if (resumeMusicArray[i].filename_hash == temp.filename_hash)
+		if (entry.filename_hash == temp.filename_hash)
 		{
 			// Update existing entry
-			resumeMusicArray[i].position = temp.position;
-			resumeMusicArray[i].last_played = temp.last_played;
+			entry.position = temp.position;
+			entry.last_played = temp.last_played;
 			return;
 		}
 
-		if (resumeMusicArray[i].filename_hash == 0)
+		if (entry.filename_hash == 0)
 		{
 			// Found empty slot - insert and return
-			resumeMusicArray[i].filename_hash = temp.filename_hash;
-			resumeMusicArray[i].position = temp.position;
-			resumeMusicArray[i].last_played = temp.last_played;
+			entry.filename_hash = temp.filename_hash;
+			entry.position = temp.position;
+			entry.last_played = temp.last_played;
 			return;
 		}
 	}
@@ -341,16 +341,16 @@ uint32_t GetMusicPosition()
 		return 0;
 	}
 
-	for (int i {0}; i < PATH_MAX; ++i)
+	for (auto& entry : resumeMusicArray)
 	{
-		if (!resumeMusicArray[i].filename_hash)
+		if (!entry.filename_hash)
 		{
 			return 0;
 		}
 
-		if (resumeMusicArray[i].filename_hash == filename_hash)
+		if (entry.filename_hash == filename_hash)
 		{
-			return resumeMusicArray[i].position;
+			return entry.position;
 		}
 	}
 
@@ -373,7 +373,7 @@ bool OkayToResume(void)
 		return false;
 	}
 
-	for (i = 0; i < PATH_MAX; ++i)
+	for (i = 0; i < resumeMusicArray.size(); ++i)
 	{
 		if (resumeMusicArray[i].filename_hash == filename_hash)
 		{

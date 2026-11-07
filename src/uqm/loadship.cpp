@@ -175,7 +175,7 @@ SpeciesId SeedShip(SpeciesId SpeciesID, bool loadWindow)
 		{
 			return target;
 		}
-		for (index = 0; index < NumShips; index++)
+		for (index = 0; index < shipMap.size(); index++)
 		{
 			if (shipMap[index] == target)
 			{

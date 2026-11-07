@@ -86,7 +86,7 @@ struct controller_list
 };
 
 static controller_list* controller_list_head UQM_GUARDED_BY(s_vcontrolLock) = nullptr;
-static int controller_assignments[2] UQM_GUARDED_BY(s_vcontrolLock) = {-1, -1};
+static uqstl::array<int, 2> controller_assignments UQM_GUARDED_BY(s_vcontrolLock) {-1, -1};
 static int active_controller_count UQM_GUARDED_BY(s_vcontrolLock) = 0;
 
 struct default_binding
@@ -103,7 +103,7 @@ static uqstl::vector<default_binding> default_bindings UQM_GUARDED_BY(s_vcontrol
 
 #endif /* HAVE_JOYSTICK */
 
-static keybinding* bindings[KeyboardInputBuckets] UQM_GUARDED_BY(s_vcontrolLock);
+static uqstl::array<keybinding*, KeyboardInputBuckets> bindings UQM_GUARDED_BY(s_vcontrolLock);
 
 static keypool* pool UQM_GUARDED_BY(s_vcontrolLock);
 
@@ -116,7 +116,7 @@ static keypool* allocate_key_chunk(void) UQM_REQUIRES(s_vcontrolLock)
 	auto* x {new keypool {}};
 	x->remaining = PoolChunkSize;
 	x->next = nullptr;
-	for (int i {}; i < PoolChunkSize; i++)
+	for (int i {}; i < x->pool.size(); i++)
 	{
 		x->pool[i].target = nullptr;
 		x->pool[i].keycode = SDLK_UNKNOWN;
@@ -249,11 +249,11 @@ void create_joystick(SDL_JoystickID instance_id)
 
 static void destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 {
-	for (int i = 0; i < 2; i++)
+	for (int& assignment : controller_assignments)
 	{
-		if (controller_assignments[i] == instance_id)
+		if (assignment == instance_id)
 		{
-			controller_assignments[i] = -1;
+			assignment = -1;
 			active_controller_count--;
 			break;
 		}
@@ -295,13 +295,13 @@ static void key_init(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	unsigned int i {};
 	pool = allocate_key_chunk();
-	for (i = 0; i < KeyboardInputBuckets; i++)
+	for (i = 0; i < bindings.size(); i++)
 	{
 		bindings[i] = nullptr;
 	}
 
 #ifdef HAVE_JOYSTICK
-	for (i = 0; i < 2; i++)
+	for (i = 0; i < controller_assignments.size(); i++)
 	{
 		controller_assignments[i] = -1;
 	}
@@ -418,7 +418,7 @@ static void add_binding(keybinding** newptr, uqstl::atomic<int>* target, sdl_key
 	/* Now find a free binding within it */
 
 	newbinding = nullptr;
-	for (i = 0; i < PoolChunkSize; i++)
+	for (i = 0; i < searchbase->pool.size(); i++)
 	{
 		if (searchbase->pool[i].target == nullptr)
 		{
@@ -985,11 +985,11 @@ void VControl_ResetInput(void)
 	const keypool* base = pool;
 	while (base != nullptr)
 	{
-		for (int i {0}; i < PoolChunkSize; i++)
+		for (const auto& entry : base->pool)
 		{
-			if (base->pool[i].target)
+			if (entry.target)
 			{
-				*(base->pool[i].target) = 0;
+				*(entry.target) = 0;
 			}
 		}
 		base = base->next;
@@ -1006,11 +1006,11 @@ void VControl_BeginFrame(void)
 	keypool* base = pool;
 	while (base != nullptr)
 	{
-		for (int i {0}; i < PoolChunkSize; i++)
+		for (auto& entry : base->pool)
 		{
-			if (base->pool[i].target)
+			if (entry.target)
 			{
-				base->pool[i].target->fetch_and(VcontrolMask);
+				entry.target->fetch_and(VcontrolMask);
 			}
 		}
 		base = base->next;

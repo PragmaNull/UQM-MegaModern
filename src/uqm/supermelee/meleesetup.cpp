@@ -31,7 +31,7 @@ const size_t MeleeTeam_serialSize = MeleeFleetSize + sizeof(((MeleeTeam*)0)->nam
 
 void MeleeTeam_init(MeleeTeam* team)
 {
-	for (FleetShipIndex slotI {0}; slotI < MeleeFleetSize; slotI++)
+	for (FleetShipIndex slotI {0}; slotI < team->ships.size(); slotI++)
 	{
 		team->ships[slotI] = MeleeShip::None;
 	}
@@ -59,7 +59,7 @@ void MeleeTeam_delete(MeleeTeam* team)
 
 int MeleeTeam_serialize(const MeleeTeam* team, uqm::io::File& stream)
 {
-	for (FleetShipIndex slotI {0}; slotI < MeleeFleetSize; slotI++)
+	for (FleetShipIndex slotI {0}; slotI < team->ships.size(); slotI++)
 	{
 		const uqstl::byte ship {static_cast<uqstl::byte>(team->ships[slotI])};
 		if (stream.write({&ship, 1}) != 1)
@@ -120,7 +120,7 @@ MeleeTeam_getValue(const MeleeTeam* team)
 {
 	uint16_t total = 0;
 
-	for (FleetShipIndex slotI {0}; slotI < MeleeFleetSize; slotI++)
+	for (FleetShipIndex slotI {0}; slotI < team->ships.size(); slotI++)
 	{
 		const MeleeShip ship = team->ships[slotI];
 		const uint16_t shipValue = GetShipValue(ship);

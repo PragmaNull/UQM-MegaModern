@@ -265,10 +265,10 @@ static inline bool readyForBattleEnd(void)
 		return false;
 	}
 
-	for (int playerI {0}; playerI < NumPlayers; playerI++)
+	for (auto& input : PlayerInput)
 	{
-		if (!PlayerInput[playerI]->handlers->battleEndReady(
-				PlayerInput[playerI]))
+		if (!input->handlers->battleEndReady(
+				input))
 		{
 			return false;
 		}

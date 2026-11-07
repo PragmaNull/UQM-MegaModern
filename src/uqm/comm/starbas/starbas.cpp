@@ -892,21 +892,21 @@ static void AnalyzeCondition(void)
 	uint8_t num_defense = 0;
 	bool HasMinimum {};
 
-	for (i = 0; i < NumDriveSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); ++i)
 	{
 		if (uqm::gameState().sis().DriveSlots[i] < EmptySlot)
 		{
 			++num_thrusters;
 		}
 	}
-	for (i = 0; i < NumJetSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().JetSlots.size(); ++i)
 	{
 		if (uqm::gameState().sis().JetSlots[i] < EmptySlot)
 		{
 			++num_jets;
 		}
 	}
-	for (i = 0; i < NumModuleSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().ModuleSlots.size(); ++i)
 	{
 		ModuleType which_piece {};
 

@@ -42,7 +42,7 @@ static constexpr auto MaxXforms {16};
 static struct
 {
 	uqm::Mutex Lock;
-	ColorTransformControl TaskControl[MaxXforms] UQM_GUARDED_BY(Lock);
+	uqstl::array<ColorTransformControl, MaxXforms> TaskControl UQM_GUARDED_BY(Lock);
 	int Highest UQM_GUARDED_BY(Lock);
 	// 'pending' is Highest >= 0
 } XFormControl;
@@ -61,7 +61,7 @@ static uqm::Mutex s_mapLock {};
 static tfb::ColorMap* poolhead UQM_GUARDED_BY(s_mapLock);
 static int poolcount UQM_GUARDED_BY(s_mapLock);
 
-static tfb::ColorMap* colormaps[MaxColormaps] UQM_GUARDED_BY(s_mapLock);
+static uqstl::array<tfb::ColorMap*, MaxColormaps> colormaps UQM_GUARDED_BY(s_mapLock);
 static int mapcount UQM_GUARDED_BY(s_mapLock);
 
 
@@ -74,9 +74,9 @@ void InitColorMaps(void)
 	// init xform control
 	const uqm::LockGuard lock {XFormControl.Lock};
 	XFormControl.Highest = -1;
-	for (int i {0}; i < MaxXforms; ++i)
+	for (auto& control : XFormControl.TaskControl)
 	{
-		XFormControl.TaskControl[i].CMapIndex = -1;
+		control.CMapIndex = -1;
 	}
 }
 
@@ -85,15 +85,15 @@ void UninitColorMaps(void)
 	tfb::ColorMap* next {};
 
 	const uqm::LockGuard lock {s_mapLock};
-	for (int i {0}; i < MaxColormaps; ++i)
+	for (auto& colormap : colormaps)
 	{
-		tfb::ColorMap* map = colormaps[i];
+		tfb::ColorMap* map = colormap;
 		if (!map)
 		{
 			continue;
 		}
 		release_colormap(map);
-		colormaps[i] = 0;
+		colormap = 0;
 	}
 
 	// free spares
@@ -278,9 +278,10 @@ bool SetColorMap(ColorMapPtr map)
 	}
 
 	// parse the supplied PLUTs into our colormaps
-	for (tfb::ColorMap** mpp {colormaps + start}; start <= end; ++start, ++mpp)
+	for (; start <= end; ++start)
 	{
-		tfb::ColorMap* oldmap {*mpp};
+		tfb::ColorMap*& map {colormaps[start]};
+		tfb::ColorMap* oldmap {map};
 		tfb::ColorMap* newmap {clone_colormap(oldmap, start)};
 
 		for (int i {0}; i < NumberOfPlutvals; ++i, colors += PlutvalByteSize)
@@ -294,7 +295,7 @@ bool SetColorMap(ColorMapPtr map)
 			SetNativePaletteColor(newmap->palette, i, color);
 		}
 
-		*mpp = newmap;
+		map = newmap;
 		release_colormap(oldmap);
 	}
 

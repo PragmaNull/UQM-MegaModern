@@ -455,7 +455,7 @@ static void CreateWidgets(void)
 
 	done = false;
 
-	for (i = 0; i < 3; i++)
+	for (i = 0; i < buttons.size(); i++)
 	{
 		buttons[i].tag = WidgetType::Button;
 		buttons[i].parent = nullptr;
@@ -502,7 +502,7 @@ static void CreateWidgets(void)
 	slider.category = GameString(GameStringBase::NetmeleeString + 24);
 	// "Net Delay"
 
-	for (i = 0; i < 2; i++)
+	for (i = 0; i < texts.size(); i++)
 	{
 		texts[i].tag = WidgetType::TextEntry;
 		texts[i].parent = nullptr;

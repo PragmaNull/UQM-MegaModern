@@ -26,10 +26,8 @@ void Netplay_NotifyAll_setTeamName(MeleeState* pMS, size_t playerNr)
 {
 	const char* name {MeleeSetup_getTeamName(pMS->meleeSetup, playerNr)};
 	const size_t len {strlen(name)};
-	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
+	for (auto conn : netConnections)
 	{
-		NetConnection* conn = netConnections[playerI];
-
 		if (conn == nullptr)
 		{
 			continue;
@@ -55,10 +53,8 @@ void Netplay_NotifyAll_setFleet(MeleeState* pMS, size_t playerNr)
 	const MeleeSetup* setup = pMS->meleeSetup;
 	const MeleeShip* ships = MeleeSetup_getFleet(setup, playerNr);
 
-	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
+	for (auto conn : netConnections)
 	{
-		NetConnection* conn = netConnections[playerI];
-
 		if (conn == nullptr)
 		{
 			continue;
@@ -85,10 +81,8 @@ void Netplay_NotifyAll_setShip(MeleeState* pMS, size_t playerNr, size_t index)
 	const MeleeShip ship = MeleeSetup_getShip(
 		setup, playerNr, (FleetShipIndex)index);
 
-	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
+	for (auto conn : netConnections)
 	{
-		NetConnection* conn = netConnections[playerI];
-
 		if (conn == nullptr)
 		{
 			continue;
@@ -125,9 +119,8 @@ bool Netplay_NotifyAll_inputDelay(size_t delay)
 #ifdef NETPLAY_CHECKSUM
 void Netplay_NotifyAll_checksum(BattleFrameCounter frameNr, Checksum checksum)
 {
-	for (uint16_t player {0}; player < NumPlayers; player++)
+	for (auto conn : netConnections)
 	{
-		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
 		{
 			continue;
@@ -145,9 +138,8 @@ void Netplay_NotifyAll_checksum(BattleFrameCounter frameNr, Checksum checksum)
 
 void Netplay_NotifyAll_battleInput(BattleInputState input)
 {
-	for (uint16_t player {0}; player < NumPlayers; player++)
+	for (auto conn : netConnections)
 	{
-		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
 		{
 			continue;

@@ -512,13 +512,13 @@ void equipShip(void)
 	}
 
 	// Thrusters:
-	for (i = 0; i < NumDriveSlots; i++)
+	for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); i++)
 	{
 		uqm::gameState().sis().DriveSlots[i] = ModuleType::FusionThruster;
 	}
 
 	// Turning jets:
-	for (i = 0; i < NumJetSlots; i++)
+	for (i = 0; i < uqm::gameState().sis().JetSlots.size(); i++)
 	{
 		uqm::gameState().sis().JetSlots[i] = ModuleType::TurningJets;
 	}
@@ -573,7 +573,7 @@ void equipShip(void)
 	// Fill the fuel and crew compartments to the maximum.
 	uqm::gameState().sis().FuelOnBoard = FuelReserve;
 	uqm::gameState().sis().CrewEnlisted = 0;
-	for (i = 0; i < NumModuleSlots; i++)
+	for (i = 0; i < uqm::gameState().sis().ModuleSlots.size(); i++)
 	{
 		switch (uqm::gameState().sis().ModuleSlots[i])
 		{
@@ -596,7 +596,7 @@ void equipShip(void)
 	{
 		// Thrusters:
 		pSolarSysState->max_ship_speed = 5 * IpShipThrustIncrement;
-		for (i = 0; i < NumDriveSlots; i++)
+		for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); i++)
 		{
 			if (uqm::gameState().sis().DriveSlots[i] == ModuleType::FusionThruster)
 			{
@@ -606,7 +606,7 @@ void equipShip(void)
 
 		// Turning jets:
 		pSolarSysState->turn_wait = IpShipTurnWait;
-		for (i = 0; i < NumJetSlots; i++)
+		for (i = 0; i < uqm::gameState().sis().JetSlots.size(); i++)
 		{
 			if (uqm::gameState().sis().JetSlots[i] == ModuleType::TurningJets)
 			{
@@ -1645,7 +1645,7 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 			   tectonicsString(planetType->BaseTectonics),
 			   atmosphereString(uqm::highNibble(planetType->AtmoAndDensity)),
 			   densityString(uqm::lowNibble(planetType->AtmoAndDensity)));
-	for (i = 0; i < NumUsefulElements; i++)
+	for (i = 0; i < planetType->UsefulElements.size(); i++)
 	{
 		const ElementDeposit* entry;
 		entry = &planetType->UsefulElements[i];

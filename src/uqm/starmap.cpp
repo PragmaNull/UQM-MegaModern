@@ -1299,7 +1299,7 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 #ifdef DEBUG_STARSEED_TRACE_Z
 	uqstl::array<bool, NumSolarSystems> tried {false};
 	//bool tried[NumSolarSystems] = {[0 ... NumSolarSystems - 1] = false};
-	for (i = 0; i < NumSolarSystems; i++)
+	for (i = 0; i < tried.size(); i++)
 	{
 		tried[i] = 0;
 	}

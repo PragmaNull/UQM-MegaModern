@@ -321,7 +321,7 @@ static void _check_gestalt(TimeCount NewTime)
 	{
 		if (NewTime - GestaltTime < GestaltRepeatDelay)
 		{
-			for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
+			for (i = 0; i < PulsedInputState.key.size(); i++)
 			{
 				for (j = 0; j < BattleKey::NumKeys; j++)
 				{
@@ -660,7 +660,7 @@ bool AnyButtonPress(bool CheckSpecial)
 	int j {};
 	(void)CheckSpecial; // Ignored
 	UpdateInputState();
-	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
+	for (i = 0; i < CurrentInputState.key.size(); i++)
 	{
 		for (j = 0; j < BattleKey::NumKeys; j++)
 		{

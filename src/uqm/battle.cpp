@@ -160,12 +160,10 @@ static void ProcessInput(void)
 
 	const bool CanRunAway {RunAwayAllowed()};
 
-	for (size_t sideI {0}; sideI < NumSides; sideI++)
+	for (const size_t cur_player : battleInputOrder)
 	{
 		StarshipHandle hBattleShip {};
 		StarshipHandle hNextShip {};
-		const size_t cur_player = battleInputOrder[sideI];
-
 		for (hBattleShip = GetHeadLink(&race_q[cur_player]);
 			 hBattleShip != 0; hBattleShip = hNextShip)
 		{

@@ -292,11 +292,11 @@ static void ExitConversation(ResponseRef R)
 		}
 
 		/* install Chmmr-supplied modules */
-		for (i = 0; i < NumDriveSlots; ++i)
+		for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); ++i)
 		{
 			uqm::gameState().sis().DriveSlots[i] = ModuleType::FusionThruster;
 		}
-		for (i = 0; i < NumJetSlots; ++i)
+		for (i = 0; i < uqm::gameState().sis().JetSlots.size(); ++i)
 		{
 			uqm::gameState().sis().JetSlots[i] = ModuleType::TurningJets;
 		}

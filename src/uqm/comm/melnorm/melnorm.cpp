@@ -586,14 +586,14 @@ static uint16_t ShipWorth(void)
 
 	worth = uqm::gameState().sis().NumLanders
 		  * uqm::gameState().game().ModuleCost[*ModuleType::PlanetLander];
-	for (i = 0; i < NumDriveSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); ++i)
 	{
 		if (uqm::gameState().sis().DriveSlots[i] < EmptySlot)
 		{
 			worth += uqm::gameState().game().ModuleCost[*ModuleType::FusionThruster];
 		}
 	}
-	for (i = 0; i < NumJetSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().JetSlots.size(); ++i)
 	{
 		if (uqm::gameState().sis().JetSlots[i] < EmptySlot)
 		{
@@ -603,7 +603,7 @@ static uint16_t ShipWorth(void)
 
 	crew_pods = -(int8_t)((uqm::gameState().sis().CrewEnlisted + CrewPodCapacity - 1)
 						  / CrewPodCapacity);
-	for (i = 0; i < NumModuleSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().ModuleSlots.size(); ++i)
 	{
 		const uint8_t which_module {*uqm::gameState().sis().ModuleSlots[i]};
 		if (which_module < ModuleType::BombModule0
@@ -693,11 +693,11 @@ static bool StripShip(uint16_t fuel_required)
 	else if (fuel_required == (uint16_t)~0)
 	{
 		uqm::gameState().sis().NumLanders = 0;
-		for (i = 0; i < NumDriveSlots; ++i)
+		for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); ++i)
 		{
 			uqm::gameState().sis().DriveSlots[i] = ModuleType::EmptyDriveSlot;
 		}
-		for (i = 0; i < NumJetSlots; ++i)
+		for (i = 0; i < uqm::gameState().sis().JetSlots.size(); ++i)
 		{
 			uqm::gameState().sis().JetSlots[i] = ModuleType::EmptyJetSlot;
 		}
@@ -711,7 +711,7 @@ static bool StripShip(uint16_t fuel_required)
 		{
 			uqm::gameState().sis().ElementAmounts[i] = 0;
 		}
-		for (i = 0; i < NumModuleSlots; ++i)
+		for (i = 0; i < uqm::gameState().sis().ModuleSlots.size(); ++i)
 		{
 			which_module = *uqm::gameState().sis().ModuleSlots[i];
 			if (which_module < ModuleType::BombModule0
@@ -766,7 +766,7 @@ static bool StripShip(uint16_t fuel_required)
 
 		bays = -(int8_t)((SIS_copy.TotalElementMass + StorageBayCapacity - 1)
 						 / StorageBayCapacity);
-		for (i = 0; i < NumModuleSlots; ++i)
+		for (i = 0; i < SIS_copy.ModuleSlots.size(); ++i)
 		{
 			which_module = *SIS_copy.ModuleSlots[i];
 			if (which_module == ModuleType::CrewPod)
@@ -796,7 +796,7 @@ static bool StripShip(uint16_t fuel_required)
 					--SIS_copy.NumLanders;
 					break;
 				case ModuleType::FusionThruster:
-					for (i = 0; i < NumDriveSlots; ++i)
+					for (i = 0; i < SIS_copy.DriveSlots.size(); ++i)
 					{
 						if (SIS_copy.DriveSlots[i] < EmptySlot)
 						{
@@ -810,7 +810,7 @@ static bool StripShip(uint16_t fuel_required)
 					SIS_copy.DriveSlots[i] = ModuleType::EmptyDriveSlot;
 					break;
 				case ModuleType::TurningJets:
-					for (i = 0; i < NumJetSlots; ++i)
+					for (i = 0; i < SIS_copy.JetSlots.size(); ++i)
 					{
 						if (SIS_copy.JetSlots[i] < EmptySlot)
 						{

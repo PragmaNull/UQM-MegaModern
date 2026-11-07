@@ -239,9 +239,9 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 		uqstl::array<char, MaxClipname> clip_buf {};
 #if 0
 		// Gotta test and make sure we don't need this intensity
-			for (i = 0; i < MaxInterpolate; i++)
+			for (i = 0; i < str_buf.size(); i++)
 				str_buf[i] = '\0';
-			for (i = 0; i < MaxClipname; i++)
+			for (i = 0; i < clip_buf.size(); i++)
 				clip_buf[i] = '\0';
 #endif
 		// InterpolateChunk returns a pointer to the start of the next

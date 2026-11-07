@@ -595,7 +595,7 @@ static void initSolarSysSISCharacteristics(void)
 	uint8_t i {};
 
 	uint8_t num_thrusters {0};
-	for (i = 0; i < NumDriveSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().DriveSlots.size(); ++i)
 	{
 		if (uqm::gameState().sis().DriveSlots[i] == ModuleType::FusionThruster)
 		{
@@ -605,7 +605,7 @@ static void initSolarSysSISCharacteristics(void)
 	pSolarSysState->max_ship_speed = (uint8_t)((num_thrusters + 5) * IpShipThrustIncrement);
 
 	pSolarSysState->turn_wait = IpShipTurnWait;
-	for (i = 0; i < NumJetSlots; ++i)
+	for (i = 0; i < uqm::gameState().sis().JetSlots.size(); ++i)
 	{
 		if (uqm::gameState().sis().JetSlots[i] == ModuleType::TurningJets)
 		{
@@ -741,7 +741,7 @@ static SystemPlanet* LoadSolarSys(void)
 	if (NebulaFrame)
 	{
 		const uint8_t brightness = (uqm::UQMOptions::read().nebulaevol + 1) * 5;
-		for (i = 0; i < NumTempRanges; i++)
+		for (i = 0; i < temp_color_array.size(); i++)
 		{
 			IncreaseBrightness(&temp_color_array[i].r, brightness);
 			IncreaseBrightness(&temp_color_array[i].g, brightness);

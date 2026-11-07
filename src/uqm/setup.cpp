@@ -304,9 +304,9 @@ bool InitContexts(void)
 
 static bool InitKernel(void)
 {
-	for (uint16_t counter {0}; counter < NumPlayers; ++counter)
+	for (auto& queue : race_q)
 	{
-		InitQueue(&race_q[counter], MaxShipsPerSide, sizeof(Starship));
+		InitQueue(&queue, MaxShipsPerSide, sizeof(Starship));
 	}
 
 	StarConFont = LoadFont(StarconFontRes);

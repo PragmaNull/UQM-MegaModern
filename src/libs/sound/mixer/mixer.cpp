@@ -49,7 +49,7 @@ static uqm::RecursiveMutex buf_mutex {};
 static uqm::RecursiveMutex act_mutex {};
 
 static constexpr auto MaxSources {8};
-static mixer_Source* active_sources[MaxSources] UQM_GUARDED_BY(act_mutex);
+static uqstl::array<mixer_Source*, MaxSources> active_sources UQM_GUARDED_BY(act_mutex);
 
 /*************************************************
  *  Internals
@@ -83,7 +83,7 @@ bool mixer_Init(uint32_t frequency, uint32_t format, MixerQuality quality,
 	last_error = MixerError::NoError;
 	{
 		const uqm::LockGuard lock {act_mutex};
-		memset(active_sources, 0, sizeof(mixer_Source*) * MaxSources);
+		active_sources.fill(nullptr);
 	}
 
 	mixer_chansize = MixFormatBpc(format);

@@ -81,9 +81,9 @@ void initBattleInputBuffers(void)
 	// Initially the buffer is filled with inputDelay zeroes,
 	// so that a party can process at least that much frames.
 
-	for (size_t player {0}; player < NumPlayers; player++)
+	for (auto& battleInputBuffer : battleInputBuffers)
 	{
-		BattleInputBuffer* bib = &battleInputBuffers[player];
+		BattleInputBuffer* bib = &battleInputBuffer;
 		BattleInputBuffer_init(bib, bufSize);
 
 		{
@@ -99,9 +99,9 @@ void initBattleInputBuffers(void)
 
 void uninitBattleInputBuffers(void)
 {
-	for (size_t player {0}; player < NumPlayers; player++)
+	for (auto& battleInputBuffer : battleInputBuffers)
 	{
-		BattleInputBuffer* bib {&battleInputBuffers[player]};
+		BattleInputBuffer* bib {&battleInputBuffer};
 		BattleInputBuffer_uninit(bib);
 	}
 }
