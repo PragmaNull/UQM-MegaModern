@@ -368,75 +368,76 @@ static void TFB_DrawCanvas_Fill(SDL_Surface* src, Uint32 fillcolor, SDL_Surface*
 	// alpha separately
 	fillcolor &= ~amask;
 
-	SDL_LockSurface(src);
-	SDL_LockSurface(dst);
-
-	const Uint32* src_p {(Uint32*)src->pixels};
-	Uint32* dst_p {(Uint32*)dst->pixels};
-
-	if (dstkey == fillcolor)
-	{ // color collision, must switch colorkey
-		// new colorkey is grey (1/2,1/2,1/2)
-		dstkey = SDL_MapSurfaceRGBA(dst, 127, 127, 127, 0);
-	}
-
-	if (srcfmt->Amask)
-	{ // alpha-based fill
-		for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+	{
+		const uqm::SurfaceLock srcLock {src};
 		{
-			for (x = 0; x < width; ++x, ++src_p, ++dst_p)
-			{
-				Uint32 p = *src_p & amask;
+			const uqm::SurfaceLock dstLock {dst};
 
-				if (p == 0)
-				{ // fully transparent pixel
-					*dst_p = dstkey;
+			const Uint32* src_p {(Uint32*)src->pixels};
+			Uint32* dst_p {(Uint32*)dst->pixels};
+
+			if (dstkey == fillcolor)
+			{ // color collision, must switch colorkey
+				// new colorkey is grey (1/2,1/2,1/2)
+				dstkey = SDL_MapSurfaceRGBA(dst, 127, 127, 127, 0);
+			}
+
+			if (srcfmt->Amask)
+			{ // alpha-based fill
+				for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+				{
+					for (x = 0; x < width; ++x, ++src_p, ++dst_p)
+					{
+						Uint32 p = *src_p & amask;
+
+						if (p == 0)
+						{ // fully transparent pixel
+							*dst_p = dstkey;
+						}
+						else if (alpha == 0xff)
+						{ // not for DRAW_ALPHA; use alpha chan directly
+							*dst_p = p | fillcolor;
+						}
+						else
+						{ // for DRAW_ALPHA; modulate the alpha channel
+							p >>= srcfmt->Ashift;
+							p = (p * alpha) >> 8;
+							p <<= srcfmt->Ashift;
+							*dst_p = p | fillcolor;
+						}
+					}
 				}
-				else if (alpha == 0xff)
-				{ // not for DRAW_ALPHA; use alpha chan directly
-					*dst_p = p | fillcolor;
+			}
+			else if (TFB_GetColorKey(src, &srckey) == 0)
+			{ // colorkey-based fill
+				for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+				{
+					for (x = 0; x < width; ++x, ++src_p, ++dst_p)
+					{
+						const Uint32 p = *src_p;
+
+						*dst_p = (p == srckey) ? dstkey : fillcolor;
+					}
 				}
-				else
-				{ // for DRAW_ALPHA; modulate the alpha channel
-					p >>= srcfmt->Ashift;
-					p = (p * alpha) >> 8;
-					p <<= srcfmt->Ashift;
-					*dst_p = p | fillcolor;
+			}
+			else
+			{ // We don't know what is that - just draw the color dammit
+				// Added by Kruzen during HdResolutionFactor filter optimization
+				// Before it couldn't draw some filled stamps because they didn't
+				// have any transparencies and supposedly nothing from existing
+				// before DrawFilledStamp usages cannot reach that
+				for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+				{
+					for (x = 0; x < width; ++x, ++src_p, ++dst_p)
+					{
+						*dst_p = fillcolor;
+					}
 				}
+				//log_add (log_Warning, "TFB_DrawCanvas_Fill: Unsupported source"
+				//		"surface format\n");
 			}
 		}
 	}
-	else if (TFB_GetColorKey(src, &srckey) == 0)
-	{ // colorkey-based fill
-		for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
-		{
-			for (x = 0; x < width; ++x, ++src_p, ++dst_p)
-			{
-				const Uint32 p = *src_p;
-
-				*dst_p = (p == srckey) ? dstkey : fillcolor;
-			}
-		}
-	}
-	else
-	{ // We don't know what is that - just draw the color dammit
-		// Added by Kruzen during HdResolutionFactor filter optimization
-		// Before it couldn't draw some filled stamps because they didn't
-		// have any transparencies and supposedly nothing from existing
-		// before DrawFilledStamp usages cannot reach that
-		for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
-		{
-			for (x = 0; x < width; ++x, ++src_p, ++dst_p)
-			{
-				*dst_p = fillcolor;
-			}
-		}
-		//log_add (log_Warning, "TFB_DrawCanvas_Fill: Unsupported source"
-		//		"surface format\n");
-	}
-
-	SDL_UnlockSurface(dst);
-	SDL_UnlockSurface(src);
 
 	// save the colorkey (dynamic image -- not using RLE coding here)
 	TFB_SetColorKey(dst, dstkey, 0);
@@ -628,74 +629,75 @@ void TFB_DrawCanvas_FontChar(tfb::Char* fontChar, tfb::Image* backing,
 	targetRect.y = y - fontChar->hotSpot.y;
 
 	// transfer the alpha channel to the backing surface
-	SDL_LockSurface(surf);
 	{
-		int x {};
-		int y {};
-		const int sskip = fontChar->pitch - w;
-		const int dskip = (surf->pitch / 4) - w;
-		const Uint32 dmask = ~SDL_GetPixelFormatDetails(surf->format)->Amask;
-		const int ashift = SDL_GetPixelFormatDetails(surf->format)->Ashift;
-		const Uint8* src_p = fontChar->data;
-		Uint32* dst_p = (Uint32*)surf->pixels;
+		const uqm::SurfaceLock surfLock {surf};
+		{
+			int x {};
+			int y {};
+			const int sskip = fontChar->pitch - w;
+			const int dskip = (surf->pitch / 4) - w;
+			const Uint32 dmask = ~SDL_GetPixelFormatDetails(surf->format)->Amask;
+			const int ashift = SDL_GetPixelFormatDetails(surf->format)->Ashift;
+			const Uint8* src_p = fontChar->data;
+			Uint32* dst_p = (Uint32*)surf->pixels;
 
-		if (mode.kind == DrawKind::Alpha)
-		{ // Per-pixel alpha and surface alpha will not work together
-			// We have to handle DRAW_ALPHA differently by modulating
-			// the backing surface alpha channel ourselves.
-			// The existing backing surface alpha channel is ignored.
-			const int alpha = mode.factor;
-			mode.kind = DrawKind::Replace;
+			if (mode.kind == DrawKind::Alpha)
+			{ // Per-pixel alpha and surface alpha will not work together
+				// We have to handle DRAW_ALPHA differently by modulating
+				// the backing surface alpha channel ourselves.
+				// The existing backing surface alpha channel is ignored.
+				const int alpha = mode.factor;
+				mode.kind = DrawKind::Replace;
 
-			for (y = 0; y < h; ++y, src_p += sskip, dst_p += dskip)
-			{
-				for (x = 0; x < w; ++x, ++src_p, ++dst_p)
+				for (y = 0; y < h; ++y, src_p += sskip, dst_p += dskip)
 				{
-					const Uint32 p = *dst_p & dmask;
-					Uint32 a = *src_p;
-
-					// we use >> 8 instead of / 255, and it does not handle
-					// alpha == 255 correctly
-					if (alpha != 0xff)
-					{ // modulate the alpha channel
-						a = (a * alpha) >> 8;
-					}
-					*dst_p = p | (a << ashift);
-				}
-			}
-		}
-		else if (mode.kind == DrawKind::Grayscale)
-		{ // For wiping char background
-			mode.kind = DrawKind::Replace;
-
-			for (y = 0; y < h; ++y, src_p += sskip, dst_p += dskip)
-			{
-				for (x = 0; x < w; ++x, ++src_p, ++dst_p)
-				{
-					const Uint32 p = *dst_p & dmask;
-					Uint32 a = *src_p;
-
-					if (a != 0x00)
+					for (x = 0; x < w; ++x, ++src_p, ++dst_p)
 					{
-						a = 0xff;
+						const Uint32 p = *dst_p & dmask;
+						Uint32 a = *src_p;
+
+						// we use >> 8 instead of / 255, and it does not handle
+						// alpha == 255 correctly
+						if (alpha != 0xff)
+						{ // modulate the alpha channel
+							a = (a * alpha) >> 8;
+						}
+						*dst_p = p | (a << ashift);
 					}
-					*dst_p = p | (a << ashift);
 				}
 			}
-		}
-		else /* if (mode.kind != DRAW_ALPHA) */
-		{	 // Transfer the alpha channel to the backing surface
-			// DRAW_REPLACE + Color.a is NOT supported right now
-			for (y = 0; y < h; ++y, src_p += sskip, dst_p += dskip)
-			{
-				for (x = 0; x < w; ++x, ++src_p, ++dst_p)
+			else if (mode.kind == DrawKind::Grayscale)
+			{ // For wiping char background
+				mode.kind = DrawKind::Replace;
+
+				for (y = 0; y < h; ++y, src_p += sskip, dst_p += dskip)
 				{
-					*dst_p = (*dst_p & dmask) | ((Uint32)*src_p << ashift);
+					for (x = 0; x < w; ++x, ++src_p, ++dst_p)
+					{
+						const Uint32 p = *dst_p & dmask;
+						Uint32 a = *src_p;
+
+						if (a != 0x00)
+						{
+							a = 0xff;
+						}
+						*dst_p = p | (a << ashift);
+					}
+				}
+			}
+			else /* if (mode.kind != DRAW_ALPHA) */
+			{	 // Transfer the alpha channel to the backing surface
+				// DRAW_REPLACE + Color.a is NOT supported right now
+				for (y = 0; y < h; ++y, src_p += sskip, dst_p += dskip)
+				{
+					for (x = 0; x < w; ++x, ++src_p, ++dst_p)
+					{
+						*dst_p = (*dst_p & dmask) | ((Uint32)*src_p << ashift);
+					}
 				}
 			}
 		}
 	}
-	SDL_UnlockSurface(surf);
 
 	TFB_DrawCanvas_Blit(surf, &srcRect, dst, &targetRect, mode);
 }

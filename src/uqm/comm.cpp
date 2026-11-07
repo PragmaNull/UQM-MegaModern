@@ -1867,93 +1867,94 @@ static void HailAlien(void)
 	ES.phrase_buf[0] = '\0';
 
 	SetContext(SpaceContext);
-	FontRef OldFont {SetContextFont(PlayerFont)};
-
 	{
-		GfxRect r;
+		const FontScope fontScope {PlayerFont};
 
-		AnimContext = CreateContext("AnimContext");
-		SetContext(AnimContext);
-		SetContextFGFrame(Screen);
-		GetFrameRect(CommData.AlienFrame, &r);
-		r.extent.width = SisScreenWidth();
-		CommWndRect.corner.x = SisOrgX(); // JMS_GFX: Added these lines because of the
-		CommWndRect.corner.y = SisOrgY(); // changed init of CommWndRect in the beginning of comm.c
-		CommWndRect.extent = r.extent;
-
-		SetTransitionSource(nullptr);
-		BatchGraphics();
-		if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 		{
-			// set the position of outtakes comm
-			CommWndRect.corner.x = ((CanvasWidth - CommWndRect.extent.width) / 2);
-			CommWndRect.corner.y = ResScale(5);
-			r.corner = CommWndRect.corner;
-			SetContextClipRect(&r);
-		}
-		else
-		{
-			const GfxPoint Log = MAKE_POINT(LogxToUniverse(uqm::gameState().sis().log_x),
-											LogyToUniverse(uqm::gameState().sis().log_y));
+			GfxRect r;
 
-			r.corner.x = SisOrgX();
-			r.corner.y = SisOrgY();
-			SetContextClipRect(&r);
-			CommWndRect.corner = r.corner;
+			AnimContext = CreateContext("AnimContext");
+			SetContext(AnimContext);
+			SetContextFGFrame(Screen);
+			GetFrameRect(CommData.AlienFrame, &r);
+			r.extent.width = SisScreenWidth();
+			CommWndRect.corner.x = SisOrgX(); // JMS_GFX: Added these lines because of the
+			CommWndRect.corner.y = SisOrgY(); // changed init of CommWndRect in the beginning of comm.c
+			CommWndRect.extent = r.extent;
 
-			DrawSISFrame();
-			// TODO: find a better way to do this, perhaps set the titles
-			// forward from callers.
-			if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
-				&& uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
-			{ // Talking to allied Starbase
-				DrawSISMessage(GameString(GameStringBase::StarbaseString + 1));
-				// "Starbase Commander"
-				DrawSISTitle(GameString(GameStringBase::StarbaseString + 0));
-				// "Starbase"
+			SetTransitionSource(nullptr);
+			BatchGraphics();
+			if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
+			{
+				// set the position of outtakes comm
+				CommWndRect.corner.x = ((CanvasWidth - CommWndRect.extent.width) / 2);
+				CommWndRect.corner.y = ResScale(5);
+				r.corner = CommWndRect.corner;
+				SetContextClipRect(&r);
 			}
 			else
-			{ // Default titles: star name + planet name
-				DrawSISMessage(nullptr);
-				// DrawSISTitle (GLOBAL_SIS (PlanetName));
+			{
+				const GfxPoint Log = MAKE_POINT(LogxToUniverse(uqm::gameState().sis().log_x),
+												LogyToUniverse(uqm::gameState().sis().log_y));
 
-				if (inHQSpace())
-				{
-					DrawHyperCoords(uqm::flagship().shipStamp.origin);
-					if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1
-						&& uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS)
-						&& (Log.x == ArilouHomeX && Log.y == ArilouHomeY))
-					{
-						DrawSISMessage(uqm::gameState().sis().PlanetName.data());
-					}
-				}
-				else if (uqm::flagship().ipPlanet == 0)
-				{
-					DrawHyperCoords(CurStarDescPtr()->star_pt);
+				r.corner.x = SisOrgX();
+				r.corner.y = SisOrgY();
+				SetContextClipRect(&r);
+				CommWndRect.corner = r.corner;
+
+				DrawSISFrame();
+				// TODO: find a better way to do this, perhaps set the titles
+				// forward from callers.
+				if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
+					&& uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
+				{ // Talking to allied Starbase
+					DrawSISMessage(GameString(GameStringBase::StarbaseString + 1));
+					// "Starbase Commander"
+					DrawSISTitle(GameString(GameStringBase::StarbaseString + 0));
+					// "Starbase"
 				}
 				else
-				{
-					DrawSISTitle(uqm::gameState().sis().PlanetName.data());
+				{ // Default titles: star name + planet name
+					DrawSISMessage(nullptr);
+					// DrawSISTitle (GLOBAL_SIS (PlanetName));
+
+					if (inHQSpace())
+					{
+						DrawHyperCoords(uqm::flagship().shipStamp.origin);
+						if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1
+							&& uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS)
+							&& (Log.x == ArilouHomeX && Log.y == ArilouHomeY))
+						{
+							DrawSISMessage(uqm::gameState().sis().PlanetName.data());
+						}
+					}
+					else if (uqm::flagship().ipPlanet == 0)
+					{
+						DrawHyperCoords(CurStarDescPtr()->star_pt);
+					}
+					else
+					{
+						DrawSISTitle(uqm::gameState().sis().PlanetName.data());
+					}
 				}
 			}
+
+			DrawSISComWindow();
 		}
 
-		DrawSISComWindow();
+
+		LastActivity |= ActivityFlag::CheckLoad; /* prevent spurious input */
+		(*CommData.init_encounter_func)();
+		DoInput(&ES, false);
+		if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
+		{
+			(*CommData.post_encounter_func)();
+		}
+		(*CommData.uninit_encounter_func)();
+
+		ClearResponses(&ES);
+		SetContext(SpaceContext);
 	}
-
-
-	LastActivity |= ActivityFlag::CheckLoad; /* prevent spurious input */
-	(*CommData.init_encounter_func)();
-	DoInput(&ES, false);
-	if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
-	{
-		(*CommData.post_encounter_func)();
-	}
-	(*CommData.uninit_encounter_func)();
-
-	ClearResponses(&ES);
-	SetContext(SpaceContext);
-	SetContextFont(OldFont);
 
 	delete CommData.ConversationPhrases;
 	DestroyMusic(CommData.AlienSong);

@@ -1112,43 +1112,44 @@ SDL_Surface* zoomSurface(SDL_Surface* src, double zoomx, double zoomy, int smoot
 	/*
      * Lock source surface 
      */
-	SDL_LockSurface(rz_src);
-	/*
+	{
+		const uqm::SurfaceLock rz_srcLock {rz_src};
+		/*
      * Check which kind of surface we have 
      */
-	if (is32bit)
-	{
-		/*
+		if (is32bit)
+		{
+			/*
 	 * Call the 32bit transformation routine to do the zooming (using alpha) 
 	 */
-		zoomSurfaceRGBA(rz_src, rz_dst, smooth);
-		/*
+			zoomSurfaceRGBA(rz_src, rz_dst, smooth);
+			/*
 	 * Turn on source-alpha support 
 	 */
-		TFB_SetSurfaceAlphaMod(rz_dst, 255);
-	}
-	else
-	{
-		/*
+			TFB_SetSurfaceAlphaMod(rz_dst, 255);
+		}
+		else
+		{
+			/*
 	 * Copy palette and colorkey info 
 	 */
-		Uint32 srckey = 0;
-		TFB_GetColorKey(rz_src, &srckey);
-		for (i = 0; i < SDL_GetSurfacePalette(rz_src)->ncolors; i++)
-		{
-			SDL_GetSurfacePalette(rz_dst)->colors[i] = SDL_GetSurfacePalette(rz_src)->colors[i];
-		}
-		SDL_GetSurfacePalette(rz_dst)->ncolors = SDL_GetSurfacePalette(rz_src)->ncolors;
-		/*
+			Uint32 srckey = 0;
+			TFB_GetColorKey(rz_src, &srckey);
+			for (i = 0; i < SDL_GetSurfacePalette(rz_src)->ncolors; i++)
+			{
+				SDL_GetSurfacePalette(rz_dst)->colors[i] = SDL_GetSurfacePalette(rz_src)->colors[i];
+			}
+			SDL_GetSurfacePalette(rz_dst)->ncolors = SDL_GetSurfacePalette(rz_src)->ncolors;
+			/*
 	 * Call the 8bit transformation routine to do the zooming 
 	 */
-		zoomSurfaceY(rz_src, rz_dst);
-		TFB_SetColorKey(rz_dst, srckey, 0);
-	}
-	/*
+			zoomSurfaceY(rz_src, rz_dst);
+			TFB_SetColorKey(rz_dst, srckey, 0);
+		}
+		/*
      * Unlock source surface 
      */
-	SDL_UnlockSurface(rz_src);
+	}
 
 	/*
      * Cleanup temp surface 
