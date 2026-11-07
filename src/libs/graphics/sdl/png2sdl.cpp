@@ -57,7 +57,7 @@ namespace
 
 // Owns a libpng read or write struct and its info struct.
 template <bool Write>
-class PngStructs
+class [[nodiscard]] PngStructs
 {
 public:
 	PngStructs()

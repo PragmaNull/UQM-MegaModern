@@ -29,7 +29,7 @@ template <typename T>
 using SdlArrayPtr = uqstl::unique_ptr<T[], SdlFree<&SDL_free>>;
 
 // Locks the surface from construction to destruction.
-class SurfaceLock
+class [[nodiscard]] SurfaceLock
 {
 public:
 	explicit SurfaceLock(SDL_Surface* surface)

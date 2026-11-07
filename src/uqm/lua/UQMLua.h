@@ -34,7 +34,7 @@ namespace uqm
 {
 
 // Restores the top of the Lua stack on destruction.
-class LuaStackGuard
+class [[nodiscard]] LuaStackGuard
 {
 public:
 	explicit LuaStackGuard(lua_State* luaState)

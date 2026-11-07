@@ -202,7 +202,7 @@ typedef void(InputFrameCallback)(void);
 InputFrameCallback* SetInputCallback(InputFrameCallback*);
 
 // Sets the input frame callback, and restores the previous one on destruction.
-class InputCallbackScope
+class [[nodiscard]] InputCallbackScope
 {
 public:
 	explicit InputCallbackScope(InputFrameCallback* callback)

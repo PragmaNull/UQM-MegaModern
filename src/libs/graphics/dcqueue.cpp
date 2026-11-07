@@ -144,7 +144,7 @@ namespace
 {
 
 // Holds the DCQ lock from construction to destruction.
-class UQM_SCOPED_CAPABILITY DcqGuard
+class [[nodiscard]] UQM_SCOPED_CAPABILITY DcqGuard
 {
 public:
 	DcqGuard() UQM_ACQUIRE(s_dcqMutex)

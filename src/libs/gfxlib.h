@@ -714,7 +714,7 @@ void ClearSystemRect(void);
 
 // Sets a value of the drawing context, and restores the previous value on destruction.
 template <typename T, T (*Set)(T)>
-class ContextValueScope
+class [[nodiscard]] ContextValueScope
 {
 public:
 	explicit ContextValueScope(T value)
@@ -749,7 +749,7 @@ using DrawModeScope = ContextValueScope<DrawMode, &SetContextDrawMode>;
 using OriginScope = ContextValueScope<GfxPoint, &SetContextOrigin>;
 
 // Batches the drawing commands from construction to destruction.
-class BatchScope
+class [[nodiscard]] BatchScope
 {
 public:
 	BatchScope()
@@ -767,7 +767,7 @@ public:
 };
 
 // Saves the clip rectangle of the drawing context, and restores it on destruction.
-class ClipRectScope
+class [[nodiscard]] ClipRectScope
 {
 public:
 	ClipRectScope()

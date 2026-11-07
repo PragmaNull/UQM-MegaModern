@@ -66,7 +66,7 @@ private:
 
 // Holds the lock from construction to destruction.
 template <typename MutexType>
-class UQM_SCOPED_CAPABILITY LockGuard
+class [[nodiscard]] UQM_SCOPED_CAPABILITY LockGuard
 {
 public:
 	explicit LockGuard(MutexType& mutex) UQM_ACQUIRE(mutex)
