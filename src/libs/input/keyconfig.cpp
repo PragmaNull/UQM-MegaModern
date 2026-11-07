@@ -5,7 +5,6 @@
 #include <yyjson.h>
 
 #include "core/log/log.h"
-
 #include "libs/file/json.h"
 
 namespace uqm
@@ -89,9 +88,9 @@ uqstl::optional<KeyTemplate> readTemplate(yyjson_val* templateObj, uqstl::span<c
 
 } // namespace
 
-uqstl::optional<uqstl::vector<KeyTemplate>> keyConfigFromJson(uqstl::string_view json, uqstl::span<const uqgsl::czstring> controlNames)
+uqstl::optional<uqstl::vector<KeyTemplate>> keyConfigFromJson(uqstl::string json, uqstl::span<const uqgsl::czstring> controlNames)
 {
-	const uqm::JsonDoc doc {uqm::parseJson(json, "Key configuration")};
+	const uqm::JsonDoc doc {uqm::parseJsonInPlace(json, "Key configuration")};
 	if (!doc)
 	{
 		return uqstl::nullopt;

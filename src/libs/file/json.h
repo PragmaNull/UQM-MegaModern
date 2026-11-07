@@ -38,8 +38,9 @@ inline constexpr yyjson_write_flag JsonWritePretty {YYJSON_WRITE_PRETTY_TWO_SPAC
 // Returns the text of 'doc', or nullopt if yyjson cannot write it.
 [[nodiscard]] uqstl::optional<uqstl::string> writeJson(const JsonMutDoc& doc, yyjson_write_flag flags = JsonWritePretty);
 
-// Returns an empty JsonDoc, and logs the error with 'what', if 'text' is not valid JSON.
-[[nodiscard]] JsonDoc parseJson(uqstl::string_view text, uqstl::string_view what, yyjson_read_flag flags = YYJSON_READ_NOFLAG);
+// Parses 'text' in place and adds padding to it. 'text' must live longer than the document. Returns an empty JsonDoc,
+// and logs the error with 'what', if 'text' is not valid JSON.
+[[nodiscard]] JsonDoc parseJsonInPlace(uqstl::string& text, uqstl::string_view what, yyjson_read_flag flags = YYJSON_READ_NOFLAG);
 
 // Returns the root object of 'doc' if its "version" is 'version'. Otherwise logs with 'what' and returns nullptr.
 [[nodiscard]] yyjson_val* versionedRoot(const JsonDoc& doc, int64_t version, uqstl::string_view what);

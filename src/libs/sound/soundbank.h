@@ -15,7 +15,7 @@ namespace uqm
 inline constexpr int c_soundBankVersion {1};
 
 // Returns the sound files, relative to the directory of the bank, or nullopt if 'json' is not a valid sound bank.
-[[nodiscard]] uqstl::optional<uqstl::vector<uqstl::string>> soundBankFromJson(uqstl::string_view json);
+[[nodiscard]] uqstl::optional<uqstl::vector<uqstl::string>> soundBankFromJson(uqstl::string json);
 
 } // namespace uqm
 

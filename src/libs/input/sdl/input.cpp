@@ -129,13 +129,13 @@ static uqstl::span<const uqgsl::czstring> flightControlNames()
 // Loads the user key configuration into the "keys." resources.
 static bool loadKeyConfiguration()
 {
-	const auto json {uqm::readTextFile(uqm::configDir(), c_keyConfigFile)};
+	auto json {uqm::readTextFile(uqm::configDir(), c_keyConfigFile)};
 	if (!json)
 	{
 		return false;
 	}
 
-	const auto templates {uqm::keyConfigFromJson(*json, flightControlNames())};
+	const auto templates {uqm::keyConfigFromJson(uqstl::move(*json), flightControlNames())};
 	if (!templates)
 	{
 		uqm::moveToBadFile(uqm::configDir(), c_keyConfigFile);

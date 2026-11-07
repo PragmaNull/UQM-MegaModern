@@ -107,7 +107,7 @@ struct SlideCommand
 };
 
 // Returns nullopt if 'json' is not a valid slideshow file.
-[[nodiscard]] uqstl::optional<uqstl::vector<SlideCommand>> slideshowFromJson(uqstl::string_view json);
+[[nodiscard]] uqstl::optional<uqstl::vector<SlideCommand>> slideshowFromJson(uqstl::string json);
 
 } // namespace uqm
 

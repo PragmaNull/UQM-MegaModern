@@ -149,8 +149,8 @@ void* _GetSoundBankData(const ResourceFile& resource)
 {
 	uqstl::vector<tfb::SoundSample*> samples {};
 
-	const auto text {readResourceText(resource)};
-	const auto sounds {text ? uqm::soundBankFromJson(*text) : uqstl::nullopt};
+	auto text {readResourceText(resource)};
+	const auto sounds {text ? uqm::soundBankFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!sounds)
 	{
 		uqm::log::warn("_GetSoundBankData(): could not read '{}'", resource.path);

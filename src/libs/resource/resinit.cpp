@@ -187,12 +187,12 @@ ResourceIndex _get_current_index_header(void)
 
 void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix)
 {
-	const uqstl::optional<uqstl::string> text {uqm::readTextFile(dir, filename)};
+	uqstl::optional<uqstl::string> text {uqm::readTextFile(dir, filename)};
 	if (!text)
 	{
 		return;
 	}
-	auto entries {uqm::resourceIndexFromJson(*text, prefix != nullptr ? prefix : "")};
+	auto entries {uqm::resourceIndexFromJson(uqstl::move(*text), prefix != nullptr ? prefix : "")};
 	if (!entries)
 	{
 		uqm::log::warn("Warning: Could not read resource index '{}'.", filename);

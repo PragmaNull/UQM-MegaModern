@@ -40,14 +40,14 @@ uqstl::optional<MenuDefinition> readMenuDefinition(uqgsl::czstring resource, con
 		log::error("The resource '{}' is not defined.", resource);
 		return uqstl::nullopt;
 	}
-	const auto json {readTextFile(contentDir(), path)};
+	auto json {readTextFile(contentDir(), path)};
 	if (!json)
 	{
 		log::error("Could not read the menu definition '{}'.", path);
 		return uqstl::nullopt;
 	}
 
-	auto definition {menuDefinitionFromJson(*json)};
+	auto definition {menuDefinitionFromJson(uqstl::move(*json))};
 	if (!definition)
 	{
 		log::error("The menu definition '{}' is not valid.", path);

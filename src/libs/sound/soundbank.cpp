@@ -7,10 +7,10 @@
 namespace uqm
 {
 
-uqstl::optional<uqstl::vector<uqstl::string>> soundBankFromJson(uqstl::string_view json)
+uqstl::optional<uqstl::vector<uqstl::string>> soundBankFromJson(uqstl::string json)
 {
 	static constexpr uqstl::string_view c_what {"Sound bank"};
-	const JsonDoc doc {parseJson(json, c_what)};
+	const JsonDoc doc {parseJsonInPlace(json, c_what)};
 	yyjson_val* const sounds {versionedMember(doc, c_soundBankVersion, "sounds", YYJSON_TYPE_ARR, c_what)};
 	if (sounds == nullptr)
 	{

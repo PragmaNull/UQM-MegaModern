@@ -324,9 +324,9 @@ const MenuDef* MenuDefinition::find(uqstl::string_view id) const noexcept
 	return nullptr;
 }
 
-uqstl::optional<MenuDefinition> menuDefinitionFromJson(uqstl::string_view json)
+uqstl::optional<MenuDefinition> menuDefinitionFromJson(uqstl::string json)
 {
-	const uqm::JsonDoc doc {uqm::parseJson(json, "Menu definition")};
+	const uqm::JsonDoc doc {uqm::parseJsonInPlace(json, "Menu definition")};
 	if (!doc)
 	{
 		return uqstl::nullopt;

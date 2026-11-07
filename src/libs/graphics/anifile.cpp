@@ -63,10 +63,10 @@ bool readFields(yyjson_val* obj, AniFrame& frame)
 
 } // namespace
 
-uqstl::optional<uqstl::vector<AniFrame>> aniFromJson(uqstl::string_view json)
+uqstl::optional<uqstl::vector<AniFrame>> aniFromJson(uqstl::string json)
 {
 	static constexpr uqstl::string_view c_what {"Animation file"};
-	const JsonDoc doc {parseJson(json, c_what)};
+	const JsonDoc doc {parseJsonInPlace(json, c_what)};
 	yyjson_val* const frames {versionedMember(doc, c_aniFileVersion, "frames", YYJSON_TYPE_ARR, c_what)};
 	if (frames == nullptr)
 	{

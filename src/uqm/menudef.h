@@ -106,7 +106,7 @@ struct MenuDefinition
 };
 
 // Returns nullopt if 'json' is not a valid menu definition.
-[[nodiscard]] uqstl::optional<MenuDefinition> menuDefinitionFromJson(uqstl::string_view json);
+[[nodiscard]] uqstl::optional<MenuDefinition> menuDefinitionFromJson(uqstl::string json);
 
 // Converts a slider position to the setting value in text form.
 [[nodiscard]] uqstl::string sliderSettingText(const MenuItemDef& slider, int displayed);

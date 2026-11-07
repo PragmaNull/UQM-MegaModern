@@ -413,8 +413,8 @@ static void Present_DrawMovieFrame(PresentationInputState* pPIS)
 
 static bool ShowPresentationFile(const char* name)
 {
-	const auto text {uqm::readTextFile(uqm::contentDir(), name)};
-	const auto commands {text ? uqm::slideshowFromJson(*text) : uqstl::nullopt};
+	auto text {uqm::readTextFile(uqm::contentDir(), name)};
+	const auto commands {text ? uqm::slideshowFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!commands)
 	{
 		uqm::log::warn("Could not read the slideshow '{}'.", name);

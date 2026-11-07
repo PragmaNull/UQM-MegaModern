@@ -56,7 +56,7 @@ extern ActivityWord NextActivity;
 // Loads only the summary when summary_desc is not null.
 extern bool LoadGame(uint16_t which_game, SaveSummaryData* summary_desc);
 // Loads a game from the text of a save file. 'file' names the save in error messages.
-bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SaveSummaryData* summary_desc);
+bool LoadGameFromJson(uqstl::string json, uqstl::string_view file, SaveSummaryData* summary_desc);
 // Loads a game from a save file at any path.
 bool LoadGameFile(const char* path);
 uqstl::string saveFileName(uint16_t which_game);

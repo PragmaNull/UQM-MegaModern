@@ -2587,13 +2587,13 @@ static constexpr const char* c_meleeConfigFile {"melee.json"};
 
 static int LoadMeleeConfig(MeleeState* pMS)
 {
-	const auto json {uqm::readTextFile(uqm::configDir(), c_meleeConfigFile)};
+	auto json {uqm::readTextFile(uqm::configDir(), c_meleeConfigFile)};
 	if (!json)
 	{
 		return -1;
 	}
 
-	const auto sides {uqm::meleeConfigFromJson(*json)};
+	const auto sides {uqm::meleeConfigFromJson(uqstl::move(*json))};
 	if (!sides || sides->size() != NumSides)
 	{
 		uqm::moveToBadFile(uqm::configDir(), c_meleeConfigFile);

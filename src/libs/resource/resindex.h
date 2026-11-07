@@ -41,7 +41,7 @@ inline constexpr int c_resourceIndexVersion {1};
 
 // Reads the entries of a resource index in file order, and puts 'prefix' before each key.
 // Returns nullopt if 'json' is not a valid resource index. Skips entries that are not valid.
-[[nodiscard]] uqstl::optional<uqstl::vector<ResourceEntry>> resourceIndexFromJson(uqstl::string_view json, uqstl::string_view prefix);
+[[nodiscard]] uqstl::optional<uqstl::vector<ResourceEntry>> resourceIndexFromJson(uqstl::string json, uqstl::string_view prefix);
 
 // Reads a resource index in the old format: a "key = TYPE:data" line for each resource, and '#' comments. The data of
 // INT32, SHIP, FLT32 and bool resources becomes a number or a truth value, and all other data stays a string.

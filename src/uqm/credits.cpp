@@ -533,8 +533,8 @@ static void processCreditsFrame(void)
 static bool LoadCredits(void)
 {
 	const char* const path {res_GetString(CreditsFileRes)};
-	const auto text {uqm::readTextFile(uqm::contentDir(), path)};
-	auto blocks {text ? uqm::creditsFromJson(*text) : uqstl::nullopt};
+	auto text {uqm::readTextFile(uqm::contentDir(), path)};
+	auto blocks {text ? uqm::creditsFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!blocks)
 	{
 		uqm::log::warn("Could not read the credits file '{}'.", path);

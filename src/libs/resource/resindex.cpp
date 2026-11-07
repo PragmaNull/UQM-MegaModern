@@ -97,10 +97,10 @@ uqstl::optional<int64_t> resourceIntField(const ResourceArg& arg, uqstl::string_
 namespace uqm
 {
 
-uqstl::optional<uqstl::vector<ResourceEntry>> resourceIndexFromJson(uqstl::string_view json, uqstl::string_view prefix)
+uqstl::optional<uqstl::vector<ResourceEntry>> resourceIndexFromJson(uqstl::string json, uqstl::string_view prefix)
 {
 	static constexpr uqstl::string_view c_what {"Resource index"};
-	const JsonDoc doc {parseJson(json, c_what)};
+	const JsonDoc doc {parseJsonInPlace(json, c_what)};
 	yyjson_val* const resources {versionedMember(doc, c_resourceIndexVersion, "resources", YYJSON_TYPE_OBJ, c_what)};
 	if (resources == nullptr)
 	{

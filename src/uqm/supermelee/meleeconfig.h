@@ -25,7 +25,7 @@ struct MeleeSideConfig
 [[nodiscard]] uqstl::string meleeConfigToJson(uqstl::span<const MeleeSideConfig> sides);
 
 // Returns nullopt if 'json' is not a valid melee configuration.
-[[nodiscard]] uqstl::optional<uqstl::vector<MeleeSideConfig>> meleeConfigFromJson(uqstl::string_view json);
+[[nodiscard]] uqstl::optional<uqstl::vector<MeleeSideConfig>> meleeConfigFromJson(uqstl::string json);
 
 } // namespace uqm
 

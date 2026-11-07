@@ -42,7 +42,7 @@ struct CreditsBlock
 };
 
 // Returns nullopt if 'json' is not a valid credits file.
-[[nodiscard]] uqstl::optional<uqstl::vector<CreditsBlock>> creditsFromJson(uqstl::string_view json);
+[[nodiscard]] uqstl::optional<uqstl::vector<CreditsBlock>> creditsFromJson(uqstl::string json);
 
 } // namespace uqm
 

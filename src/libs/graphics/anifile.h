@@ -33,7 +33,7 @@ struct AniFrame
 };
 
 // Returns nullopt if 'json' is not a valid animation file.
-[[nodiscard]] uqstl::optional<uqstl::vector<AniFrame>> aniFromJson(uqstl::string_view json);
+[[nodiscard]] uqstl::optional<uqstl::vector<AniFrame>> aniFromJson(uqstl::string json);
 
 } // namespace uqm
 

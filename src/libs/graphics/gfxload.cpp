@@ -147,8 +147,8 @@ static void processFontChar(tfb::Char* CharPtr, tfb::Canvas canvas, FontRef font
 
 void* _GetCelData(const ResourceFile& resource)
 {
-	const auto text {readResourceText(resource)};
-	auto frames {text ? uqm::aniFromJson(*text) : uqstl::nullopt};
+	auto text {readResourceText(resource)};
+	auto frames {text ? uqm::aniFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!frames || frames->empty())
 	{
 		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
@@ -303,10 +303,10 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		goto err;
 	}
 
-	if (const auto text {uqm::readTextFile(*fontDirHandle, cfg_name)})
+	if (auto text {uqm::readTextFile(*fontDirHandle, cfg_name)})
 	{
 		memset(&fontPtr->KernTab, (uint8_t)~0, sizeof(fontPtr->KernTab));
-		if (const auto metrics {uqm::fontMetricsFromJson(*text)})
+		if (const auto metrics {uqm::fontMetricsFromJson(uqstl::move(*text))})
 		{
 			fontPtr->Leading = metrics->leading;
 			fontPtr->CharSpace = metrics->charSpace;

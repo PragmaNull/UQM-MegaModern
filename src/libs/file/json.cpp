@@ -6,10 +6,12 @@
 namespace uqm
 {
 
-JsonDoc parseJson(uqstl::string_view text, uqstl::string_view what, yyjson_read_flag flags)
+JsonDoc parseJsonInPlace(uqstl::string& text, uqstl::string_view what, yyjson_read_flag flags)
 {
+	const size_t length {text.size()};
+	text.append(YYJSON_PADDING_SIZE, '\0');
 	yyjson_read_err err {};
-	JsonDoc doc {yyjson_read_opts(const_cast<char*>(text.data()), text.size(), flags, nullptr, &err)};
+	JsonDoc doc {yyjson_read_opts(text.data(), length, flags | YYJSON_READ_INSITU, nullptr, &err)};
 	if (!doc)
 	{
 		uqm::log::error("{}: JSON parse error at byte {}: {}", what, err.pos, err.msg);

@@ -81,10 +81,10 @@ uqstl::optional<CreditsBlock> readBlock(yyjson_val* obj)
 
 } // namespace
 
-uqstl::optional<uqstl::vector<CreditsBlock>> creditsFromJson(uqstl::string_view json)
+uqstl::optional<uqstl::vector<CreditsBlock>> creditsFromJson(uqstl::string json)
 {
 	static constexpr uqstl::string_view c_what {"Credits"};
-	const JsonDoc doc {parseJson(json, c_what)};
+	const JsonDoc doc {parseJsonInPlace(json, c_what)};
 	yyjson_val* const blocks {versionedMember(doc, c_creditsFileVersion, "blocks", YYJSON_TYPE_ARR, c_what)};
 	if (blocks == nullptr)
 	{

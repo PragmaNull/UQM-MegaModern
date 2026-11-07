@@ -23,7 +23,7 @@ struct KeyTemplate
 [[nodiscard]] uqstl::string keyConfigToJson(uqstl::span<const KeyTemplate> templates, uqstl::span<const uqgsl::czstring> controlNames);
 
 // Returns nullopt if 'json' is not a valid key configuration.
-[[nodiscard]] uqstl::optional<uqstl::vector<KeyTemplate>> keyConfigFromJson(uqstl::string_view json, uqstl::span<const uqgsl::czstring> controlNames);
+[[nodiscard]] uqstl::optional<uqstl::vector<KeyTemplate>> keyConfigFromJson(uqstl::string json, uqstl::span<const uqgsl::czstring> controlNames);
 
 } // namespace uqm
 

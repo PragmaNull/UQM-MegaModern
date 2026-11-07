@@ -7,7 +7,6 @@
 
 #include "core/log/log.h"
 #include "core/stl/limits.h"
-
 #include "libs/file/json.h"
 
 namespace uqm
@@ -261,9 +260,9 @@ uqstl::string SettingsRegistry::toJson() const
 	return uqm::writeJson(docOwner).value_or(uqstl::string {});
 }
 
-bool SettingsRegistry::fromJson(uqstl::string_view json)
+bool SettingsRegistry::fromJson(uqstl::string json)
 {
-	const uqm::JsonDoc doc {uqm::parseJson(json, "Settings")};
+	const uqm::JsonDoc doc {uqm::parseJsonInPlace(json, "Settings")};
 	if (!doc)
 	{
 		return false;

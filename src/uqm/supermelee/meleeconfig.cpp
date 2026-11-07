@@ -7,7 +7,6 @@
 
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
-
 #include "libs/file/json.h"
 
 
@@ -154,9 +153,9 @@ uqstl::string meleeConfigToJson(uqstl::span<const MeleeSideConfig> sides)
 	return uqm::writeJson(docOwner).value_or(uqstl::string {});
 }
 
-uqstl::optional<uqstl::vector<MeleeSideConfig>> meleeConfigFromJson(uqstl::string_view json)
+uqstl::optional<uqstl::vector<MeleeSideConfig>> meleeConfigFromJson(uqstl::string json)
 {
-	const uqm::JsonDoc doc {uqm::parseJson(json, "Melee configuration")};
+	const uqm::JsonDoc doc {uqm::parseJsonInPlace(json, "Melee configuration")};
 	if (!doc)
 	{
 		return uqstl::nullopt;

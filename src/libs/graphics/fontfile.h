@@ -35,7 +35,7 @@ struct FontMetrics
 };
 
 // Returns nullopt if 'json' is not a valid font metrics file.
-[[nodiscard]] uqstl::optional<FontMetrics> fontMetricsFromJson(uqstl::string_view json);
+[[nodiscard]] uqstl::optional<FontMetrics> fontMetricsFromJson(uqstl::string json);
 
 } // namespace uqm
 

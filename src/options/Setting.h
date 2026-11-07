@@ -491,7 +491,7 @@ public:
 	[[nodiscard]] uqstl::string toJson() const;
 
 	// Returns false if 'json' is not a JSON object. Unknown keys and invalid values are logged and skipped.
-	bool fromJson(uqstl::string_view json);
+	bool fromJson(uqstl::string json);
 
 private:
 	uqstl::vector<SettingBase*> m_settings {};
