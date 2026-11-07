@@ -92,7 +92,7 @@ template <>
 inline constexpr bool IsArithmeticEnum<GameStringBase> = true;
 
 
-inline constexpr auto DosStarbaseStringBase {(GameStringBase::StarbaseString + 12)};
+inline constexpr auto DosStarbaseStringBase {GameStringBase::StarbaseString + 12};
 inline constexpr auto TdoStarbaseStringBase {DosStarbaseStringBase + *ModuleType::NumPurchaseModules};
 inline constexpr auto EndStarbaseStringBase {TdoStarbaseStringBase + *ModuleType::NumPurchaseModules};
 

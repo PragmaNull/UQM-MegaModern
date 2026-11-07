@@ -449,12 +449,12 @@ static uint8_t stack1;
 static uint8_t stack2;
 static uint8_t stack3;
 
-static constexpr auto AllianceShofixti {(1 << 0)};
-static constexpr auto AllianceYehat {(1 << 1)};
-static constexpr auto AllianceArilou {(1 << 2)};
-static constexpr auto AllianceChenjesu {(1 << 3)};
-static constexpr auto AllianceMmrnmhrm {(1 << 4)};
-static constexpr auto AllianceSyreen {(1 << 5)};
+static constexpr auto AllianceShofixti {1 << 0};
+static constexpr auto AllianceYehat {1 << 1};
+static constexpr auto AllianceArilou {1 << 2};
+static constexpr auto AllianceChenjesu {1 << 3};
+static constexpr auto AllianceMmrnmhrm {1 << 4};
+static constexpr auto AllianceSyreen {1 << 5};
 
 static void AllianceInfo(RESPONSE_REF R)
 {
@@ -524,13 +524,13 @@ static void AllianceInfo(RESPONSE_REF R)
 	Response(StarbasePhrase::EnoughAlliance, AlienRaces);
 }
 
-static constexpr auto HierarchyMycon {(1 << 0)};
-static constexpr auto HierarchySpathi {(1 << 1)};
-static constexpr auto HierarchyUmgah {(1 << 2)};
-static constexpr auto HierarchyAndrosynth {(1 << 3)};
-static constexpr auto HierarchyIlwrath {(1 << 4)};
-static constexpr auto HierarchyVux {(1 << 5)};
-static constexpr auto HierarchyUrquan {(1 << 6)};
+static constexpr auto HierarchyMycon {1 << 0};
+static constexpr auto HierarchySpathi {1 << 1};
+static constexpr auto HierarchyUmgah {1 << 2};
+static constexpr auto HierarchyAndrosynth {1 << 3};
+static constexpr auto HierarchyIlwrath {1 << 4};
+static constexpr auto HierarchyVux {1 << 5};
+static constexpr auto HierarchyUrquan {1 << 6};
 
 static void HierarchyInfo(RESPONSE_REF R)
 {
@@ -609,9 +609,9 @@ static void HierarchyInfo(RESPONSE_REF R)
 	Response(StarbasePhrase::EnoughHierarchy, AlienRaces);
 }
 
-static constexpr auto RacesAlliance {(1 << 0)};
-static constexpr auto RacesHierarchy {(1 << 1)};
-static constexpr auto RacesOther {(1 << 2)};
+static constexpr auto RacesAlliance {1 << 0};
+static constexpr auto RacesHierarchy {1 << 1};
+static constexpr auto RacesOther {1 << 2};
 
 static void AlienRaces(RESPONSE_REF R)
 {
@@ -653,10 +653,10 @@ static void AlienRaces(RESPONSE_REF R)
 	Response(StarbasePhrase::EnoughAliens, TellHistory);
 }
 
-static constexpr auto WarStarted {(1 << 0)};
-static constexpr auto WarWasLike {(1 << 1)};
-static constexpr auto WarLost {(1 << 2)};
-static constexpr auto WarAftermath {(1 << 3)};
+static constexpr auto WarStarted {1 << 0};
+static constexpr auto WarWasLike {1 << 1};
+static constexpr auto WarLost {1 << 2};
+static constexpr auto WarAftermath {1 << 3};
 
 static void WarInfo(RESPONSE_REF R)
 {
@@ -707,9 +707,9 @@ static void WarInfo(RESPONSE_REF R)
 	Response(StarbasePhrase::EnoughWar, TellHistory);
 }
 
-static constexpr auto AncientPrecursors {(1 << 0)};
-static constexpr auto AncientRaces {(1 << 1)};
-static constexpr auto AncientEarth {(1 << 2)};
+static constexpr auto AncientPrecursors {1 << 0};
+static constexpr auto AncientRaces {1 << 1};
+static constexpr auto AncientEarth {1 << 2};
 
 static void AncientHistory(RESPONSE_REF R)
 {
@@ -824,10 +824,10 @@ static void TellHistory(RESPONSE_REF R)
 	Response(StarbasePhrase::EnoughHistory, NeedInfo);
 }
 
-static constexpr auto HowFindUrquan {(1 << 0)};
-static constexpr auto HowFightUrquan {(1 << 1)};
-static constexpr auto HowAllyAgainstUrquan {(1 << 2)};
-static constexpr auto HowStrongAgainstUrquan {(1 << 3)};
+static constexpr auto HowFindUrquan {1 << 0};
+static constexpr auto HowFightUrquan {1 << 1};
+static constexpr auto HowAllyAgainstUrquan {1 << 2};
+static constexpr auto HowStrongAgainstUrquan {1 << 3};
 
 static void DefeatUrquan(RESPONSE_REF R)
 {

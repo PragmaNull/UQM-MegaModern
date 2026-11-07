@@ -150,14 +150,14 @@ struct ControllerInputState
 };
 
 typedef uint8_t BATTLE_INPUT_STATE; // TODO PragmaNull : replace with falg enum.
-inline constexpr auto BattleLeft {((BATTLE_INPUT_STATE)(1 << 0))};
-inline constexpr auto BattleRight {((BATTLE_INPUT_STATE)(1 << 1))};
-inline constexpr auto BattleThrust {((BATTLE_INPUT_STATE)(1 << 2))};
-inline constexpr auto BattleWeapon {((BATTLE_INPUT_STATE)(1 << 3))};
-inline constexpr auto BattleSpecial {((BATTLE_INPUT_STATE)(1 << 4))};
-inline constexpr auto BattleEscape {((BATTLE_INPUT_STATE)(1 << 5))};
-inline constexpr auto BattleDown {((BATTLE_INPUT_STATE)(1 << 6))};
-inline constexpr auto BattleThrustAlt {((BATTLE_INPUT_STATE)(1 << 7))};
+inline constexpr auto BattleLeft {(BATTLE_INPUT_STATE)(1 << 0)};
+inline constexpr auto BattleRight {(BATTLE_INPUT_STATE)(1 << 1)};
+inline constexpr auto BattleThrust {(BATTLE_INPUT_STATE)(1 << 2)};
+inline constexpr auto BattleWeapon {(BATTLE_INPUT_STATE)(1 << 3)};
+inline constexpr auto BattleSpecial {(BATTLE_INPUT_STATE)(1 << 4)};
+inline constexpr auto BattleEscape {(BATTLE_INPUT_STATE)(1 << 5)};
+inline constexpr auto BattleDown {(BATTLE_INPUT_STATE)(1 << 6)};
+inline constexpr auto BattleThrustAlt {(BATTLE_INPUT_STATE)(1 << 7)};
 
 BATTLE_INPUT_STATE CurrentInputToBattleInput(uint16_t player);
 BATTLE_INPUT_STATE PulsedInputToBattleInput(uint16_t player);

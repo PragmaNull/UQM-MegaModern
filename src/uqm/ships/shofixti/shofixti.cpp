@@ -52,7 +52,7 @@ static constexpr auto MissileDamage {1};
 static constexpr auto SpecialEnergyCost {0};
 static constexpr auto SpecialSauce {180};
 static auto DestructRange() { return ResScale(SpecialSauce); }
-static constexpr auto MaxDestruction {(SpecialSauce / 10)};
+static constexpr auto MaxDestruction {SpecialSauce / 10};
 
 // Full game: Tanaka/Katana's damaged ships
 static constexpr auto NumLimpets {3};
@@ -157,7 +157,7 @@ static uint16_t initialize_standard_missile(Element* ShipPtr, HELEMENT MissileAr
 	return (1);
 }
 
-static constexpr auto DestructSwitch {((NumExplosionFrames * 3) - 3)};
+static constexpr auto DestructSwitch {(NumExplosionFrames * 3) - 3};
 
 static void destruct_preprocess(Element* ElementPtr)
 {

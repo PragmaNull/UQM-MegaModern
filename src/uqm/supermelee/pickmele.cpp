@@ -276,7 +276,7 @@ bool selectShipHuman(HumanInputContext* context, PickMeleeState* gms)
 	return SelectShip_processInput(gms, context->playerNr, inputState);
 }
 
-static constexpr auto ComputerSelectionDelay {(c_gameSecond / 2)};
+static constexpr auto ComputerSelectionDelay {c_gameSecond / 2};
 
 bool selectShipComputer(ComputerInputContext* context, PickMeleeState* gms)
 {

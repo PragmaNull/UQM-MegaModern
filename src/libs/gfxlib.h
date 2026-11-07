@@ -57,7 +57,7 @@ typedef DrawableDesc* DRAWABLE;
 typedef uint16_t TIME_VALUE;
 
 inline constexpr auto TimeShift {8};
-inline constexpr auto MaxTimeValue {((1 << TimeShift) + 1)};
+inline constexpr auto MaxTimeValue {(1 << TimeShift) + 1};
 
 
 static inline bool sameColor(Color c1, Color c2)

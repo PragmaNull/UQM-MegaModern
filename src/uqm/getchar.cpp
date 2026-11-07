@@ -136,7 +136,7 @@ void FlushCursorRect(void)
 	cursor.extent.width = 0;
 }
 
-static constexpr auto BlinkRate {(c_gameSecond / 32)};
+static constexpr auto BlinkRate {c_gameSecond / 32};
 
 static void FlashCursor(void)
 {

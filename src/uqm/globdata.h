@@ -217,15 +217,15 @@ inline auto YearsToKohrahVictory() { return (uqm::UQMOptions::read().deCleansing
 
 
 // Values for GameData.glob_flags:
-inline constexpr auto ReadSpeedMask {((1 << 3) - 1)};
+inline constexpr auto ReadSpeedMask {(1 << 3) - 1};
 inline constexpr auto NumReadSpeeds {5};
 inline constexpr auto CombatSpeedShift {6};
-inline constexpr auto CombatSpeedMask {(((1 << 2) - 1) << CombatSpeedShift)};
+inline constexpr auto CombatSpeedMask {((1 << 2) - 1) << CombatSpeedShift};
 inline constexpr auto NumCombatSpeeds {4};
 
-inline constexpr auto MusicDisabled {(1 << 3)};
-inline constexpr auto SoundDisabled {(1 << 4)};
-inline constexpr auto CyborgEnabled {(1 << 5)};
+inline constexpr auto MusicDisabled {1 << 3};
+inline constexpr auto SoundDisabled {1 << 4};
+inline constexpr auto CyborgEnabled {1 << 5};
 
 enum class ActivityKind : uint8_t
 {

@@ -29,7 +29,7 @@ inline constexpr auto StartYear {2155};
 // *not* on the system (or translated) timer
 // and is hard-coded to the original 24 fps
 inline constexpr auto ClockBaseFramerate {24};
-inline constexpr auto ClockFrameRate {(c_gameSecond / ClockBaseFramerate)};
+inline constexpr auto ClockFrameRate {c_gameSecond / ClockBaseFramerate};
 
 typedef HLINK HEVENT;
 

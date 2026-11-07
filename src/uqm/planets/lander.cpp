@@ -55,7 +55,7 @@
 // comparing speeds frame-by-frame and I came
 // up with 42 FPS. Can be changed later if it
 // causes any trouble.
-static constexpr auto PlanetSideRate {(c_gameSecond / 42)};
+static constexpr auto PlanetSideRate {c_gameSecond / 42};
 
 
 // This is a derived type from InputStateDesc.
@@ -160,7 +160,7 @@ static constexpr auto DamageCycle {6};
 static constexpr auto ExplosionLife {10};
 // How long to wait after the lander explodes, so that the full
 // gravity of the player's situation sinks in
-static constexpr auto ExplosionWait {(GameTicksPerSecond * 2)};
+static constexpr auto ExplosionWait {GameTicksPerSecond * 2};
 static constexpr auto ExplosionWaitFrames {TimePeriod {ExplosionWait} / PlanetSideRate};
 // The actual number of frame that the explosion and wait takes is:
 //   ExplosionLife * 3 + ExplosionWaitFrames
@@ -172,8 +172,8 @@ static auto SurfaceWidth() { return SisScreenWidth(); }
 static auto SurfaceHeight() { return (SisScreenHeight() - MapHeight() - MapBorderHeight()); }
 
 
-static constexpr auto KillCrew {(1 << 5)};
-static constexpr auto AddAtEnd {(1 << 4)};
+static constexpr auto KillCrew {1 << 5};
+static constexpr auto AddAtEnd {1 << 4};
 
 
 static auto LanderSpeedDenom() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 14 : 10); }
@@ -1679,7 +1679,7 @@ static void ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 	SetContext(OldContext);
 }
 
-static constexpr auto AnimFrameRate {(c_gameSecond / 30)};
+static constexpr auto AnimFrameRate {c_gameSecond / 30};
 
 static void animationInterframe(TimeCount* TimeIn, uint16_t periods)
 {

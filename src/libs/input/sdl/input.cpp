@@ -33,7 +33,7 @@
 #include "libs/graphics/sdl/pure.h"
 #include "core/stl/atomic.h"
 
-static constexpr auto Kbdbufsize {(1 << 8)};
+static constexpr auto Kbdbufsize {1 << 8};
 static int kbdhead = 0, kbdtail = 0;
 static uqm::UniChar kbdbuf[Kbdbufsize];
 static uqm::UniChar lastchar;

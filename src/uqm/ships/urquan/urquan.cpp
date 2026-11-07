@@ -52,7 +52,7 @@ static auto FighterOffset() { return ResScale(4); }
 static auto FighterSpeed() { return DisplayToWorld(ResScale(8)); }
 static constexpr auto OneWayFlight {125};
 static constexpr auto TrackThreshold {6};
-static constexpr auto FighterLife {(OneWayFlight + OneWayFlight + 150)};
+static constexpr auto FighterLife {OneWayFlight + OneWayFlight + 150};
 static constexpr auto FighterHits {1};
 static constexpr auto FighterMass {0};
 static constexpr auto FighterWeaponWait {8};

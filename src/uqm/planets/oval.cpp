@@ -31,12 +31,12 @@
 static constexpr auto NumQuads {4};
 static constexpr auto OffscreenPrim {PrimitiveType::Count};
 
-static constexpr auto FirstQuad {(1 << 0)};
-static constexpr auto SecondQuad {(1 << 1)};
-static constexpr auto ThirdQuad {(1 << 2)};
-static constexpr auto FourthQuad {(1 << 3)};
-static constexpr auto FullVisibility {(1 << 4)};
-static constexpr auto AllQuad {(FirstQuad | SecondQuad | ThirdQuad | FourthQuad)};
+static constexpr auto FirstQuad {1 << 0};
+static constexpr auto SecondQuad {1 << 1};
+static constexpr auto ThirdQuad {1 << 2};
+static constexpr auto FourthQuad {1 << 3};
+static constexpr auto FullVisibility {1 << 4};
+static constexpr auto AllQuad {FirstQuad | SecondQuad | ThirdQuad | FourthQuad};
 
 static bool PointOnScreen(int32_t x, int32_t y)
 {

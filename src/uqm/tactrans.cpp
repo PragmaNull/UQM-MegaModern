@@ -282,7 +282,7 @@ static void preprocess_dead_ship(Element* DeadShipPtr)
 	(void)DeadShipPtr; // unused argument
 }
 
-static constexpr auto MinDittyFrameCount {((c_gameSecond * 3) / BattleFrameRateTicks)};
+static constexpr auto MinDittyFrameCount {(c_gameSecond * 3) / BattleFrameRateTicks};
 
 void cleanup_dead_ship(Element* DeadShipPtr)
 {

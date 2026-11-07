@@ -26,35 +26,35 @@
 extern "C" {
 #endif
 
-inline constexpr auto BehaviorHunt {(0 << 0)};
-inline constexpr auto BehaviorFlee {(1 << 0)};
-inline constexpr auto BehaviorUnpredictable {(2 << 0)};
+inline constexpr auto BehaviorHunt {0 << 0};
+inline constexpr auto BehaviorFlee {1 << 0};
+inline constexpr auto BehaviorUnpredictable {2 << 0};
 
 inline constexpr auto BehaviorMask {0x03};
 inline constexpr auto BehaviorShift {0};
 
-inline constexpr auto AwarenessLow {(0 << 2)};
-inline constexpr auto AwarenessMedium {(1 << 2)};
-inline constexpr auto AwarenessHigh {(2 << 2)};
+inline constexpr auto AwarenessLow {0 << 2};
+inline constexpr auto AwarenessMedium {1 << 2};
+inline constexpr auto AwarenessHigh {2 << 2};
 
 inline constexpr auto AwarenessMask {0x0C};
-inline constexpr auto AwarenessShift {(BehaviorShift + 2)};
+inline constexpr auto AwarenessShift {BehaviorShift + 2};
 
-inline constexpr auto SpeedMotionless {(0 << 4)};
-inline constexpr auto SpeedSlow {(1 << 4)};
-inline constexpr auto SpeedMedium {(2 << 4)};
-inline constexpr auto SpeedFast {(3 << 4)};
+inline constexpr auto SpeedMotionless {0 << 4};
+inline constexpr auto SpeedSlow {1 << 4};
+inline constexpr auto SpeedMedium {2 << 4};
+inline constexpr auto SpeedFast {3 << 4};
 
 inline constexpr auto SpeedMask {0x30};
-inline constexpr auto SpeedShift {(AwarenessShift + 2)};
+inline constexpr auto SpeedShift {AwarenessShift + 2};
 
-inline constexpr auto DangerHarmless {(0 << 6)};
-inline constexpr auto DangerWeak {(1 << 6)};
-inline constexpr auto DangerNormal {(2 << 6)};
-inline constexpr auto DangerMonstrous {(3 << 6)};
+inline constexpr auto DangerHarmless {0 << 6};
+inline constexpr auto DangerWeak {1 << 6};
+inline constexpr auto DangerNormal {2 << 6};
+inline constexpr auto DangerMonstrous {3 << 6};
 
 inline constexpr auto DangerMask {0xC0};
-inline constexpr auto DangerShift {(SpeedShift + 2)};
+inline constexpr auto DangerShift {SpeedShift + 2};
 
 inline constexpr auto NumCreatureTypes {23};
 inline constexpr auto NumSpecialCreatureTypes {3};

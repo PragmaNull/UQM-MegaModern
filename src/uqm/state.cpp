@@ -22,7 +22,7 @@
 #include "globdata.h"
 #include "core/log/log.h"
 
-static constexpr auto StarBufsize {(NumSolarSystems * sizeof(uint32_t) + 3800 * (3 * sizeof(uint32_t)))};
+static constexpr auto StarBufsize {NumSolarSystems * sizeof(uint32_t) + 3800 * (3 * sizeof(uint32_t))};
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -225,10 +225,10 @@ void UninitPlanetInfo(void)
 	DeleteStateFile(StarinfoFile);
 }
 
-static constexpr auto OffsetSize {(sizeof(uint32_t))};
+static constexpr auto OffsetSize {sizeof(uint32_t)};
 //#define ScanRecordSize  (sizeof (uint32_t) * NUM_SCAN_TYPES)
 // JMS: Increased the size of scan record to house partially scavenged minerals.
-static constexpr auto ScanRecordSize {((sizeof(uint32_t) * *ScanType::Count) + (sizeof(uint8_t) * *ScanType::Count * 32))};
+static constexpr auto ScanRecordSize {(sizeof(uint32_t) * *ScanType::Count) + (sizeof(uint8_t) * *ScanType::Count * 32)};
 
 void GetPlanetInfo(void)
 {

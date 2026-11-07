@@ -38,7 +38,7 @@ static constexpr auto TurnWait {1};
 static constexpr auto ShipMass {4};
 
 // Howitzer
-static constexpr auto WeaponEnergyCost {(MaxEnergy / 3)};
+static constexpr auto WeaponEnergyCost {MaxEnergy / 3};
 static constexpr auto WeaponWait {4};
 
 static constexpr auto MissileSpeed {DisplayToWorld(30)};

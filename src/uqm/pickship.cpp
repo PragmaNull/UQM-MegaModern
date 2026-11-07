@@ -388,7 +388,7 @@ static HSTARSHIP GetArmadaStarShip(void)
 	return (hBattleShip);
 }
 
-static constexpr auto RunAwayFuelCost {(5 * FuelTankScale)};
+static constexpr auto RunAwayFuelCost {5 * FuelTankScale};
 
 // Get the next ship to use.
 HSTARSHIP GetEncounterStarShip(Starship* LastStarShipPtr, uint16_t which_player)

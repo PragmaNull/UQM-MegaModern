@@ -40,7 +40,7 @@ inline constexpr auto NumMeleeRows {2};
 inline auto NumMeleeColumns() { return SafeBool(7, 6); }
 //#define NumMeleeColumns() 7
 inline auto TrueMeleeFleetSize() { return (NumMeleeRows * NumMeleeColumns()); }
-inline constexpr auto MeleeFleetSize {(14)};
+inline constexpr auto MeleeFleetSize {14};
 inline auto IconWidth() { return ResScale(16); }
 inline auto IconHeight() { return ResScale(16); }
 
@@ -90,7 +90,7 @@ using MELEE_OPTIONS = MeleeMenuItem;
 extern "C" {
 #endif
 
-inline constexpr auto MeleeStateIndexDone {((uint16_t)-1)};
+inline constexpr auto MeleeStateIndexDone {(uint16_t)-1};
 
 struct MeleeState
 {

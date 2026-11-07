@@ -40,7 +40,7 @@ static constexpr auto MissileLife {10};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {1};
 static auto MissileOffset() { return ResScale(1); }
-static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
+static constexpr auto MissileRange {MissileSpeed * MissileLife};
 /* This is for the cyborg only. */
 
 // B.U.T.T.

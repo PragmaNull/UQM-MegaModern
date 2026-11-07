@@ -130,7 +130,7 @@ extern void uninit_communication(void);
 extern uint16_t InitCommunication(Conversation which_comm);
 extern void RaceCommunication(void);
 
-inline constexpr auto WaitTrackAll {((uint16_t)~0)};
+inline constexpr auto WaitTrackAll {(uint16_t)~0};
 extern void AlienTalkSegue(uint16_t wait_track);
 bool getLineWithinWidth(GfxText* pText, const char** startNext,
 						int16_t maxWidth, uint16_t maxChars);
@@ -160,10 +160,10 @@ extern void DeltaLastTime(TimePeriod diff);
 
 extern bool cwLock;
 
-inline constexpr auto UseAltFrame {(1 << 0)};
-inline constexpr auto UseAltColormap {(1 << 1)};
-inline constexpr auto UseAltSong {(1 << 2)};
-inline constexpr auto UseAltAll {(UseAltFrame | UseAltColormap | UseAltSong)};
+inline constexpr auto UseAltFrame {1 << 0};
+inline constexpr auto UseAltColormap {1 << 1};
+inline constexpr auto UseAltSong {1 << 2};
+inline constexpr auto UseAltAll {UseAltFrame | UseAltColormap | UseAltSong};
 extern uint8_t altResFlags;
 
 #if 0 //defined(__cplusplus)

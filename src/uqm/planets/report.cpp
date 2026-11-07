@@ -40,7 +40,7 @@
 
 static auto ColMultiplier() { return (isPC(uqm::UQMOptions::read().landerStyle) || IsPad() ? 7 : 6); }
 static auto NumCellCols() { return (UqmMapWidth / ColMultiplier()); }
-static constexpr auto NumCellRows {(Sc2MapHeight / 6)};
+static constexpr auto NumCellRows {Sc2MapHeight / 6};
 
 
 extern FRAME SpaceJunkFrame;

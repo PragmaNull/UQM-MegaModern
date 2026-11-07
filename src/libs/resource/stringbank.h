@@ -24,7 +24,7 @@
 #include <stdio.h>
 #endif
 
-inline constexpr auto StrbankChunkSize {(1024 - sizeof(void*) - sizeof(int))};
+inline constexpr auto StrbankChunkSize {1024 - sizeof(void*) - sizeof(int)};
 
 struct stringbank
 {

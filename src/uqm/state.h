@@ -41,16 +41,16 @@ extern void InitGroupInfo(bool FirstTime);
 extern void UninitGroupInfo(void);
 extern bool GetGroupInfo(uint32_t offset, uint8_t which_group);
 extern uint32_t PutGroupInfo(uint32_t offset, uint8_t which_group);
-inline constexpr auto GroupsRandom {((uint32_t)(0L))};
-inline constexpr auto GroupsAddNew {((uint32_t)(~0L))};
-inline constexpr auto GroupList {((uint8_t)0)};
-inline constexpr auto GroupInitIp {((uint8_t)~0)};
+inline constexpr auto GroupsRandom {(uint32_t)(0L)};
+inline constexpr auto GroupsAddNew {(uint32_t)(~0L)};
+inline constexpr auto GroupList {(uint8_t)0};
+inline constexpr auto GroupInitIp {(uint8_t)~0};
 // Initialize IP group list (ip_group_q) from the actual groups
 // (not GroupList) in one of the state files
 inline constexpr auto GroupLoadIp {GroupList};
 // Read IP group list into ip_group_q from the list entry
 // (GroupList) in one of the state files
-inline constexpr auto GroupSaveIp {((uint8_t)~0)};
+inline constexpr auto GroupSaveIp {(uint8_t)~0};
 // Write IP group list from ip_group_q to the list entry
 // (GroupList) in one of the state files
 extern void BuildGroups(void);
@@ -77,10 +77,10 @@ inline constexpr auto StarinfoFile {0};
 //"starinfo.dat"
 inline constexpr auto RandgrpinfoFile {1};
 //"randgrp.dat"
-inline constexpr auto RandBufsize {(4 * 1024)};
+inline constexpr auto RandBufsize {4 * 1024};
 inline constexpr auto DefgrpinfoFile {2};
 //"defgrp.dat"
-inline constexpr auto DefBufsize {(10 * 1024)};
+inline constexpr auto DefBufsize {10 * 1024};
 
 enum class InfoType
 {

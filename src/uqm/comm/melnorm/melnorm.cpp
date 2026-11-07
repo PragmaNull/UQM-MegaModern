@@ -483,7 +483,7 @@ struct TechSaleData
 
 // Right now, all techs have the same price.
 // Unless Hard Mode is enabled.
-static constexpr auto Techprice {(75 * BioCreditValueDefault)};
+static constexpr auto Techprice {75 * BioCreditValueDefault};
 
 TechSaleData tech_sale_catalog[] =
 	{

@@ -23,8 +23,8 @@
 #include "tfb_draw.h"
 
 typedef uint16_t FBK_FLAGS;
-inline constexpr auto FbkDirty {(1 << 0)};
-inline constexpr auto FbkImage {(1 << 1)};
+inline constexpr auto FbkDirty {1 << 0};
+inline constexpr auto FbkImage {1 << 1};
 
 struct GraphicsContextDesc
 {

@@ -26,8 +26,8 @@
 #include "options/OptionDefs.h"
 
 
-inline constexpr auto ClearSisRadar {(1 << 2)};
-inline constexpr auto DrawSisDisplay {(1 << 3)};
+inline constexpr auto ClearSisRadar {1 << 2};
+inline constexpr auto DrawSisDisplay {1 << 3};
 
 inline constexpr auto UndefinedDelta {0x7FFF};
 
@@ -38,8 +38,8 @@ inline constexpr auto NumModuleSlots {16};
 inline constexpr auto CrewPodCapacity {50};
 inline constexpr auto StorageBayCapacity {500}; /* km cubed */
 inline constexpr auto FuelTankScale {100};
-inline constexpr auto FuelTankCapacity {(50 * FuelTankScale)};
-inline constexpr auto HefuelTankCapacity {(100 * FuelTankScale)};
+inline constexpr auto FuelTankCapacity {50 * FuelTankScale};
+inline constexpr auto HefuelTankCapacity {100 * FuelTankScale};
 inline constexpr auto ModuleCostScale {50};
 
 inline constexpr auto CrewExpenseThreshold {1000};
@@ -48,8 +48,8 @@ inline constexpr auto CrewPerRow {5};
 inline constexpr auto SbayMassPerRow {50};
 
 inline constexpr auto MaxFuelBars {10};
-inline constexpr auto FuelVolumePerRow {(HefuelTankCapacity / MaxFuelBars)};
-inline constexpr auto FuelReserve {(10 * FuelTankScale)};
+inline constexpr auto FuelVolumePerRow {HefuelTankCapacity / MaxFuelBars};
+inline constexpr auto FuelReserve {10 * FuelTankScale};
 inline constexpr auto FuelCostRu {20};
 
 inline constexpr auto IpShipThrustIncrement {8};
@@ -190,8 +190,8 @@ struct FlagshipData
 	uint8_t SaveVersion;
 };
 
-inline constexpr auto OverrideLanderFlags {(1 << 7)};
-inline constexpr auto AfterBombInstalled {(1 << 7)};
+inline constexpr auto OverrideLanderFlags {1 << 7};
+inline constexpr auto AfterBombInstalled {1 << 7};
 
 extern void RepairSISBorder(void);
 extern void InitSISContexts(void);
@@ -214,14 +214,14 @@ extern void DrawSISTitle(const char* pStr);
 
 // Flags for DrawSISMessageEx (may be OR'ed):
 inline constexpr auto DsmeNone {0};
-inline constexpr auto DsmeSetfr {(1 << 0)};
+inline constexpr auto DsmeSetfr {1 << 0};
 // Set the flash rectangle to the message area.
-inline constexpr auto DsmeClearfr {(1 << 1)};
+inline constexpr auto DsmeClearfr {1 << 1};
 // Disable the flash rectangle.
-inline constexpr auto DsmeBlockcur {(1 << 2)};
+inline constexpr auto DsmeBlockcur {1 << 2};
 // Use a block cursor instead of an insertion point cursor,
 // when editing in the message field.
-inline constexpr auto DsmeMycolor {(1 << 3)};
+inline constexpr auto DsmeMycolor {1 << 3};
 // Use the current foreground color, instead of the default.
 extern bool DrawSISMessageEx(const char* pStr, int16_t CurPos,
 							 int16_t ExPos, uint16_t flags);

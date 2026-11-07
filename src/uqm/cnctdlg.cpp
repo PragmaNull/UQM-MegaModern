@@ -33,7 +33,7 @@
 static auto McdWidth() { return ResScale(260); }
 static auto McdHeight() { return ResScale(110); }
 
-static constexpr auto MenuFrameRate {(c_gameSecond / 20)};
+static constexpr auto MenuFrameRate {c_gameSecond / 20};
 
 struct ConnectDialogState
 {

@@ -30,55 +30,55 @@ extern "C" {
 // the image to the state it was in before the animation began. Which
 // frame is neutral depends on the animation type.
 // Animation types:
-inline constexpr auto RandomAnim {(1 << 0)};
+inline constexpr auto RandomAnim {1 << 0};
 // The next index is randomly chosen.
 // The first frame is neutral
-inline constexpr auto CircularAnim {(1 << 1)};
+inline constexpr auto CircularAnim {1 << 1};
 // After the last index has been reached, the animation starts over.
 // The last frame is neutral. This complicates the animation task.
-inline constexpr auto YoyoAnim {(1 << 2)};
+inline constexpr auto YoyoAnim {1 << 2};
 // After the last index has been reached, the order that the
 // animation frames are used is reversed.
 // The first frame is neutral
-inline constexpr auto AnimMask {(RandomAnim | CircularAnim | YoyoAnim)};
+inline constexpr auto AnimMask {RandomAnim | CircularAnim | YoyoAnim};
 // Mask of all animation types.
 // Static frames do not have any of these flags set.
 
-inline constexpr auto WaitTalking {(1 << 3)};
+inline constexpr auto WaitTalking {1 << 3};
 // This is set in AlienTalkDesc when the talking animation is active
 // or should be active.
 // In AlienAmbientArray, this is set for those ambient animations
 // which can not be active while the talking animation is active.
 // Such animations stop at the end of the current animation cycle
 // when the talking animation activates.
-inline constexpr auto PauseTalking {(1 << 4)};
+inline constexpr auto PauseTalking {1 << 4};
 // Set in AlienTalkDesc when we do not want the talking animation
-inline constexpr auto TalkIntro {(1 << 5)};
+inline constexpr auto TalkIntro {1 << 5};
 // In AlienTransitionDesc: indicates a transition to talking state
-inline constexpr auto TalkDone {(1 << 6)};
+inline constexpr auto TalkDone {1 << 6};
 // In AlienTransitionDesc: indicates a transition to silent state
 // In AlienTalkDesc: signals the end of talking animation
 
-inline constexpr auto AnimDisabled {(1L << 8)}; // BW (needed for news anchor and animated background)
+inline constexpr auto AnimDisabled {1L << 8}; // BW (needed for news anchor and animated background)
 
-inline constexpr auto FreezeTalking {(1 << 9)};
+inline constexpr auto FreezeTalking {1 << 9};
 // Kr (needed for blocking animations that are WaitTalking even
 // if talking itself is stopped. Used only in PS-DOS style scrolling)
 
-inline constexpr auto RestartAllAfter {(1 << 10)};
-inline constexpr auto StopAllAfter {(1 << 11)};
+inline constexpr auto RestartAllAfter {1 << 10};
+inline constexpr auto StopAllAfter {1 << 11};
 // Kruzen: Needed for OneShotAnim in HdResolutionFactor to define - should we restart
 // other ambient animations or no
 
-inline constexpr auto ImmumeToRestart {(1 << 12)};
-inline constexpr auto ImmumeToStop {(1 << 13)};
+inline constexpr auto ImmumeToRestart {1 << 12};
+inline constexpr auto ImmumeToStop {1 << 13};
 // Kruzen: Some animations needed to be handled individually
 
-inline constexpr auto AlphaMaskAnim {(1 << 14)};
+inline constexpr auto AlphaMaskAnim {1 << 14};
 // Kruzen: New type of animations: Draw transparent frames
 // on top of all (sets fullRedraw to true
 
-inline constexpr auto TriggerFullRedraw {(1 << 15)};
+inline constexpr auto TriggerFullRedraw {1 << 15};
 // When animation plays - it triggers full redraw
 
 
@@ -171,12 +171,12 @@ struct AnimSequence;
 inline constexpr auto CommColormapIndex {10};
 inline constexpr auto MaxFilters {3}; // Could be more, but for now more that enough
 
-inline constexpr auto TurnOffOft {(1 << 0)};   // on full transparency
-inline constexpr auto TurnOffOfo {(1 << 1)};   // on full opacity
-inline constexpr auto FramedFilter {(1 << 2)}; // filter draws frame and nothing else
-inline constexpr auto FilterDisabled {(1 << 3)};
-inline constexpr auto SwitchOffAnims {(1 << 4)};
-inline constexpr auto SwitchOnAnims {(1 << 5)};
+inline constexpr auto TurnOffOft {1 << 0};	 // on full transparency
+inline constexpr auto TurnOffOfo {1 << 1};	 // on full opacity
+inline constexpr auto FramedFilter {1 << 2}; // filter draws frame and nothing else
+inline constexpr auto FilterDisabled {1 << 3};
+inline constexpr auto SwitchOffAnims {1 << 4};
+inline constexpr auto SwitchOnAnims {1 << 5};
 
 struct AnimFilter
 {

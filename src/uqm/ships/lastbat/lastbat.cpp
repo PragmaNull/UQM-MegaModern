@@ -37,13 +37,13 @@ static constexpr auto MaxThrust {0};
 static constexpr auto ThrustIncrement {0};
 static constexpr auto TurnWait {0};
 static constexpr auto ThrustWait {0};
-static constexpr auto ShipMass {(MaxShipMass * 10)};
+static constexpr auto ShipMass {MaxShipMass * 10};
 static constexpr auto TurretWait {0}; /* Controls animation of the Sa-Matra's central
                        * 'furnace', a new frame is displayed once every
                        * TurretWait frames. */
 
 // Yellow comet
-static constexpr auto WeaponWait {((c_gameSecond / BattleFrameRateTicks) * 10)};
+static constexpr auto WeaponWait {(c_gameSecond / BattleFrameRateTicks) * 10};
 static constexpr auto CometDamage {2};
 static constexpr auto CometOffset {0};
 static auto CometHits() { return difficultyCase(10, 12, 15); }
@@ -56,7 +56,7 @@ static constexpr auto WeaponEnergyCost {2};
 		 * actually used. */
 
 // Green sentinel
-static constexpr auto SpecialWait {((c_gameSecond / BattleFrameRateTicks) * 3)};
+static constexpr auto SpecialWait {(c_gameSecond / BattleFrameRateTicks) * 3};
 static auto SentinelSpeed() { return DisplayToWorld(ResScale(8)); }
 static constexpr auto SentinelLife {2};
 static constexpr auto SentinelOffset {0};

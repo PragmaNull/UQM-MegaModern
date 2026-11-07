@@ -52,7 +52,7 @@ static constexpr auto FragmentLife {10};
 static auto FragmentRange() { return (FragmentLife * FragmentSpeed()); }
 
 // F.R.I.E.D.
-static constexpr auto SpecialEnergyCost {(MaxEnergySize / 2)};
+static constexpr auto SpecialEnergyCost {MaxEnergySize / 2};
 static constexpr auto SpecialWait {9};
 static auto GasOffset() { return ResScale(2); }
 static auto GasSpeed() { return ResScale(16); }

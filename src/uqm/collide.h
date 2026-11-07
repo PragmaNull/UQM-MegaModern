@@ -29,7 +29,7 @@ extern "C" {
 inline constexpr auto CollisionTurnWait {1};
 inline constexpr auto CollisionThrustWait {3};
 
-inline constexpr auto SkipCollision {(Nonsolid | Disappearing)};
+inline constexpr auto SkipCollision {Nonsolid | Disappearing};
 constexpr auto CollidingElement(const auto& e) { return (!((e)->state_flags & SkipCollision)); }
 constexpr auto CollisionPossible(const auto& e0, const auto& e1) { return (CollidingElement(e0) && (!(((e1)->state_flags & (e0)->state_flags) & Collision) && ((!(((e1)->state_flags & (e0)->state_flags) & IgnoreSimilar) || (e1)->pParent != (e0)->pParent)) && ((e1)->mass_points || (e0)->mass_points))); }
 

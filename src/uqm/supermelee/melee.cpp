@@ -1382,8 +1382,8 @@ static void Select(MELEE_OPTIONS opt)
 	}
 }
 
-static constexpr auto FlashRate {(c_gameSecond / 9)};
-static constexpr auto BlinkRate {(c_gameSecond / 16)};
+static constexpr auto FlashRate {c_gameSecond / 9};
+static constexpr auto BlinkRate {c_gameSecond / 16};
 
 void Melee_flashSelection(MeleeState* pMS)
 {

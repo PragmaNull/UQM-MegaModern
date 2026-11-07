@@ -48,7 +48,7 @@ static constexpr auto TrackWait {2};
 
 // Blazer
 static constexpr auto SpecialEnergyCost {2};
-static constexpr auto BlazerDegeneration {(-1)};
+static constexpr auto BlazerDegeneration {-1};
 static constexpr auto SpecialWait {0};
 static auto BlazerOffset() { return ResScale(10); }
 static auto BlazerThrust() { return ResScale(60); }

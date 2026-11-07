@@ -705,7 +705,7 @@ static inline void Flash_prepareCacheFrame(FlashContext* context, uint16_t index
 	}
 }
 
-static constexpr auto BlinkRate {(c_gameSecond / 18)};
+static constexpr auto BlinkRate {c_gameSecond / 18};
 
 Color GetFlashPCColor(void)
 {

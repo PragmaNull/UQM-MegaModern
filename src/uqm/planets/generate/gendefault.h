@@ -27,11 +27,11 @@
 extern "C" {
 #endif
 
-inline constexpr auto SmallRocky {(1 << 0)};
-inline constexpr auto LargeRocky {(1 << 1)};
-inline constexpr auto AllRocky {(1 << 2)};
-inline constexpr auto OnlyLarge {(1 << 3)};
-inline constexpr auto OnlyGas {(1 << 4)};
+inline constexpr auto SmallRocky {1 << 0};
+inline constexpr auto LargeRocky {1 << 1};
+inline constexpr auto AllRocky {1 << 2};
+inline constexpr auto OnlyLarge {1 << 3};
+inline constexpr auto OnlyGas {1 << 4};
 
 
 bool GenerateDefault_initNpcs(SolarSystemState* solarSys);

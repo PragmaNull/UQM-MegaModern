@@ -40,7 +40,7 @@ extern PRIM_LINKS DisplayLinks;
 static constexpr auto BigStarCount {30};
 static constexpr auto MedStarCount {60};
 static constexpr auto SmlStarCount {90};
-static constexpr auto NumStars {(BigStarCount + MedStarCount + SmlStarCount)};
+static constexpr auto NumStars {BigStarCount + MedStarCount + SmlStarCount};
 
 LargePoint SpaceOrg;
 static LargePoint log_star_array[NumStars];

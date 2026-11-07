@@ -1506,7 +1506,7 @@ static void DMS_SetMode(MenuState* pMS, DmsMode mode)
 	}
 }
 
-static constexpr auto ModifyCrewFlag {(1 << 8)};
+static constexpr auto ModifyCrewFlag {1 << 8};
 // Helper function for DoModifyShips(), called when the player presses the
 // special button.
 // It works both when the cursor is over an escort ship, while not editing

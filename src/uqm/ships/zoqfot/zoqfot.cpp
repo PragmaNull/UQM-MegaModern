@@ -42,7 +42,7 @@ static constexpr auto MissileOffset {0};
 static constexpr auto MissileSpeed {DisplayToWorld(10)};
 /* Used by the cyborg only. */
 static constexpr auto MissileLife {10};
-static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
+static constexpr auto MissileRange {MissileSpeed * MissileLife};
 static constexpr auto MissileDamage {1};
 static constexpr auto MissileHits {1};
 static constexpr auto SpitWait {2};
@@ -50,7 +50,7 @@ static constexpr auto SpitWait {2};
 		 * The animation advances one frame every SpitWait frames. */
 
 // Tongue
-static constexpr auto SpecialEnergyCost {(MaxEnergy * 3 / 4)};
+static constexpr auto SpecialEnergyCost {MaxEnergy * 3 / 4};
 static constexpr auto SpecialWait {6};
 static constexpr auto TongueSpeed {0};
 static constexpr auto TongueHits {1};

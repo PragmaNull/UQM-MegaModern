@@ -45,8 +45,8 @@
 #include "starcon.h"
 #include "libs/graphics/gfx_common.h"
 
-static constexpr auto AccelerationIncrement {(c_gameSecond / 12)};
-static constexpr auto MenuRepeatDelay {(c_gameSecond / 2)};
+static constexpr auto AccelerationIncrement {c_gameSecond / 12};
+static constexpr auto MenuRepeatDelay {c_gameSecond / 2};
 
 struct InputStateDesc
 {

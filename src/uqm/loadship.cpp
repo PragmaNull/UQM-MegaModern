@@ -70,7 +70,7 @@ SpeciesId* escort = &(ship[NumCapitals]);
 static constexpr auto NumEscorts {9};
 SpeciesId* scout = &(ship[NumCapitals + NumEscorts]);
 static constexpr auto NumScouts {8};
-static constexpr auto NumShips {(NumCapitals + NumEscorts + NumScouts)};
+static constexpr auto NumShips {NumCapitals + NumEscorts + NumScouts};
 
 // Returns the array index in ship array for a specific SpeciesID.
 static inline uint16_t ShipIndex(SpeciesId SpeciesID)

@@ -47,8 +47,8 @@ inline constexpr auto MaxHyperShips {7};
 //   in the savegames: num_ships occupy the low nibble and flags the high one.
 //   Bits 4 and 5 are available for more flags in the savegames,
 //   and bits 0-3 available in the game but will not be saved.
-inline constexpr auto OneShotEncounter {(1 << 7)};
-inline constexpr auto EncounterReforming {(1 << 6)};
+inline constexpr auto OneShotEncounter {1 << 7};
+inline constexpr auto EncounterReforming {1 << 6};
 
 
 struct BriefShipInfo

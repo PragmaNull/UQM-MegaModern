@@ -475,7 +475,7 @@ inline constexpr auto ScanBiologicalTextColor {BuildColor(MakeRgb15(0x00, 0x0E, 
 
 inline constexpr auto ScanPcTitleColor6014 {BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x3B)};
 
-inline constexpr auto OutlineColor {(BuildColorRgba(0x00, 0x00, 0x00, 0x66))};
+inline constexpr auto OutlineColor {BuildColorRgba(0x00, 0x00, 0x00, 0x66)};
 
 // === Super-Melee ToolTips ===
 

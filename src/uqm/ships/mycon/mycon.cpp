@@ -39,7 +39,7 @@ static constexpr auto MissileOffset {0};
 static constexpr auto NumPlasmas {11};
 static constexpr auto NumGloballs {8};
 static constexpr auto PlasmaDuration {13};
-static constexpr auto MissileLife {(NumPlasmas * PlasmaDuration)};
+static constexpr auto MissileLife {NumPlasmas * PlasmaDuration};
 static auto MissileSpeed() { return DisplayToWorld(ResScale(8)); }
 static constexpr auto MissileDamage {10};
 static constexpr auto TrackWait {1};

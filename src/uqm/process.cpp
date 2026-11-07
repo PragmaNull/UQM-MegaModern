@@ -319,7 +319,7 @@ static uint16_t CalcReduction(int32_t dx, int32_t dy)
 	return (next_reduction);
 }
 
-static constexpr auto ZoomJump {((1 << ZoomShift) >> 3)};
+static constexpr auto ZoomJump {(1 << ZoomShift) >> 3};
 
 static ViewState CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
 						  int32_t* pdx, int32_t* pdy, uint16_t ships_alive)

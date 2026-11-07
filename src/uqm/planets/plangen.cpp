@@ -921,8 +921,8 @@ static auto ShieldHalo() { return ResScale(playerInPlanetOrbit() ? 7 : 14); }
 static auto ShieldRadius() { return (Radius() + ShieldHalo()); }
 
 
-static constexpr auto ShieldHaloGlow {(ShieldGlowComp + ShieldReflectComp)};
-static constexpr auto ShieldHaloGlowMin {(ShieldHaloGlow >> 2)};
+static constexpr auto ShieldHaloGlow {ShieldGlowComp + ShieldReflectComp};
+static constexpr auto ShieldHaloGlowMin {ShieldHaloGlow >> 2};
 
 static FRAME CreateShieldMask(uint16_t radius)
 {
@@ -1037,7 +1037,7 @@ static auto ThrobHalfCycle() { return (ThrobCycle() >> 1); }
 
 static constexpr auto ThrobMaxLevel {256};
 static constexpr auto ThrobMinLevel {100};
-static constexpr auto ThrobDLevel {(ThrobMaxLevel - ThrobMinLevel)};
+static constexpr auto ThrobDLevel {ThrobMaxLevel - ThrobMinLevel};
 
 static inline int shield_level(int offset)
 {
@@ -1522,7 +1522,7 @@ void Render3DOPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset,
 
 static constexpr auto RangeShift {6};
 
-static constexpr auto DitherVariance {(1 << (RangeShift - 3))};
+static constexpr auto DitherVariance {1 << (RangeShift - 3)};
 
 static void DitherMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 {
@@ -2169,7 +2169,7 @@ static inline int TopoVarianceCalc(int factor)
 }
 
 static constexpr auto AvgVariance {250};
-static constexpr auto StepRange {(4 - 1)};
+static constexpr auto StepRange {4 - 1};
 
 static void TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 						int fault_var)
@@ -2400,9 +2400,9 @@ static void TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 // Lots of pure Voodoo here ;)
 //  the goal is a 3D illusion, not mathematically correct lighting
 
-static constexpr auto LmapAvgBlock {((Sc2MapHeight + 64) / 5)};
-static constexpr auto LmapMaxDist {((LmapAvgBlock + 1) >> 1)};
-static constexpr auto LmapWeightThres {(LmapMaxDist * 2 / 3)};
+static constexpr auto LmapAvgBlock {(Sc2MapHeight + 64) / 5};
+static constexpr auto LmapMaxDist {(LmapAvgBlock + 1) >> 1};
+static constexpr auto LmapWeightThres {LmapMaxDist * 2 / 3};
 
 struct elev_block_t
 {
@@ -2466,7 +2466,7 @@ static inline void get_vblock_avg(elev_block_t* pblk, int8_t* pTopo, int x, int 
 	pblk->avg = avg / (y1 - y0);
 }
 
-static constexpr auto LmapBlocks {(2 * LmapMaxDist + 1)};
+static constexpr auto LmapBlocks {2 * LmapMaxDist + 1};
 
 // See description above
 static void GenerateLightMap(int8_t* pTopo, int w, int h)

@@ -104,8 +104,8 @@ inline constexpr auto MuteVolume {0};
 inline constexpr auto FirstSfxChannel {0};
 inline constexpr auto MinFxChannel {1};
 inline constexpr auto NumFxChannels {4};
-inline constexpr auto LastSfxChannel {(MinFxChannel + NumFxChannels - 1)};
-inline constexpr auto NumSfxChannels {(MinFxChannel + NumFxChannels)};
+inline constexpr auto LastSfxChannel {MinFxChannel + NumFxChannels - 1};
+inline constexpr auto NumSfxChannels {MinFxChannel + NumFxChannels};
 
 extern void PLRPlaySong(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority);
 extern void PLRStop(MUSIC_REF MusicRef);
@@ -131,7 +131,7 @@ extern bool SoundPlaying(void);
 extern uint32_t PLRGetPos(void);
 
 extern void WaitForSoundEnd(uint16_t Channel);
-inline constexpr auto TfbsoundWaitAll {((uint16_t)~0)};
+inline constexpr auto TfbsoundWaitAll {(uint16_t)~0};
 
 extern TimeCount FadeMusic(uint8_t end_vol, TimePeriod TimeInterval);
 extern uint8_t GetCurrMusicVol(void);

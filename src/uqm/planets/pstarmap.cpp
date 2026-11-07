@@ -82,9 +82,9 @@ static void SwapPlates(Nameplate* n1, Nameplate* n2)
 	*n2 = temp;
 }
 
-static constexpr auto IgnoreMovingSoi {(1 << 5)};
-static constexpr auto PreDeathSoi {(1 << 6)};
-static constexpr auto DeathSoi {(1 << 7)};
+static constexpr auto IgnoreMovingSoi {1 << 5};
+static constexpr auto PreDeathSoi {1 << 6};
+static constexpr auto DeathSoi {1 << 7};
 
 static GfxPoint cursorLoc;
 static GfxPoint mapOrigin;
@@ -2679,9 +2679,9 @@ static void AdvancedAutoPilot(void)
 	}
 }
 
-static constexpr auto MinAccelDelay {(c_gameSecond / 60)};
-static constexpr auto MaxAccelDelay {(c_gameSecond / 8)};
-static constexpr auto StepAccelDelay {(c_gameSecond / 120)};
+static constexpr auto MinAccelDelay {c_gameSecond / 60};
+static constexpr auto MaxAccelDelay {c_gameSecond / 8};
+static constexpr auto StepAccelDelay {c_gameSecond / 120};
 
 static bool DoMoveCursor(MenuState* pMS)
 {

@@ -66,7 +66,7 @@ static inline uint32_t VelocitySquared(int16_t dx, int16_t dy)
 }
 
 inline constexpr auto VelocityShift {5};
-inline constexpr auto VelocityScale {(1 << VelocityShift)};
+inline constexpr auto VelocityScale {1 << VelocityShift};
 
 
 constexpr auto VelocityToWorld(const auto& v) { return ((v) >> VelocityShift); }

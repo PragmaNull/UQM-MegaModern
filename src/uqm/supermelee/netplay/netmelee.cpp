@@ -523,7 +523,7 @@ bool localReadyConnections(NetConnection_ReadyCallback readyCallback,
 
 /////////////////////////////////////////////////////////////////////////////
 
-static constexpr auto NetworkPollDelay {(GameTicksPerSecond / 24)};
+static constexpr auto NetworkPollDelay {GameTicksPerSecond / 24};
 
 typedef struct NegotiateReadyState NegotiateReadyState;
 struct NegotiateReadyState

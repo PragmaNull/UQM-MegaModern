@@ -89,7 +89,7 @@ inline constexpr auto StarColorShift {5}; /* STAR_TYPE_SHIFT + 2 */
 inline constexpr auto StarColorMask {(uint8_t)(0xFF << StarColorShift)};
 inline constexpr auto StarTypeMask {(uint8_t)((0xFF << StarTypeShift) & ~StarColorMask)};
 inline constexpr auto StarOwnerMask {(uint8_t)((0xFF << StarOwnerShift) & ~(StarColorMask | StarTypeMask))};
-inline constexpr auto StarUnknownMask {(StarOwnerMask & ~*SystemOwner::Player)};
+inline constexpr auto StarUnknownMask {StarOwnerMask & ~*SystemOwner::Player};
 
 constexpr auto MakeStar(const auto& t, const auto& c, const auto& o) { return (uint8_t)((((uint8_t)(t) << StarTypeShift) & StarTypeMask) | (((uint8_t)(c) << StarColorShift) & StarColorMask) | (((uint8_t)(o) << StarOwnerShift) & StarOwnerMask)); }
 constexpr auto StarType(const auto& f) { return static_cast<StellarSize>(((f)&StarTypeMask) >> StarTypeShift); }
@@ -99,9 +99,9 @@ constexpr auto StarOwner(const auto& f) { return static_cast<SystemOwner>(((f)&S
 
 inline constexpr auto PlanSizeMask {0x03};
 
-inline constexpr auto TopoAlgo {(0 << 2)};
-inline constexpr auto CrateredAlgo {(1 << 2)};
-inline constexpr auto GasGiantAlgo {(2 << 2)};
+inline constexpr auto TopoAlgo {0 << 2};
+inline constexpr auto CrateredAlgo {1 << 2};
+inline constexpr auto GasGiantAlgo {2 << 2};
 inline constexpr auto PlanAlgoMask {0x0C};
 
 constexpr auto Plansize(const auto& type) { return static_cast<PlanetSize>((type)&PlanSizeMask); }
@@ -201,10 +201,10 @@ enum class PlanetType
 template <>
 inline constexpr bool IsArithmeticEnum<PlanetType> = true;
 
-inline constexpr auto NumberOfSmallRockyWorlds {(PlanetType::LastSmallRocky - PlanetType::FirstSmallRocky + 1)};
-inline constexpr auto NumberOfLargeRockyWorlds {(PlanetType::LastLargeRocky - PlanetType::FirstLargeRocky + 1)};
-inline constexpr auto NumberOfRockyWorlds {(NumberOfSmallRockyWorlds + NumberOfLargeRockyWorlds)};
-inline constexpr auto NumberOfGasGiants {(PlanetType::LastGasGiant - PlanetType::FirstGasGiant + 1)};
+inline constexpr auto NumberOfSmallRockyWorlds {PlanetType::LastSmallRocky - PlanetType::FirstSmallRocky + 1};
+inline constexpr auto NumberOfLargeRockyWorlds {PlanetType::LastLargeRocky - PlanetType::FirstLargeRocky + 1};
+inline constexpr auto NumberOfRockyWorlds {NumberOfSmallRockyWorlds + NumberOfLargeRockyWorlds};
+inline constexpr auto NumberOfGasGiants {PlanetType::LastGasGiant - PlanetType::FirstGasGiant + 1};
 
 // TODO: This struct is highly alignment and padding dependent and
 //   should not be used! The data is loaded as binary from files and

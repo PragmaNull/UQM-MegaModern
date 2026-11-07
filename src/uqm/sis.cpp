@@ -1985,7 +1985,7 @@ static void AutoPilotTextLogic(void)
 	DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
 }
 
-static constexpr auto BlinkRate {(c_gameSecond * 3 / 40)}; // 9 @ 120 ticks/second
+static constexpr auto BlinkRate {c_gameSecond * 3 / 40}; // 9 @ 120 ticks/second
 
 void DrawAutoPilotMessage(bool Reset)
 {

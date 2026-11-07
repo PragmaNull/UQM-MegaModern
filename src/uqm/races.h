@@ -42,38 +42,38 @@ inline constexpr auto MaxShipsPerSide {14};
 
 /* ShipInfoDesc.ship_flags - ship specific flags */
 /* bits 0 and 1 are now available */
-inline constexpr auto SeekingWeapon {(1 << 2)};
-inline constexpr auto SeekingSpecial {(1 << 3)};
-inline constexpr auto PointDefense {(1 << 4)};
+inline constexpr auto SeekingWeapon {1 << 2};
+inline constexpr auto SeekingSpecial {1 << 3};
+inline constexpr auto PointDefense {1 << 4};
 /* Ship has some point-defense capabilities */
-inline constexpr auto ImmediateWeapon {(1 << 5)};
-inline constexpr auto CrewImmune {(1 << 6)};
-inline constexpr auto FiresFore {(1 << 7)};
-inline constexpr auto FiresRight {(1 << 8)};
-inline constexpr auto FiresAft {(1 << 9)};
-inline constexpr auto FiresLeft {(1 << 10)};
-inline constexpr auto ShieldDefense {(1 << 11)};
-inline constexpr auto DontChase {(1 << 12)};
-inline constexpr auto PlayerCaptain {(1 << 13)};
+inline constexpr auto ImmediateWeapon {1 << 5};
+inline constexpr auto CrewImmune {1 << 6};
+inline constexpr auto FiresFore {1 << 7};
+inline constexpr auto FiresRight {1 << 8};
+inline constexpr auto FiresAft {1 << 9};
+inline constexpr auto FiresLeft {1 << 10};
+inline constexpr auto ShieldDefense {1 << 11};
+inline constexpr auto DontChase {1 << 12};
+inline constexpr auto PlayerCaptain {1 << 13};
 /* The protagonist himself is on board. He gets a different color. */
 
 
 typedef uint16_t STATUS_FLAGS;
 
 /* STATUS_FLAGS - heat of battle specific flags */
-inline constexpr auto LeftFlag {(1 << 0)};
-inline constexpr auto RightFlag {(1 << 1)};
-inline constexpr auto ThrustFlag {(1 << 2)};
-inline constexpr auto WeaponFlag {(1 << 3)};
-inline constexpr auto SpecialFlag {(1 << 4)};
-inline constexpr auto LowOnEnergy {(1 << 5)};
-inline constexpr auto ShipBeyondMaxSpeed {(1 << 6)};
-inline constexpr auto ShipAtMaxSpeed {(1 << 7)};
-inline constexpr auto ShipInGravityWell {(1 << 8)};
-inline constexpr auto PlayVictoryDitty {(1 << 9)};
+inline constexpr auto LeftFlag {1 << 0};
+inline constexpr auto RightFlag {1 << 1};
+inline constexpr auto ThrustFlag {1 << 2};
+inline constexpr auto WeaponFlag {1 << 3};
+inline constexpr auto SpecialFlag {1 << 4};
+inline constexpr auto LowOnEnergy {1 << 5};
+inline constexpr auto ShipBeyondMaxSpeed {1 << 6};
+inline constexpr auto ShipAtMaxSpeed {1 << 7};
+inline constexpr auto ShipInGravityWell {1 << 8};
+inline constexpr auto PlayVictoryDitty {1 << 9};
 
-inline constexpr auto ShofixtiExplosion {(1 << 10)};
-inline constexpr auto AndrosynCometToggle {(1 << 11)};
+inline constexpr auto ShofixtiExplosion {1 << 10};
+inline constexpr auto AndrosynCometToggle {1 << 11};
 
 /* These track the old resource package orderings for the ship resource indices */
 enum class SpeciesId
@@ -196,7 +196,7 @@ struct ShipInfoDesc
 	FRAME melee_icon;
 };
 
-inline constexpr auto InfiniteRadius {((uint16_t)~0)};
+inline constexpr auto InfiniteRadius {(uint16_t)~0};
 
 struct FleetStatus
 {
@@ -313,7 +313,7 @@ constexpr auto UnlockStarShip(const auto& pq, const auto& h) { return UnlockLink
 
 typedef HLINK HSHIPFRAG;
 
-inline constexpr auto InfiniteFleet {((uint16_t)~0)};
+inline constexpr auto InfiniteFleet {(uint16_t)~0};
 
 struct ShipFragment : ShipBase
 {

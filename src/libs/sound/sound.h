@@ -29,10 +29,10 @@
 
 
 inline constexpr auto FirstSfxSource {0};
-inline constexpr auto LastSfxSource {(FirstSfxSource + NumSfxChannels - 1)};
-inline constexpr auto MusicSource {(LastSfxSource + 1)};
-inline constexpr auto SpeechSource {(MusicSource + 1)};
-inline constexpr auto NumSoundsources {(SpeechSource + 1)};
+inline constexpr auto LastSfxSource {FirstSfxSource + NumSfxChannels - 1};
+inline constexpr auto MusicSource {LastSfxSource + 1};
+inline constexpr auto SpeechSource {MusicSource + 1};
+inline constexpr auto NumSoundsources {SpeechSource + 1};
 
 struct TFB_SoundTag
 {

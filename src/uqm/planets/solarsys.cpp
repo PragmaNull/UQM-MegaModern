@@ -66,13 +66,13 @@
 //#define DEBUG_SOLARSYS
 //#define SMOOTH_SYSTEM_ZOOM  1
 
-static constexpr auto IpFrameRate {(c_gameSecond / 30)};
+static constexpr auto IpFrameRate {c_gameSecond / 30};
 
 // BW: those do not depend on the resolution because numbers too small
 // cause crashes in the generation and rendering
-static constexpr auto SmallMoonDiameter {(7 << 2)};
-static constexpr auto LargeMoonDiameter {(11 << 2)};
-static constexpr auto PlanetDiameter {(29 << 2)};
+static constexpr auto SmallMoonDiameter {7 << 2};
+static constexpr auto LargeMoonDiameter {11 << 2};
+static constexpr auto PlanetDiameter {29 << 2};
 constexpr auto GeneratePerimeter(const auto& a) { return (a * OriginalMapWidth() / OriginalMapHeight()); }
 
 static bool DoIpFlight(SolarSystemState* pSS);
@@ -131,7 +131,7 @@ static uint16_t PBodySize[7] = {0, 3, 4, 7, 11, 15, 29};
 // There are actually only 6 sizes, but 0 is reached
 // only for WORLD_TYPE_SPECIAL and '!= 0' check prevents
 // from nuking SpaceJunkFrame in SetPlanetOldFrame()
-static constexpr auto UndefinedOffset {((uint8_t)~0)};
+static constexpr auto UndefinedOffset {(uint8_t)~0};
 
 uqstl::optional<uqm::UQMRandom> SysGenRNG {};
 uqm::UQMRandom* SysGenRNGDebug {};

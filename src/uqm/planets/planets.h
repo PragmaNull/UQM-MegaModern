@@ -88,7 +88,7 @@ inline auto MaxHoldBars() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 
 constexpr auto ScaleRadius(const auto& r) { return ((r) << 6); }
 constexpr auto UnscaleRadius(const auto& r) { return ((r) >> 6); }
 inline constexpr auto MaxZoomRadius {ScaleRadius(128)};
-inline constexpr auto MinZoomRadius {(MaxZoomRadius >> 3)};
+inline constexpr auto MinZoomRadius {MaxZoomRadius >> 3};
 inline constexpr auto EarthRadius {ScaleRadius(8)};
 inline constexpr auto EarthHours {240};
 
@@ -391,9 +391,9 @@ bool worldIsMoon(const SolarSystemState* solarSys,
 uint16_t planetIndex(const SolarSystemState* solarSys,
 					 const SystemPlanet* world);
 uint16_t moonIndex(const SolarSystemState* solarSys, const SystemPlanet* moon);
-inline constexpr auto MatchPlanet {((uint8_t)-1)};
-inline constexpr auto MatchPbyte {((uint8_t)-2)};
-inline constexpr auto MatchMbyte {((uint8_t)-3)};
+inline constexpr auto MatchPlanet {(uint8_t)-1};
+inline constexpr auto MatchPbyte {(uint8_t)-2};
+inline constexpr auto MatchMbyte {(uint8_t)-3};
 bool matchWorld(const SolarSystemState* solarSys, const SystemPlanet* world,
 				uint8_t planetI, uint8_t moonI);
 
@@ -423,7 +423,7 @@ extern void DrawRotatedEllipse(int cx, int cy, int rx, int ry,
 							   int angle_deg, int filled, int dotted);
 extern void ComputeSpeed(SystemPlanet* planet, bool GeneratingMoons,
 						 uint16_t rand_val);
-inline constexpr auto NumplanetsPdesc {((uint8_t)-2)};
+inline constexpr auto NumplanetsPdesc {(uint8_t)-2};
 extern void FillOrbits(SolarSystemState* system, uint8_t NumPlanets,
 					   SystemPlanet* pBaseDesc, bool TypesDefined);
 extern void InitLander(uint8_t LanderFlags);

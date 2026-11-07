@@ -412,7 +412,7 @@ uint16_t InitEncounter(void)
 				{44,	 -27},
 				{-44, -27},
 		};
-		constexpr auto NumDisplayPts {(std::size(display_pt))};
+		constexpr auto NumDisplayPts {std::size(display_pt)};
 
 		for (hStarShip = GetHeadLink(&uqm::gameState().game().npc_built_ship_q), i = 0;
 			 hStarShip && i < 60; hStarShip = hNextShip, ++i)
@@ -524,7 +524,7 @@ static void DrawFadeText(const char* str1, const char* str2, bool fade_in,
 	GfxRect r1;
 	GfxRect r2;
 	const auto& fade_cycle {ScavengeTextColorTable};
-	constexpr auto NumFades {(std::size(fade_cycle))};
+	constexpr auto NumFades {std::size(fade_cycle)};
 
 	t1.baseline.x = pRect->corner.x + ResScale(100);
 	t1.baseline.y = pRect->corner.y + ResScale(45);
@@ -629,7 +629,7 @@ uint16_t UninitEncounter(void)
 		char buf[80] {};
 		const ShipFragment* FragPtr {};
 		const auto& fade_ship_cycle {ScavengeScreenColorTable};
-		constexpr auto NumShipFades {(std::size(fade_ship_cycle))};
+		constexpr auto NumShipFades {std::size(fade_ship_cycle)};
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_CARRIER, static_cast<uint32_t>(0));

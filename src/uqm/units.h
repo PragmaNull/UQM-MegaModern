@@ -118,14 +118,14 @@ inline auto SisScreenHeight() { return (SpaceHeight() - ResScale(13)); }
 
 inline auto OrigSisScreenWidth() { return (ResDescale(SisScreenWidth())); }
 inline auto OrigSisScreenHeight() { return (ResDescale(SisScreenHeight())); }
-inline constexpr auto DosSisScreenWidth {(243)};
-inline constexpr auto DosSisScreenHeight {(187)};
-inline constexpr auto ThreedoSisScreenWidth {(210)};
-inline constexpr auto ThreedoSisScreenHeight {(195)};
-inline constexpr auto UqmSisScreenWidth {(242)};
-inline constexpr auto UqmSisScreenHeight {(227)};
-inline constexpr auto HdmodSisScreenWidth {(1074)};
-inline constexpr auto HdmodSisScreenHeight {(924)};
+inline constexpr auto DosSisScreenWidth {243};
+inline constexpr auto DosSisScreenHeight {187};
+inline constexpr auto ThreedoSisScreenWidth {210};
+inline constexpr auto ThreedoSisScreenHeight {195};
+inline constexpr auto UqmSisScreenWidth {242};
+inline constexpr auto UqmSisScreenHeight {227};
+inline constexpr auto HdmodSisScreenWidth {1074};
+inline constexpr auto HdmodSisScreenHeight {924};
 
 inline constexpr GfxExtent SisScreenDimensions[] {
 	{DosSisScreenWidth,		DosSisScreenHeight	  },
@@ -160,14 +160,14 @@ inline auto ShipNameHeight() { return ResScale(7); }
 inline constexpr auto MaxReduction {3};
 inline constexpr auto MaxVisReduction {2};
 inline constexpr auto ReductionShift {1};
-inline constexpr auto NumViews {(MaxVisReduction + 1)};
+inline constexpr auto NumViews {MaxVisReduction + 1};
 
 inline constexpr auto ZoomShift {8};
-inline constexpr auto MaxZoomOut {(1 << (ZoomShift + MaxReduction - 1))};
+inline constexpr auto MaxZoomOut {1 << (ZoomShift + MaxReduction - 1)};
 
 inline constexpr auto OneShift {2};
 inline constexpr auto BackgroundShift {3};
-inline constexpr auto ScaledOne {(1 << OneShift)};
+inline constexpr auto ScaledOne {1 << OneShift};
 constexpr auto DisplayToWorld(const auto& x) { return ((x) << OneShift); }
 constexpr auto WorldToDisplay(const auto& x) { return ((x) >> OneShift); }
 
@@ -191,7 +191,7 @@ inline constexpr auto MaxYUniverse {9999};
 
 inline constexpr auto SphereRadiusIncrement {11};
 
-inline constexpr auto MaxFleetStrength {(254 * SphereRadiusIncrement)};
+inline constexpr auto MaxFleetStrength {254 * SphereRadiusIncrement};
 
 // XXX: These corrected for the weird screen aspect ratio on DOS
 //   In part because of them, hyperflight is slower vertically
@@ -217,8 +217,8 @@ inline auto HsSouthEdge() { return ((SisWorldHeight() - UnitScrDiff()) >> 1); }
 //   on the screen resolution when it should not.
 //   Using the new math will break old savegames.
 
-inline constexpr auto UniverseUnitsX {(((MaxXUniverse + 1) >> 4))};
-inline constexpr auto UniverseUnitsY {(((MaxYUniverse + 1) >> 4))};
+inline constexpr auto UniverseUnitsX {(MaxXUniverse + 1) >> 4};
+inline constexpr auto UniverseUnitsY {(MaxYUniverse + 1) >> 4};
 inline auto LogUnitsX() { return ((int32_t)(UniverseUnitsX * ResScale(16))); }
 inline auto LogUnitsY() { return ((int32_t)(UniverseUnitsY * ResScale(16))); }
 
@@ -257,10 +257,10 @@ inline auto MaxYLogical() { return (UniverseToLogy(-1) - (UniverseToLogy(MaxYUni
 inline constexpr auto SectorWidth {195};
 inline constexpr auto SectorHeight {25};
 
-inline constexpr auto OldLogUnitsX {((int32_t)(8192 >> 4) * SectorWidth)};
-inline constexpr auto OldLogUnitsY {((int32_t)(7680 >> 4) * SectorHeight)};
-inline constexpr auto OldUniverseUnitsX {(((MaxXUniverse + 1) >> 4) * 10)};
-inline constexpr auto OldUniverseUnitsY {(((MaxYUniverse + 1) >> 4))};
+inline constexpr auto OldLogUnitsX {(int32_t)(8192 >> 4) * SectorWidth};
+inline constexpr auto OldLogUnitsY {(int32_t)(7680 >> 4) * SectorHeight};
+inline constexpr auto OldUniverseUnitsX {((MaxXUniverse + 1) >> 4) * 10};
+inline constexpr auto OldUniverseUnitsY {(MaxYUniverse + 1) >> 4};
 
 static inline int32_t oldLogxToUniverse(int32_t lx)
 {
@@ -287,11 +287,11 @@ static inline int32_t inBounds(int32_t val, int32_t min, int32_t max)
 }
 
 inline constexpr auto CircleShift {6};
-inline constexpr auto FullCircle {(1 << CircleShift)};
+inline constexpr auto FullCircle {1 << CircleShift};
 
-inline constexpr auto HalfCircle {(FullCircle >> 1)};
-inline constexpr auto Quadrant {(FullCircle >> 2)};
-inline constexpr auto Octant {(FullCircle >> 3)};
+inline constexpr auto HalfCircle {FullCircle >> 1};
+inline constexpr auto Quadrant {FullCircle >> 2};
+inline constexpr auto Octant {FullCircle >> 3};
 
 inline constexpr auto FacingShift {4};
 
@@ -303,7 +303,7 @@ constexpr auto NormalizeFacing(const auto& f) { return ((uint32_t)((f) & ((1 << 
 
 
 inline constexpr auto SinShift {14};
-inline constexpr auto SinScale {(1 << SinShift)};
+inline constexpr auto SinScale {1 << SinShift};
 
 constexpr auto FltAdjust(const auto& x) { return (int16_t)((x)*SinScale); }
 

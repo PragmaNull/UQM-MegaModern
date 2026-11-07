@@ -49,7 +49,7 @@ extern bool DestroyVideo(VIDEO_REF VidRef);
 extern VideoType VidPlay(VIDEO_REF VidRef);
 extern VideoType VidPlayEx(VIDEO_REF VidRef, MUSIC_REF AudRef,
 						   MUSIC_REF SpeechRef, uint32_t LoopFrame);
-inline constexpr auto VidNoLoop {(0U - 1)};
+inline constexpr auto VidNoLoop {0U - 1};
 extern void VidStop(void);
 extern VIDEO_REF VidPlaying(void);
 extern bool VidProcessFrame(void);

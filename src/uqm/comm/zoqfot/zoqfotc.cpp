@@ -582,11 +582,11 @@ static void ZoqFotInfo(RESPONSE_REF R)
 	}
 }
 
-static constexpr auto UtwigBuyTime {(1 << 0)};
-static constexpr auto KohrAhWin {(1 << 1)};
-static constexpr auto UrquanLose {(1 << 2)};
-static constexpr auto KohrAhKill {(1 << 3)};
-static constexpr auto KnowAll {(UtwigBuyTime | KohrAhWin | UrquanLose | KohrAhKill)};
+static constexpr auto UtwigBuyTime {1 << 0};
+static constexpr auto KohrAhWin {1 << 1};
+static constexpr auto UrquanLose {1 << 2};
+static constexpr auto KohrAhKill {1 << 3};
+static constexpr auto KnowAll {UtwigBuyTime | KohrAhWin | UrquanLose | KohrAhKill};
 
 static void ZoqFotHome(RESPONSE_REF R)
 {

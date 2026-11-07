@@ -61,20 +61,20 @@ extern SOUND_REF GameSounds;
 
 /* Constants for DoInput */
 typedef uint16_t MENU_SOUND_FLAGS;
-inline constexpr auto MenuSoundUp {((MENU_SOUND_FLAGS)(1 << 0))};
-inline constexpr auto MenuSoundDown {((MENU_SOUND_FLAGS)(1 << 1))};
-inline constexpr auto MenuSoundLeft {((MENU_SOUND_FLAGS)(1 << 2))};
-inline constexpr auto MenuSoundRight {((MENU_SOUND_FLAGS)(1 << 3))};
-inline constexpr auto MenuSoundSelect {((MENU_SOUND_FLAGS)(1 << 4))};
-inline constexpr auto MenuSoundCancel {((MENU_SOUND_FLAGS)(1 << 5))};
-inline constexpr auto MenuSoundSpecial {((MENU_SOUND_FLAGS)(1 << 6))};
-inline constexpr auto MenuSoundPageup {((MENU_SOUND_FLAGS)(1 << 7))};
-inline constexpr auto MenuSoundPagedown {((MENU_SOUND_FLAGS)(1 << 8))};
-inline constexpr auto MenuSoundDelete {((MENU_SOUND_FLAGS)(1 << 9))};
-inline constexpr auto MenuSoundArrows {(MenuSoundUp | MenuSoundDown | MenuSoundLeft | MenuSoundRight)};
-inline constexpr auto MenuSoundPage {(MenuSoundPageup | MenuSoundPagedown)};
-inline constexpr auto MenuSoundAction {(MenuSoundSelect | MenuSoundCancel)};
-inline constexpr auto MenuSoundNone {((MENU_SOUND_FLAGS)0)};
+inline constexpr auto MenuSoundUp {(MENU_SOUND_FLAGS)(1 << 0)};
+inline constexpr auto MenuSoundDown {(MENU_SOUND_FLAGS)(1 << 1)};
+inline constexpr auto MenuSoundLeft {(MENU_SOUND_FLAGS)(1 << 2)};
+inline constexpr auto MenuSoundRight {(MENU_SOUND_FLAGS)(1 << 3)};
+inline constexpr auto MenuSoundSelect {(MENU_SOUND_FLAGS)(1 << 4)};
+inline constexpr auto MenuSoundCancel {(MENU_SOUND_FLAGS)(1 << 5)};
+inline constexpr auto MenuSoundSpecial {(MENU_SOUND_FLAGS)(1 << 6)};
+inline constexpr auto MenuSoundPageup {(MENU_SOUND_FLAGS)(1 << 7)};
+inline constexpr auto MenuSoundPagedown {(MENU_SOUND_FLAGS)(1 << 8)};
+inline constexpr auto MenuSoundDelete {(MENU_SOUND_FLAGS)(1 << 9)};
+inline constexpr auto MenuSoundArrows {MenuSoundUp | MenuSoundDown | MenuSoundLeft | MenuSoundRight};
+inline constexpr auto MenuSoundPage {MenuSoundPageup | MenuSoundPagedown};
+inline constexpr auto MenuSoundAction {MenuSoundSelect | MenuSoundCancel};
+inline constexpr auto MenuSoundNone {(MENU_SOUND_FLAGS)0};
 
 extern void SetMenuSounds(MENU_SOUND_FLAGS sound_0,
 						  MENU_SOUND_FLAGS sound_1);

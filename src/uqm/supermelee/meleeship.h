@@ -44,7 +44,7 @@ enum class MeleeShip
 };
 template <>
 inline constexpr bool IsArithmeticEnum<MeleeShip> = true;
-inline constexpr auto NumMeleeShips {(MeleeShip::Zoqfotpik + 1)};
+inline constexpr auto NumMeleeShips {MeleeShip::Zoqfotpik + 1};
 inline MeleeShip operator+=(MeleeShip lhs, int rhs) { return static_cast<MeleeShip>(static_cast<int>(lhs) + rhs); }
 inline MeleeShip operator-=(MeleeShip lhs, int rhs) { return static_cast<MeleeShip>(static_cast<int>(lhs) - rhs); }
 inline MeleeShip operator++(MeleeShip val) { return static_cast<MeleeShip>(static_cast<int>(val) + 1); }

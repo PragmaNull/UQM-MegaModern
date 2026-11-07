@@ -243,7 +243,7 @@ static void rename_template(WidgetTextEntry* self)
 	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value);
 }
 
-static constexpr auto MenuFrameRate {(c_gameSecond / 20)};
+static constexpr auto MenuFrameRate {c_gameSecond / 20};
 
 static bool DoSetupMenu(SetupMenuState* pInputState)
 {

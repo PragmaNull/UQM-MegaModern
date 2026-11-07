@@ -300,7 +300,7 @@ static void RefocusView(MeleeState* pMS, uint16_t index)
 	}
 }
 
-static constexpr auto FlashRate {(c_gameSecond / 9)};
+static constexpr auto FlashRate {c_gameSecond / 9};
 
 static void flashSelectedTeam(MeleeState* pMS)
 {

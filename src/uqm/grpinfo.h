@@ -37,10 +37,10 @@ typedef HLINK HIPGROUP;
 
 typedef uint8_t IP_FLAGS;
 
-inline constexpr auto CanTurn {(1 << 0)};
-inline constexpr auto Rotates {(1 << 1)};
-inline constexpr auto IsProbe {(1 << 2)};
-inline constexpr auto IsXform {(1 << 3)};
+inline constexpr auto CanTurn {1 << 0};
+inline constexpr auto Rotates {1 << 1};
+inline constexpr auto IsProbe {1 << 2};
+inline constexpr auto IsXform {1 << 3};
 
 struct InterplanetaryGroup
 {

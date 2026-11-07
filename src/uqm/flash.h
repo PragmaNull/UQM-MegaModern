@@ -192,9 +192,9 @@ struct FlashContext
 };
 
 inline constexpr auto FlashDefaultFadeInTime {TimePeriod::zero()};
-inline constexpr auto FlashDefaultOnTime {(c_gameSecond / 8)};
+inline constexpr auto FlashDefaultOnTime {c_gameSecond / 8};
 inline constexpr auto FlashDefaultFadeOutTime {TimePeriod::zero()};
-inline constexpr auto FlashDefaultOffTime {(c_gameSecond / 8)};
+inline constexpr auto FlashDefaultOffTime {c_gameSecond / 8};
 
 inline constexpr auto FlashDefaultCacheSize {9};
 #endif /* FLASH_INTERNAL */

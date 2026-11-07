@@ -59,7 +59,7 @@ struct aiff_ChunkHeader
 	uint32_t size;
 };
 
-static constexpr auto AiffChunkHdrSize {(4 + 4)};
+static constexpr auto AiffChunkHdrSize {4 + 4};
 
 struct aiff_FileHeader
 {
@@ -81,7 +81,7 @@ struct aiff_CommonChunk
 						   /* this is actually stored as IEEE-754 80bit in files */
 };
 
-static constexpr auto AiffCommSize {(2 + 4 + 2 + 10)};
+static constexpr auto AiffCommSize {2 + 4 + 2 + 10};
 
 struct aiff_ExtCommonChunk
 {
@@ -93,7 +93,7 @@ struct aiff_ExtCommonChunk
 	char extName[32];	   /* compression type name */
 };
 
-static constexpr auto AiffExtCommSize {(AiffCommSize + 4)};
+static constexpr auto AiffExtCommSize {AiffCommSize + 4};
 
 struct aiff_SoundDataChunk
 {
@@ -101,7 +101,7 @@ struct aiff_SoundDataChunk
 	uint32_t blockSize; /* size of alignment blocks */
 };
 
-static constexpr auto AiffSsndSize {(4 + 4)};
+static constexpr auto AiffSsndSize {4 + 4};
 
 
 const static char* aifa_GetName(void);

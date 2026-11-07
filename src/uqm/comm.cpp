@@ -64,7 +64,7 @@ static auto OscilloscopeRate() { return (c_gameSecond / chooseIfHd(32, 60)); }
 // The rate was originally 120fps which allowed for more animation
 // precision which is ultimately wasted on the human eye anyway.
 // The highest known stable animation rate is 40fps, so that's what we use.
-static constexpr auto CommAnimRate {(c_gameSecond / 40)};
+static constexpr auto CommAnimRate {c_gameSecond / 40};
 
 static GFXCONTEXT AnimContext;
 

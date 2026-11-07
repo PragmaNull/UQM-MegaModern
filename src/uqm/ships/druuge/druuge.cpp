@@ -38,7 +38,7 @@ static auto DruugeOffset() { return ResScale(24); }
 static auto MissileOffset() { return ResScale(6); }
 static constexpr auto MissileSpeed {DisplayToWorld(30)};
 static constexpr auto MissileLife {20};
-static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
+static constexpr auto MissileRange {MissileSpeed * MissileLife};
 static constexpr auto MissileHits {4};
 static constexpr auto MissileDamage {6};
 static auto RecoilVelocity() { return WorldToVelocity(DisplayToWorld(ResScale(6))); }

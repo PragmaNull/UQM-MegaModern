@@ -376,7 +376,7 @@ void PrepareNextRotationFrameForIP(SystemPlanet* pPlanetDesc, int16_t frameCount
 }
 
 static auto ZoomRate() { return ResScale(35); }
-static constexpr auto ZoomTime {(GameTicksPerSecond * 6 / 5)};
+static constexpr auto ZoomTime {GameTicksPerSecond * 6 / 5};
 
 // This takes care of zooming the planet sphere into place
 // when entering orbit
@@ -466,7 +466,7 @@ void ZoomInPlanetSphere(void)
 	}
 }
 
-static constexpr auto PlanetRotationFps {(c_gameSecond / 60)};
+static constexpr auto PlanetRotationFps {c_gameSecond / 60};
 
 void RotatePlanetSphere(bool keepRate, GfxStamp* onTop)
 {

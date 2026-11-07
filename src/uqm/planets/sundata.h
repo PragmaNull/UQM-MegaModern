@@ -43,7 +43,7 @@ struct SolarSystemInfo
 	PlanetData PlanetInfo;
 };
 
-inline constexpr auto GenerateAll {((uint16_t)~0)};
+inline constexpr auto GenerateAll {(uint16_t)~0};
 
 extern uint16_t GenerateMineralDeposits(const SolarSystemInfo*, uint16_t whichDeposit,
 										SurfaceNode* info);

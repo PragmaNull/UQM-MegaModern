@@ -688,7 +688,7 @@ static void setPlanetLoc(GfxPoint new_pt, bool restoreOld)
 	savePlanetLocationImage();
 }
 
-static constexpr auto FlashFrameDelay {(c_gameSecond / 16)};
+static constexpr auto FlashFrameDelay {c_gameSecond / 16};
 
 static void flashPlanetLocation(void)
 {

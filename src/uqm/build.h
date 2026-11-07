@@ -32,7 +32,7 @@ extern "C" {
 
 inline constexpr auto NumRaceLabels {3};
 inline constexpr auto NumClassLabels {2};
-inline constexpr auto NameOffset {(NumRaceLabels + NumClassLabels)};
+inline constexpr auto NameOffset {NumRaceLabels + NumClassLabels};
 inline constexpr auto NumCaptainsNames {16};
 
 constexpr auto PickCaptainName() { return (((uint16_t)uqm::random().next() & (NumCaptainsNames - 1)) + NameOffset); }

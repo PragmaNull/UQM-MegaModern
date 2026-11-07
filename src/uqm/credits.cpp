@@ -43,7 +43,7 @@ static auto CreditsMaxRate() { return ResScale(130); }
 // Maximum frame rate
 static auto CreditsFrameRate() { return ResScale(36); }
 
-static constexpr auto CreditsTimeout {(c_gameSecond * 5)};
+static constexpr auto CreditsTimeout {c_gameSecond * 5};
 
 
 // Positive or negative scroll rate in pixel lines per second

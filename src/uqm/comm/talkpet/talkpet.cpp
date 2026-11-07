@@ -26,8 +26,8 @@
 #include "uqm/sounds.h"
 
 static constexpr auto StrobeRate {30};
-static constexpr auto StrobeLength {(GameTicksPerSecond / 3)};
-static constexpr auto NumStrobes {(StrobeLength * StrobeRate / GameTicksPerSecond)};
+static constexpr auto StrobeLength {GameTicksPerSecond / 3};
+static constexpr auto NumStrobes {StrobeLength * StrobeRate / GameTicksPerSecond};
 
 static ConversationData talkpet_desc =
 	{

@@ -115,10 +115,10 @@ static ConversationData pkunk_desc =
 		nullptr,
 };
 
-static constexpr auto GoodReason1 {(1 << 0)};
-static constexpr auto GoodReason2 {(1 << 1)};
-static constexpr auto BadReason1 {(1 << 2)};
-static constexpr auto BadReason2 {(1 << 3)};
+static constexpr auto GoodReason1 {1 << 0};
+static constexpr auto GoodReason2 {1 << 1};
+static constexpr auto BadReason1 {1 << 2};
+static constexpr auto BadReason2 {1 << 3};
 
 static void ExitConversation(RESPONSE_REF R)
 {
