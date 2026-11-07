@@ -60,6 +60,7 @@
 #include <string.h>
 
 #include "core/log/log.h"
+#include "libs/file/json.h"
 #include "libs/file/textfile.h"
 #include "libs/gfxlib.h"
 #include "libs/mathlib.h"
@@ -806,16 +807,20 @@ static void DrawSuperMeleeTitle(void)
 		return;
 	}
 
-	const FontScope fontScope {LoadFont(MeleeTitleFontRes)};
-	const FontEffectScope fontEffectScope {SetAbsFrameIndex(FontGradFrame, 7)};
+	const FontRef titleFont {LoadFont(MeleeTitleFontRes)};
+	{
+		const FontScope fontScope {titleFont};
+		const FontEffectScope fontEffectScope {SetAbsFrameIndex(FontGradFrame, 7)};
 
-	t.baseline.x = (CanvasWidth >> 1) - (SafeNeg(1));
-	t.baseline.y = ResScale(4);
-	t.align = TextAlign::Center;
-	t.pStr = AlignText((const char*)buf, &t.baseline.x);
-	t.CharCount = (uint16_t)~0;
+		t.baseline.x = (CanvasWidth >> 1) - (SafeNeg(1));
+		t.baseline.y = ResScale(4);
+		t.align = TextAlign::Center;
+		t.pStr = AlignText((const char*)buf, &t.baseline.x);
+		t.CharCount = (uint16_t)~0;
 
-	font_DrawText(&t);
+		font_DrawText(&t);
+	}
+	DestroyFont(titleFont);
 }
 
 void RepairMeleeFrame(const GfxRect* pRect)
@@ -2536,7 +2541,7 @@ static constexpr const char* c_meleeConfigFile {"melee.json"};
 
 static int LoadMeleeConfig(MeleeState* pMS)
 {
-	auto json {uqm::readTextFile(uqm::configDir(), c_meleeConfigFile)};
+	auto json {uqm::readTextFile(uqm::configDir(), c_meleeConfigFile, uqm::JsonPadding)};
 	if (!json)
 	{
 		return -1;
