@@ -86,6 +86,12 @@ The list contains only bugs that are in MegaMod at the fork commit `18e1f3d1`. I
 
 ## Other
 
+### A failed screenshot frees its surface twice
+
+- **MegaMod:** `TFB_sdl_to_png` in `src/libs/graphics/sdl/png2sdl.c`, called through `SDL_SavePNG` from `TFB_SDL_ScreenShot` in `src/libs/graphics/sdl/sdl2_pure.c`.
+- **Problem:** when the PNG write fails, `TFB_sdl_to_png` frees the surface. The caller then unlocks and frees the same surface.
+- **Fix here:** `cf65570a`. `TFB_sdl_to_png` does not free the surface.
+
 ### The music file name hash sign-extends bytes
 
 - **MegaMod:** `crc32b` in `src/libs/math/sqrt.c`.
