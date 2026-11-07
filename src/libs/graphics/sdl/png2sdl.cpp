@@ -38,7 +38,12 @@
 #include <fmt/base.h>
 #include <png.h>
 
+#include "core/log/log.h"
+#include "core/stl/array.h"
+#include "core/stl/stl.h"
+#include "core/stl/vector.h"
 #include "sdl_common.h"
+#include "sdl_ptr.h"
 
 /* Link function between SDL_IOStream and PNG's data source */
 static void png_read_data(png_structp ctx, png_bytep area, png_size_t size)
@@ -47,75 +52,88 @@ static void png_read_data(png_structp ctx, png_bytep area, png_size_t size)
 	SDL_ReadIO(src, area, size);
 }
 
-SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
+namespace
 {
-	Sint64 start {};
-	const char* error {};
-	SDL_Surface* surface {};
-	png_structp png_ptr {};
-	png_infop info_ptr {};
+
+// Owns a libpng read or write struct and its info struct.
+template <bool Write>
+class PngStructs
+{
+public:
+	PngStructs()
+		: m_png {Write ? png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr) : png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr)}
+	{
+		if (m_png != nullptr)
+		{
+			m_info = png_create_info_struct(m_png);
+		}
+	}
+
+	~PngStructs()
+	{
+		if (m_png == nullptr)
+		{
+			return;
+		}
+		if constexpr (Write)
+		{
+			png_destroy_write_struct(&m_png, m_info != nullptr ? &m_info : nullptr);
+		}
+		else
+		{
+			png_destroy_read_struct(&m_png, m_info != nullptr ? &m_info : nullptr, nullptr);
+		}
+	}
+
+	PngStructs(const PngStructs&) = delete;
+	PngStructs& operator=(const PngStructs&) = delete;
+
+	[[nodiscard]] png_structp png() const
+	{
+		return m_png;
+	}
+
+	[[nodiscard]] png_infop info() const
+	{
+		return m_info;
+	}
+
+private:
+	png_structp m_png {};
+	png_infop m_info {};
+};
+
+// The image data that the read needs after the header.
+struct PngHeader
+{
+	png_uint_32 width;
+	png_uint_32 height;
+	int bitDepth;
+	int colorType;
+	int numChannels;
+	int colorKey;
+	png_color_16* transparent;
+};
+
+// These functions call setjmp. Their local variables must have trivial destructors.
+
+// Reads the header and sets up the decode.
+bool readPngHeader(png_structp png, png_infop info, SDL_IOStream* src, PngHeader& header)
+{
+	if (setjmp(png_jmpbuf(png)))
+	{
+		return false;
+	}
+
+	png_set_read_fn(png, src, png_read_data);
+
 	png_uint_32 width {};
 	png_uint_32 height {};
-	int bit_depth {};
-	int color_type {};
-	int interlace_type {};
-	int num_channels {};
-	Uint32 Rmask {};
-	Uint32 Gmask {};
-	Uint32 Bmask {};
-	Uint32 Amask {};
-	png_bytep* row_pointers {};
-	int row {};
-	int i {};
-	int ckey = -1;
-	png_color_16* transv {};
-
-	if (!src)
-	{
-		/* The error message has been set in SDL_IOFromFile */
-		return nullptr;
-	}
-	start = SDL_TellIO(src);
-
-	/* Initialize the data we will clean up when we're done */
-	error = nullptr;
-	png_ptr = nullptr;
-	info_ptr = nullptr;
-	row_pointers = nullptr;
-	surface = nullptr;
-
-	/* Create the PNG loading context structure */
-	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
-									 nullptr, nullptr, nullptr);
-	if (png_ptr == nullptr)
-	{
-		error = "Couldn't allocate memory for PNG file";
-		goto done;
-	}
-
-	/* Allocate/initialize the memory for image information */
-	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == nullptr)
-	{
-		error = "Couldn't create image information for PNG file";
-		goto done;
-	}
-
-	/* Set error handling */
-	if (setjmp(png_jmpbuf(png_ptr)))
-	{
-		error = "Error reading the PNG file.";
-		goto done;
-	}
-
-	/* Set up the input control */
-	png_set_read_fn(png_ptr, src, png_read_data);
-
-	/* Read PNG header info */
-	png_read_info(png_ptr, info_ptr);
-	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth,
-				 &color_type, &interlace_type, nullptr, nullptr);
-
+	int bitDepth {};
+	int colorType {};
+	int interlaceType {};
+	png_read_info(png, info);
+	png_get_IHDR(png, info, &width, &height, &bitDepth, &colorType, &interlaceType, nullptr, nullptr);
 
 	/* Configure the decode based on what we know of the image
 	 * already: strip 16 bit color down to 8 bit, automatically
@@ -123,24 +141,26 @@ SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
 	 * than one transparent color or any translucent colors into
 	 * full RGB or RGBA, and expand 1, 2, or 4-bpp paletted
 	 * images to 8bpp. */
-	png_set_strip_16(png_ptr);
-	png_set_interlace_handling(png_ptr);
-	png_set_packing(png_ptr);
-	if (color_type == PNG_COLOR_TYPE_GRAY)
+	png_set_strip_16(png);
+	png_set_interlace_handling(png);
+	png_set_packing(png);
+	if (colorType == PNG_COLOR_TYPE_GRAY)
 	{
-		png_set_expand(png_ptr);
+		png_set_expand(png);
 	}
-	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+	int colorKey {-1};
+	png_color_16* transparent {};
+	if (png_get_valid(png, info, PNG_INFO_tRNS))
 	{
-		int num_trans {};
+		int numTrans {};
 		Uint8* trans {};
-		png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans, &transv);
-		if (color_type == PNG_COLOR_TYPE_PALETTE)
+		png_get_tRNS(png, info, &trans, &numTrans, &transparent);
+		if (colorType == PNG_COLOR_TYPE_PALETTE)
 		{
 			/* Check if all tRNS entries are opaque except one */
 			int j {};
-			int t = -1;
-			for (j = 0; j < num_trans; j++)
+			int t {-1};
+			for (j = 0; j < numTrans; j++)
 			{
 				if (trans[j] == 0)
 				{
@@ -155,90 +175,135 @@ SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
 					break;
 				}
 			}
-			if (j == num_trans)
+			if (j == numTrans)
 			{
 				/* exactly one transparent index */
-				ckey = t;
+				colorKey = t;
 			}
 			else
 			{
 				/* more than one transparent index, or translucency */
-				png_set_expand(png_ptr);
+				png_set_expand(png);
 			}
 		}
 		else
 		{
-			ckey = 0; /* actual value will be set later */
+			colorKey = 0; /* actual value will be set later */
 		}
 	}
 
-	if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+	if (colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 	{
-		png_set_gray_to_rgb(png_ptr);
+		png_set_gray_to_rgb(png);
 	}
 
 	/* Register our changes with the reading machinery and refresh
 	 * our ancillary data about the image */
-	png_read_update_info(png_ptr, info_ptr);
-	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth,
-				 &color_type, &interlace_type, nullptr, nullptr);
+	png_read_update_info(png, info);
+	png_get_IHDR(png, info, &width, &height, &bitDepth, &colorType, &interlaceType, nullptr, nullptr);
+
+	header = PngHeader {width, height, bitDepth, colorType, png_get_channels(png, info), colorKey, transparent};
+	return true;
+}
+
+bool readPngRows(png_structp png, png_bytep* rows)
+{
+	if (setjmp(png_jmpbuf(png)))
+	{
+		return false;
+	}
+	png_read_image(png, rows);
+	return true;
+}
+
+} // namespace
+
+SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
+{
+	if (!src)
+	{
+		/* The error message has been set in SDL_IOFromFile */
+		return nullptr;
+	}
+	const Sint64 start {SDL_TellIO(src)};
+
+	const auto fail {[&](uqgsl::czstring error) -> SDL_Surface* {
+		SDL_SeekIO(src, start, SDL_IO_SEEK_SET);
+		uqm::log::error("{}", error);
+		return nullptr;
+	}};
+
+	const PngStructs<false> structs {};
+	if (structs.png() == nullptr)
+	{
+		return fail("Couldn't allocate memory for PNG file");
+	}
+	if (structs.info() == nullptr)
+	{
+		return fail("Couldn't create image information for PNG file");
+	}
+
+	PngHeader header {};
+	if (!readPngHeader(structs.png(), structs.info(), src, header))
+	{
+		return fail("Error reading the PNG file.");
+	}
 
 	/* Allocate the SDL surface to hold the image */
-	Rmask = Gmask = Bmask = Amask = 0;
-	num_channels = png_get_channels(png_ptr, info_ptr);
-	if (num_channels >= 3)
+	Uint32 Rmask {};
+	Uint32 Gmask {};
+	Uint32 Bmask {};
+	Uint32 Amask {};
+	if (header.numChannels >= 3)
 	{
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 		Rmask = 0x000000FF;
 		Gmask = 0x0000FF00;
 		Bmask = 0x00FF0000;
-		Amask = (num_channels == 4) ? 0xFF000000 : 0;
+		Amask = (header.numChannels == 4) ? 0xFF000000 : 0;
 #else
-		int s = (num_channels == 4) ? 0 : 8;
+		const int s {(header.numChannels == 4) ? 0 : 8};
 		Rmask = 0xFF000000 >> s;
 		Gmask = 0x00FF0000 >> s;
 		Bmask = 0x0000FF00 >> s;
 		Amask = 0x000000FF >> s;
 #endif
 	}
-	surface = TFB_CreateSurface(width, height,
-								bit_depth * num_channels,
-								Rmask, Gmask, Bmask, Amask);
-	if (surface == nullptr)
+	uqm::SurfacePtr surface {TFB_CreateSurface(header.width, header.height, header.bitDepth * header.numChannels, Rmask,
+											   Gmask, Bmask, Amask)};
+	if (!surface)
 	{
-		error = SDL_GetError();
-		goto done;
+		return fail(SDL_GetError());
 	}
 
-	if (ckey != -1)
+	if (header.colorKey != -1)
 	{
-		if (color_type != PNG_COLOR_TYPE_PALETTE)
+		int colorKey {header.colorKey};
+		if (header.colorType != PNG_COLOR_TYPE_PALETTE)
 		{
 			/* FIXME: Should these be truncated or shifted down? */
-			ckey = SDL_MapSurfaceRGB(surface,
-									 (Uint8)transv->red,
-									 (Uint8)transv->green,
-									 (Uint8)transv->blue);
+			colorKey = SDL_MapSurfaceRGB(surface.get(), static_cast<Uint8>(header.transparent->red),
+										 static_cast<Uint8>(header.transparent->green),
+										 static_cast<Uint8>(header.transparent->blue));
 		}
-		SDL_SetSurfaceColorKey(surface, true, ckey);
+		SDL_SetSurfaceColorKey(surface.get(), true, colorKey);
 	}
 
-	SDL_LockSurface(surface);
+	SDL_LockSurface(surface.get());
 	/* Create the array of pointers to image data */
-	row_pointers = (png_bytep*)SDL_malloc(sizeof(png_bytep) * height);
-	if (!row_pointers)
+	uqstl::vector<png_bytep> rows(header.height);
+	for (png_uint_32 row {0}; row < header.height; row++)
 	{
-		error = "Out of memory";
-		goto done;
-	}
-	for (row = 0; row < (int)height; row++)
-	{
-		row_pointers[row] = (png_bytep)(Uint8*)surface->pixels + row * surface->pitch;
+		rows[row] = static_cast<png_bytep>(surface->pixels) + row * surface->pitch;
 	}
 
 	/* Read the entire image in one go */
-	png_read_image(png_ptr, row_pointers);
-	SDL_UnlockSurface(surface);
+	const bool rowsRead {readPngRows(structs.png(), rows.data())};
+	SDL_UnlockSurface(surface.get());
+	if (!rowsRead)
+	{
+		return fail("Error reading the PNG file.");
+	}
 
 	/* and we're done!  (png_read_end() can be omitted if no
 	 * processing of post-IDAT text/time/etc. is desired)
@@ -247,57 +312,35 @@ SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
 	 * we omit png_read_end */
 
 	/* Load the palette, if any */
-	if (SDL_GetSurfacePalette(surface))
+	if (SDL_GetSurfacePalette(surface.get()))
 	{
-		uqstl::array<SDL_Color, 256> palette;
+		uqstl::array<SDL_Color, 256> palette {};
 		int png_num_palette {};
 		png_colorp png_palette {};
-		png_get_PLTE(png_ptr, info_ptr, &png_palette, &png_num_palette);
-		if (color_type == PNG_COLOR_TYPE_GRAY)
+		png_get_PLTE(structs.png(), structs.info(), &png_palette, &png_num_palette);
+		if (header.colorType == PNG_COLOR_TYPE_GRAY)
 		{
 			png_num_palette = 256;
-			for (i = 0; i < 256; i++)
+			for (int i {0}; i < 256; i++)
 			{
-				palette[i].r = (Uint8)i;
-				palette[i].g = (Uint8)i;
-				palette[i].b = (Uint8)i;
+				palette[i].r = static_cast<Uint8>(i);
+				palette[i].g = static_cast<Uint8>(i);
+				palette[i].b = static_cast<Uint8>(i);
 			}
 		}
 		else if (png_num_palette > 0)
 		{
-			for (i = 0; i < png_num_palette; ++i)
+			for (int i {0}; i < png_num_palette; ++i)
 			{
 				palette[i].b = png_palette[i].blue;
 				palette[i].g = png_palette[i].green;
 				palette[i].r = png_palette[i].red;
 			}
 		}
-		SDL_SetPaletteColors(SDL_GetSurfacePalette(surface), palette.data(),
-							 0, png_num_palette);
+		SDL_SetPaletteColors(SDL_GetSurfacePalette(surface.get()), palette.data(), 0, png_num_palette);
 	}
 
-done: /* Clean up and return */
-	if (png_ptr)
-	{
-		png_destroy_read_struct(&png_ptr,
-								info_ptr ? &info_ptr : (png_infopp)0,
-								(png_infopp)0);
-	}
-	if (row_pointers)
-	{
-		SDL_free(row_pointers);
-	}
-	if (error)
-	{
-		SDL_SeekIO(src, start, SDL_IO_SEEK_SET);
-		if (surface)
-		{
-			SDL_DestroySurface(surface);
-			surface = nullptr;
-		}
-		fmt::print(stderr, "{}", error);
-	}
-	return surface;
+	return surface.release();
 }
 
 /* SDL to PNG
@@ -346,141 +389,109 @@ SDL_Surface* SDL_PNGFormatAlpha(SDL_Surface* src)
 	return surf;
 }
 
-int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst, int freedst)
+namespace
 {
-	png_structp png_ptr {};
-	png_infop info_ptr {};
-	png_colorp pal_ptr {};
-	const SDL_Palette* pal {};
-	int i {};
-	int colortype {};
-	png_bytep* row_pointers {};
-	const char* error {};
 
-	/* Initialize the data we will clean up when we're done */
-	error = nullptr;
-	png_ptr = nullptr;
-	info_ptr = nullptr;
-	row_pointers = nullptr;
-
-	/* Initialize and do basic error checking */
-	if (!dst)
+// Writes the image. Calls setjmp, so its local variables must have trivial destructors.
+bool writePng(png_structp png, png_infop info, SDL_Surface* surface, SDL_IOStream* dst,
+			  uqstl::span<const png_color> palette, png_bytep* rows)
+{
+	if (setjmp(png_jmpbuf(png)))
 	{
-		error = "Argument 2 to TFB_sdl_to_png can't be nullptr\n";
-		goto done;
-	}
-	if (!surface)
-	{
-		error = "Argument 1 to TFB_sdl_to_png can't be nullptr\n";
-		goto done;
-	}
-
-	/* Create the PNG writing context structure */
-	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-									  nullptr, nullptr, nullptr);
-	if (png_ptr == nullptr)
-	{
-		error = "Couldn't allocate memory for PNG file";
-		goto done;
-	}
-
-	/* Allocate/initialize the memory for image information */
-	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == nullptr)
-	{
-		error = "Couldn't create image information for PNG file";
-		goto done;
-	}
-
-	/* Set error handling */
-	if (setjmp(png_jmpbuf(png_ptr)))
-	{
-		error = "Error reading the PNG file.";
-		goto done;
+		return false;
 	}
 
 	/* Set up the output control */
-	png_set_write_fn(png_ptr, dst, png_write_data, nullptr);
+	png_set_write_fn(png, dst, png_write_data, nullptr);
 
 	/* Prepare chunks */
-	colortype = PNG_COLOR_MASK_COLOR;
-	if (SDL_GetPixelFormatDetails(surface->format)->bytes_per_pixel > 0
-		&& SDL_GetPixelFormatDetails(surface->format)->bytes_per_pixel <= 8
-		&& (pal = SDL_GetSurfacePalette(surface)))
+	const SDL_PixelFormatDetails* const format {SDL_GetPixelFormatDetails(surface->format)};
+	int colortype {PNG_COLOR_MASK_COLOR};
+	if (!palette.empty())
 	{
 		colortype |= PNG_COLOR_MASK_PALETTE;
-		pal_ptr = (png_colorp)malloc(pal->ncolors * sizeof(png_color));
-		for (i = 0; i < pal->ncolors; i++)
-		{
-			pal_ptr[i].red = pal->colors[i].r;
-			pal_ptr[i].green = pal->colors[i].g;
-			pal_ptr[i].blue = pal->colors[i].b;
-		}
-		png_set_PLTE(png_ptr, info_ptr, pal_ptr, pal->ncolors);
-		free(pal_ptr);
+		png_set_PLTE(png, info, palette.data(), static_cast<int>(palette.size()));
 	}
-	else if (SDL_GetPixelFormatDetails(surface->format)->bytes_per_pixel > 3 || SDL_GetPixelFormatDetails(surface->format)->Amask)
+	else if (format->bytes_per_pixel > 3 || format->Amask)
 	{
 		colortype |= PNG_COLOR_MASK_ALPHA;
 	}
 
 	/* Set the PNG header info */
-	png_set_IHDR(png_ptr, info_ptr, surface->w, surface->h, 8, colortype,
-				 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
+	png_set_IHDR(png, info, surface->w, surface->h, 8, colortype, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
 				 PNG_FILTER_TYPE_DEFAULT);
 
-	png_set_packing(png_ptr);
+	png_set_packing(png);
 
 	/* Allow BGR surfaces */
-	if (SDL_GetPixelFormatDetails(surface->format)->Rmask == BMask
-		&& SDL_GetPixelFormatDetails(surface->format)->Gmask == GMask
-		&& SDL_GetPixelFormatDetails(surface->format)->Bmask == RMask)
+	if (format->Rmask == BMask && format->Gmask == GMask && format->Bmask == RMask)
 	{
-		png_set_bgr(png_ptr);
+		png_set_bgr(png);
 	}
 
 	/* Write everything */
-	png_write_info(png_ptr, info_ptr);
+	png_write_info(png, info);
+	png_write_image(png, rows);
+	png_write_end(png, info);
+	return true;
+}
+
+} // namespace
+
+int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst, int freedst)
+{
+	const auto fail {[](uqgsl::czstring error) {
+		uqm::log::error("{}", error);
+		return -1;
+	}};
+	const auto closeDst {uqgsl::finally([&] {
+		if (freedst && dst)
+		{
+			SDL_CloseIO(dst);
+		}
+	})};
+
+	/* Initialize and do basic error checking */
+	if (!dst)
+	{
+		return fail("Argument 2 to TFB_sdl_to_png can't be nullptr");
+	}
+	if (!surface)
+	{
+		return fail("Argument 1 to TFB_sdl_to_png can't be nullptr");
+	}
+
+	const PngStructs<true> structs {};
+	if (structs.png() == nullptr)
+	{
+		return fail("Couldn't allocate memory for PNG file");
+	}
+	if (structs.info() == nullptr)
+	{
+		return fail("Couldn't create image information for PNG file");
+	}
+
+	uqstl::vector<png_color> palette {};
+	const SDL_PixelFormatDetails* const format {SDL_GetPixelFormatDetails(surface->format)};
+	if (const SDL_Palette* const pal {SDL_GetSurfacePalette(surface)};
+		pal != nullptr && format->bytes_per_pixel > 0 && format->bytes_per_pixel <= 8)
+	{
+		for (const SDL_Color& color : uqstl::span {pal->colors, static_cast<size_t>(pal->ncolors)})
+		{
+			palette.push_back({color.r, color.g, color.b});
+		}
+	}
 
 	/* Create the array of pointers to image data */
-	row_pointers =
-		(png_bytep*)SDL_malloc(sizeof(png_bytep) * surface->h);
-	if (!row_pointers)
+	uqstl::vector<png_bytep> rows(static_cast<size_t>(surface->h));
+	for (int i {0}; i < surface->h; i++)
 	{
-		error = "Out of memory";
-		goto done;
-	}
-	for (i = 0; i < surface->h; i++)
-	{
-		row_pointers[i] = (png_bytep)(Uint8*)surface->pixels + i * surface->pitch;
+		rows[i] = static_cast<png_bytep>(surface->pixels) + i * surface->pitch;
 	}
 
-	png_write_image(png_ptr, row_pointers);
-	png_write_end(png_ptr, info_ptr);
-
-done: /* Clean up and return */
-	if (freedst)
+	if (!writePng(structs.png(), structs.info(), surface, dst, palette, rows.data()))
 	{
-		SDL_CloseIO(dst);
+		return fail("Error writing the PNG file.");
 	}
-	if (row_pointers)
-	{
-		SDL_free(row_pointers);
-	}
-	if (png_ptr)
-	{
-		png_destroy_write_struct(&png_ptr,
-								 info_ptr ? &info_ptr : (png_infopp)0);
-	}
-	if (error)
-	{
-		if (surface)
-		{
-			SDL_DestroySurface(surface);
-			surface = nullptr;
-		}
-		fmt::print(stderr, "{}", error);
-		return (-1);
-	}
-	return (0);
+	return 0;
 }
