@@ -206,15 +206,7 @@ void TFB_DrawCommandQueue_Clear(void);
 
 void TFB_EnqueueDrawCommand(tfb::DrawCommand* DrawCommand);
 
-// Holds the draw command queue lock after the queue has space for 'slots' commands.
-class [[nodiscard]] DcqLock
-{
-public:
-	explicit DcqLock(int slots);
-	~DcqLock();
-
-	DcqLock(const DcqLock&) = delete;
-	DcqLock& operator=(const DcqLock&) = delete;
-};
+// Ends all batches, then enqueues the command, so that the renderer reaches it.
+void TFB_EnqueueUnbatched(tfb::DrawCommand* DrawCommand);
 
 #endif // UQM_LIBS_GRAPHICS_DRAWCMD_H

@@ -169,17 +169,6 @@ public:
 
 } // namespace
 
-DcqLock::DcqLock(int slots)
-	UQM_NO_THREAD_SAFETY_ANALYSIS
-{
-	lockDcqWithSpace(slots);
-}
-
-DcqLock::~DcqLock()
-	UQM_NO_THREAD_SAFETY_ANALYSIS
-{
-	unlockDcq();
-}
 
 // Always have the DCQ locked when calling this.
 static void Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
@@ -319,6 +308,13 @@ static void checkExclusiveThread(tfb::DrawCommand* DrawCommand)
 #else
 	(void)DrawCommand; // suppress unused warning
 #endif
+}
+
+void TFB_EnqueueUnbatched(tfb::DrawCommand* DrawCommand)
+{
+	const DcqGuard lock {1};
+	TFB_BatchReset();
+	TFB_EnqueueDrawCommand(DrawCommand);
 }
 
 void TFB_EnqueueDrawCommand(tfb::DrawCommand* DrawCommand)
@@ -511,7 +507,7 @@ void TFB_FlushGraphics(void)
 
 	int commands_handled {0};
 	// Holds the queue lock while the renderer empties the queue.
-	uqstl::optional<DcqLock> livelockLock {};
+	uqstl::optional<DcqGuard> livelockLock {};
 
 	if (DCQ_FullSize() > DcqForceBreakSize)
 	{
@@ -797,7 +793,7 @@ void TFB_FlushGraphics(void)
 
 void TFB_PurgeDanglingGraphics(void)
 {
-	const DcqLock lock {-1};
+	const DcqGuard lock {-1};
 
 	for (;;)
 	{

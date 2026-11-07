@@ -195,11 +195,7 @@ void TFB_DrawScreen_WaitForSignal(void)
 	tfb::DrawCommand DrawCommand;
 	DrawCommand.Type = DrawCommandType::SendSignal;
 	DrawCommand.data.sendsignal.sem = &flushed;
-	{
-		const DcqLock lock {1};
-		TFB_BatchReset();
-		TFB_EnqueueDrawCommand(&DrawCommand);
-	}
+	TFB_EnqueueUnbatched(&DrawCommand);
 	flushed.acquire();
 }
 
