@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_ARILOU_RESINST_H
 #define UQM_COMM_ARILOU_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring ArilouColorMap {"comm.arilou.colortable"};
 inline constexpr uqgsl::czstring ArilouConversationPhrases {"comm.arilou.dialogue"};
 inline constexpr uqgsl::czstring ArilouFont {"comm.arilou.font"};
 inline constexpr uqgsl::czstring ArilouMusic {"comm.arilou.music"};
 inline constexpr uqgsl::czstring ArilouPmapAnim {"comm.arilou.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_ARILOU_RESINST_H

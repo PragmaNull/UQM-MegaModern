@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_SLYLAND_RESINST_H
 #define UQM_COMM_SLYLAND_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring SlylandColorMap {"comm.probe.colortable"};
 inline constexpr uqgsl::czstring SlylandConversationPhrases {"comm.probe.dialogue"};
 inline constexpr uqgsl::czstring SlylandFont {"comm.probe.font"};
 inline constexpr uqgsl::czstring SlylandMusic {"comm.probe.music"};
 inline constexpr uqgsl::czstring SlylandPmapAnim {"comm.probe.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_SLYLAND_RESINST_H

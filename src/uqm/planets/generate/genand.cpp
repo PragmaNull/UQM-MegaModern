@@ -31,6 +31,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateAndrosynth_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateAndrosynth_generateOrbital(SolarSystemState* solarSys,
 											   SystemPlanet* world);
@@ -233,3 +235,5 @@ static uint16_t GenerateAndrosynth_generateEnergy(const SolarSystemState* solarS
 
 	return 0;
 }
+
+} // namespace uqm

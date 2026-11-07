@@ -25,6 +25,8 @@
 #include "element.h"
 #include "battlecontrols.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -54,5 +56,7 @@ extern void StartShipExplosion(Element* ShipPtr, bool playSound);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_TACTRANS_H

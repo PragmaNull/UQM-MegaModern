@@ -18,6 +18,8 @@
 #ifndef UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H
 #define UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -28,8 +30,12 @@ typedef struct luaUqm_custom_Function luaUqm_custom_Function;
 }
 #endif
 
+} // namespace uqm
+
 #include "uqm/lua/UQMLua.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -47,5 +53,7 @@ int luaUqm_custom_init(lua_State* luaState,
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H

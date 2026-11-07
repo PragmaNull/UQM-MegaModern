@@ -22,6 +22,8 @@
 #include "libs/gfxlib.h"
 #include "element.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -34,5 +36,7 @@ extern void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_PROCESS_H

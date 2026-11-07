@@ -27,6 +27,8 @@
 #include "../units.h"
 #include "../globdata.h"
 
+namespace uqm
+{
 inline constexpr auto EndInterplanetary {ActivityFlag::StartInterplanetary};
 
 inline constexpr auto OneYear {365.25};
@@ -145,6 +147,8 @@ struct SolarSystemState;
 struct PlotLocation;
 struct PortalLocation;
 
+} // namespace uqm
+
 #include "generate.h"
 #include "lifeform.h"
 #include "plandata.h"
@@ -152,6 +156,8 @@ struct PortalLocation;
 #include "../gendef.h" //JSD need gendef.h unless we move plots & starmap to starmap
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 struct MapPoint3D
 {
 	GfxPoint p[4];
@@ -474,5 +480,7 @@ extern uint8_t PickClosestHabitable(SolarSystemState* solarSys);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_PLANETS_PLANETS_H

@@ -30,6 +30,8 @@
 #include "options/options.h"
 
 
+namespace uqm
+{
 static auto McdWidth() { return ResScale(260); }
 static auto McdHeight() { return ResScale(110); }
 
@@ -632,5 +634,7 @@ bool MeleeConnectDialog(int side)
 
 	return state.confirmed;
 }
+
+} // namespace uqm
 
 #endif /* NETPLAY */

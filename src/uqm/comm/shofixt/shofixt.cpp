@@ -25,6 +25,8 @@
 #include "uqm/races.h"
 
 
+namespace uqm
+{
 static ConversationData shofixti_desc =
 	{
 		Conversation::Shofixti, /* AlienConv */
@@ -692,3 +694,5 @@ ConversationData* init_shofixti_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

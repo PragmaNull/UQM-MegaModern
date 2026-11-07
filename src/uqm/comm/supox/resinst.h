@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_SUPOX_RESINST_H
 #define UQM_COMM_SUPOX_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring SupoxColorMap {"comm.supox.colortable"};
 inline constexpr uqgsl::czstring SupoxConversationPhrases {"comm.supox.dialogue"};
 inline constexpr uqgsl::czstring SupoxFont {"comm.supox.font"};
 inline constexpr uqgsl::czstring SupoxMusic {"comm.supox.music"};
 inline constexpr uqgsl::czstring SupoxPmapAnim {"comm.supox.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_SUPOX_RESINST_H

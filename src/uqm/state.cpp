@@ -22,12 +22,19 @@
 #include "globdata.h"
 #include "core/log/log.h"
 
+namespace uqm
+{
 static constexpr auto StarBufsize {NumSolarSystems * sizeof(uint32_t) + 3800 * (3 * sizeof(uint32_t))};
+
+} // namespace uqm
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <memory.h>
 
+namespace uqm
+{
 uqstl::array<GameStateFile, NUM_STATE_FILES> MakeStateFiles(void)
 {
 	// In the order StarinfoFile, RandgrpinfoFile, DefgrpinfoFile.
@@ -424,3 +431,5 @@ void PutPlanetInfo(void)
 		CloseStateFile(fp);
 	}
 }
+
+} // namespace uqm

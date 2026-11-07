@@ -21,6 +21,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class UrquanPhrase
 {
 	NullPhrase,
@@ -102,5 +104,7 @@ enum class UrquanPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(UrquanPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_URQUAN_STRINGS_H

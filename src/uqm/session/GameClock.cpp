@@ -2,9 +2,9 @@
 
 #include "GameClock.h"
 
+
 namespace uqm
 {
-
 namespace
 {
 

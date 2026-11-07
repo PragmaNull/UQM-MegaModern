@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class DruugePhrase
 {
 	NullPhrase,
@@ -132,5 +134,7 @@ enum class DruugePhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(DruugePhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_DRUUGE_STRINGS_H

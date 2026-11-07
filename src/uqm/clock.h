@@ -23,6 +23,8 @@
 #include "libs/time/timelib.h"
 #include "displist.h"
 
+namespace uqm
+{
 inline constexpr auto StartYear {2155};
 
 // the running of the game-clock is based on game framerates
@@ -90,5 +92,7 @@ extern void UnlockGameClock(void);
 // A weak indicator of the clock moving. Suitable for debugging,
 // but not much else
 extern bool GameClockRunning(void);
+
+} // namespace uqm
 
 #endif // UQM_CLOCK_H

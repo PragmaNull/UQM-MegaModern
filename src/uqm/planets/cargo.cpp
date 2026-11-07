@@ -32,6 +32,8 @@
 #include "core/string/StringUtils.h"
 
 
+namespace uqm
+{
 static auto ElementOrgY() { return ResScale(35); }
 static auto BioOrgY() { return ResScale(119); }
 static auto ElementSpacingY() { return ResScale(9); }
@@ -494,3 +496,5 @@ void CargoMenu(void)
 	// erase the cargo display
 	ClearSISRect(DrawSisDisplay);
 }
+
+} // namespace uqm

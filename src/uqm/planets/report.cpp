@@ -38,6 +38,8 @@
 #include "uqm/lua/UQMLua.h"
 
 
+namespace uqm
+{
 static auto ColMultiplier() { return (isPC(uqm::UQMOptions::read().landerStyle) || IsPad() ? 7 : 6); }
 static auto NumCellCols() { return (UqmMapWidth / ColMultiplier()); }
 static constexpr auto NumCellRows {Sc2MapHeight / 6};
@@ -411,3 +413,5 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 
 	WaitForNoInput(WaitInfinite, true);
 }
+
+} // namespace uqm

@@ -217,6 +217,29 @@ template <BitFlagEnum E>
 	return static_cast<std::underlying_type_t<E>>(a & b) != 0;
 }
 
+// The enum operators for the enums of the game code.
+namespace uqm
+{
+using ::any;
+using ::format_as;
+using ::operator*;
+using ::operator-;
+using ::operator+;
+using ::operator++;
+using ::operator--;
+using ::operator+=;
+using ::operator-=;
+using ::operator==;
+using ::operator<=>;
+using ::operator|;
+using ::operator&;
+using ::operator^;
+using ::operator~;
+using ::operator|=;
+using ::operator&=;
+using ::operator^=;
+} // namespace uqm
+
 #define ENUM_BITWISE_OPS(enumName)                                                                                                             \
 	[[nodiscard]] constexpr inline enumName operator|(enumName lhs, enumName rhs) noexcept                                                     \
 	{                                                                                                                                          \

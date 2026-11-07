@@ -35,6 +35,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateSaMatra_initNpcs(SolarSystemState* solarSys);
 static bool GenerateSaMatra_reinitNpcs(SolarSystemState* solarSys);
 static bool GenerateSaMatra_generatePlanets(SolarSystemState* solarSys);
@@ -551,3 +553,5 @@ static bool GenerateSaMatra_pickupEnergy(SolarSystemState* solarSys, SystemPlane
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

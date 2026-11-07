@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_ARILOU_ARILOU_H
 #define UQM_SHIPS_ARILOU_ARILOU_H
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -27,5 +29,7 @@ RaceDesc* init_arilou(void);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_ARILOU_ARILOU_H

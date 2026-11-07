@@ -23,6 +23,8 @@
 #include "../planets.h"
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -94,5 +96,7 @@ consteval bool isArithmeticEnum(HardModeEncounter) { return true; }
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_PLANETS_GENERATE_GENDEFAULT_H

@@ -20,6 +20,8 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_CHECKBUF_H
 #define UQM_SUPERMELEE_NETPLAY_CHECKBUF_H
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -31,10 +33,14 @@ typedef struct ChecksumBuffer ChecksumBuffer;
 }
 #endif
 
+} // namespace uqm
+
 #include "../../battle.h"
 // for BattleFrameCounter
 #include "checksum.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -76,5 +82,7 @@ bool ChecksumBuffer_getChecksum(ChecksumBuffer* cb,
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_CHECKBUF_H

@@ -8,6 +8,8 @@
 #include "uqm/displist.h"
 #include "uqm/sis.h"
 
+namespace uqm
+{
 struct GameData
 {
 	uint8_t CrewCost, FuelCost;
@@ -36,5 +38,7 @@ struct GameData
 	/* List of escort ships available at starbase;
 			 * queue Element is ShipFragment */
 };
+
+} // namespace uqm
 
 #endif // UQM_SESSION_GAMEDATA_H

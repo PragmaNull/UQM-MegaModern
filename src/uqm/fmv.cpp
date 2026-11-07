@@ -33,6 +33,8 @@
 #include "gameopt.h"
 #include "build.h"
 
+namespace uqm
+{
 static constexpr auto MaxLoadEntries {40};
 
 void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
@@ -251,3 +253,5 @@ void AdvanceLoadProgress(void)
 		DrawFilledRectangle(&r);
 	}
 }
+
+} // namespace uqm

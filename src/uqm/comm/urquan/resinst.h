@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_URQUAN_RESINST_H
 #define UQM_COMM_URQUAN_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring UrquanColorMap {"comm.urquan.colortable"};
 inline constexpr uqgsl::czstring UrquanAltcolorMap {"comm.urquan.alt.colortable"};
 inline constexpr uqgsl::czstring UrquanConversationPhrases {"comm.urquan.dialogue"};
@@ -13,5 +15,7 @@ inline constexpr uqgsl::czstring UrquanFont {"comm.urquan.font"};
 inline constexpr uqgsl::czstring UrquanMusic {"comm.urquan.music"};
 inline constexpr uqgsl::czstring UrquanProbeMusic {"comm.urquan.probe.music"};
 inline constexpr uqgsl::czstring UrquanPmapAnim {"comm.urquan.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_URQUAN_RESINST_H

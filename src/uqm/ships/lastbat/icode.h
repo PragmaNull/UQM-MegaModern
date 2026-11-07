@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_LASTBAT_ICODE_H
 #define UQM_SHIPS_LASTBAT_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring SamatraCode {"ship.samatra.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_LASTBAT_ICODE_H

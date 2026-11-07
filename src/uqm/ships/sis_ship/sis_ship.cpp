@@ -27,6 +27,8 @@
 #include "libs/mathlib.h"
 #include "../../setup.h"
 
+namespace uqm
+{
 /* Core characteristics.
  * All of these are changed at init time by some module, except for
  * MaxEnergySize, ThrustIncrement, and MaxShipMass. */
@@ -1055,3 +1057,5 @@ static void uninit_sis(RaceDesc* pRaceDesc)
 
 	SetCustomShipData(pRaceDesc, nullptr);
 }
+
+} // namespace uqm

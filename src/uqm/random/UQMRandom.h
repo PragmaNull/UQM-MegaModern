@@ -9,9 +9,9 @@
 
 #include <cstdint>
 
+
 namespace uqm
 {
-
 class UQMRandom final : public Random<UQMRandom>
 {
 public:
@@ -33,5 +33,6 @@ public:
 [[nodiscard]] UQMRandom& random();
 
 } // namespace uqm
+
 
 #endif // UQM_RANDOM_UQMRANDOM_H

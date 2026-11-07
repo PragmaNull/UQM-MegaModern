@@ -9,9 +9,9 @@
 #include <cctype>
 #include <cstdlib>
 
+
 namespace uqm
 {
-
 namespace
 {
 

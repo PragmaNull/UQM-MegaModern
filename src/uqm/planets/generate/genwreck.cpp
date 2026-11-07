@@ -28,6 +28,8 @@
 #include "../../comm.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 static bool GenerateWreck_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateWreck_generateOrbital(SolarSystemState* solarSys,
 										  SystemPlanet* world);
@@ -209,3 +211,5 @@ static bool GenerateWreck_pickupEnergy(SolarSystemState* solarSys, SystemPlanet*
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

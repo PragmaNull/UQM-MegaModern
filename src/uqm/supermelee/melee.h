@@ -28,6 +28,9 @@
 #include "libs/time/timelib.h"
 #include "libs/reslib.h"
 #include "netplay/packet.h"
+
+namespace uqm
+{
 // for NetplayAbortReason and NetplayResetReason.
 
 #if 0 //defined(__cplusplus)
@@ -81,10 +84,14 @@ using MELEE_OPTIONS = MeleeMenuItem;
 }
 #endif
 
+} // namespace uqm
+
 #include "loadmele.h"
 #include "meleesetup.h"
 #include "meleeship.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -245,5 +252,7 @@ consteval bool isArithmeticEnum(MeleeFrameIndex) { return true; }
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_MELEE_H

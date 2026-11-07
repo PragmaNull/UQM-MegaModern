@@ -40,7 +40,7 @@ LEGACY_VIDEO_REF PlayLegacyVideo(LEGACY_VIDEO vid)
 		return nullptr;
 	}
 
-	DrawBorderPadding(ref->vidref->w);
+	uqm::DrawBorderPadding(ref->vidref->w);
 
 	if (audname)
 	{

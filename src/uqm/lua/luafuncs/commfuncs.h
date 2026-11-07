@@ -20,6 +20,8 @@
 
 #include "uqm/lua/UQMLua.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -29,5 +31,7 @@ int luaUqm_comm_open(lua_State* luaState);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_LUA_LUAFUNCS_COMMFUNCS_H

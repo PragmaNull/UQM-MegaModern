@@ -23,8 +23,12 @@
 #include "libs/reslib.h"
 
 
+namespace uqm
+{
 inline DRAWABLE LoadGraphic(RESOURCE res) { return static_cast<DRAWABLE>(LoadGraphicInstance(res)); }
 inline FONT LoadFont(RESOURCE res) { return static_cast<FONT>(LoadGraphicInstance(res)); }
+
+} // namespace uqm
 
 
 #endif // UQM_NAMEREF_H

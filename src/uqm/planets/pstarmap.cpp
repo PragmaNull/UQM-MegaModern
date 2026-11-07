@@ -56,6 +56,8 @@
 #include "uqm/setupmenu.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 enum class StarmapView
 {
 	NormalStarmap,
@@ -3479,3 +3481,5 @@ bool StarMap(void)
 
 	return (uqm::flagship().autopilot.hasTarget());
 }
+
+} // namespace uqm

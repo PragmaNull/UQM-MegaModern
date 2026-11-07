@@ -23,6 +23,9 @@
 #include "uqm/gendef.h"
 #include "libs/mathlib.h"
 #include "core/log/log.h"
+
+namespace uqm
+{
 /* -------------------------------- DATA -------------------------------- */
 
 /* -------------------------------- CODE -------------------------------- */
@@ -619,3 +622,5 @@ void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr, SystemPlanet* pPlanetDesc)
 #endif /* DEBUG_PLANET_CALC */
 	}
 }
+
+} // namespace uqm

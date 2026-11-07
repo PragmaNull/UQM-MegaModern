@@ -25,6 +25,8 @@
 #include "uqm/setup.h"
 
 
+namespace uqm
+{
 static ConversationData syreen_desc =
 	{
 		Conversation::Syreen, /* AlienConv */
@@ -1084,3 +1086,5 @@ ConversationData* init_syreen_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

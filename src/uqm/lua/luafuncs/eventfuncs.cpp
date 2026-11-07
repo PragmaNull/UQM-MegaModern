@@ -24,6 +24,8 @@
 #include "core/log/log.h"
 
 
+namespace uqm
+{
 static int luaUqm_event_addAbsolute(lua_State* luaState);
 static int luaUqm_event_addRelative(lua_State* luaState);
 static int luaUqm_event_register(lua_State* luaState);
@@ -192,3 +194,5 @@ static int luaUqm_event_unregister(lua_State* luaState)
 
 	return 0;
 }
+
+} // namespace uqm

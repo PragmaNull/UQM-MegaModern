@@ -36,7 +36,7 @@ const char* skipMarker(const char* str, char delimiter, int16_t* offset)
 
 	if (value != 0)
 	{
-		*offset += ResScale(value);
+		*offset += uqm::ResScale(value);
 	}
 	return str + end + 1;
 }

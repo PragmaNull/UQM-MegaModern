@@ -11,9 +11,9 @@
 
 #include "core/stl/optional.h"
 
+
 namespace uqm
 {
-
 class SettingsRegistry;
 
 struct MenuOptionDef
@@ -119,5 +119,6 @@ struct MenuDefinition
 [[nodiscard]] uqstl::vector<uqstl::string> validateMenuDefinition(const MenuDefinition& definition, const SettingsRegistry& settings);
 
 } // namespace uqm
+
 
 #endif // UQM_MENUDEF_H

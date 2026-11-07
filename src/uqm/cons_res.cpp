@@ -27,6 +27,9 @@
 #include "units.h"
 // for NumViews
 #include "planets/planets.h"
+
+namespace uqm
+{
 // for NUMBER_OF_PLANET_TYPES, PLANET_SHIELDED
 
 const static char* planet_types[] = {
@@ -126,3 +129,5 @@ int num_orbit_themes(void)
 		return NumOrbitThemes - 1;
 	}
 }
+
+} // namespace uqm

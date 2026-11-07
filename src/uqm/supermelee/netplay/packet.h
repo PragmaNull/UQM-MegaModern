@@ -22,6 +22,9 @@
 
 
 #include "core/types/enum.h"
+
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -77,12 +80,16 @@ consteval bool isArithmeticEnum(NetplayResetReason) { return true; }
 }
 #endif
 
+} // namespace uqm
+
 #ifndef PACKET_H_STANDALONE
 #include "netconnection.h"
 
 #include <cstdint>
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -107,8 +114,12 @@ extern PacketTypeData packetTypeData[];
 }
 #endif
 
+} // namespace uqm
+
 #endif
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -354,5 +365,7 @@ Packet_Reset* Packet_Reset_create(uint16_t reason);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_PACKET_H

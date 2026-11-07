@@ -10,9 +10,9 @@
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
 
+
 namespace uqm
 {
-
 enum class GameFlag : uint16_t
 {
 #define UQM_GAME_FLAG(name, bits) name,
@@ -50,5 +50,6 @@ inline constexpr size_t c_gameFlagCount {uqstl::size(c_gameFlags)};
 [[nodiscard]] uqstl::optional<GameFlag> findGameFlag(uqstl::string_view name);
 
 } // namespace uqm
+
 
 #endif // UQM_SESSION_GAMEFLAGS_H

@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class PkunkPhrase
 {
 	NullPhrase,
@@ -212,5 +214,7 @@ enum class PkunkPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(PkunkPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_PKUNK_STRINGS_H

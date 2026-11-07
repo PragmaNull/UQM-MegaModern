@@ -20,14 +20,20 @@
 #ifndef UQM_SUPERMELEE_LOADMELE_H
 #define UQM_SUPERMELEE_LOADMELE_H
 
+namespace uqm
+{
 inline constexpr auto LoadTeamViewSize {5};
 
 struct melee_load_state;
+
+} // namespace uqm
 
 #include "melee.h"
 #include "meleesetup.h"
 #include "core/stl/vector.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -63,5 +69,7 @@ void LoadTeamList(MeleeState* pMS);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_LOADMELE_H

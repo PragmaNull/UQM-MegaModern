@@ -29,6 +29,8 @@
 
 #include <assert.h>
 
+namespace uqm
+{
 // Reset packets are sent to indicate that a game is to be reset.
 // i.e. the game is to return to the SuperMelee fleet setup menu.
 // The reset will occur when a reset packet has both been sent and
@@ -168,3 +170,5 @@ bool Netplay_isRemoteReset(const NetConnection* conn)
 {
 	return conn->stateFlags.reset.remoteReset;
 }
+
+} // namespace uqm

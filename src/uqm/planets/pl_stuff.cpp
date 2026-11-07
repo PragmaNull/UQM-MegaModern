@@ -30,6 +30,8 @@
 #include <SDL3/SDL.h>
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // define USE_ADDITIVE_SCAN_BLIT to use additive blittting
 // instead of transparency for the planet scans.
 // It still doesn't look right though (it is too bright)
@@ -639,3 +641,5 @@ void DrawPlanet(int tintY, Color tintColor)
 	}
 	UnbatchGraphics();
 }
+
+} // namespace uqm

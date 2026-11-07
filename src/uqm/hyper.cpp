@@ -48,6 +48,8 @@
 #include "util.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 static auto Xoffs() { return ((RadarScanWidth() + (UnitScreenWidth() << 2)) >> 1); }
 static auto Yoffs() { return ((RadarScanHeight() + (UnitScreenHeight() << 2)) >> 1); }
 static auto AnimatedHyperspace() { return (IsHd() && uqm::UQMOptions::read().hyperStars); }
@@ -2349,3 +2351,5 @@ void SaveSisHyperState(void)
 	uqm::flagship().shipFacing = StarShipPtr->ShipFacing + 1;
 	UnlockElement(hSisElement);
 }
+
+} // namespace uqm

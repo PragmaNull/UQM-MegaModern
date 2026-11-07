@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class OrzPhrase
 {
 	NullPhrase,
@@ -141,5 +143,7 @@ enum class OrzPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(OrzPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_ORZ_STRINGS_H

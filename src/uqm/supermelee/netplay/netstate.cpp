@@ -23,6 +23,8 @@
 #include <stdlib.h>
 
 
+namespace uqm
+{
 #define DEFINE_NETSTATEDATA(stateName) \
 	{                                  \
 		/* .name = */ #stateName,      \
@@ -45,3 +47,5 @@ void NetConnectionStateData_release(NetConnectionStateData* stateData)
 	assert(stateData->releaseFunction != nullptr);
 	stateData->releaseFunction(stateData);
 }
+
+} // namespace uqm

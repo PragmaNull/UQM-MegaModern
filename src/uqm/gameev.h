@@ -23,6 +23,8 @@
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -75,5 +77,7 @@ extern void SetRaceDest(uint8_t which_race, int16_t x, int16_t y, uint8_t days_l
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_GAMEEV_H

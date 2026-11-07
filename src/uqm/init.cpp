@@ -39,6 +39,8 @@
 #include "libs/input/input_common.h"
 
 
+namespace uqm
+{
 FRAME stars_in_space;
 FRAME stars_misc[NumViews];
 FRAME scenery;
@@ -420,3 +422,5 @@ void ReloadGameContent(void)
 		InitGameKernel();
 	}
 }
+
+} // namespace uqm

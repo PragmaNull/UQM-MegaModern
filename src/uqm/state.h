@@ -28,6 +28,8 @@
 #include <assert.h>
 #include <cstdint>
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -184,5 +186,7 @@ static inline uint16_t swrite_a32(GameStateFile* fp, const uint32_t* ar, uint16_
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_STATE_H

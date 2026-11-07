@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_UMGAH_RESINST_H
 #define UQM_COMM_UMGAH_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring UmgahColorMap {"comm.umgah.colortable"};
 inline constexpr uqgsl::czstring UmgahConversationPhrases {"comm.umgah.dialogue"};
 inline constexpr uqgsl::czstring UmgahFont {"comm.umgah.font"};
 inline constexpr uqgsl::czstring UmgahMusic {"comm.umgah.music"};
 inline constexpr uqgsl::czstring UmgahPmapAnim {"comm.umgah.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_UMGAH_RESINST_H

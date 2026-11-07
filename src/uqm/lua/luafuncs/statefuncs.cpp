@@ -25,6 +25,8 @@
 #include "uqm/globdata.h"
 
 
+namespace uqm
+{
 static int luaUqm_state_clock_getDate(lua_State* luaState);
 static int luaUqm_state_escort_addShips(lua_State* luaState);
 static int luaUqm_state_escort_canAddShips(lua_State* luaState);
@@ -541,3 +543,5 @@ static int luaUqm_state_misc_alignText(lua_State* luaState)
 
 	return 1;
 }
+
+} // namespace uqm

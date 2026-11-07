@@ -25,6 +25,8 @@
 #include "menustat.h"
 #include "util.h"
 
+namespace uqm
+{
 static constexpr auto LowFuelColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E)};
 
 void DrawCrewFuelString(int16_t y, int16_t state)
@@ -501,3 +503,5 @@ void DeltaStatistics(ShipInfoDesc* ShipInfoPtr, int16_t y_offs,
 		}
 	}
 }
+
+} // namespace uqm

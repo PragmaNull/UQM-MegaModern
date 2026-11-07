@@ -6,11 +6,15 @@
 #ifndef UQM_COMM_SHOFIXT_RESINST_H
 #define UQM_COMM_SHOFIXT_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring ShofixtiColorMap {"comm.shofixti.colortable"};
 inline constexpr uqgsl::czstring ShofixtiConversationPhrases {"comm.shofixti.dialogue"};
 inline constexpr uqgsl::czstring ShofixtiFont {"comm.shofixti.font"};
 inline constexpr uqgsl::czstring ShofixtiMusic {"comm.shofixti.music"};
 inline constexpr uqgsl::czstring ShofixtiPmapAnim {"comm.shofixti.graphics"};
 inline constexpr uqgsl::czstring ShofixtiAltPmapAnim {"comm.shofixti.alt.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_SHOFIXT_RESINST_H

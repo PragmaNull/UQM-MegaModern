@@ -173,7 +173,7 @@ void DrawBatch(Primitive* lpBasePrim, PRIM_LINKS PrimLinks,
 				case PrimitiveType::Line:
 					color = GetPrimColor(lpWorkPrim);
 					TFB_Prim_Line(&lpWorkPrim->Object.Line, color,
-								  mode, origin, chooseIfHd(1, 3));
+								  mode, origin, uqm::chooseIfHd(1, 3));
 					break;
 				case PrimitiveType::Text:
 					if (!TextRect(&lpWorkPrim->Object.Text, &ClipRect, nullptr))

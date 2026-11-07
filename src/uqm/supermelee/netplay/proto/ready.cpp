@@ -26,6 +26,8 @@
 
 #include <assert.h>
 
+namespace uqm
+{
 static void Netplay_bothReady(NetConnection* conn)
 {
 	assert(conn->readyCallback != nullptr);
@@ -103,3 +105,5 @@ bool Netplay_isRemoteReady(const NetConnection* conn)
 {
 	return conn->stateFlags.ready.remoteReady;
 }
+
+} // namespace uqm

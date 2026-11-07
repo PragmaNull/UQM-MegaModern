@@ -23,6 +23,8 @@
 #include "element.h"
 #include "libs/gfxlib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -65,5 +67,7 @@ extern FRAME ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_WEAPON_H

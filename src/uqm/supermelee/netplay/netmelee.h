@@ -32,6 +32,9 @@
 #include "../../controls.h"
 // for BATTLE_INPUT_STATE
 #include "../../races.h"
+
+namespace uqm
+{
 // for Starship
 
 #if 0 //defined(__cplusplus)
@@ -89,6 +92,8 @@ bool waitResetConnections(NetState nextState);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif
 

@@ -19,6 +19,8 @@
 #include "uqm/lua/UQMLua.h"
 #include "core/log/log.h"
 
+namespace uqm
+{
 static int luaUqm_log_debug(lua_State* luaState);
 static int luaUqm_log_error(lua_State* luaState);
 static int luaUqm_log_fatal(lua_State* luaState);
@@ -40,6 +42,8 @@ int luaUqm_log_open(lua_State* luaState)
 	return 1;
 }
 
+} // namespace uqm
+
 template <>
 struct fmt::formatter<lua_State> : fmt::formatter<std::string>
 {
@@ -48,6 +52,9 @@ struct fmt::formatter<lua_State> : fmt::formatter<std::string>
 		return fmt::format_to(ctx.out(), "Lua: {}", lua_tostring(&my, 1));
 	}
 };
+
+namespace uqm
+{
 
 // [1] -> string logMessage
 static int luaUqm_log_debug(lua_State* luaState)
@@ -83,3 +90,5 @@ static int luaUqm_log_warn(lua_State* luaState)
 	uqm::log::warn("{}", *luaState);
 	return 0;
 }
+
+} // namespace uqm

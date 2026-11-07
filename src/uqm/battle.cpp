@@ -48,6 +48,9 @@
 #include "libs/input/sdl/vcontrol.h"
 #include "hyper.h"
 #include "uqm/random/UQMRandom.h"
+
+namespace uqm
+{
 // for EraseRadar()
 
 
@@ -547,3 +550,5 @@ AbortBattle:
 
 	return (bool)(num_ships < 0);
 }
+
+} // namespace uqm

@@ -7,9 +7,9 @@
 
 #include <random>
 
+
 namespace uqm
 {
-
 GameSeed normalized(GameSeed seed) noexcept
 {
 	if (seed.type == SeedType::Original)

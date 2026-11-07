@@ -5,6 +5,8 @@
 #include "core/types/enum.h"
 #include <cstdint>
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -57,5 +59,7 @@ static inline bool MeleeShip_valid(MeleeShip ship)
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_MELEESHIP_H

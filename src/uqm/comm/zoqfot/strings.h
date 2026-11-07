@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class ZoqFotPikPhrase
 {
 	NullPhrase,
@@ -361,5 +363,7 @@ enum class ZoqFotPikPhrase
 	OutTakes13,
 };
 consteval bool isArithmeticEnum(ZoqFotPikPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_ZOQFOT_STRINGS_H

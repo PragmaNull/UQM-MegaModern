@@ -23,6 +23,8 @@
 #include <string.h> /* for memset */
 #include "libs/gfxlib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -75,5 +77,7 @@ constexpr auto WorldToVelocity(const auto& l) { return ((l) << VelocityShift); }
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_VELOCITY_H

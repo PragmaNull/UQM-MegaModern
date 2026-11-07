@@ -172,7 +172,7 @@ RESOURCE_INDEX InitResourceSystem(void)
 	InstallStringTableResType();
 	InstallAudioResTypes();
 	InstallVideoResType();
-	InstallCodeResType();
+	uqm::InstallCodeResType();
 
 	return ndx;
 }

@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_SYREEN_RESINST_H
 #define UQM_SHIPS_SYREEN_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring DaggerBigMaskPmapAnim {"ship.syreen.graphics.dagger.large"};
 inline constexpr uqgsl::czstring DaggerMedMaskPmapAnim {"ship.syreen.graphics.dagger.medium"};
 inline constexpr uqgsl::czstring DaggerSmlMaskPmapAnim {"ship.syreen.graphics.dagger.small"};
@@ -18,5 +20,7 @@ inline constexpr uqgsl::czstring SyreenRaceStrings {"ship.syreen.text"};
 inline constexpr uqgsl::czstring SyreenShipSounds {"ship.syreen.sounds"};
 inline constexpr uqgsl::czstring SyreenSmlMaskPmapAnim {"ship.syreen.graphics.penetrator.small"};
 inline constexpr uqgsl::czstring SyreenVictorySong {"ship.syreen.ditty"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_SYREEN_RESINST_H

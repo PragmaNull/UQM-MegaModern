@@ -18,13 +18,19 @@
 #ifndef UQM_SUPERMELEE_PICKMELE_H
 #define UQM_SUPERMELEE_PICKMELE_H
 
+namespace uqm
+{
 struct PickMeleeState;
+
+} // namespace uqm
 
 #include "uqm/races.h"
 #include "uqm/battlecontrols.h"
 #include "meleesetup.h"
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 void MeleeShipDeath(Starship*);
 void BuildPickMeleeFrame(void);
 void DestroyPickMeleeFrame(void);
@@ -42,6 +48,8 @@ bool selectShipComputer(ComputerInputContext* context,
 bool selectShipNetwork(NetworkInputContext* context, PickMeleeState* gms);
 #endif /* NETPLAY */
 
+} // namespace uqm
+
 #ifdef PICKMELE_INTERNAL
 
 #include "../flash.h"
@@ -49,6 +57,8 @@ bool selectShipNetwork(NetworkInputContext* context, PickMeleeState* gms);
 #include "../init.h"
 
 
+namespace uqm
+{
 struct PickMeleeState
 {
 	bool (*InputFunc)(struct PickMeleeState* pInputState);
@@ -83,6 +93,8 @@ struct PickMeleeState
 
 bool setShipSelected(PickMeleeState* gms, uint16_t playerI, uint16_t choice,
 					 bool reportNetwork);
+
+} // namespace uqm
 
 
 #endif /* PICKMELE_INTERNAL */

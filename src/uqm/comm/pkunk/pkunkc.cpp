@@ -24,6 +24,8 @@
 #include "uqm/gameev.h"
 
 
+namespace uqm
+{
 static ConversationData pkunk_desc =
 	{
 		Conversation::Pkunk, /* AlienConv */
@@ -1197,3 +1199,5 @@ ConversationData* init_pkunk_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

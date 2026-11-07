@@ -44,6 +44,8 @@
 #include "util.h"
 #include "shipcont.h"
 
+namespace uqm
+{
 static auto DosMenu() { return (uqm::UQMOptions::read().dosMenus || IsDos()); } // The DOS Menu window
 
 // 3DO 4x3 hangar layout
@@ -2767,3 +2769,5 @@ ExitShipyard:
 
 	return true;
 }
+
+} // namespace uqm

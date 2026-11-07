@@ -22,6 +22,8 @@
 #include "libs/mathlib.h"
 #include "planets.h"
 
+namespace uqm
+{
 void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GfxRect* pRect,
 					 int16_t depth_delta)
 {
@@ -242,3 +244,5 @@ void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GfxRect* pRect
 		} while (--h);
 	} while (--num_iterations);
 }
+
+} // namespace uqm

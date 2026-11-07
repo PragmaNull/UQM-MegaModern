@@ -23,6 +23,8 @@
 #include "setup.h"
 
 
+namespace uqm
+{
 static MUSIC_REF LastMusicRef;
 static bool LastContinuous;
 static uint8_t LastPriority;
@@ -120,3 +122,5 @@ void PlaySpeechEffect(SOUND S, SoundPosition Pos, void* PositionalObject, uint8_
 		PlayChannel(6, S, Pos, PositionalObject, Priority);
 	}
 }
+
+} // namespace uqm

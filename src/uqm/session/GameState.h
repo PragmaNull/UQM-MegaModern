@@ -18,10 +18,10 @@
 #include "uqm/state.h"
 #include <cstdint>
 
-struct StarDesc;
-
 namespace uqm
 {
+struct StarDesc;
+
 
 class GameState
 {
@@ -110,10 +110,11 @@ private:
 	return gameState().flagship();
 }
 
-} // namespace uqm
 
 // A flag of the current session, or 0 if it is not set.
 uint32_t getGameStateUint(const char* name);
 void setGameStateUint(const char* name, uint32_t val);
+
+} // namespace uqm
 
 #endif // UQM_SESSION_GAMESTATE_H

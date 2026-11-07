@@ -23,6 +23,8 @@
 #include "core/types/enum.h"
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -214,5 +216,7 @@ inline auto ElementCategory(const auto& et) { return Elements[et] & 0x7; }
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_PLANETS_ELEMDATA_H

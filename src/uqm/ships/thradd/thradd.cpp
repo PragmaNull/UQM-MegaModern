@@ -22,6 +22,8 @@
 
 #include "uqm/globdata.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {8};
 static constexpr auto MaxEnergy {24};
@@ -432,3 +434,5 @@ RaceDesc* init_thraddash(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

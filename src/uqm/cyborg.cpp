@@ -28,6 +28,8 @@
 #include "core/log/log.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 //#define DEBUG_CYBORG
 
 uint16_t PlotIntercept(Element* ElementPtr0, Element* ElementPtr1,
@@ -1496,3 +1498,5 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 		return (InputState);
 	}
 }
+
+} // namespace uqm

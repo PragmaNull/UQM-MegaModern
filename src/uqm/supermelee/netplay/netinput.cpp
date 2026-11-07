@@ -28,6 +28,8 @@
 #include <stdlib.h>
 
 
+namespace uqm
+{
 static BattleInputBuffer battleInputBuffers[NumPlayers];
 static size_t BattleInput_inputDelay;
 
@@ -140,3 +142,5 @@ BattleInputBuffer* getBattleInputBuffer(size_t player)
 {
 	return &battleInputBuffers[player];
 }
+
+} // namespace uqm

@@ -24,20 +24,31 @@
 #include "setup.h"
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
+
+namespace uqm
+{
 // for CONVERSATION
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
+} // namespace uqm
+
 #ifdef COMM_INTERNAL
 
+namespace uqm
+{
 inline auto SliderY() { return (ResScale(107)); }
 inline auto SliderHeight() { return ResScale((!usingSpeech && isPC(uqm::UQMOptions::read().smoothScroll)) ? 4 : DosBool(15, 4)); }
+
+} // namespace uqm
 
 #include "commanim.h"
 
 
+namespace uqm
+{
 extern ConversationData CommData;
 
 static inline bool haveTalkingAnim(void)
@@ -115,8 +126,12 @@ static inline bool signaledFreezeTalkingAnim(void)
 	return CommData.AlienTalkDesc.AnimFlags & FreezeTalking;
 }
 
+} // namespace uqm
+
 #endif
 
+namespace uqm
+{
 inline auto TextXOffs() { return ResScale(1); }
 
 inline auto SisTextWidth() { return (SisScreenWidth() - (TextXOffs() << 1)); }
@@ -169,5 +184,7 @@ extern uint8_t altResFlags;
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_COMM_H

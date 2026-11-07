@@ -179,8 +179,8 @@ VIDEO_REF _init_video_file(const char* pStr)
 	tfb::VideoClip* vid {new tfb::VideoClip {}};
 	vid->decoder = dec;
 	vid->length = dec->length;
-	vid->w = vid->decoder->w - IfHd(4);
-	vid->h = vid->decoder->h + IfHd(7);
+	vid->w = vid->decoder->w - uqm::IfHd(4);
+	vid->h = vid->decoder->h + uqm::IfHd(7);
 
 	return (VIDEO_REF)vid;
 }

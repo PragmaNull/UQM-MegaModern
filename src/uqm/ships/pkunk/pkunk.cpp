@@ -28,6 +28,8 @@
 #include "uqm/nameref.h" // for fwiffo
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {8};
 static constexpr auto MaxEnergy {12};
@@ -665,3 +667,5 @@ RaceDesc* init_pkunk(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

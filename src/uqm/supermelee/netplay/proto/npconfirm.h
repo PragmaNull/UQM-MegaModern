@@ -23,6 +23,8 @@
 #include "../netplay.h"
 #include "../netconnection.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -33,5 +35,7 @@ NetResult Netplay_cancelConfirmation(NetConnection* conn);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_PROTO_NPCONFIRM_H

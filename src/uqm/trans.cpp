@@ -20,6 +20,8 @@
 #include "core/misc/bittricks.h"
 
 
+namespace uqm
+{
 int32_t sinetab[] =
 	{
 		-FltAdjust(1.000000),
@@ -163,3 +165,5 @@ uint16_t ARCTAN(int32_t delta_x, int32_t delta_y)
 
 	return (NormalizeAngle(v1));
 }
+
+} // namespace uqm

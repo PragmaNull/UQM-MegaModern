@@ -12,9 +12,9 @@
 
 #include "core/stl/optional.h"
 
+
 namespace uqm
 {
-
 struct MeleeSideConfig
 {
 	PlayerControlFlags control {PlayerControlFlags::None};
@@ -29,5 +29,6 @@ struct MeleeSideConfig
 [[nodiscard]] uqstl::optional<uqstl::vector<MeleeSideConfig>> meleeConfigFromJson(uqstl::string_view json);
 
 } // namespace uqm
+
 
 #endif // UQM_SUPERMELEE_MELEECONFIG_H

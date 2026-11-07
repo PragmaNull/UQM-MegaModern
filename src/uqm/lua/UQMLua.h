@@ -29,10 +29,10 @@
 #include <cstdio>
 #include <lua.hpp>
 
-struct luaUqm_custom_Function;
-
 namespace uqm
 {
+struct luaUqm_custom_Function;
+
 
 // The Lua state of the game, and the script environments that use it.
 class UQMLua
@@ -123,5 +123,6 @@ private:
 [[nodiscard]] UQMLua& lua();
 
 } // namespace uqm
+
 
 #endif // UQM_LUA_UQMLUA_H

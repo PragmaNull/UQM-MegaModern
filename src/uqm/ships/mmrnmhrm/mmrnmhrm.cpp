@@ -20,6 +20,8 @@
 #include "mmrnmhrm.h"
 #include "resinst.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {20};
 static constexpr auto MaxEnergy {10};
@@ -551,3 +553,5 @@ RaceDesc* init_mmrnmhrm(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

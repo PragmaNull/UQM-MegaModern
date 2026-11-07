@@ -33,6 +33,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateThraddash_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 											  SystemPlanet* world);
@@ -318,3 +320,5 @@ static bool GenerateThraddash_pickupEnergy(SolarSystemState* solarSys,
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

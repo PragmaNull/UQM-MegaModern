@@ -6,6 +6,8 @@
 #ifndef UQM_IFONTRES_H
 #define UQM_IFONTRES_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring LanderFontRes {"font.lander"};
 inline constexpr uqgsl::czstring MicroFontRes {"font.micro"};
 inline constexpr uqgsl::czstring MicroThinFontRes {"font.micro.thin"};
@@ -25,5 +27,7 @@ inline constexpr uqgsl::czstring MeleeTitleFontRes {"font.melee.title"};
 inline constexpr uqgsl::czstring ButtonFontRes {"font.button"};
 inline constexpr uqgsl::czstring PlaymenuFontRes {"font.playmenu"};
 inline constexpr uqgsl::czstring ModuleFontRes {"font.module"};
+
+} // namespace uqm
 
 #endif // UQM_IFONTRES_H

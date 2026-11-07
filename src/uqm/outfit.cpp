@@ -40,6 +40,8 @@
 
 #include "core/string/StringUtils.h"
 
+namespace uqm
+{
 // How manyeth .png in the module.ani file is the first lander shield.
 static constexpr auto ShieldLocationInModuleAni {23 + 2 * *ModuleType::NumPurchaseModules};
 static auto DosMenu() { return (uqm::UQMOptions::read().dosMenus || IsDos()); } // The DOS Menu window
@@ -1508,3 +1510,5 @@ ExitOutfit:
 
 	return (true);
 }
+
+} // namespace uqm

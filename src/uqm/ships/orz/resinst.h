@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_ORZ_RESINST_H
 #define UQM_SHIPS_ORZ_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring HowitzerBigMaskPmapAnim {"ship.orz.graphics.howitzer.large"};
 inline constexpr uqgsl::czstring HowitzerMedMaskPmapAnim {"ship.orz.graphics.howitzer.medium"};
 inline constexpr uqgsl::czstring HowitzerSmlMaskPmapAnim {"ship.orz.graphics.howitzer.small"};
@@ -21,5 +23,7 @@ inline constexpr uqgsl::czstring OrzVictorySong {"ship.orz.ditty"};
 inline constexpr uqgsl::czstring TurretBigMaskPmapAnim {"ship.orz.graphics.turret.large"};
 inline constexpr uqgsl::czstring TurretMedMaskPmapAnim {"ship.orz.graphics.turret.medium"};
 inline constexpr uqgsl::czstring TurretSmlMaskPmapAnim {"ship.orz.graphics.turret.small"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_ORZ_RESINST_H

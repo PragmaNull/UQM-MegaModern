@@ -11,9 +11,9 @@
 
 #include <cstdint>
 
+
 namespace uqm
 {
-
 inline constexpr int c_creditsFileVersion {1};
 inline constexpr size_t c_creditsMaxColumns {5};
 inline constexpr size_t c_creditsMaxLines {50};
@@ -45,5 +45,6 @@ struct CreditsBlock
 [[nodiscard]] uqstl::optional<uqstl::vector<CreditsBlock>> creditsFromJson(uqstl::string_view json);
 
 } // namespace uqm
+
 
 #endif // UQM_CREDITSFILE_H

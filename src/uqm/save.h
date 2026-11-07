@@ -24,6 +24,8 @@
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -72,5 +74,7 @@ uqstl::optional<uqstl::string> SaveGameJson(SaveSummaryData* summary_desc, const
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SAVE_H

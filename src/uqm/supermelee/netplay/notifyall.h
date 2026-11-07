@@ -25,6 +25,8 @@
 #include "checksum.h"
 #endif /* NETPLAY_CHECKSUM */
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -45,5 +47,7 @@ void Netplay_NotifyAll_battleInput(BATTLE_INPUT_STATE input);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_NOTIFYALL_H

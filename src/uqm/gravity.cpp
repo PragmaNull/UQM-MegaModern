@@ -22,6 +22,8 @@
 #include "units.h"
 #include "core/log/log.h"
 
+namespace uqm
+{
 //#define DEBUG_GRAVITY
 
 static auto DifuseGravity() { return ResScale(175); } // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
@@ -212,3 +214,5 @@ bool TimeSpaceMatterConflict(Element* ElementPtr)
 
 	return (hTestElement != 0 ? true : false);
 }
+
+} // namespace uqm

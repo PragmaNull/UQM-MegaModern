@@ -45,6 +45,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static void cleanup_dead_ship(Element* ElementPtr);
 
 static bool dittyIsPlaying;
@@ -1040,3 +1042,5 @@ void flee_preprocess(Element* ElementPtr)
 	// Ignore control input when fleeing.
 	PreProcessStatus(ElementPtr);
 }
+
+} // namespace uqm

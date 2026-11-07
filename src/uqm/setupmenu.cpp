@@ -49,6 +49,8 @@
 #include "uqm/random/GameSeed.h"
 #include "uqm/setupsettings.h"
 
+namespace uqm
+{
 struct SetupMenuState
 {
 	bool (*InputFunc)(struct SetupMenuState* pInputState);
@@ -409,7 +411,7 @@ static inline float gammaCurve(float x)
 
 static inline float solveGammaCurve(float y)
 {
-	return log(y) / GammaCurveB + 1;
+	return std::log(y) / GammaCurveB + 1;
 }
 
 static int gammaToSlider(float gamma)
@@ -1007,3 +1009,5 @@ uqstl::optional<uqm::GameSeed> NewGameMenu(void)
 				  MenuSoundSelect);
 	return result;
 }
+
+} // namespace uqm

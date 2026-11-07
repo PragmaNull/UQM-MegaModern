@@ -28,6 +28,8 @@
 #include "core/log/log.h"
 #include "options.h"
 
+namespace uqm
+{
 // WARNING: Most of clock functions are only meant to be called by the
 //   Starcon2Main thread! If you need access from other threads, examine
 //   the locking system!
@@ -202,3 +204,5 @@ void UnlockEvent(HEVENT h) { UnlockLink(&uqm::gameState().clock().events(), h); 
 void FreeEvent(HEVENT h) { FreeLink(&uqm::gameState().clock().events(), h); }
 void ForAllEvents(void (*callback)(QueueLink*, void*), void* arg) { ForAllLinks(&uqm::gameState().clock().events(), callback, arg); }
 void LockEvent(HEVENT h, GameEvent** ppe) { *ppe = reinterpret_cast<GameEvent*>(LockLink(&uqm::gameState().clock().events(), h)); }
+
+} // namespace uqm

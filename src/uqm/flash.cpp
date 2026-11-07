@@ -45,6 +45,8 @@
 #include "util.h"
 
 
+namespace uqm
+{
 static FlashContext* Flash_create(GFXCONTEXT gfxContext);
 static void Flash_fixState(FlashContext* context);
 static void Flash_nextState(FlashContext* context);
@@ -880,3 +882,5 @@ static void Flash_drawCurrentFrame(FlashContext* context)
 		Flash_drawCachedFrame(context, numer, denom);
 	}
 }
+
+} // namespace uqm

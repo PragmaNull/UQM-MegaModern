@@ -23,6 +23,8 @@
 #include "uqm/session/GameState.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -114,5 +116,7 @@ extern void setStarMarked(const int star_index, const char* marker_state);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_STARMAP_H

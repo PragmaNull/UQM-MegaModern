@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class VuxPhrase
 {
 	NullPhrase,
@@ -129,5 +131,7 @@ enum class VuxPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(VuxPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_VUX_STRINGS_H

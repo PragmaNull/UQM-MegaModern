@@ -20,6 +20,8 @@
 
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -29,5 +31,7 @@ extern void Credits(bool WithOuttakes);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_CREDITS_H

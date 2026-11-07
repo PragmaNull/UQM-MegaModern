@@ -22,6 +22,8 @@
 
 #include "menustat.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -45,5 +47,7 @@ extern FONT ModuleFont;
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SHIPCONT_H

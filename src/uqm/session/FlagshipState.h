@@ -8,9 +8,9 @@
 #include "libs/gfxlib.h"
 #include "uqm/velocity.h"
 
+
 namespace uqm
 {
-
 // The point on the star map that the autopilot flies to.
 class Autopilot
 {
@@ -57,5 +57,6 @@ struct FlagshipState
 };
 
 } // namespace uqm
+
 
 #endif // UQM_SESSION_FLAGSHIPSTATE_H

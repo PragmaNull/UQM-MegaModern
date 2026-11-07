@@ -29,6 +29,8 @@
 #include <string.h>
 
 
+namespace uqm
+{
 #define DEFINE_PACKETDATA(name)                               \
 	{                                                         \
 		/* .len = */ sizeof(Packet_##name),                   \
@@ -250,3 +252,5 @@ Packet_Reset* Packet_Reset_create(uint16_t reason)
 	packet->reason = uqm::convertBigEndian<uint16_t>(reason);
 	return packet;
 }
+
+} // namespace uqm

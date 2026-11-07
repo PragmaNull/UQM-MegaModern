@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_THRADD_RESINST_H
 #define UQM_SHIPS_THRADD_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring HornBigMaskPmapAnim {"ship.thraddash.graphics.horn.large"};
 inline constexpr uqgsl::czstring HornMedMaskPmapAnim {"ship.thraddash.graphics.horn.medium"};
 inline constexpr uqgsl::czstring HornSmlMaskPmapAnim {"ship.thraddash.graphics.horn.small"};
@@ -21,5 +23,7 @@ inline constexpr uqgsl::czstring ThraddashRaceStrings {"ship.thraddash.text"};
 inline constexpr uqgsl::czstring ThraddashShipSounds {"ship.thraddash.sounds"};
 inline constexpr uqgsl::czstring ThraddashSmlMaskPmapAnim {"ship.thraddash.graphics.torch.small"};
 inline constexpr uqgsl::czstring ThraddashVictorySong {"ship.thraddash.ditty"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_THRADD_RESINST_H

@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class SyreenPhrase
 {
 	NullPhrase,
@@ -154,5 +156,7 @@ enum class SyreenPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(SyreenPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_SYREEN_STRINGS_H

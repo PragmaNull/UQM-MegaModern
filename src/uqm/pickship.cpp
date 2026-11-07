@@ -34,6 +34,8 @@
 #include "libs/mathlib.h"
 #include "util.h"
 
+namespace uqm
+{
 static constexpr auto NumPickShipRows {2};
 static constexpr auto NumPickShipColumns {6};
 
@@ -607,3 +609,5 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 
 	SetContext(OldContext);
 }
+
+} // namespace uqm

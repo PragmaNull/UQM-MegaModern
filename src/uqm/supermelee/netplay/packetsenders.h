@@ -30,6 +30,9 @@
 #include "../meleeship.h"
 // for MeleeShip
 #include "../meleesetup.h"
+
+namespace uqm
+{
 // for FleetShipIndex
 
 #if 0 //defined(__cplusplus)
@@ -64,5 +67,7 @@ void sendReset(NetConnection* conn, NetplayResetReason reason);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_PACKETSENDERS_H

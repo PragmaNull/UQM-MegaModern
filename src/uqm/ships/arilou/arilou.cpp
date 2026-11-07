@@ -25,6 +25,8 @@
 #include <math.h>
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {6};
 static constexpr auto MaxEnergy {20};
@@ -343,3 +345,5 @@ RaceDesc* init_arilou(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

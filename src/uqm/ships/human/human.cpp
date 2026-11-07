@@ -23,6 +23,8 @@
 #include "uqm/colors.h"
 #include "uqm/globdata.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {18};
 static constexpr auto MaxEnergy {18};
@@ -367,3 +369,5 @@ RaceDesc* init_human(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

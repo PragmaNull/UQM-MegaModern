@@ -35,6 +35,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static void TellMission(RESPONSE_REF R);
 static void SellMinerals(RESPONSE_REF R);
 
@@ -2201,3 +2203,5 @@ ConversationData* init_starbase_comm()
 
 	return (retval);
 }
+
+} // namespace uqm

@@ -22,6 +22,8 @@
 
 #include "uqm/races.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -34,5 +36,7 @@ extern void FreeIPData(void);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_PLANETS_SOLARSYS_H

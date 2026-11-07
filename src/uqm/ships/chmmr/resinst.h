@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_CHMMR_RESINST_H
 #define UQM_SHIPS_CHMMR_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring ChmmrBigMaskPmapAnim {"ship.chmmr.graphics.avatar.large"};
 inline constexpr uqgsl::czstring ChmmrCaptainMaskPmapAnim {"ship.chmmr.graphics.captain"};
 inline constexpr uqgsl::czstring ChmmrIconMaskPmapAnim {"ship.chmmr.icons"};
@@ -21,5 +23,7 @@ inline constexpr uqgsl::czstring MuzzleSmlMaskPmapAnim {"ship.chmmr.graphics.muz
 inline constexpr uqgsl::czstring SatelliteBigMaskPmapAnim {"ship.chmmr.graphics.satellite.large"};
 inline constexpr uqgsl::czstring SatelliteMedMaskPmapAnim {"ship.chmmr.graphics.satellite.medium"};
 inline constexpr uqgsl::czstring SatelliteSmlMaskPmapAnim {"ship.chmmr.graphics.satellite.small"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_CHMMR_RESINST_H

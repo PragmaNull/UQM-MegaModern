@@ -32,6 +32,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateMelnorme_initNpcs(SolarSystemState* solarSys);
 static bool GenerateMelnorme_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateMelnorme_generateMoons(SolarSystemState* solarSys,
@@ -259,3 +261,5 @@ static void SetMelnormeRef(uint32_t Ref)
 
 	DSetGameState(RefVar, Ref);
 }
+
+} // namespace uqm

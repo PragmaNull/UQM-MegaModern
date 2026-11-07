@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class MelnormePhrase
 {
 	NullPhrase,
@@ -308,5 +310,7 @@ enum class MelnormePhrase
 	EnumerateThousand
 };
 consteval bool isArithmeticEnum(MelnormePhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_MELNORM_STRINGS_H

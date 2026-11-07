@@ -22,6 +22,8 @@
 #include "core/log/log.h"
 
 
+namespace uqm
+{
 // We use a wrapper, so that we can call the custom function with the
 // arguments of our choice (i.e. no arguments).
 static int luaFunctionWrapper(lua_State* luaState)
@@ -96,3 +98,5 @@ int luaUqm_custom_init(lua_State* luaState,
 	// [-1] -> table custom
 	return 0;
 }
+
+} // namespace uqm

@@ -24,6 +24,8 @@
 #include "netsend.h"
 
 
+namespace uqm
+{
 void sendInit(NetConnection* conn)
 {
 	Packet_Init* packet {Packet_Init_create()};
@@ -154,3 +156,5 @@ void sendReset(NetConnection* conn, NetplayResetReason reason)
 	Packet_Reset* packet {Packet_Reset_create((uint16_t)reason)};
 	queuePacket(conn, (Packet*)packet);
 }
+
+} // namespace uqm

@@ -28,14 +28,20 @@
 #include "displist.h"
 #include "uqm/inteldefs.h"
 
+namespace uqm
+{
 struct Starship;
 typedef HLINK HSTARSHIP;
+
+} // namespace uqm
 
 #include "element.h"
 #include "libs/sndlib.h"
 #include "libs/reslib.h"
 
 
+namespace uqm
+{
 // TODO: remove RacesPerPlayer remnant of SC1
 
 inline constexpr auto MaxShipsPerSide {14};
@@ -713,6 +719,8 @@ static inline HomeId SpeciesToHomeID(SpeciesId species_id)
 			return HomeId::NumAvailableHomes;
 	}
 }
+
+} // namespace uqm
 
 
 #endif // UQM_RACES_H

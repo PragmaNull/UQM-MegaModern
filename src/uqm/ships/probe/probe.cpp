@@ -20,6 +20,8 @@
 #include "probe.h"
 #include "resinst.h"
 
+namespace uqm
+{
 static constexpr auto MaxCrew {1};
 static constexpr auto MaxEnergy {1};
 static constexpr auto EnergyRegeneration {0};
@@ -113,3 +115,5 @@ RaceDesc* init_probe(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

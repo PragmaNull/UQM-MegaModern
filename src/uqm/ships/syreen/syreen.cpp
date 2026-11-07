@@ -23,6 +23,8 @@
 #include "../../setupmenu.h"
 #include "libs/mathlib.h"
 
+namespace uqm
+{
 // Core characteristics
 
 static constexpr auto MaxCrew {12};
@@ -306,3 +308,5 @@ RaceDesc* init_syreen(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

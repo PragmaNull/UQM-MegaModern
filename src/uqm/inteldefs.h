@@ -7,6 +7,8 @@
 #include "uqm/units.h"
 
 
+namespace uqm
+{
 inline constexpr auto CloseRangeWeapon {DisplayToWorld(50)};
 inline constexpr auto LongRangeWeapon {DisplayToWorld(1000)};
 inline constexpr auto FastShip {150};
@@ -54,5 +56,7 @@ ENUM_BITWISE_OPS(PlayerControlFlags);
 static inline constexpr PlayerControlFlags ComputerControlFlags {PlayerControlFlags::Cyborg | PlayerControlFlags::Psytron};
 static inline constexpr PlayerControlFlags ControlFlagsMask {PlayerControlFlags::Human | PlayerControlFlags::Network | ComputerControlFlags};
 static inline constexpr PlayerControlFlags DifficultyFlagsMask {PlayerControlFlags::DifficultyStandard | PlayerControlFlags::DifficultyGood | PlayerControlFlags::DifficultyAwesome};
+
+} // namespace uqm
 
 #endif // UQM_INTELDEFS_H

@@ -27,6 +27,8 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 static bool GenerateRainbowWorld_initNpcs(SolarSystemState* solarSys);
 static bool GenerateRainbowWorld_generatePlanets(
 	SolarSystemState* solarSys);
@@ -171,3 +173,5 @@ static void GenerateSlylandro(SolarSystemState* solarSys)
 		}
 	}
 }
+
+} // namespace uqm

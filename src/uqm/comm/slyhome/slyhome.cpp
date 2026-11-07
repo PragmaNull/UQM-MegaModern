@@ -25,6 +25,8 @@
 #include "uqm/build.h"
 
 
+namespace uqm
+{
 static ConversationData slylandro_desc =
 	{
 		Conversation::SlylandroHome, /* AlienConv */
@@ -1005,3 +1007,5 @@ ConversationData* init_slylandro_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

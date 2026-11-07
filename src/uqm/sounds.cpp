@@ -19,6 +19,8 @@
 #include "units.h"
 #include "options.h"
 
+namespace uqm
+{
 SOUND_REF MenuSounds;
 SOUND_REF GameSounds;
 
@@ -198,3 +200,5 @@ void RemoveSoundsForObject(Element* PosObj)
 		}
 	}
 }
+
+} // namespace uqm

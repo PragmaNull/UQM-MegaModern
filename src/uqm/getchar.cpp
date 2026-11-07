@@ -32,6 +32,8 @@
 // for bool TextEntry3DO
 #include "gameopt.h"
 
+namespace uqm
+{
 static GfxRect cursor;
 static GFXCONTEXT curContext;
 static bool block = false;
@@ -501,3 +503,5 @@ bool DoTextEntry(TextEntryState* pTES)
 
 	return true;
 }
+
+} // namespace uqm

@@ -25,6 +25,8 @@
 #include "uqm/gameev.h"
 
 
+namespace uqm
+{
 static ConversationData spahome_desc =
 	{
 		Conversation::Spathi, /* AlienConv */
@@ -1127,3 +1129,5 @@ ConversationData* init_spahome_comm()
 
 	return (retval);
 }
+
+} // namespace uqm

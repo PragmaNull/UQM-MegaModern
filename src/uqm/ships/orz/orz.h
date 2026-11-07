@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_ORZ_ORZ_H
 #define UQM_SHIPS_ORZ_ORZ_H
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -31,5 +33,7 @@ void marine_collision(Element* ElementPtr0, GfxPoint* pPt0,
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_ORZ_ORZ_H

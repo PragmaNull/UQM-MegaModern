@@ -10,9 +10,9 @@
 
 #include <cmath>
 
+
 namespace uqm
 {
-
 namespace
 {
 

@@ -33,6 +33,8 @@
 #include "libs/math/Random.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 RobotPhrase RoboTrack[NumRoboTracks];
 
 static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack);
@@ -652,3 +654,5 @@ const char* phraseIdNumToStr(RESPONSE_REF response)
 	// Index 0 is for NULL_PHRASE, hence the '- 1'.
 	return CommData.ConversationPhrases->name(response - 1);
 }
+
+} // namespace uqm

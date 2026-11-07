@@ -29,6 +29,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+namespace uqm
+{
 static inline PacketQueueLink* PacketQueueLink_alloc(void)
 {
 	// XXX: perhaps keep a pool of links?
@@ -141,3 +143,5 @@ NetResult flushPacketQueue(NetConnection* conn)
 	}
 	return flushResult;
 }
+
+} // namespace uqm

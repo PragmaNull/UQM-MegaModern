@@ -29,6 +29,8 @@
 #include "races.h"
 #include "setup.h"
 
+namespace uqm
+{
 constexpr auto Maneuverability(const auto& pi) { return ((pi)->ManeuverabilityIndex); }
 constexpr auto GetWeaponRange(const auto& pi) { return ((pi)->WeaponRange); }
 
@@ -111,5 +113,7 @@ static inline bool isNetwork(void)
 {
 	return testFlag(PlayerControl[0] | PlayerControl[1], PlayerControlFlags::Network);
 }
+
+} // namespace uqm
 
 #endif // UQM_INTEL_H

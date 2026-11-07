@@ -28,6 +28,8 @@
 #include "options.h"
 
 
+namespace uqm
+{
 void InitSISContexts(void)
 {
 	GfxRect r;
@@ -251,3 +253,5 @@ void DrawSISFrame(void)
 
 	UnbatchGraphics();
 }
+
+} // namespace uqm

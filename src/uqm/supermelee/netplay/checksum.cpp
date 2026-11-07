@@ -32,6 +32,8 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 ChecksumBuffer localChecksumBuffer;
 
 void crc_processEXTENT(crc_State* state, const GfxExtent* val)
@@ -289,6 +291,8 @@ bool verifyChecksums(BattleFrameCounter frameNr)
 	}
 	return true;
 }
+
+} // namespace uqm
 
 
 #endif /* NETPLAY_CHECKSUM */

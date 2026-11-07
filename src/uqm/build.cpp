@@ -34,6 +34,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 // Allocate a new Starship or ShipFragment and put it in the queue
 HLINK Build(Queue* pQueue, SpeciesId SpeciesID)
 {
@@ -1777,3 +1779,5 @@ GfxPoint SeedFleetLocation(FleetInfo* FleetPtr, PlotLocation* plotmap, uint16_t 
 	}
 	return (location);
 }
+
+} // namespace uqm

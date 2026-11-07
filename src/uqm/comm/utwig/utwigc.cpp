@@ -25,6 +25,8 @@
 #include "uqm/gameev.h"
 
 
+namespace uqm
+{
 static ConversationData utwig_desc =
 	{
 		Conversation::Utwig, /* AlienConv */
@@ -1079,3 +1081,5 @@ ConversationData* init_utwig_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

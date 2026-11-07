@@ -20,6 +20,8 @@
 #include "druuge.h"
 #include "resinst.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {14};
 static constexpr auto MaxEnergy {32};
@@ -341,3 +343,5 @@ RaceDesc* init_druuge(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

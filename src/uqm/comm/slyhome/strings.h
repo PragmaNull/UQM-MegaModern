@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class SlylandroHomePhrase
 {
 	NullPhrase,
@@ -141,5 +143,7 @@ enum class SlylandroHomePhrase
 	WhyYesThereIs,
 };
 consteval bool isArithmeticEnum(SlylandroHomePhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_SLYHOME_STRINGS_H

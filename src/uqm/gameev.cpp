@@ -37,6 +37,8 @@
 #include "sounds.h"
 #include "planets/lander.h"
 
+namespace uqm
+{
 static int arilou_entrance_event(int arg);
 static int arilou_exit_event(int arg);
 static void check_race_growth(void);
@@ -971,3 +973,5 @@ static int slylandro_ramp_down(int arg)
 	(void)arg;
 	return 0;
 }
+
+} // namespace uqm

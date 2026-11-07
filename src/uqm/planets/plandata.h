@@ -23,6 +23,8 @@
 #include "core/types/enum.h"
 #include "libs/reslib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -331,5 +333,7 @@ const extern PlanetFrame* PlanData;
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_PLANETS_PLANDATA_H

@@ -26,6 +26,8 @@
 #include "starmap.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -88,5 +90,7 @@ extern uint8_t GTFO;
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_BUILD_H

@@ -29,6 +29,8 @@
 #include "core/stl/vector.h"
 #include "libs/time/timelib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -249,6 +251,8 @@ extern void TestSpeechSound(SOUND snd);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 
 #endif // UQM_CONTROLS_H

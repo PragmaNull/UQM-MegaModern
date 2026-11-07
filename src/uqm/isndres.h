@@ -6,9 +6,13 @@
 #ifndef UQM_ISNDRES_H
 #define UQM_ISNDRES_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring GameSoundsRes {"sounds.battle"};
 inline constexpr uqgsl::czstring LanderSoundsRes {"sounds.lander"};
 inline constexpr uqgsl::czstring MenuSoundsRes {"sounds.menu"};
 inline constexpr uqgsl::czstring TestSoundsRes {"sounds.test"};
+
+} // namespace uqm
 
 #endif // UQM_ISNDRES_H

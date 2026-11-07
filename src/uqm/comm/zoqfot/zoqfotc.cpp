@@ -26,6 +26,8 @@
 #include "uqm/gameev.h"
 
 
+namespace uqm
+{
 static auto ZoqBaseX() { return (TextXOffs() + ((SisTextWidth() >> 1) >> 1)); }
 static auto ZoqBaseY() { return ResScale(24); }
 static constexpr auto ZoqTalkIndex {18};
@@ -1001,3 +1003,5 @@ ConversationData* init_zoqfot_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

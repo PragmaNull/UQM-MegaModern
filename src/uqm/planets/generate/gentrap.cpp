@@ -22,6 +22,8 @@
 #include "uqm/globdata.h"
 
 
+namespace uqm
+{
 static bool GenerateTrap_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateTrap_generateOrbital(SolarSystemState* solarSys,
 										 SystemPlanet* world);
@@ -96,3 +98,5 @@ static bool GenerateTrap_generateOrbital(SolarSystemState* solarSys, SystemPlane
 
 	return true;
 }
+
+} // namespace uqm

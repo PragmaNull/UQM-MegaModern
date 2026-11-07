@@ -38,6 +38,8 @@
 
 #include "util.h"
 
+namespace uqm
+{
 static void CleanupAfterStarBase(void);
 
 static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
@@ -688,3 +690,5 @@ uint16_t WrapText(const char* pStr, uint16_t len, GfxText* tarray, int16_t field
 
 	return (num_lines);
 }
+
+} // namespace uqm

@@ -22,6 +22,8 @@
 #include "core/misc/bittricks.h"
 #include "core/log/log.h"
 
+namespace uqm
+{
 constexpr auto VelocityRemainder(const auto& v) { return ((v) & (VelocityScale - 1)); }
 
 void GetCurrentVelocityComponents(VelocityDesc* velocityptr, int16_t* pdx, int16_t* pdy)
@@ -176,3 +178,5 @@ void DeltaVelocityComponents(VelocityDesc* velocityptr, int32_t dx, int32_t dy)
 
 	SetVelocityComponents(velocityptr, dx, dy);
 }
+
+} // namespace uqm

@@ -9,9 +9,9 @@
 #include "core/stl/utility.h"
 #include "core/thread/Mutex.h"
 
+
 namespace uqm
 {
-
 // Runs the task on the game thread the next time that it processes callbacks.
 void runOnGameThread(uqstl::function<void()> task);
 
@@ -56,5 +56,6 @@ private:
 };
 
 } // namespace uqm
+
 
 #endif // UQM_IMGUI_GAMETHREAD_H

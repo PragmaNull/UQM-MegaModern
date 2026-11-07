@@ -22,6 +22,8 @@
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -222,5 +224,7 @@ extern void DisengageFilters(void);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_COMMANIM_H

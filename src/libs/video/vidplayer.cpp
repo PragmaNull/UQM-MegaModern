@@ -245,7 +245,7 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 	sr = dr;
 	// JMS_GFX: Added this if-clause around the following lines to make the
 	// 3DO videos work also in 1280x960.
-	if (IsHd())
+	if (uqm::IsHd())
 	{
 		sr.corner.x = -sr.corner.x;
 		sr.corner.y = -sr.corner.y;

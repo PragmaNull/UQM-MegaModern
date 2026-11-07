@@ -3,6 +3,8 @@
 
 #include "core/stl/optional.h"
 
+namespace uqm
+{
 namespace
 {
 
@@ -24,3 +26,5 @@ uqm::net::Context& netplayContext()
 {
 	return *s_context;
 }
+
+} // namespace uqm

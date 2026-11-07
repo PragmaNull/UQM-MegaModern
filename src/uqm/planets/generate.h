@@ -18,12 +18,18 @@
 #ifndef UQM_PLANETS_GENERATE_H
 #define UQM_PLANETS_GENERATE_H
 
+namespace uqm
+{
 typedef struct GenerateFunctions GenerateFunctions;
+
+} // namespace uqm
 
 #include <cstdint>
 #include "planets.h"
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -110,5 +116,7 @@ const GenerateFunctions* getGenerateFunctions(uint8_t Index);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_PLANETS_GENERATE_H

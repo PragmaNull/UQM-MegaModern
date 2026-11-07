@@ -26,6 +26,8 @@
 #include "uqm/colors.h"
 #include <stdlib.h>
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto EnergyRegeneration {1};
 static constexpr auto EnergyWait {4};
@@ -647,3 +649,5 @@ RaceDesc* init_urquan(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

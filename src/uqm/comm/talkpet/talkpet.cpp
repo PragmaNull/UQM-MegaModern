@@ -25,6 +25,8 @@
 #include "uqm/battle.h"
 #include "uqm/sounds.h"
 
+namespace uqm
+{
 static constexpr auto StrobeRate {30};
 static constexpr auto StrobeLength {GameTicksPerSecond / 3};
 static constexpr auto NumStrobes {StrobeLength * StrobeRate / GameTicksPerSecond};
@@ -959,3 +961,5 @@ ConversationData* init_talkpet_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

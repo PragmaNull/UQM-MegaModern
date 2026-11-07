@@ -13,9 +13,9 @@
 #include "core/stl/map.h"
 #include "core/stl/memory.h"
 
+
 namespace uqm
 {
-
 class SettingBase;
 class SettingsRegistry;
 
@@ -104,5 +104,6 @@ void initButtonWidget(WidgetButton& widget, const uqstl::string& name, const uqs
 void initLabelWidget(WidgetLabel& widget, uqstl::vector<const char*>& lines);
 
 } // namespace uqm
+
 
 #endif // UQM_MENUWIDGETS_H

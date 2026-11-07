@@ -26,6 +26,8 @@
 #include "options/OptionDefs.h"
 
 
+namespace uqm
+{
 inline constexpr auto ClearSisRadar {1 << 2};
 inline constexpr auto DrawSisDisplay {1 << 3};
 
@@ -307,6 +309,8 @@ enum class BevelLevel
 	ThickOutInvBevel = ThickOuterBevel + 8,
 };
 consteval bool isArithmeticEnum(BevelLevel) { return true; }
+
+} // namespace uqm
 
 
 #endif // UQM_SIS_H

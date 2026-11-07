@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_ORZ_ICODE_H
 #define UQM_SHIPS_ORZ_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring OrzCode {"ship.orz.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_ORZ_ICODE_H

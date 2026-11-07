@@ -11,9 +11,9 @@
 #include <cstdint>
 #include "core/stl/optional.h"
 
+
 namespace uqm
 {
-
 enum class ScriptKey
 {
 	Up,
@@ -98,5 +98,6 @@ private:
 };
 
 } // namespace uqm
+
 
 #endif // UQM_INPUTSCRIPT_H

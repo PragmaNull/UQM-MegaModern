@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_MYCON_RESINST_H
 #define UQM_COMM_MYCON_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring MyconColorMap {"comm.mycon.colortable"};
 inline constexpr uqgsl::czstring MyconConversationPhrases {"comm.mycon.dialogue"};
 inline constexpr uqgsl::czstring MyconFont {"comm.mycon.font"};
 inline constexpr uqgsl::czstring MyconMusic {"comm.mycon.music"};
 inline constexpr uqgsl::czstring MyconPmapAnim {"comm.mycon.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_MYCON_RESINST_H

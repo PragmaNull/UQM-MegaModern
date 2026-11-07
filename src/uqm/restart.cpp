@@ -53,6 +53,9 @@
 #include "libs/resource/stringbank.h"
 #include "UQMGame.h"
 #include "uqm/session/GameSession.h"
+
+namespace uqm
+{
 // for StringBank_Create() & SplitString()
 
 enum class MainMenuItem
@@ -956,3 +959,5 @@ bool StartGame(void)
 
 	return (true);
 }
+
+} // namespace uqm

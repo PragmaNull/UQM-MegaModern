@@ -33,6 +33,8 @@
 #include "nameref.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 extern uint16_t zoom_out;
 extern PRIM_LINKS DisplayLinks;
 
@@ -587,3 +589,5 @@ void SetStarPoint(GfxPoint pt, uint16_t i)
 	log_star_array[i].x = pt.x;
 	log_star_array[i].y = pt.y;
 }
+
+} // namespace uqm

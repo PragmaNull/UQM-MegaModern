@@ -34,6 +34,8 @@
 #include "setup.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 bool legacySave;
 uint8_t GTFO = 0;
 extern FRAME SpaceJunkFrame;
@@ -1117,3 +1119,5 @@ void DoMissions(void)
 		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 	}
 }
+
+} // namespace uqm

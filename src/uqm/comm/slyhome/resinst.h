@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_SLYHOME_RESINST_H
 #define UQM_COMM_SLYHOME_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring SlylandroColorMap {"comm.slylandro.colortable"};
 inline constexpr uqgsl::czstring SlylandroConversationPhrases {"comm.slylandro.dialogue"};
 inline constexpr uqgsl::czstring SlylandroFont {"comm.slylandro.font"};
 inline constexpr uqgsl::czstring SlylandroMusic {"comm.slylandro.music"};
 inline constexpr uqgsl::czstring SlylandroPmapAnim {"comm.slylandro.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_SLYHOME_RESINST_H

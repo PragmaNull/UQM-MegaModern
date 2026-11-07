@@ -29,6 +29,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GeneratePkunk_generatePlanets(SolarSystemState* solarSys);
 static bool GeneratePkunk_generateOrbital(SolarSystemState* solarSys,
 										  SystemPlanet* world);
@@ -170,3 +172,5 @@ static uint16_t GeneratePkunk_generateEnergy(const SolarSystemState* solarSys,
 
 	return 0;
 }
+
+} // namespace uqm

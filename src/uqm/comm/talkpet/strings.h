@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class TalkingPetPhrase
 {
 	NullPhrase,
@@ -139,5 +141,7 @@ enum class TalkingPetPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(TalkingPetPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_TALKPET_STRINGS_H

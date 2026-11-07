@@ -25,6 +25,8 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto EnergyRegeneration {1};
 static constexpr auto EnergyWait {1};
@@ -770,3 +772,5 @@ RaceDesc* init_chmmr(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

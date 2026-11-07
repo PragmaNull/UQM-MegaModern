@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class SlylandroPhrase
 {
 	NullPhrase,
@@ -113,5 +115,7 @@ enum class SlylandroPhrase
 	EnumerateNinety,
 };
 consteval bool isArithmeticEnum(SlylandroPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_SLYLAND_STRINGS_H

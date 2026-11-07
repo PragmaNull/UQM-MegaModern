@@ -30,6 +30,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateShofixti_initNpcs(SolarSystemState* solarSys);
 static bool GenerateShofixti_reinitNpcs(SolarSystemState* solarSys);
 static bool GenerateShofixti_uninitNpcs(SolarSystemState* solarSys);
@@ -320,3 +322,5 @@ static void check_old_shofixti(void)
 	}
 	UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 }
+
+} // namespace uqm

@@ -20,6 +20,8 @@
 
 #include "libs/sndlib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -41,5 +43,7 @@ extern void PlaySpeechEffect(SOUND S, SoundPosition Pos, void* PositionalObject,
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SETTINGS_H

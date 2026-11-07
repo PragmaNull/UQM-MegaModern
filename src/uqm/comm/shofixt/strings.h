@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class ShofixtiPhrase
 {
 	NullPhrase,
@@ -118,5 +120,7 @@ enum class ShofixtiPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(ShofixtiPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_SHOFIXT_STRINGS_H

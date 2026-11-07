@@ -42,6 +42,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 extern RobotPhrase RoboTrack[];
 const static char npcPhraseCallbackRegistryKey[] =
 	"uqm_comm_npcPhraseCallback";
@@ -623,3 +625,5 @@ static int luaUqm_comm_swapIfSeeded(lua_State* luaState)
 	RoboTrack[0] = RobotPhrase::SubClip;
 	return 1;
 }
+
+} // namespace uqm

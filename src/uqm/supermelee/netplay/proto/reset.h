@@ -23,6 +23,8 @@
 #include "../netconnection.h"
 #include "../packet.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -37,5 +39,7 @@ bool Netplay_isRemoteReset(const NetConnection* conn);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_PROTO_RESET_H

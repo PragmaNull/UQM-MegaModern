@@ -33,6 +33,8 @@
 #include "nameref.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 void spawn_planet(void)
 {
 	GfxPoint pt = MAKE_POINT(0, 0);
@@ -504,3 +506,5 @@ void AbandonShip(Element* ShipPtr, Element* TargetPtr,
 		UnlockElement(hCrew);
 	}
 }
+
+} // namespace uqm

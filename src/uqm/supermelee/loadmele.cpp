@@ -35,6 +35,8 @@
 #include "core/string/StringUtils.h"
 
 
+namespace uqm
+{
 static constexpr auto LoadTeamNameTextColor {BuildColor(MakeRgb15(0x0F, 0x10, 0x1B), 0x00)};
 static constexpr auto LoadTeamNameTextColorHilite {BuildColor(MakeRgb15(0x17, 0x18, 0x1D), 0x00)};
 
@@ -823,3 +825,5 @@ void UninitMeleeLoadState(MeleeState* pMS)
 	UninitPreBuilt(pMS);
 	pMS->load.entryIndices = {};
 }
+
+} // namespace uqm

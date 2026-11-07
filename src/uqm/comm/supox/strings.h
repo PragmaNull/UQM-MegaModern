@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class SupoxPhrase
 {
 	NullPhrase,
@@ -120,5 +122,7 @@ enum class SupoxPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(SupoxPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_SUPOX_STRINGS_H

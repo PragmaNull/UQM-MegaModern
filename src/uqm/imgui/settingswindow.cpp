@@ -13,9 +13,9 @@
 #include "uqm/menudef.h"
 #include "uqm/setupsettings.h"
 
+
 namespace uqm
 {
-
 namespace
 {
 

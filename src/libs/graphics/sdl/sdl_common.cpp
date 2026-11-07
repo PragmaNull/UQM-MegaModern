@@ -270,7 +270,7 @@ void TFB_SwapBuffers(tfb::Redraw force_full_redraw)
 		graphics_backend->screen (TFB_SCREEN_MAIN, 255, &system_box);
 	}*/
 
-	graphics_backend->postprocess(IsHd());
+	graphics_backend->postprocess(uqm::IsHd());
 }
 
 /* Probably ought to clean this away at some point. */
@@ -645,7 +645,7 @@ void TFB_ScreenShot(void)
 	auto now = std::chrono::system_clock::now();
 	auto fullPath = fmt::format("{}{:%Y-%m-%d %H-%M-%S} v{}.{}.{} {}.png", shotDirName, now,
 								UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
-								chooseIfHd<const char*>(UqmExtraVersion, UqmExtraVersionHd));
+								uqm::chooseIfHd<const char*>(UqmExtraVersion, UqmExtraVersionHd));
 
 	if (std::filesystem::exists(shotDirName))
 	{

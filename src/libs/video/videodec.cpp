@@ -266,8 +266,8 @@ tfb::VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir, const char* 
 		return nullptr;
 	}
 
-	decoder->w = ResScale(decoder->w);
-	decoder->h = ResScale(decoder->h) - IfHd(7);
+	decoder->w = uqm::ResScale(decoder->w);
+	decoder->h = uqm::ResScale(decoder->h) - uqm::IfHd(7);
 
 	return decoder;
 }

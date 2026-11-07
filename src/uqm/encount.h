@@ -22,10 +22,16 @@
 
 
 #include "core/types/enum.h"
+
+namespace uqm
+{
 struct BriefShipInfo;
 struct Encounter;
 
 // XXX: temporary, for CONVERSATION
+
+} // namespace uqm
+
 #include "commglue.h"
 #include "displist.h"
 #include "libs/gfxlib.h"
@@ -33,6 +39,8 @@ struct Encounter;
 #include "element.h"
 #include "races.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -122,5 +130,7 @@ extern uint8_t EncounterGroup;
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_ENCOUNT_H

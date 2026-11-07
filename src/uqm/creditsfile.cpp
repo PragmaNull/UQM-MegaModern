@@ -4,9 +4,9 @@
 #include "core/log/log.h"
 #include "libs/file/json.h"
 
+
 namespace uqm
 {
-
 namespace
 {
 

@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_SYREEN_ICODE_H
 #define UQM_SHIPS_SYREEN_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring SyreenCode {"ship.syreen.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_SYREEN_ICODE_H

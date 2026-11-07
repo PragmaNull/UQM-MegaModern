@@ -30,6 +30,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateZoqFotPik_initNpcs(SolarSystemState* solarSys);
 static bool GenerateZoqFotPik_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateZoqFotPik_generateMoons(SolarSystemState* solarSys,
@@ -323,3 +325,5 @@ static bool GenerateZoqFotPik_pickupEnergy(SolarSystemState* solarSys,
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

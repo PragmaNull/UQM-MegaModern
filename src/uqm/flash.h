@@ -95,6 +95,8 @@
 #include "libs/time/timelib.h"
 #include "core/stl/vector.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -234,5 +236,7 @@ void Flash_UpdateOriginal(FlashContext* context);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_FLASH_H

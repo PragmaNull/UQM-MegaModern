@@ -27,6 +27,8 @@
 #include "libs/gfxlib.h"
 #include "../gamestr.h"
 
+namespace uqm
+{
 static FRAME BuildPickFrame;
 
 static constexpr auto TtipFrameOffset {43};
@@ -389,3 +391,5 @@ bool BuildPickShip(MeleeState* pMS)
 
 	return pMS->buildPickConfirmed;
 }
+
+} // namespace uqm

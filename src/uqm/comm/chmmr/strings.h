@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class ChmmrPhrase
 {
 	NullPhrase,
@@ -105,5 +107,7 @@ enum class ChmmrPhrase
 	Yes,
 };
 consteval bool isArithmeticEnum(ChmmrPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_CHMMR_STRINGS_H

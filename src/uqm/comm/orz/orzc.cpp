@@ -26,6 +26,9 @@
 //JMS_GFX: For LoadGraphic()
 
 #include "uqm/setup.h"
+
+namespace uqm
+{
 // for GraphicsLock
 
 
@@ -1023,3 +1026,5 @@ ConversationData* init_orz_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

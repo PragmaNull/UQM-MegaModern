@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_SIS_SHIP_ICODE_H
 #define UQM_SHIPS_SIS_SHIP_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring SisCode {"ship.flagship.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_SIS_SHIP_ICODE_H

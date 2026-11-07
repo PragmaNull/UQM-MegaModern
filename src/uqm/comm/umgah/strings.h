@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class UmgahPhrase
 {
 	NullPhrase,
@@ -113,5 +115,7 @@ enum class UmgahPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(UmgahPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_UMGAH_STRINGS_H

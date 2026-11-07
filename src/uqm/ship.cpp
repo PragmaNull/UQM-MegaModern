@@ -38,6 +38,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 void animation_preprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
@@ -659,3 +661,5 @@ bool GetInitialStarShips(void)
 		return true;
 	}
 }
+
+} // namespace uqm

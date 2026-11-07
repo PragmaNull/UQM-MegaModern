@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_MYCON_ICODE_H
 #define UQM_SHIPS_MYCON_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring MyconCode {"ship.mycon.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_MYCON_ICODE_H

@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_ZOQFOT_RESINST_H
 #define UQM_COMM_ZOQFOT_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring ZoqfotpikColorMap {"comm.zoqfotpik.colortable"};
 inline constexpr uqgsl::czstring ZoqfotpikConversationPhrases {"comm.zoqfotpik.dialogue"};
 inline constexpr uqgsl::czstring ZoqfotpikFont {"comm.zoqfotpik.font"};
 inline constexpr uqgsl::czstring ZoqfotpikMusic {"comm.zoqfotpik.music"};
 inline constexpr uqgsl::czstring ZoqfotpikPmapAnim {"comm.zoqfotpik.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_ZOQFOT_RESINST_H

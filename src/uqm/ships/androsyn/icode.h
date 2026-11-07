@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_ANDROSYN_ICODE_H
 #define UQM_SHIPS_ANDROSYN_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring AndrosynthCode {"ship.androsynth.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_ANDROSYN_ICODE_H

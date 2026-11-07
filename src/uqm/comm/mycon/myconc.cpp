@@ -27,6 +27,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static ConversationData mycon_desc =
 	{
 		Conversation::Mycon, /* AlienConv */
@@ -711,3 +713,5 @@ ConversationData* init_mycon_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

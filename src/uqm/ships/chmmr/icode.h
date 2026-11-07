@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_CHMMR_ICODE_H
 #define UQM_SHIPS_CHMMR_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring ChmmrCode {"ship.chmmr.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_CHMMR_ICODE_H

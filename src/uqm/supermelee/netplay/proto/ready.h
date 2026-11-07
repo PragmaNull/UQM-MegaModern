@@ -22,6 +22,8 @@
 
 #include "../netconnection.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -35,5 +37,7 @@ bool Netplay_isRemoteReady(const NetConnection* conn);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_PROTO_READY_H

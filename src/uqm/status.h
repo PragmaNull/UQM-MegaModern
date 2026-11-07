@@ -24,9 +24,16 @@
 #include "options/options.h"
 #include "globdata.h"
 
+namespace uqm
+{
 inline auto ShipInfoHeight() { return ResScale(65); }
+
+} // namespace uqm
+
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -79,5 +86,7 @@ extern void PostProcessStatus(Element* ShipPtr);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_STATUS_H

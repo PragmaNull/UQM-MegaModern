@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_PROBE_RESINST_H
 #define UQM_SHIPS_PROBE_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring UrquanDroneMiconMaskPmapAnim {"ship.drone.meleeicons"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_PROBE_RESINST_H

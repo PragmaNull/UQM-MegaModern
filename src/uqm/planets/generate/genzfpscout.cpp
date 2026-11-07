@@ -23,6 +23,8 @@
 #include "../../state.h"
 
 
+namespace uqm
+{
 static bool GenerateZoqFotPikScout_initNpcs(SolarSystemState* solarSys);
 static bool GenerateZoqFotPikScout_reinitNpcs(SolarSystemState* solarSys);
 
@@ -92,3 +94,5 @@ static bool GenerateZoqFotPikScout_reinitNpcs(SolarSystemState* solarSys)
 
 	return true;
 }
+
+} // namespace uqm

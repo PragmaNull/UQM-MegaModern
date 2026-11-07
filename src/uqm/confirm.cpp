@@ -34,6 +34,8 @@
 #include <stdlib.h>
 
 
+namespace uqm
+{
 static auto ConfirmWinWidth() { return ResScale(84); }
 static auto ConfirmWinHeight() { return ResScale(26); }
 
@@ -297,3 +299,5 @@ void DoPopupWindow(const char* msg)
 	SetMenuSounds(s0, s1);
 	StringBank_Free(bank);
 }
+
+} // namespace uqm

@@ -23,6 +23,8 @@
 #include "uqm/globdata.h"
 
 
+namespace uqm
+{
 //#define DEBUG_SURFACE
 
 const uint8_t* Elements;
@@ -460,3 +462,5 @@ uint16_t CustomMineralDeposit(SurfaceNode* info, uint16_t type, uint8_t quality,
 
 	return 1;
 }
+
+} // namespace uqm

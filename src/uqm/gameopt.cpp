@@ -43,6 +43,8 @@
 #include <ctype.h>
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 extern FRAME PlayFrame;
 
 static constexpr auto MaxSavedGames {50};
@@ -2170,3 +2172,5 @@ bool GameOptions(void)
 
 	return !(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad));
 }
+
+} // namespace uqm

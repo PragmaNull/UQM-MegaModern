@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_SYREEN_SYREEN_H
 #define UQM_SHIPS_SYREEN_SYREEN_H
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -27,5 +29,7 @@ RaceDesc* init_syreen(void);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_SYREEN_SYREEN_H

@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_SUPOX_RESINST_H
 #define UQM_SHIPS_SUPOX_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring GobBigMaskPmapAnim {"ship.supox.graphics.glob.large"};
 inline constexpr uqgsl::czstring GobMedMaskPmapAnim {"ship.supox.graphics.glob.medium"};
 inline constexpr uqgsl::czstring GobSmlMaskPmapAnim {"ship.supox.graphics.glob.small"};
@@ -18,5 +20,7 @@ inline constexpr uqgsl::czstring SupoxRaceStrings {"ship.supox.text"};
 inline constexpr uqgsl::czstring SupoxShipSounds {"ship.supox.sounds"};
 inline constexpr uqgsl::czstring SupoxSmlMaskPmapAnim {"ship.supox.graphics.blade.small"};
 inline constexpr uqgsl::czstring SupoxVictorySong {"ship.supox.ditty"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_SUPOX_RESINST_H

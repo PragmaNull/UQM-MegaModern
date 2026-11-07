@@ -42,6 +42,8 @@
 #include "core/stl/utility.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 //#define DEBUG_LOAD
 
 ACTIVITY NextActivity;
@@ -951,3 +953,5 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SaveSumm
 	// proper state, including Prime seed.
 	return InitStarseed(false);
 }
+
+} // namespace uqm

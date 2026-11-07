@@ -39,6 +39,8 @@
 #include "uqm/races.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 static uint16_t melnorme_digit_names[] =
 	{
 		*MelnormePhrase::EnumerateZero,
@@ -2211,3 +2213,5 @@ ConversationData* init_melnorme_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

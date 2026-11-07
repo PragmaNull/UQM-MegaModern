@@ -24,6 +24,8 @@
 #include "core/log/log.h"
 
 
+namespace uqm
+{
 //#define DEBUG_COLLIDE
 
 void collide(Element* ElementPtr0, Element* ElementPtr1)
@@ -209,3 +211,5 @@ void collide(Element* ElementPtr0, Element* ElementPtr1)
 #endif /* DEBUG_COLLIDE */
 	}
 }
+
+} // namespace uqm

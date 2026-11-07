@@ -23,13 +23,16 @@
 #include "libs/gfxlib.h"
 #include "../options.h"
 
+extern int CanvasWidth;
+extern int CanvasHeight;
+extern unsigned int resolutionFactor;
+
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
-extern int CanvasWidth;
-extern int CanvasHeight;
-extern unsigned int resolutionFactor;
 
 /* Most basic resolution units. */
 inline constexpr auto HdResolutionFactor {2};
@@ -324,5 +327,7 @@ constexpr auto WrapDeltaY(const auto& dy) { return ((dy) < 0 ? ((-(dy) <= LogSpa
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_UNITS_H

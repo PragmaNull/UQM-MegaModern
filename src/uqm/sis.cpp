@@ -45,6 +45,8 @@
 
 #include <stdio.h>
 
+namespace uqm
+{
 static StatMsgMode curMsgMode = StatMsgMode::Default;
 
 const static char* describeWeapon(ModuleType moduleType);
@@ -2374,3 +2376,5 @@ void ContinueFlash(void)
 		flashPaused = false;
 	}
 }
+
+} // namespace uqm

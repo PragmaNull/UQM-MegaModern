@@ -22,6 +22,9 @@
 
 #include "element.h"
 #include "units.h"
+
+namespace uqm
+{
 // for UnitScreenWidth()/HEIGHT
 
 #if 0 //defined(__cplusplus)
@@ -57,5 +60,7 @@ extern void SaveSisHyperState(void);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_HYPER_H

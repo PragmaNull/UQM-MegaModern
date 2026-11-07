@@ -32,6 +32,8 @@
 #include "../../starmap.h"
 
 
+namespace uqm
+{
 static ConversationData chmmr_desc =
 	{
 		Conversation::Chmmr, /* AlienConv */
@@ -795,3 +797,5 @@ ConversationData* init_chmmr_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

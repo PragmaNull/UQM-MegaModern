@@ -21,6 +21,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class StarbasePhrase
 {
 	NullPhrase,
@@ -295,5 +297,7 @@ enum class StarbasePhrase
 	Resunits,
 };
 consteval bool isArithmeticEnum(StarbasePhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_STARBAS_STRINGS_H

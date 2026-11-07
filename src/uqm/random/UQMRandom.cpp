@@ -5,9 +5,9 @@
 #include "core/log/log.h"
 #include "uqm/session/GameSession.h"
 
+
 namespace uqm
 {
-
 UQMRandom& random()
 {
 	if (GameSession* const session {UQMGame::getInstance().session()})

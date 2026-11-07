@@ -70,6 +70,8 @@
 #include <string.h>
 
 
+namespace uqm
+{
 static void StartMelee(MeleeState* pMS);
 #ifdef NETPLAY
 static ssize_t numPlayersReady(void);
@@ -3252,3 +3254,5 @@ void Melee_RemoteChange_teamName(MeleeState* pMS, NetConnection* conn,
 ///////////////////////////////////////////////////////////////////////////
 
 #endif /* NETPLAY */
+
+} // namespace uqm

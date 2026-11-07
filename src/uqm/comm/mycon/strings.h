@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class MyconPhrase
 {
 	NullPhrase,
@@ -136,5 +138,7 @@ enum class MyconPhrase
 	WontFallForTrick,
 };
 consteval bool isArithmeticEnum(MyconPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_MYCON_STRINGS_H

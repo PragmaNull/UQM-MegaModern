@@ -72,7 +72,7 @@ struct audio_Driver
 
 
 /* Initialization */
-int32_t initAudio(int32_t driver, int32_t flags);
+int32_t initAudio(AudioDriverType driver, AudioFlags flags);
 void unInitAudio(void);
 
 /* General */

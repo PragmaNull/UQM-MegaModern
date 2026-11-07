@@ -20,6 +20,8 @@
 #include "mycon.h"
 #include "resinst.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {20};
 static constexpr auto MaxEnergy {40};
@@ -400,3 +402,5 @@ RaceDesc* init_mycon(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

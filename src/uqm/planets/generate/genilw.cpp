@@ -28,6 +28,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateIlwrath_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateIlwrath_generateOrbital(SolarSystemState* solarSys,
 											SystemPlanet* world);
@@ -158,3 +160,5 @@ static bool GenerateIlwrath_pickupEnergy(SolarSystemState* solarSys, SystemPlane
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

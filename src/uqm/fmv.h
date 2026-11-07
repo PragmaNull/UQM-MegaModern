@@ -22,6 +22,8 @@
 #include "libs/sndlib.h"
 #include "libs/gfxlib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -52,5 +54,7 @@ extern bool ShowPresentation(RESOURCE presentation);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_FMV_H

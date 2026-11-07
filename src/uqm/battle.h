@@ -22,11 +22,18 @@
 #include "core/misc/bittricks.h"
 #include "libs/time/timelib.h"
 
+namespace uqm
+{
 #if defined(NETPLAY)
 typedef uint32_t BattleFrameCounter;
 #endif
 
+} // namespace uqm
+
 #include "init.h"
+
+namespace uqm
+{
 // For NumSides
 
 #if 0 //defined(__cplusplus)
@@ -68,5 +75,7 @@ extern bool RunAwayAllowed(void);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_BATTLE_H

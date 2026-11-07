@@ -37,6 +37,8 @@
 #include "setup.h"
 #include "libs/graphics/drawable.h"
 
+namespace uqm
+{
 // Rates in pixel lines per second
 static auto CreditsBaseRate() { return ResScale(9); }
 static auto CreditsMaxRate() { return ResScale(130); }
@@ -767,3 +769,5 @@ void Credits(bool WithOuttakes)
 
 	FreeCredits();
 }
+
+} // namespace uqm

@@ -32,6 +32,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateTalkingPet_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateTalkingPet_generateOrbital(SolarSystemState* solarSys,
 											   SystemPlanet* world);
@@ -286,3 +288,5 @@ static void ZapToUrquanEncounter(void)
 		UnlockEncounter(hEncounter);
 	}
 }
+
+} // namespace uqm

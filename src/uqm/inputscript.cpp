@@ -5,9 +5,9 @@
 
 #include <fmt/format.h>
 
+
 namespace uqm
 {
-
 namespace
 {
 

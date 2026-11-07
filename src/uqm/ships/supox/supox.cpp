@@ -23,6 +23,8 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {12};
 static constexpr auto MaxEnergy {16};
@@ -321,3 +323,5 @@ RaceDesc* init_supox(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

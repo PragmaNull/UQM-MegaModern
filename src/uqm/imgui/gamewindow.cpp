@@ -18,9 +18,9 @@
 #include "uqm/sis.h"
 #include "uqm/starcon.h"
 
+
 namespace uqm
 {
-
 namespace
 {
 

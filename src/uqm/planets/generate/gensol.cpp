@@ -34,6 +34,8 @@
 #include <math.h>
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 static bool GenerateSol_initNpcs(SolarSystemState* solarSys);
 static bool GenerateSol_reinitNpcs(SolarSystemState* solarSys);
 static bool GenerateSol_generatePlanets(SolarSystemState* solarSys);
@@ -837,3 +839,5 @@ static void check_probe(void)
 	}
 	UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 }
+
+} // namespace uqm

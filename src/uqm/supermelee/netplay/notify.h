@@ -31,6 +31,9 @@
 #include "../meleeship.h"
 // for MeleeShip
 #include "../meleesetup.h"
+
+namespace uqm
+{
 // for FleetShipIndex
 
 #if 0 //defined(__cplusplus)
@@ -59,5 +62,7 @@ void Netplay_Notify_checksum(NetConnection* conn,
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_NOTIFY_H

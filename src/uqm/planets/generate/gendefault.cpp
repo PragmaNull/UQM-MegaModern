@@ -28,6 +28,8 @@
 #include "libs/mathlib.h"
 
 
+namespace uqm
+{
 static void check_yehat_rebellion(void);
 
 
@@ -504,3 +506,5 @@ static void check_yehat_rebellion(void)
 		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 	}
 }
+
+} // namespace uqm

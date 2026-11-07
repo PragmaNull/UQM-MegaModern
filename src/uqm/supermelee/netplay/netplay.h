@@ -24,14 +24,20 @@
 
 #if defined(NETPLAY)
 
+namespace uqm
+{
 // NETPLAY can either be unset (in which case we will never get here)
 // NetplayFull, or NetplayIpv4 (disables IPv6)
 inline constexpr auto NetplayIpv4 {1};
+
+} // namespace uqm
 
 
 #include "core/stl/expected.h"
 #include "core/stl/system_error.h"
 
+namespace uqm
+{
 // The result of a netplay operation.
 using NetResult = uqstl::expected<void, uqstl::error_code>;
 
@@ -82,6 +88,8 @@ inline constexpr auto NetplayListenBacklog {2};
 #define NETPLAY_DEBUG
 #define DUMP_CRC_OPS
 #endif
+
+} // namespace uqm
 
 
 #endif

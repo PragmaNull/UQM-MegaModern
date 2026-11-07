@@ -24,6 +24,8 @@
 #include "uqm/build.h"
 
 
+namespace uqm
+{
 static ConversationData yehat_desc =
 	{
 		Conversation::YehatRebel, /* AlienConv */
@@ -496,3 +498,5 @@ ConversationData* init_rebel_yehat_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

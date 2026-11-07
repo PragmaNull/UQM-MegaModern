@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_UTWIG_RESINST_H
 #define UQM_SHIPS_UTWIG_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring LanceBigMaskPmapAnim {"ship.utwig.graphics.lance.large"};
 inline constexpr uqgsl::czstring LanceMedMaskPmapAnim {"ship.utwig.graphics.lance.medium"};
 inline constexpr uqgsl::czstring LanceSmlMaskPmapAnim {"ship.utwig.graphics.lance.small"};
@@ -18,5 +20,7 @@ inline constexpr uqgsl::czstring UtwigRaceStrings {"ship.utwig.text"};
 inline constexpr uqgsl::czstring UtwigShipSounds {"ship.utwig.sounds"};
 inline constexpr uqgsl::czstring UtwigSmlMaskPmapAnim {"ship.utwig.graphics.jugger.small"};
 inline constexpr uqgsl::czstring UtwigVictorySong {"ship.utwig.ditty"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_UTWIG_RESINST_H

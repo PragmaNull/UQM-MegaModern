@@ -41,6 +41,8 @@
 #include "../util.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 //define SPIN_ON_LAUNCH to let the planet spin while
 // the lander animation is playing
 #define SPIN_ON_LAUNCH
@@ -3151,3 +3153,5 @@ void InitPCLander(bool Loading)
 
 	UnbatchGraphics();
 }
+
+} // namespace uqm

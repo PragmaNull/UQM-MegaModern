@@ -28,6 +28,8 @@
 #include <stdio.h>
 
 
+namespace uqm
+{
 BATTLE_INPUT_STATE computer_intelligence(ComputerInputContext* context, Starship* StarShipPtr)
 {
 	BATTLE_INPUT_STATE InputState {};
@@ -87,3 +89,5 @@ BATTLE_INPUT_STATE computer_intelligence(ComputerInputContext* context, Starship
 	}
 	return InputState;
 }
+
+} // namespace uqm

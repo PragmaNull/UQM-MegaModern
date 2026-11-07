@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_UTWIG_RESINST_H
 #define UQM_COMM_UTWIG_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring UtwigColorMap {"comm.utwig.colortable"};
 inline constexpr uqgsl::czstring UtwigConversationPhrases {"comm.utwig.dialogue"};
 inline constexpr uqgsl::czstring UtwigFont {"comm.utwig.font"};
@@ -13,5 +15,7 @@ inline constexpr uqgsl::czstring UtwigMusic {"comm.utwig.music"};
 inline constexpr uqgsl::czstring UtwigPmapAnim {"comm.utwig.graphics"};
 
 inline constexpr uqgsl::czstring UtwigUltronMusic {"comm.utwig.ultron.music"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_UTWIG_RESINST_H

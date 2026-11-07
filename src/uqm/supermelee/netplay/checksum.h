@@ -23,7 +23,11 @@
 
 #include <cstdint>
 
+namespace uqm
+{
 typedef uint32_t Checksum;
+
+} // namespace uqm
 
 
 #include "netplay.h"
@@ -34,6 +38,8 @@ typedef uint32_t Checksum;
 
 #include "netconnection.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -95,5 +101,7 @@ bool verifyChecksums(BattleFrameCounter frameNr);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_CHECKSUM_H

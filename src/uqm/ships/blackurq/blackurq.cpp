@@ -22,6 +22,8 @@
 
 #include "uqm/globdata.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto EnergyRegeneration {1};
 static constexpr auto EnergyWait {4};
@@ -594,3 +596,5 @@ RaceDesc* init_black_urquan(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

@@ -28,6 +28,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateYehat_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateYehat_generateOrbital(SolarSystemState* solarSys,
 										  SystemPlanet* world);
@@ -150,3 +152,5 @@ static bool GenerateYehat_pickupEnergy(SolarSystemState* solarSys, SystemPlanet*
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

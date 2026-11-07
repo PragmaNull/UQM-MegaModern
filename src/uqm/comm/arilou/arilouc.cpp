@@ -26,6 +26,8 @@
 #include "uqm/lua/UQMLua.h"
 
 
+namespace uqm
+{
 static ConversationData arilou_desc =
 	{
 		Conversation::Arilou, /* AlienConv */
@@ -924,3 +926,5 @@ ConversationData* init_arilou_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

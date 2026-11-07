@@ -26,6 +26,8 @@
 
 #include <stdio.h>
 
+namespace uqm
+{
 // If a function is assigned to this, it will be called from the
 // Starcon2Main thread, in the main game loop.
 extern uqstl::atomic<void (*)(void)> debugHook;
@@ -210,5 +212,7 @@ void printWorld(const SystemPlanet* world);
 // - a function to fast forward the game clock to a specifiable time.
 
 #endif
+
+} // namespace uqm
 
 #endif // UQM_UQMDEBUG_H

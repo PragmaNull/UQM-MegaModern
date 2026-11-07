@@ -24,6 +24,8 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {36};
 static constexpr auto MaxEnergy {30};
@@ -695,3 +697,5 @@ RaceDesc* init_chenjesu(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

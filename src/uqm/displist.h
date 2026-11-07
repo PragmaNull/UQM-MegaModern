@@ -25,6 +25,8 @@
 #include "core/misc/bittricks.h"
 #include "core/stl/utility.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -107,8 +109,6 @@ extern void RemoveQueue(Queue* pq, HLINK hLink);
 extern uint16_t CountLinks(Queue* pq);
 void ForAllLinks(Queue* pq, void (*callback)(QueueLink*, void*), void* arg);
 
-namespace uqm
-{
 
 // A Queue that owns its table of links. Code that takes a Queue* can use it.
 class LinkQueue : public Queue
@@ -146,10 +146,11 @@ public:
 	}
 };
 
-} // namespace uqm
 
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_DISPLIST_H

@@ -3,9 +3,9 @@
 #include "GameState.h"
 #include "core/log/log.h"
 
+
 namespace uqm
 {
-
 uqstl::optional<uint32_t> GameState::flag(uqstl::string_view name) const
 {
 	if (const auto gameFlag {findGameFlag(name)})
@@ -44,7 +44,6 @@ void GameState::clearFlags() noexcept
 	m_otherFlags.clear();
 }
 
-} // namespace uqm
 
 uint32_t getGameStateUint(const char* name)
 {
@@ -58,3 +57,5 @@ void setGameStateUint(const char* name, uint32_t val)
 #endif
 	uqm::gameState().setFlag(name, val);
 }
+
+} // namespace uqm

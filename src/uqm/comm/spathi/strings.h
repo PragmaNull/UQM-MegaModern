@@ -21,6 +21,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class SpathiPhrase
 {
 	NullPhrase,
@@ -161,5 +163,7 @@ enum class SpathiPhrase
 	JoinUsNomad,
 };
 consteval bool isArithmeticEnum(SpathiPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_SPATHI_STRINGS_H

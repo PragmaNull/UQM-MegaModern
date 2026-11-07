@@ -51,6 +51,8 @@
 
 #include <ctype.h>
 
+namespace uqm
+{
 static constexpr auto MaxResponses {8};
 
 // Oscilloscope frame rate
@@ -2517,3 +2519,5 @@ void FlushCustomBaseLine(void)
 	head_node = nullptr;
 	cur_node = nullptr;
 }
+
+} // namespace uqm

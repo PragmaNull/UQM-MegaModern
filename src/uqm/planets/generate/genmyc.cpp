@@ -34,6 +34,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateMycon_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateMycon_generateName(const SolarSystemState*,
 									   const SystemPlanet* world);
@@ -398,3 +400,5 @@ static uint16_t GenerateMycon_generateLife(const SolarSystemState* solarSys,
 	(void)info;
 	return 0;
 }
+
+} // namespace uqm

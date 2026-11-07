@@ -31,6 +31,8 @@
 #include "libs/vidlib.h"
 
 
+namespace uqm
+{
 void FreeKernel(void)
 {
 	UninitPlayerInput();
@@ -102,3 +104,5 @@ void UninitGameKernel(void)
 		UninitContexts();
 	}
 }
+
+} // namespace uqm

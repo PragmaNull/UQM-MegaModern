@@ -30,6 +30,8 @@
 #include <stdlib.h>
 
 
+namespace uqm
+{
 static BattleStateData* BattleStateData_alloc(void);
 static void BattleStateData_free(BattleStateData* battleStateData);
 static inline BattleStateData* BattleStateData_new(
@@ -126,3 +128,5 @@ static void NetMelee_enterState_inSetup(NetConnection* conn, void* arg)
 
 	(void)arg;
 }
+
+} // namespace uqm

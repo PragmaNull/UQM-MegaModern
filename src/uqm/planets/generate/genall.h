@@ -23,6 +23,8 @@
 #include "../generate.h"
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 const extern GenerateFunctions generateDefaultFunctions;
 
 const extern GenerateFunctions generateAndrosynthFunctions;
@@ -53,5 +55,7 @@ const extern GenerateFunctions generateWreckFunctions;
 const extern GenerateFunctions generateYehatFunctions;
 const extern GenerateFunctions generateZoqFotPikFunctions;
 const extern GenerateFunctions generateZoqFotPikScoutFunctions;
+
+} // namespace uqm
 
 #endif // UQM_PLANETS_GENERATE_GENALL_H

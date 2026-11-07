@@ -21,6 +21,8 @@
 #include "races.h"
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -66,5 +68,7 @@ FRAME GetShipMeleeIconsFromIndex(unsigned Index);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_MASTER_H

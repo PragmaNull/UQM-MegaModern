@@ -23,6 +23,8 @@
 #include "core/types/enum.h"
 #include "port.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -49,8 +51,12 @@ consteval bool isArithmeticEnum(NetState) { return true; }
 }
 #endif
 
+} // namespace uqm
+
 #include <cstdint>
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -81,5 +87,7 @@ static inline bool NetState_battleActive(NetState state)
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_NETSTATE_H

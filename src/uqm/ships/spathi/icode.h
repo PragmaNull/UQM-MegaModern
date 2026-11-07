@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_SPATHI_ICODE_H
 #define UQM_SHIPS_SPATHI_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring SpathiCode {"ship.spathi.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_SPATHI_ICODE_H

@@ -26,6 +26,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateBurvixese_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateBurvixese_generateMoons(SolarSystemState* solarSys,
 											SystemPlanet* planet);
@@ -229,3 +231,5 @@ static bool GenerateBurvixese_pickupEnergy(SolarSystemState* solarSys,
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

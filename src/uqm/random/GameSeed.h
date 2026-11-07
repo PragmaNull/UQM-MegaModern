@@ -9,9 +9,9 @@
 
 #include <cstdint>
 
+
 namespace uqm
 {
-
 struct OptionsStruct;
 
 struct GameSeed
@@ -48,5 +48,6 @@ struct GameSeed
 }
 
 } // namespace uqm
+
 
 #endif // UQM_RANDOM_GAMESEED_H

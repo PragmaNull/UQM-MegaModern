@@ -29,6 +29,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static ConversationData yehat_desc =
 	{
 		Conversation::Yehat, /* AlienConv */
@@ -750,3 +752,5 @@ ConversationData* init_yehat_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

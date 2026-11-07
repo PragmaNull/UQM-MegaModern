@@ -480,23 +480,23 @@ static void dukv_RenderFrame(tfb::VideoDecoder* This)
 				uint16_t* dst1 {};
 
 				dst0 = (uint16_t*)This->callbacks.GetCanvasLine(
-					This, y * 2 + IfHd(1));
+					This, y * 2 + uqm::IfHd(1));
 				dst1 = (uint16_t*)This->callbacks.GetCanvasLine(
 					This, y * 2 + 1);
 
-				if (IsHd() && y % scale != 0)
+				if (uqm::IsHd() && y % scale != 0)
 				{
 					dec -= dukv->decoder.w;
 				}
 
-				for (x = 0; x < dukv->decoder.w; ++x, chooseIfHd(++dec, reinterpret_cast<uint32_t*>(++bufInc)), ++dst0, ++dst1)
+				for (x = 0; x < dukv->decoder.w; ++x, uqm::chooseIfHd(++dec, reinterpret_cast<uint32_t*>(++bufInc)), ++dst0, ++dst1)
 				{
 					/*if (IsHd())
 						++bufInc;
 					else
 						++dec;*/
 
-					if (bufInc % scale == 0 && IsHd())
+					if (bufInc % scale == 0 && uqm::IsHd())
 					{
 						dec++;
 					}
@@ -514,23 +514,23 @@ static void dukv_RenderFrame(tfb::VideoDecoder* This)
 				uint8_t* dst1 {};
 
 				dst0 = (uint8_t*)This->callbacks.GetCanvasLine(
-					This, y * 2 + IfHd(1));
+					This, y * 2 + uqm::IfHd(1));
 				dst1 = (uint8_t*)This->callbacks.GetCanvasLine(
 					This, y * 2 + 1);
 
-				if (IsHd() && y % scale != 0)
+				if (uqm::IsHd() && y % scale != 0)
 				{
 					dec -= dukv->decoder.w;
 				}
 
-				for (x = 0; x < dukv->decoder.w; ++x, chooseIfHd(++dec, reinterpret_cast<uint32_t*>(++bufInc)), dst0 += 3, dst1 += 3)
+				for (x = 0; x < dukv->decoder.w; ++x, uqm::chooseIfHd(++dec, reinterpret_cast<uint32_t*>(++bufInc)), dst0 += 3, dst1 += 3)
 				{
 					/*if (IsHd())
 						++bufInc;
 					else
 						++dec;*/
 
-					if (bufInc % scale == 0 && IsHd())
+					if (bufInc % scale == 0 && uqm::IsHd())
 					{
 						dec++;
 					}
@@ -554,19 +554,19 @@ static void dukv_RenderFrame(tfb::VideoDecoder* This)
 				dst1 = (uint32_t*)This->callbacks.GetCanvasLine(
 					This, y * 2 + 1);
 
-				if (IsHd() && y % scale != 0)
+				if (uqm::IsHd() && y % scale != 0)
 				{
-					dec -= ResDescale(dukv->decoder.w);
+					dec -= uqm::ResDescale(dukv->decoder.w);
 				}
 
-				for (x = 0; x < dukv->decoder.w; ++x, chooseIfHd(++dec, reinterpret_cast<uint32_t*>(++bufInc)), ++dst0, ++dst1)
+				for (x = 0; x < dukv->decoder.w; ++x, uqm::chooseIfHd(++dec, reinterpret_cast<uint32_t*>(++bufInc)), ++dst0, ++dst1)
 				{
 					/*if (IsHd())
 						++bufInc;
 					else
 						++dec;*/
 
-					if (bufInc % scale == 0 && IsHd())
+					if (bufInc % scale == 0 && uqm::IsHd())
 					{
 						dec++;
 					}

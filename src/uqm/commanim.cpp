@@ -30,6 +30,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static TimeCount LastTime;
 static AnimSequence Sequences[MaxAnimations + 2];
 // 2 extra for Talk and Transition animations
@@ -905,3 +907,5 @@ void DeltaLastTime(TimePeriod diff)
 {
 	LastTime += diff;
 }
+
+} // namespace uqm

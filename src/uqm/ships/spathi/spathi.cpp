@@ -20,6 +20,8 @@
 #include "spathi.h"
 #include "resinst.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {30};
 static constexpr auto MaxEnergy {10};
@@ -308,3 +310,5 @@ RaceDesc* init_spathi(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

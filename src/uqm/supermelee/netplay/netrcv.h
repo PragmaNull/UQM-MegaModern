@@ -26,6 +26,8 @@
 
 #include <cstddef>
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -36,5 +38,7 @@ uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std:
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_NETRCV_H

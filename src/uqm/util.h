@@ -23,6 +23,8 @@
 #include "libs/gfxlib.h"
 #include "setupmenu.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -50,5 +52,7 @@ void formatFuelValue(uint32_t coarseFuel, uqstl::span<char> buf);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_UTIL_H

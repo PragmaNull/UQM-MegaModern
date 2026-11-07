@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_YEHAT_RESINST_H
 #define UQM_COMM_YEHAT_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring RebelConversationPhrases {"comm.yehat.rebel.dialogue"};
 inline constexpr uqgsl::czstring RebelMusic {"comm.yehat.rebel.music"};
 inline constexpr uqgsl::czstring YehatColorMap {"comm.yehat.colortable"};
@@ -13,5 +15,7 @@ inline constexpr uqgsl::czstring YehatConversationPhrases {"comm.yehat.dialogue"
 inline constexpr uqgsl::czstring YehatFont {"comm.yehat.font"};
 inline constexpr uqgsl::czstring YehatMusic {"comm.yehat.music"};
 inline constexpr uqgsl::czstring YehatPmapAnim {"comm.yehat.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_YEHAT_RESINST_H

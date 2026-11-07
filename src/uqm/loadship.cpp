@@ -26,6 +26,8 @@
 #include "libs/strings/strintrn.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 static RESOURCE code_resources[] = {
 	NullResource,
 	ArilouCode,
@@ -376,3 +378,5 @@ void free_ship(RaceDesc* raceDescPtr, bool FreeIconData,
 
 	DestroyCodeRes(ReleaseCodeRes(raceDescPtr->CodeRef));
 }
+
+} // namespace uqm

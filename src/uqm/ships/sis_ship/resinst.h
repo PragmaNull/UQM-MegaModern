@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_SIS_SHIP_RESINST_H
 #define UQM_SHIPS_SIS_SHIP_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring BlasterBigMaskPmapAnim {"ship.flagship.graphics.blaster.large"};
 inline constexpr uqgsl::czstring BlasterMedMaskPmapAnim {"ship.flagship.graphics.blaster.medium"};
 inline constexpr uqgsl::czstring BlasterSmlMaskPmapAnim {"ship.flagship.graphics.blaster.small"};
@@ -21,5 +23,7 @@ inline constexpr uqgsl::czstring SisIconMaskPmapAnim {"ship.flagship.icons"};
 inline constexpr uqgsl::czstring SisIconMaskPmapAnimRed {"ship.flagship.red.icons"};
 inline constexpr uqgsl::czstring SisShipSounds {"ship.flagship.sounds"};
 inline constexpr uqgsl::czstring SisVictorySong {"ship.flagship.ditty"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_SIS_SHIP_RESINST_H

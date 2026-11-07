@@ -35,6 +35,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateSpathi_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateSpathi_generateMoons(SolarSystemState* solarSys,
 										 SystemPlanet* planet);
@@ -469,3 +471,5 @@ static bool GenerateSpathi_pickupLife(SolarSystemState* solarSys, SystemPlanet* 
 
 	return GenerateDefault_pickupLife(solarSys, world, whichNode);
 }
+
+} // namespace uqm

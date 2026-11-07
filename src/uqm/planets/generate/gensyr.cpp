@@ -32,6 +32,8 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 static bool GenerateSyreen_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateSyreen_generateMoons(SolarSystemState* solarSys,
 										 SystemPlanet* planet);
@@ -232,3 +234,5 @@ static bool GenerateSyreen_pickupEnergy(SolarSystemState* solarSys, SystemPlanet
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class ThraddashPhrase
 {
 	NullPhrase,
@@ -179,5 +181,7 @@ enum class ThraddashPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(ThraddashPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_THRADD_STRINGS_H

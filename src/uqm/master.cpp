@@ -25,6 +25,8 @@
 #include "supermelee/melee.h"
 
 
+namespace uqm
+{
 Queue master_q;
 static int master_ship_seed = 0;
 
@@ -214,3 +216,5 @@ FRAME GetShipMeleeIconsFromIndex(unsigned Index)
 
 	return val;
 }
+
+} // namespace uqm

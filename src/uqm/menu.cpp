@@ -35,6 +35,8 @@
 #include "ifontres.h"
 #include "libs/graphics/drawable.h"
 
+namespace uqm
+{
 static uint8_t GetEndMenuState(uint8_t BaseState);
 static uint8_t GetBeginMenuState(uint8_t BaseState);
 static uint8_t FixMenuState(uint8_t BadState);
@@ -1134,3 +1136,5 @@ void FunkyMenu(uint8_t m, GfxStamp stmp)
 		DrawStamp(&stmp);
 	}
 }
+
+} // namespace uqm

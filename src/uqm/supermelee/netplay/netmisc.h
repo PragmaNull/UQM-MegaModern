@@ -20,13 +20,20 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_NETMISC_H
 #define UQM_SUPERMELEE_NETPLAY_NETMISC_H
 
+namespace uqm
+{
 typedef struct BattleStateData BattleStateData;
+
+} // namespace uqm
 
 #include "netconnection.h"
 #include "netstate.h"
 #include <cstdint>
 
 #include "../../battle.h"
+
+namespace uqm
+{
 // for BattleFrameCounter, BattleFrameRateTicks
 
 #if 0 //defined(__cplusplus)
@@ -67,5 +74,7 @@ static inline bool readyFlagsMeaningful(NetState state)
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_NETMISC_H

@@ -46,6 +46,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool testNetState(bool condition, PacketType type)
 {
 	if (!condition)
@@ -723,3 +725,5 @@ NetResult PacketHandler_Reset(NetConnection* conn, const Packet_Reset* packet)
 	Netplay_remoteReset(conn, reason);
 	return {};
 }
+
+} // namespace uqm

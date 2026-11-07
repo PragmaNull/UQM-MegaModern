@@ -12,9 +12,9 @@
 
 #include <cstdint>
 
+
 namespace uqm
 {
-
 inline constexpr int c_slideshowVersion {1};
 inline constexpr int32_t c_slideshowMaxFonts {5};
 inline constexpr size_t c_slideshowMaxFadeInLines {15};
@@ -110,5 +110,6 @@ struct SlideCommand
 [[nodiscard]] uqstl::optional<uqstl::vector<SlideCommand>> slideshowFromJson(uqstl::string_view json);
 
 } // namespace uqm
+
 
 #endif // UQM_SLIDESHOW_H

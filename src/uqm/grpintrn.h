@@ -11,6 +11,8 @@
 // For GameStateFile
 #include "state.h"
 
+namespace uqm
+{
 //#define DEBUG_GROUPS
 
 // A group header describes battle groups present in a star system. There is
@@ -52,5 +54,7 @@ void ReadShipFragment(GameStateFile* fp, ShipFragment* FragPtr);
 void WriteShipFragment(GameStateFile* fp, const ShipFragment* FragPtr);
 void ReadIpGroup(GameStateFile* fp, InterplanetaryGroup* GroupPtr);
 void WriteIpGroup(GameStateFile* fp, const InterplanetaryGroup* GroupPtr);
+
+} // namespace uqm
 
 #endif // UQM_GRPINTRN_H

@@ -22,6 +22,8 @@
 
 #include "libs/reslib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -40,5 +42,7 @@ struct CodeResRef
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_CODERES_H

@@ -26,6 +26,8 @@
 #include "libs/gfxlib.h"
 #include "colors.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -245,5 +247,7 @@ extern bool CalculateGravity(Element* ElementPtr);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_ELEMENT_H

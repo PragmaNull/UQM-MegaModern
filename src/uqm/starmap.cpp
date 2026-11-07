@@ -32,6 +32,8 @@
 #include <time.h>	// For the clock.
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // The "starmap_array" variable (from StarmapGlobalData) is only used to intialize
 // the "star_array" global variable.  This is now intentionally a copy
 // of the data so that it may be manipulated or placed back to default from
@@ -2048,3 +2050,5 @@ MMRNMHRM_ID:
 // {{5704, 9795}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), VUX_BEAST_DEFINED, 4, 49},
 // {{ 333, 9812}, MakeStar (DWARF_STAR, GREEN_BODY, -1), SLYLANDRO_DEFINED, 2, 27},
 #endif
+
+} // namespace uqm

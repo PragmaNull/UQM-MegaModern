@@ -21,6 +21,8 @@
 #include "strings.h"
 #include "uqm/lua/UQMLua.h"
 
+namespace uqm
+{
 static ConversationData urquan_desc =
 	{
 		Conversation::Urquan, /* AlienConv */
@@ -644,3 +646,5 @@ ConversationData* init_urquan_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

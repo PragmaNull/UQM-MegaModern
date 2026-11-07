@@ -20,13 +20,19 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_PACKETQ_H
 #define UQM_SUPERMELEE_NETPLAY_PACKETQ_H
 
+namespace uqm
+{
 typedef struct PacketQueue PacketQueue;
+
+} // namespace uqm
 
 #include "packet.h"
 #include <cstdint>
 
 #include <sys/types.h>
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -57,5 +63,7 @@ NetResult flushPacketQueue(NetConnection* conn);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_PACKETQ_H

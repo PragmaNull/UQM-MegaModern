@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class UtwigPhrase
 {
 	NullPhrase,
@@ -141,5 +143,7 @@ enum class UtwigPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(UtwigPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_UTWIG_STRINGS_H

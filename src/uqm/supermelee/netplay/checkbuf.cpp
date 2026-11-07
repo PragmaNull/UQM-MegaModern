@@ -29,6 +29,8 @@
 #include <stdlib.h>
 
 
+namespace uqm
+{
 static inline BattleFrameCounter ChecksumBuffer_getCurrentFrameNr(void)
 {
 	return battleFrameCount;
@@ -135,3 +137,5 @@ bool ChecksumBuffer_getChecksum(ChecksumBuffer* cb, BattleFrameCounter frameNr,
 	*result = entry->checksum;
 	return true;
 }
+
+} // namespace uqm

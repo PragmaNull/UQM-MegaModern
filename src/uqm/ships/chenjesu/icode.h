@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_CHENJESU_ICODE_H
 #define UQM_SHIPS_CHENJESU_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring ChenjesuCode {"ship.chenjesu.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_CHENJESU_ICODE_H

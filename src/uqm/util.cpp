@@ -37,6 +37,8 @@
 #include "starmap.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 void DrawStarConBox(GfxRect* pRect, int16_t BorderWidth, Color TopLeftColor,
 					Color BottomRightColor, bool FillInterior, Color InteriorColor,
 					bool CreateCorners, Color CornerColor)
@@ -731,3 +733,5 @@ char* WholeFuelValue(void)
 
 	return buf;
 }
+
+} // namespace uqm

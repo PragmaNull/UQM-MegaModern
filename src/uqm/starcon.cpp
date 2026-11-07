@@ -62,6 +62,8 @@
 #include "uqm/session/SaveCheck.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 uqstl::atomic<bool> MainExited {false};
 
 // Open or close the periodically occuring QuasiSpace portal.
@@ -209,8 +211,6 @@ static void SetRandomMenuMusic(void)
 }
 
 /* TODO: Remove these declarations once threading is gone. */
-extern AudioDriverType snddriver;
-extern AudioFlags soundflags;
 
 // Releases the kernel and tells the main thread that Starcon2Main ends.
 static void ShutdownKernel(void)
@@ -233,7 +233,6 @@ int Starcon2Main(void* threadArg)
 		/* TODO: Put initAudio back in main where it belongs once threading
 		 *       is gone.
 		 */
-		extern int32_t initAudio(AudioDriverType driver, AudioFlags flags);
 		initAudio(snddriver, soundflags);
 	}
 
@@ -418,3 +417,5 @@ int Starcon2Main(void* threadArg)
 	(void)threadArg; /* Satisfying compiler (unused parameter) */
 	return 0;
 }
+
+} // namespace uqm

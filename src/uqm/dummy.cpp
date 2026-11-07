@@ -35,6 +35,8 @@
 #include <ctype.h>
 
 
+namespace uqm
+{
 struct CodeResData
 {
 	RaceDesc data;
@@ -211,3 +213,5 @@ void* ReleaseCodeRes(void* CodeRef)
 {
 	return CodeRef;
 }
+
+} // namespace uqm

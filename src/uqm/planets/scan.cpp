@@ -48,6 +48,8 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 extern FRAME SpaceJunkFrame;
 
 // define SPIN_ON_SCAN to allow the planet to spin
@@ -1868,3 +1870,5 @@ void setNodeNotRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t node
 {
 	planetInfo->ScanRetrieveMask[*scanType] &= ~((uint32_t)1 << nodeNr);
 }
+
+} // namespace uqm

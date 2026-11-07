@@ -26,6 +26,8 @@
 // for GfxPoint
 #include <assert.h>
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -104,5 +106,7 @@ extern HIPGROUP BuildGroup(Queue* pDstQueue, uint8_t race_id);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_GRPINFO_H

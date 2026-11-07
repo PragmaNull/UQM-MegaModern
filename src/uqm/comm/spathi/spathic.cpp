@@ -24,6 +24,8 @@
 #include "uqm/lua/UQMLua.h"
 
 
+namespace uqm
+{
 static ConversationData spathi_desc =
 	{
 		Conversation::Spathi, /* AlienConv */
@@ -963,3 +965,5 @@ ConversationData* init_spathi_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

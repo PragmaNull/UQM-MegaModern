@@ -22,6 +22,8 @@
 #include "uqm/races.h"
 #include "uqm/lua/UQMLua.h"
 
+namespace uqm
+{
 static ConversationData vux_desc =
 	{
 		Conversation::Vux, /* AlienConv */
@@ -943,3 +945,5 @@ ConversationData* init_vux_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

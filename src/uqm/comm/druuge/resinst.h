@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_DRUUGE_RESINST_H
 #define UQM_COMM_DRUUGE_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring DruugeColorMap {"comm.druuge.colortable"};
 inline constexpr uqgsl::czstring DruugeConversationPhrases {"comm.druuge.dialogue"};
 inline constexpr uqgsl::czstring DruugeFont {"comm.druuge.font"};
 inline constexpr uqgsl::czstring DruugeMusic {"comm.druuge.music"};
 inline constexpr uqgsl::czstring DruugePmapAnim {"comm.druuge.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_DRUUGE_RESINST_H

@@ -20,12 +20,18 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_CRC_H
 #define UQM_SUPERMELEE_NETPLAY_CRC_H
 
+namespace uqm
+{
 typedef struct crc_State crc_State;
+
+} // namespace uqm
 
 #include <cstdint>
 
 #include <stddef.h>
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -46,8 +52,13 @@ uint32_t crc_finish(const crc_State* state);
 }
 #endif
 
+} // namespace uqm
+
 #ifdef DUMP_CRC_OPS
 #include "netconnection.h"
+
+namespace uqm
+{
 // for netplayDebugFile
 //#define crc_log(...)  log_add (logDebug, __VA_ARGS__)
 #define crc_log(...)                                      \
@@ -56,6 +67,9 @@ uint32_t crc_finish(const crc_State* state);
 		netplayDebugPrint(netplayDebugFile, __VA_ARGS__); \
 		netplayDebugPrint(netplayDebugFile, "\n");        \
 	} while (false)
+
+} // namespace uqm
+
 #endif
 
 #endif // UQM_SUPERMELEE_NETPLAY_CRC_H

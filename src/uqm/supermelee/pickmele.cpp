@@ -43,6 +43,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static constexpr auto NumPickmeleeRows {2};
 static constexpr auto NumPickmeleeColumns {7};
 
@@ -968,3 +970,5 @@ static void reportShipSelected(PickMeleeState* gms, uint16_t index)
 	(void)gms;
 }
 #endif
+
+} // namespace uqm

@@ -32,6 +32,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateOrz_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateOrz_generateMoons(SolarSystemState* solarSys,
 									  SystemPlanet* planet);
@@ -315,3 +317,5 @@ static bool GenerateOrz_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* w
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

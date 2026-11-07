@@ -31,6 +31,8 @@
 #include "velocity.h"
 #include "commanim.h"
 
+namespace uqm
+{
 // general numbers-speech generator info
 // should accomodate most common base-10 languages
 // many languages require various plural forms
@@ -257,6 +259,8 @@ enum class ActivityFlag : uint16_t
 consteval bool isFlagEnum(ActivityFlag) { return true; }
 typedef uint16_t ACTIVITY; // TODO PramgaNull: use ActivityFlag
 
+} // namespace uqm
+
 #include "uqm/session/GameState.h"
 
 namespace uqm
@@ -267,7 +271,6 @@ namespace uqm
 [[nodiscard]] constexpr ActivityKind activityKind(ACTIVITY activity) { return static_cast<ActivityKind>(lowByte(activity)); }
 // The in-game options, with the bits of the glob_flags values above. They stay between sessions.
 [[nodiscard]] uint8_t& globalFlags();
-} // namespace uqm
 
 
 inline constexpr auto MaxEncounters {16};
@@ -473,5 +476,7 @@ static inline void SetHomeworldKnown(uint32_t homeworld)
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_GLOBDATA_H

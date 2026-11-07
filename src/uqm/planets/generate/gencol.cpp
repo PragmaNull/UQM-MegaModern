@@ -27,6 +27,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateColony_initNpcs(SolarSystemState* solarSys);
 static bool GenerateColony_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateColony_generateMoons(SolarSystemState* solarSys,
@@ -188,3 +190,5 @@ static bool GenerateColony_generateOrbital(SolarSystemState* solarSys,
 
 	return true;
 }
+
+} // namespace uqm

@@ -26,6 +26,8 @@
 #include "uqm/lua/UQMLua.h"
 
 
+namespace uqm
+{
 static ConversationData ilwrath_desc =
 	{
 		Conversation::Ilwrath, /* AlienConv */
@@ -768,3 +770,5 @@ ConversationData* init_ilwrath_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

@@ -45,6 +45,8 @@
 #include <string.h>
 
 
+namespace uqm
+{
 ACTIVITY LastActivity;
 PlayerControlFlags PlayerControl[NumPlayers] {};
 
@@ -535,3 +537,5 @@ void uninitIO(void)
 {
 	uqm::releaseGameFiles();
 }
+
+} // namespace uqm

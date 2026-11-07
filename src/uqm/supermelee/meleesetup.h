@@ -18,6 +18,8 @@
 #ifndef UQM_SUPERMELEE_MELEESETUP_H
 #define UQM_SUPERMELEE_MELEESETUP_H
 
+namespace uqm
+{
 typedef struct MeleeTeam MeleeTeam;
 typedef struct MeleeSetup MeleeSetup;
 
@@ -25,14 +27,22 @@ typedef struct MeleeSetup MeleeSetup;
 #define MELEETEAM_INTERNAL
 #endif /* MELEESETUP_INTERNAL */
 
+} // namespace uqm
+
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 typedef uint16_t FleetShipIndex;
+
+} // namespace uqm
 
 #include "libs/io/FileSystem.h"
 #include "melee.h"
 #include "meleeship.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -139,5 +149,7 @@ void MeleeState_setTeam(MeleeState* pMS, size_t teamNr,
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_MELEESETUP_H

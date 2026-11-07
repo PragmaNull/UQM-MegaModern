@@ -26,6 +26,8 @@
 #include "supermelee/netplay/netmelee.h"
 #endif /* NETPLAY */
 
+namespace uqm
+{
 InputContext* PlayerInput[NumPlayers];
 
 template <typename Context>
@@ -91,3 +93,5 @@ NetworkInputContext* NetworkInputContext_new(uint16_t playerNr)
 	return result;
 }
 #endif
+
+} // namespace uqm

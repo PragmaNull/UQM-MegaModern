@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class KohrAhPhrase
 {
 	NullPhrase,
@@ -103,5 +105,7 @@ enum class KohrAhPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(KohrAhPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_BLACKUR_STRINGS_H

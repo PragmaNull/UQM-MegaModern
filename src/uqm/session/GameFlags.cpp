@@ -3,9 +3,9 @@
 #include "GameFlags.h"
 #include "core/stl/map.h"
 
+
 namespace uqm
 {
-
 uqstl::optional<GameFlag> findGameFlag(uqstl::string_view name)
 {
 	static const uqstl::map<uqstl::string_view, GameFlag> s_byName {[] {

@@ -21,6 +21,8 @@
 #include "libs/gfxlib.h"
 #include "libs/sndlib.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -40,5 +42,7 @@ MUSIC_REF loadMainMenuMusic(uint8_t selector);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_CONS_RES_H

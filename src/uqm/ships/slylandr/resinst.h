@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_SLYLANDR_RESINST_H
 #define UQM_SHIPS_SLYLANDR_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring SlylandroBigMaskPmapAnim {"ship.slylandro.graphics.probe.large"};
 inline constexpr uqgsl::czstring SlylandroCaptainMaskPmapAnim {"ship.slylandro.graphics.captain"};
 inline constexpr uqgsl::czstring SlylandroIconMaskPmapAnim {"ship.slylandro.icons"};
@@ -15,5 +17,7 @@ inline constexpr uqgsl::czstring SlylandroRaceStrings {"ship.slylandro.text"};
 inline constexpr uqgsl::czstring SlylandroShipSounds {"ship.slylandro.sounds"};
 inline constexpr uqgsl::czstring SlylandroSmlMaskPmapAnim {"ship.slylandro.graphics.probe.small"};
 inline constexpr uqgsl::czstring SlylandroVictorySong {"ship.slylandro.ditty"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_SLYLANDR_RESINST_H

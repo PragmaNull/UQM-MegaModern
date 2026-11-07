@@ -62,6 +62,8 @@
 #include <SDL3/SDL_version.h>
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 //#define DEBUG_STARSEED
 //#define DEBUG_SOLARSYS
 //#define SMOOTH_SYSTEM_ZOOM  1
@@ -3298,3 +3300,5 @@ void InitialIntersect(void)
 	// rare but annoying
 	CheckIntersect();
 }
+
+} // namespace uqm

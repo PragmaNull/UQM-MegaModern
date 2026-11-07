@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_PROBE_ICODE_H
 #define UQM_SHIPS_PROBE_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring UrquanDroneCode {"ship.drone.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_PROBE_ICODE_H

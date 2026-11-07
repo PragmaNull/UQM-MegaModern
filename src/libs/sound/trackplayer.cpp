@@ -363,8 +363,8 @@ static int SplitSubPages(const char* text, uqstl::string pages[], int32_t timest
 			pages[page] += "...";
 		}
 
-		if (uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC && !usingSpeech
-			&& (uqm::activityKind(uqm::currentActivity()) != ActivityKind::WonLastBattle))
+		if (uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC && !uqm::usingSpeech
+			&& (uqm::activityKind(uqm::currentActivity()) != uqm::ActivityKind::WonLastBattle))
 		{
 			timestamp[page] =
 				RecalculateDelay(lead_ellips + pos + aft_ellips, true);
@@ -965,7 +965,7 @@ uint32_t RecalculateDelay(uint32_t numChars, bool talk)
 {
 	uint32_t silence_length {};
 	uint32_t talk_length = GameTicksPerSecond * numChars / ModerateSpeed;
-	const uint8_t read_speed = speed_array[uqm::globalFlags() & ReadSpeedMask];
+	const uint8_t read_speed = speed_array[uqm::globalFlags() & uqm::ReadSpeedMask];
 
 	if (read_speed)
 	{

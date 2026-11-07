@@ -29,6 +29,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateVault_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateVault_generateOrbital(SolarSystemState* solarSys,
 										  SystemPlanet* world);
@@ -204,3 +206,5 @@ static bool GenerateVault_pickupEnergy(SolarSystemState* solarSys, SystemPlanet*
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

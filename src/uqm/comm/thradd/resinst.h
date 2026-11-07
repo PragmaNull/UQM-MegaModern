@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_THRADD_RESINST_H
 #define UQM_COMM_THRADD_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring ThraddColorMap {"comm.thraddash.colortable"};
 inline constexpr uqgsl::czstring ThraddConversationPhrases {"comm.thraddash.dialogue"};
 inline constexpr uqgsl::czstring ThraddFont {"comm.thraddash.font"};
 inline constexpr uqgsl::czstring ThraddMusic {"comm.thraddash.music"};
 inline constexpr uqgsl::czstring ThraddPmapAnim {"comm.thraddash.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_THRADD_RESINST_H

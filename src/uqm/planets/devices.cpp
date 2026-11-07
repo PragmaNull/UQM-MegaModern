@@ -40,6 +40,9 @@
 #include "libs/strlib.h"
 #include "../../options.h"
 #include "libs/graphics/gfx_common.h"
+
+namespace uqm
+{
 // for scaling down devices in HdResolutionFactor
 
 
@@ -766,3 +769,5 @@ bool DevicesMenu(void)
 
 	return false;
 }
+
+} // namespace uqm

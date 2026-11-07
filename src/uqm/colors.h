@@ -20,6 +20,8 @@
 
 #include "libs/gfxlib.h"
 
+namespace uqm
+{
 // To be used as an indicator that the actual value of the color does not
 // matter, for instance in structure initialisations for fields which
 // are irrelevant in the context.
@@ -550,5 +552,7 @@ inline constexpr auto ScanBiologicalTintColor {BrightGreenColor};
 
 // Transparent
 inline constexpr auto Transparent {BuildColorRgba(0x50, 0x50, 0x50, 0x00)};
+
+} // namespace uqm
 
 #endif // UQM_COLORS_H

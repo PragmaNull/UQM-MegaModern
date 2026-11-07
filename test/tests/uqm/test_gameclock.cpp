@@ -27,7 +27,7 @@ TEST_F(GameClockTest, StartsOnFebruary17)
 {
 	EXPECT_EQ(m_clock.day(), 17);
 	EXPECT_EQ(m_clock.month(), 2);
-	EXPECT_EQ(m_clock.year(), StartYear);
+	EXPECT_EQ(m_clock.year(), uqm::StartYear);
 	EXPECT_EQ(m_clock.dayInTicks(), 0);
 }
 
@@ -65,7 +65,7 @@ TEST_F(GameClockTest, TickStartsANewDayOnlyWhenTheClockRuns)
 
 TEST_F(GameClockTest, SetDayInTicksKeepsThePartOfTheDay)
 {
-	m_clock.restore(17, 2, StartYear, 50, 100);
+	m_clock.restore(17, 2, uqm::StartYear, 50, 100);
 	m_clock.setDayInTicks(200);
 	EXPECT_EQ(m_clock.tickCount(), 100);
 	EXPECT_EQ(m_clock.dayInTicks(), 200);
@@ -73,10 +73,10 @@ TEST_F(GameClockTest, SetDayInTicksKeepsThePartOfTheDay)
 
 TEST_F(GameClockTest, DaysElapsedCountsFromTheStart)
 {
-	m_clock.restore(17, 2, StartYear, 100, 100);
+	m_clock.restore(17, 2, uqm::StartYear, 100, 100);
 	EXPECT_FLOAT_EQ(m_clock.daysElapsed(), 0.0f);
 
-	m_clock.restore(17, 2, StartYear + 1, 50, 100);
+	m_clock.restore(17, 2, uqm::StartYear + 1, 50, 100);
 	EXPECT_FLOAT_EQ(m_clock.daysElapsed(), 365.5f);
 }
 
@@ -85,83 +85,83 @@ TEST_F(GameClockTest, ResolveDateMakesRelativeDatesAbsolute)
 	uint16_t month {0};
 	uint16_t day {14};
 	uint16_t year {0};
-	EXPECT_TRUE(m_clock.resolveDate(EventType::Relative, month, day, year));
+	EXPECT_TRUE(m_clock.resolveDate(uqm::EventType::Relative, month, day, year));
 	EXPECT_EQ(day, 3);
 	EXPECT_EQ(month, 3);
-	EXPECT_EQ(year, StartYear);
+	EXPECT_EQ(year, uqm::StartYear);
 }
 
 TEST_F(GameClockTest, ResolveDateRefusesPastDates)
 {
 	uint16_t month {2};
 	uint16_t day {16};
-	uint16_t year {StartYear};
-	EXPECT_FALSE(m_clock.resolveDate(EventType::Absolute, month, day, year));
+	uint16_t year {uqm::StartYear};
+	EXPECT_FALSE(m_clock.resolveDate(uqm::EventType::Absolute, month, day, year));
 	day = 17;
-	EXPECT_TRUE(m_clock.resolveDate(EventType::Absolute, month, day, year));
+	EXPECT_TRUE(m_clock.resolveDate(uqm::EventType::Absolute, month, day, year));
 }
 
 TEST_F(GameClockTest, DueEventsComeInDateOrder)
 {
-	EXPECT_NE(m_clock.addEvent(2, 19, StartYear, GameEventId::KohrAhVictoriousEvent), nullptr);
-	EXPECT_NE(m_clock.addEvent(2, 18, StartYear, GameEventId::ArilouExitEvent), nullptr);
-	EXPECT_NE(m_clock.addEvent(2, 18, StartYear, GameEventId::HyperspaceEncounterEvent), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 19, uqm::StartYear, uqm::GameEventId::KohrAhVictoriousEvent), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 18, uqm::StartYear, uqm::GameEventId::ArilouExitEvent), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 18, uqm::StartYear, uqm::GameEventId::HyperspaceEncounterEvent), nullptr);
 
-	GameEventId funcIndex {};
+	uqm::GameEventId funcIndex {};
 	EXPECT_FALSE(m_clock.takeDueEvent(funcIndex));
 
 	m_clock.nextDay();
 	ASSERT_TRUE(m_clock.takeDueEvent(funcIndex));
-	EXPECT_EQ(funcIndex, GameEventId::ArilouExitEvent);
+	EXPECT_EQ(funcIndex, uqm::GameEventId::ArilouExitEvent);
 	ASSERT_TRUE(m_clock.takeDueEvent(funcIndex));
-	EXPECT_EQ(funcIndex, GameEventId::HyperspaceEncounterEvent);
+	EXPECT_EQ(funcIndex, uqm::GameEventId::HyperspaceEncounterEvent);
 	EXPECT_FALSE(m_clock.takeDueEvent(funcIndex));
 
 	m_clock.nextDay();
 	ASSERT_TRUE(m_clock.takeDueEvent(funcIndex));
-	EXPECT_EQ(funcIndex, GameEventId::KohrAhVictoriousEvent);
+	EXPECT_EQ(funcIndex, uqm::GameEventId::KohrAhVictoriousEvent);
 }
 
 TEST_F(GameClockTest, EventsThatWereMissedAreDue)
 {
-	EXPECT_NE(m_clock.addEvent(2, 17, StartYear, GameEventId::AdvanceThraddMission), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 17, uqm::StartYear, uqm::GameEventId::AdvanceThraddMission), nullptr);
 	m_clock.nextDay();
 	m_clock.nextDay();
 
-	GameEventId funcIndex {};
+	uqm::GameEventId funcIndex {};
 	ASSERT_TRUE(m_clock.takeDueEvent(funcIndex));
-	EXPECT_EQ(funcIndex, GameEventId::AdvanceThraddMission);
+	EXPECT_EQ(funcIndex, uqm::GameEventId::AdvanceThraddMission);
 	EXPECT_FALSE(m_clock.takeDueEvent(funcIndex));
 }
 
 TEST_F(GameClockTest, FirstEventIsTheEarliest)
 {
 	EXPECT_FALSE(m_clock.firstEvent().has_value());
-	EXPECT_NE(m_clock.addEvent(5, 1, StartYear, GameEventId::AdvancePkunkMission), nullptr);
-	EXPECT_NE(m_clock.addEvent(3, 9, StartYear, GameEventId::AdvanceIlwrathMission), nullptr);
+	EXPECT_NE(m_clock.addEvent(5, 1, uqm::StartYear, uqm::GameEventId::AdvancePkunkMission), nullptr);
+	EXPECT_NE(m_clock.addEvent(3, 9, uqm::StartYear, uqm::GameEventId::AdvanceIlwrathMission), nullptr);
 
 	const auto first {m_clock.firstEvent()};
 	ASSERT_TRUE(first.has_value());
-	EXPECT_EQ(first->func_index, GameEventId::AdvanceIlwrathMission);
+	EXPECT_EQ(first->func_index, uqm::GameEventId::AdvanceIlwrathMission);
 	EXPECT_EQ(first->month_index, 3);
 	EXPECT_EQ(first->day_index, 9);
 }
 
 TEST_F(GameClockTest, IsBeforeComparesDates)
 {
-	EXPECT_TRUE(m_clock.isBefore(StartYear, 2, 18));
-	EXPECT_TRUE(m_clock.isBefore(StartYear + 1, 1, 1));
-	EXPECT_FALSE(m_clock.isBefore(StartYear, 2, 17));
-	EXPECT_FALSE(m_clock.isBefore(StartYear, 1, 31));
+	EXPECT_TRUE(m_clock.isBefore(uqm::StartYear, 2, 18));
+	EXPECT_TRUE(m_clock.isBefore(uqm::StartYear + 1, 1, 1));
+	EXPECT_FALSE(m_clock.isBefore(uqm::StartYear, 2, 17));
+	EXPECT_FALSE(m_clock.isBefore(uqm::StartYear, 1, 31));
 }
 
 TEST_F(GameClockTest, AddEventFailsWhenTheQueueIsFull)
 {
 	for (int i {0}; i < 8; ++i)
 	{
-		EXPECT_NE(m_clock.addEvent(3, 1, StartYear, GameEventId::ArilouEntranceEvent), nullptr);
+		EXPECT_NE(m_clock.addEvent(3, 1, uqm::StartYear, uqm::GameEventId::ArilouEntranceEvent), nullptr);
 	}
-	EXPECT_EQ(m_clock.addEvent(3, 1, StartYear, GameEventId::ArilouEntranceEvent), nullptr);
+	EXPECT_EQ(m_clock.addEvent(3, 1, uqm::StartYear, uqm::GameEventId::ArilouEntranceEvent), nullptr);
 }
 
 } // namespace

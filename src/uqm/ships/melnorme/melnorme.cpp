@@ -27,6 +27,8 @@
 #include "uqm/battle.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {20};
 static constexpr auto EnergyRegeneration {1};
@@ -788,3 +790,5 @@ RaceDesc* init_melnorme(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

@@ -30,6 +30,8 @@
 #include "libs/math/Random.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 static ConversationData commander_desc =
 	{
 		Conversation::Commander, /* AlienConv */
@@ -861,3 +863,5 @@ ConversationData* init_commander_comm()
 
 	return (retval);
 }
+
+} // namespace uqm

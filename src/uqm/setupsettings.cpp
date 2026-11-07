@@ -16,14 +16,14 @@
 #include "libs/sound/sound.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 #if defined(DIRECTIONAL_JOY)
 static constexpr bool HaveDirectionalJoystick {true};
 #else
 static constexpr bool HaveDirectionalJoystick {false};
 #endif
 
-namespace uqm
-{
 
 namespace
 {

@@ -23,6 +23,8 @@
 #include "core/types/enum.h"
 #include "menustat.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -53,5 +55,7 @@ extern uint16_t ShipCost(uint8_t race_id);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_STARBASE_H

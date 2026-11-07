@@ -21,6 +21,9 @@
 #define UQM_SUPERMELEE_NETPLAY_NETCONNECTION_H
 
 #include "netplay.h"
+
+namespace uqm
+{
 // for NETPLAY_STATISTICS
 
 #if 0 //defined(__cplusplus)
@@ -46,6 +49,8 @@ typedef void (*NetConnection_ResetCallback)(NetConnection* conn, void* arg);
 }
 #endif
 
+} // namespace uqm
+
 #include "netstate.h"
 #include "options/netoptions.h"
 #ifdef NETPLAY_CHECKSUM
@@ -58,6 +63,8 @@ typedef void (*NetConnection_ResetCallback)(NetConnection* conn, void* arg);
 #include "libs/io/FileSystem.h"
 #endif
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -86,6 +93,8 @@ struct NetStatistics
 extern "C" {
 #endif
 
+} // namespace uqm
+
 #ifdef NETCONNECTION_INTERNAL
 #include "libs/network/Connection.h"
 #include "libs/network/Connector.h"
@@ -94,6 +103,8 @@ extern "C" {
 #include "packetq.h"
 
 
+namespace uqm
+{
 struct HandShakeFlags
 {
 	// For actions that require agreement by both parties.
@@ -199,9 +210,13 @@ struct NetConnection
 	void* extra;
 };
 
+} // namespace uqm
+
 #endif /* NETCONNECTION_INTERNAL */
 
 
+namespace uqm
+{
 NetConnection* NetConnection_open(int player,
 								  const uqm::NetplayPeerOptions* options,
 								  NetConnection_ConnectCallback connectCallback,
@@ -263,5 +278,7 @@ void netplayDebugPrint(uqm::io::File* file, fmt::format_string<Args...> format, 
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_NETCONNECTION_H

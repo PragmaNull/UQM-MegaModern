@@ -30,6 +30,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateSupox_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateSupox_generateName(const SolarSystemState*,
 									   const SystemPlanet* world);
@@ -188,3 +190,5 @@ static uint16_t GenerateSupox_generateEnergy(const SolarSystemState* solarSys,
 
 	return 0;
 }
+
+} // namespace uqm

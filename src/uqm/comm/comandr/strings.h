@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class CommanderPhrase
 {
 	NullPhrase,
@@ -122,5 +124,7 @@ enum class CommanderPhrase
 	GoodbyeCommander,
 };
 consteval bool isArithmeticEnum(CommanderPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_COMANDR_STRINGS_H

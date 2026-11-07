@@ -40,10 +40,17 @@
 #endif
 
 
+namespace uqm
+{
 static void NetConnection_doClose(NetConnection* conn);
+
+} // namespace uqm
 
 #include "core/platform/platform.h"
 #include "core/string/StringUtils.h"
+
+namespace uqm
+{
 #include "nc_connect.ci"
 
 #if defined(NETPLAY_DEBUG) && defined(NETPLAY_DEBUG_FILE)
@@ -369,3 +376,5 @@ NetStatistics* NetConnection_getStatistics(NetConnection* conn)
 	return &conn->statistics;
 }
 #endif
+
+} // namespace uqm

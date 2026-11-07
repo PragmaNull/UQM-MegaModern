@@ -20,14 +20,20 @@
 #ifndef UQM_PLANETS_SCAN_H
 #define UQM_PLANETS_SCAN_H
 
+namespace uqm
+{
 struct ScanDesc;
 struct ScanBlock;
+
+} // namespace uqm
 
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "planets.h"
 #include "core/string/StringUtils.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -72,5 +78,7 @@ void GetPlanetTitle(uqstl::span<char> buf);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_PLANETS_SCAN_H

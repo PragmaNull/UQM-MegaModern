@@ -27,6 +27,8 @@
 #include "uqm/starmap.h"
 
 
+namespace uqm
+{
 static uint16_t probe_digit_names[] =
 	{
 		*SlylandroPhrase::EnumerateZero,
@@ -568,3 +570,5 @@ ConversationData* init_slyland_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

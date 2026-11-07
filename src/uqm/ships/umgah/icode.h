@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_UMGAH_ICODE_H
 #define UQM_SHIPS_UMGAH_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring UmgahCode {"ship.umgah.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_UMGAH_ICODE_H

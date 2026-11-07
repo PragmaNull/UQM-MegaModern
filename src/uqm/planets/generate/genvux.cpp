@@ -34,6 +34,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateVux_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateVux_generateOrbital(SolarSystemState* solarSys,
 										SystemPlanet* world);
@@ -392,3 +394,5 @@ static bool GenerateVux_pickupLife(SolarSystemState* solarSys, SystemPlanet* wor
 
 	return GenerateDefault_pickupLife(solarSys, world, whichNode);
 }
+
+} // namespace uqm

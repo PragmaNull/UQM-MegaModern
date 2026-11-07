@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_ZOQFOT_RESINST_H
 #define UQM_SHIPS_ZOQFOT_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring SpitBigMaskPmapAnim {"ship.zoqfotpik.graphics.spit.large"};
 inline constexpr uqgsl::czstring SpitMedMaskPmapAnim {"ship.zoqfotpik.graphics.spit.medium"};
 inline constexpr uqgsl::czstring SpitSmlMaskPmapAnim {"ship.zoqfotpik.graphics.spit.small"};
@@ -21,5 +23,7 @@ inline constexpr uqgsl::czstring ZoqfotpikRaceStrings {"ship.zoqfotpik.text"};
 inline constexpr uqgsl::czstring ZoqfotpikShipSounds {"ship.zoqfotpik.sounds"};
 inline constexpr uqgsl::czstring ZoqfotpikSmlMaskPmapAnim {"ship.zoqfotpik.graphics.stinger.small"};
 inline constexpr uqgsl::czstring ZoqfotpikVictorySong {"ship.zoqfotpik.ditty"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_ZOQFOT_RESINST_H

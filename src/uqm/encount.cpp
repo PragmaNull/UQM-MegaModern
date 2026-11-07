@@ -52,6 +52,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static void DrawFadeText(const char* str1, const char* str2,
 						 bool fade_in, GfxRect* pRect);
 
@@ -1091,3 +1093,5 @@ void EncounterBattle(void)
 
 	uqm::currentActivity() = OldActivity;
 }
+
+} // namespace uqm

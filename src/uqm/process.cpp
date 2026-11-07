@@ -36,6 +36,8 @@
 #include "intel.h"
 
 
+namespace uqm
+{
 //#define DEBUG_PROCESS
 
 uint16_t DisplayFreeList;
@@ -1203,3 +1205,5 @@ void RemoveElement(HLINK hLink)
 	}
 	RemoveQueue(&disp_q, hLink);
 }
+
+} // namespace uqm

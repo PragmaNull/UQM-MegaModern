@@ -26,6 +26,8 @@
 #include "packetsenders.h"
 
 
+namespace uqm
+{
 // Convert a local player number to a side indication relative to this
 // party.
 static inline NetplaySide netSide(NetConnection* conn, int side)
@@ -112,3 +114,5 @@ void Netplay_Notify_checksum(NetConnection* conn, BattleFrameCounter frameNr,
 	sendChecksum(conn, frameNr, checksum);
 }
 #endif /* NETPLAY_CHECKSUM */
+
+} // namespace uqm

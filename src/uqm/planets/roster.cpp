@@ -33,6 +33,8 @@
 
 #include <stdlib.h>
 
+namespace uqm
+{
 // JMS_GFX: These exist to prevent the leftover red borders of the rostered ships in hi-res.
 static GfxRect savedShipFrame_r;
 static GfxStamp savedShipFrame;
@@ -509,3 +511,5 @@ bool RosterMenu(void)
 
 	return true;
 }
+
+} // namespace uqm

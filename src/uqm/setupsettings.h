@@ -9,9 +9,9 @@
 #include "core/stl/optional.h"
 #include "uqm/menudef.h"
 
+
 namespace uqm
 {
-
 class SettingBase;
 class SettingsRegistry;
 enum class CheatAction : uint8_t;
@@ -33,5 +33,6 @@ enum class CheatAction : uint8_t;
 bool applySettingChange(const SettingBase& setting);
 
 } // namespace uqm
+
 
 #endif // UQM_SETUPSETTINGS_H

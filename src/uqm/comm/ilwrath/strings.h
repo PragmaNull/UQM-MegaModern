@@ -21,6 +21,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class IlwrathPhrase
 {
 	NullPhrase,
@@ -136,5 +138,7 @@ enum class IlwrathPhrase
 	Gtfo,
 };
 consteval bool isArithmeticEnum(IlwrathPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_ILWRATH_STRINGS_H

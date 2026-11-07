@@ -23,6 +23,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateSlylandro_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateSlylandro_generateName(const SolarSystemState*,
 										   const SystemPlanet* world);
@@ -103,3 +105,5 @@ static bool GenerateSlylandro_generateOrbital(SolarSystemState* solarSys,
 	GenerateDefault_generateOrbital(solarSys, world);
 	return true;
 }
+
+} // namespace uqm

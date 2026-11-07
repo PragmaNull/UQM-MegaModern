@@ -19,6 +19,8 @@
 #include "netmelee.h"
 #include "notify.h"
 
+namespace uqm
+{
 // Notify the network connections of a team name change.
 void Netplay_NotifyAll_setTeamName(MeleeState* pMS, size_t playerNr)
 {
@@ -159,3 +161,5 @@ void Netplay_NotifyAll_battleInput(BATTLE_INPUT_STATE input)
 		Netplay_Notify_battleInput(conn, input);
 	}
 }
+
+} // namespace uqm

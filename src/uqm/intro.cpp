@@ -40,6 +40,8 @@
 #include "slideshow.h"
 #include "libs/file/textfile.h"
 
+namespace uqm
+{
 static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands);
 
 struct PresentationInputState
@@ -1506,3 +1508,5 @@ bool ShowPresentation(RESOURCE res)
 	uqm::log::warn("Tried to present '{}', of non-presentable type '{}'", res, resType);
 	return false;
 }
+
+} // namespace uqm

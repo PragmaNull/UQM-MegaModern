@@ -29,6 +29,8 @@
 #include "libs/time/timelib.h"
 #include "../element.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -99,5 +101,7 @@ consteval bool isArithmeticEnum(PlanetsidePlayer) { return true; }
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_PLANETS_LANDER_H

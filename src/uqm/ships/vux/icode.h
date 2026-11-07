@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_VUX_ICODE_H
 #define UQM_SHIPS_VUX_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring VuxCode {"ship.vux.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_VUX_ICODE_H

@@ -42,6 +42,8 @@
 #include "uqm/gamestr.h"
 
 
+namespace uqm
+{
 // PlanetOrbitMenu() items
 enum class PlanetMenuItem
 {
@@ -759,3 +761,5 @@ void PlanetOrbitMenu(void)
 		DrawMenuStateStrings(MenuString::Starmap, -PlanetMenuItem::Navigation);
 	}
 }
+
+} // namespace uqm

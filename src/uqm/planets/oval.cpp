@@ -28,6 +28,8 @@
 #include "planets.h"
 #include "uqm/setup.h"
 
+namespace uqm
+{
 static constexpr auto NumQuads {4};
 static constexpr auto OffscreenPrim {PrimitiveType::Count};
 
@@ -1079,3 +1081,5 @@ void DrawRotatedEllipse(int cx, int cy, int rx, int ry, int angle_deg, int fille
 	ry = (int)(sqrt((rx2 * ry2) / xd2) + 0.5);
 	DrawEllipse(cx, cy, rx, ry, shear, filled, dotted);
 }
+
+} // namespace uqm

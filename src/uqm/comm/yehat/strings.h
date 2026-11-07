@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class YehatPhrase
 {
 	NullPhrase,
@@ -95,5 +97,7 @@ enum class YehatPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(YehatPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_YEHAT_STRINGS_H

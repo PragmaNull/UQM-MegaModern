@@ -31,6 +31,8 @@
 #include <string.h>
 
 
+namespace uqm
+{
 // Try to get a single packet from a stream of data.
 // Returns the length of the packet that was processed, 0 if the packet is
 // not complete, or an error, in which case the state is unchanged.
@@ -140,3 +142,5 @@ uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std:
 	}
 	return *processed;
 }
+
+} // namespace uqm

@@ -25,6 +25,8 @@
 #include "uqm/gameev.h"
 
 
+namespace uqm
+{
 static ConversationData thradd_desc =
 	{
 		Conversation::Thradd, /* AlienConv */
@@ -1078,3 +1080,5 @@ ConversationData* init_thradd_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

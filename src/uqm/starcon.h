@@ -19,6 +19,8 @@
 #define UQM_STARCON_H
 #include "core/stl/atomic.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -35,5 +37,7 @@ extern void FreeGameData(void);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_STARCON_H

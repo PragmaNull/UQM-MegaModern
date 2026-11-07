@@ -33,6 +33,8 @@
 #include <unistd.h>
 #endif
 
+namespace uqm
+{
 static uint8_t LastEncGroup;
 // Last encountered group, saved into state files
 
@@ -1024,3 +1026,5 @@ uint32_t PutGroupInfo(uint32_t offset, uint8_t which_group)
 
 	return (offset);
 }
+
+} // namespace uqm

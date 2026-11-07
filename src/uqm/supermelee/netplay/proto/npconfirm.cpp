@@ -26,6 +26,8 @@
 
 #include <assert.h>
 
+namespace uqm
+{
 NetResult Netplay_confirm(NetConnection* conn)
 {
 	assert(handshakeMeaningful(NetConnection_getState(conn)));
@@ -84,3 +86,5 @@ NetResult Netplay_cancelConfirmation(NetConnection* conn)
 
 	return {};
 }
+
+} // namespace uqm

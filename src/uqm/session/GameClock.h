@@ -9,9 +9,9 @@
 #include "core/stl/vector.h"
 #include "uqm/clock.h"
 
+
 namespace uqm
 {
-
 class GameClock
 {
 public:
@@ -92,5 +92,6 @@ private:
 };
 
 } // namespace uqm
+
 
 #endif // UQM_SESSION_GAMECLOCK_H

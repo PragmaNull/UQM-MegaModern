@@ -34,6 +34,8 @@
 #include <stdio.h>
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // A wrapper function for weapon_collision that discards the return value.
 // This makes its signature match ElementCollisionFunc.
 static void weapon_collision_cb(Element* WeaponElementPtr, GfxPoint* pWPt,
@@ -425,3 +427,5 @@ CheckTracking:
 
 	return (best_delta_facing);
 }
+
+} // namespace uqm

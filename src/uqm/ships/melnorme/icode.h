@@ -6,6 +6,10 @@
 #ifndef UQM_SHIPS_MELNORME_ICODE_H
 #define UQM_SHIPS_MELNORME_ICODE_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring MelnormeCode {"ship.melnorme.code"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_MELNORME_ICODE_H

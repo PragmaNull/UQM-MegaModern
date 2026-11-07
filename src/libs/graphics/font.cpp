@@ -32,9 +32,9 @@ static inline tfb::Char* getCharFrame(FontDesc* fontPtr, uqm::UniChar ch);
 
 tfb::Char* GetFrameForFPS(uqm::UniChar ch)
 {
-	if (StarConFont && !(uqm::currentActivity() & ActivityFlag::CheckAbort))
+	if (uqm::StarConFont && !(uqm::currentActivity() & uqm::ActivityFlag::CheckAbort))
 	{
-		return getCharFrame(StarConFont, ch);
+		return getCharFrame(uqm::StarConFont, ch);
 	}
 	else
 	{
@@ -44,19 +44,19 @@ tfb::Char* GetFrameForFPS(uqm::UniChar ch)
 
 bool GoodToGoFPS(void)
 {
-	return (bool)(StarConFont && !(uqm::currentActivity() & ActivityFlag::CheckAbort)
+	return (bool)(uqm::StarConFont && !(uqm::currentActivity() & uqm::ActivityFlag::CheckAbort)
 				  && !optRequiresReload);
 }
 
 void GetFontDims(int16_t* w, int16_t* h)
 {
-	*w = (int16_t)StarConFont->disp.width;
-	*h = (int16_t)StarConFont->disp.height;
+	*w = (int16_t)uqm::StarConFont->disp.width;
+	*h = (int16_t)uqm::StarConFont->disp.height;
 }
 
 int GetFontCharSpace(void)
 {
-	return StarConFont->CharSpace;
+	return uqm::StarConFont->CharSpace;
 }
 
 FONT SetContextFont(FONT Font)
@@ -162,7 +162,7 @@ void font_DrawTracedText(GfxText* pText, Color text, Color trace)
 {
 	// Preserve current foreground color for full correctness
 	const Color oldfg = SetContextForeGroundColor(trace);
-	const uint8_t stroke = ResScale(1);
+	const uint8_t stroke = uqm::ResScale(1);
 	const GfxPoint t_baseline = pText->baseline;
 	GfxPoint offset;
 
@@ -216,7 +216,7 @@ void font_DrawTracedTextAlt(GfxText* pText, Color text, Color trace, FONT AltFon
 {
 	// Preserve current foreground color for full correctness
 	const Color oldfg = SetContextForeGroundColor(trace);
-	const uint8_t stroke = ResScale(1);
+	const uint8_t stroke = uqm::ResScale(1);
 	const GfxPoint t_baseline = pText->baseline;
 	GfxPoint offset;
 	static uint8_t swap = 0;
@@ -277,15 +277,15 @@ void font_DrawShadowedText(GfxText* pText, ShadowAngle direction,
 			break;
 	}
 
-	pText->baseline.x += ResScale(shadow_angle.x);
-	pText->baseline.y += ResScale(shadow_angle.y);
+	pText->baseline.x += uqm::ResScale(shadow_angle.x);
+	pText->baseline.y += uqm::ResScale(shadow_angle.y);
 
 	OldColor = SetContextForeGroundColor(shadow_color);
 
 	font_DrawText(pText);
 
-	pText->baseline.x -= ResScale(shadow_angle.x);
-	pText->baseline.y -= ResScale(shadow_angle.y);
+	pText->baseline.x -= uqm::ResScale(shadow_angle.x);
+	pText->baseline.y -= uqm::ResScale(shadow_angle.y);
 
 	SetContextForeGroundColor(text_color);
 
@@ -433,7 +433,7 @@ bool TextRect(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta)
 			}
 			else if (lpText->align == TextAlign::Center)
 			{
-				pRect->corner.x = -ResScale((ResDescale(width) >> 1));
+				pRect->corner.x = -uqm::ResScale((uqm::ResDescale(width) >> 1));
 			}
 			else
 			{
@@ -622,7 +622,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 				{
 					TFB_Prim_FontChar(origin, fontChar, b_first, mode,
 									  ctxOrigin);
-					PlayMenuSound(MenuSoundEffect::Text);
+					PlayMenuSound(uqm::MenuSoundEffect::Text);
 
 					SleepThread(getTicksForFramerate(16));
 				}
@@ -663,8 +663,8 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 				}
 			}
 		}
-		UpdateInputState();
-		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & ActivityFlag::CheckAbort))
+		uqm::UpdateInputState();
+		if (uqm::CurrentInputState.menu[*uqm::MenuKey::MenuCancel] || (uqm::currentActivity() & uqm::ActivityFlag::CheckAbort))
 		{
 			*skip = true;
 		}
@@ -800,7 +800,7 @@ bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap,
 			}
 			else if (lpText->align == TextAlign::Center)
 			{
-				pRect->corner.x = -ResScale((ResDescale(width) >> 1));
+				pRect->corner.x = -uqm::ResScale((uqm::ResDescale(width) >> 1));
 			}
 			else
 			{

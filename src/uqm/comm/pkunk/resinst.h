@@ -6,10 +6,14 @@
 #ifndef UQM_COMM_PKUNK_RESINST_H
 #define UQM_COMM_PKUNK_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring PkunkColorMap {"comm.pkunk.colortable"};
 inline constexpr uqgsl::czstring PkunkConversationPhrases {"comm.pkunk.dialogue"};
 inline constexpr uqgsl::czstring PkunkFont {"comm.pkunk.font"};
 inline constexpr uqgsl::czstring PkunkMusic {"comm.pkunk.music"};
 inline constexpr uqgsl::czstring PkunkPmapAnim {"comm.pkunk.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_PKUNK_RESINST_H

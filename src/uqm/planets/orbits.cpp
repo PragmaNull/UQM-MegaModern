@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 //#define DEBUG_ORBITS
 
 enum class PlanetChance
@@ -972,3 +974,5 @@ bool CheckForHabitable(SolarSystemState* solarSys)
 	//	}
 	//}
 }
+
+} // namespace uqm

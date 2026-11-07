@@ -18,6 +18,8 @@
 #ifndef UQM_BATTLECONTROLS_H
 #define UQM_BATTLECONTROLS_H
 
+namespace uqm
+{
 typedef struct BattleInputHandlers BattleInputHandlers;
 typedef struct InputContext InputContext;
 typedef struct ComputerInputContext ComputerInputContext;
@@ -26,11 +28,15 @@ typedef struct HumanInputContext HumanInputContext;
 typedef struct NetworkInputContext NetworkInputContext;
 #endif /* NETPLAY */
 
+} // namespace uqm
+
 #include "controls.h"
 #include "supermelee/pickmele.h"
 #include "races.h"
 #include "core/misc/bittricks.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -94,5 +100,7 @@ void InputContext_init(InputContext* context, BattleInputHandlers* handlers,
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_BATTLECONTROLS_H

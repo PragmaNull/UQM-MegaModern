@@ -28,6 +28,8 @@
 #include "uqm/lua/UQMLua.h"
 
 
+namespace uqm
+{
 static ConversationData druuge_desc =
 	{
 		Conversation::Druuge, /* AlienConv */
@@ -1064,3 +1066,5 @@ ConversationData* init_druuge_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

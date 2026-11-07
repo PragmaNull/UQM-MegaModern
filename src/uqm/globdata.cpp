@@ -40,6 +40,8 @@
 #include "UQMGame.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 static constexpr auto OopsAll {0}; // Set a plot ID to stamp it to all empty starsystems
 static void CreateRadar(void);
 
@@ -787,3 +789,5 @@ int replaceChar(char* pStr, const char find, const char replace)
 
 	return count;
 }
+
+} // namespace uqm

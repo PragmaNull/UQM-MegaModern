@@ -45,6 +45,8 @@
 #include "starcon.h"
 #include "libs/graphics/gfx_common.h"
 
+namespace uqm
+{
 static constexpr auto AccelerationIncrement {c_gameSecond / 12};
 static constexpr auto MenuRepeatDelay {c_gameSecond / 2};
 
@@ -720,3 +722,5 @@ void TestSpeechSound(SOUND snd)
 {
 	PlaySpeechEffect(snd, NotPositional(), nullptr, 0);
 }
+
+} // namespace uqm

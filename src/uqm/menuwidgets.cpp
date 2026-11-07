@@ -6,9 +6,9 @@
 
 #include "core/stl/map.h"
 
+
 namespace uqm
 {
-
 struct MenuWidgets::BoundChoice
 {
 	WidgetChoice widget {};

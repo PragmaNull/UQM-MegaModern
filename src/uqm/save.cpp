@@ -44,6 +44,8 @@
 
 #include <yyjson.h>
 
+namespace uqm
+{
 #pragma clang optimize off
 
 namespace
@@ -814,3 +816,5 @@ uqstl::optional<uqstl::string> SaveGameJson(SaveSummaryData* SummPtr, const char
 	}
 	return uqstl::string {text.get(), length};
 }
+
+} // namespace uqm

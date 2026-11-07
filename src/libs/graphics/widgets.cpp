@@ -30,27 +30,27 @@
 Widget* widget_focus = nullptr;
 
 /* Some basic color defines */
-static constexpr auto WidgetActiveColor {MenuHighlightColor};
+static constexpr auto WidgetActiveColor {uqm::MenuHighlightColor};
 static constexpr auto WidgetInactiveColor {BuildColor(MakeRgb15(0x18, 0x18, 0x1F), 0x00)};
 
-static constexpr auto WidgetInactiveSelectedColor {WhiteColor};
-static constexpr auto WidgetCursorColor {BlackColor};
+static constexpr auto WidgetInactiveSelectedColor {uqm::WhiteColor};
+static constexpr auto WidgetCursorColor {uqm::BlackColor};
 
 static constexpr auto WidgetDialogTextColor {WidgetCursorColor};
 static constexpr auto WidgetBonusColor {BuildColorRgba(0xDF, 0x6A, 0x13, 0xFF)};
 
 static constexpr auto WidgetEnabledColor {BuildColor(MakeRgb15(0x00, 0x18, 0x00), 0x00)};
-static constexpr auto WidgetDisabledColor {PcmenuTopLeftBorderColor};
+static constexpr auto WidgetDisabledColor {uqm::PcmenuTopLeftBorderColor};
 static constexpr auto WidgetTooltipColor {BuildColor(MakeRgb15(0xD2, 0xB4, 0x8C), 0x00)};
 static constexpr auto WidgetLabelColor {BuildColorRgba(0x00, 0x77, 0x77, 0xFF)};
 static constexpr auto WidgetWarningColor {BuildColorRgba(0xB1, 0x27, 0x47, 0xFF)};
 
-static auto Onscreen() { return DosBool(13, 10); }
+static auto Onscreen() { return uqm::DosBool(13, 10); }
 // The pos from the page edge where we need to start scrolling
 static constexpr auto ScrollOffset {3};
-static auto ScreenCenter() { return ResScale(ResDescale(CanvasWidth) / 2); }
-static auto Lstep() { return ResScale(ResDescale(CanvasWidth) / 2 - 7); }
-static auto Rstep() { return ResScale(ResDescale(CanvasWidth) / 2 + 7); }
+static auto ScreenCenter() { return uqm::ResScale(uqm::ResDescale(CanvasWidth) / 2); }
+static auto Lstep() { return uqm::ResScale(uqm::ResDescale(CanvasWidth) / 2 - 7); }
+static auto Rstep() { return uqm::ResScale(uqm::ResDescale(CanvasWidth) / 2 + 7); }
 
 static Color win_bg_clr =
 	BuildColor(MakeRgb15(0x18, 0x18, 0x1F), 0x00);
@@ -76,7 +76,7 @@ void LoadArrows(void)
 	if (arrow_frame == nullptr || optRequiresReload)
 	{
 		// Load the different arrows depending on the resolution factor.
-		arrow_frame = CaptureDrawable(LoadGraphic(MenuarrPmapAnimRes));
+		arrow_frame = CaptureDrawable(uqm::LoadGraphic(uqm::MenuarrPmapAnimRes));
 	}
 }
 
@@ -91,8 +91,8 @@ void ReleaseArrows(void)
 
 void DrawShadowedBox(GfxRect* r, Color bg, Color dark, Color medium)
 { // Dialog box
-	DrawStarConBox(r, ResScale(2), dark, medium, true, bg, true,
-				   Transparent);
+	uqm::DrawStarConBox(r, uqm::ResScale(2), dark, medium, true, bg, true,
+						uqm::Transparent);
 }
 
 // windowRect, if not nullptr, will be filled with the dimensions of the
@@ -114,40 +114,40 @@ void DrawLabelAsWindow(WidgetLabel* label, GfxRect* windowRect)
 	}
 
 	/* Compute the dimensions of the label */
-	win_h = label->height((Widget*)label) + ResScale(16);
+	win_h = label->height((Widget*)label) + uqm::ResScale(16);
 	win_w = 0;
 	for (i = 0; i < label->line_count; i++)
 	{
 		const size_t len = uqm::utf8StringCount(label->lines[i]);
 		if (len > win_w)
 		{
-			win_w = ResScale(len);
+			win_w = uqm::ResScale(len);
 		}
 	}
-	win_w = (win_w * 6) + ResScale(16);
+	win_w = (win_w * 6) + uqm::ResScale(16);
 
 	BatchGraphics();
-	r.corner.x = ResScale(
-					 (ResDescale(CanvasWidth) - ResDescale(win_w)) >> 1)
-			   - ResScale(2);
-	r.corner.y = ResScale(
-					 (ResDescale(CanvasHeight) - ResDescale(win_h)) >> 1)
-			   - ResScale(2);
-	r.extent.width = win_w + ResScale(4);
-	r.extent.height = win_h + ResScale(4);
+	r.corner.x = uqm::ResScale(
+					 (uqm::ResDescale(CanvasWidth) - uqm::ResDescale(win_w)) >> 1)
+			   - uqm::ResScale(2);
+	r.corner.y = uqm::ResScale(
+					 (uqm::ResDescale(CanvasHeight) - uqm::ResDescale(win_h)) >> 1)
+			   - uqm::ResScale(2);
+	r.extent.width = win_w + uqm::ResScale(4);
+	r.extent.height = win_h + uqm::ResScale(4);
 
 	DrawShadowedBox(&r, win_bg_clr, win_dark_clr, win_medium_clr);
 
 	t.baseline.x = r.corner.x
-				 + ResScale(ResDescale(r.extent.width) >> 1);
-	t.baseline.y = r.corner.y + ResScale(16);
+				 + uqm::ResScale(uqm::ResDescale(r.extent.width) >> 1);
+	t.baseline.y = r.corner.y + uqm::ResScale(16);
 	for (i = 0; i < label->line_count; i++)
 	{
 		t.pStr = label->lines[i];
 		t.align = TextAlign::Center;
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
-		t.baseline.y += ResScale(8);
+		t.baseline.y += uqm::ResScale(8);
 	}
 
 	UnbatchGraphics();
@@ -202,16 +202,16 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	r.corner.x = ResScale(2);
-	r.corner.y = ResScale(8);
-	r.extent.width = CanvasWidth - ResScale(4);
-	r.extent.height = CanvasHeight + ResScale(3);
+	r.corner.x = uqm::ResScale(2);
+	r.corner.y = uqm::ResScale(8);
+	r.extent.width = CanvasWidth - uqm::ResScale(4);
+	r.extent.height = CanvasHeight + uqm::ResScale(3);
 
 	t.align = TextAlign::Center;
 	t.CharCount = ~0;
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y
-				 + (r.extent.height - ResScale(8) - ResScale(8) * numlines);
+				 + (r.extent.height - uqm::ResScale(8) - uqm::ResScale(8) * numlines);
 
 	for (int i {0}; i < numlines; i++)
 	{
@@ -231,7 +231,7 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 			SetContextForeGroundColor(WidgetTooltipColor);
 		}
 
-		t.baseline.y += ResScale(9);
+		t.baseline.y += uqm::ResScale(9);
 	}
 
 	SetContextFontEffect(oldFontEffect);
@@ -267,10 +267,10 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	r.corner.x = ResScale(2);
-	r.corner.y = ResScale(1);
-	r.extent.width = CanvasWidth - ResScale(4);
-	r.extent.height = CanvasHeight - ResScale(4);
+	r.corner.x = uqm::ResScale(2);
+	r.corner.y = uqm::ResScale(1);
+	r.extent.width = CanvasWidth - uqm::ResScale(4);
+	r.extent.height = CanvasHeight - uqm::ResScale(4);
 
 	title = WidgetInactiveSelectedColor;
 
@@ -278,12 +278,12 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 
 	oldtext = SetContextForeGroundColor(title);
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
-	t.baseline.y = r.corner.y + ResScale(6);
+	t.baseline.y = r.corner.y + uqm::ResScale(6);
 	t.pStr = self->title;
 	t.align = TextAlign::Center;
 	t.CharCount = ~0;
 	font_DrawText(&t);
-	t.baseline.y += ResScale(8);
+	t.baseline.y += uqm::ResScale(8);
 	t.pStr = self->subtitle;
 	font_DrawText(&t);
 
@@ -297,11 +297,11 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 		if (widget_index <= Onscreen())
 		{
 			height += (*child->height)(child);
-			height += ResScale(5); /* spacing */
+			height += uqm::ResScale(5); /* spacing */
 		}
 	}
 
-	height -= ResScale(8);
+	height -= uqm::ResScale(8);
 	widget_y = (CanvasHeight - height) >> 1;
 
 	{ // Scrolling
@@ -356,19 +356,19 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 		{ // Arrows (blue to the right)
 			GfxStamp arr;
 
-			arr.origin.x = ResScale(290);
+			arr.origin.x = uqm::ResScale(290);
 
 			if (offset_t != 0)
 			{
 				arr.frame = SetAbsFrameIndex(arrow_frame, 0); // Up arrow
-				arr.origin.y = ResScale(25);
+				arr.origin.y = uqm::ResScale(25);
 				DrawStamp(&arr);
 			}
 			if (offset_b != self->num_children - 1)
 			{
 				arr.frame = SetAbsFrameIndex(arrow_frame, 1);
 				// Down arrow
-				arr.origin.y = ResScale(195);
+				arr.origin.y = uqm::ResScale(195);
 				DrawStamp(&arr);
 			}
 		}
@@ -385,7 +385,7 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 	{
 		Widget* c = self->child[widget_index];
 		(*c->draw)(c, 0, widget_y);
-		widget_y += (*c->height)(c) + ResScale(5);
+		widget_y += (*c->height)(c) + uqm::ResScale(5);
 	}
 
 	SetContextFontEffect(oldFontEffect);
@@ -468,7 +468,7 @@ void Widget_DrawChoice(Widget* _self, int x, int y)
 					GfxStamp arr;
 
 					arr.origin.x = font_GetTextRect(&t).corner.x
-								 - ResScale(10);
+								 - uqm::ResScale(10);
 					arr.origin.y = t.baseline.y;
 
 					// Left arrow
@@ -477,7 +477,7 @@ void Widget_DrawChoice(Widget* _self, int x, int y)
 
 					arr.origin.x = font_GetTextRect(&t).corner.x
 								 + font_GetTextRect(&t).extent.width
-								 + ResScale(10);
+								 + uqm::ResScale(10);
 
 					// Right arrow
 					arr.frame = SetAbsFrameIndex(arrow_frame, 3);
@@ -487,15 +487,15 @@ void Widget_DrawChoice(Widget* _self, int x, int y)
 				{ // Navigation Dots
 					GfxRect d;
 
-					d.extent.width = ResScale(4);
-					d.extent.height = ResScale(1);
+					d.extent.width = uqm::ResScale(4);
+					d.extent.height = uqm::ResScale(1);
 
-					d.corner.x = t.baseline.x - ResScale(6);
-					d.corner.y = t.baseline.y + ResScale(4);
+					d.corner.x = t.baseline.x - uqm::ResScale(6);
+					d.corner.y = t.baseline.y + uqm::ResScale(4);
 
 					for (uint16_t c {0}; c < self->numopts; c++)
 					{
-						d.corner.x += ResScale(6);
+						d.corner.x += uqm::ResScale(6);
 
 						if (c == self->highlighted)
 						{
@@ -603,7 +603,7 @@ void Widget_DrawLabel(Widget* _self, int x, int y)
 		}
 
 		font_DrawText(&t);
-		t.baseline.y += ResScale(10);
+		t.baseline.y += uqm::ResScale(10);
 
 		if (warning)
 		{
@@ -613,8 +613,8 @@ void Widget_DrawLabel(Widget* _self, int x, int y)
 		if (underline)
 		{ // Underline labels
 			r = font_GetTextRect(&t);
-			r.corner.y += ResScale(1);
-			r.extent.height = ResScale(1);
+			r.corner.y += uqm::ResScale(1);
+			r.extent.height = uqm::ResScale(1);
 			DrawFilledRectangle(&r);
 		}
 	}
@@ -667,17 +667,17 @@ void Widget_DrawSlider(Widget* _self, int x, int y)
 
 	// Slider Bar
 	r.corner.x = Rstep();
-	r.corner.y = t.baseline.y - ResScale(4);
-	r.extent.height = ResScale(2);
+	r.corner.y = t.baseline.y - uqm::ResScale(4);
+	r.extent.height = uqm::ResScale(2);
 	r.extent.width = 2 * tick;
 	const int slider_width {r.corner.x + r.extent.width};
 	DrawFilledRectangle(&r);
 
 	// Slider Indicator
-	r.extent.width = ResScale(3);
-	r.extent.height = ResScale(8);
-	r.corner.y = t.baseline.y - ResScale(7);
-	r.corner.x = Rstep() + (2 * tick * (self->value - self->min) / (self->max - self->min)) - (ResScale(3) >> 1);
+	r.extent.width = uqm::ResScale(3);
+	r.extent.height = uqm::ResScale(8);
+	r.corner.y = t.baseline.y - uqm::ResScale(7);
+	r.corner.x = Rstep() + (2 * tick * (self->value - self->min) / (self->max - self->min)) - (uqm::ResScale(3) >> 1);
 	DrawFilledRectangle(&r);
 
 	//printf("%d + 3 * %d - 22 * %d\n", Rstep(), tick, tick);
@@ -698,7 +698,7 @@ void Widget_Slider_DrawValue(WidgetSlider* self, int x, int y)
 
 	fmt::format_to_n(buffer, sizeof(buffer) - 1, "{}", self->value);
 
-	t.baseline.x = x + ResScale(14);
+	t.baseline.x = x + uqm::ResScale(14);
 	t.baseline.y = y;
 	t.align = TextAlign::Left;
 	t.CharCount = ~0;
@@ -714,7 +714,7 @@ void Widget_Slider_DrawPercentageValue(WidgetSlider* self, int x, int y)
 
 	fmt::format_to_n(buffer, sizeof(buffer) - 1, "{}%", self->value);
 
-	t.baseline.x = x + ResScale(14);
+	t.baseline.x = x + uqm::ResScale(14);
 	t.baseline.y = y;
 	t.align = TextAlign::Left;
 	t.CharCount = ~0;
@@ -766,7 +766,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 	t.baseline.x -= t.baseline.x;
 
 	/* Force string termination */
-	self->value[WidgetTextentryWidth - ResScale(1)] = 0;
+	self->value[WidgetTextentryWidth - uqm::ResScale(1)] = 0;
 
 	t.baseline.y = y;
 	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
@@ -802,12 +802,12 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 		// XXX: this may need some tuning, especially if a
 		//   different font is used. The font 'leading' values
 		//   are not what they should be.
-		const auto BoxVertOffset {ResScale(2)};
+		const auto BoxVertOffset {uqm::ResScale(2)};
 		GetContextFontLeading(&leading);
-		r.corner.x = t.baseline.x - ResScale(1);
+		r.corner.x = t.baseline.x - uqm::ResScale(1);
 		r.corner.y = t.baseline.y - leading + BoxVertOffset;
-		r.extent.width = CanvasWidth - r.corner.x - ResScale(10);
-		r.extent.height = leading - ResScale(1);
+		r.extent.width = CanvasWidth - r.corner.x - uqm::ResScale(10);
+		r.extent.height = leading - uqm::ResScale(1);
 
 		TextRect(&t, &text_r, char_deltas);
 #if 0
@@ -832,7 +832,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 		}
 		if (self->cursor_pos < t.CharCount) /* cursor mid-line */
 		{
-			r.corner.x -= ResScale(1);
+			r.corner.x -= uqm::ResScale(1);
 		}
 
 		if (any(self->state, TextEntryWidgetState::BlockCursor))
@@ -843,33 +843,33 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 
 			if (self->cursor_pos == t.CharCount)
 			{ // cursor at end-line -- use insertion point
-				r.extent.width = ResScale(1);
-				r.corner.x -= IfHd(3);
+				r.extent.width = uqm::ResScale(1);
+				r.corner.x -= uqm::IfHd(3);
 			}
 			else if (self->cursor_pos + 1 == t.CharCount)
 			{ // extra pixel for last char margin
-				r.extent.width = (int16_t)*pchar_deltas - IfHd(3);
-				r.corner.x += ResScale(1);
+				r.extent.width = (int16_t)*pchar_deltas - uqm::IfHd(3);
+				r.corner.x += uqm::ResScale(1);
 			}
 			else
 			{ // normal mid-line char
 				r.extent.width = (int16_t)*pchar_deltas;
-				r.corner.x += ResScale(1);
+				r.corner.x += uqm::ResScale(1);
 			}
 		}
 		else
 		{ // Insertion point cursor
-			r.corner.y = r.corner.y + ResScale(1);
-			r.extent.height = r.extent.height - ResScale(2);
-			r.extent.width = ResScale(1);
+			r.corner.y = r.corner.y + uqm::ResScale(1);
+			r.extent.height = r.extent.height - uqm::ResScale(2);
+			r.extent.width = uqm::ResScale(1);
 
 			if (self->cursor_pos == t.CharCount)
 			{
-				r.corner.x -= IfHd(3);
+				r.corner.x -= uqm::IfHd(3);
 			}
 		}
 		// position cursor within input field rect
-		r.corner.x += ResScale(1);
+		r.corner.x += uqm::ResScale(1);
 		SetContextForeGroundColor(WidgetCursorColor);
 		DrawFilledRectangle(&r);
 
@@ -904,7 +904,7 @@ void Widget_DrawControlEntry(Widget* _self, int x, int y)
 	default_color = WidgetInactiveSelectedColor;
 	selected = WidgetActiveColor;
 
-	t.baseline.x = x + ResScale(16);
+	t.baseline.x = x + uqm::ResScale(16);
 	t.baseline.y = y;
 	t.align = TextAlign::Left;
 	t.CharCount = ~0;
@@ -927,7 +927,7 @@ void Widget_DrawControlEntry(Widget* _self, int x, int y)
 	for (int i {0}; i < 2; i++)
 	{
 		t.baseline.x = home_x + ((i % 3) * (CanvasWidth / 3));
-		t.baseline.y = home_y + ResScale(8 * (i / 3));
+		t.baseline.y = home_y + uqm::ResScale(8 * (i / 3));
 		t.pStr = self->controlname[i];
 		if (!t.pStr[0])
 		{
@@ -954,7 +954,7 @@ void Widget_DrawControlEntry(Widget* _self, int x, int y)
 int Widget_HeightChoice(Widget* _self)
 {
 	(void)_self;
-	return ResScale(8); //effectively 1 column
+	return uqm::ResScale(8); //effectively 1 column
 }
 
 int Widget_HeightFullScreen(Widget* _self)
@@ -966,13 +966,13 @@ int Widget_HeightFullScreen(Widget* _self)
 int Widget_HeightOneLine(Widget* _self)
 {
 	(void)_self;
-	return ResScale(8);
+	return uqm::ResScale(8);
 }
 
 int Widget_HeightLabel(Widget* _self)
 {
 	const WidgetLabel* self = (WidgetLabel*)_self;
-	return self->line_count * ResScale(8);
+	return self->line_count * uqm::ResScale(8);
 }
 
 int Widget_WidthFullScreen(Widget* _self)

@@ -24,6 +24,8 @@
 #include "uqm/build.h"
 
 
+namespace uqm
+{
 static ConversationData umgah_desc =
 	{
 		Conversation::Umgah, /* AlienConv */
@@ -813,3 +815,5 @@ ConversationData* init_umgah_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

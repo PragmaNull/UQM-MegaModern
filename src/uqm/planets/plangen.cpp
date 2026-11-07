@@ -37,6 +37,8 @@
 #include <math.h>
 #include <time.h>
 
+namespace uqm
+{
 #undef PROFILE_ROTATION
 
 // define USE_ALPHA_SHIELD to use an aloha overlay instead of
@@ -3134,3 +3136,5 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 	SetContext(OldContext);
 	DestroyContext(TopoContext);
 }
+
+} // namespace uqm

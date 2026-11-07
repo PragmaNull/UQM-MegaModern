@@ -22,6 +22,8 @@
 
 #include "element.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -55,5 +57,7 @@ extern void collide(Element* ElementPtr0, Element* ElementPtr1);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_COLLIDE_H

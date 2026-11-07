@@ -24,6 +24,8 @@
 // for BATTLE_INPUT_STATE
 #include "../../init.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -55,5 +57,7 @@ BattleInputBuffer* getBattleInputBuffer(size_t player);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_SUPERMELEE_NETPLAY_NETINPUT_H

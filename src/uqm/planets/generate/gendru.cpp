@@ -32,6 +32,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateDruuge_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateDruuge_generateName(const SolarSystemState*,
 										const SystemPlanet* world);
@@ -203,3 +205,5 @@ static uint16_t GenerateDruuge_generateEnergy(const SolarSystemState* solarSys,
 
 	return 0;
 }
+
+} // namespace uqm

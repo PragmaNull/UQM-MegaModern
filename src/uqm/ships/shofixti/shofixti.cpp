@@ -26,6 +26,8 @@
 #include "libs/mathlib.h"
 #include "../../starmap.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {6};
 static constexpr auto MaxEnergy {4};
@@ -263,8 +265,14 @@ static void destruct_preprocess(Element* ElementPtr)
 
 /* In order to detect any Orz Marines that have boarded the ship
    when it self-destructs, we'll need to see some Orz functions */
+
+} // namespace uqm
+
 #include "../orz/orz.h"
 #include "uqm/random/UQMRandom.h"
+
+namespace uqm
+{
 constexpr auto OrzMarine(const auto& ptr) { return (ptr->preprocess_func == intruder_preprocess && ptr->collision_func == marine_collision); }
 
 static void self_destruct_kill_objects(Element* ElementPtr)
@@ -577,3 +585,5 @@ RaceDesc* init_shofixti(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

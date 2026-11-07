@@ -27,6 +27,8 @@
 #include "planets/elemdata.h"
 
 
+namespace uqm
+{
 // JSD Changed the way RAINBOW#_DEFINED works
 inline constexpr auto VortexScale {20};
 
@@ -3206,5 +3208,7 @@ static constexpr PlanetFrame PlanetsArray[*PlanetType::NumberOfPlanetTypes] =
 			29,
 		 },
 };
+
+} // namespace uqm
 
 #endif // UQM_STARMAPGLOBALDATA_H

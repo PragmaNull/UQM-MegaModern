@@ -33,6 +33,8 @@
 #include <string.h>
 
 
+namespace uqm
+{
 int16_t status_y_offsets[NumPlayers];
 
 
@@ -791,3 +793,5 @@ void PostProcessStatus(Element* ShipPtr)
 		StarShipPtr->old_status_flags = cur_status_flags;
 	}
 }
+
+} // namespace uqm

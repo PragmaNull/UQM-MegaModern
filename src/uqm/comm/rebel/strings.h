@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class YehatRebelPhrase
 {
 	NullPhrase,
@@ -61,5 +63,7 @@ enum class YehatRebelPhrase
 	HatePkunkRebel,
 };
 consteval bool isArithmeticEnum(YehatRebelPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_REBEL_STRINGS_H

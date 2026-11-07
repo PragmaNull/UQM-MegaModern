@@ -20,6 +20,8 @@
 #include "core/log/log.h"
 
 
+namespace uqm
+{
 /*
  * This file contains code for generic doubly linked lists.
  * Each list has its own preallocated
@@ -215,3 +217,5 @@ void ForAllLinks(Queue* pq, void (*callback)(QueueLink*, void*), void* arg)
 		UnlockLink(pq, hLink);
 	}
 }
+
+} // namespace uqm

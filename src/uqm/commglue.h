@@ -27,6 +27,8 @@
 #include "libs/sound/trackplayer.h"
 #include "libs/callback/callback.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -340,5 +342,7 @@ consteval bool isArithmeticEnum(RobotPhrase) { return true; }
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_COMMGLUE_H

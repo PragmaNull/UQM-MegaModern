@@ -123,17 +123,17 @@ static void processFontChar(tfb::Char* CharPtr, tfb::Canvas canvas, FONT fontPtr
 
 		int tune_amount = 0;
 
-		if (CharPtr->disp.height <= ResScale(8))
+		if (CharPtr->disp.height <= uqm::ResScale(8))
 		{
-			tune_amount = ResScale(1);
+			tune_amount = uqm::ResScale(1);
 		}
-		else if (CharPtr->disp.height == ResScale(9))
+		else if (CharPtr->disp.height == uqm::ResScale(9))
 		{
-			tune_amount = ResScale(2);
+			tune_amount = uqm::ResScale(2);
 		}
-		else if (CharPtr->disp.height > ResScale(9))
+		else if (CharPtr->disp.height > uqm::ResScale(9))
 		{
-			tune_amount = ResScale(3);
+			tune_amount = uqm::ResScale(3);
 		}
 
 		if (fontPtr->HaveFntData)
@@ -403,8 +403,8 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 
 	if (!fontPtr->HaveFntData)
 	{
-		fontPtr->Leading = fontPtr->disp.height + ResScale(1);
-		fontPtr->CharSpace = ResScale(1);
+		fontPtr->Leading = fontPtr->disp.height + uqm::ResScale(1);
+		fontPtr->CharSpace = uqm::ResScale(1);
 	}
 
 	return fontPtr;

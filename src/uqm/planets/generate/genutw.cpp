@@ -33,6 +33,8 @@
 #include "uqm/random/UQMRandom.h"
 
 
+namespace uqm
+{
 static bool GenerateUtwig_initNpcs(SolarSystemState* solarSys);
 static bool GenerateUtwig_generatePlanets(SolarSystemState* solarSys);
 static bool GenerateUtwig_generateName(const SolarSystemState*,
@@ -359,3 +361,5 @@ static bool GenerateUtwig_pickupEnergy(SolarSystemState* solarSys, SystemPlanet*
 	(void)whichNode;
 	return false;
 }
+
+} // namespace uqm

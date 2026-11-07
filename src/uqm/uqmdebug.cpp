@@ -46,6 +46,8 @@
 #include <stdio.h>
 #include <errno.h>
 
+namespace uqm
+{
 uqstl::atomic<void (*)(void)> debugHook {nullptr};
 bool DebugKeyPressed;
 
@@ -2217,3 +2219,5 @@ void debugContexts(void)
 }
 
 #endif /* DEBUG */
+
+} // namespace uqm

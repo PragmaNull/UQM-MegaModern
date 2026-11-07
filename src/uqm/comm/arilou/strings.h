@@ -22,6 +22,8 @@
 
 #include "core/types/enum.h"
 
+namespace uqm
+{
 enum class ArilouPhrase
 {
 	NullPhrase,
@@ -124,5 +126,7 @@ enum class ArilouPhrase
 	OutTakes,
 };
 consteval bool isArithmeticEnum(ArilouPhrase) { return true; }
+
+} // namespace uqm
 
 #endif // UQM_COMM_ARILOU_STRINGS_H

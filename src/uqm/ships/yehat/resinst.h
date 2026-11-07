@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_YEHAT_RESINST_H
 #define UQM_SHIPS_YEHAT_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring ShieldBigMaskAnim {"ship.yehat.graphics.shield.large"};
 inline constexpr uqgsl::czstring ShieldMedMaskAnim {"ship.yehat.graphics.shield.medium"};
 inline constexpr uqgsl::czstring ShieldSmlMaskAnim {"ship.yehat.graphics.shield.small"};
@@ -21,5 +23,7 @@ inline constexpr uqgsl::czstring YehatRaceStrings {"ship.yehat.text"};
 inline constexpr uqgsl::czstring YehatShipSounds {"ship.yehat.sounds"};
 inline constexpr uqgsl::czstring YehatSmlMaskPmapAnim {"ship.yehat.graphics.terminator.small"};
 inline constexpr uqgsl::czstring YehatVictorySong {"ship.yehat.ditty"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_YEHAT_RESINST_H

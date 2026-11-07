@@ -12,9 +12,9 @@
 #include "uqm/save.h"
 #include "uqm/session/GameSession.h"
 
+
 namespace uqm
 {
-
 namespace
 {
 

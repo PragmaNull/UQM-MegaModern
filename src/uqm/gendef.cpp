@@ -21,6 +21,8 @@
 #include "planets/generate/genall.h"
 
 
+namespace uqm
+{
 const GenerateFunctions* getGenerateFunctions(uint8_t Index)
 {
 	switch (static_cast<PlotId>(Index))
@@ -126,3 +128,5 @@ const GenerateFunctions* getGenerateFunctions(uint8_t Index)
 			return &generateDefaultFunctions;
 	}
 }
+
+} // namespace uqm

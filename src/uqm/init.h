@@ -22,6 +22,8 @@
 #include "libs/reslib.h"
 #include "units.h"
 
+namespace uqm
+{
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
@@ -47,5 +49,7 @@ extern bool free_image(FRAME* pixarray);
 #if 0 //defined(__cplusplus)
 }
 #endif
+
+} // namespace uqm
 
 #endif // UQM_INIT_H

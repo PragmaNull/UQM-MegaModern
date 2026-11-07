@@ -24,6 +24,8 @@
 #include "uqm/build.h"
 
 
+namespace uqm
+{
 static ConversationData supox_desc =
 	{
 		Conversation::Supox, /* AlienConv */
@@ -774,3 +776,5 @@ ConversationData* init_supox_comm(void)
 
 	return (retval);
 }
+
+} // namespace uqm

@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_SPATHI_RESINST_H
 #define UQM_COMM_SPATHI_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring FwiffoMusic {"comm.fwiffo.music"};
 inline constexpr uqgsl::czstring SpahomeMusic {"comm.safeones.music"};
 inline constexpr uqgsl::czstring SpathiColorMap {"comm.spathi.colortable"};
@@ -16,5 +18,7 @@ inline constexpr uqgsl::czstring SpathiHomeConversationPhrases {"comm.safeones.d
 inline constexpr uqgsl::czstring SpathiHomePmapAnim {"comm.safeones.graphics"};
 inline constexpr uqgsl::czstring SpathiMusic {"comm.spathi.music"};
 inline constexpr uqgsl::czstring SpathiPmapAnim {"comm.spathi.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_SPATHI_RESINST_H

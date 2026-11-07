@@ -24,6 +24,8 @@
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
+namespace uqm
+{
 // Core characteristics
 static constexpr auto MaxCrew {20};
 static constexpr auto MaxEnergy {24};
@@ -568,3 +570,5 @@ RaceDesc* init_androsynth(void)
 
 	return (RaceDescPtr);
 }
+
+} // namespace uqm

@@ -6,6 +6,8 @@
 #ifndef UQM_ISTRTAB_H
 #define UQM_ISTRTAB_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring AccessdataStrtabRes {"slides.accessdata"};
 inline constexpr uqgsl::czstring AcidColorTabRes {"planet.acid.colortable"};
 inline constexpr uqgsl::czstring AcidXlatTabRes {"planet.acid.translatetable"};
@@ -195,5 +197,7 @@ inline constexpr uqgsl::czstring YttricXlatTabRes {"planet.yttric.translatetable
 inline constexpr uqgsl::czstring ZfpruinsStrtabRes {"text.zfpcolony"};
 inline constexpr uqgsl::czstring DosSphereColorTabRes {"dossphere.colortable"};
 inline constexpr uqgsl::czstring DosShieldedColorTabRes {"planet.shielded.colortable"};
+
+} // namespace uqm
 
 #endif // UQM_ISTRTAB_H

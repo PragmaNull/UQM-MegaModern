@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_VUX_RESINST_H
 #define UQM_SHIPS_VUX_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring LimpetsBigMaskPmapAnim {"ship.vux.graphics.limpets.large"};
 inline constexpr uqgsl::czstring LimpetsMedMaskPmapAnim {"ship.vux.graphics.limpets.medium"};
 inline constexpr uqgsl::czstring LimpetsSmlMaskPmapAnim {"ship.vux.graphics.limpets.small"};
@@ -19,5 +21,7 @@ inline constexpr uqgsl::czstring VuxRaceStrings {"ship.vux.text"};
 inline constexpr uqgsl::czstring VuxShipSounds {"ship.vux.sounds"};
 inline constexpr uqgsl::czstring VuxSmlMaskPmapAnim {"ship.vux.graphics.intruder.small"};
 inline constexpr uqgsl::czstring VuxVictorySong {"ship.vux.ditty"};
+
+} // namespace uqm
 
 #endif // UQM_SHIPS_VUX_RESINST_H

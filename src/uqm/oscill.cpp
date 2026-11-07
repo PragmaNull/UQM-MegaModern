@@ -31,6 +31,8 @@
 #include "util.h"
 #include "options.h"
 
+namespace uqm
+{
 static FRAME scope_frame;
 static int scope_init = 0;
 static FRAME scopeWork;
@@ -264,3 +266,5 @@ void DrawSlider(void)
 		UnbatchGraphics();
 	}
 }
+
+} // namespace uqm

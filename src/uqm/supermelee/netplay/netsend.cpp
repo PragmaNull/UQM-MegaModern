@@ -30,6 +30,8 @@
 #include <string.h>
 
 
+namespace uqm
+{
 NetResult sendPacket(NetConnection* conn, Packet* packet)
 {
 	assert(NetConnection_isConnected(conn));
@@ -70,3 +72,5 @@ NetResult sendPacket(NetConnection* conn, Packet* packet)
 
 	return {};
 }
+
+} // namespace uqm

@@ -31,9 +31,12 @@ extern "C" {
 #endif
 
 
+namespace uqm
+{
 extern bool AnyButtonPress(bool DetectSpecial);
 extern bool DirKeysPress(void);
 extern bool ActKeysPress(void);
+} // namespace uqm
 
 extern void TFB_ResetControls(void);
 

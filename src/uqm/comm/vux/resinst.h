@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_VUX_RESINST_H
 #define UQM_COMM_VUX_RESINST_H
 
+namespace uqm
+{
 inline constexpr uqgsl::czstring VuxColorMap {"comm.vux.colortable"};
 inline constexpr uqgsl::czstring VuxConversationPhrases {"comm.vux.dialogue"};
 inline constexpr uqgsl::czstring VuxFont {"comm.vux.font"};
@@ -13,5 +15,7 @@ inline constexpr uqgsl::czstring VuxMusic {"comm.vux.music"};
 inline constexpr uqgsl::czstring VuxZexMusic {"comm.vux.zex.music"};
 inline constexpr uqgsl::czstring VuxPmapAnim {"comm.vux.graphics"};
 inline constexpr uqgsl::czstring VuxZexPmapAnim {"comm.vux.zex.graphics"};
+
+} // namespace uqm
 
 #endif // UQM_COMM_VUX_RESINST_H

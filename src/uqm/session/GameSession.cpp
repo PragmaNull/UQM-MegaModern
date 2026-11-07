@@ -10,9 +10,9 @@
 #include "libs/time/timelib.h"
 #include "uqm/lua/UQMLua.h"
 
+
 namespace uqm
 {
-
 GameSession::GameSession(SessionKind kind)
 	: m_kind {kind}
 {

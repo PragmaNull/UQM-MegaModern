@@ -65,7 +65,7 @@ static TIME_VALUE frame_intersect(IntersectInfo* pControl0, GfxRect* pr0,
 	IB1.Box.extent.width = GetFrameWidth(IB1.FramePtr);
 	IB1.Box.extent.height = GetFrameHeight(IB1.FramePtr);
 
-	const int32_t iterator {ResScale(1)};
+	const int32_t iterator {uqm::ResScale(1)};
 
 	int32_t dx_0 {pr0->extent.width};
 	int32_t dy_0 {pr0->extent.height};

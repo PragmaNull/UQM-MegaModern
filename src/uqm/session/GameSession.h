@@ -7,9 +7,9 @@
 #include "uqm/random/UQMRandom.h"
 #include "uqm/session/GameState.h"
 
+
 namespace uqm
 {
-
 enum class SessionKind
 {
 	FullGame,
@@ -51,5 +51,6 @@ private:
 };
 
 } // namespace uqm
+
 
 #endif // UQM_SESSION_GAMESESSION_H
