@@ -24,6 +24,7 @@
 #include "png2sdl.h"
 #include "pure.h"
 #include "scalers.h"
+#include "sdl_ptr.h"
 #include "uqmversion.h"
 
 
@@ -607,7 +608,7 @@ static void TFB_SDL_UploadTransitionScreen(void)
 
 static void TFB_SDL_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
 {
-	SDL_LockSurface(src);
+	const uqm::SurfaceLock srcLock {src};
 	const char* srcBytes {(char*)src->pixels};
 	if (rect)
 	{
@@ -631,7 +632,6 @@ static void TFB_SDL_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect*
 	 * rely on this allegedly slower but definitely more reliable
 	 * function. */
 	SDL_UpdateTexture(dest, rect, srcBytes, src->pitch);
-	SDL_UnlockSurface(src);
 }
 
 static void TFB_SDL_ScanLines(bool hd)
@@ -958,41 +958,41 @@ bool TFB_SDL_GammaCorrection(float gamma)
 
 bool TFB_SDL_ScreenShot(const char* path)
 {
-	bool successful = false;
-
-	SDL_Surface* rendered {SDL_RenderReadPixels(renderer, nullptr)};
-	if (!rendered)
+	uqm::SurfacePtr tmp {};
 	{
-		uqm::log::error("Cannot read the screen for the screenshot: {}", SDL_GetError());
-		return false;
+		const uqm::SurfacePtr rendered {SDL_RenderReadPixels(renderer, nullptr)};
+		if (!rendered)
+		{
+			uqm::log::error("Cannot read the screen for the screenshot: {}", SDL_GetError());
+			return false;
+		}
+		tmp.reset(SDL_ConvertSurface(rendered.get(), SDL_PIXELFORMAT_RGBA32));
 	}
-	SDL_Surface* tmp {SDL_ConvertSurface(rendered, SDL_PIXELFORMAT_RGBA32)};
-	SDL_DestroySurface(rendered);
 	if (!tmp)
 	{
 		uqm::log::error("Cannot convert the screenshot: {}", SDL_GetError());
 		return false;
 	}
 
-	SDL_LockSurface(tmp);
-	if (SDL_IOStream* file {SDL_IOFromFile(path, "wb")}; file == nullptr)
+	const uqm::SurfaceLock lock {tmp.get()};
 	{
-		uqm::log::error("Cannot open '{}' for the screenshot: {}", path, SDL_GetError());
-	}
-	else if (TFB_sdl_to_png(tmp, file, 1) == 0)
-	{
-		successful = true;
+		const uqm::IoStreamPtr file {SDL_IOFromFile(path, "wb")};
+		if (!file)
+		{
+			uqm::log::error("Cannot open '{}' for the screenshot: {}", path, SDL_GetError());
+			return false;
+		}
+		if (TFB_sdl_to_png(tmp.get(), file.get()) != 0)
+		{
+			return false;
+		}
 	}
 
-	if (successful && CopySurfaceToClipboard(tmp) != 0)
+	if (CopySurfaceToClipboard(tmp.get()) != 0)
 	{
-		uqm::log::warn("Failed to copy PNG to clipboard\n");
+		uqm::log::warn("Failed to copy PNG to clipboard");
 	}
-
-	SDL_UnlockSurface(tmp);
-	SDL_DestroySurface(tmp);
-
-	return successful;
+	return true;
 }
 
 bool TFB_SDL_ImGuiEvent(const SDL_Event* event)

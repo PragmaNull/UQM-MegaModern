@@ -31,6 +31,7 @@
 #include "primitives.h"
 #include "rotozoom.h"
 #include "sdl_common.h"
+#include "sdl_ptr.h"
 #include "sdlimage.h"
 
 typedef SDL_Surface* NativeCanvas;
@@ -92,9 +93,8 @@ void TFB_DrawCanvas_Line(int x1, int y1, int x2, int y2, Color color,
 
 	if (thickness < 2)
 	{ // Ususal SD line
-		SDL_LockSurface(dst);
+		const uqm::SurfaceLock dstLock {dst};
 		line_prim(x1, y1, x2, y2, sdlColor, plotFn, mode.factor, dst);
-		SDL_UnlockSurface(dst);
 	}
 	else
 	{ // Lines for HdResolutionFactor with Anti-aliasing (WIP)
@@ -105,15 +105,13 @@ void TFB_DrawCanvas_Line(int x1, int y1, int x2, int y2, Color color,
 			sr.y = uqstl::min(y1, y2);
 			sr.w = abs(x1 - x2) + thickness;
 			sr.h = abs(y1 - y2) + thickness;
-			SDL_LockSurface(dst);
+			const uqm::SurfaceLock dstLock {dst};
 			fillrect_prim(sr, sdlColor, plotFn, mode.factor, dst);
-			SDL_UnlockSurface(dst);
 		}
 		else
 		{
-			SDL_LockSurface(dst);
+			const uqm::SurfaceLock dstLock {dst};
 			line_aa_prim(x1, y1, x2, y2, sdlColor, plotFn, mode.factor, dst, thickness);
-			SDL_UnlockSurface(dst);
 		}
 	}
 }
@@ -155,9 +153,8 @@ void TFB_DrawCanvas_Rect(GfxRect* rect, Color color, DrawMode mode, tfb::Canvas 
 			return;
 		}
 
-		SDL_LockSurface(dst);
+		const uqm::SurfaceLock dstLock {dst};
 		fillrect_prim(sr, sdlColor, plotFn, mode.factor, dst);
-		SDL_UnlockSurface(dst);
 	}
 }
 
@@ -211,9 +208,8 @@ static void TFB_DrawCanvas_Blit(SDL_Surface* src, SDL_Rect* src_r,
 			loc_dst_r.h = dst->h;
 			dst_r = &loc_dst_r;
 		}
-		SDL_LockSurface(dst);
+		const uqm::SurfaceLock dstLock {dst};
 		blt_prim(src, *src_r, plotFn, mode.factor, dst, *dst_r);
-		SDL_UnlockSurface(dst);
 	}
 }
 
@@ -310,7 +306,7 @@ void TFB_DrawCanvas_Image(tfb::Image* img, int x, int y, int scale,
 
 		if (alpha != 0xFF)
 		{
-			SDL_LockSurface(surf);
+			const uqm::SurfaceLock surfLock {surf};
 			{
 				const Uint32 smask = ~SDL_GetPixelFormatDetails(surf->format)->Amask;
 				const int ashift = SDL_GetPixelFormatDetails(surf->format)->Ashift;
@@ -333,7 +329,6 @@ void TFB_DrawCanvas_Image(tfb::Image* img, int x, int y, int scale,
 					*src_p = p | (a << ashift);
 				}
 			}
-			SDL_UnlockSurface(surf);
 		}
 	}
 
@@ -730,9 +725,8 @@ static void TFB_DrawCanvas_FillMask(SDL_Surface* base, DrawMode mode, Color* fil
 			mode.factor = 0xFF;
 		}
 
-		SDL_LockSurface(base);
+		const uqm::SurfaceLock baseLock {base};
 		blt_filtered_fill(base, plotFn, mode.factor, fill);
-		SDL_UnlockSurface(base);
 	}
 }
 
@@ -766,15 +760,13 @@ static void TFB_DrawCanvas_Mask(SDL_Surface* layer, SDL_Surface* base, DrawMode 
 				pal[i] = NativeToColor(palette->colors[i]);
 			}
 
-			SDL_LockSurface(base);
+			const uqm::SurfaceLock baseLock {base};
 			blt_filtered_pal(layer, base, pal.data());
-			SDL_UnlockSurface(base);
 		}
 		else
 		{
-			SDL_LockSurface(base);
+			const uqm::SurfaceLock baseLock {base};
 			blt_filtered_prim(layer, plotFn, mode.factor, base, fill);
-			SDL_UnlockSurface(base);
 		}
 	}
 }
@@ -996,7 +988,7 @@ bool TFB_DrawCanvas_GetFontCharData(tfb::Canvas canvas, uint8_t* outData,
 		return false;
 	}
 
-	SDL_LockSurface(surf);
+	const uqm::SurfaceLock surfLock {surf};
 
 	GetPixelFn getpix {getpixel_for(surf)};
 
@@ -1021,8 +1013,6 @@ bool TFB_DrawCanvas_GetFontCharData(tfb::Canvas canvas, uint8_t* outData,
 			*dst = a;
 		}
 	}
-
-	SDL_UnlockSurface(surf);
 
 	return true;
 }
@@ -1303,7 +1293,7 @@ void TFB_DrawCanvas_Rescale_Nearest(tfb::Canvas src_canvas, tfb::Canvas dst_canv
 	ssx = 0x6000;
 	ssy = 0x6000;
 
-	SDL_LockSurface(src);
+	const uqm::SurfaceLock srcLock {src};
 	SDL_LockSurface(dst);
 
 	if (SDL_GetPixelFormatDetails(src->format)->bytes_per_pixel == 1 && SDL_GetPixelFormatDetails(dst->format)->bytes_per_pixel == 1)
@@ -1375,7 +1365,6 @@ void TFB_DrawCanvas_Rescale_Nearest(tfb::Canvas src_canvas, tfb::Canvas dst_canv
 					   SDL_GetPixelFormatDetails(src->format)->bits_per_pixel, SDL_GetPixelFormatDetails(dst->format)->bits_per_pixel);
 	}
 	SDL_UnlockSurface(dst);
-	SDL_UnlockSurface(src);
 }
 
 typedef union
@@ -1628,7 +1617,7 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 		ck1 &= mk1;
 	}
 
-	SDL_LockSurface(src);
+	const uqm::SurfaceLock srcLock {src};
 	SDL_LockSurface(dst);
 	SDL_LockSurface(mm);
 
@@ -1813,7 +1802,6 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 
 	SDL_UnlockSurface(mm);
 	SDL_UnlockSurface(dst);
-	SDL_UnlockSurface(src);
 }
 
 void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_canvas,
@@ -1907,7 +1895,7 @@ void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_can
 		ck = srckey & mk;
 	}
 
-	SDL_LockSurface(src);
+	const uqm::SurfaceLock srcLock {src};
 	SDL_LockSurface(dst);
 
 	for (y = 0, sy = ssy; y < h; ++y, sy += fsy)
@@ -2010,7 +1998,6 @@ void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_can
 	}
 
 	SDL_UnlockSurface(dst);
-	SDL_UnlockSurface(src);
 }
 
 void TFB_DrawCanvas_Lock(tfb::Canvas canvas)
@@ -2072,13 +2059,11 @@ Color TFB_DrawCanvas_GetPixel(tfb::Canvas canvas, int x, int y)
 		return c;
 	}
 
-	SDL_LockSurface(surf);
+	const uqm::SurfaceLock surfLock {surf};
 
 	GetPixelFn getpixel {getpixel_for(surf)};
 	const Uint32 pixel {(*getpixel)(surf, x, y)};
 	SDL_GetRGBA(pixel, SDL_GetPixelFormatDetails(surf->format), SDL_GetSurfacePalette(surf), &c.r, &c.g, &c.b, &c.a);
-
-	SDL_UnlockSurface(surf);
 
 	return c;
 }
@@ -2279,7 +2264,7 @@ static bool TFB_DrawCanvas_TransferColors(tfb::Canvas canvas, bool write,
 	w = width < surf->w ? width : surf->w;
 	h = height < surf->h ? height : surf->h;
 
-	SDL_LockSurface(surf);
+	const uqm::SurfaceLock surfLock {surf};
 
 	// This could be done faster if we assumed 32bpp surfaces
 	for (int y {0}; y < h; ++y)
@@ -2301,8 +2286,6 @@ static bool TFB_DrawCanvas_TransferColors(tfb::Canvas canvas, bool write,
 			}
 		}
 	}
-
-	SDL_UnlockSurface(surf);
 
 	return true;
 }
@@ -2356,7 +2339,7 @@ static bool TFB_DrawCanvas_TransferIndexes(tfb::Canvas canvas, bool write,
 	w = width < surf->w ? width : surf->w;
 	h = height < surf->h ? height : surf->h;
 
-	SDL_LockSurface(surf);
+	const uqm::SurfaceLock surfLock {surf};
 
 	for (int y {0}; y < h; ++y)
 	{
@@ -2373,8 +2356,6 @@ static bool TFB_DrawCanvas_TransferIndexes(tfb::Canvas canvas, bool write,
 			memcpy(data_p, surf_p, w * sizeof(uint8_t));
 		}
 	}
-
-	SDL_UnlockSurface(surf);
 
 	return true;
 }

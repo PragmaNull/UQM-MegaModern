@@ -22,6 +22,33 @@ struct SdlFree
 };
 
 using SurfacePtr = uqstl::unique_ptr<SDL_Surface, SdlFree<&SDL_DestroySurface>>;
+using IoStreamPtr = uqstl::unique_ptr<SDL_IOStream, SdlFree<&SDL_CloseIO>>;
+
+// Memory that SDL allocated and SDL_free releases.
+template <typename T>
+using SdlArrayPtr = uqstl::unique_ptr<T[], SdlFree<&SDL_free>>;
+
+// Locks the surface from construction to destruction.
+class SurfaceLock
+{
+public:
+	explicit SurfaceLock(SDL_Surface* surface)
+		: m_surface {surface}
+	{
+		SDL_LockSurface(m_surface);
+	}
+
+	~SurfaceLock()
+	{
+		SDL_UnlockSurface(m_surface);
+	}
+
+	SurfaceLock(const SurfaceLock&) = delete;
+	SurfaceLock& operator=(const SurfaceLock&) = delete;
+
+private:
+	SDL_Surface* m_surface;
+};
 
 } // namespace uqm
 

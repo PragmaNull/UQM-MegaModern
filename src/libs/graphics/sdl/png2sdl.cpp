@@ -438,18 +438,12 @@ bool writePng(png_structp png, png_infop info, SDL_Surface* surface, SDL_IOStrea
 
 } // namespace
 
-int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst, int freedst)
+int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst)
 {
 	const auto fail {[](uqgsl::czstring error) {
 		uqm::log::error("{}", error);
 		return -1;
 	}};
-	const auto closeDst {uqgsl::finally([&] {
-		if (freedst && dst)
-		{
-			SDL_CloseIO(dst);
-		}
-	})};
 
 	/* Initialize and do basic error checking */
 	if (!dst)

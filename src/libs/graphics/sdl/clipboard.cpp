@@ -17,6 +17,7 @@
 #include <SDL3/SDL.h>
 
 #include "core/log/log.h"
+#include "sdl_ptr.h"
 
 #ifdef _WIN32
 
@@ -28,27 +29,26 @@ static HBITMAP sdl_surface_to_bitmap(SDL_Surface* surface)
 	HBITMAP hbitmap {};
 
 	// Convert to 32-bit BGRA (required for Windows DIB)
-	SDL_Surface* convPtr {SDL_ConvertSurface(surface, SDL_PIXELFORMAT_BGRA32)};
-	if (!convPtr)
+	const uqm::SurfacePtr converted {SDL_ConvertSurface(surface, SDL_PIXELFORMAT_BGRA32)};
+	if (!converted)
 	{
 		return nullptr;
 	}
 
 	// Create DIB header
 	BIH.biSize = sizeof(BITMAPINFOHEADER);
-	BIH.biWidth = convPtr->w;
-	BIH.biHeight = -convPtr->h;
+	BIH.biWidth = converted->w;
+	BIH.biHeight = -converted->h;
 	BIH.biPlanes = 1;
 	BIH.biBitCount = 32;
 	BIH.biCompression = BI_RGB;
 
 	// Create DIB section
 	HDC hdc {GetDC(nullptr)};
-	hbitmap = CreateDIBitmap(hdc, &BIH, CBM_INIT, convPtr->pixels,
+	hbitmap = CreateDIBitmap(hdc, &BIH, CBM_INIT, converted->pixels,
 							 (BITMAPINFO*)&BIH, DIB_RGB_COLORS);
 
 	ReleaseDC(nullptr, hdc);
-	SDL_DestroySurface(convPtr);
 
 	return hbitmap;
 }

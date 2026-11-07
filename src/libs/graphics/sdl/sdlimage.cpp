@@ -23,6 +23,7 @@
 #include "libs/file/textfile.h"
 #include "libs/io/FileSystem.h"
 #include "png2sdl.h"
+#include "sdl_ptr.h"
 
 SDL_Surface* sdl_loadImage(const uqm::io::Directory& dir, const char* fileName)
 {
@@ -33,12 +34,10 @@ SDL_Surface* sdl_loadImage(const uqm::io::Directory& dir, const char* fileName)
 		return nullptr;
 	}
 
-	SDL_IOStream* const rwops {SDL_IOFromConstMem(data->data(), static_cast<int>(data->size()))};
-	if (rwops == nullptr)
+	const uqm::IoStreamPtr stream {SDL_IOFromConstMem(data->data(), data->size())};
+	if (!stream)
 	{
 		return nullptr;
 	}
-	SDL_Surface* const result {TFB_png_to_sdl(rwops)};
-	SDL_CloseIO(rwops);
-	return result;
+	return TFB_png_to_sdl(stream.get());
 }

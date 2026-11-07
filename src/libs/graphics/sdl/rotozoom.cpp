@@ -16,7 +16,7 @@
 #include <string.h>
 
 #include "sdl_common.h"
-
+#include "sdl_ptr.h"
 
 /* 
  
@@ -787,7 +787,7 @@ SDL_Surface* rotozoomSurface(SDL_Surface* src, double angle, double zoom, int sm
 		/*
 	 * Lock source surface 
 	 */
-		SDL_LockSurface(rz_src);
+		const uqm::SurfaceLock rz_srcLock {rz_src};
 		/*
 	 * Check which kind of surface we have 
 	 */
@@ -825,7 +825,6 @@ SDL_Surface* rotozoomSurface(SDL_Surface* src, double angle, double zoom, int sm
 		/*
 	 * Unlock source surface 
 	 */
-		SDL_UnlockSurface(rz_src);
 	}
 	else
 	{
@@ -865,7 +864,7 @@ SDL_Surface* rotozoomSurface(SDL_Surface* src, double angle, double zoom, int sm
 		/*
 	 * Lock source surface 
 	 */
-		SDL_LockSurface(rz_src);
+		const uqm::SurfaceLock rz_srcLock {rz_src};
 		/*
 	 * Check which kind of surface we have 
 	 */
@@ -901,7 +900,6 @@ SDL_Surface* rotozoomSurface(SDL_Surface* src, double angle, double zoom, int sm
 		/*
 	 * Unlock source surface 
 	 */
-		SDL_UnlockSurface(rz_src);
 	}
 
 	/*
@@ -978,29 +976,29 @@ int rotateSurface(SDL_Surface* src, SDL_Surface* dst, double angle, int smooth)
 	}
 
 	/* Lock source surface */
-	SDL_LockSurface(src);
-	SDL_LockSurface(dst);
-	/* Check which kind of surface we have */
-	if (is32bit)
-	{ /* Call the 32bit transformation routine to do the rotation (using alpha) */
-		transformSurfaceRGBA(src, dst, dstwidthhalf, dstheighthalf,
-							 (int)(sanglezoominv), (int)(canglezoominv), smooth);
-	}
-	else
+	const uqm::SurfaceLock srcLock {src};
 	{
-		/* Copy palette info */
-		for (i = 0; i < SDL_GetSurfacePalette(src)->ncolors; i++)
-		{
-			SDL_GetSurfacePalette(dst)->colors[i] = SDL_GetSurfacePalette(src)->colors[i];
+		const uqm::SurfaceLock dstLock {dst};
+		/* Check which kind of surface we have */
+		if (is32bit)
+		{ /* Call the 32bit transformation routine to do the rotation (using alpha) */
+			transformSurfaceRGBA(src, dst, dstwidthhalf, dstheighthalf,
+								 (int)(sanglezoominv), (int)(canglezoominv), smooth);
 		}
-		SDL_GetSurfacePalette(dst)->ncolors = SDL_GetSurfacePalette(src)->ncolors;
-		/* Call the 8bit transformation routine to do the rotation */
-		transformSurfaceY(src, dst, dstwidthhalf, dstheighthalf,
-						  (int)(sanglezoominv), (int)(canglezoominv));
+		else
+		{
+			/* Copy palette info */
+			for (i = 0; i < SDL_GetSurfacePalette(src)->ncolors; i++)
+			{
+				SDL_GetSurfacePalette(dst)->colors[i] = SDL_GetSurfacePalette(src)->colors[i];
+			}
+			SDL_GetSurfacePalette(dst)->ncolors = SDL_GetSurfacePalette(src)->ncolors;
+			/* Call the 8bit transformation routine to do the rotation */
+			transformSurfaceY(src, dst, dstwidthhalf, dstheighthalf,
+							  (int)(sanglezoominv), (int)(canglezoominv));
+		}
+		/* Unlock source surface */
 	}
-	/* Unlock source surface */
-	SDL_UnlockSurface(dst);
-	SDL_UnlockSurface(src);
 
 	return 0;
 }

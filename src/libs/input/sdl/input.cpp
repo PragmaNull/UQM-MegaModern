@@ -28,6 +28,7 @@
 #include "core/string/StringUtils.h"
 #include "libs/file/textfile.h"
 #include "libs/graphics/sdl/pure.h"
+#include "libs/graphics/sdl/sdl_ptr.h"
 #include "libs/input/keyconfig.h"
 #include "libs/input/sdl/keynames.h"
 #include "libs/input/sdl/vcontrol.h"
@@ -297,7 +298,7 @@ static void initJoystick(void)
 	}
 
 	int nJoysticks {};
-	SDL_JoystickID* const joysticks {SDL_GetJoysticks(&nJoysticks)};
+	const uqm::SdlArrayPtr<SDL_JoystickID> joysticks {SDL_GetJoysticks(&nJoysticks)};
 	uqm::log::info("{} joysticks were found.", nJoysticks);
 
 	if (nJoysticks > 0)
@@ -321,7 +322,6 @@ static void initJoystick(void)
 			create_joystick(joysticks[i]);
 		}
 	}
-	SDL_free(joysticks);
 }
 
 #endif /* HAVE_JOYSTICK */
