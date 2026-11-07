@@ -4,6 +4,7 @@
 
 #include "controls.h"
 #include "core/log/log.h"
+#include "libs/file/json.h"
 #include "libs/file/textfile.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
@@ -40,7 +41,7 @@ uqstl::optional<MenuDefinition> readMenuDefinition(uqgsl::czstring resource, con
 		log::error("The resource '{}' is not defined.", resource);
 		return uqstl::nullopt;
 	}
-	auto json {readTextFile(contentDir(), path)};
+	auto json {readTextFile(contentDir(), path, JsonPadding)};
 	if (!json)
 	{
 		log::error("Could not read the menu definition '{}'.", path);

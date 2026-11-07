@@ -38,6 +38,9 @@ inline constexpr yyjson_write_flag JsonWritePretty {YYJSON_WRITE_PRETTY_TWO_SPAC
 // Returns the text of 'doc', or nullopt if yyjson cannot write it.
 [[nodiscard]] uqstl::optional<uqstl::string> writeJson(const JsonMutDoc& doc, yyjson_write_flag flags = JsonWritePretty);
 
+// The space that parseJsonInPlace() adds to the text. Read the text with this much spare capacity.
+inline constexpr size_t JsonPadding {YYJSON_PADDING_SIZE};
+
 // Parses 'text' in place and adds padding to it. 'text' must live longer than the document. Returns an empty JsonDoc,
 // and logs the error with 'what', if 'text' is not valid JSON.
 [[nodiscard]] JsonDoc parseJsonInPlace(uqstl::string& text, uqstl::string_view what, yyjson_read_flag flags = YYJSON_READ_NOFLAG);

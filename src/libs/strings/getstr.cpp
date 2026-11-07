@@ -55,7 +55,7 @@ namespace
 [[nodiscard]] uqm::JsonDoc readJsonFile(uqstl::string_view path, uqstl::string& buffer)
 {
 	const uqstl::string pathText {path};
-	auto text {uqm::readTextFile(uqm::contentDir(), pathText.c_str())};
+	auto text {uqm::readTextFile(uqm::contentDir(), pathText.c_str(), uqm::JsonPadding)};
 	if (!text)
 	{
 		uqm::log::warn("Warning: Can't open '{}'", path);
@@ -264,7 +264,7 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 // of text lines.
 void* _GetStringData(const ResourceFile& resource)
 {
-	auto text {readResourceText(resource)};
+	auto text {readResourceText(resource, uqm::JsonPadding)};
 	if (!text)
 	{
 		uqm::log::warn("Warning: Can't read '{}'", resource.path);

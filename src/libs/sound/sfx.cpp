@@ -17,6 +17,7 @@
 #include <math.h>
 
 #include "core/log/log.h"
+#include "libs/file/json.h"
 #include "libs/io/Path.h"
 #include "libs/reslib.h"
 #include "options.h"
@@ -149,7 +150,7 @@ void* _GetSoundBankData(const ResourceFile& resource)
 {
 	uqstl::vector<tfb::SoundSample*> samples {};
 
-	auto text {readResourceText(resource)};
+	auto text {readResourceText(resource, uqm::JsonPadding)};
 	const auto sounds {text ? uqm::soundBankFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!sounds)
 	{

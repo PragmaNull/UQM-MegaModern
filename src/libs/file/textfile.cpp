@@ -13,9 +13,9 @@ namespace uqm
 namespace
 {
 
-// Reads the whole file into a container of byte-sized elements.
+// Reads the whole file into a container of byte-sized elements, with room for 'padding' more elements.
 template <typename Container>
-uqstl::optional<Container> readWholeFile(const io::Directory& dir, uqgsl::czstring name)
+uqstl::optional<Container> readWholeFile(const io::Directory& dir, uqgsl::czstring name, size_t padding = 0)
 {
 	io::Result<io::File> file {dir.open(name, io::OpenMode::Read)};
 	if (!file)
@@ -23,7 +23,10 @@ uqstl::optional<Container> readWholeFile(const io::Directory& dir, uqgsl::czstri
 		return uqstl::nullopt;
 	}
 
-	Container data(static_cast<size_t>(file->size()), {});
+	const size_t size {static_cast<size_t>(file->size())};
+	Container data {};
+	data.reserve(size + padding);
+	data.resize(size);
 	data.resize(file->read(uqstl::as_writable_bytes(uqstl::span {data})));
 	if (file->error())
 	{
@@ -34,19 +37,28 @@ uqstl::optional<Container> readWholeFile(const io::Directory& dir, uqgsl::czstri
 
 } // namespace
 
-uqstl::optional<uqstl::string> readTextFile(const io::Directory& dir, uqgsl::czstring name)
+uqstl::optional<uqstl::string> readTextFile(const io::Directory& dir, uqgsl::czstring name, size_t padding)
 {
-	return readWholeFile<uqstl::string>(dir, name);
+	return readWholeFile<uqstl::string>(dir, name, padding);
 }
 
-uqstl::optional<uqstl::string> readTextFile(uqgsl::czstring path)
+uqstl::optional<uqstl::string> readTextFile(uqgsl::czstring path, size_t padding)
 {
-	uqstl::ifstream file {path, uqstl::ios::binary};
+	uqstl::ifstream file {path, uqstl::ios::binary | uqstl::ios::ate};
 	if (!file)
 	{
 		return uqstl::nullopt;
 	}
-	return uqstl::string {uqstl::istreambuf_iterator<char> {file}, uqstl::istreambuf_iterator<char> {}};
+	const auto size {static_cast<size_t>(file.tellg())};
+	uqstl::string text {};
+	text.reserve(size + padding);
+	text.resize(size);
+	file.seekg(0);
+	if (!file.read(text.data(), static_cast<uqstl::streamsize>(size)))
+	{
+		return uqstl::nullopt;
+	}
+	return text;
 }
 
 uqstl::optional<uqstl::vector<uqstl::byte>> readBinaryFile(const io::Directory& dir, uqgsl::czstring name)

@@ -42,9 +42,11 @@ void loadResourceDesc(ResourceDesc* desc)
 	}
 }
 
-uqstl::optional<uqstl::string> readResourceText(const ResourceFile& resource)
+uqstl::optional<uqstl::string> readResourceText(const ResourceFile& resource, size_t padding)
 {
-	uqstl::string text(resource.length, '\0');
+	uqstl::string text {};
+	text.reserve(resource.length + padding);
+	text.resize(resource.length);
 	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
 	if (resource.file.error())
 	{

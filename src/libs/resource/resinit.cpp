@@ -30,6 +30,7 @@
 #include "options.h"
 #include "resintrn.h"
 // XXX: we should not include anything from uqm/ inside libs/
+#include "libs/file/json.h"
 #include "uqm/coderes.h"
 
 static ResourceIndex allocResourceIndex(void)
@@ -187,7 +188,7 @@ ResourceIndex _get_current_index_header(void)
 
 void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix)
 {
-	uqstl::optional<uqstl::string> text {uqm::readTextFile(dir, filename)};
+	uqstl::optional<uqstl::string> text {uqm::readTextFile(dir, filename, uqm::JsonPadding)};
 	if (!text)
 	{
 		return;

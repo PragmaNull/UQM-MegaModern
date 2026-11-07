@@ -26,6 +26,7 @@
 #include "core/log/log.h"
 #include "core/stl/atomic.h"
 #include "core/string/StringUtils.h"
+#include "libs/file/json.h"
 #include "libs/file/textfile.h"
 #include "libs/graphics/sdl/pure.h"
 #include "libs/graphics/sdl/sdl_ptr.h"
@@ -130,7 +131,7 @@ static uqstl::span<const uqgsl::czstring> flightControlNames()
 // Loads the user key configuration into the "keys." resources.
 static bool loadKeyConfiguration()
 {
-	auto json {uqm::readTextFile(uqm::configDir(), c_keyConfigFile)};
+	auto json {uqm::readTextFile(uqm::configDir(), c_keyConfigFile, uqm::JsonPadding)};
 	if (!json)
 	{
 		return false;

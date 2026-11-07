@@ -57,7 +57,7 @@ struct ResourceFile
 	uint32_t length;
 };
 // Returns the whole file as text, or nullopt on a read error.
-[[nodiscard]] uqstl::optional<uqstl::string> readResourceText(const ResourceFile& resource);
+[[nodiscard]] uqstl::optional<uqstl::string> readResourceText(const ResourceFile& resource, size_t padding = 0);
 typedef void*(ResourceLoadFileFun)(const ResourceFile& resource);
 
 void* LoadResourceFromPath(const char* pathname, ResourceLoadFileFun fn);

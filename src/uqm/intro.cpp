@@ -23,6 +23,7 @@
 #include "core/string/StringUtils.h"
 #include "fmv.h"
 #include "globdata.h"
+#include "libs/file/json.h"
 #include "libs/file/textfile.h"
 #include "libs/graphics/drawable.h"
 #include "libs/graphics/gfx_common.h"
@@ -410,7 +411,7 @@ static void Present_DrawMovieFrame(PresentationInputState* pPIS)
 
 static bool ShowPresentationFile(const char* name)
 {
-	auto text {uqm::readTextFile(uqm::contentDir(), name)};
+	auto text {uqm::readTextFile(uqm::contentDir(), name, uqm::JsonPadding)};
 	const auto commands {text ? uqm::slideshowFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!commands)
 	{

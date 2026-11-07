@@ -3,6 +3,7 @@
 #include <cstring>
 
 #include "core/log/log.h"
+#include "libs/file/json.h"
 #include "libs/file/textfile.h"
 #include "libs/reslib.h"
 #include "options.h"
@@ -18,7 +19,7 @@ static_assert(c_controlTemplateCount == uqstl::to_underlying(ControlTemplate::NU
 
 bool loadUserSettings(OptionsStruct& options)
 {
-	auto json {readTextFile(uqm::configDir(), c_settingsFile)};
+	auto json {readTextFile(uqm::configDir(), c_settingsFile, uqm::JsonPadding)};
 	if (!json)
 	{
 		uqm::log::info("No {} found; using default settings.", c_settingsFile);
