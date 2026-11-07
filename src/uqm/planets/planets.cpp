@@ -205,7 +205,7 @@ void DrawScannedObjects(bool Reversed)
 						   GetPredElement(ElementPtr) :
 						   GetSuccElement(ElementPtr);
 
-		if (ElementPtr->state_flags & Appearing)
+		if (testFlag(ElementPtr->state_flags, ElementFlags::Appearing))
 		{
 			GfxStamp s;
 
@@ -746,7 +746,7 @@ void PlanetOrbitMenu(void)
 	SetFlashRect(SfrMenu3do(), false);
 
 	menuState.CurState = *PlanetMenuItem::Scan;
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	InputFrameCallback* oldCallback {SetInputCallback(on_input_frame)};
 
 	menuState.InputFunc = DoPlanetOrbit;

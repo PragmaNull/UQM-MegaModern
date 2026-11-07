@@ -55,7 +55,7 @@ static RaceDesc slylandro_desc =
 	{
 		{/* ShipInfoDesc */
 		 "probe",
-		 SeekingWeapon | CrewImmune,
+		 ShipFlags::SeekingWeapon | ShipFlags::CrewImmune,
 		 17, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -129,7 +129,7 @@ static uint16_t initialize_lightning(Element* ElementPtr,
 static void lightning_postprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait
-		&& !(ElementPtr->state_flags & Collision))
+		&& !(testFlag(ElementPtr->state_flags, ElementFlags::Collision)))
 	{
 		ElementHandle Lightning {};
 
@@ -168,7 +168,7 @@ static uint16_t initialize_lightning(Element* ElementPtr, ElementHandle LaserArr
 	LaserBlock.ey = 0;
 
 	LaserBlock.sender = ElementPtr->playerNr;
-	LaserBlock.flags = IgnoreSimilar;
+	LaserBlock.flags = ElementFlags::IgnoreSimilar;
 	LaserBlock.face = 0;
 	LaserBlock.pixoffs = 0;
 	LaserArray[0] = initialize_laser(&LaserBlock);
@@ -189,7 +189,7 @@ static uint16_t initialize_lightning(Element* ElementPtr, ElementHandle LaserArr
 
 		const uint32_t rand_val {uqm::random().next()};
 
-		if (!(ElementPtr->state_flags & PlayerShip))
+		if (!(testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip)))
 		{
 			angle = GetVelocityTravelAngle(&ElementPtr->velocity);
 			facing = NormalizeFacing(AngleToFacing(angle));
@@ -304,20 +304,20 @@ static void slylandro_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 14)
 	{
-		StarShipPtr->ship_input_state |= WeaponFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~WeaponFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 	}
 
-	StarShipPtr->ship_input_state &= ~SpecialFlag;
+	StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level < StarShipPtr->RaceDescPtr->ship_info.max_energy)
 	{
 		lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::FirstEmpty];
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 14)
 		{
-			StarShipPtr->ship_input_state |= SpecialFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Special;
 		}
 	}
 }
@@ -336,7 +336,7 @@ static bool harvest_space_junk(Element* ElementPtr)
 		LockElement(hElement, &ObjPtr);
 		hNextElement = GetSuccElement(ObjPtr);
 
-		if (!(ObjPtr->state_flags & (Appearing | PlayerShip | FiniteLife))
+		if (!(testFlag(ObjPtr->state_flags, (ElementFlags::Appearing | ElementFlags::PlayerShip | ElementFlags::FiniteLife)))
 			&& ObjPtr->playerNr == NeutralPlayerNum
 			&& !GravityMass(ObjPtr->mass_points)
 			&& CollisionPossible(ObjPtr, ElementPtr))
@@ -362,7 +362,7 @@ static bool harvest_space_junk(Element* ElementPtr)
 				&& dx * dx + dy * dy <= HarvestRange() * HarvestRange())
 			{
 				ObjPtr->life_span = 0;
-				ObjPtr->state_flags |= Nonsolid;
+				ObjPtr->state_flags |= ElementFlags::Nonsolid;
 
 				if (!retval)
 				{
@@ -403,7 +403,7 @@ static void slylandro_postprocess(Element* ElementPtr)
 	}
 
 	if (StarShipPtr->special_counter == 0
-		&& (StarShipPtr->cur_status_flags & SpecialFlag)
+		&& (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& harvest_space_junk(ElementPtr))
 	{
 		StarShipPtr->special_counter =
@@ -413,13 +413,13 @@ static void slylandro_postprocess(Element* ElementPtr)
 
 static void slylandro_preprocess(Element* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & (Appearing | Nonsolid)))
+	if (!(testFlag(ElementPtr->state_flags, (ElementFlags::Appearing | ElementFlags::Nonsolid))))
 	{
 		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		if ((StarShipPtr->cur_status_flags & ThrustFlag)
-			&& !(StarShipPtr->old_status_flags & ThrustFlag))
+		if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Thrust))
+			&& !(testFlag(StarShipPtr->old_status_flags, StatusFlags::Thrust)))
 		{
 			StarShipPtr->ShipFacing += AngleToFacing(HalfCircle);
 		}
@@ -428,11 +428,11 @@ static void slylandro_preprocess(Element* ElementPtr)
 		{
 			ElementPtr->turn_wait +=
 				StarShipPtr->RaceDescPtr->characteristics.turn_wait + 1;
-			if (StarShipPtr->cur_status_flags & LeftFlag)
+			if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Left))
 			{
 				--StarShipPtr->ShipFacing;
 			}
-			else if (StarShipPtr->cur_status_flags & RightFlag)
+			else if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Right))
 			{
 				++StarShipPtr->ShipFacing;
 			}
@@ -448,12 +448,12 @@ static void slylandro_preprocess(Element* ElementPtr)
 			SetVelocityVector(&ElementPtr->velocity,
 							  StarShipPtr->RaceDescPtr->characteristics.max_thrust,
 							  StarShipPtr->ShipFacing);
-			StarShipPtr->cur_status_flags |= ShipAtMaxSpeed;
-			StarShipPtr->cur_status_flags &= ~ShipInGravityWell;
+			StarShipPtr->cur_status_flags |= StatusFlags::ShipAtMaxSpeed;
+			StarShipPtr->cur_status_flags &= ~StatusFlags::ShipInGravityWell;
 		}
 
 		ElementPtr->next.image.frame = IncFrameIndex(ElementPtr->next.image.frame);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 }
 

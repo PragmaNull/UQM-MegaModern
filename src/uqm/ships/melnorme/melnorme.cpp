@@ -69,7 +69,7 @@ static RaceDesc melnorme_desc =
 	{
 		{/* ShipInfoDesc */
 		 "trader",
-		 FiresFore,
+		 ShipFlags::FiresFore,
 		 18, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergySize, MaxEnergySize,
@@ -159,7 +159,7 @@ static void pump_up_preprocess(Element* ElementPtr)
 		ElementPtr->next.image.frame = SetAbsFrameIndex(
 			ElementPtr->current.image.frame, frame_index);
 
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 }
 
@@ -167,7 +167,7 @@ static uint16_t initialize_pump_up(Element* ShipPtr, ElementHandle PumpUpArray[]
 
 static void pump_up_postprocess(Element* ElementPtr)
 {
-	if (ElementPtr->state_flags & Appearing)
+	if (testFlag(ElementPtr->state_flags, ElementFlags::Appearing))
 	{
 		ZeroVelocityComponents(&ElementPtr->velocity);
 	}
@@ -235,8 +235,7 @@ static void pump_up_postprocess(Element* ElementPtr)
 				EPtr->current.image.frame, frame_index);
 		}
 
-		if (StarShipPtr->cur_status_flags & StarShipPtr->old_status_flags
-			& WeaponFlag)
+		if (testFlag(StarShipPtr->cur_status_flags & StarShipPtr->old_status_flags, StatusFlags::Weapon))
 		{
 			StarShipPtr->weapon_counter = WeaponWait;
 		}
@@ -263,7 +262,7 @@ static void pump_up_postprocess(Element* ElementPtr)
 
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 					NoPrim);
-		ElementPtr->state_flags |= Nonsolid;
+		ElementPtr->state_flags |= ElementFlags::Nonsolid;
 	}
 }
 
@@ -277,7 +276,7 @@ static void animate(Element* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
@@ -330,7 +329,7 @@ static uint16_t initialize_pump_up(Element* ShipPtr, ElementHandle PumpUpArray[]
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = MelnormeOffset();
 	MissileBlock.speed = DisplayToWorld(MelnormeOffset());
 	MissileBlock.hit_points = PumpupDamage;
@@ -378,17 +377,17 @@ static void confuse_preprocess_april(Element* ElementPtr)
 		};
 	const size_t colorTabCount = std::size(colorTable);
 
-	if (!(ElementPtr->state_flags & Nonsolid))
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid)))
 	{
 		ElementPtr->next.image.frame = SetAbsFrameIndex(
 			ElementPtr->current.image.frame,
 			(GetFrameIndex(ElementPtr->current.image.frame) + 1) & 7);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 	else if (ElementPtr->hTarget == 0)
 	{
 		ElementPtr->life_span = 0;
-		ElementPtr->state_flags |= Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Disappearing;
 	}
 	else
 	{
@@ -413,8 +412,8 @@ static void confuse_preprocess_april(Element* ElementPtr)
 			GetElementStarShip(eptr, &StarShipPtr);
 			StarShipPtr->ship_input_state =
 				(StarShipPtr->ship_input_state
-				 & ~(LeftFlag | RightFlag | SpecialFlag))
-				| ElementPtr->turn_wait;
+				 & ~(StatusFlags::Left | StatusFlags::Right | StatusFlags::Special))
+				| static_cast<StatusFlags>(ElementPtr->turn_wait);
 
 			if (ElementPtr->life_span > 1)
 			{
@@ -441,7 +440,7 @@ static void confuse_preprocess_april(Element* ElementPtr)
 			{
 				LockElement(hEffect, &eptr);
 				eptr->playerNr = ElementPtr->playerNr;
-				eptr->state_flags = FiniteLife | Nonsolid | Changing;
+				eptr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid | ElementFlags::Changing;
 				eptr->life_span = 1;
 				eptr->current = eptr->next = ElementPtr->next;
 				eptr->preprocess_func = confuse_preprocess_april;
@@ -461,17 +460,17 @@ static void confuse_preprocess_april(Element* ElementPtr)
 
 static void confuse_preprocess(Element* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & Nonsolid))
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid)))
 	{
 		ElementPtr->next.image.frame = SetAbsFrameIndex(
 			ElementPtr->current.image.frame,
 			(GetFrameIndex(ElementPtr->current.image.frame) + 1) & 7);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 	else if (ElementPtr->hTarget == 0)
 	{
 		ElementPtr->life_span = 0;
-		ElementPtr->state_flags |= Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Disappearing;
 	}
 	else
 	{
@@ -496,15 +495,15 @@ static void confuse_preprocess(Element* ElementPtr)
 			GetElementStarShip(eptr, &StarShipPtr);
 			StarShipPtr->ship_input_state =
 				(StarShipPtr->ship_input_state
-				 & ~(LeftFlag | RightFlag | SpecialFlag))
-				| ElementPtr->turn_wait;
+				 & ~(StatusFlags::Left | StatusFlags::Right | StatusFlags::Special))
+				| static_cast<StatusFlags>(ElementPtr->turn_wait);
 
 			ElementHandle hEffect {AllocElement()};
 			if (hEffect)
 			{
 				LockElement(hEffect, &eptr);
 				eptr->playerNr = ElementPtr->playerNr;
-				eptr->state_flags = FiniteLife | Nonsolid | Changing;
+				eptr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid | ElementFlags::Changing;
 				eptr->life_span = 1;
 				eptr->current = eptr->next = ElementPtr->next;
 				eptr->preprocess_func = confuse_preprocess;
@@ -527,7 +526,7 @@ static void confuse_preprocess(Element* ElementPtr)
 static void confusion_collision(Element* ElementPtr0, GfxPoint* pPt0,
 								Element* ElementPtr1, GfxPoint* pPt1)
 {
-	if (ElementPtr1->state_flags & PlayerShip)
+	if (testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 	{
 		ElementHandle hConfusionElement {};
 		ElementHandle hNextElement {};
@@ -541,7 +540,7 @@ static void confusion_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			LockElement(hConfusionElement, &ConfusionPtr);
 			if (elementsOfSamePlayer(ConfusionPtr, ElementPtr0)
 				&& ConfusionPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special
-				&& (ConfusionPtr->state_flags & Nonsolid))
+				&& (testFlag(ConfusionPtr->state_flags, ElementFlags::Nonsolid)))
 			{
 				UnlockElement(hConfusionElement);
 				break;
@@ -554,7 +553,7 @@ static void confusion_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		{
 			LockElement(hConfusionElement, &ConfusionPtr);
 
-			if (ConfusionPtr->state_flags == 0) /* not allocated before */
+			if (ConfusionPtr->state_flags == ElementFlags::None) /* not allocated before */
 			{
 				InsertElement(hConfusionElement, GetHeadElement());
 
@@ -563,7 +562,7 @@ static void confusion_collision(Element* ElementPtr0, GfxPoint* pPt0,
 					ConfusionPtr->current.image.frame, 8);
 				ConfusionPtr->next = ConfusionPtr->current;
 				ConfusionPtr->playerNr = ElementPtr0->playerNr;
-				ConfusionPtr->state_flags = FiniteLife | Nonsolid | Changing;
+				ConfusionPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid | ElementFlags::Changing;
 				ConfusionPtr->preprocess_func = confuse_preprocess;
 				SetPrimType(
 					&DisplayArray[ConfusionPtr->PrimIndex],
@@ -595,7 +594,7 @@ static void confusion_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 		ElementPtr0->hit_points = 0;
 		ElementPtr0->life_span = 0;
-		ElementPtr0->state_flags |= Disappearing | Collision | Nonsolid;
+		ElementPtr0->state_flags |= ElementFlags::Disappearing | ElementFlags::Collision | ElementFlags::Nonsolid;
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
@@ -613,7 +612,7 @@ static uint16_t initialize_confusion(Element* ShipPtr, ElementHandle ConfusionAr
 	ConfusionBlock.index = 0;
 	ConfusionBlock.face = StarShipPtr->ShipFacing;
 	ConfusionBlock.sender = ShipPtr->playerNr;
-	ConfusionBlock.flags = IgnoreSimilar;
+	ConfusionBlock.flags = ElementFlags::IgnoreSimilar;
 	ConfusionBlock.pixoffs = MelnormeOffset();
 	ConfusionBlock.speed = CmissileSpeed();
 	ConfusionBlock.hit_points = CmissileHits;
@@ -648,7 +647,7 @@ static uint16_t initialize_test_pump_up(Element* ShipPtr, ElementHandle PumpUpAr
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = MelnormeOffset();
 	MissileBlock.speed = PumpupSpeedHd();
 	MissileBlock.hit_points = PumpupDamage;
@@ -681,7 +680,7 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 	{
 		if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SpecialEnergyCost
 																   + WeaponEnergyCost
-			&& !(StarShipPtr->old_status_flags & WeaponFlag))
+			&& !(testFlag(StarShipPtr->old_status_flags, StatusFlags::Weapon)))
 		{
 			lpEvalDesc->MoveState = MovementState::Entice;
 		}
@@ -690,8 +689,7 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 			Starship* EnemyStarShipPtr {};
 
 			GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
-			if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-				  & ImmediateWeapon))
+			if (!(testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::ImmediateWeapon)))
 			{
 				lpEvalDesc->MoveState = MovementState::Pursue;
 			}
@@ -704,16 +702,16 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 			|| ((StarShipPtr->special_counter
 				 || StarShipPtr->RaceDescPtr->ship_info.energy_level >= SpecialEnergyCost
 																			+ WeaponEnergyCost)
-				&& !(StarShipPtr->ship_input_state & WeaponFlag))))
+				&& !(testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon)))))
 	{
-		StarShipPtr->ship_input_state ^= WeaponFlag;
+		StarShipPtr->ship_input_state ^= StatusFlags::Weapon;
 	}
 
-	StarShipPtr->ship_input_state &= ~SpecialFlag;
+	StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	if (StarShipPtr->special_counter == 0
 		&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SpecialEnergyCost)
 	{
-		const uint8_t old_input_state {StarShipPtr->ship_input_state};
+		const StatusFlags old_input_state {StarShipPtr->ship_input_state};
 
 		StarShipPtr->RaceDescPtr->init_weapon_func = initialize_confusion;
 
@@ -723,14 +721,13 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 		--ShipPtr->thrust_wait;
 		--ShipPtr->turn_wait;
 
-		if (StarShipPtr->ship_input_state & WeaponFlag)
+		if (testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon))
 		{
-			StarShipPtr->ship_input_state &= ~WeaponFlag;
-			StarShipPtr->ship_input_state |= SpecialFlag;
+			StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
+			StarShipPtr->ship_input_state |= StatusFlags::Special;
 		}
 
-		StarShipPtr->ship_input_state = (unsigned char)(old_input_state
-														| (StarShipPtr->ship_input_state & SpecialFlag));
+		StarShipPtr->ship_input_state = old_input_state | (StarShipPtr->ship_input_state & StatusFlags::Special);
 	}
 
 	StarShipPtr->weapon_counter = old_count;
@@ -743,7 +740,7 @@ static void melnorme_postprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{

@@ -84,9 +84,9 @@ static void DoRunAway(Starship* StarShipPtr)
 	LockElement(StarShipPtr->hShip, &ElementPtr);
 	if (GetPrimType(&DisplayArray[ElementPtr->PrimIndex]) == PrimitiveType::Stamp
 		&& ElementPtr->life_span == NormalLife
-		&& !(ElementPtr->state_flags & FiniteLife)
+		&& !(testFlag(ElementPtr->state_flags, ElementFlags::FiniteLife))
 		&& ElementPtr->mass_points != MaxShipMass * 10
-		&& !(ElementPtr->state_flags & Appearing))
+		&& !(testFlag(ElementPtr->state_flags, ElementFlags::Appearing)))
 	{
 		battle_counter[0]--;
 
@@ -97,7 +97,7 @@ static void DoRunAway(Starship* StarShipPtr)
 		ElementPtr->mass_points = MaxShipMass * 10;
 		ZeroVelocityComponents(&ElementPtr->velocity);
 		StarShipPtr->cur_status_flags &=
-			~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
+			~(StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed);
 
 		SetPrimColor(&DisplayArray[ElementPtr->PrimIndex],
 					 BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2E));
@@ -106,7 +106,7 @@ static void DoRunAway(Starship* StarShipPtr)
 		// but it is slightly different (0x0A as red value). - SvdB.
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], PrimitiveType::StampFill);
 
-		StarShipPtr->ship_input_state = 0;
+		StarShipPtr->ship_input_state = StatusFlags::None;
 	}
 	UnlockElement(StarShipPtr->hShip);
 }
@@ -197,32 +197,32 @@ static void ProcessInput(void)
 				}
 #endif
 
-				StarShipPtr->ship_input_state = 0;
+				StarShipPtr->ship_input_state = StatusFlags::None;
 				if (StarShipPtr->RaceDescPtr->ship_info.crew_level)
 				{
 					if (testFlag(InputState, BattleInputState::Left))
 					{
-						StarShipPtr->ship_input_state |= LeftFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Left;
 					}
 					else if (testFlag(InputState, BattleInputState::Right))
 					{
-						StarShipPtr->ship_input_state |= RightFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Right;
 					}
 					if (testFlag(InputState, BattleInputState::Thrust))
 					{
-						StarShipPtr->ship_input_state |= ThrustFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Thrust;
 					}
 					if (testFlag(InputState, BattleInputState::ThrustAlt))
 					{
-						StarShipPtr->ship_input_state |= ThrustFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Thrust;
 					}
 					if (testFlag(InputState, BattleInputState::Weapon))
 					{
-						StarShipPtr->ship_input_state |= WeaponFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 					}
 					if (testFlag(InputState, BattleInputState::Special))
 					{
-						StarShipPtr->ship_input_state |= SpecialFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Special;
 					}
 
 					if (CanRunAway && cur_player == 0 && ((testFlag(InputState, BattleInputState::Escape)) || WarpFromMenu))
@@ -301,7 +301,7 @@ static bool DoBattle(BattleState* bs)
 	extern uint16_t nth_frame;
 	GfxRect r;
 
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 
 #if defined(NETPLAY) && defined(NETPLAY_CHECKSUM)
 	if (getNumNetConnections() > 0 && battleFrameCount % NetplayChecksumInterval == 0)

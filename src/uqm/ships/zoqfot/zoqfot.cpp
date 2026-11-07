@@ -67,7 +67,7 @@ static RaceDesc zoqfotpik_desc =
 	{
 		{/* ShipInfoDesc */
 		 "stinger",
-		 FiresFore,
+		 ShipFlags::FiresFore,
 		 6, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -168,7 +168,7 @@ static void spit_preprocess(Element* ElementPtr)
 
 		/* turn_wait is abused here to control the animation speed. */
 		ElementPtr->turn_wait = SpitWait;
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 }
 
@@ -184,7 +184,7 @@ static uint16_t initialize_spit(Element* ShipPtr, ElementHandle SpitArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = ZoqfotpikOffset();
 	MissileBlock.speed = DisplayToWorld(
 							 ResScale(GetFrameCount(StarShipPtr->RaceDescPtr->ship_data.weapon[0])))
@@ -232,7 +232,7 @@ static void tongue_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 	StarShipPtr->special_counter -= ElementPtr0->turn_wait;
 	ElementPtr0->turn_wait = 0;
-	ElementPtr0->state_flags |= Nonsolid;
+	ElementPtr0->state_flags |= ElementFlags::Nonsolid;
 }
 
 static void spawn_tongue(Element* ElementPtr)
@@ -246,7 +246,7 @@ static void spawn_tongue(Element* ElementPtr)
 	TongueBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 	TongueBlock.face = TongueBlock.index = StarShipPtr->ShipFacing;
 	TongueBlock.sender = ElementPtr->playerNr;
-	TongueBlock.flags = IgnoreSimilar;
+	TongueBlock.flags = ElementFlags::IgnoreSimilar;
 	TongueBlock.pixoffs = 0;
 	TongueBlock.speed = TongueSpeed;
 	TongueBlock.hit_points = TongueHits;
@@ -262,7 +262,7 @@ static void spawn_tongue(Element* ElementPtr)
 		LockElement(Tongue, &TonguePtr);
 		TonguePtr->postprocess_func = tongue_postprocess;
 		TonguePtr->collision_func = tongue_collision;
-		if (ElementPtr->state_flags & PlayerShip)
+		if (testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip))
 		{
 			TonguePtr->turn_wait = StarShipPtr->special_counter;
 		}
@@ -312,7 +312,7 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 	bool GiveTongueJob {false};
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 
 		ObjectEvaluation* lpEnemyEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 		if (lpEnemyEvalDesc->ObjectPtr
@@ -334,7 +334,7 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 					- ShipPtr->next.location.y;
 			if (StarShipPtr->ShipFacing == NormalizeFacing(AngleToFacing(ARCTAN(delta_x, delta_y))))
 			{
-				StarShipPtr->ship_input_state |= SpecialFlag;
+				StarShipPtr->ship_input_state |= StatusFlags::Special;
 			}
 		}
 	}
@@ -345,7 +345,7 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 
 	if (StarShipPtr->weapon_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~WeaponFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 		if (!GiveTongueJob)
 		{
 			ObjectsOfConcern += ConcernCounter;
@@ -363,7 +363,7 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 					&& ship_weapons(ShipPtr,
 									ObjectsOfConcern->ObjectPtr, DisplayToWorld(ResScale(20))))
 				{
-					StarShipPtr->ship_input_state |= WeaponFlag;
+					StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 					break;
 				}
 			}
@@ -376,7 +376,7 @@ static void zoqfotpik_postprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{

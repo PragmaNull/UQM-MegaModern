@@ -139,7 +139,7 @@ static void PreProcess(Element* ElementPtr)
 			Untarget(ElementPtr);
 		}
 
-		ElementPtr->state_flags |= Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Disappearing;
 		if (ElementPtr->death_func)
 		{
 			(*ElementPtr->death_func)(ElementPtr);
@@ -147,30 +147,30 @@ static void PreProcess(Element* ElementPtr)
 	}
 
 	state_flags = ElementPtr->state_flags;
-	if (!(state_flags & Disappearing))
+	if (!(testFlag(state_flags, ElementFlags::Disappearing)))
 	{
-		if (state_flags & Appearing)
+		if (testFlag(state_flags, ElementFlags::Appearing))
 		{
 			SetUpElement(ElementPtr);
 
-			if (state_flags & PlayerShip)
+			if (testFlag(state_flags, ElementFlags::PlayerShip))
 			{
-				state_flags &= ~Appearing; /* want to preprocess ship */
+				state_flags &= ~ElementFlags::Appearing; /* want to preprocess ship */
 			}
 		}
 
-		if (ElementPtr->preprocess_func && !(state_flags & Appearing))
+		if (ElementPtr->preprocess_func && !(testFlag(state_flags, ElementFlags::Appearing)))
 		{
 			(*ElementPtr->preprocess_func)(ElementPtr);
 
 			state_flags = ElementPtr->state_flags;
-			if ((state_flags & Changing) && CollidingElement(ElementPtr))
+			if ((testFlag(state_flags, ElementFlags::Changing)) && CollidingElement(ElementPtr))
 			{
 				InitIntersectFrame(ElementPtr);
 			}
 		}
 
-		if (!(state_flags & IgnoreVelocity))
+		if (!(testFlag(state_flags, ElementFlags::IgnoreVelocity)))
 		{
 			int16_t delta_x {};
 			int16_t delta_y {};
@@ -179,7 +179,7 @@ static void PreProcess(Element* ElementPtr)
 									  &delta_x, &delta_y, 1);
 			if (delta_x != 0 || delta_y != 0)
 			{
-				state_flags |= Changing;
+				state_flags |= ElementFlags::Changing;
 				ElementPtr->next.location.x += delta_x;
 				ElementPtr->next.location.y += delta_y;
 			}
@@ -190,14 +190,14 @@ static void PreProcess(Element* ElementPtr)
 			InitIntersectEndPoint(ElementPtr);
 		}
 
-		if (state_flags & FiniteLife)
+		if (testFlag(state_flags, ElementFlags::FiniteLife))
 		{
 			--ElementPtr->life_span;
 		}
 	}
 
-	ElementPtr->state_flags = (state_flags & ~(PostProcessFlag | Collision))
-							| PreProcessFlag;
+	ElementPtr->state_flags = (state_flags & ~(ElementFlags::PostProcess | ElementFlags::Collision))
+							| ElementFlags::PreProcess;
 }
 
 static void PostProcess(Element* ElementPtr)
@@ -215,8 +215,8 @@ static void PostProcess(Element* ElementPtr)
 	}
 
 	ElementPtr->state_flags = (ElementPtr->state_flags
-							   & ~(PreProcessFlag | Changing | Appearing))
-							| PostProcessFlag;
+							   & ~(ElementFlags::PreProcess | ElementFlags::Changing | ElementFlags::Appearing))
+							| ElementFlags::PostProcess;
 }
 
 static uint16_t CalcReduction(int32_t dx, int32_t dy)
@@ -416,8 +416,8 @@ static ViewState CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
 }
 
 
-static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* ElementPtr,
-									  TimeValue min_time, ElementFlags process_flags)
+static bool ProcessCollisions(ElementHandle hSuccElement, Element* ElementPtr,
+							  TimeValue min_time, ElementFlags process_flags)
 {
 	ElementHandle hTestElement {};
 
@@ -426,7 +426,7 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 		Element* TestElementPtr {};
 
 		LockElement(hTestElement, &TestElementPtr);
-		if (!(TestElementPtr->state_flags & process_flags))
+		if (!testFlag(TestElementPtr->state_flags, process_flags))
 		{
 			PreProcess(TestElementPtr);
 		}
@@ -445,10 +445,10 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 
 			state_flags = ElementPtr->state_flags;
 			ElementFlags test_state_flags {TestElementPtr->state_flags};
-			if (((state_flags | test_state_flags) & FiniteLife)
-				&& (((state_flags & Appearing)
+			if (testFlag(state_flags | test_state_flags, ElementFlags::FiniteLife)
+				&& ((testFlag(state_flags, ElementFlags::Appearing)
 					 && ElementPtr->life_span > 1)
-					|| ((test_state_flags & Appearing)
+					|| ((testFlag(test_state_flags, ElementFlags::Appearing))
 						&& TestElementPtr->life_span > 1)))
 			{
 				time_val = 0;
@@ -458,13 +458,13 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 				while ((time_val = DrawablesIntersect(&ElementPtr->IntersectControl,
 													  &TestElementPtr->IntersectControl, min_time))
 						   == 1
-					   && !((state_flags | test_state_flags) & FiniteLife))
+					   && !testFlag(state_flags | test_state_flags, ElementFlags::FiniteLife))
 				{
 #ifdef DEBUG_PROCESS
 					uqm::log::debug("BAD NEWS {:#x} <--> {:#x}", ElementPtr,
 									TestElementPtr);
 #endif /* DEBUG_PROCESS */
-					if (state_flags & Collision)
+					if (testFlag(state_flags, ElementFlags::Collision))
 					{
 						InitIntersectEndPoint(TestElementPtr);
 						TestElementPtr->IntersectControl.IntersectStamp.origin =
@@ -483,7 +483,7 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 						if (NextFrame == CurFrame
 							&& TestNextFrame == TestCurFrame)
 						{
-							if (test_state_flags & Appearing)
+							if (testFlag(test_state_flags, ElementFlags::Appearing))
 							{
 								do_damage(TestElementPtr, TestElementPtr->hit_points);
 								if (TestElementPtr->pParent) /* untarget this dead Element */
@@ -491,13 +491,13 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 									Untarget(TestElementPtr);
 								}
 
-								TestElementPtr->state_flags |= (Collision | Disappearing);
+								TestElementPtr->state_flags |= (ElementFlags::Collision | ElementFlags::Disappearing);
 								if (TestElementPtr->death_func)
 								{
 									(*TestElementPtr->death_func)(TestElementPtr);
 								}
 							}
-							if (state_flags & Appearing)
+							if (testFlag(state_flags, ElementFlags::Appearing))
 							{
 								do_damage(ElementPtr, ElementPtr->hit_points);
 								if (ElementPtr->pParent) /* untarget this dead Element */
@@ -505,14 +505,14 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 									Untarget(ElementPtr);
 								}
 
-								ElementPtr->state_flags |= (Collision | Disappearing);
+								ElementPtr->state_flags |= (ElementFlags::Collision | ElementFlags::Disappearing);
 								if (ElementPtr->death_func)
 								{
 									(*ElementPtr->death_func)(ElementPtr);
 								}
 
 								UnlockElement(hTestElement);
-								return (Collision);
+								return true;
 							}
 
 							time_val = 0;
@@ -554,7 +554,7 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 							InitIntersectStartPoint(ElementPtr);
 							InitIntersectEndPoint(ElementPtr);
 							InitIntersectFrame(ElementPtr);
-							if (state_flags & PlayerShip)
+							if (testFlag(state_flags, ElementFlags::PlayerShip))
 							{
 								Starship* StarShipPtr {};
 
@@ -567,7 +567,7 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 							InitIntersectStartPoint(TestElementPtr);
 							InitIntersectEndPoint(TestElementPtr);
 							InitIntersectFrame(TestElementPtr);
-							if (test_state_flags & PlayerShip)
+							if (testFlag(test_state_flags, ElementFlags::PlayerShip))
 							{
 								Starship* StarShipPtr {};
 
@@ -602,12 +602,12 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 				InitIntersectEndPoint(ElementPtr);
 				InitIntersectEndPoint(TestElementPtr);
 				if (time_val == 1
-					|| (((state_flags & Collision)
+					|| (((testFlag(state_flags, ElementFlags::Collision))
 						 || !ProcessCollisions(hSuccElement, ElementPtr,
 											   time_val - 1, process_flags))
-						&& ((test_state_flags & Collision)
+						&& ((testFlag(test_state_flags, ElementFlags::Collision))
 							|| !ProcessCollisions(
-								!(TestElementPtr->state_flags & Appearing) ?
+								!(testFlag(TestElementPtr->state_flags, ElementFlags::Appearing)) ?
 									GetSuccElement(ElementPtr) :
 									GetHeadElement(),
 								TestElementPtr,
@@ -620,7 +620,7 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 					uqm::log::debug("PROCESSING {:#x} <--> {:#x} at {}",
 									ElementPtr, TestElementPtr, time_val);
 #endif /* DEBUG_PROCESS */
-					if (test_state_flags & PlayerShip)
+					if (testFlag(test_state_flags, ElementFlags::PlayerShip))
 					{
 						(*TestElementPtr->collision_func)(
 							TestElementPtr, &TestSavePt,
@@ -639,9 +639,9 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 							ElementPtr, &SavePt);
 					}
 
-					if (TestElementPtr->state_flags & Collision)
+					if (testFlag(TestElementPtr->state_flags, ElementFlags::Collision))
 					{
-						if (!(test_state_flags & Collision))
+						if (!(testFlag(test_state_flags, ElementFlags::Collision)))
 						{
 							TestElementPtr->IntersectControl.IntersectStamp.origin =
 								TestSavePt;
@@ -653,9 +653,9 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 						}
 					}
 
-					if (ElementPtr->state_flags & Collision)
+					if (testFlag(ElementPtr->state_flags, ElementFlags::Collision))
 					{
-						if (!(state_flags & Collision))
+						if (!(testFlag(state_flags, ElementFlags::Collision)))
 						{
 							ElementPtr->IntersectControl.IntersectStamp.origin =
 								SavePt;
@@ -665,7 +665,7 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 								DisplayToWorld(SavePt.y);
 							InitIntersectEndPoint(ElementPtr);
 
-							if (!(state_flags & FiniteLife) && !(test_state_flags & FiniteLife))
+							if (!(testFlag(state_flags, ElementFlags::FiniteLife)) && !(testFlag(test_state_flags, ElementFlags::FiniteLife)))
 							{
 								collide(ElementPtr, TestElementPtr);
 
@@ -676,14 +676,14 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 							}
 						}
 						UnlockElement(hTestElement);
-						return (Collision);
+						return true;
 					}
 
 					if (!CollidingElement(ElementPtr))
 					{
-						ElementPtr->state_flags |= Collision;
+						ElementPtr->state_flags |= ElementFlags::Collision;
 						UnlockElement(hTestElement);
-						return (Collision);
+						return true;
 					}
 				}
 			}
@@ -692,7 +692,7 @@ static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* Eleme
 		UnlockElement(hTestElement);
 	}
 
-	return (ElementPtr->state_flags & Collision);
+	return ((testFlag(ElementPtr->state_flags, ElementFlags::Collision)));
 }
 
 static ViewState PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
@@ -728,20 +728,20 @@ static ViewState PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 
 		LockElement(hElement, &ElementPtr);
 
-		if (!(ElementPtr->state_flags & PreProcessFlag))
+		if (!(testFlag(ElementPtr->state_flags, ElementFlags::PreProcess)))
 		{
 			PreProcess(ElementPtr);
 		}
 		ElementHandle hNextElement {GetSuccElement(ElementPtr)};
 
 		if (CollidingElement(ElementPtr)
-			&& !(ElementPtr->state_flags & Collision))
+			&& !(testFlag(ElementPtr->state_flags, ElementFlags::Collision)))
 		{
 			ProcessCollisions(hNextElement, ElementPtr,
-							  MaxTimeValue, PreProcessFlag);
+							  MaxTimeValue, ElementFlags::PreProcess);
 		}
 
-		if (ElementPtr->state_flags & PlayerShip)
+		if (testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip))
 		{
 			ships_alive++;
 			if (max_reduction > opt_max_zoom_out
@@ -916,18 +916,18 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 		LockElement(hElement, &ElementPtr);
 
 		state_flags = ElementPtr->state_flags;
-		if (state_flags & PreProcessFlag)
+		if (testFlag(state_flags, ElementFlags::PreProcess))
 		{
-			if (!(state_flags & Collision))
+			if (!(testFlag(state_flags, ElementFlags::Collision)))
 			{
-				ElementPtr->state_flags &= ~DefyPhysics;
+				ElementPtr->state_flags &= ~ElementFlags::DefyPhysics;
 			}
 			else
 			{
-				ElementPtr->state_flags &= ~Collision;
+				ElementPtr->state_flags &= ~ElementFlags::Collision;
 			}
 
-			if (state_flags & PostProcessFlag)
+			if (testFlag(state_flags, ElementFlags::PostProcess))
 			{
 				delta.x = 0;
 				delta.y = 0;
@@ -946,17 +946,17 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 				Element* PostElementPtr {};
 
 				LockElement(hPostElement, &PostElementPtr);
-				if (!(PostElementPtr->state_flags & PreProcessFlag))
+				if (!(testFlag(PostElementPtr->state_flags, ElementFlags::PreProcess)))
 				{
 					PreProcess(PostElementPtr);
 				}
 				hNextElement = GetSuccElement(PostElementPtr);
 
 				if (CollidingElement(PostElementPtr)
-					&& !(PostElementPtr->state_flags & Collision))
+					&& !(testFlag(PostElementPtr->state_flags, ElementFlags::Collision)))
 				{
 					ProcessCollisions(GetHeadElement(), PostElementPtr,
-									  MaxTimeValue, PreProcessFlag | PostProcessFlag);
+									  MaxTimeValue, ElementFlags::PreProcess | ElementFlags::PostProcess);
 				}
 				UnlockElement(hPostElement);
 				hPostElement = hNextElement;
@@ -971,7 +971,7 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 			state_flags = ElementPtr->state_flags;
 		}
 
-		if (state_flags & Disappearing)
+		if (testFlag(state_flags, ElementFlags::Disappearing))
 		{
 			hNextElement = GetSuccElement(ElementPtr);
 			UnlockElement(hElement);
@@ -982,7 +982,7 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 		{
 			const PrimitiveType ObjType {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
 			if (view_state != ViewState::Stable
-				|| (state_flags & (Appearing | Changing)))
+				|| (testFlag(state_flags, (ElementFlags::Appearing | ElementFlags::Changing))))
 			{
 				GfxPoint next;
 
@@ -1012,7 +1012,7 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 					if (ObjType == PrimitiveType::Stamp || ObjType == PrimitiveType::StampFill)
 					{
 						if (view_state == ViewState::Change
-							|| (state_flags & (Appearing | Changing)))
+							|| (testFlag(state_flags, (ElementFlags::Appearing | ElementFlags::Changing))))
 						{
 							uint16_t index {};
 							uint16_t scale = GscaleIdentity;

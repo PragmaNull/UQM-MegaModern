@@ -305,7 +305,7 @@ void object_animation(Element* ElementPtr)
 
 	Primitive* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (GetPrimType(pPrim) == PrimitiveType::StampFill
-		&& !((ElementPtr->state_flags & FiniteLife)
+		&& !((testFlag(ElementPtr->state_flags, ElementFlags::FiniteLife))
 			 && ElementPtr->mass_points == LanderEvent::EarthquakeDisaster))
 	{
 		Color c;
@@ -341,7 +341,7 @@ void object_animation(Element* ElementPtr)
 		pPrim->Object.Stamp.frame =
 			IncFrameIndex(pPrim->Object.Stamp.frame);
 
-		if (ElementPtr->state_flags & FiniteLife)
+		if (testFlag(ElementPtr->state_flags, ElementFlags::FiniteLife))
 		{
 			/* A natural disaster */
 			if (ElementPtr->mass_points == DeathExplosion)
@@ -559,7 +559,7 @@ void object_animation(Element* ElementPtr)
 		}
 	}
 
-	if ((ElementPtr->state_flags & FiniteLife)
+	if ((testFlag(ElementPtr->state_flags, ElementFlags::FiniteLife))
 		&& ElementPtr->mass_points == DeathExplosion
 		&& GetSuccLink(DisplayLinks) != ElementPtr->PrimIndex)
 	{
@@ -785,7 +785,7 @@ static bool pickupNode(PlanetsideDesc* pPSD, uint16_t NumRetrieved,
 
 				// Notify the engine that the scan screen gfx should be
 				// updated.
-				ElementPtr->state_flags |= Changing;
+				ElementPtr->state_flags |= ElementFlags::Changing;
 				uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
 
 				// Change the surface screen gfx.
@@ -862,7 +862,7 @@ static void ExplodeCritter(Element* ElementPtr)
 		LockElement(hExplosionElement, &ExplosionElementPtr);
 
 		ExplosionElementPtr->mass_points = DeathExplosion;
-		ExplosionElementPtr->state_flags = FiniteLife;
+		ExplosionElementPtr->state_flags = ElementFlags::FiniteLife;
 		ExplosionElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 		ExplosionElementPtr->next.location = ElementPtr->next.location;
 		ExplosionElementPtr->preprocess_func = object_animation;
@@ -888,7 +888,7 @@ static void ExplodeCritter(Element* ElementPtr)
 		PlaySound(GetSound(LanderSounds, LanderEvent::LanderDestroyed),
 				  NotPositional(), nullptr, GameSoundPriority + 1);
 
-		ElementPtr->state_flags |= Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Disappearing;
 		// JMS: Delete the critter frame
 		ElementPtr->mass_points = 0;
 		// JMS: Make sure critter/explosion doesn't give biodata.
@@ -1033,7 +1033,7 @@ static void CheckObjectCollision(uint16_t index)
 
 			if (&DisplayArray[ElementPtr->PrimIndex] == pLanderPrim)
 			{
-				ElementPtr->state_flags |= Disappearing;
+				ElementPtr->state_flags |= ElementFlags::Disappearing;
 				UnlockElement(hElement);
 				continue;
 			}
@@ -1058,7 +1058,7 @@ static void CheckObjectCollision(uint16_t index)
 						break;
 					}
 
-					if (ElementPtr->state_flags & FiniteLife)
+					if (testFlag(ElementPtr->state_flags, ElementFlags::FiniteLife))
 					{
 						/* A natural disaster */
 						scan = ElementPtr->mass_points;
@@ -1108,7 +1108,7 @@ static void CheckObjectCollision(uint16_t index)
 
 					NumRetrieved = ElementPtr->mass_points;
 				}
-				else if (ElementPtr->state_flags & FiniteLife)
+				else if (testFlag(ElementPtr->state_flags, ElementFlags::FiniteLife))
 				{
 					/* Collision of a stun bolt with a natural disaster */
 					UnlockElement(hElement);
@@ -1167,7 +1167,7 @@ static void CheckObjectCollision(uint16_t index)
 					setNodeRetrieved(&pSolarSysState->SysInfo.PlanetInfo,
 									 static_cast<ScanType>(scan), which_node);
 					uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
-					ElementPtr->state_flags |= Disappearing;
+					ElementPtr->state_flags |= ElementFlags::Disappearing;
 				}
 				UnlockElement(hElement);
 			}
@@ -1245,7 +1245,7 @@ static void AddLightning(void)
 		LockElement(hLightningElement, &LightningElementPtr);
 
 		LightningElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
-		LightningElementPtr->state_flags = FiniteLife;
+		LightningElementPtr->state_flags = ElementFlags::FiniteLife;
 		LightningElementPtr->preprocess_func = lightning_process;
 		if (uqm::random().next() % 100 >= 25)
 		{
@@ -1309,7 +1309,7 @@ static ElementHandle AddGroundDisaster(uint16_t which_disaster)
 		Primitive* pPrim {&DisplayArray[GroundDisasterElementPtr->PrimIndex]};
 		GroundDisasterElementPtr->mass_points = which_disaster;
 		GroundDisasterElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
-		GroundDisasterElementPtr->state_flags = FiniteLife;
+		GroundDisasterElementPtr->state_flags = ElementFlags::FiniteLife;
 		GroundDisasterElementPtr->preprocess_func = object_animation;
 
 		const uint32_t rand_val {uqm::random().next()};
@@ -1403,7 +1403,7 @@ static void BuildObjectList(void)
 		LockElement(hElement, &ElementPtr);
 
 		if (ElementPtr->life_span == 0
-			|| (ElementPtr->state_flags & Disappearing))
+			|| (testFlag(ElementPtr->state_flags, ElementFlags::Disappearing)))
 		{
 			hNextElement = GetSuccElement(ElementPtr);
 			UnlockElement(hElement);
@@ -1411,7 +1411,7 @@ static void BuildObjectList(void)
 			FreeElement(hElement);
 			continue;
 		}
-		else if (ElementPtr->state_flags & FiniteLife)
+		else if (testFlag(ElementPtr->state_flags, ElementFlags::FiniteLife))
 		{
 			--ElementPtr->life_span;
 		}
@@ -1454,7 +1454,7 @@ static void BuildObjectList(void)
 			}
 
 			// XXX: Appearing flag is set by scan.c for scanned blips
-			if (ElementPtr->state_flags & Appearing)
+			if (testFlag(ElementPtr->state_flags, ElementFlags::Appearing))
 			{ // Update the location of a moving object on the scan map
 				ElementPtr->current.location.x =
 					ElementPtr->next.location.x >> MagShift;
@@ -1954,7 +1954,7 @@ static void LanderFire(int16_t facing)
 	WeaponElementPtr->playerNr = *PlanetsidePlayer::Human;
 	WeaponElementPtr->mass_points = 1;
 	WeaponElementPtr->life_span = 12;
-	WeaponElementPtr->state_flags = FiniteLife;
+	WeaponElementPtr->state_flags = ElementFlags::FiniteLife;
 	WeaponElementPtr->next.location = curLanderLoc;
 
 	SetPrimType(&DisplayArray[WeaponElementPtr->PrimIndex], PrimitiveType::Stamp);
@@ -2043,7 +2043,7 @@ static void put_node(Element* ElementPtr)
 	NodeElementPtr->next.location.y =
 		NodeElementPtr->current.location.y << MagShift;
 
-	NodeElementPtr->state_flags |= Appearing;
+	NodeElementPtr->state_flags |= ElementFlags::Appearing;
 	uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
 
 	UnlockElement(hNodeElement);
@@ -2085,7 +2085,7 @@ static void spawn_node(Element* ElementPtr)
 		NodeElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 		NodeElementPtr->mass_points = 1;
 		NodeElementPtr->life_span = 1;
-		NodeElementPtr->state_flags = FiniteLife | Nonsolid;
+		NodeElementPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 		NodeElementPtr->next.location.x = ElementPtr->next.location.x;
 		NodeElementPtr->next.location.y = ElementPtr->next.location.y - arc;
 
@@ -2139,7 +2139,7 @@ static void LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amo
 	NodeElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 	NodeElementPtr->mass_points = 1;
 	NodeElementPtr->life_span = dist;
-	NodeElementPtr->state_flags = FiniteLife | Nonsolid | Appearing;
+	NodeElementPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid | ElementFlags::Appearing;
 	NodeElementPtr->next.location = curLanderLoc;
 	NodeElementPtr->cycle = which_node;
 	NodeElementPtr->turn_wait = type;
@@ -2215,7 +2215,7 @@ static bool LanderExplosion(void)
 
 	ExplosionElementPtr->playerNr = *PlanetsidePlayer::Human;
 	ExplosionElementPtr->mass_points = DeathExplosion;
-	ExplosionElementPtr->state_flags = FiniteLife;
+	ExplosionElementPtr->state_flags = ElementFlags::FiniteLife;
 	ExplosionElementPtr->next.location = curLanderLoc;
 	ExplosionElementPtr->preprocess_func = object_animation;
 	// Animation advances every 3rd frame
@@ -2813,7 +2813,7 @@ void PlanetSide(GfxPoint planetLoc)
 
 	landerInputState.Initialized = false;
 	landerInputState.InputFunc = DoPlanetSide;
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 
 	DoInput(&landerInputState, false);
 
@@ -2895,7 +2895,7 @@ void PlanetSide(GfxPoint planetLoc)
 
 			LockElement(hElement, &ElementPtr);
 			hNextElement = _GetSuccLink(ElementPtr);
-			if (ElementPtr->state_flags & FiniteLife)
+			if (testFlag(ElementPtr->state_flags, ElementFlags::FiniteLife))
 			{
 				UnlockElement(hElement);
 
@@ -2909,7 +2909,7 @@ void PlanetSide(GfxPoint planetLoc)
 	}
 
 	ZeroVelocityComponents(&uqm::flagship().velocity);
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 }
 
 static void DrawMinDatText(void)

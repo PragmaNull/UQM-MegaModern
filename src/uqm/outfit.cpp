@@ -636,7 +636,7 @@ static bool DoInstallModule(MenuState* pMS)
 	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
 	const bool motion {PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuRight] || PulsedInputState.menu[*MenuKey::MenuUp] || PulsedInputState.menu[*MenuKey::MenuDown]};
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	int16_t FirstItem {0};
 	ModuleType NewState {static_cast<ModuleType>(pMS->CurState)};
@@ -1473,11 +1473,11 @@ ExitOutfit:
 		switch (pMS->CurState)
 		{
 			case *OutfitMenuItem::DoFuel:
-				SetMenuSounds(MenuSoundArrows,
-							  MenuSoundPage | MenuSoundAction);
+				SetMenuSounds(MenuSoundFlags::Arrows,
+							  MenuSoundFlags::Page | MenuSoundFlags::Action);
 				break;
 			default:
-				SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+				SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 				break;
 		}
 

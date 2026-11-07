@@ -1479,16 +1479,16 @@ static void DMS_SetMode(MenuState* pMS, DmsMode mode)
 	switch (mode)
 	{
 		case DmsMode::Navigate:
-			SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+			SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 			DMS_FlashActiveShip(pMS);
 			break;
 		case DmsMode::AddEscort:
-			SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+			SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 			SetFlashRect(DosBool(SfrMenu3do(), SfrMenuNon()), false);
 			break;
 		case DmsMode::EditCrew:
-			SetMenuSounds(MenuSoundArrows,
-						  MenuSoundPage | MenuSoundAction);
+			SetMenuSounds(MenuSoundFlags::Arrows,
+						  MenuSoundFlags::Page | MenuSoundFlags::Action);
 			if (uqm::highNibble(pMS->CurState))
 			{
 				// Enter crew editing mode for the flagship.
@@ -1501,7 +1501,7 @@ static void DMS_SetMode(MenuState* pMS, DmsMode mode)
 			}
 			break;
 		case DmsMode::Exit:
-			SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+			SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 			SetFlashRect(SfrMenu3do(), false);
 			break;
 	}
@@ -2610,7 +2610,7 @@ bool DoShipyard(MenuState* pMS)
 
 	FillHangarX();
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	if (!pMS->Initialized)
 	{
 		pMS->InputFunc = DoShipyard;

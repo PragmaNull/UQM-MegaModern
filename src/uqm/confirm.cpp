@@ -278,7 +278,7 @@ void DoPopupWindow(const char* msg)
 	// There was a SetSystemRect(&windowRect) call which we don't need anymore
 
 	GetMenuSounds(&s0, &s1);
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
 
 	state.InputFunc = DoPopup;

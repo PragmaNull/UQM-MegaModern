@@ -1335,7 +1335,7 @@ static int16_t FindRadius(GfxPoint shipLoc, int16_t fromRadius)
 	return fromRadius;
 }
 
-static uint16_t flagship_inertial_thrust(uint16_t CurrentAngle)
+static StatusFlags flagship_inertial_thrust(uint16_t CurrentAngle)
 {
 	int16_t max_ship_speed {};
 	int16_t cur_delta_x {};
@@ -1350,7 +1350,7 @@ static uint16_t flagship_inertial_thrust(uint16_t CurrentAngle)
 		&& cur_delta_x == Cosine(CurrentAngle, max_ship_speed)
 		&& cur_delta_y == Sine(CurrentAngle, max_ship_speed))
 	{ // already maxed-out acceleration
-		return (ShipAtMaxSpeed);
+		return (StatusFlags::ShipAtMaxSpeed);
 	}
 	else
 	{
@@ -1372,7 +1372,7 @@ static uint16_t flagship_inertial_thrust(uint16_t CurrentAngle)
 			SetVelocityComponents(VelocityPtr,
 								  Cosine(CurrentAngle, max_ship_speed),
 								  Sine(CurrentAngle, max_ship_speed));
-			return (ShipAtMaxSpeed);
+			return (StatusFlags::ShipAtMaxSpeed);
 		}
 		else
 		{ // maxed-out acceleration at an angle to current travel vector
@@ -1394,13 +1394,13 @@ static uint16_t flagship_inertial_thrust(uint16_t CurrentAngle)
 				SetVelocityComponents(VelocityPtr,
 									  Cosine(CurrentAngle, max_ship_speed),
 									  Sine(CurrentAngle, max_ship_speed));
-				return (ShipAtMaxSpeed);
+				return (StatusFlags::ShipAtMaxSpeed);
 			}
 
 			*VelocityPtr = v;
 		}
 
-		return 0;
+		return StatusFlags::None;
 	}
 }
 
@@ -2862,7 +2862,7 @@ void ExploreSolarSys(void)
 #endif
 
 	InitSolarSys();
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 	SolarSysState.InputFunc = DoIpFlight;
 
 	DoInput(&SolarSysState, false);
@@ -3196,7 +3196,7 @@ static void SolarSysMenu(void)
 	DrawStatusMessage(nullptr);
 	SetFlashRect(SfrMenu3do(), false);
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	menuState.InputFunc = DoSolarSysMenu;
 	DoInput(&menuState, true);
 
@@ -3214,13 +3214,13 @@ static bool DoIpFlight(SolarSystemState* pSS)
 	if (pSS->InOrbit)
 	{ // CheckShipLocation() or InitSolarSys() sent us to orbital
 		EnterPlanetOrbit();
-		SetMenuSounds(MenuSoundNone, MenuSoundNone);
+		SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 		pSS->InOrbit = false;
 	}
 	else if (!NewGameInit && (cancel || LastActivity == ActivityFlag::CheckLoad))
 	{
 		SolarSysMenu();
-		SetMenuSounds(MenuSoundNone, MenuSoundNone);
+		SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 	}
 	else if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
@@ -3244,10 +3244,10 @@ static bool DoIpFlight(SolarSystemState* pSS)
 
 		if (NewGameInit)
 		{
-			SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+			SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 			SettingsMenu(false);
 			SolarSysMenu();
-			SetMenuSounds(MenuSoundNone, MenuSoundNone);
+			SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 		}
 	}
 

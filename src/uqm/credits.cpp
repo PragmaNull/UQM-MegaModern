@@ -747,7 +747,7 @@ void Credits(bool WithOuttakes)
 		cis.AllowCancel = !WithOuttakes;
 		cis.CloseWhenDone = !WithOuttakes;
 		cis.AllowSpeedChange = true;
-		SetMenuSounds(MenuSoundNone, MenuSoundNone);
+		SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 		DoInput(&cis, true);
 	}
 

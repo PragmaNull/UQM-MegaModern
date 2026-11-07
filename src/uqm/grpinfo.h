@@ -33,12 +33,16 @@ inline constexpr auto NumSavedBattleGroups {64};
 
 using IpGroupHandle = LinkHandle;
 
-using IpFlags = uint8_t;
 
-inline constexpr auto CanTurn {1 << 0};
-inline constexpr auto Rotates {1 << 1};
-inline constexpr auto IsProbe {1 << 2};
-inline constexpr auto IsXform {1 << 3};
+enum class IpFlags : uint8_t
+{
+	None = 0,
+	CanTurn = 1 << 0,
+	Rotates = 1 << 1,
+	IsProbe = 1 << 2,
+	IsXform = 1 << 3,
+};
+ENUM_BITWISE_OPS(IpFlags)
 
 struct InterplanetaryGroup
 {

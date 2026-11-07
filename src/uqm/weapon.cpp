@@ -58,7 +58,7 @@ ElementHandle initialize_laser(LaserDesc* pLaserBlock)
 		LaserElementPtr->playerNr = pLaserBlock->sender;
 		LaserElementPtr->hit_points = 1;
 		LaserElementPtr->mass_points = 1;
-		LaserElementPtr->state_flags = Appearing | FiniteLife
+		LaserElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife
 									 | pLaserBlock->flags;
 		LaserElementPtr->life_span = LaserLife;
 		LaserElementPtr->collision_func = weapon_collision_cb;
@@ -100,7 +100,7 @@ ElementHandle initialize_missile(MissileDesc* pMissileBlock)
 		MissileElementPtr->hit_points = (uint8_t)pMissileBlock->hit_points;
 		MissileElementPtr->mass_points = (uint8_t)pMissileBlock->damage;
 		MissileElementPtr->playerNr = pMissileBlock->sender;
-		MissileElementPtr->state_flags = Appearing | FiniteLife
+		MissileElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife
 									   | pMissileBlock->flags;
 		MissileElementPtr->life_span = pMissileBlock->life;
 		SetPrimType(&DisplayArray[MissileElementPtr->PrimIndex], PrimitiveType::Stamp);
@@ -137,14 +137,14 @@ ElementHandle weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 	int16_t damage {};
 	ElementHandle hBlastElement {};
 
-	if (WeaponElementPtr->state_flags & Collision) /* if already did effect */
+	if (testFlag(WeaponElementPtr->state_flags, ElementFlags::Collision)) /* if already did effect */
 	{
 		return ((ElementHandle)0);
 	}
 
 	damage = (int16_t)WeaponElementPtr->mass_points;
 	if (damage
-		&& ((HitElementPtr->state_flags & FiniteLife)
+		&& ((testFlag(HitElementPtr->state_flags, ElementFlags::FiniteLife))
 			|| HitElementPtr->life_span == NormalLife))
 #ifdef NEVER
 			&&
@@ -157,15 +157,14 @@ ElementHandle weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 				do_damage(HitElementPtr, damage);
 				if (HitElementPtr->hit_points)
 				{
-					WeaponElementPtr->state_flags |= Collision;
+					WeaponElementPtr->state_flags |= ElementFlags::Collision;
 				}
 			}
 
-	if (!(HitElementPtr->state_flags & FiniteLife)
+	if (!(testFlag(HitElementPtr->state_flags, ElementFlags::FiniteLife))
 		|| (!(/* WeaponElementPtr->state_flags
 			& */
-			  HitElementPtr->state_flags
-			  & Collision)
+			  testFlag(HitElementPtr->state_flags, ElementFlags::Collision))
 			&& WeaponElementPtr->hit_points <= HitElementPtr->mass_points))
 	{
 		if (damage)
@@ -182,12 +181,12 @@ ElementHandle weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 		if (GetPrimType(&DisplayArray[WeaponElementPtr->PrimIndex])
 			!= PrimitiveType::Line)
 		{
-			WeaponElementPtr->state_flags |= Disappearing;
+			WeaponElementPtr->state_flags |= ElementFlags::Disappearing;
 		}
 
 		WeaponElementPtr->hit_points = 0;
 		WeaponElementPtr->life_span = 0;
-		WeaponElementPtr->state_flags |= Collision | Nonsolid;
+		WeaponElementPtr->state_flags |= ElementFlags::Collision | ElementFlags::Nonsolid;
 
 		hBlastElement = AllocElement();
 		if (hBlastElement)
@@ -201,7 +200,7 @@ ElementHandle weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 			PutElement(hBlastElement);
 			LockElement(hBlastElement, &BlastElementPtr);
 			BlastElementPtr->playerNr = WeaponElementPtr->playerNr;
-			BlastElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
+			BlastElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 			SetPrimType(&DisplayArray[BlastElementPtr->PrimIndex], PrimitiveType::Stamp);
 
 			BlastElementPtr->current.location.x = DisplayToWorld(pWPt->x);
@@ -346,11 +345,11 @@ int16_t TrackShip(Element* Tracker, uint16_t* pfacing)
 	{
 		LockElement(hShip, &Trackee);
 		hNextShip = GetSuccElement(Trackee);
-		if ((Trackee->state_flags & PlayerShip)
+		if ((testFlag(Trackee->state_flags, ElementFlags::PlayerShip))
 			&& !elementsOfSamePlayer(Trackee, Tracker)
 			&& (!ObjectCloaked(Trackee)
-				|| ((Tracker->state_flags & PlayerShip)
-					&& (Tracker->state_flags & Appearing))))
+				|| ((testFlag(Tracker->state_flags, ElementFlags::PlayerShip))
+					&& (testFlag(Tracker->state_flags, ElementFlags::Appearing)))))
 		{
 			Starship* StarShipPtr; // NOLINT(cppcoreguidelines-init-variables)
 
@@ -363,7 +362,7 @@ CheckTracking:
 				int16_t delta_y {};
 				int16_t delta_facing {};
 
-				if (Tracker->state_flags & PreProcessFlag)
+				if (testFlag(Tracker->state_flags, ElementFlags::PreProcess))
 				{
 					delta_x = Trackee->next.location.x
 							- Tracker->next.location.x;

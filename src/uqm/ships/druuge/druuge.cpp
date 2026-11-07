@@ -59,7 +59,7 @@ static RaceDesc druuge_desc =
 	{
 		{/* ShipInfoDesc */
 		 "mauler",
-		 FiresFore,
+		 ShipFlags::FiresFore,
 		 17, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -132,7 +132,7 @@ static void cannon_collision(Element* ElementPtr0, GfxPoint* pPt0,
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 
-	if ((ElementPtr1->state_flags & PlayerShip)
+	if ((testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 		&& ElementPtr1->crew_level
 		&& !GravityMass(ElementPtr1->mass_points + 1))
 	{
@@ -143,7 +143,7 @@ static void cannon_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		StarShipPtr->cur_status_flags &=
-			~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
+			~(StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed);
 
 		angle = FacingToAngle(
 			GetFrameIndex(ElementPtr0->next.image.frame));
@@ -176,7 +176,7 @@ static uint16_t initialize_cannon(Element* ShipPtr, ElementHandle CannonArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = MissileBlock.face;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = DruugeOffset();
 	MissileBlock.speed = chooseIfHd(MissileSpeed, MissileSpeedHd());
 	MissileBlock.hit_points = MissileHits;
@@ -201,14 +201,14 @@ static uint16_t initialize_cannon(Element* ShipPtr, ElementHandle CannonArray[])
 static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 								uint16_t ConcernCounter)
 {
-	uint16_t ship_flags = 0;
+	ShipFlags ship_flags {};
 	Starship* StarShipPtr {};
 	Starship* EnemyStarShipPtr = nullptr;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
-	if (StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed)
+	if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::ShipBeyondMaxSpeed))
 	{
 		lpEvalDesc->MoveState = MovementState::Entice;
 	}
@@ -218,7 +218,7 @@ static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		ship_flags = EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags;
 		EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags &=
-			~(FiresFore | FiresRight | FiresAft | FiresLeft);
+			~(ShipFlags::FiresFore | ShipFlags::FiresRight | ShipFlags::FiresAft | ShipFlags::FiresLeft);
 
 		lpEvalDesc->MoveState = MovementState::Pursue;
 		if (ShipPtr->thrust_wait == 0)
@@ -232,12 +232,12 @@ static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 		EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags = ship_flags;
 	}
 
-	if (!(StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed)
+	if (!(testFlag(StarShipPtr->cur_status_flags, StatusFlags::ShipBeyondMaxSpeed))
 		&& (lpEvalDesc->which_turn <= 12
 			|| (ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr
 				&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].which_turn <= 6)))
 	{
-		StarShipPtr->ship_input_state |= WeaponFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 		if (ShipPtr->thrust_wait < WeaponWait + 1)
 		{
 			ShipPtr->thrust_wait = WeaponWait + 1;
@@ -245,15 +245,15 @@ static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	}
 
 
-	if ((StarShipPtr->ship_input_state & WeaponFlag)
+	if ((testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon))
 		&& StarShipPtr->RaceDescPtr->ship_info.energy_level < WeaponEnergyCost
 		&& ShipPtr->crew_level > 1)
 	{
-		StarShipPtr->ship_input_state |= SpecialFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Special;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	}
 }
 
@@ -263,14 +263,14 @@ static void druuge_postprocess(Element* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	/* if just fired cannon */
-	if ((StarShipPtr->cur_status_flags & WeaponFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Weapon))
 		&& StarShipPtr->weapon_counter == StarShipPtr->RaceDescPtr->characteristics.weapon_wait)
 	{
 		uint16_t angle {};
 		int32_t cur_delta_x {};
 		int32_t cur_delta_y {};
 
-		StarShipPtr->cur_status_flags &= ~ShipAtMaxSpeed;
+		StarShipPtr->cur_status_flags &= ~StatusFlags::ShipAtMaxSpeed;
 
 		angle = FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle;
 		DeltaVelocityComponents(&ElementPtr->velocity,
@@ -295,14 +295,14 @@ static void druuge_preprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (StarShipPtr->cur_status_flags & SpecialFlag)
+	if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 	{
 		if (StarShipPtr->special_counter
 			|| ElementPtr->crew_level == 1
 			|| StarShipPtr->RaceDescPtr->ship_info.energy_level
 				   == StarShipPtr->RaceDescPtr->ship_info.max_energy)
 		{
-			StarShipPtr->cur_status_flags &= ~SpecialFlag;
+			StarShipPtr->cur_status_flags &= ~StatusFlags::Special;
 		}
 		else
 		{

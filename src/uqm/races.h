@@ -24,6 +24,7 @@
 #include <cstdint>
 
 #include "core/misc/bittricks.h"
+#include "core/stl/array.h"
 #include "core/types/enum.h"
 #include "displist.h"
 #include "element.h"
@@ -43,38 +44,49 @@ inline constexpr auto MaxShipsPerSide {14};
 
 /* ShipInfoDesc.ship_flags - ship specific flags */
 /* bits 0 and 1 are now available */
-inline constexpr auto SeekingWeapon {1 << 2};
-inline constexpr auto SeekingSpecial {1 << 3};
-inline constexpr auto PointDefense {1 << 4};
-/* Ship has some point-defense capabilities */
-inline constexpr auto ImmediateWeapon {1 << 5};
-inline constexpr auto CrewImmune {1 << 6};
-inline constexpr auto FiresFore {1 << 7};
-inline constexpr auto FiresRight {1 << 8};
-inline constexpr auto FiresAft {1 << 9};
-inline constexpr auto FiresLeft {1 << 10};
-inline constexpr auto ShieldDefense {1 << 11};
-inline constexpr auto DontChase {1 << 12};
-inline constexpr auto PlayerCaptain {1 << 13};
+enum class ShipFlags : uint16_t
+{
+	None = 0,
+	SeekingWeapon = 1 << 2,
+	SeekingSpecial = 1 << 3,
+	PointDefense = 1 << 4,
+	// Ship has some point-defense capabilities
+	ImmediateWeapon = 1 << 5,
+	CrewImmune = 1 << 6,
+	FiresFore = 1 << 7,
+	FiresRight = 1 << 8,
+	FiresAft = 1 << 9,
+	FiresLeft = 1 << 10,
+	ShieldDefense = 1 << 11,
+	DontChase = 1 << 12,
+	PlayerCaptain = 1 << 13,
+};
+ENUM_BITWISE_OPS(ShipFlags)
+
+// The flags of the four directions that a ship can fire in, clockwise from the front.
+inline constexpr uqstl::array<ShipFlags, 4> FireDirections {ShipFlags::FiresFore, ShipFlags::FiresRight, ShipFlags::FiresAft, ShipFlags::FiresLeft};
 /* The protagonist himself is on board. He gets a different color. */
 
 
-using StatusFlags = uint16_t;
-
 /* StatusFlags - heat of battle specific flags */
-inline constexpr auto LeftFlag {1 << 0};
-inline constexpr auto RightFlag {1 << 1};
-inline constexpr auto ThrustFlag {1 << 2};
-inline constexpr auto WeaponFlag {1 << 3};
-inline constexpr auto SpecialFlag {1 << 4};
-inline constexpr auto LowOnEnergy {1 << 5};
-inline constexpr auto ShipBeyondMaxSpeed {1 << 6};
-inline constexpr auto ShipAtMaxSpeed {1 << 7};
-inline constexpr auto ShipInGravityWell {1 << 8};
-inline constexpr auto PlayVictoryDitty {1 << 9};
+enum class StatusFlags : uint16_t
+{
+	None = 0,
+	Left = 1 << 0,
+	Right = 1 << 1,
+	Thrust = 1 << 2,
+	Weapon = 1 << 3,
+	Special = 1 << 4,
+	LowOnEnergy = 1 << 5,
+	ShipBeyondMaxSpeed = 1 << 6,
+	ShipAtMaxSpeed = 1 << 7,
+	ShipInGravityWell = 1 << 8,
+	PlayVictoryDitty = 1 << 9,
 
-inline constexpr auto ShofixtiExplosion {1 << 10};
-inline constexpr auto AndrosynCometToggle {1 << 11};
+	ShofixtiExplosion = 1 << 10,
+	AndrosynCometToggle = 1 << 11,
+};
+ENUM_BITWISE_OPS(StatusFlags)
 
 /* These track the old resource package orderings for the ship resource indices */
 enum class SpeciesId
@@ -179,7 +191,7 @@ struct ShipCharacteristics
 struct ShipInfoDesc
 {
 	const char* idStr;
-	uint16_t ship_flags;
+	ShipFlags ship_flags;
 	uint8_t ship_cost;
 
 	uint16_t crew_level;
@@ -284,7 +296,7 @@ struct Starship : ShipBase
 	uint8_t special_counter; // In battle: frames left before special can be used
 	uint8_t energy_counter;	 // In battle: frames left before energy regeneration
 
-	uint8_t ship_input_state;
+	StatusFlags ship_input_state;
 	StatusFlags cur_status_flags;
 	StatusFlags old_status_flags;
 

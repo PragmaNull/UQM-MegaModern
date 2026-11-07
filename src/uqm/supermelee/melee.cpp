@@ -1655,7 +1655,7 @@ static bool DoEdit(MeleeState* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect | MenuSoundDelete);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select | MenuSoundFlags::Delete);
 	if (!pMS->Initialized)
 	{
 		UpdateCurrentShip(pMS);
@@ -2201,7 +2201,7 @@ static bool DoConnectingDialog(MeleeState* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 	if (!pMS->Initialized)
 	{
 		GfxRect r;
@@ -2459,7 +2459,7 @@ bool DoMelee(MeleeState* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	if (!pMS->Initialized)
 	{
 		if (pMS->hMusic)
@@ -2683,7 +2683,7 @@ void Melee(void)
 		}
 
 		menuState.side = 0;
-		SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+		SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 		DoInput(&menuState, true);
 
 		StopMusic();

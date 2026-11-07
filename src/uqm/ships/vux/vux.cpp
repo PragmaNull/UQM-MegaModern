@@ -70,7 +70,7 @@ static RaceDesc vux_desc =
 	{
 		{/* ShipInfoDesc */
 		 "intruder",
-		 FiresFore | SeekingSpecial | ImmediateWeapon,
+		 ShipFlags::FiresFore | ShipFlags::SeekingSpecial | ShipFlags::ImmediateWeapon,
 		 12, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -155,13 +155,13 @@ static void limpet_preprocess(Element* ElementPtr)
 	ElementPtr->next.image.frame =
 		IncFrameIndex(ElementPtr->next.image.frame);
 
-	ElementPtr->state_flags |= Changing;
+	ElementPtr->state_flags |= ElementFlags::Changing;
 }
 
 static void limpet_collision(Element* ElementPtr0, GfxPoint* pPt0,
 							 Element* ElementPtr1, GfxPoint* pPt1)
 {
-	if (ElementPtr1->state_flags & PlayerShip)
+	if (testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 	{
 		GfxStamp s;
 		Starship* StarShipPtr {};
@@ -215,7 +215,7 @@ static void limpet_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 	ElementPtr0->hit_points = 0;
 	ElementPtr0->life_span = 0;
-	ElementPtr0->state_flags |= Collision | Disappearing;
+	ElementPtr0->state_flags |= ElementFlags::Collision | ElementFlags::Disappearing;
 
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
@@ -231,7 +231,7 @@ static void spawn_limpets(Element* ElementPtr)
 	MissileBlock.face = StarShipPtr->ShipFacing + HalfCircle;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ElementPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = LimpetOffset();
 	MissileBlock.speed = LimpetSpeed();
 	MissileBlock.hit_points = LimpetHits;
@@ -268,7 +268,7 @@ static uint16_t initialize_horrific_laser(Element* ShipPtr, ElementHandle LaserA
 	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), LaserRange());
 	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), LaserRange());
 	LaserBlock.sender = ShipPtr->playerNr;
-	LaserBlock.flags = IgnoreSimilar;
+	LaserBlock.flags = ElementFlags::IgnoreSimilar;
 	LaserBlock.pixoffs = VuxOffset();
 	LaserBlock.color = BuildColor(MakeRgb15(0x0A, 0x1F, 0x0A), 0x0A);
 	LaserArray[0] = initialize_laser(&LaserBlock);
@@ -286,10 +286,8 @@ static void vux_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 	if (ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr != 0
 		&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState == MovementState::Entice)
 	{
-		if ((ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr->state_flags
-			 & FiniteLife)
-			&& !(ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr->state_flags
-				 & CrewObject))
+		if ((testFlag(ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr->state_flags, ElementFlags::FiniteLife))
+			&& !(testFlag(ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr->state_flags, ElementFlags::CrewObject)))
 		{
 			ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState = MovementState::Avoid;
 		}
@@ -306,14 +304,14 @@ static void vux_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 	if (StarShipPtr->special_counter == 0
 		&& lpEvalDesc->ObjectPtr != 0
 		&& lpEvalDesc->which_turn <= 12
-		&& (StarShipPtr->ship_input_state & (LeftFlag | RightFlag))
+		&& (testFlag(StarShipPtr->ship_input_state, (StatusFlags::Left | StatusFlags::Right)))
 		&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= (uint8_t)(StarShipPtr->RaceDescPtr->ship_info.max_energy >> 1))
 	{
-		StarShipPtr->ship_input_state |= SpecialFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Special;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	}
 }
 
@@ -322,7 +320,7 @@ static void vux_postprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
@@ -339,7 +337,7 @@ static void vux_postprocess(Element* ElementPtr)
 
 static void vux_preprocess(Element* ElementPtr)
 {
-	if (ElementPtr->state_flags & Appearing)
+	if (testFlag(ElementPtr->state_flags, ElementFlags::Appearing))
 	{
 		Starship* StarShipPtr {};
 

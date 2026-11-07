@@ -21,6 +21,7 @@
 #define UQM_ELEMENT_H
 
 #include "colors.h"
+#include "core/types/enum.h"
 #include "displist.h"
 #include "libs/gfxlib.h"
 #include "units.h"
@@ -35,30 +36,35 @@ struct Starship;
 
 // Bits for ElementFlags:
 // bits 0 and 1 are now available
-inline constexpr auto PlayerShip {1 << 2};
-// The Element is a player controlable ship, and not some bullet,
-// crew, asteroid, fighter, etc. This does not mean that the ship
-// is actually controlled by a human; it may be a computer.
+enum class ElementFlags : uint16_t
+{
+	None = 0,
+	PlayerShip = 1 << 2,
+	// The Element is a player controlable ship, and not some bullet,
+	// crew, asteroid, fighter, etc. This does not mean that the ship
+	// is actually controlled by a human; it may be a computer.
 
-inline constexpr auto Appearing {1 << 3};
-inline constexpr auto Disappearing {1 << 4};
-inline constexpr auto Changing {1 << 5};
-// The Element's graphical representation has changed.
+	Appearing = 1 << 3,
+	Disappearing = 1 << 4,
+	Changing = 1 << 5,
+	// The Element's graphical representation has changed.
 
-inline constexpr auto Nonsolid {1 << 6};
-inline constexpr auto Collision {1 << 7};
-inline constexpr auto IgnoreSimilar {1 << 8};
-inline constexpr auto DefyPhysics {1 << 9};
+	Nonsolid = 1 << 6,
+	Collision = 1 << 7,
+	IgnoreSimilar = 1 << 8,
+	DefyPhysics = 1 << 9,
 
-inline constexpr auto FiniteLife {1 << 10};
+	FiniteLife = 1 << 10,
 
-inline constexpr auto PreProcessFlag {1 << 11};
-// PreProcess() is to be called for the Element.
-inline constexpr auto PostProcessFlag {1 << 12};
+	PreProcess = 1 << 11,
+	// PreProcess() is to be called for the Element.
+	PostProcess = 1 << 12,
 
-inline constexpr auto IgnoreVelocity {1 << 13};
-inline constexpr auto CrewObject {1 << 14};
-inline constexpr auto BackgroundObject {1 << 15};
+	IgnoreVelocity = 1 << 13,
+	CrewObject = 1 << 14,
+	BackgroundObject = 1 << 15,
+};
+ENUM_BITWISE_OPS(ElementFlags)
 // The BackgroundObject flag existed originally but wasn't used.
 // It can now be used for objects that never influence the state
 // of other elements; elements that have this flag set are not
@@ -79,7 +85,6 @@ enum class ViewState
 	Change
 };
 
-using ElementFlags = uint16_t;
 
 inline constexpr auto NoPrim {PrimitiveType::Count};
 

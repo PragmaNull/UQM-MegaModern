@@ -110,7 +110,7 @@ void crc_processELEMENT(crc_State* state, const Element* val)
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processELEMENT().");
 #endif
-	if (val->state_flags & BackgroundObject)
+	if (testFlag(val->state_flags, ElementFlags::BackgroundObject))
 	{
 		// The Element never influences the state of other elements,
 		// and is to be excluded from checksums.

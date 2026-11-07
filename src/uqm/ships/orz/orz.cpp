@@ -73,7 +73,7 @@ static RaceDesc orz_desc =
 	{
 		{/* ShipInfoDesc */
 		 "nemesis",
-		 FiresFore | SeekingSpecial,
+		 ShipFlags::FiresFore | ShipFlags::SeekingSpecial,
 		 23, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -163,10 +163,10 @@ static uint16_t initialize_turret_missile(Element* ShipPtr, ElementHandle Missil
 
 	LockElement(GetSuccElement(ShipPtr), &TurretPtr);
 	if (TurretPtr->turn_wait == 0
-		&& (StarShipPtr->cur_status_flags & SpecialFlag)
-		&& (StarShipPtr->cur_status_flags & (LeftFlag | RightFlag)))
+		&& (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
+		&& (testFlag(StarShipPtr->cur_status_flags, (StatusFlags::Left | StatusFlags::Right))))
 	{
-		if (StarShipPtr->cur_status_flags & RightFlag)
+		if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Right))
 		{
 			++TurretPtr->thrust_wait;
 		}
@@ -183,7 +183,7 @@ static uint16_t initialize_turret_missile(Element* ShipPtr, ElementHandle Missil
 	UnlockElement(GetSuccElement(ShipPtr));
 
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = TurretOffset();
 	MissileBlock.speed = MissileSpeedHd();
 	MissileBlock.hit_points = MissileHits;
@@ -226,9 +226,9 @@ static uint8_t count_marines(Starship* StarShipPtr, bool FindSpot)
 		hNextElement = GetPredElement(ElementPtr);
 		if (ElementPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special
 			&& ElementPtr->life_span
-			&& !(ElementPtr->state_flags & (FiniteLife | Disappearing)))
+			&& !(testFlag(ElementPtr->state_flags, (ElementFlags::FiniteLife | ElementFlags::Disappearing))))
 		{
-			if (ElementPtr->state_flags & Nonsolid)
+			if (testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid))
 			{
 				id_use[ElementPtr->turn_wait] = 1;
 			}
@@ -270,7 +270,7 @@ static void orz_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (lpEvalDesc->ObjectPtr == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	}
 	else if (StarShipPtr->special_counter != 1)
 	{
@@ -279,9 +279,8 @@ static void orz_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 		if (ShipPtr->turn_wait == 0
 			&& lpEvalDesc->MoveState == MovementState::Entice
 			&& lpEvalDesc->which_turn < 24
-			&& (StarShipPtr->cur_status_flags
-				& (ShipAtMaxSpeed | ShipBeyondMaxSpeed))
-			&& !(StarShipPtr->ship_input_state & ThrustFlag)
+			&& (testFlag(StarShipPtr->cur_status_flags, (StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed)))
+			&& !(testFlag(StarShipPtr->ship_input_state, StatusFlags::Thrust))
 			&& NormalizeAngle(
 				   GetVelocityTravelAngle(&ShipPtr->velocity)
 				   - ARCTAN(
@@ -292,12 +291,12 @@ static void orz_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 				   + (Quadrant - (Octant >> 1)))
 				   >= ((Quadrant - (Octant >> 1)) << 1))
 		{
-			StarShipPtr->ship_input_state &= ~(LeftFlag | RightFlag);
+			StarShipPtr->ship_input_state &= ~(StatusFlags::Left | StatusFlags::Right);
 		}
 
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		if (ShipPtr->turn_wait == 0
-			&& !(StarShipPtr->ship_input_state & (LeftFlag | RightFlag | WeaponFlag))
+			&& !(testFlag(StarShipPtr->ship_input_state, (StatusFlags::Left | StatusFlags::Right | StatusFlags::Weapon)))
 			&& TurretPtr->turn_wait == 0)
 		{
 			int16_t delta_facing {};
@@ -307,7 +306,7 @@ static void orz_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 									 + TurretPtr->thrust_wait);
 			if ((delta_facing = TrackShip(TurretPtr, &facing)) > 0)
 			{
-				StarShipPtr->ship_input_state |= SpecialFlag;
+				StarShipPtr->ship_input_state |= StatusFlags::Special;
 				if (delta_facing == AngleToFacing(HalfCircle))
 				{
 					delta_facing += (((uint8_t)uqm::random().next() & 1) << 1) - 1;
@@ -315,28 +314,27 @@ static void orz_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 
 				if (delta_facing < AngleToFacing(HalfCircle))
 				{
-					StarShipPtr->ship_input_state |= RightFlag;
+					StarShipPtr->ship_input_state |= StatusFlags::Right;
 				}
 				else
 				{
-					StarShipPtr->ship_input_state |= LeftFlag;
+					StarShipPtr->ship_input_state |= StatusFlags::Left;
 				}
 			}
 		}
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if (StarShipPtr->special_counter == 0
-			&& !(StarShipPtr->ship_input_state & WeaponFlag)
+			&& !(testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon))
 			&& StarShipPtr->RaceDescPtr->ship_info.crew_level > (uint8_t)(StarShipPtr->RaceDescPtr->ship_info.max_crew >> 2)
-			&& !(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-				 & PointDefense)
+			&& !(testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::PointDefense))
 			&& (Maneuverability(
 					&EnemyStarShipPtr->RaceDescPtr->cyborg_control)
 					< ResolutionCompensated(SlowShip)
 				|| lpEvalDesc->which_turn <= 12
 				|| count_marines(StarShipPtr, false) < 2))
 		{
-			StarShipPtr->ship_input_state |= WeaponFlag | SpecialFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Weapon | StatusFlags::Special;
 		}
 	}
 
@@ -375,8 +373,8 @@ static void ion_preprocess(Element* ElementPtr)
 		SetPrimColor(&DisplayArray[ElementPtr->PrimIndex],
 					 colorTable[ElementPtr->colorCycleIndex]);
 
-		ElementPtr->state_flags &= ~Disappearing;
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags &= ~ElementFlags::Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 }
 
@@ -393,10 +391,10 @@ void intruder_preprocess(Element* ElementPtr)
 	LockElement(StarShipPtr->hShip, &ShipPtr);
 	if (ShipPtr->crew_level == 0
 		&& ShipPtr->life_span == 1
-		&& (ShipPtr->state_flags & (FiniteLife | Nonsolid)) == (FiniteLife | Nonsolid))
+		&& testAllBits(ShipPtr->state_flags, ElementFlags::FiniteLife | ElementFlags::Nonsolid))
 	{
 		ElementPtr->life_span = 0;
-		ElementPtr->state_flags |= Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Disappearing;
 	}
 	UnlockElement(StarShipPtr->hShip);
 
@@ -408,7 +406,7 @@ void intruder_preprocess(Element* ElementPtr)
 	for (hElement = GetHeadElement(); hElement; hElement = hNextElement)
 	{
 		LockElement(hElement, &ShipPtr);
-		if ((ShipPtr->state_flags & PlayerShip)
+		if ((testFlag(ShipPtr->state_flags, ElementFlags::PlayerShip))
 			&& !elementsOfSamePlayer(ShipPtr, ElementPtr))
 		{
 			GfxStamp s;
@@ -449,7 +447,7 @@ LeftShip:
 				if (randval < (0x0100 / 16))
 				{
 					ElementPtr->life_span = 0;
-					ElementPtr->state_flags |= Disappearing;
+					ElementPtr->state_flags |= ElementFlags::Disappearing;
 
 					ProcessSound(GetSound(
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 4),
@@ -487,8 +485,8 @@ LeftShip:
 
 	if (hElement == 0 && ElementPtr->life_span)
 	{
-		ElementPtr->state_flags &= ~Nonsolid;
-		ElementPtr->state_flags |= Changing | CrewObject;
+		ElementPtr->state_flags &= ~ElementFlags::Nonsolid;
+		ElementPtr->state_flags |= ElementFlags::Changing | ElementFlags::CrewObject;
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 					PrimitiveType::Stamp);
 
@@ -519,7 +517,7 @@ spawn_marine_ion_trail(Element* ElementPtr, Starship* StarShipPtr,
 		InsertElement(hIonElement, GetHeadElement());
 		LockElement(hIonElement, &IonElementPtr);
 		IonElementPtr->playerNr = NeutralPlayerNum;
-		IonElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
+		IonElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 		IonElementPtr->thrust_wait = IonLife;
 		IonElementPtr->life_span = IonElementPtr->thrust_wait;
 		// When the Element "dies", in the death_func
@@ -546,7 +544,7 @@ spawn_marine_ion_trail(Element* ElementPtr, Starship* StarShipPtr,
 			 */
 			IonElementPtr->next = IonElementPtr->current;
 			--IonElementPtr->life_span;
-			IonElementPtr->state_flags |= PreProcessFlag;
+			IonElementPtr->state_flags |= ElementFlags::PreProcess;
 		}
 
 		UnlockElement(hIonElement);
@@ -562,10 +560,10 @@ static void marine_preprocess(Element* ElementPtr)
 	LockElement(StarShipPtr->hShip, &ShipPtr);
 	if (ShipPtr->crew_level == 0
 		&& ShipPtr->life_span == 1
-		&& (ShipPtr->state_flags & (FiniteLife | Nonsolid)) == (FiniteLife | Nonsolid))
+		&& testAllBits(ShipPtr->state_flags, ElementFlags::FiniteLife | ElementFlags::Nonsolid))
 	{
 		ElementPtr->life_span = 0;
-		ElementPtr->state_flags |= Disappearing | Nonsolid;
+		ElementPtr->state_flags |= ElementFlags::Disappearing | ElementFlags::Nonsolid;
 		ElementPtr->turn_wait = 1;
 	}
 	UnlockElement(StarShipPtr->hShip);
@@ -586,7 +584,7 @@ static void marine_preprocess(Element* ElementPtr)
 
 		// XXX: thrust_wait is abused to store marine speed and
 		//   gravity well flags
-		ElementPtr->thrust_wait &= ~(ShipInGravityWell >> 6);
+		ElementPtr->thrust_wait &= ~(*StatusFlags::ShipInGravityWell >> 6);
 
 		ElementHandle hTarget {0};
 		for (hObject = GetHeadElement();
@@ -616,16 +614,16 @@ static void marine_preprocess(Element* ElementPtr)
 						hNextObject = 0;
 					}
 
-					ElementPtr->thrust_wait |= (ShipInGravityWell >> 6);
+					ElementPtr->thrust_wait |= (*StatusFlags::ShipInGravityWell >> 6);
 				}
 			}
-			else if ((ObjectPtr->state_flags & PlayerShip)
+			else if ((testFlag(ObjectPtr->state_flags, ElementFlags::PlayerShip))
 					 && ObjectPtr->crew_level
 					 && !ObjectCloaked(ObjectPtr))
 			{
 				if (!elementsOfSamePlayer(ObjectPtr, ElementPtr))
 				{
-					if (ElementPtr->state_flags & IgnoreSimilar)
+					if (testFlag(ElementPtr->state_flags, ElementFlags::IgnoreSimilar))
 					{
 						hTarget = hObject;
 					}
@@ -683,13 +681,13 @@ static void marine_preprocess(Element* ElementPtr)
 				VelocityDesc ShipVelocity;
 
 				if (elementsOfSamePlayer(ObjectPtr, ElementPtr)
-					&& (ElementPtr->state_flags & IgnoreSimilar))
+					&& (testFlag(ElementPtr->state_flags, ElementFlags::IgnoreSimilar)))
 				{
 					ElementPtr->next.image.frame = SetAbsFrameIndex(
 						StarShipPtr->RaceDescPtr->ship_data.special[0],
 						21);
-					ElementPtr->state_flags &= ~IgnoreSimilar;
-					ElementPtr->state_flags |= Changing;
+					ElementPtr->state_flags &= ~ElementFlags::IgnoreSimilar;
+					ElementPtr->state_flags |= ElementFlags::Changing;
 				}
 
 				num_frames = ResDescale(WorldToTurn(
@@ -734,8 +732,8 @@ static void marine_preprocess(Element* ElementPtr)
 
 		ElementPtr->turn_wait = uqm::makeByte(0, NormalizeFacing(facing));
 		if (delta_facing == 0
-			|| ((ElementPtr->thrust_wait & (ShipBeyondMaxSpeed >> 6))
-				&& !(ElementPtr->thrust_wait & (ShipInGravityWell >> 6))))
+			|| ((ElementPtr->thrust_wait & (*StatusFlags::ShipBeyondMaxSpeed >> 6))
+				&& !(ElementPtr->thrust_wait & (*StatusFlags::ShipInGravityWell >> 6))))
 		{
 			Starship* StarShipPtr {};
 
@@ -751,7 +749,7 @@ static void marine_preprocess(Element* ElementPtr)
 			StarShipPtr->ShipFacing = facing;
 			// XXX: thrust_wait is abused to store marine speed and
 			//   gravity well flags
-			StarShipPtr->cur_status_flags = ElementPtr->thrust_wait << 6;
+			StarShipPtr->cur_status_flags = static_cast<StatusFlags>(ElementPtr->thrust_wait << 6);
 			StarShipPtr->RaceDescPtr->characteristics.thrust_increment =
 				MarineThrustIncrement();
 			StarShipPtr->RaceDescPtr->characteristics.max_thrust =
@@ -765,17 +763,16 @@ static void marine_preprocess(Element* ElementPtr)
 			StarShipPtr->cur_status_flags = OldStatus;
 			StarShipPtr->ShipFacing = OldFacing;
 
-			if ((ElementPtr->thrust_wait & (ShipInGravityWell >> 6))
+			if ((ElementPtr->thrust_wait & (*StatusFlags::ShipInGravityWell >> 6))
 				|| delta_facing
-				|| !(thrust_status
-					 & (ShipAtMaxSpeed | ShipBeyondMaxSpeed)))
+				|| !(testFlag(thrust_status, (StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed))))
 			{
 				spawn_marine_ion_trail(ElementPtr, StarShipPtr, facing);
 			}
 
 			// XXX: thrust_wait is abused to store marine speed and
 			//   gravity well flags
-			ElementPtr->thrust_wait = (uint8_t)(thrust_status >> 6);
+			ElementPtr->thrust_wait = static_cast<uint8_t>(*thrust_status >> 6);
 		}
 	}
 }
@@ -784,40 +781,40 @@ void marine_collision(Element* ElementPtr0, GfxPoint* pPt0,
 					  Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (ElementPtr0->life_span
-		&& !(ElementPtr0->state_flags & (Nonsolid | Collision))
-		&& !(ElementPtr1->state_flags & FiniteLife))
+		&& !(testFlag(ElementPtr0->state_flags, (ElementFlags::Nonsolid | ElementFlags::Collision)))
+		&& !(testFlag(ElementPtr1->state_flags, ElementFlags::FiniteLife)))
 	{
 		if (!elementsOfSamePlayer(ElementPtr0, ElementPtr1))
 		{
 			ElementPtr0->turn_wait =
 				uqm::makeByte(5, uqm::highNibble(ElementPtr0->turn_wait));
 			ElementPtr0->thrust_wait &=
-				~((ShipAtMaxSpeed | ShipBeyondMaxSpeed) >> 6);
-			ElementPtr0->state_flags |= Collision;
+				~(*(StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed) >> 6);
+			ElementPtr0->state_flags |= ElementFlags::Collision;
 		}
 
 		if (GravityMass(ElementPtr1->mass_points))
 		{
-			ElementPtr0->state_flags |= Nonsolid | FiniteLife;
+			ElementPtr0->state_flags |= ElementFlags::Nonsolid | ElementFlags::FiniteLife;
 			ElementPtr0->hit_points = 0;
 			ElementPtr0->life_span = 0;
 		}
-		else if ((ElementPtr1->state_flags & PlayerShip)
-				 && ((ElementPtr1->state_flags & FiniteLife)
+		else if ((testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
+				 && ((testFlag(ElementPtr1->state_flags, ElementFlags::FiniteLife))
 					 || ElementPtr1->life_span == NormalLife))
 		{
-			ElementPtr1->state_flags &= ~Collision;
+			ElementPtr1->state_flags &= ~ElementFlags::Collision;
 
-			if (!(ElementPtr0->state_flags & Collision))
+			if (!(testFlag(ElementPtr0->state_flags, ElementFlags::Collision)))
 			{
 				DeltaCrew(ElementPtr1, 1);
 
 				ElementPtr0->state_flags |=
-					Disappearing | Nonsolid | FiniteLife;
+					ElementFlags::Disappearing | ElementFlags::Nonsolid | ElementFlags::FiniteLife;
 				ElementPtr0->hit_points = 0;
 				ElementPtr0->life_span = 0;
 			}
-			else if ((ElementPtr0->state_flags & IgnoreSimilar)
+			else if ((testFlag(ElementPtr0->state_flags, ElementFlags::IgnoreSimilar))
 					 && ElementPtr1->crew_level
 #ifdef NEVER
 					 && (uint8_t)uqm::random().next() <= (0x0100 / 3)
@@ -842,8 +839,8 @@ void marine_collision(Element* ElementPtr0, GfxPoint* pPt0,
 				ElementPtr0->next.image.frame = SetAbsFrameIndex(
 					ElementPtr0->next.image.farray[0],
 					22 + ElementPtr0->turn_wait);
-				ElementPtr0->state_flags |= Nonsolid;
-				ElementPtr0->state_flags &= ~CrewObject;
+				ElementPtr0->state_flags |= ElementFlags::Nonsolid;
+				ElementPtr0->state_flags &= ~ElementFlags::CrewObject;
 				SetPrimType(&DisplayArray[ElementPtr0->PrimIndex], NoPrim);
 				ElementPtr0->preprocess_func = intruder_preprocess;
 				s.origin.x = ResScale(16 + (ElementPtr0->turn_wait & 3) * 9);
@@ -856,7 +853,7 @@ void marine_collision(Element* ElementPtr0, GfxPoint* pPt0,
 							 ElementPtr1);
 			}
 
-			ElementPtr0->state_flags &= ~Collision;
+			ElementPtr0->state_flags &= ~ElementFlags::Collision;
 		}
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
@@ -873,7 +870,7 @@ static void animate(Element* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
@@ -902,9 +899,9 @@ static void turret_postprocess(Element* ElementPtr)
 
 				LockElement(hTurret, &TurretPtr);
 				TurretPtr->playerNr = ElementPtr->playerNr;
-				TurretPtr->state_flags = FiniteLife | Nonsolid
-									   | IgnoreSimilar | Changing | PreProcessFlag
-									   | PostProcessFlag;
+				TurretPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid
+									   | ElementFlags::IgnoreSimilar | ElementFlags::Changing | ElementFlags::PreProcess
+									   | ElementFlags::PostProcess;
 				TurretPtr->life_span = 1;
 				TurretPtr->current.image = ElementPtr->current.image;
 				TurretPtr->current.location = ShipPtr->next.location;
@@ -915,10 +912,10 @@ static void turret_postprocess(Element* ElementPtr)
 				{
 					--TurretPtr->turn_wait;
 				}
-				else if ((StarShipPtr->cur_status_flags & SpecialFlag)
-						 && (StarShipPtr->cur_status_flags & (LeftFlag | RightFlag)))
+				else if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
+						 && (testFlag(StarShipPtr->cur_status_flags, (StatusFlags::Left | StatusFlags::Right))))
 				{
-					if (StarShipPtr->cur_status_flags & RightFlag)
+					if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Right))
 					{
 						++TurretPtr->thrust_wait;
 					}
@@ -932,14 +929,12 @@ static void turret_postprocess(Element* ElementPtr)
 				facing = NormalizeFacing(StarShipPtr->ShipFacing
 										 + TurretPtr->thrust_wait);
 				StarShipPtr->RaceDescPtr->ship_info.ship_flags &=
-					~(FiresFore | FiresRight | FiresAft | FiresLeft);
-				StarShipPtr->RaceDescPtr->ship_info.ship_flags |= FiresFore
-															   << (NormalizeFacing(facing + AngleToFacing(Octant))
-																   / AngleToFacing(Quadrant));
+					~(ShipFlags::FiresFore | ShipFlags::FiresRight | ShipFlags::FiresAft | ShipFlags::FiresLeft);
+				StarShipPtr->RaceDescPtr->ship_info.ship_flags |= FireDirections[NormalizeFacing(facing + AngleToFacing(Octant)) / AngleToFacing(Quadrant)];
 				TurretPtr->current.image.frame = SetAbsFrameIndex(
 					TurretPtr->current.image.frame, facing);
 				facing = FacingToAngle(facing);
-				if (StarShipPtr->cur_status_flags & WeaponFlag)
+				if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Weapon))
 				{
 					ElementHandle hTurretEffect {};
 					Element* TurretEffectPtr {};
@@ -947,7 +942,7 @@ static void turret_postprocess(Element* ElementPtr)
 					LockElement(GetTailElement(), &TurretEffectPtr);
 					if (TurretEffectPtr != ElementPtr
 						&& elementsOfSamePlayer(TurretEffectPtr, ElementPtr)
-						&& (TurretEffectPtr->state_flags & Appearing)
+						&& (testFlag(TurretEffectPtr->state_flags, ElementFlags::Appearing))
 						&& GetPrimType(&DisplayArray[TurretEffectPtr->PrimIndex]) == PrimitiveType::Stamp
 						&& (hTurretEffect = AllocElement()))
 					{
@@ -958,8 +953,8 @@ static void turret_postprocess(Element* ElementPtr)
 
 						LockElement(hTurretEffect, &TurretEffectPtr);
 						TurretEffectPtr->playerNr = ElementPtr->playerNr;
-						TurretEffectPtr->state_flags = FiniteLife
-													 | Nonsolid | IgnoreSimilar | Appearing;
+						TurretEffectPtr->state_flags = ElementFlags::FiniteLife
+													 | ElementFlags::Nonsolid | ElementFlags::IgnoreSimilar | ElementFlags::Appearing;
 						TurretEffectPtr->life_span = 4;
 
 						TurretEffectPtr->current.location.x =
@@ -1004,8 +999,8 @@ static void turret_postprocess(Element* ElementPtr)
 			}
 
 			if (StarShipPtr->special_counter == 0
-				&& (StarShipPtr->cur_status_flags & SpecialFlag)
-				&& (StarShipPtr->cur_status_flags & WeaponFlag)
+				&& (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
+				&& (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Weapon))
 				&& ShipPtr->crew_level > 1
 				&& count_marines(StarShipPtr, false) < MaxMarines
 				&& TrackShip(ShipPtr, &facing) >= 0
@@ -1015,8 +1010,8 @@ static void turret_postprocess(Element* ElementPtr)
 
 				LockElement(hSpaceMarine, &SpaceMarinePtr);
 				SpaceMarinePtr->playerNr = ElementPtr->playerNr;
-				SpaceMarinePtr->state_flags = IgnoreSimilar | Appearing
-											| CrewObject;
+				SpaceMarinePtr->state_flags = ElementFlags::IgnoreSimilar | ElementFlags::Appearing
+											| ElementFlags::CrewObject;
 				SpaceMarinePtr->life_span = NormalLife;
 				SpaceMarinePtr->hit_points = MarineHitPoints;
 				SpaceMarinePtr->mass_points = MarineMassPoints;
@@ -1069,19 +1064,17 @@ static void orz_preprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (!(ElementPtr->state_flags & Appearing))
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Appearing)))
 	{
-		if (((StarShipPtr->cur_status_flags
-			  | StarShipPtr->old_status_flags)
-			 & SpecialFlag)
-			&& (StarShipPtr->cur_status_flags & (LeftFlag | RightFlag))
+		if (testFlag(StarShipPtr->cur_status_flags | StarShipPtr->old_status_flags, StatusFlags::Special)
+			&& testFlag(StarShipPtr->cur_status_flags, StatusFlags::Left | StatusFlags::Right)
 			&& ElementPtr->turn_wait == 0)
 		{
 			++ElementPtr->turn_wait;
 		}
 
-		if ((StarShipPtr->cur_status_flags & SpecialFlag)
-			&& (StarShipPtr->cur_status_flags & WeaponFlag)
+		if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
+			&& (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Weapon))
 			&& StarShipPtr->weapon_counter == 0)
 		{
 			++StarShipPtr->weapon_counter;
@@ -1096,7 +1089,7 @@ static void orz_preprocess(Element* ElementPtr)
 
 			LockElement(hTurret, &TurretPtr);
 			TurretPtr->playerNr = ElementPtr->playerNr;
-			TurretPtr->state_flags = FiniteLife | Nonsolid | IgnoreSimilar;
+			TurretPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid | ElementFlags::IgnoreSimilar;
 			TurretPtr->life_span = 1;
 			TurretPtr->current.image.farray =
 				StarShipPtr->RaceDescPtr->ship_data.special;

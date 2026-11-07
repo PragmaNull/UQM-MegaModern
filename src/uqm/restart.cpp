@@ -447,7 +447,7 @@ static bool RestartMessage(void)
 	SetFlashRect(nullptr, false);
 	DoPopupWindow(GameString(GameStringBase::MainmenuString + 35));
 	// Got to restart -message
-	SetMenuSounds(MenuSoundUp | MenuSoundDown, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Up | MenuSoundFlags::Down, MenuSoundFlags::Select);
 	SetTransitionSource(nullptr);
 	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 	uqm::currentActivity() = *ActivityFlag::CheckAbort;
@@ -550,8 +550,8 @@ static bool DoRestart(MenuState* pMS)
 						GameString(GameStringBase::MainmenuString + 65));
 					// Got to restart -message
 					SetMenuSounds(
-						MenuSoundUp | MenuSoundDown,
-						MenuSoundSelect);
+						MenuSoundFlags::Up | MenuSoundFlags::Down,
+						MenuSoundFlags::Select);
 					SetTransitionSource(nullptr);
 					SleepThreadUntil(
 						FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
@@ -809,7 +809,7 @@ static bool RestartMenu(MenuState* pMS)
 
 	DrawRestartMenuGraphic(pMS);
 	uqm::currentActivity() &= ~ActivityFlag::CheckAbort;
-	SetMenuSounds(MenuSoundUp | MenuSoundDown, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Up | MenuSoundFlags::Down, MenuSoundFlags::Select);
 	SetDefaultMenuRepeatDelay();
 	DoInput(pMS, true);
 

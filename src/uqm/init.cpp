@@ -297,7 +297,7 @@ static uint16_t CountCrewElements(void)
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
-		if (ElementPtr->state_flags & CrewObject)
+		if (testFlag(ElementPtr->state_flags, ElementFlags::CrewObject))
 		{
 			++result;
 		}
@@ -334,7 +334,7 @@ void UninitShips(void)
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
-		if ((ElementPtr->state_flags & PlayerShip)
+		if ((testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip))
 			|| ElementPtr->death_func == new_ship)
 		{
 			Starship* StarShipPtr {};

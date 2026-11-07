@@ -49,18 +49,18 @@ bool animIsInTransition(CaptainGraphics* CSPtr)
 	return (CSPtr->thrust_offset & 1) || (CSPtr->weapon_offset & 1) || (CSPtr->special_offset & 1) || (CSPtr->tl_offset & 1) || (CSPtr->tr_offset & 1);
 }
 
-static uint8_t CalculateAnimOffsets(CaptainGraphics* CSPtr,
-									StatusFlags delta_status_flags, StatusFlags cur_status_flags)
+static StatusFlags CalculateAnimOffsets(CaptainGraphics* CSPtr,
+										StatusFlags delta_status_flags, StatusFlags cur_status_flags)
 {
-	uint8_t redraw_flag = 0;
+	StatusFlags redraw_flag {};
 
-	if (delta_status_flags & LeftFlag || CSPtr->tl_offset & 1)
+	if (testFlag(delta_status_flags, StatusFlags::Left) || CSPtr->tl_offset & 1)
 	{
-		if (!(delta_status_flags & RightFlag))
+		if (!(testFlag(delta_status_flags, StatusFlags::Right)))
 		{
 			CSPtr->tr_offset = 0;
 
-			if (cur_status_flags & LeftFlag)
+			if (testFlag(cur_status_flags, StatusFlags::Left))
 			{
 				CSPtr->tl_offset++;
 			}
@@ -69,28 +69,28 @@ static uint8_t CalculateAnimOffsets(CaptainGraphics* CSPtr,
 				CSPtr->tl_offset--;
 			}
 
-			redraw_flag |= LeftFlag;
+			redraw_flag |= StatusFlags::Left;
 		}
-		else if (cur_status_flags & RightFlag)
+		else if (testFlag(cur_status_flags, StatusFlags::Right))
 		{
 			CSPtr->tl_offset = 0;
 			CSPtr->tr_offset = 1;
 
-			redraw_flag |= RightFlag;
+			redraw_flag |= StatusFlags::Right;
 		}
 		else
 		{
 			CSPtr->tr_offset = 0;
 			CSPtr->tl_offset = 1;
 
-			redraw_flag |= LeftFlag;
+			redraw_flag |= StatusFlags::Left;
 		}
 	}
-	else if (delta_status_flags & RightFlag || CSPtr->tr_offset & 1)
+	else if (testFlag(delta_status_flags, StatusFlags::Right) || CSPtr->tr_offset & 1)
 	{
 		CSPtr->tl_offset = 0;
 
-		if (cur_status_flags & RightFlag)
+		if (testFlag(cur_status_flags, StatusFlags::Right))
 		{
 			CSPtr->tr_offset++;
 		}
@@ -99,12 +99,12 @@ static uint8_t CalculateAnimOffsets(CaptainGraphics* CSPtr,
 			CSPtr->tr_offset--;
 		}
 
-		redraw_flag |= RightFlag;
+		redraw_flag |= StatusFlags::Right;
 	}
 
-	if (delta_status_flags & ThrustFlag || CSPtr->thrust_offset & 1)
+	if (testFlag(delta_status_flags, StatusFlags::Thrust) || CSPtr->thrust_offset & 1)
 	{
-		if (cur_status_flags & ThrustFlag)
+		if (testFlag(cur_status_flags, StatusFlags::Thrust))
 		{
 			CSPtr->thrust_offset++;
 		}
@@ -113,12 +113,12 @@ static uint8_t CalculateAnimOffsets(CaptainGraphics* CSPtr,
 			CSPtr->thrust_offset--;
 		}
 
-		redraw_flag |= ThrustFlag;
+		redraw_flag |= StatusFlags::Thrust;
 	}
 
-	if (delta_status_flags & WeaponFlag || CSPtr->weapon_offset & 1)
+	if (testFlag(delta_status_flags, StatusFlags::Weapon) || CSPtr->weapon_offset & 1)
 	{
-		if (cur_status_flags & WeaponFlag)
+		if (testFlag(cur_status_flags, StatusFlags::Weapon))
 		{
 			CSPtr->weapon_offset++;
 		}
@@ -127,12 +127,12 @@ static uint8_t CalculateAnimOffsets(CaptainGraphics* CSPtr,
 			CSPtr->weapon_offset--;
 		}
 
-		redraw_flag |= WeaponFlag;
+		redraw_flag |= StatusFlags::Weapon;
 	}
 
-	if (delta_status_flags & SpecialFlag || CSPtr->special_offset & 1)
+	if (testFlag(delta_status_flags, StatusFlags::Special) || CSPtr->special_offset & 1)
 	{
-		if (cur_status_flags & SpecialFlag)
+		if (testFlag(cur_status_flags, StatusFlags::Special))
 		{
 			CSPtr->special_offset++;
 		}
@@ -141,21 +141,21 @@ static uint8_t CalculateAnimOffsets(CaptainGraphics* CSPtr,
 			CSPtr->special_offset--;
 		}
 
-		redraw_flag |= SpecialFlag;
+		redraw_flag |= StatusFlags::Special;
 	}
 
 	return redraw_flag;
 }
 
 static void DrawCaptainWindowAnimation(CaptainGraphics* CSPtr, int16_t y,
-									   uint8_t redraw_flag)
+									   StatusFlags redraw_flag)
 {
 	GfxStamp Stamp;
 
 	Stamp.origin.x = CaptainXoffs();
 	Stamp.origin.y = y + CaptainYoffs();
 
-	if (redraw_flag & LeftFlag)
+	if (testFlag(redraw_flag, StatusFlags::Left))
 	{
 		Stamp.frame = SetRelFrameIndex(CSPtr->turn, 1);
 		DrawStamp(&Stamp);
@@ -168,7 +168,7 @@ static void DrawCaptainWindowAnimation(CaptainGraphics* CSPtr, int16_t y,
 			DrawStamp(&Stamp);
 		}
 	}
-	else if (redraw_flag & RightFlag)
+	else if (testFlag(redraw_flag, StatusFlags::Right))
 	{
 		Stamp.frame = SetRelFrameIndex(CSPtr->turn, 3);
 		DrawStamp(&Stamp);
@@ -182,19 +182,19 @@ static void DrawCaptainWindowAnimation(CaptainGraphics* CSPtr, int16_t y,
 		}
 	}
 
-	if (redraw_flag & ThrustFlag)
+	if (testFlag(redraw_flag, StatusFlags::Thrust))
 	{
 		Stamp.frame = SetRelFrameIndex(CSPtr->thrust, CSPtr->thrust_offset);
 		DrawStamp(&Stamp);
 	}
 
-	if (redraw_flag & WeaponFlag)
+	if (testFlag(redraw_flag, StatusFlags::Weapon))
 	{
 		Stamp.frame = SetRelFrameIndex(CSPtr->weapon, CSPtr->weapon_offset);
 		DrawStamp(&Stamp);
 	}
 
-	if (redraw_flag & SpecialFlag)
+	if (testFlag(redraw_flag, StatusFlags::Special))
 	{
 		Stamp.frame = SetRelFrameIndex(CSPtr->special, CSPtr->special_offset);
 		DrawStamp(&Stamp);
@@ -458,7 +458,7 @@ void DrawCaptainsWindow(Starship* StarShipPtr)
 		SetContextFont(MenuBool(TinyFontBold, TinyFont));
 		font_DrawText(&t);
 	}
-	if (RDPtr->ship_info.max_crew > MaxCrewSize || RDPtr->ship_info.ship_flags & PlayerCaptain)
+	if (RDPtr->ship_info.max_crew > MaxCrewSize || testFlag(RDPtr->ship_info.ship_flags, ShipFlags::PlayerCaptain))
 	{
 		// All crew doesn't fit in the graphics; print a number.
 		// Always print a number for the SIS in the full game.
@@ -500,11 +500,11 @@ bool DeltaEnergy(Element* ElementPtr, int16_t energy_delta)
 
 	if (!retval)
 	{
-		StarShipPtr->cur_status_flags |= LowOnEnergy;
+		StarShipPtr->cur_status_flags |= StatusFlags::LowOnEnergy;
 	}
 	else
 	{
-		StarShipPtr->cur_status_flags &= ~LowOnEnergy;
+		StarShipPtr->cur_status_flags &= ~StatusFlags::LowOnEnergy;
 		StarShipPtr->energy_counter =
 			StarShipPtr->RaceDescPtr->characteristics.energy_wait;
 
@@ -569,20 +569,20 @@ void PreProcessStatus(Element* ShipPtr)
 	{ // All except Sa-Matra, no captain's window there
 		StatusFlags old_status_flags {};
 		StatusFlags cur_status_flags {};
-		uint8_t redraw_flags = 0;
+		StatusFlags redraw_flags {};
 
 		cur_status_flags = StarShipPtr->cur_status_flags;
 		old_status_flags = StarShipPtr->old_status_flags;
 		old_status_flags ^= cur_status_flags;
 
 		CaptainGraphics* CSPtr {&StarShipPtr->RaceDescPtr->ship_data.captain_control};
-		old_status_flags &= (LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag);
-		if (old_status_flags || animIsInTransition(CSPtr))
+		old_status_flags &= (StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon | StatusFlags::Special);
+		if (old_status_flags != StatusFlags::None || animIsInTransition(CSPtr))
 		{
 			assert(StarShipPtr->playerNr >= 0);
 			redraw_flags = CalculateAnimOffsets(CSPtr, old_status_flags, cur_status_flags);
 
-			if (redraw_flags)
+			if (redraw_flags != StatusFlags::None)
 			{
 				DrawCaptainWindowAnimation(CSPtr, status_y_offsets[StarShipPtr->playerNr], redraw_flags);
 			}
@@ -610,9 +610,9 @@ void PostProcessStatus(Element* ShipPtr)
 		if (ShipPtr->crew_level == 0)
 		{
 			StarShipPtr->cur_status_flags &=
-				~(LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag);
+				~(StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon | StatusFlags::Special);
 
-			if (StarShipPtr->RaceDescPtr->ship_info.crew_level == 0 && ShipPtr->state_flags & FiniteLife)
+			if (StarShipPtr->RaceDescPtr->ship_info.crew_level == 0 && testFlag(ShipPtr->state_flags, ElementFlags::FiniteLife))
 			{ // Kruzen: FiniteLife check was added in case if crew-level == 0
 				// Is triggered by the ship itself (shofixti glory device) and
 				// avoiding drawing black area
@@ -623,12 +623,12 @@ void PostProcessStatus(Element* ShipPtr)
 
 				i = (uint8_t)(NumExplosionFrames * 3 - 1) - ShipPtr->life_span;
 
-				if (cur_status_flags & ShofixtiExplosion && i == 0)
+				if (testFlag(cur_status_flags, StatusFlags::ShofixtiExplosion) && i == 0)
 				{ // Special case: Instead of first orange rectangle we will draw the last
 					// frame from captain avatars (used for shofixti glory device)
 					const CaptainGraphics* CSPtr {&StarShipPtr->RaceDescPtr->ship_data.captain_control};
 
-					cur_status_flags &= ~ShofixtiExplosion;
+					cur_status_flags &= ~StatusFlags::ShofixtiExplosion;
 					DrawCaptainWindowFrame(DecFrameIndex(CSPtr->background), y);
 				}
 				else
@@ -771,13 +771,13 @@ void PostProcessStatus(Element* ShipPtr)
 		}
 
 		old_status_flags = StarShipPtr->old_status_flags;
-		old_status_flags = (old_status_flags ^ cur_status_flags) & (LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag | LowOnEnergy);
+		old_status_flags = (old_status_flags ^ cur_status_flags) & (StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon | StatusFlags::Special | StatusFlags::LowOnEnergy);
 
-		if (old_status_flags)
+		if (old_status_flags != StatusFlags::None)
 		{
-			if (old_status_flags & LowOnEnergy)
+			if (testFlag(old_status_flags, StatusFlags::LowOnEnergy))
 			{
-				if (!(cur_status_flags & LowOnEnergy))
+				if (!(testFlag(cur_status_flags, StatusFlags::LowOnEnergy)))
 				{
 					DrawCrewFuelString(y, 1);
 				}

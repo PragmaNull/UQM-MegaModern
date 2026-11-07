@@ -61,7 +61,7 @@ static RaceDesc utwig_desc =
 	{
 		{/* ShipInfoDesc */
 		 "jugger",
-		 FiresFore | PointDefense | ShieldDefense,
+		 ShipFlags::FiresFore | ShipFlags::PointDefense | ShipFlags::ShieldDefense,
 		 22, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy >> 1, MaxEnergy,
@@ -138,7 +138,7 @@ static uint16_t initialize_lance(Element* ShipPtr, ElementHandle WeaponArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.speed = MissileSpeed();
 	MissileBlock.hit_points = MissileHits;
 	MissileBlock.damage = MissileDamage;
@@ -213,12 +213,12 @@ static void utwig_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 		{
 			ShieldStatus = 0;
-			if (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife))
+			if (!(testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::FiniteLife)))
 			{
 				lpEvalDesc->MoveState = MovementState::Pursue;
 			}
 			else if (lpEvalDesc->ObjectPtr->mass_points
-					 || (lpEvalDesc->ObjectPtr->state_flags & CrewObject))
+					 || (testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::CrewObject)))
 			{
 				if ((lpEvalDesc->which_turn >>= 1) == 0)
 				{
@@ -240,20 +240,19 @@ static void utwig_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		if (ShieldStatus)
 		{
 			if ((ShieldStatus > 0 || lpEvalDesc->ObjectPtr)
 				&& lpEvalDesc->which_turn <= 2
 				&& (ShieldStatus > 0
-					|| (lpEvalDesc->ObjectPtr->state_flags
-						& PlayerShip) /* means IMMEDIATE WeaponFlag */
+					|| (testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::PlayerShip)) /* means IMMEDIATE WeaponFlag */
 					|| PlotIntercept(lpEvalDesc->ObjectPtr,
 									 ShipPtr, 2, 0))
 				&& (uqm::random().next() & 3))
 			{
-				StarShipPtr->ship_input_state |= SpecialFlag;
-				StarShipPtr->ship_input_state &= ~WeaponFlag;
+				StarShipPtr->ship_input_state |= StatusFlags::Special;
+				StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 			}
 
 			lpEvalDesc->ObjectPtr = 0;
@@ -266,8 +265,7 @@ static void utwig_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		Starship* EnemyStarShipPtr {};
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
-		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-			  & ImmediateWeapon))
+		if (!(testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::ImmediateWeapon)))
 		{
 			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
@@ -279,7 +277,7 @@ static void utwig_collision(Element* ElementPtr0, GfxPoint* pPt0,
 							Element* ElementPtr1, GfxPoint* pPt1)
 {
 	if (ElementPtr0->life_span > NormalLife
-		&& (ElementPtr1->state_flags & FiniteLife)
+		&& (testFlag(ElementPtr1->state_flags, ElementFlags::FiniteLife))
 		&& ElementPtr1->mass_points)
 	{
 		ElementPtr0->life_span += ElementPtr1->mass_points;
@@ -292,7 +290,7 @@ static void utwig_preprocess(Element* ElementPtr)
 {
 	Starship* StarShipPtr {};
 
-	if (ElementPtr->state_flags & Appearing)
+	if (testFlag(ElementPtr->state_flags, ElementFlags::Appearing))
 	{
 		ElementPtr->collision_func = utwig_collision;
 	}
@@ -308,7 +306,7 @@ static void utwig_preprocess(Element* ElementPtr)
 					 ElementPtr);
 	}
 
-	if (!(StarShipPtr->cur_status_flags & SpecialFlag))
+	if (!(testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special)))
 	{
 		StarShipPtr->special_counter = 0;
 	}
@@ -317,7 +315,7 @@ static void utwig_preprocess(Element* ElementPtr)
 		if (!DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 		{
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &=
-				~(PointDefense | ShieldDefense);
+				~(ShipFlags::PointDefense | ShipFlags::ShieldDefense);
 		}
 		else if (StarShipPtr->special_counter == 0)
 		{

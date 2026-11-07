@@ -56,21 +56,24 @@ extern SoundBankRef MenuSounds;
 extern SoundBankRef GameSounds;
 
 /* Constants for DoInput */
-using MenuSoundFlags = uint16_t;
-inline constexpr auto MenuSoundUp {(MenuSoundFlags)(1 << 0)};
-inline constexpr auto MenuSoundDown {(MenuSoundFlags)(1 << 1)};
-inline constexpr auto MenuSoundLeft {(MenuSoundFlags)(1 << 2)};
-inline constexpr auto MenuSoundRight {(MenuSoundFlags)(1 << 3)};
-inline constexpr auto MenuSoundSelect {(MenuSoundFlags)(1 << 4)};
-inline constexpr auto MenuSoundCancel {(MenuSoundFlags)(1 << 5)};
-inline constexpr auto MenuSoundSpecial {(MenuSoundFlags)(1 << 6)};
-inline constexpr auto MenuSoundPageup {(MenuSoundFlags)(1 << 7)};
-inline constexpr auto MenuSoundPagedown {(MenuSoundFlags)(1 << 8)};
-inline constexpr auto MenuSoundDelete {(MenuSoundFlags)(1 << 9)};
-inline constexpr auto MenuSoundArrows {MenuSoundUp | MenuSoundDown | MenuSoundLeft | MenuSoundRight};
-inline constexpr auto MenuSoundPage {MenuSoundPageup | MenuSoundPagedown};
-inline constexpr auto MenuSoundAction {MenuSoundSelect | MenuSoundCancel};
-inline constexpr auto MenuSoundNone {(MenuSoundFlags)0};
+enum class MenuSoundFlags : uint16_t
+{
+	Up = 1 << 0,
+	Down = 1 << 1,
+	Left = 1 << 2,
+	Right = 1 << 3,
+	Select = 1 << 4,
+	Cancel = 1 << 5,
+	Special = 1 << 6,
+	PageUp = 1 << 7,
+	PageDown = 1 << 8,
+	Delete = 1 << 9,
+	Arrows = Up | Down | Left | Right,
+	Page = PageUp | PageDown,
+	Action = Select | Cancel,
+	None = 0,
+};
+ENUM_BITWISE_OPS(MenuSoundFlags)
 
 extern void SetMenuSounds(MenuSoundFlags sound_0,
 						  MenuSoundFlags sound_1);

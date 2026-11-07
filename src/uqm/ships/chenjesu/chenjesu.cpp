@@ -73,7 +73,7 @@ static RaceDesc chenjesu_desc =
 	{
 		{/* ShipInfoDesc */
 		 "broodhome",
-		 FiresFore | SeekingSpecial | SeekingWeapon,
+		 ShipFlags::FiresFore | ShipFlags::SeekingSpecial | ShipFlags::SeekingWeapon,
 		 28, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -152,7 +152,7 @@ static void crystal_postprocess(Element* ElementPtr)
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.index = 1;
 	MissileBlock.sender = ElementPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = 0;
 	MissileBlock.speed = FragmentSpeed();
 	MissileBlock.hit_points = FragmentHits;
@@ -189,7 +189,7 @@ static void crystal_preprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (StarShipPtr->cur_status_flags & WeaponFlag)
+	if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Weapon))
 	{
 		++ElementPtr->life_span; /* keep it going while key pressed */
 	}
@@ -211,7 +211,7 @@ static void animate(Element* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
@@ -313,8 +313,8 @@ static void doggy_death(Element* ElementPtr)
 					 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 				 ElementPtr);
 
-	ElementPtr->state_flags &= ~Disappearing;
-	ElementPtr->state_flags |= Nonsolid | FiniteLife;
+	ElementPtr->state_flags &= ~ElementFlags::Disappearing;
+	ElementPtr->state_flags |= ElementFlags::Nonsolid | ElementFlags::FiniteLife;
 	ElementPtr->life_span = 6;
 	{
 		ElementPtr->preprocess_func = animate;
@@ -330,7 +330,7 @@ static void doggy_collision(Element* ElementPtr0, GfxPoint* pPt0,
 							Element* ElementPtr1, GfxPoint* pPt1)
 {
 	collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
-	if ((ElementPtr1->state_flags & PlayerShip)
+	if ((testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 		&& !elementsOfSamePlayer(ElementPtr0, ElementPtr1))
 	{
 		Starship* StarShipPtr {};
@@ -366,7 +366,7 @@ static void spawn_doggy(Element* ElementPtr)
 		Element* DoggyElementPtr {};
 		Starship* StarShipPtr {};
 
-		ElementPtr->state_flags |= DefyPhysics;
+		ElementPtr->state_flags |= ElementFlags::DefyPhysics;
 
 		PutElement(hDoggyElement);
 		LockElement(hDoggyElement, &DoggyElementPtr);
@@ -374,7 +374,7 @@ static void spawn_doggy(Element* ElementPtr)
 		DoggyElementPtr->mass_points = DoggyMass;
 		DoggyElementPtr->thrust_wait = 0;
 		DoggyElementPtr->playerNr = ElementPtr->playerNr;
-		DoggyElementPtr->state_flags = Appearing;
+		DoggyElementPtr->state_flags = ElementFlags::Appearing;
 		DoggyElementPtr->life_span = NormalLife;
 		SetPrimType(&DisplayArray[DoggyElementPtr->PrimIndex],
 					PrimitiveType::Stamp);
@@ -416,7 +416,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 	static uint32_t old_dist[NumSides] = {(uint32_t)~0, (uint32_t)~0};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	StarShipPtr->ship_input_state &= ~SpecialFlag;
+	StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (lpEvalDesc->ObjectPtr)
@@ -434,7 +434,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 				&& GetWeaponRange(
 					   &EnemyStarShipPtr->RaceDescPtr->cyborg_control)
 					   >= chooseIfHd(LongRangeWeapon, LongRangeWeaponHd) * 3 / 4
-				&& (EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & SeekingWeapon)))
+				&& (testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::SeekingWeapon))))
 		{
 			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
@@ -456,14 +456,14 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 		ElementHandle hNext {};
 		Element* CrystalPtr {};
 
-		h = (StarShipPtr->old_status_flags & WeaponFlag) ?
+		h = (testFlag(StarShipPtr->old_status_flags, StatusFlags::Weapon)) ?
 				GetTailElement() :
 				(ElementHandle)0;
 		for (; h; h = hNext)
 		{
 			LockElement(h, &CrystalPtr);
 			hNext = GetPredElement(CrystalPtr);
-			if (!(CrystalPtr->state_flags & Nonsolid)
+			if (!(testFlag(CrystalPtr->state_flags, ElementFlags::Nonsolid))
 				&& CrystalPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.weapon
 				&& CrystalPtr->preprocess_func
 				&& CrystalPtr->life_span > 0
@@ -507,7 +507,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 					}
 					if (crystal_would_miss)
 					{
-						StarShipPtr->ship_input_state &= ~WeaponFlag;
+						StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 						old_dist[ShipPtr->playerNr] = (uint32_t)~0;
 
 						// JMS: Let's try to stop Chenjesu's stupid over-rapid firing behavior in hires modes...
@@ -522,7 +522,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 					}
 					else if (StarShipPtr->weapon_counter == 0)
 					{
-						StarShipPtr->ship_input_state |= WeaponFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 						lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 					}
 
@@ -536,9 +536,9 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 
 		if (h == 0)
 		{
-			if (StarShipPtr->old_status_flags & WeaponFlag)
+			if (testFlag(StarShipPtr->old_status_flags, StatusFlags::Weapon))
 			{
-				StarShipPtr->ship_input_state &= ~WeaponFlag;
+				StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 				old_dist[ShipPtr->playerNr] = (uint32_t)~0;
 				if (lpEvalDesc == &ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon])
 				{
@@ -565,7 +565,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 					if (w)
 					{
 						LockElement(w, &EPtr);
-						if (EPtr->state_flags & Appearing)
+						if (testFlag(EPtr->state_flags, ElementFlags::Appearing))
 						{
 							EPtr->next = EPtr->current;
 							InitIntersectStartPoint(EPtr);
@@ -577,7 +577,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 										  EPtr->life_span, FragmentRange() / 2)
 							< 80)
 						{
-							StarShipPtr->ship_input_state |= WeaponFlag;
+							StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 						}
 
 						UnlockElement(w);
@@ -586,7 +586,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 				}
 				else
 				{
-					StarShipPtr->ship_input_state |= WeaponFlag;
+					StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 				}
 			}
 		}
@@ -596,9 +596,9 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 	{
 		if (lpEvalDesc->ObjectPtr
 			&& StarShipPtr->RaceDescPtr->ship_info.energy_level <= SpecialEnergyCost
-			&& !(StarShipPtr->ship_input_state & WeaponFlag))
+			&& !(testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon)))
 		{
-			StarShipPtr->ship_input_state |= SpecialFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Special;
 		}
 	}
 }
@@ -615,7 +615,7 @@ static uint16_t initialize_crystal(Element* ShipPtr, ElementHandle CrystalArray[
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = ChenjesuOffset();
 	MissileBlock.speed = MissileSpeed();
 	MissileBlock.hit_points = MissileHits;
@@ -642,7 +642,7 @@ static void chenjesu_postprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& StarShipPtr->special_counter < MaxDoggies
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
@@ -665,9 +665,7 @@ static void chenjesu_preprocess(Element* ElementPtr)
 	{
 		StarShipPtr->special_counter += MaxDoggies;
 	}
-	if (StarShipPtr->cur_status_flags
-		& StarShipPtr->old_status_flags
-		& WeaponFlag)
+	if (testFlag(StarShipPtr->cur_status_flags & StarShipPtr->old_status_flags, StatusFlags::Weapon))
 	{
 		++StarShipPtr->weapon_counter;
 	}

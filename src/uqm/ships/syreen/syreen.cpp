@@ -61,7 +61,7 @@ static RaceDesc syreen_desc =
 	{
 		{/* ShipInfoDesc */
 		 "penetrator",
-		 FiresFore,
+		 ShipFlags::FiresFore,
 		 13, /* Super Melee cost */
 		 MaxCrew, MaxCrewSize,
 		 MaxEnergy, MaxEnergy,
@@ -140,7 +140,7 @@ static uint16_t initialize_dagger(Element* ShipPtr, ElementHandle DaggerArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = SyreenOffset();
 	MissileBlock.speed = MissileSpeedHd();
 	MissileBlock.hit_points = MissileHits;
@@ -155,7 +155,7 @@ static uint16_t initialize_dagger(Element* ShipPtr, ElementHandle DaggerArray[])
 
 static void spawn_crew(Element* ElementPtr)
 {
-	if (ElementPtr->state_flags & PlayerShip)
+	if (testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip))
 	{
 		ElementHandle hCrew {AllocElement()};
 		if (hCrew != 0)
@@ -165,7 +165,7 @@ static void spawn_crew(Element* ElementPtr)
 			LockElement(hCrew, &CrewPtr);
 			CrewPtr->next.location = ElementPtr->next.location;
 			CrewPtr->playerNr = ElementPtr->playerNr;
-			CrewPtr->state_flags = Appearing | Nonsolid | FiniteLife;
+			CrewPtr->state_flags = ElementFlags::Appearing | ElementFlags::Nonsolid | ElementFlags::FiniteLife;
 			CrewPtr->life_span = 0;
 			CrewPtr->death_func = spawn_crew;
 			CrewPtr->pParent = ElementPtr->pParent;
@@ -188,7 +188,7 @@ static void spawn_crew(Element* ElementPtr)
 			LockElement(hElement, &ObjPtr);
 			hNextElement = GetSuccElement(ObjPtr);
 
-			if ((ObjPtr->state_flags & PlayerShip)
+			if ((testFlag(ObjPtr->state_flags, ElementFlags::PlayerShip))
 				&& !elementsOfSamePlayer(ObjPtr, ElementPtr)
 				&& ObjPtr->crew_level > 1)
 			{
@@ -251,16 +251,16 @@ static void syreen_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 
 		GetElementStarShip(ShipPtr, &StarShipPtr);
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
-		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune)
+		if (!(testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::CrewImmune))
 			&& StarShipPtr->special_counter == 0
 			&& lpEvalDesc->ObjectPtr->crew_level > 1
 			&& lpEvalDesc->which_turn <= 14)
 		{
-			StarShipPtr->ship_input_state |= SpecialFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Special;
 		}
 		else
 		{
-			StarShipPtr->ship_input_state &= ~SpecialFlag;
+			StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		}
 	}
 }
@@ -270,7 +270,7 @@ static void syreen_postprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{

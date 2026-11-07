@@ -85,15 +85,15 @@ void collide(Element* ElementPtr0, Element* ElementPtr1)
 		&& ElementPtr1->next.location.x == ElementPtr1->current.location.x
 		&& ElementPtr1->next.location.y == ElementPtr1->current.location.y)
 	{
-		if (ElementPtr0->state_flags & ElementPtr1->state_flags & DefyPhysics)
+		if (testFlag(ElementPtr0->state_flags & ElementPtr1->state_flags, ElementFlags::DefyPhysics))
 		{
 			ImpactAngle0 = TravelAngle0 + (HalfCircle - Octant);
 			ImpactAngle1 = TravelAngle1 + (HalfCircle - Octant);
 			ZeroVelocityComponents(&ElementPtr0->velocity);
 			ZeroVelocityComponents(&ElementPtr1->velocity);
 		}
-		ElementPtr0->state_flags |= (DefyPhysics | Collision);
-		ElementPtr1->state_flags |= (DefyPhysics | Collision);
+		ElementPtr0->state_flags |= (ElementFlags::DefyPhysics | ElementFlags::Collision);
+		ElementPtr1->state_flags |= (ElementFlags::DefyPhysics | ElementFlags::Collision);
 #ifdef DEBUG_COLLIDE
 		uqm::log::debug("No movement before collision -- "
 						"<({}, {}) = {}, ({}, {}) = {}>",
@@ -113,14 +113,14 @@ void collide(Element* ElementPtr0, Element* ElementPtr1)
 
 		if (!GravityMass(ElementPtr0->mass_points + 1))
 		{
-			if (ElementPtr0->state_flags & PlayerShip)
+			if (testFlag(ElementPtr0->state_flags, ElementFlags::PlayerShip))
 			{
 				Starship* StarShipPtr {};
 
 				GetElementStarShip(ElementPtr0, &StarShipPtr);
 				StarShipPtr->cur_status_flags &=
-					~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
-				if (!(ElementPtr0->state_flags & DefyPhysics))
+					~(StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed);
+				if (!(testFlag(ElementPtr0->state_flags, ElementFlags::DefyPhysics)))
 				{
 					if (ElementPtr0->turn_wait < CollisionTurnWait)
 					{
@@ -160,14 +160,14 @@ void collide(Element* ElementPtr0, Element* ElementPtr1)
 
 		if (!GravityMass(ElementPtr1->mass_points + 1))
 		{
-			if (ElementPtr1->state_flags & PlayerShip)
+			if (testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 			{
 				Starship* StarShipPtr {};
 
 				GetElementStarShip(ElementPtr1, &StarShipPtr);
 				StarShipPtr->cur_status_flags &=
-					~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
-				if (!(ElementPtr1->state_flags & DefyPhysics))
+					~(StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed);
+				if (!(testFlag(ElementPtr1->state_flags, ElementFlags::DefyPhysics)))
 				{
 					if (ElementPtr1->turn_wait < CollisionTurnWait)
 					{

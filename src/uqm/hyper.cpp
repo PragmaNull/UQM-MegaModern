@@ -303,7 +303,7 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 
 			LockElement(hElement, &ElementPtr);
 
-			if (!(ElementPtr->state_flags & PlayerShip))
+			if (!(testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip)))
 			{
 				hNextElement = GetPredElement(ElementPtr);
 			}
@@ -837,7 +837,7 @@ static void unhyper_transition(Element* ElementPtr)
 		SetElementStarShip(ElementPtr, StarShipPtr);
 	}
 
-	ElementPtr->state_flags |= Changing;
+	ElementPtr->state_flags |= ElementFlags::Changing;
 
 	uint16_t frame_index {GetFrameIndex(ElementPtr->current.image.frame)};
 	if (frame_index == 0)
@@ -890,7 +890,7 @@ static void init_transition(Element* ElementPtr0, Element* ElementPtr1,
 	dy = WorldToVelocity(ElementPtr0->next.location.y
 						 - ElementPtr1->next.location.y);
 
-	ElementPtr1->state_flags |= Nonsolid;
+	ElementPtr1->state_flags |= ElementFlags::Nonsolid;
 	ElementPtr1->preprocess_func = unhyper_transition;
 	ElementPtr1->postprocess_func = nullptr;
 	ElementPtr1->turn_wait = (uint8_t)which_transition;
@@ -946,7 +946,7 @@ void DoAdvancedAutoPilot(void)
 
 bool hyper_transition(Element* ElementPtr)
 {
-	if (ElementPtr->state_flags & Appearing)
+	if (testFlag(ElementPtr->state_flags, ElementFlags::Appearing))
 	{
 		if (LastActivity & ActivityFlag::CheckLoad)
 		{
@@ -955,7 +955,7 @@ bool hyper_transition(Element* ElementPtr)
 			ElementPtr->current = ElementPtr->next;
 			SetUpElement(ElementPtr);
 
-			ElementPtr->state_flags |= DefyPhysics;
+			ElementPtr->state_flags |= ElementFlags::DefyPhysics;
 
 			return false;
 		}
@@ -964,7 +964,7 @@ bool hyper_transition(Element* ElementPtr)
 			ElementPtr->preprocess_func =
 				(void (*)(struct Element* ElementPtr))hyper_transition;
 			ElementPtr->postprocess_func = nullptr;
-			ElementPtr->state_flags |= Nonsolid;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid;
 			ElementPtr->next.image.frame =
 				SetAbsFrameIndex(ElementPtr->current.image.frame,
 								 GetFrameCount(ElementPtr->current.image.frame) - 1);
@@ -1013,21 +1013,21 @@ bool hyper_transition(Element* ElementPtr)
 			{
 				ElementPtr->preprocess_func = ship_preprocess;
 				ElementPtr->postprocess_func = ship_postprocess;
-				ElementPtr->state_flags &= ~Nonsolid;
+				ElementPtr->state_flags &= ~ElementFlags::Nonsolid;
 			}
 		}
 
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 		ElementPtr->next.image.frame =
 			SetAbsFrameIndex(ElementPtr->current.image.frame,
 							 frame_index);
 
-		if (!(ElementPtr->state_flags & Nonsolid))
+		if (!(testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid)))
 		{
 			ElementPtr->current = ElementPtr->next;
 			SetUpElement(ElementPtr);
 
-			ElementPtr->state_flags |= DefyPhysics;
+			ElementPtr->state_flags |= ElementFlags::DefyPhysics;
 
 			if (uqm::UQMOptions::read().advancedAutoPilot)
 			{
@@ -1042,7 +1042,7 @@ bool hyper_transition(Element* ElementPtr)
 static void hyper_collision(Element* ElementPtr0, GfxPoint* pPt0,
 							Element* ElementPtr1, GfxPoint* pPt1)
 {
-	if ((ElementPtr1->state_flags & PlayerShip)
+	if ((testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 		&& uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER) == 0)
 	{
 		int16_t dx {};
@@ -1057,11 +1057,11 @@ static void hyper_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		GetCurrentVelocityComponents(&ElementPtr1->velocity, &dx, &dy);
 		if (SDPtr == CurStarDescPtr()
-			|| (ElementPtr1->state_flags & Appearing)
-			|| !(dx || dy || (StarShipPtr->cur_status_flags & (LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag))))
+			|| (testFlag(ElementPtr1->state_flags, ElementFlags::Appearing))
+			|| !(dx || dy || (testFlag(StarShipPtr->cur_status_flags, (StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon | StatusFlags::Special)))))
 		{
 			CurStarDescPtr() = SDPtr;
-			ElementPtr0->state_flags |= DefyPhysics | Collision;
+			ElementPtr0->state_flags |= ElementFlags::DefyPhysics | ElementFlags::Collision;
 		}
 		else if ((uqm::currentActivity() & ActivityFlag::InBattle)
 				 && (!uqm::flagship().autopilot.hasTarget()
@@ -1069,7 +1069,7 @@ static void hyper_collision(Element* ElementPtr0, GfxPoint* pPt0,
 						 && uqm::flagship().autopilot.target().y == SDPtr->star_pt.y)))
 		{
 			CurStarDescPtr() = SDPtr;
-			ElementPtr0->state_flags |= Collision;
+			ElementPtr0->state_flags |= ElementFlags::Collision;
 
 			init_transition(ElementPtr0, ElementPtr1,
 							TransitionType::Interplanetary);
@@ -1081,7 +1081,7 @@ static void hyper_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 static void hyper_death(Element* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & DefyPhysics)
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::DefyPhysics))
 		&& (uqm::currentActivity() & ActivityFlag::InBattle))
 	{
 		CurStarDescPtr() = 0;
@@ -1090,7 +1090,7 @@ static void hyper_death(Element* ElementPtr)
 
 static void arilou_space_death(Element* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & DefyPhysics)
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::DefyPhysics))
 		|| uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_COUNTER) == 0)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
@@ -1109,7 +1109,7 @@ static void arilou_space_collision(Element* ElementPtr0,
 {
 	uint16_t which_side {};
 
-	if (!(ElementPtr1->state_flags & PlayerShip))
+	if (!(testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip)))
 	{
 		return;
 	}
@@ -1117,7 +1117,7 @@ static void arilou_space_collision(Element* ElementPtr0,
 	which_side = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE);
 	if (which_side == 0 || which_side == 3)
 	{
-		if (ElementPtr1->state_flags & DefyPhysics)
+		if (testFlag(ElementPtr1->state_flags, ElementFlags::DefyPhysics))
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(which_side ^ 1));
 		}
@@ -1128,7 +1128,7 @@ static void arilou_space_collision(Element* ElementPtr0,
 		}
 	}
 
-	ElementPtr0->state_flags |= DefyPhysics | Collision;
+	ElementPtr0->state_flags |= ElementFlags::DefyPhysics | ElementFlags::Collision;
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
@@ -1142,7 +1142,7 @@ static ElementHandle AllocHyperElement(const GfxPoint* elem_pt)
 
 		LockElement(hHyperSpaceElement, &HyperSpaceElementPtr);
 		HyperSpaceElementPtr->playerNr = NeutralPlayerNum;
-		HyperSpaceElementPtr->state_flags = Changing | FiniteLife;
+		HyperSpaceElementPtr->state_flags = ElementFlags::Changing | ElementFlags::FiniteLife;
 		HyperSpaceElementPtr->life_span = 1;
 		HyperSpaceElementPtr->mass_points = 1;
 
@@ -1182,7 +1182,7 @@ static void AddAmbientElement(void)
 		LockElement(hHyperSpaceElement, &HyperSpaceElementPtr);
 		HyperSpaceElementPtr->playerNr = NeutralPlayerNum;
 		HyperSpaceElementPtr->state_flags =
-			Appearing | FiniteLife | Nonsolid;
+			ElementFlags::Appearing | ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 		SetPrimType(&DisplayArray[HyperSpaceElementPtr->PrimIndex],
 					PrimitiveType::Stamp);
 		HyperSpaceElementPtr->preprocess_func = animation_preprocess;
@@ -1258,7 +1258,7 @@ static void encounter_animation(Element* ElementPtr)
 
 static void encounter_transition(Element* ElementPtr)
 {
-	ElementPtr->state_flags &= ~Disappearing;
+	ElementPtr->state_flags &= ~ElementFlags::Disappearing;
 	ElementPtr->life_span = 1;
 	if (ElementPtr->turn_wait)
 	{
@@ -1312,7 +1312,7 @@ static ElementHandle getSisElement(void)
 	{
 		Element* ElementPtr;
 		LockElement(hShip, &ElementPtr);
-		assert(ElementPtr->state_flags & PlayerShip);
+		assert(testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip));
 		UnlockElement(hShip);
 	}
 #endif
@@ -1326,7 +1326,7 @@ static void encounter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	EncounterHandle hEncounter {};
 	EncounterHandle hNextEncounter {};
 
-	if (!(ElementPtr1->state_flags & PlayerShip)
+	if (!(testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 		|| !(uqm::currentActivity() & ActivityFlag::InBattle))
 	{
 		return;
@@ -1347,7 +1347,7 @@ static void encounter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			Element* ElementPtr {};
 
 			LockElement(EncounterPtr->hElement, &ElementPtr);
-			ElementPtr->state_flags |= Nonsolid | IgnoreSimilar;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid | ElementFlags::IgnoreSimilar;
 			UnlockElement(EncounterPtr->hElement);
 		}
 		UnlockEncounter(hEncounter);
@@ -1517,7 +1517,7 @@ static ElementHandle AddEncounterElement(Encounter* EncounterPtr, GfxPoint* puni
 		ElementPtr->IntersectControl.IntersectStamp.frame =
 			DecFrameIndex(stars_in_space);
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NoPrim);
-		ElementPtr->state_flags |= Nonsolid | IgnoreVelocity;
+		ElementPtr->state_flags |= ElementFlags::Nonsolid | ElementFlags::IgnoreVelocity;
 
 		UnlockElement(hElement);
 
@@ -1720,7 +1720,7 @@ static bool ProcessEncounter(Encounter* EncounterPtr, GfxPoint* puniverse,
 			|| (uint32_t)delta_x * delta_x + (uint32_t)delta_y * delta_y >= (uint32_t)encounter_radius * encounter_radius)
 		{
 			// Encounter globe traveled outside the SoI and now disappears
-			ElementPtr->state_flags |= Nonsolid;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid;
 			ElementPtr->life_span = 0;
 
 			if (EncounterPtr->transition_state == 0)
@@ -1758,7 +1758,7 @@ static bool ProcessEncounter(Encounter* EncounterPtr, GfxPoint* puniverse,
 		ElementPtr->next.location.y =
 			(int16_t)(EncounterPtr->log_y - uqm::gameState().sis().log_y)
 			+ (LogSpaceHeight() >> 1);
-		if ((ElementPtr->state_flags & Nonsolid)
+		if ((testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid))
 			&& EncounterPtr->transition_state == 0)
 		{
 			ElementPtr->current.location = ElementPtr->next.location;
@@ -1767,13 +1767,13 @@ static bool ProcessEncounter(Encounter* EncounterPtr, GfxPoint* puniverse,
 			if (ElementPtr->death_func == 0)
 			{
 				InitIntersectStartPoint(ElementPtr);
-				ElementPtr->state_flags &= ~Nonsolid;
+				ElementPtr->state_flags &= ~ElementFlags::Nonsolid;
 			}
 		}
 	}
 	else
 	{
-		ElementPtr->state_flags |= Nonsolid;
+		ElementPtr->state_flags |= ElementFlags::Nonsolid;
 		if (ex - puniverse->x < -Xoffs() || ex - puniverse->x > Xoffs()
 			|| ey - puniverse->y < -Yoffs() || ey - puniverse->y > Yoffs())
 		{
@@ -2154,7 +2154,7 @@ void SeedUniverse(void)
 				SetPrimFlags(&DisplayArray[*PrimIndex], HsStarmask);
 
 				HyperSpaceElementPtr->state_flags =
-					Appearing | FiniteLife | Nonsolid;
+					ElementFlags::Appearing | ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 
 				UnlockElement(hHyperSpaceElement);
 
@@ -2310,7 +2310,7 @@ void HyperspaceMenu(void)
 	DrawMenuStateStrings(MenuString::Starmap, *HyperMenuItem::Starmap);
 	SetFlashRect(SfrMenu3do(), false);
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	DoInput(&menuState, true);
 
 	SetFlashRect(nullptr, false);

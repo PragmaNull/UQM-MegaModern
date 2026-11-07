@@ -741,8 +741,8 @@ bool DevicesMenu(void)
 
 	DrawDevices(&DevicesState, (uint16_t)~0, menuState.CurState);
 
-	SetMenuSounds(MenuSoundArrows | MenuSoundPage,
-				  MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows | MenuSoundFlags::Page,
+				  MenuSoundFlags::Select);
 
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
@@ -752,7 +752,7 @@ bool DevicesMenu(void)
 	menuState.InputFunc = DoManipulateDevices;
 	DoInput(&menuState, true);
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	if (uqm::gameState().sis().CrewEnlisted != (uint16_t)~0
 		&& !(uqm::currentActivity() & ActivityFlag::CheckAbort))

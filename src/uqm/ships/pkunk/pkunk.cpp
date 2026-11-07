@@ -65,7 +65,7 @@ static RaceDesc pkunk_desc =
 	{
 		{/* ShipInfoDesc */
 		 "fury",
-		 FiresFore | FiresLeft | FiresRight,
+		 ShipFlags::FiresFore | ShipFlags::FiresLeft | ShipFlags::FiresRight,
 		 20, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -182,7 +182,7 @@ static void animate(Element* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
@@ -199,7 +199,7 @@ static uint16_t initialize_bug_missile(Element* ShipPtr, ElementHandle MissileAr
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = PkunkOffset();
 	MissileBlock.speed = ResScale(MissileSpeed);
 	MissileBlock.hit_points = MissileHits;
@@ -257,11 +257,11 @@ static void pkunk_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		&& (StarShipPtr->special_counter == 0
 			|| (uint8_t)uqm::random().next() < 20))
 	{
-		StarShipPtr->ship_input_state |= SpecialFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Special;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	}
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 }
@@ -275,7 +275,7 @@ static void new_pkunk(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	const PkunkData* pkunkData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 
-	ElementPtr->state_flags = Appearing | PlayerShip | IgnoreSimilar;
+	ElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::PlayerShip | ElementFlags::IgnoreSimilar;
 	ElementPtr->mass_points = ShipMass;
 	// Restore the Element processing callbacks after the explosion.
 	// The callbacks were changed for the explosion sequence
@@ -294,10 +294,10 @@ static void new_pkunk(Element* ElementPtr)
 	StarShipPtr->RaceDescPtr->characteristics.thrust_wait = ThrustWait;
 	StarShipPtr->RaceDescPtr->characteristics.special_wait = 0;
 
-	StarShipPtr->ship_input_state = 0;
+	StarShipPtr->ship_input_state = StatusFlags::None;
 	// Pkunk wins in a simultaneous destruction if it reincarnates
-	StarShipPtr->cur_status_flags &= PlayVictoryDitty;
-	StarShipPtr->old_status_flags = 0;
+	StarShipPtr->cur_status_flags &= StatusFlags::PlayVictoryDitty;
+	StarShipPtr->old_status_flags = StatusFlags::None;
 	StarShipPtr->energy_counter = 0;
 	StarShipPtr->weapon_counter = 0;
 	StarShipPtr->special_counter = 0;
@@ -351,7 +351,7 @@ static void intercept_pkunk_death(Element* ElementPtr)
 	if (StarShipPtr->RaceDescPtr->ship_info.crew_level != 0)
 	{ // Ship not dead yet.
 		// Keep the Phoenix Element alive.
-		ElementPtr->state_flags &= ~Disappearing;
+		ElementPtr->state_flags &= ~ElementFlags::Disappearing;
 		ElementPtr->life_span = 1;
 		return;
 	}
@@ -403,8 +403,8 @@ static void spawn_phoenix_trail(Element* ElementPtr)
 		SetPrimColor(&DisplayArray[ElementPtr->PrimIndex],
 					 colorTable[ElementPtr->colorCycleIndex]);
 
-		ElementPtr->state_flags &= ~Disappearing;
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags &= ~ElementFlags::Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	} // else, the Element disappears.
 }
 
@@ -417,7 +417,7 @@ static void phoenix_transition(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	LockElement(StarShipPtr->hShip, &ShipImagePtr);
 
-	if (!(ShipImagePtr->state_flags & Nonsolid))
+	if (!(testFlag(ShipImagePtr->state_flags, ElementFlags::Nonsolid)))
 	{
 		ElementPtr->preprocess_func = nullptr;
 	}
@@ -429,7 +429,7 @@ static void phoenix_transition(Element* ElementPtr)
 
 		LockElement(hShipImage, &ShipImagePtr);
 		ShipImagePtr->playerNr = NeutralPlayerNum;
-		ShipImagePtr->state_flags = Appearing | FiniteLife | Nonsolid;
+		ShipImagePtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 		ShipImagePtr->life_span = TransitionLife;
 		SetPrimType(&DisplayArray[ShipImagePtr->PrimIndex],
 					PrimitiveType::StampFill);
@@ -439,7 +439,7 @@ static void phoenix_transition(Element* ElementPtr)
 		ShipImagePtr->colorCycleIndex = 0;
 		ShipImagePtr->current.image = ElementPtr->current.image;
 		ShipImagePtr->current.location = ElementPtr->current.location;
-		if (!(ElementPtr->state_flags & PlayerShip))
+		if (!(testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip)))
 		{
 			angle = ElementPtr->mass_points;
 
@@ -489,7 +489,7 @@ static void pkunk_preprocess(Element* ElementPtr)
 		FwiffoSounds = uqm::loadSoundBank("ship.spathi.sounds").release();
 	}
 
-	if (ElementPtr->state_flags & Appearing)
+	if (testFlag(ElementPtr->state_flags, ElementFlags::Appearing))
 	{
 		ElementHandle hPhoenix = 0;
 
@@ -509,7 +509,7 @@ static void pkunk_preprocess(Element* ElementPtr)
 
 			LockElement(hPhoenix, &PhoenixPtr);
 			PhoenixPtr->playerNr = ElementPtr->playerNr;
-			PhoenixPtr->state_flags = FiniteLife | Nonsolid | IgnoreSimilar;
+			PhoenixPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid | ElementFlags::IgnoreSimilar;
 			PhoenixPtr->life_span = 1;
 
 			PhoenixPtr->death_func = intercept_pkunk_death;
@@ -545,7 +545,7 @@ static void pkunk_preprocess(Element* ElementPtr)
 			ElementPtr->life_span = PhoenixLife;
 			SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 						NoPrim);
-			ElementPtr->state_flags |= Nonsolid | FiniteLife | Changing;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid | ElementFlags::FiniteLife | ElementFlags::Changing;
 
 			const uint16_t facing {StarShipPtr->ShipFacing};
 			for (uint16_t angle {Octant}; angle < FullCircle; angle += Quadrant)
@@ -561,7 +561,7 @@ static void pkunk_preprocess(Element* ElementPtr)
 	if (StarShipPtr->RaceDescPtr->preprocess_func)
 	{
 		StarShipPtr->cur_status_flags &=
-			~(LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag);
+			~(StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon | StatusFlags::Special);
 
 		if (ElementPtr->life_span == NormalLife)
 		{
@@ -576,8 +576,8 @@ static void pkunk_preprocess(Element* ElementPtr)
 			InitIntersectEndPoint(ElementPtr);
 			InitIntersectFrame(ElementPtr);
 			ZeroVelocityComponents(&ElementPtr->velocity);
-			ElementPtr->state_flags &= ~(Nonsolid | FiniteLife);
-			ElementPtr->state_flags |= Changing;
+			ElementPtr->state_flags &= ~(ElementFlags::Nonsolid | ElementFlags::FiniteLife);
+			ElementPtr->state_flags |= ElementFlags::Changing;
 
 			StarShipPtr->RaceDescPtr->preprocess_func = 0;
 		}
@@ -595,7 +595,7 @@ static void pkunk_postprocess(Element* ElementPtr)
 	{
 		--StarShipPtr->RaceDescPtr->characteristics.special_wait;
 	}
-	else if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	else if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 			 && StarShipPtr->RaceDescPtr->ship_info.energy_level < StarShipPtr->RaceDescPtr->ship_info.max_energy)
 	{
 		uint16_t CurSound {};

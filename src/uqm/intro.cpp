@@ -1367,7 +1367,7 @@ static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& comman
 	FontRef OldFont {SetContextFont(nullptr)};
 	SetContextBackGroundColor(BlackColor);
 
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 	pis.InputFunc = DoPresentation;
 	pis.LastDrawKind = -1;
 	pis.TextVPos = uqm::SlideTextAlign::Bottom;
@@ -1472,7 +1472,7 @@ static bool ShowLegacyVideo(LegacyVideo vid)
 
 	vis.InputFunc = DoVideoInput;
 	vis.CurVideo = ref;
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 	DoInput(&vis, true);
 
 	StopLegacyVideo(ref);

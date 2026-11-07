@@ -69,7 +69,7 @@ static RaceDesc black_urquan_desc =
 	{
 		{/* ShipInfoDesc */
 		 "marauder",
-		 FiresFore,
+		 ShipFlags::FiresFore,
 		 30, /* Super Melee cost */
 		 MaxCrewSize, MaxCrewSize,
 		 MaxEnergySize, MaxEnergySize,
@@ -150,7 +150,7 @@ static void spin_preprocess(Element* ElementPtr)
 		&& ++StarShipPtr->RaceDescPtr->characteristics.special_wait > MaxSaws)
 	{
 		ElementPtr->life_span = 1;
-		ElementPtr->state_flags |= Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Disappearing;
 	}
 	else
 	{
@@ -173,7 +173,7 @@ static void spin_preprocess(Element* ElementPtr)
 				ElementPtr->next.image.frame =
 					SetAbsFrameIndex(ElementPtr->current.image.frame, 0);
 			}
-			ElementPtr->state_flags |= Changing;
+			ElementPtr->state_flags |= ElementFlags::Changing;
 
 			ElementPtr->turn_wait = SawRate;
 		}
@@ -264,7 +264,7 @@ static void splinter_preprocess(Element* ElementPtr)
 {
 	ElementPtr->next.image.frame =
 		IncFrameIndex(ElementPtr->current.image.frame);
-	ElementPtr->state_flags |= Changing;
+	ElementPtr->state_flags |= ElementFlags::Changing;
 }
 
 static void buzzsaw_collision(Element* ElementPtr0, GfxPoint* pPt0,
@@ -272,10 +272,10 @@ static void buzzsaw_collision(Element* ElementPtr0, GfxPoint* pPt0,
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 
-	if (ElementPtr0->state_flags & Disappearing)
+	if (testFlag(ElementPtr0->state_flags, ElementFlags::Disappearing))
 	{
-		ElementPtr0->state_flags &= ~Disappearing;
-		ElementPtr0->state_flags |= Nonsolid | Changing;
+		ElementPtr0->state_flags &= ~ElementFlags::Disappearing;
+		ElementPtr0->state_flags |= ElementFlags::Nonsolid | ElementFlags::Changing;
 		ElementPtr0->life_span = 5;
 		ElementPtr0->next.image.frame =
 			SetAbsFrameIndex(ElementPtr0->current.image.frame, 2);
@@ -289,7 +289,7 @@ static void buzzsaw_preprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (!(StarShipPtr->cur_status_flags & WeaponFlag))
+	if (!(testFlag(StarShipPtr->cur_status_flags, StatusFlags::Weapon)))
 	{
 		ElementPtr->life_span >>= 1;
 		ElementPtr->preprocess_func = decelerate_preprocess;
@@ -317,8 +317,8 @@ static void buzzsaw_postprocess(Element* ElementPtr)
 		InitIntersectStartPoint(ListElementPtr);
 		InitIntersectEndPoint(ListElementPtr);
 		ListElementPtr->state_flags = (ListElementPtr->state_flags
-									   & ~(PreProcessFlag | Changing | Appearing))
-									| PostProcessFlag;
+									   & ~(ElementFlags::PreProcess | ElementFlags::Changing | ElementFlags::Appearing))
+									| ElementFlags::PostProcess;
 		UnlockElement(hElement);
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -342,7 +342,7 @@ static uint16_t initialize_buzzsaw(Element* ShipPtr, ElementHandle SawArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = KohrAhOffset();
 	MissileBlock.speed = MissileSpeed();
 	MissileBlock.hit_points = MissileHits;
@@ -375,7 +375,7 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == MovementState::Entice
-		&& (lpEvalDesc->ObjectPtr->state_flags & CrewObject)
+		&& (testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::CrewObject))
 		&& lpEvalDesc->which_turn <= 8)
 	{
 		lpEvalDesc->MoveState = MovementState::Pursue;
@@ -385,14 +385,14 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 					  ObjectsOfConcern, ConcernCounter);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	StarShipPtr->ship_input_state &= ~SpecialFlag;
+	StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 
 	if (StarShipPtr->special_counter == 0
 		&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SpecialEnergyCost
 		&& lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->which_turn <= 8)
 	{
-		StarShipPtr->ship_input_state |= SpecialFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Special;
 	}
 
 	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
@@ -402,14 +402,14 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 		ElementHandle hNext {};
 		Element* BuzzSawPtr {};
 
-		h = (StarShipPtr->old_status_flags & WeaponFlag) ?
+		h = (testFlag(StarShipPtr->old_status_flags, StatusFlags::Weapon)) ?
 				GetSuccElement(ShipPtr) :
 				(ElementHandle)0;
 		for (; h; h = hNext)
 		{
 			LockElement(h, &BuzzSawPtr);
 			hNext = GetSuccElement(BuzzSawPtr);
-			if (!(BuzzSawPtr->state_flags & Nonsolid)
+			if (!(testFlag(BuzzSawPtr->state_flags, ElementFlags::Nonsolid))
 				&& BuzzSawPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.weapon
 				&& BuzzSawPtr->life_span > MissileLife * 3 / 4
 				&& elementsOfSamePlayer(BuzzSawPtr, ShipPtr))
@@ -421,11 +421,11 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 									   lpEvalDesc->ObjectPtr, BuzzSawPtr->life_span,
 									   FragmentRange() / 2))
 					{
-						StarShipPtr->ship_input_state &= ~WeaponFlag;
+						StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 					}
 					else if (StarShipPtr->weapon_counter == 0)
 					{
-						StarShipPtr->ship_input_state |= WeaponFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 					}
 
 					UnlockElement(h);
@@ -438,23 +438,23 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 
 		if (h == 0)
 		{
-			if (StarShipPtr->old_status_flags & WeaponFlag)
+			if (testFlag(StarShipPtr->old_status_flags, StatusFlags::Weapon))
 			{
-				StarShipPtr->ship_input_state &= ~WeaponFlag;
+				StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 			}
 			else if (StarShipPtr->weapon_counter == 0
 					 && ship_weapons(ShipPtr, lpEvalDesc->ObjectPtr, FragmentRange() / 2))
 			{
-				StarShipPtr->ship_input_state |= WeaponFlag;
+				StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 			}
 
 			if (StarShipPtr->special_counter == 0
-				&& !(StarShipPtr->ship_input_state & WeaponFlag)
+				&& !(testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon))
 				&& lpEvalDesc->which_turn <= 8
-				&& (StarShipPtr->ship_input_state & (LeftFlag | RightFlag))
+				&& (testFlag(StarShipPtr->ship_input_state, (StatusFlags::Left | StatusFlags::Right)))
 				&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SpecialEnergyCost)
 			{
-				StarShipPtr->ship_input_state |= SpecialFlag;
+				StarShipPtr->ship_input_state |= StatusFlags::Special;
 			}
 		}
 	}
@@ -470,7 +470,7 @@ static void gas_cloud_preprocess(Element* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = GasRate;
 	}
@@ -479,7 +479,7 @@ static void gas_cloud_preprocess(Element* ElementPtr)
 static void gas_cloud_collision(Element* ElementPtr0, GfxPoint* pPt0,
 								Element* ElementPtr1, GfxPoint* pPt1)
 {
-	if (ElementPtr1->state_flags & PlayerShip)
+	if (testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 	{
 		ElementPtr0->mass_points = GasDamage;
 	}
@@ -504,7 +504,7 @@ static void spawn_gas_cloud(Element* ElementPtr)
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ElementPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = ResScale(20);
 	MissileBlock.speed = GasSpeed();
 	MissileBlock.hit_points = GasHits;
@@ -542,7 +542,7 @@ static void black_urquan_postprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
@@ -564,8 +564,7 @@ static void black_urquan_preprocess(Element* ElementPtr)
 	/* no spinning disks */
 	StarShipPtr->RaceDescPtr->characteristics.special_wait = 0;
 	if (StarShipPtr->weapon_counter == 0
-		&& (StarShipPtr->cur_status_flags
-			& StarShipPtr->old_status_flags & WeaponFlag))
+		&& testFlag(StarShipPtr->cur_status_flags & StarShipPtr->old_status_flags, StatusFlags::Weapon))
 	{
 		++StarShipPtr->weapon_counter;
 	}

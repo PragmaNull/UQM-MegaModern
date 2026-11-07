@@ -58,7 +58,7 @@ static RaceDesc ilwrath_desc =
 	{
 		{/* ShipInfoDesc */
 		 "avenger",
-		 FiresFore,
+		 ShipFlags::FiresFore,
 		 10, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -136,7 +136,7 @@ static void flame_preprocess(Element* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
@@ -146,8 +146,8 @@ static void flame_collision(Element* ElementPtr0, GfxPoint* pPt0,
 							Element* ElementPtr1, GfxPoint* pPt1)
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
-	ElementPtr0->state_flags &= ~Disappearing;
-	ElementPtr0->state_flags |= Nonsolid;
+	ElementPtr0->state_flags &= ~ElementFlags::Disappearing;
+	ElementPtr0->state_flags |= ElementFlags::Nonsolid;
 }
 
 static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
@@ -171,23 +171,23 @@ static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCo
 			|| (lpEvalDesc->which_turn <= 10
 				&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].which_turn <= 10)))
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		if (ObjectCloaked(ShipPtr))
 		{
-			StarShipPtr->ship_input_state &= ~LeftFlag | RightFlag;
-			StarShipPtr->ship_input_state |= ThrustFlag;
+			StarShipPtr->ship_input_state &= ~StatusFlags::Left | StatusFlags::Right;
+			StarShipPtr->ship_input_state |= StatusFlags::Thrust;
 		}
-		StarShipPtr->ship_input_state |= WeaponFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 	}
 	else if (StarShipPtr->special_counter == 0
 			 && (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InEncounter
 				 || !uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER)))
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		if (!ObjectCloaked(ShipPtr)
-			&& !(StarShipPtr->ship_input_state & WeaponFlag))
+			&& !(testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon)))
 		{
-			StarShipPtr->ship_input_state |= SpecialFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Special;
 		}
 	}
 }
@@ -204,7 +204,7 @@ static uint16_t initialize_flame(Element* ShipPtr, ElementHandle FlameArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = IlwrathOffset();
 	MissileBlock.speed = MissileSpeed();
 	MissileBlock.hit_points = MissileHits;
@@ -247,11 +247,11 @@ static void ilwrath_preprocess(Element* ElementPtr)
 		bool weapon_discharge {};
 
 		color = GetPrimColor(lpPrim);
-		weapon_discharge = ((status_flags & WeaponFlag)
+		weapon_discharge = ((testFlag(status_flags, StatusFlags::Weapon))
 							&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= WeaponEnergyCost);
 		if (weapon_discharge
 			|| (StarShipPtr->special_counter == 0
-				&& ((status_flags & SpecialFlag) || !sameColor(color, BlackColor))))
+				&& ((testFlag(status_flags, StatusFlags::Special)) || !sameColor(color, BlackColor))))
 		{
 			if (sameColor(color,
 						  BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)))
@@ -318,7 +318,7 @@ static void ilwrath_preprocess(Element* ElementPtr)
 								AngleToFacing(ARCTAN(dx0, dy0)));
 #ifdef NOTYET
 						if (ElementPtr->thrust_wait == 0
-							&& (StarShipPtr->cur_status_flags & ThrustFlag))
+							&& (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Thrust)))
 						{
 							uint16_t last_facing;
 
@@ -355,8 +355,8 @@ static void ilwrath_preprocess(Element* ElementPtr)
 				}
 			}
 
-			ElementPtr->state_flags |= Changing;
-			status_flags &= ~SpecialFlag;
+			ElementPtr->state_flags |= ElementFlags::Changing;
+			status_flags &= ~StatusFlags::Special;
 			StarShipPtr->special_counter = 0;
 		}
 		else if (!sameColor(color, BlackColor))
@@ -391,11 +391,11 @@ static void ilwrath_preprocess(Element* ElementPtr)
 							 BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B));
 			}
 
-			ElementPtr->state_flags |= Changing;
+			ElementPtr->state_flags |= ElementFlags::Changing;
 		}
 	}
 
-	if ((status_flags & SpecialFlag)
+	if ((testFlag(status_flags, StatusFlags::Special))
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
@@ -410,7 +410,7 @@ static void ilwrath_preprocess(Element* ElementPtr)
 		StarShipPtr->special_counter =
 			StarShipPtr->RaceDescPtr->characteristics.special_wait;
 
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 }
 

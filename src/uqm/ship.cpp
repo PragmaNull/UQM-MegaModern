@@ -48,7 +48,7 @@ void animation_preprocess(Element* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
@@ -80,15 +80,13 @@ StatusFlags inertial_thrust(Element* ElementPtr)
 	{ // inertialess acceleration (Skiff)
 		SetVelocityVector(VelocityPtr,
 						  max_thrust, StarShipPtr->ShipFacing);
-		return (ShipAtMaxSpeed);
+		return (StatusFlags::ShipAtMaxSpeed);
 	}
 	else if (TravelAngle == CurrentAngle
-			 && (StarShipPtr->cur_status_flags
-				 & (ShipAtMaxSpeed | ShipBeyondMaxSpeed))
-			 && !(StarShipPtr->cur_status_flags & ShipInGravityWell))
+			 && (testFlag(StarShipPtr->cur_status_flags, (StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed)))
+			 && !(testFlag(StarShipPtr->cur_status_flags, StatusFlags::ShipInGravityWell)))
 	{ // already maxed-out acceleration
-		return (StarShipPtr->cur_status_flags
-				& (ShipAtMaxSpeed | ShipBeyondMaxSpeed));
+		return (((StarShipPtr->cur_status_flags & (StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed))));
 	}
 	else
 	{
@@ -109,13 +107,13 @@ StatusFlags inertial_thrust(Element* ElementPtr)
 		{ // normal acceleration
 			SetVelocityComponents(VelocityPtr, delta_x, delta_y);
 		}
-		else if (((StarShipPtr->cur_status_flags & ShipInGravityWell)
+		else if (((testFlag(StarShipPtr->cur_status_flags, StatusFlags::ShipInGravityWell))
 				  && desired_speed <= MaxAllowedSpeedSqr())
 				 || desired_speed < current_speed)
 		{ // acceleration in a gravity well within max allowed
 			// deceleration after gravity whip
 			SetVelocityComponents(VelocityPtr, delta_x, delta_y);
-			return (ShipAtMaxSpeed | ShipBeyondMaxSpeed);
+			return (StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed);
 		}
 		else if (TravelAngle == CurrentAngle)
 		{ // normal max acceleration, same vector
@@ -124,7 +122,7 @@ StatusFlags inertial_thrust(Element* ElementPtr)
 				SetVelocityVector(VelocityPtr, max_thrust,
 								  StarShipPtr->ShipFacing);
 			}
-			return (ShipAtMaxSpeed);
+			return (StatusFlags::ShipAtMaxSpeed);
 		}
 		else
 		{ // maxed-out acceleration at an angle to current travel vector
@@ -146,13 +144,13 @@ StatusFlags inertial_thrust(Element* ElementPtr)
 				{
 					*VelocityPtr = v;
 				}
-				return (ShipAtMaxSpeed | ShipBeyondMaxSpeed);
+				return (StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed);
 			}
 
 			*VelocityPtr = v;
 		}
 
-		return (0);
+		return StatusFlags::None;
 	}
 }
 
@@ -187,11 +185,10 @@ void ship_preprocess(Element* ElementPtr)
 
 	cur_status_flags =
 		StarShipPtr->cur_status_flags
-		& ~(LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag);
-	if (!(ElementPtr->state_flags & Appearing))
+		& ~(StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon | StatusFlags::Special);
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Appearing)))
 	{
-		cur_status_flags |= StarShipPtr->ship_input_state
-						  & (LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag);
+		cur_status_flags |= ((StarShipPtr->ship_input_state & (StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon | StatusFlags::Special)));
 	}
 	else
 	{ // Preprocessing for the first time
@@ -281,9 +278,9 @@ void ship_preprocess(Element* ElementPtr)
 	{
 		--ElementPtr->turn_wait;
 	}
-	else if (cur_status_flags & (LeftFlag | RightFlag))
+	else if (testFlag(cur_status_flags, (StatusFlags::Left | StatusFlags::Right)))
 	{
-		if (cur_status_flags & LeftFlag)
+		if (testFlag(cur_status_flags, StatusFlags::Left))
 		{
 			StarShipPtr->ShipFacing =
 				NormalizeFacing(StarShipPtr->ShipFacing - 1);
@@ -296,7 +293,7 @@ void ship_preprocess(Element* ElementPtr)
 		ElementPtr->next.image.frame =
 			SetAbsFrameIndex(ElementPtr->next.image.frame,
 							 StarShipPtr->ShipFacing);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = RDPtr->characteristics.turn_wait;
 	}
@@ -305,13 +302,13 @@ void ship_preprocess(Element* ElementPtr)
 	{
 		--ElementPtr->thrust_wait;
 	}
-	else if (cur_status_flags & ThrustFlag)
+	else if (testFlag(cur_status_flags, StatusFlags::Thrust))
 	{
 		const StatusFlags thrust_status {inertial_thrust(ElementPtr)};
 		StarShipPtr->cur_status_flags &=
-			~(ShipAtMaxSpeed
-			  | ShipBeyondMaxSpeed
-			  | ShipInGravityWell);
+			~(StatusFlags::ShipAtMaxSpeed
+			  | StatusFlags::ShipBeyondMaxSpeed
+			  | StatusFlags::ShipInGravityWell);
 		StarShipPtr->cur_status_flags |= thrust_status;
 
 		ElementPtr->thrust_wait = RDPtr->characteristics.thrust_wait;
@@ -345,8 +342,7 @@ void ship_postprocess(Element* ElementPtr)
 	{
 		--StarShipPtr->weapon_counter;
 	}
-	else if ((StarShipPtr->cur_status_flags
-			  & WeaponFlag)
+	else if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Weapon))
 			 && DeltaEnergy(ElementPtr,
 							-RDPtr->characteristics.weapon_energy_cost))
 	{
@@ -410,9 +406,9 @@ void ship_postprocess(Element* ElementPtr)
 void collision(Element* ElementPtr0, GfxPoint* pPt0,
 			   Element* ElementPtr1, GfxPoint* pPt1)
 {
-	if (!(ElementPtr1->state_flags & FiniteLife))
+	if (!(testFlag(ElementPtr1->state_flags, ElementFlags::FiniteLife)))
 	{
-		ElementPtr0->state_flags |= Collision;
+		ElementPtr0->state_flags |= ElementFlags::Collision;
 		if (GravityMass(ElementPtr1->mass_points))
 		{
 			// Collision with a planet.
@@ -449,9 +445,9 @@ static bool spawn_ship(Starship* StarShipPtr)
 
 	StarShipPtr->RaceDescPtr = RDPtr;
 
-	StarShipPtr->ship_input_state = 0;
-	StarShipPtr->cur_status_flags = 0;
-	StarShipPtr->old_status_flags = 0;
+	StarShipPtr->ship_input_state = StatusFlags::None;
+	StarShipPtr->cur_status_flags = StatusFlags::None;
+	StarShipPtr->old_status_flags = StatusFlags::None;
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InEncounter
 		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
@@ -497,7 +493,7 @@ static bool spawn_ship(Starship* StarShipPtr)
 		ShipElementPtr->playerNr = StarShipPtr->playerNr;
 		ShipElementPtr->crew_level = 0;
 		ShipElementPtr->mass_points = RDPtr->characteristics.ship_mass;
-		ShipElementPtr->state_flags = Appearing | PlayerShip | IgnoreSimilar;
+		ShipElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::PlayerShip | ElementFlags::IgnoreSimilar;
 		ShipElementPtr->turn_wait = 0;
 		ShipElementPtr->thrust_wait = 0;
 		ShipElementPtr->life_span = NormalLife;

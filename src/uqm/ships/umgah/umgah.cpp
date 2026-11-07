@@ -55,7 +55,7 @@ static RaceDesc umgah_desc =
 	{
 		{/* ShipInfoDesc */
 		 "drone",
-		 FiresFore | ImmediateWeapon,
+		 ShipFlags::FiresFore | ShipFlags::ImmediateWeapon,
 		 7, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -170,7 +170,7 @@ static void cone_preprocess(Element* ElementPtr)
 		SetRelFrameIndex(StarShipPtr->RaceDescPtr->ship_data.special[0],
 						 AngleToFacing(FullCircle));
 
-	ElementPtr->state_flags |= Appearing;
+	ElementPtr->state_flags |= ElementFlags::Appearing;
 }
 
 static void cone_collision(Element* ElementPtr0, GfxPoint* pPt0,
@@ -182,7 +182,7 @@ static void cone_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		RemoveElement(hBlastElement);
 		FreeElement(hBlastElement);
 
-		ElementPtr0->state_flags &= ~Disappearing;
+		ElementPtr0->state_flags &= ~ElementFlags::Disappearing;
 	}
 }
 
@@ -197,12 +197,12 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 	{
 		if (lpEvalDesc->which_turn > 3
-			|| (StarShipPtr->old_status_flags & SpecialFlag))
+			|| (testFlag(StarShipPtr->old_status_flags, StatusFlags::Special)))
 		{
 			lpEvalDesc->ObjectPtr = 0;
 		}
-		else if ((lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
-				 && !(lpEvalDesc->ObjectPtr->state_flags & CrewObject))
+		else if ((testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::FiniteLife))
+				 && !(testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::CrewObject)))
 		{
 			lpEvalDesc->MoveState = MovementState::Avoid;
 		}
@@ -222,9 +222,9 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 		if (lpEvalDesc->which_turn < 16)
 		{
-			StarShipPtr->ship_input_state |= WeaponFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 		}
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	}
 	else
 	{
@@ -256,7 +256,7 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if (EnoughJuice
-			&& ((StarShipPtr->old_status_flags & SpecialFlag)
+			&& ((testFlag(StarShipPtr->old_status_flags, StatusFlags::Special))
 				|| EnemyBehind
 				|| (this_turn > 6
 					&& Maneuverability(
@@ -275,21 +275,21 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 		if (StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange == CloseRangeWeapon)
 		{
-			StarShipPtr->ship_input_state &= ~SpecialFlag;
+			StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		}
 		else
 		{
 			bool LinedUp {};
 
-			StarShipPtr->ship_input_state &= ~ThrustFlag;
+			StarShipPtr->ship_input_state &= ~StatusFlags::Thrust;
 			LinedUp = (bool)(ShipPtr->turn_wait == 0
-							 && !(StarShipPtr->old_status_flags & (LeftFlag | RightFlag)));
-			if (((StarShipPtr->old_status_flags & SpecialFlag)
+							 && !(testFlag(StarShipPtr->old_status_flags, (StatusFlags::Left | StatusFlags::Right))));
+			if (((testFlag(StarShipPtr->old_status_flags, StatusFlags::Special))
 				 && this_turn <= StarShipPtr->RaceDescPtr->characteristics.special_wait)
-				|| (!(StarShipPtr->old_status_flags & SpecialFlag)
+				|| (!(testFlag(StarShipPtr->old_status_flags, StatusFlags::Special))
 					&& EnemyBehind && (LinedUp || this_turn < 16)))
 			{
-				StarShipPtr->ship_input_state |= SpecialFlag;
+				StarShipPtr->ship_input_state |= StatusFlags::Special;
 				StarShipPtr->RaceDescPtr->characteristics.special_wait = this_turn;
 
 				/* don't want him backing straight into ship */
@@ -297,28 +297,28 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 				{
 					if (uqm::random().next() & 1)
 					{
-						StarShipPtr->ship_input_state |= LeftFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Left;
 					}
 					else
 					{
-						StarShipPtr->ship_input_state |= RightFlag;
+						StarShipPtr->ship_input_state |= StatusFlags::Right;
 					}
 				}
 			}
-			else if (StarShipPtr->old_status_flags & SpecialFlag)
+			else if (testFlag(StarShipPtr->old_status_flags, StatusFlags::Special))
 			{
-				StarShipPtr->ship_input_state &= ~(SpecialFlag | LeftFlag | RightFlag);
-				StarShipPtr->ship_input_state |= ThrustFlag;
+				StarShipPtr->ship_input_state &= ~(StatusFlags::Special | StatusFlags::Left | StatusFlags::Right);
+				StarShipPtr->ship_input_state |= StatusFlags::Thrust;
 			}
 		}
 
 		if (this_turn < 16 && !EnemyBehind)
 		{
-			StarShipPtr->ship_input_state |= WeaponFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 		}
 	}
 
-	if (!(StarShipPtr->ship_input_state & SpecialFlag))
+	if (!(testFlag(StarShipPtr->ship_input_state, StatusFlags::Special)))
 	{
 		StarShipPtr->RaceDescPtr->characteristics.special_wait = 0xFF;
 	}
@@ -335,7 +335,7 @@ static uint16_t initialize_cone(Element* ShipPtr, ElementHandle ConeArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = UmgahOffset;
 	MissileBlock.speed = ConeSpeed;
 	MissileBlock.hit_points = ConeHits;
@@ -368,7 +368,7 @@ static uint16_t initialize_cone(Element* ShipPtr, ElementHandle ConeArray[])
 
 		LockElement(ConeArray[0], &ConePtr);
 		ConePtr->collision_func = cone_collision;
-		ConePtr->state_flags &= ~Appearing;
+		ConePtr->state_flags &= ~ElementFlags::Appearing;
 		ConePtr->next = ConePtr->current;
 		InitIntersectStartPoint(ConePtr);
 		InitIntersectEndPoint(ConePtr);
@@ -399,7 +399,7 @@ static void umgah_preprocess(Element* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
-	if (ElementPtr->state_flags & Appearing)
+	if (testFlag(ElementPtr->state_flags, ElementFlags::Appearing))
 	{
 		// Reset the value just in case
 		SetCustomShipData(StarShipPtr->RaceDescPtr, nullptr);
@@ -407,7 +407,7 @@ static void umgah_preprocess(Element* ElementPtr)
 	else
 	{
 		if (ElementPtr->thrust_wait == 0
-			&& (StarShipPtr->cur_status_flags & SpecialFlag)
+			&& (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 			&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 		{
 			uint16_t facing {};
@@ -421,7 +421,7 @@ static void umgah_preprocess(Element* ElementPtr)
 									Cosine(facing, WorldToVelocity(JumpDist())),
 									Sine(facing, WorldToVelocity(JumpDist())));
 			StarShipPtr->cur_status_flags &=
-				~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
+				~(StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed);
 
 			StarShipPtr->special_counter = SpecialWait;
 		}

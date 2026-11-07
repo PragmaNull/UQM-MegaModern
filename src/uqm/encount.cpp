@@ -60,7 +60,7 @@ static void DrawFadeText(const char* str1, const char* str2,
 
 static bool DoSelectAction(MenuState* pMS)
 {
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		pMS->CurState = *EncounterAction::Attack + 1;

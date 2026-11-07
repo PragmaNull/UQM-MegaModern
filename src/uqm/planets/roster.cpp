@@ -292,14 +292,14 @@ static bool DoModifyRoster(MenuState* pMS)
 		if (!rosterState->modifyingCrew)
 		{
 			SetFlashRect(nullptr, false);
-			SetMenuSounds(MenuSoundArrows | MenuSoundPage, MenuSoundSelect);
+			SetMenuSounds(MenuSoundFlags::Arrows | MenuSoundFlags::Page, MenuSoundFlags::Select);
 		}
 		else
 		{
 			drawModifiedSupportShip(rosterState);
 			flashSupportShipCrew();
-			SetMenuSounds(MenuSoundUp | MenuSoundDown | MenuSoundPage,
-						  MenuSoundAction);
+			SetMenuSounds(MenuSoundFlags::Up | MenuSoundFlags::Down | MenuSoundFlags::Page,
+						  MenuSoundFlags::Action);
 		}
 	}
 	else if (rosterState->modifyingCrew)
@@ -488,7 +488,7 @@ bool RosterMenu(void)
 		DrawMenuStateStrings(MenuString::AltCargo, 2);
 	}
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	menuState.InputFunc = DoModifyRoster;
 	DoInput(&menuState, true);

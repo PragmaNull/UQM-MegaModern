@@ -383,7 +383,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 	tes.ChangeCallback = OnTextEntryChange;
 	tes.FrameCallback = OnTextEntryFrame;
 
-	SetMenuSounds(MenuSoundNone, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::Select);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
 		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
@@ -395,7 +395,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 			(*(widget->onChange))(widget);
 		}
 	}
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	widget->state = TextEntryWidgetState::Normal;
 	redraw_menu();
@@ -962,7 +962,7 @@ void SetupMenu(void)
 
 	s.InputFunc = DoSetupMenu;
 	s.initialized = false;
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	init_widgets();
 
 	SetInputScriptMenuDump(dump_setup_menu);
@@ -972,8 +972,8 @@ void SetupMenu(void)
 	apply_settings();
 	clean_up_widgets();
 
-	SetMenuSounds(MenuSoundUp | MenuSoundDown,
-				  MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Up | MenuSoundFlags::Down,
+				  MenuSoundFlags::Select);
 }
 
 uqstl::optional<uqm::GameSeed> NewGameMenu(void)
@@ -989,7 +989,7 @@ uqstl::optional<uqm::GameSeed> NewGameMenu(void)
 	SetupMenuState s;
 	s.InputFunc = DoSetupMenu;
 	s.initialized = false;
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	init_widgets();
 
 	SetInputScriptMenuDump(dump_setup_menu);
@@ -1005,8 +1005,8 @@ uqstl::optional<uqm::GameSeed> NewGameMenu(void)
 	newGameSettings.reset();
 	menuMode = MenuMode::Setup;
 
-	SetMenuSounds(MenuSoundUp | MenuSoundDown,
-				  MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Up | MenuSoundFlags::Down,
+				  MenuSoundFlags::Select);
 	return result;
 }
 

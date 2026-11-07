@@ -286,7 +286,7 @@ static bool DoPickShip(MeleeState* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	if (PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel])
 	{

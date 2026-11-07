@@ -410,7 +410,7 @@ void DeltaStatistics(ShipInfoDesc* ShipInfoPtr, int16_t y_offs,
 		{
 			r.corner.y = (y + ResScale(1)) - (((oldNumBlocks + 1) >> 1) * (UnitHeight() + ResScale(1)));
 			SetContextForeGroundColor(
-				(ShipInfoPtr->ship_flags & CrewImmune) ?
+				(testFlag(ShipInfoPtr->ship_flags, ShipFlags::CrewImmune)) ?
 					RobotUnitColor :
 					CrewUnitColor);
 			for (blockI = oldNumBlocks; blockI < newNumBlocks; blockI++)
@@ -440,7 +440,7 @@ void DeltaStatistics(ShipInfoDesc* ShipInfoPtr, int16_t y_offs,
 			}
 		}
 
-		if (ShipInfoPtr->ship_flags & PlayerCaptain)
+		if (testFlag(ShipInfoPtr->ship_flags, ShipFlags::PlayerCaptain))
 		{
 			if (((ShipInfoPtr->crew_level > MaxCrewSize) != (newCrewLevel > MaxCrewSize) || ShipInfoPtr->crew_level == 0) && newCrewLevel != 0)
 			{
@@ -456,7 +456,7 @@ void DeltaStatistics(ShipInfoDesc* ShipInfoPtr, int16_t y_offs,
 		}
 
 		ShipInfoPtr->crew_level = newCrewLevel;
-		if (ShipInfoPtr->max_crew > MaxCrewSize || ShipInfoPtr->ship_flags & PlayerCaptain)
+		if (ShipInfoPtr->max_crew > MaxCrewSize || testFlag(ShipInfoPtr->ship_flags, ShipFlags::PlayerCaptain))
 		{
 			// All crew doesn't fit in the graphics; print a number.
 			// Always print a number for the SIS in the full game.

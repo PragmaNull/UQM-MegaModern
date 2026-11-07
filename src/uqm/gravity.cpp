@@ -56,7 +56,7 @@ bool CalculateGravity(Element* ElementPtr)
 			int16_t dx {};
 			int16_t dy {};
 
-			if (!(ElementPtr->state_flags & PreProcessFlag))
+			if (!(testFlag(ElementPtr->state_flags, ElementFlags::PreProcess)))
 			{
 				dx = ElementPtr->current.location.x
 				   - TestElementPtr->current.location.x;
@@ -71,7 +71,7 @@ bool CalculateGravity(Element* ElementPtr)
 				   - TestElementPtr->next.location.y;
 			}
 #ifdef DEBUG_GRAVITY
-			if (TestElementPtr->state_flags & PlayerShip)
+			if (testFlag(TestElementPtr->state_flags, ElementFlags::PlayerShip))
 			{
 				uqm::log::debug("CalculateGravity:");
 				uqm::log::debug("\tdx = {}, dy = {}", dx, dy);
@@ -80,7 +80,7 @@ bool CalculateGravity(Element* ElementPtr)
 			dx = WrapDeltaX(dx);
 			dy = WrapDeltaY(dy);
 #ifdef DEBUG_GRAVITY
-			if (TestElementPtr->state_flags & PlayerShip)
+			if (testFlag(TestElementPtr->state_flags, ElementFlags::PlayerShip))
 			{
 				uqm::log::debug("\twrap_dx = {}, wrap_dy = {}", dx, dy);
 			}
@@ -90,7 +90,7 @@ bool CalculateGravity(Element* ElementPtr)
 			abs_dx = WorldToDisplay(abs_dx);
 			abs_dy = WorldToDisplay(abs_dy);
 #ifdef DEBUG_GRAVITY
-			if (TestElementPtr->state_flags & PlayerShip)
+			if (testFlag(TestElementPtr->state_flags, ElementFlags::PlayerShip))
 			{
 				uqm::log::debug("\tdisplay_dx = {}, display_dy = {}",
 								abs_dx, abs_dy);
@@ -128,7 +128,7 @@ bool CalculateGravity(Element* ElementPtr)
 #endif /* NEVER */
 
 #ifdef DEBUG_GRAVITY
-					if (TestElementPtr->state_flags & PlayerShip)
+					if (testFlag(TestElementPtr->state_flags, ElementFlags::PlayerShip))
 					{
 						uqm::log::debug("dist_squared = {}", dist_squared);
 					}
@@ -145,13 +145,13 @@ bool CalculateGravity(Element* ElementPtr)
 						DeltaVelocityComponents(&TestElementPtr->velocity,
 												Cosine(angle, WorldToVelocity(ResScale(1))),
 												Sine(angle, WorldToVelocity(ResScale(1))));
-						if (TestElementPtr->state_flags & PlayerShip)
+						if (testFlag(TestElementPtr->state_flags, ElementFlags::PlayerShip))
 						{
 							Starship* StarShipPtr {};
 
 							GetElementStarShip(TestElementPtr, &StarShipPtr);
-							StarShipPtr->cur_status_flags &= ~ShipAtMaxSpeed;
-							StarShipPtr->cur_status_flags |= ShipInGravityWell;
+							StarShipPtr->cur_status_flags &= ~StatusFlags::ShipAtMaxSpeed;
+							StarShipPtr->cur_status_flags |= StatusFlags::ShipInGravityWell;
 						}
 					}
 				}
@@ -189,7 +189,7 @@ bool TimeSpaceMatterConflict(Element* ElementPtr)
 		if (TestElementPtr != ElementPtr
 			&& (CollidingElement(TestElementPtr)
 				/* ship in transition */
-				|| (TestElementPtr->state_flags & PlayerShip)))
+				|| (testFlag(TestElementPtr->state_flags, ElementFlags::PlayerShip))))
 		{
 			IntersectInfo TestElementControl;
 

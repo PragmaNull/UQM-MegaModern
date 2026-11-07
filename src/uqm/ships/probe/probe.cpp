@@ -42,7 +42,7 @@ static RaceDesc probe_desc =
 	{
 		{/* ShipInfoDesc */
 		 "urquanprobe",
-		 0,
+		 ShipFlags::None,
 		 0, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,

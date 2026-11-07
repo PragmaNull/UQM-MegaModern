@@ -73,7 +73,7 @@ static RaceDesc mmrnmhrm_desc =
 	{
 		{/* ShipInfoDesc */
 		 "xform",
-		 FiresFore | ImmediateWeapon,
+		 ShipFlags::FiresFore | ShipFlags::ImmediateWeapon,
 		 19, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -188,7 +188,7 @@ static void missile_preprocess(Element* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetAbsFrameIndex(ElementPtr->next.image.frame,
 								 facing);
-			ElementPtr->state_flags |= Changing;
+			ElementPtr->state_flags |= ElementFlags::Changing;
 
 			SetVelocityVector(&ElementPtr->velocity,
 							  MissileSpeed(), facing);
@@ -217,10 +217,10 @@ static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
-	StarShipPtr->ship_input_state &= ~SpecialFlag;
+	StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	if (CanTransform
 		&& lpEvalDesc->ObjectPtr
-		&& !(StarShipPtr->ship_input_state & WeaponFlag))
+		&& !(testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon)))
 	{
 		int32_t delta_x {};
 		int32_t delta_y {};
@@ -253,7 +253,7 @@ static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 						   direction_angle - travel_angle + Quadrant)
 						   > HalfCircle)
 				{
-					StarShipPtr->ship_input_state |= SpecialFlag;
+					StarShipPtr->ship_input_state |= StatusFlags::Special;
 				}
 			}
 		}
@@ -274,7 +274,7 @@ static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 						   direction_angle - travel_angle + Octant)
 						   <= Quadrant)
 				{
-					StarShipPtr->ship_input_state |= SpecialFlag;
+					StarShipPtr->ship_input_state |= StatusFlags::Special;
 				}
 			}
 			else if (lpEvalDesc->which_turn > 32
@@ -282,21 +282,21 @@ static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 							direction_angle - travel_angle + Quadrant)
 							> HalfCircle)
 			{
-				StarShipPtr->ship_input_state |= SpecialFlag;
+				StarShipPtr->ship_input_state |= StatusFlags::Special;
 			}
 		}
 	}
 
 	if (ShipPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 	{
-		if (!(StarShipPtr->ship_input_state & SpecialFlag)
+		if (!(testFlag(StarShipPtr->ship_input_state, StatusFlags::Special))
 			&& lpEvalDesc->ObjectPtr)
 		{
-			StarShipPtr->ship_input_state |= WeaponFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 		}
 		else
 		{
-			StarShipPtr->ship_input_state &= ~WeaponFlag;
+			StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 		}
 	}
 }
@@ -304,7 +304,7 @@ static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 static void twin_laser_collision(Element* ElementPtr0, GfxPoint* pPt0,
 								 Element* ElementPtr1, GfxPoint* pPt1)
 {
-	if (!(ElementPtr1->state_flags & PlayerShip)
+	if (!(testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 		|| !elementsOfSamePlayer(ElementPtr0, ElementPtr1))
 	{
 		weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
@@ -334,7 +334,7 @@ static uint16_t initialize_dual_weapons(Element* ShipPtr, ElementHandle WeaponAr
 		Element* LaserPtr {};
 
 		LaserBlock.sender = ShipPtr->playerNr;
-		LaserBlock.flags = 0;
+		LaserBlock.flags = ElementFlags::None;
 		LaserBlock.pixoffs = 0;
 		LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C);
 		LaserBlock.face = facing;
@@ -373,7 +373,7 @@ static uint16_t initialize_dual_weapons(Element* ShipPtr, ElementHandle WeaponAr
 
 		TorpBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 		TorpBlock.sender = ShipPtr->playerNr;
-		TorpBlock.flags = IgnoreSimilar;
+		TorpBlock.flags = ElementFlags::IgnoreSimilar;
 		TorpBlock.pixoffs = 0;
 		TorpBlock.speed = MissileSpeed();
 		TorpBlock.hit_points = MissileHits;
@@ -443,25 +443,24 @@ static void mmrnmhrm_postprocess(Element* ElementPtr)
 		if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 		{
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = ResScale(LongRangeWeapon - 1);
-			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~ImmediateWeapon;
-			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= SeekingWeapon;
+			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~ShipFlags::ImmediateWeapon;
+			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= ShipFlags::SeekingWeapon;
 			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 2;
 
 			StarShipPtr->cur_status_flags &=
-				~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
+				~(StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed);
 		}
 		else
 		{
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = ResScale(CloseRangeWeapon);
-			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~SeekingWeapon;
-			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= ImmediateWeapon;
+			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~ShipFlags::SeekingWeapon;
+			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= ShipFlags::ImmediateWeapon;
 			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 0;
 
-			if (StarShipPtr->cur_status_flags
-				& (ShipAtMaxSpeed | ShipBeyondMaxSpeed))
+			if (testFlag(StarShipPtr->cur_status_flags, (StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed)))
 			{
 				StarShipPtr->cur_status_flags |=
-					ShipAtMaxSpeed | ShipBeyondMaxSpeed;
+					StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed;
 			}
 		}
 	}
@@ -473,9 +472,9 @@ static void mmrnmhrm_preprocess(Element* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
-	if (!(ElementPtr->state_flags & Appearing))
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Appearing)))
 	{
-		if ((StarShipPtr->cur_status_flags & SpecialFlag)
+		if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 			&& StarShipPtr->special_counter == 0)
 		{
 			/* Either we transform or text will flash */
@@ -495,7 +494,7 @@ static void mmrnmhrm_preprocess(Element* ElementPtr)
 				ElementPtr->next.image.frame =
 					SetEquFrameIndex(ElementPtr->next.image.farray[0],
 									 ElementPtr->next.image.frame);
-				ElementPtr->state_flags |= Changing;
+				ElementPtr->state_flags |= ElementFlags::Changing;
 
 				StarShipPtr->special_counter =
 					StarShipPtr->RaceDescPtr->characteristics.special_wait;

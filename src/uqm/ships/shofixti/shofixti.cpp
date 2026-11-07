@@ -69,7 +69,7 @@ static RaceDesc shofixti_desc =
 	{
 		{/* ShipInfoDesc */
 		 "scout",
-		 FiresFore,
+		 ShipFlags::FiresFore,
 		 5, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -149,7 +149,7 @@ static uint16_t initialize_standard_missile(Element* ShipPtr, ElementHandle Miss
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = ShofixtiOffset();
 	MissileBlock.speed = MissileSpeedHd();
 	MissileBlock.hit_points = MissileHits;
@@ -170,7 +170,7 @@ static void destruct_preprocess(Element* ElementPtr)
 	// ship_death() set the ship Element's life_span to
 	// (NumExplosionFrames * 3)
 	Primitive* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
-	ElementPtr->state_flags |= Changing;
+	ElementPtr->state_flags |= ElementFlags::Changing;
 	if (ElementPtr->life_span > DestructSwitch)
 	{
 		// First, stamp-fill the ship's own Element with changing colors
@@ -245,7 +245,7 @@ static void destruct_preprocess(Element* ElementPtr)
 			DestructPtr->hit_points = 0;
 			DestructPtr->mass_points = 0;
 			DestructPtr->playerNr = NeutralPlayerNum;
-			DestructPtr->state_flags = Appearing | FiniteLife | Nonsolid;
+			DestructPtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 			SetPrimType(&DisplayArray[DestructPtr->PrimIndex],
 						PrimitiveType::StampFill);
 			SetPrimColor(&DisplayArray[DestructPtr->PrimIndex],
@@ -311,7 +311,7 @@ static void self_destruct_kill_objects(Element* ElementPtr)
 			const int destruction = 1 + MaxDestruction * (DestructRange() - square_root(dist)) / DestructRange();
 
 			// XXX: Why not simply call do_damage()?
-			if (ObjPtr->state_flags & PlayerShip)
+			if (testFlag(ObjPtr->state_flags, ElementFlags::PlayerShip))
 			{
 				if (!antiCheat(ElementPtr, true, uqm::GodModeFlags::NoDamage))
 				{
@@ -371,7 +371,7 @@ static void shofixti_destruct_death(Element* ShipPtr)
 	{ // This ship is the winner
 		// It may have self-destructed before the ditty started playing,
 		// and in that case, there should be no ditty
-		StarShip->cur_status_flags &= ~PlayVictoryDitty;
+		StarShip->cur_status_flags &= ~StatusFlags::PlayVictoryDitty;
 	}
 	RecordShipDeath(ShipPtr);
 }
@@ -394,7 +394,7 @@ static void self_destruct(Element* ElementPtr)
 
 		LockElement(hDestruct, &DestructPtr);
 		DestructPtr->playerNr = ElementPtr->playerNr;
-		DestructPtr->state_flags = Appearing | Nonsolid | FiniteLife;
+		DestructPtr->state_flags = ElementFlags::Appearing | ElementFlags::Nonsolid | ElementFlags::FiniteLife;
 		DestructPtr->next.location = ElementPtr->next.location;
 		DestructPtr->life_span = 0;
 		DestructPtr->pParent = ElementPtr->pParent;
@@ -411,7 +411,7 @@ static void self_destruct(Element* ElementPtr)
 	DeltaCrew(ElementPtr, -(int)ElementPtr->crew_level);
 	ZeroVelocityComponents(&ElementPtr->velocity);
 
-	ElementPtr->state_flags |= Nonsolid;
+	ElementPtr->state_flags |= ElementFlags::Nonsolid;
 	ElementPtr->life_span = 0;
 	// The ship is now dead. It's death_func, i.e. shofixti_destruct_death(),
 	// will be called the next frame.
@@ -431,9 +431,9 @@ static void shofixti_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 		return;
 	}
 
-	if (StarShipPtr->ship_input_state & SpecialFlag)
+	if (testFlag(StarShipPtr->ship_input_state, StatusFlags::Special))
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	}
 	else
 	{
@@ -445,13 +445,13 @@ static void shofixti_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 					&& lpShipEvalDesc->which_turn <= 4)
 				|| (lpWeaponEvalDesc->ObjectPtr != nullptr
 					/* means IMMEDIATE WeaponFlag */
-					&& (((lpWeaponEvalDesc->ObjectPtr->state_flags & PlayerShip)
+					&& (((testFlag(lpWeaponEvalDesc->ObjectPtr->state_flags, ElementFlags::PlayerShip))
 						 && ShipPtr->crew_level == 1)
 						|| (PlotIntercept(lpWeaponEvalDesc->ObjectPtr, ShipPtr, 2, 0)
 							&& lpWeaponEvalDesc->ObjectPtr->mass_points >= ShipPtr->crew_level
 							&& (uqm::random().next() & 1))))))
 		{
-			StarShipPtr->ship_input_state |= SpecialFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Special;
 		}
 	}
 }
@@ -461,10 +461,8 @@ static void shofixti_preprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags
-		 ^ StarShipPtr->old_status_flags)
-			& SpecialFlag
-		&& !(StarShipPtr->cur_status_flags & SpecialFlag))
+	if (testFlag(StarShipPtr->cur_status_flags ^ StarShipPtr->old_status_flags, StatusFlags::Special)
+		&& !testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 	{
 		if (!(StarShipPtr->RaceDescPtr->ship_data.captain_control.special_offset & 1))
 		{
@@ -485,7 +483,7 @@ static void shofixti_postprocess(Element* ElementPtr)
 	if (StarShipPtr->RaceDescPtr->ship_data.captain_control.special_offset == 5)
 	{
 		self_destruct(ElementPtr);
-		StarShipPtr->cur_status_flags |= ShofixtiExplosion;
+		StarShipPtr->cur_status_flags |= StatusFlags::ShofixtiExplosion;
 	}
 }
 

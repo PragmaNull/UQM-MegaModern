@@ -59,7 +59,7 @@ static RaceDesc supox_desc =
 	{
 		{/* ShipInfoDesc */
 		 "blade",
-		 FiresFore,
+		 ShipFlags::FiresFore,
 		 16, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -137,7 +137,7 @@ static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (StarShipPtr->special_counter || lpEvalDesc->ObjectPtr == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	}
 	else
 	{
@@ -165,14 +165,14 @@ static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 				   + Octant)
 				   > Quadrant)
 		{
-			StarShipPtr->ship_input_state &= ~SpecialFlag;
+			StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		}
 		else if (LinedUp && lpEvalDesc->which_turn <= 12)
 		{
-			StarShipPtr->ship_input_state |= SpecialFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Special;
 		}
 
-		if (StarShipPtr->ship_input_state & SpecialFlag)
+		if (testFlag(StarShipPtr->ship_input_state, StatusFlags::Special))
 		{
 			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
@@ -181,9 +181,9 @@ static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	ship_intelligence(ShipPtr,
 					  ObjectsOfConcern, ConcernCounter);
 
-	if (StarShipPtr->ship_input_state & SpecialFlag)
+	if (testFlag(StarShipPtr->ship_input_state, StatusFlags::Special))
 	{
-		StarShipPtr->ship_input_state |= ThrustFlag | WeaponFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Thrust | StatusFlags::Weapon;
 	}
 
 	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon];
@@ -192,16 +192,16 @@ static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		&& lpEvalDesc->MoveState == MovementState::Avoid
 		&& ShipPtr->turn_wait == 0)
 	{
-		StarShipPtr->ship_input_state &= ~ThrustFlag;
-		StarShipPtr->ship_input_state |= SpecialFlag;
-		if (!(StarShipPtr->cur_status_flags & (LeftFlag | RightFlag)))
+		StarShipPtr->ship_input_state &= ~StatusFlags::Thrust;
+		StarShipPtr->ship_input_state |= StatusFlags::Special;
+		if (!(testFlag(StarShipPtr->cur_status_flags, (StatusFlags::Left | StatusFlags::Right))))
 		{
-			StarShipPtr->ship_input_state |= 1 << ((uint8_t)uqm::random().next() & 1);
+			StarShipPtr->ship_input_state |= (uqm::random().next() & 1) ? StatusFlags::Right : StatusFlags::Left;
 		}
 		else
 		{
 			StarShipPtr->ship_input_state |=
-				StarShipPtr->cur_status_flags & (LeftFlag | RightFlag);
+				((StarShipPtr->cur_status_flags & (StatusFlags::Left | StatusFlags::Right)));
 		}
 	}
 }
@@ -217,7 +217,7 @@ static uint16_t initialize_horn(Element* ShipPtr, ElementHandle HornArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = SupoxOffset();
 	MissileBlock.speed = MissileSpeedHd();
 	MissileBlock.hit_points = MissileHits;
@@ -234,14 +234,14 @@ static void supox_preprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		/*
 			&& DeltaEnergy (ElementPtr, -SpecialEnergyCost)
 */
 	)
 	{
 		int16_t add_facing {0};
-		if (StarShipPtr->cur_status_flags & ThrustFlag)
+		if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Thrust))
 		{
 			if (ElementPtr->thrust_wait == 0)
 			{
@@ -250,7 +250,7 @@ static void supox_preprocess(Element* ElementPtr)
 
 			add_facing = AngleToFacing(HalfCircle);
 		}
-		if (StarShipPtr->cur_status_flags & LeftFlag)
+		if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Left))
 		{
 			if (ElementPtr->turn_wait == 0)
 			{
@@ -266,7 +266,7 @@ static void supox_preprocess(Element* ElementPtr)
 				add_facing = -AngleToFacing(Quadrant);
 			}
 		}
-		else if (StarShipPtr->cur_status_flags & RightFlag)
+		else if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Right))
 		{
 			if (ElementPtr->turn_wait == 0)
 			{
@@ -290,9 +290,9 @@ static void supox_preprocess(Element* ElementPtr)
 				facing + add_facing);
 			const StatusFlags thrust_status {inertial_thrust(ElementPtr)};
 			StarShipPtr->cur_status_flags &=
-				~(ShipAtMaxSpeed
-				  | ShipBeyondMaxSpeed
-				  | ShipInGravityWell);
+				~(StatusFlags::ShipAtMaxSpeed
+				  | StatusFlags::ShipBeyondMaxSpeed
+				  | StatusFlags::ShipInGravityWell);
 			StarShipPtr->cur_status_flags |= thrust_status;
 			StarShipPtr->ShipFacing = facing;
 		}

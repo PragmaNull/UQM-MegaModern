@@ -1155,7 +1155,7 @@ static bool TalkSegue(uint16_t wait_track)
 	}
 
 	// Run the talking controls
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 	talkingState.InputFunc = DoTalkSegue;
 	talkingState.waitTrack = wait_track;
 	DoInput(&talkingState, false);
@@ -1657,7 +1657,7 @@ static bool DoCommunication(CommEncounterState* pES)
 {
 	if (!IsDarkMode)
 	{
-		SetMenuSounds(MenuSoundUp | MenuSoundDown, MenuSoundSelect);
+		SetMenuSounds(MenuSoundFlags::Up | MenuSoundFlags::Down, MenuSoundFlags::Select);
 	}
 
 	// First, finish playing all queued tracks if not done yet

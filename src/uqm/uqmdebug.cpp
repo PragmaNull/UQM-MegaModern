@@ -106,7 +106,7 @@ Starship* findPlayerShip(int16_t playerNr)
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
 
-		if ((ElementPtr->state_flags & PlayerShip) && ElementPtr->playerNr == playerNr)
+		if ((testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip)) && ElementPtr->playerNr == playerNr)
 		{
 			Starship* StarShipPtr {};
 			GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -695,7 +695,7 @@ static ElementHandle findFlagshipElement (void)
 	{
 		LockElement (hElement, &ElementPtr);
 
-		if ((ElementPtr->state_flags & PlayerShip) != 0)
+		if ((testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip)) != 0)
 		{
 			UnlockElement (hElement);
 			return hElement;

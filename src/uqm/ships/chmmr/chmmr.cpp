@@ -61,7 +61,7 @@ static RaceDesc chmmr_desc =
 	{
 		{/* ShipInfoDesc */
 		 "avatar",
-		 FiresFore | ImmediateWeapon | SeekingSpecial | PointDefense,
+		 ShipFlags::FiresFore | ShipFlags::ImmediateWeapon | ShipFlags::SeekingSpecial | ShipFlags::PointDefense,
 		 30, /* Super Melee cost */
 		 MaxCrewSize, MaxCrewSize,
 		 MaxEnergySize, MaxEnergySize,
@@ -139,7 +139,7 @@ static void animate(Element* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
@@ -176,8 +176,8 @@ static void laser_death(Element* ElementPtr)
 
 			LockElement(hIonSpots, &IonSpotsPtr);
 			IonSpotsPtr->playerNr = ElementPtr->playerNr;
-			IonSpotsPtr->state_flags = FiniteLife | Nonsolid
-									 | IgnoreSimilar | Appearing;
+			IonSpotsPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid
+									 | ElementFlags::IgnoreSimilar | ElementFlags::Appearing;
 			IonSpotsPtr->turn_wait = IonSpotsPtr->next_turn = 0;
 			IonSpotsPtr->life_span = 9;
 
@@ -237,7 +237,7 @@ static uint16_t initialize_megawatt_laser(Element* ShipPtr, ElementHandle LaserA
 	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), LaserRange());
 	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), LaserRange());
 	LaserBlock.sender = ShipPtr->playerNr;
-	LaserBlock.flags = IgnoreSimilar;
+	LaserBlock.flags = ElementFlags::IgnoreSimilar;
 	LaserBlock.pixoffs = 0;
 	LaserBlock.color = cycle_array[StarShipPtr->special_counter];
 	LaserArray[0] = initialize_laser(&LaserBlock);
@@ -267,11 +267,11 @@ static void chmmr_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	StarShipPtr->ship_input_state &= ~SpecialFlag;
+	StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (StarShipPtr->special_counter == 0
 		&& lpEvalDesc->ObjectPtr
-		&& !(StarShipPtr->ship_input_state & WeaponFlag)
+		&& !(testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon))
 		&& lpEvalDesc->which_turn > 12
 		&& NormalizeAngle(
 			   GetVelocityTravelAngle(&ShipPtr->velocity)
@@ -280,7 +280,7 @@ static void chmmr_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 			   + Quadrant)
 			   > HalfCircle)
 	{
-		StarShipPtr->ship_input_state |= SpecialFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Special;
 	}
 }
 
@@ -290,7 +290,7 @@ static void chmmr_postprocess(Element* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
-	if (StarShipPtr->cur_status_flags & WeaponFlag)
+	if (testFlag(StarShipPtr->cur_status_flags, StatusFlags::Weapon))
 	{
 		ElementHandle hMuzzleFlash {};
 		Element* MuzzleFlashPtr {};
@@ -298,15 +298,15 @@ static void chmmr_postprocess(Element* ElementPtr)
 		LockElement(GetTailElement(), &MuzzleFlashPtr);
 		if (MuzzleFlashPtr != ElementPtr
 			&& elementsOfSamePlayer(MuzzleFlashPtr, ElementPtr)
-			&& (MuzzleFlashPtr->state_flags & Appearing)
+			&& (testFlag(MuzzleFlashPtr->state_flags, ElementFlags::Appearing))
 			&& GetPrimType(&DisplayArray[MuzzleFlashPtr->PrimIndex]) == PrimitiveType::Line
 			&& !(StarShipPtr->special_counter & 1)
 			&& (hMuzzleFlash = AllocElement()))
 		{
 			LockElement(hMuzzleFlash, &MuzzleFlashPtr);
 			MuzzleFlashPtr->playerNr = ElementPtr->playerNr;
-			MuzzleFlashPtr->state_flags = FiniteLife | Nonsolid
-										| IgnoreSimilar | Appearing;
+			MuzzleFlashPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid
+										| ElementFlags::IgnoreSimilar | ElementFlags::Appearing;
 			MuzzleFlashPtr->life_span = 1;
 
 			MuzzleFlashPtr->current = ElementPtr->next;
@@ -326,7 +326,7 @@ static void chmmr_postprocess(Element* ElementPtr)
 		UnlockElement(GetTailElement());
 	}
 
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		Element* ShipElementPtr {};
@@ -394,16 +394,16 @@ static void chmmr_postprocess(Element* ElementPtr)
 				max_speed = VelocitySquared(WorldToVelocity(
 												EnemyStarShipPtr->RaceDescPtr->characteristics.max_thrust),
 											0);
-				EnemyStarShipPtr->cur_status_flags &= ~(ShipAtMaxSpeed
-														| ShipBeyondMaxSpeed);
+				EnemyStarShipPtr->cur_status_flags &= ~(StatusFlags::ShipAtMaxSpeed
+														| StatusFlags::ShipBeyondMaxSpeed);
 				if (current_speed > max_speed)
 				{
-					EnemyStarShipPtr->cur_status_flags |= (ShipAtMaxSpeed
-														   | ShipBeyondMaxSpeed);
+					EnemyStarShipPtr->cur_status_flags |= (StatusFlags::ShipAtMaxSpeed
+														   | StatusFlags::ShipBeyondMaxSpeed);
 				}
 				else if (current_speed == max_speed)
 				{
-					EnemyStarShipPtr->cur_status_flags |= ShipAtMaxSpeed;
+					EnemyStarShipPtr->cur_status_flags |= StatusFlags::ShipAtMaxSpeed;
 				}
 
 				// add tractor beam graphical effects
@@ -416,8 +416,8 @@ static void chmmr_postprocess(Element* ElementPtr)
 
 						LockElement(hShadow, &ShadowElementPtr);
 						ShadowElementPtr->playerNr = ShipElementPtr->playerNr;
-						ShadowElementPtr->state_flags = FiniteLife | Nonsolid
-													  | IgnoreSimilar | PostProcessFlag;
+						ShadowElementPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid
+													  | ElementFlags::IgnoreSimilar | ElementFlags::PostProcess;
 						ShadowElementPtr->life_span = 1;
 
 						ShadowElementPtr->current = ShipElementPtr->next;
@@ -455,7 +455,7 @@ static void satellite_preprocess(Element* ElementPtr)
 	ElementPtr->next.image.frame =
 		SetAbsFrameIndex(ElementPtr->current.image.frame,
 						 (GetFrameIndex(ElementPtr->current.image.frame) + 1) & 7);
-	ElementPtr->state_flags |= Changing;
+	ElementPtr->state_flags |= ElementFlags::Changing;
 
 	ElementPtr->turn_wait = (uint8_t)NormalizeAngle(
 		ElementPtr->turn_wait + 1);
@@ -467,7 +467,7 @@ static void satellite_preprocess(Element* ElementPtr)
 		int32_t dy {};
 		Element* ShipPtr {};
 
-		StarShipPtr->RaceDescPtr->ship_info.ship_flags |= PointDefense;
+		StarShipPtr->RaceDescPtr->ship_info.ship_flags |= ShipFlags::PointDefense;
 
 		LockElement(StarShipPtr->hShip, &ShipPtr);
 
@@ -569,7 +569,7 @@ static void spawn_point_defense(Element* ElementPtr)
 		LaserBlock.ey = ObjectPtr->next.location.y
 					  - SattPtr->next.location.y;
 		LaserBlock.sender = SattPtr->playerNr;
-		LaserBlock.flags = IgnoreSimilar;
+		LaserBlock.flags = ElementFlags::IgnoreSimilar;
 		LaserBlock.pixoffs = 0;
 		LaserBlock.color = BuildColor(MakeRgb15(0x00, 0x01, 0x1F), 0x4D);
 		ElementHandle hPointDefense {initialize_laser(&LaserBlock)};
@@ -613,7 +613,7 @@ static void satellite_postprocess(Element* ElementPtr)
 
 			LockElement(hDefense, &DefensePtr);
 			DefensePtr->playerNr = ElementPtr->playerNr;
-			DefensePtr->state_flags = Appearing | Nonsolid | FiniteLife;
+			DefensePtr->state_flags = ElementFlags::Appearing | ElementFlags::Nonsolid | ElementFlags::FiniteLife;
 
 			{
 				Element* SuccPtr {};
@@ -647,10 +647,10 @@ static void satellite_death(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~PointDefense;
+	StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~ShipFlags::PointDefense;
 
-	ElementPtr->state_flags &= ~Disappearing;
-	ElementPtr->state_flags |= Nonsolid | FiniteLife | Changing;
+	ElementPtr->state_flags &= ~ElementFlags::Disappearing;
+	ElementPtr->state_flags |= ElementFlags::Nonsolid | ElementFlags::FiniteLife | ElementFlags::Changing;
 	ElementPtr->life_span = 4;
 	ElementPtr->turn_wait = 1;
 	ElementPtr->next_turn = 0;
@@ -682,8 +682,8 @@ static void spawn_satellites(Element* ElementPtr)
 
 				LockElement(hSatellite, &SattPtr);
 				SattPtr->playerNr = ElementPtr->playerNr;
-				SattPtr->state_flags = IgnoreSimilar | Appearing
-									 | FiniteLife;
+				SattPtr->state_flags = ElementFlags::IgnoreSimilar | ElementFlags::Appearing
+									 | ElementFlags::FiniteLife;
 				SattPtr->life_span = NormalLife + 1;
 				SattPtr->hit_points = SatelliteHitpoints;
 				SattPtr->mass_points = SatelliteMass;
@@ -731,8 +731,8 @@ static void chmmr_preprocess(Element* ElementPtr)
 
 		LockElement(hSatellite, &SattPtr);
 		SattPtr->playerNr = ElementPtr->playerNr;
-		SattPtr->state_flags = FiniteLife | Nonsolid | IgnoreSimilar
-							 | Appearing;
+		SattPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid | ElementFlags::IgnoreSimilar
+							 | ElementFlags::Appearing;
 		SattPtr->life_span = HyperjumpLife + 1;
 
 		SattPtr->death_func = spawn_satellites;

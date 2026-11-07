@@ -58,7 +58,7 @@ static RaceDesc arilou_desc =
 	{
 		{/* ShipInfoDesc */
 		 "skiff",
-		 /* FiresFore | */ ImmediateWeapon,
+		 /* FiresFore | */ ShipFlags::ImmediateWeapon,
 		 16, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -147,7 +147,7 @@ static uint16_t initialize_autoaim_laser(Element* ShipPtr, ElementHandle LaserAr
 	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), LaserRange);
 	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), LaserRange);
 	LaserBlock.sender = ShipPtr->playerNr;
-	LaserBlock.flags = IgnoreSimilar;
+	LaserBlock.flags = ElementFlags::IgnoreSimilar;
 	LaserBlock.pixoffs = ResScale(ArilouOffset);
 	LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E);
 	LaserArray[0] = initialize_laser(&LaserBlock);
@@ -161,14 +161,14 @@ static void arilou_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	StarShipPtr->ship_input_state |= ThrustFlag;
+	StarShipPtr->ship_input_state |= StatusFlags::Thrust;
 
 	ObjectsOfConcern[*IntelObjectIndex::EnemyShip].MoveState = MovementState::Entice;
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 
 		const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 6)
@@ -177,11 +177,9 @@ static void arilou_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 			Starship* EnemyStarShipPtr {};
 
 			GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
-			if (((EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-				  & SeekingWeapon)
+			if (((testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::SeekingWeapon))
 				 && lpEvalDesc->ObjectPtr->next.image.farray == EnemyStarShipPtr->RaceDescPtr->ship_data.weapon)
-				|| ((EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-					 & SeekingSpecial)
+				|| ((testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::SeekingSpecial))
 					&& lpEvalDesc->ObjectPtr->next.image.farray == EnemyStarShipPtr->RaceDescPtr->ship_data.special))
 			{
 				IsTrackingWeapon = true;
@@ -191,19 +189,19 @@ static void arilou_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 				IsTrackingWeapon = false;
 			}
 
-			if (((lpEvalDesc->ObjectPtr->state_flags & PlayerShip)															 /* means IMMEDIATE WeaponFlag */
-				 || (IsTrackingWeapon && (lpEvalDesc->which_turn == 1 || (lpEvalDesc->ObjectPtr->state_flags & CrewObject))) /* FIGHTERS!!! */
+			if (((testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::PlayerShip))															/* means IMMEDIATE WeaponFlag */
+				 || (IsTrackingWeapon && (lpEvalDesc->which_turn == 1 || (testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::CrewObject)))) /* FIGHTERS!!! */
 				 || PlotIntercept(lpEvalDesc->ObjectPtr, ShipPtr, 3, 0))
 				&& !(uqm::random().next() & 3))
 			{
-				StarShipPtr->ship_input_state &= ~(LeftFlag | RightFlag | ThrustFlag | WeaponFlag);
-				StarShipPtr->ship_input_state |= SpecialFlag;
+				StarShipPtr->ship_input_state &= ~(StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon);
+				StarShipPtr->ship_input_state |= StatusFlags::Special;
 			}
 		}
 	}
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level <= SpecialEnergyCost << 1)
 	{
-		StarShipPtr->ship_input_state &= ~WeaponFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 	}
 }
 
@@ -212,24 +210,24 @@ static void arilou_preprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (!(ElementPtr->state_flags & Nonsolid))
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid)))
 	{
 		if (ElementPtr->thrust_wait == 0)
 		{
 			ZeroVelocityComponents(&ElementPtr->velocity);
-			StarShipPtr->cur_status_flags &= ~ShipAtMaxSpeed;
+			StarShipPtr->cur_status_flags &= ~StatusFlags::ShipAtMaxSpeed;
 		}
 
-		if ((StarShipPtr->cur_status_flags & SpecialFlag)
+		if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 			&& StarShipPtr->special_counter == 0
 			&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 		{
 			/* Special key is pressed; start teleport */
 			ZeroVelocityComponents(&ElementPtr->velocity);
 			StarShipPtr->cur_status_flags &=
-				~(ShipAtMaxSpeed | LeftFlag | RightFlag | ThrustFlag | WeaponFlag);
+				~(StatusFlags::ShipAtMaxSpeed | StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon);
 
-			ElementPtr->state_flags |= Nonsolid | FiniteLife | Changing;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid | ElementFlags::FiniteLife | ElementFlags::Changing;
 			ElementPtr->life_span = HyperLife;
 
 			ElementPtr->next.image.farray =
@@ -251,9 +249,8 @@ static void arilou_preprocess(Element* ElementPtr)
 
 		StarShipPtr->cur_status_flags =
 			(StarShipPtr->cur_status_flags
-			 & ~(LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag))
-			| (StarShipPtr->old_status_flags
-			   & (LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag));
+			 & ~(StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon | StatusFlags::Special))
+			| (((StarShipPtr->old_status_flags & (StatusFlags::Left | StatusFlags::Right | StatusFlags::Thrust | StatusFlags::Weapon | StatusFlags::Special))));
 		++StarShipPtr->weapon_counter;
 		++StarShipPtr->special_counter;
 		++StarShipPtr->energy_counter;
@@ -262,8 +259,8 @@ static void arilou_preprocess(Element* ElementPtr)
 
 		if ((life_span = ElementPtr->life_span) == NormalLife)
 		{ /* Ending teleport */
-			ElementPtr->state_flags &= ~(Nonsolid | FiniteLife);
-			ElementPtr->state_flags |= Appearing;
+			ElementPtr->state_flags &= ~(ElementFlags::Nonsolid | ElementFlags::FiniteLife);
+			ElementPtr->state_flags |= ElementFlags::Appearing;
 			ElementPtr->current.image.farray =
 				ElementPtr->next.image.farray =
 					StarShipPtr->RaceDescPtr->ship_data.ship;
@@ -320,7 +317,7 @@ static void arilou_preprocess(Element* ElementPtr)
 			}
 		}
 
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 }
 

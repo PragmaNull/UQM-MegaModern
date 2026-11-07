@@ -660,7 +660,7 @@ static bool NameSaveGame(uint16_t gameIndex, char* buf)
 		namingCB();
 	}
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	SetFlashRect(nullptr, false);
 
@@ -1951,8 +1951,8 @@ static bool PickGame(bool saving, bool fromMainMenu)
 		UnbatchGraphics();
 	}
 
-	SetMenuSounds(MenuSoundArrows | MenuSoundPage,
-				  0);
+	SetMenuSounds(MenuSoundFlags::Arrows | MenuSoundFlags::Page,
+				  MenuSoundFlags::None);
 	menuState.InputFunc = DoPickGame;
 
 	// Save/load retry loop
@@ -1986,7 +1986,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 		RedrawPickDisplay(&pickState, menuState.CurState);
 	}
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	if (pickState.success && !saving)
 	{ // Load succeeded, signal up the chain
@@ -2160,7 +2160,7 @@ bool GameOptions(void)
 
 	SetFlashRect(SfrMenu3do(), false);
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	menuState.InputFunc = DoGameOptions;
 	DoInput(&menuState, true);
 	SetFlashRect(nullptr, false);

@@ -2560,7 +2560,7 @@ static bool DoStarSearch(MenuState* pMS)
 	tes.ChangeCallback = OnStarNameChange;
 	tes.FrameCallback = OnStarNameFrame;
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	SetDefaultMenuRepeatDelay();
 	bool success {DoTextEntry(&tes)};
 
@@ -2795,7 +2795,7 @@ static bool DoMoveCursor(MenuState* pMS)
 
 			SetMenuRepeatDelay(MinAccelDelay, MaxAccelDelay,
 							   StepAccelDelay, true);
-			SetMenuSounds(MenuSoundNone, MenuSoundNone);
+			SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 		}
 		else
 		{ // no search in QuasiSpace
@@ -3450,13 +3450,13 @@ bool StarMap(void)
 			   UniverseToDispy(cursorLoc.y));
 	UnbatchGraphics();
 
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 	SetMenuRepeatDelay(MinAccelDelay, MaxAccelDelay, StepAccelDelay,
 					   true);
 
 	DoInput(&menuState, false);
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 	SetDefaultMenuRepeatDelay();
 
 	DrawHyperCoords(universe);

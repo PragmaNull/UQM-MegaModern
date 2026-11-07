@@ -332,8 +332,8 @@ bool DoLoadTeam(MeleeState* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MenuSoundUp | MenuSoundDown | MenuSoundPage,
-				  MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Up | MenuSoundFlags::Down | MenuSoundFlags::Page,
+				  MenuSoundFlags::Select);
 
 	if (!pMS->Initialized)
 	{

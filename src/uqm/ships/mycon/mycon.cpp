@@ -56,7 +56,7 @@ static RaceDesc mycon_desc =
 	{
 		{/* ShipInfoDesc */
 		 "podship",
-		 FiresFore | SeekingWeapon,
+		 ShipFlags::FiresFore | ShipFlags::SeekingWeapon,
 		 21, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -143,7 +143,7 @@ static void plasma_preprocess(Element* ElementPtr)
 		ElementPtr->next.image.frame =
 			SetAbsFrameIndex(ElementPtr->next.image.frame,
 							 plasma_index);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 
 	if (ElementPtr->turn_wait > 0)
@@ -187,7 +187,7 @@ static void plasma_blast_preprocess(Element* ElementPtr)
 		UnlockElement(ElementPtr->hTarget);
 	}
 
-	ElementPtr->state_flags |= Changing;
+	ElementPtr->state_flags |= ElementFlags::Changing;
 }
 
 static void plasma_collision(Element* ElementPtr0, GfxPoint* pPt0,
@@ -197,7 +197,7 @@ static void plasma_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 	const int16_t old_mass {(int16_t)ElementPtr0->mass_points};
 	if ((ElementPtr0->pParent != ElementPtr1->pParent
-		 || (ElementPtr1->state_flags & PlayerShip))
+		 || (testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip)))
 		&& (hBlastElement =
 				weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)))
 	{
@@ -206,7 +206,7 @@ static void plasma_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 		LockElement(hBlastElement, &BlastElementPtr);
 		BlastElementPtr->pParent = ElementPtr0->pParent;
-		if (!(ElementPtr1->state_flags & PlayerShip))
+		if (!(testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip)))
 		{
 			BlastElementPtr->hTarget = 0;
 		}
@@ -249,8 +249,8 @@ static void mycon_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 	{
-		if ((lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
-			&& !(lpEvalDesc->ObjectPtr->state_flags & CrewObject))
+		if ((testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::FiniteLife))
+			&& !(testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::CrewObject)))
 		{
 			lpEvalDesc->MoveState = MovementState::Avoid;
 		}
@@ -265,7 +265,7 @@ static void mycon_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState == MovementState::Pursue)
 	{
-		StarShipPtr->ship_input_state &= ~ThrustFlag; /* don't pursue seekers */
+		StarShipPtr->ship_input_state &= ~StatusFlags::Thrust; /* don't pursue seekers */
 	}
 
 	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
@@ -293,26 +293,26 @@ static void mycon_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 							- StarShipPtr->ShipFacing
 							+ AngleToFacing(Quadrant))
 				<= AngleToFacing(HalfCircle)
-			&& (!(StarShipPtr->cur_status_flags & (ShipBeyondMaxSpeed | ShipInGravityWell))
+			&& (!(testFlag(StarShipPtr->cur_status_flags, (StatusFlags::ShipBeyondMaxSpeed | StatusFlags::ShipInGravityWell)))
 				|| NormalizeFacing(direction_facing
 								   - travel_facing + AngleToFacing(Octant))
 					   <= AngleToFacing(Quadrant)))
 		{
-			StarShipPtr->ship_input_state |= WeaponFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 		}
 	}
 
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = DisplayToWorld(ResScale(800));
 		if (ShipPtr->crew_level < StarShipPtr->RaceDescPtr->ship_info.max_crew)
 		{
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = MissileSpeed() * MissileLife;
 			if (StarShipPtr->RaceDescPtr->ship_info.energy_level >= SpecialEnergyCost
-				&& !(StarShipPtr->ship_input_state & WeaponFlag))
+				&& !(testFlag(StarShipPtr->ship_input_state, StatusFlags::Weapon)))
 			{
-				StarShipPtr->ship_input_state |= SpecialFlag;
+				StarShipPtr->ship_input_state |= StatusFlags::Special;
 			}
 		}
 	}
@@ -330,7 +330,7 @@ static uint16_t initialize_plasma(Element* ShipPtr, ElementHandle PlasmaArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = 0;
+	MissileBlock.flags = ElementFlags::None;
 	MissileBlock.pixoffs = MyconOffset();
 	MissileBlock.speed = MissileSpeed();
 	MissileBlock.hit_points = MissileDamage;
@@ -358,7 +358,7 @@ static void mycon_postprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& StarShipPtr->special_counter == 0
 		&& ElementPtr->crew_level != StarShipPtr->RaceDescPtr->ship_info.max_crew
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))

@@ -214,8 +214,8 @@ static void ip_group_preprocess(Element* ElementPtr)
 	InterplanetaryGroup* GroupPtr {};
 
 	Element* EPtr {ElementPtr};
-	EPtr->state_flags &= ~(Disappearing | Nonsolid); // "I'm not quite dead"
-	++EPtr->life_span;								 // so that it will 'die' again next time
+	EPtr->state_flags &= ~(ElementFlags::Disappearing | ElementFlags::Nonsolid); // "I'm not quite dead"
+	++EPtr->life_span;															 // so that it will 'die' again next time
 
 	*(&GroupPtr) = (InterplanetaryGroup*)(EPtr)->pParent;
 	group_loc = GroupPtr->sys_loc; // save old location
@@ -270,7 +270,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 	if ((task & ~(GroupTaskFlag::IgnoreFlagship | GroupTaskFlag::ReformGroup)) == GroupTask::Flee
 		&& (task & GroupTaskFlag::IgnoreFlagship))
 	{ // Make fleeing groups non-collidable
-		EPtr->state_flags |= Nonsolid;
+		EPtr->state_flags |= ElementFlags::Nonsolid;
 	}
 
 	uint8_t target_loc {GroupPtr->dest_loc};
@@ -535,7 +535,7 @@ CheckGetAway:
 			if (Transition)
 			{
 				/* no collisions during transition */
-				EPtr->state_flags |= Nonsolid;
+				EPtr->state_flags |= ElementFlags::Nonsolid;
 
 				vdx = 0;
 				vdy = 0;
@@ -550,7 +550,7 @@ CheckGetAway:
 				{
 					/* Group completely left the star system */
 					EPtr->life_span = 0;
-					EPtr->state_flags |= Disappearing | Nonsolid;
+					EPtr->state_flags |= ElementFlags::Disappearing | ElementFlags::Nonsolid;
 					GroupPtr->in_system = 0;
 					return;
 				}
@@ -585,7 +585,7 @@ CheckGetAway:
 
 		if (uqm::UQMOptions::read().shipDirectionIP)
 		{
-			if (GroupPtr->flags & Rotates)
+			if (testFlag(GroupPtr->flags, IpFlags::Rotates))
 			{ // BW : make IP ships face the direction they're going into
 				if (uqm::currentActivity() & ActivityFlag::StartEncounter)
 				{ // sometimes they give up chase, don't turn them away
@@ -612,10 +612,10 @@ CheckGetAway:
 				{ // JMS: Direction memory prevents jittering of battle
 					// group icons when they are orbiting a planet (and not
 					// chasing the player ship).
-					if (GroupPtr->flags & CanTurn)
+					if (testFlag(GroupPtr->flags, IpFlags::CanTurn))
 					{
 						EPtr->next.image.frame = suggestedFrame;
-						GroupPtr->flags &= ~CanTurn;
+						GroupPtr->flags &= ~IpFlags::CanTurn;
 						// cannot turn until destination is reached
 					}
 				}
@@ -625,17 +625,17 @@ CheckGetAway:
 				}
 			}
 			// Tumble any probes
-			if (GroupPtr->flags & IsProbe)
+			if (testFlag(GroupPtr->flags, IpFlags::IsProbe))
 			{
 				EPtr->next.image.frame =
 					IncFrameIndex(EPtr->next.image.frame);
 			}
 			// Transform any xforms
-			if (GroupPtr->flags & IsXform && GroupPtr->dest_loc == IpnlInterceptPlayer)
+			if (testFlag(GroupPtr->flags, IpFlags::IsXform) && GroupPtr->dest_loc == IpnlInterceptPlayer)
 			{
 				GroupPtr->melee_icon = Ywing;
 			}
-			if (GroupPtr->flags & IsXform && GroupPtr->dest_loc != IpnlInterceptPlayer)
+			if (testFlag(GroupPtr->flags, IpFlags::IsXform) && GroupPtr->dest_loc != IpnlInterceptPlayer)
 			{
 				GroupPtr->melee_icon = Xform;
 			}
@@ -645,13 +645,13 @@ CheckGetAway:
 				 && dest_pt.y == GroupPtr->loc.y)
 				|| Transition)
 			{
-				GroupPtr->flags |= CanTurn;
+				GroupPtr->flags |= IpFlags::CanTurn;
 			}
 		}
 	}
 	else if (task >= *GroupTaskFlag::ReformGroup && uqm::UQMOptions::read().shipDirectionIP)
 	{ // To face sis while reforming
-		if (GroupPtr->flags & Rotates)
+		if (testFlag(GroupPtr->flags, IpFlags::Rotates))
 		{
 			if (GetFrameIndex(EPtr->current.image.frame) == 1)
 			{ // Define direction only once and not follow player while
@@ -671,10 +671,10 @@ CheckGetAway:
 					SetAbsFrameIndex(EPtr->next.image.farray[0],
 									 2 + NormalizeFacing(AngleToFacing(ARCTAN(delta_x, delta_y))));
 
-				GroupPtr->flags |= CanTurn;
+				GroupPtr->flags |= IpFlags::CanTurn;
 			}
 		}
-		else if (GroupPtr->flags & IsProbe)
+		else if (testFlag(GroupPtr->flags, IpFlags::IsProbe))
 		{ // Probe will wobble while reforming
 			EPtr->next.image.frame =
 				IncFrameIndex(EPtr->next.image.frame);
@@ -701,18 +701,18 @@ CheckGetAway:
 			&& (GroupPtr->group_counter & 1)))
 	{
 		SetPrimType(&DisplayArray[EPtr->PrimIndex], NoPrim);
-		EPtr->state_flags |= Nonsolid;
+		EPtr->state_flags |= ElementFlags::Nonsolid;
 	}
 	else
 	{
 		SetPrimType(&DisplayArray[EPtr->PrimIndex], PrimitiveType::Stamp);
 		if (task & GroupTaskFlag::ReformGroup)
 		{
-			EPtr->state_flags |= Nonsolid;
+			EPtr->state_flags |= ElementFlags::Nonsolid;
 		}
 	}
 
-	EPtr->state_flags |= Changing;
+	EPtr->state_flags |= ElementFlags::Changing;
 }
 
 static void flag_ship_collision(Element* ElementPtr0, GfxPoint* pPt0,
@@ -723,14 +723,14 @@ static void flag_ship_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		return; // ignore the rest of the collisions
 	}
 
-	if (!(ElementPtr1->state_flags & Collision))
+	if (!(testFlag(ElementPtr1->state_flags, ElementFlags::Collision)))
 	{ // The other Element's collision has not been processed yet
 		// Defer starting the Encounter until it is.
-		ElementPtr0->state_flags |= Collision | Nonsolid;
+		ElementPtr0->state_flags |= ElementFlags::Collision | ElementFlags::Nonsolid;
 	}
 	else
 	{ // Both Element's collisions have now been processed
-		ElementPtr1->state_flags &= ~Collision;
+		ElementPtr1->state_flags &= ~ElementFlags::Collision;
 		uqm::currentActivity() |= ActivityFlag::StartEncounter;
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
@@ -760,15 +760,15 @@ static void ip_group_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	if (OtherPtr)
 	{ // Collision with another group
 		// Prevent the groups from coalescing into a single ship icon
-		if ((ElementPtr0->state_flags & Collision)
+		if ((testFlag(ElementPtr0->state_flags, ElementFlags::Collision))
 			|| (ElementPtr1->current.location.x == ElementPtr1->next.location.x
 				&& ElementPtr1->current.location.y == ElementPtr1->next.location.y))
 		{
-			ElementPtr0->state_flags &= ~Collision;
+			ElementPtr0->state_flags &= ~ElementFlags::Collision;
 		}
 		else
 		{
-			ElementPtr1->state_flags |= Collision;
+			ElementPtr1->state_flags |= ElementFlags::Collision;
 
 			GroupPtr->loc = DisplayArray[ElementPtr0->PrimIndex].Object.Point;
 			ElementPtr0->next.location = ElementPtr0->current.location;
@@ -786,14 +786,14 @@ static void ip_group_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		// resent.
 		NotifyOthers(GroupPtr->race_id, IpnlAllClear);
 
-		if (!(ElementPtr1->state_flags & Collision))
+		if (!(testFlag(ElementPtr1->state_flags, ElementFlags::Collision)))
 		{ // The other Element's collision has not been processed yet
 			// Defer starting the Encounter until it is.
-			ElementPtr0->state_flags |= Collision | Nonsolid;
+			ElementPtr0->state_flags |= ElementFlags::Collision | ElementFlags::Nonsolid;
 		}
 		else
 		{ // Both Element's collisions have now been processed
-			ElementPtr1->state_flags &= ~Collision;
+			ElementPtr1->state_flags &= ~ElementFlags::Collision;
 			uqm::currentActivity() |= ActivityFlag::StartEncounter;
 		}
 	}
@@ -813,7 +813,7 @@ static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 		IPSHIPElementPtr->mass_points = 1;
 		IPSHIPElementPtr->hit_points = 1;
 		IPSHIPElementPtr->state_flags =
-			Changing | FiniteLife | IgnoreVelocity;
+			ElementFlags::Changing | ElementFlags::FiniteLife | ElementFlags::IgnoreVelocity;
 
 		SetPrimType(&DisplayArray[IPSHIPElementPtr->PrimIndex], PrimitiveType::Stamp);
 		// XXX: Hack: farray points to FrameRef[3] and given FrameRef
@@ -826,18 +826,18 @@ static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 			 * same result without the side
 			 * effect (InitIntersectFrame)
 			 */
-		GroupPtr->flags = 0;
+		GroupPtr->flags = IpFlags::None;
 		if (GroupPtr->race_id != RaceId::Slylandro)
 		{
-			GroupPtr->flags |= Rotates;
+			GroupPtr->flags |= IpFlags::Rotates;
 		}
 		if (GroupPtr->race_id == RaceId::Mmrnmhrm)
 		{
-			GroupPtr->flags |= IsXform;
+			GroupPtr->flags |= IpFlags::IsXform;
 		}
 		if (GroupPtr->race_id == RaceId::Slylandro)
 		{
-			GroupPtr->flags |= IsProbe;
+			GroupPtr->flags |= IpFlags::IsProbe;
 		}
 		if (uqm::currentSeed().ships)
 		{
@@ -851,14 +851,14 @@ static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 			{
 				const SpeciesId ship = SeedShip(TemplatePtr->SpeciesID, false);
 				UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
-				GroupPtr->flags = 0;
+				GroupPtr->flags = IpFlags::None;
 				switch (ship)
 				{
 					case SpeciesId::Slylandro:
-						GroupPtr->flags |= IsProbe;
+						GroupPtr->flags |= IpFlags::IsProbe;
 						break;
 					case SpeciesId::Mmrnmhrm:
-						GroupPtr->flags |= IsXform + Rotates;
+						GroupPtr->flags |= IpFlags::IsXform | IpFlags::Rotates;
 						break;
 					case SpeciesId::Orz:
 					case SpeciesId::Utwig:
@@ -883,14 +883,14 @@ static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 					case SpeciesId::Androsynth:
 					case SpeciesId::Earthling:
 					case SpeciesId::Syreen:
-						GroupPtr->flags |= Rotates;
+						GroupPtr->flags |= IpFlags::Rotates;
 						break;
 					default:
 						break;
 				}
 			}
 		}
-		if (uqm::UQMOptions::read().shipDirectionIP && GroupPtr->flags & IsProbe)
+		if (uqm::UQMOptions::read().shipDirectionIP && testFlag(GroupPtr->flags, IpFlags::IsProbe))
 		{
 			GroupPtr->melee_icon =
 				CaptureDrawable(
@@ -1006,27 +1006,27 @@ static void flag_ship_preprocess(Element* ElementPtr)
 
 		if (ElementPtr->sys_loc == flagship_loc)
 		{
-			if (ElementPtr->state_flags & Nonsolid)
+			if (testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid))
 			{
-				ElementPtr->state_flags &= ~Nonsolid;
+				ElementPtr->state_flags &= ~ElementFlags::Nonsolid;
 			}
 		}
 		else /* no collisions during transition */
 		{
-			ElementPtr->state_flags |= Nonsolid;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid;
 			ElementPtr->sys_loc = flagship_loc;
 		}
 
 		if ((ec = uqm::gameState().flag(uqm::GameFlag::ESCAPE_COUNTER))
 			&& !(uqm::currentActivity() & ActivityFlag::StartEncounter))
 		{
-			ElementPtr->state_flags |= Nonsolid;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid;
 
 			--ec;
 			uqm::gameState().setFlag(uqm::GameFlag::ESCAPE_COUNTER, static_cast<uint32_t>(ec));
 		}
 
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 }
 
@@ -1060,10 +1060,10 @@ static void spawn_flag_ship(void)
 		// Must have mass_points for collisions to work
 		FlagShipElementPtr->mass_points = 1;
 		FlagShipElementPtr->sys_loc = getFlagshipLocation();
-		FlagShipElementPtr->state_flags = Appearing | IgnoreVelocity;
+		FlagShipElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::IgnoreVelocity;
 		if (uqm::gameState().flag(uqm::GameFlag::ESCAPE_COUNTER))
 		{
-			FlagShipElementPtr->state_flags |= Nonsolid;
+			FlagShipElementPtr->state_flags |= ElementFlags::Nonsolid;
 		}
 		FlagShipElementPtr->life_span = NormalLife;
 		FlagShipElementPtr->thrust_wait = FlipWait;

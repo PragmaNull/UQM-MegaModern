@@ -488,7 +488,7 @@ void CargoMenu(void)
 		DrawMenuStateStrings(MenuString::AltCargo, 0);
 	}
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	menuState.InputFunc = DoDiscardCargo;
 	DoInput(&menuState, true);

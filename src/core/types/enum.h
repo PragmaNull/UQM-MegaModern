@@ -242,6 +242,7 @@ using ::operator^=;
 } // namespace uqm
 
 #define ENUM_BITWISE_OPS(enumName)                                                                                                             \
+	consteval bool isFlagEnum(enumName) { return true; }                                                                                       \
 	[[nodiscard]] constexpr inline enumName operator|(enumName lhs, enumName rhs) noexcept                                                     \
 	{                                                                                                                                          \
 		return static_cast<enumName>(static_cast<std::underlying_type_t<enumName>>(lhs) | static_cast<std::underlying_type_t<enumName>>(rhs)); \

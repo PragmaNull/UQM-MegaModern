@@ -344,7 +344,7 @@ bool DoStarBase(MenuState* pMS)
 		pMS->CurState = *StarbaseMenuItem::DepartBase;
 		goto ExitStarBase;
 	}
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	if (!pMS->Initialized)
 	{
@@ -433,7 +433,7 @@ ExitStarBase:
 					break;
 			}
 
-			SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+			SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 			DoInput(pMS, true);
 
 			if (IsHd())

@@ -59,7 +59,7 @@ static RaceDesc yehat_desc =
 	{
 		{/* ShipInfoDesc */
 		 "terminator",
-		 FiresFore | ShieldDefense,
+		 ShipFlags::FiresFore | ShipFlags::ShieldDefense,
 		 23, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -136,7 +136,7 @@ static uint16_t initialize_standard_missiles(Element* ShipPtr, ElementHandle Mis
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = YehatOffset();
 	MissileBlock.speed = MissileSpeedHd();
 	MissileBlock.hit_points = MissileHits;
@@ -169,14 +169,14 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 	{
 		ShieldStatus = 0;
-		if (!(lpEvalDesc->ObjectPtr->state_flags & (FiniteLife | CrewObject)))
+		if (!(testFlag(lpEvalDesc->ObjectPtr->state_flags, (ElementFlags::FiniteLife | ElementFlags::CrewObject))))
 		{
 			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 		else if (lpEvalDesc->ObjectPtr->mass_points
-				 || (lpEvalDesc->ObjectPtr->state_flags & CrewObject))
+				 || (testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::CrewObject)))
 		{
-			if (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife))
+			if (!(testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::FiniteLife)))
 			{
 				lpEvalDesc->which_turn <<= 1;
 			}
@@ -203,24 +203,23 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		if (ShieldStatus)
 		{
 			if (ShipPtr->life_span <= NormalLife + 1
 				&& (ShieldStatus > 0 || lpEvalDesc->ObjectPtr)
 				&& lpEvalDesc->which_turn <= 2
 				&& (ShieldStatus > 0
-					|| (lpEvalDesc->ObjectPtr->state_flags
-						& PlayerShip) /* means IMMEDIATE WeaponFlag */
+					|| (testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::PlayerShip)) /* means IMMEDIATE WeaponFlag */
 					|| PlotIntercept(lpEvalDesc->ObjectPtr,
 									 ShipPtr, 2, 0))
 				&& (uqm::random().next() & 3))
 			{
-				StarShipPtr->ship_input_state |= SpecialFlag;
+				StarShipPtr->ship_input_state |= StatusFlags::Special;
 			}
 
 			if (lpEvalDesc->ObjectPtr
-				&& !(lpEvalDesc->ObjectPtr->state_flags & CrewObject))
+				&& !(testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::CrewObject)))
 			{
 				lpEvalDesc->ObjectPtr = 0;
 			}
@@ -232,8 +231,7 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		Starship* EnemyStarShipPtr {};
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
-		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-			  & ImmediateWeapon))
+		if (!(testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::ImmediateWeapon)))
 		{
 			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
@@ -247,7 +245,7 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 static void yehat_postprocess(Element* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & Nonsolid))
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid)))
 	{
 		Starship* StarShipPtr {};
 
@@ -292,8 +290,8 @@ static void yehat_postprocess(Element* ElementPtr)
 				ShipElementPtr->playerNr = ElementPtr->playerNr;
 				ShipElementPtr->state_flags =
 					/* in place of Appearing */
-					(Changing | PreProcessFlag | PostProcessFlag)
-					| FiniteLife | Nonsolid;
+					(ElementFlags::Changing | ElementFlags::PreProcess | ElementFlags::PostProcess)
+					| ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 				SetPrimType(
 					&DisplayArray[ShipElementPtr->PrimIndex],
 					PrimitiveType::Stamp);
@@ -321,7 +319,7 @@ static void yehat_postprocess(Element* ElementPtr)
 
 static void yehat_preprocess(Element* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & Appearing))
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Appearing)))
 	{
 		Starship* StarShipPtr {};
 
@@ -343,10 +341,10 @@ static void yehat_preprocess(Element* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.ship[0],
 								 ElementPtr->next.image.frame);
-			ElementPtr->state_flags |= Changing;
+			ElementPtr->state_flags |= ElementFlags::Changing;
 		}
 
-		if ((StarShipPtr->cur_status_flags & SpecialFlag)
+		if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 			&& StarShipPtr->special_counter == 0)
 		{
 			if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SpecialEnergyCost)
@@ -361,7 +359,7 @@ static void yehat_preprocess(Element* ElementPtr)
 				ElementPtr->next.image.frame =
 					SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.special[0],
 									 ElementPtr->next.image.frame);
-				ElementPtr->state_flags |= Changing;
+				ElementPtr->state_flags |= ElementFlags::Changing;
 
 				StarShipPtr->special_counter =
 					StarShipPtr->RaceDescPtr->characteristics.special_wait;

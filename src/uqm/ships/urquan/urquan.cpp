@@ -71,7 +71,7 @@ static RaceDesc urquan_desc =
 	{
 		{/* ShipInfoDesc */
 		 "dreadnought",
-		 FiresFore | SeekingSpecial,
+		 ShipFlags::FiresFore | ShipFlags::SeekingSpecial,
 		 30, /* Super Melee cost */
 		 MaxCrewSize, MaxCrewSize,
 		 MaxEnergySize, MaxEnergySize,
@@ -150,7 +150,7 @@ static uint16_t initialize_fusion(Element* ShipPtr, ElementHandle FusionArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = UrquanOffset();
 	MissileBlock.speed = MissileSpeedHd();
 	MissileBlock.hit_points = MissileHits;
@@ -175,7 +175,7 @@ static void fighter_postprocess(Element* ElementPtr)
 	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), FighterLaserRange());
 	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), FighterLaserRange());
 	LaserBlock.sender = ElementPtr->playerNr;
-	LaserBlock.flags = IgnoreSimilar;
+	LaserBlock.flags = ElementFlags::IgnoreSimilar;
 	LaserBlock.pixoffs = FighterOffset();
 	LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E);
 	ElementHandle Laser {initialize_laser(&LaserBlock)};
@@ -274,7 +274,7 @@ static void fighter_preprocess(Element* ElementPtr)
 
 	++StarShipPtr->RaceDescPtr->characteristics.special_wait;
 	if (FighterLife - ElementPtr->life_span > TrackThreshold
-		&& !(ElementPtr->state_flags & Changing))
+		&& !(testFlag(ElementPtr->state_flags, ElementFlags::Changing)))
 	{
 		uint16_t orig_facing {};
 		uint16_t facing {};
@@ -291,7 +291,7 @@ static void fighter_preprocess(Element* ElementPtr)
 			 || TrackShip(ElementPtr, &facing) >= 0)
 			&& (delta_x == 0 || delta_y >= OneWayFlight))
 		{
-			ElementPtr->state_flags |= IgnoreSimilar;
+			ElementPtr->state_flags |= ElementFlags::IgnoreSimilar;
 		}
 		else if (delta_x)
 		{
@@ -317,7 +317,7 @@ static void fighter_preprocess(Element* ElementPtr)
 			}
 			if (delta_x <= LASER_RANGE && delta_y <= LASER_RANGE)
 #endif /* NEVER */
-				ElementPtr->state_flags &= ~IgnoreSimilar;
+				ElementPtr->state_flags &= ~ElementFlags::IgnoreSimilar;
 
 			Enroute = false;
 		}
@@ -352,7 +352,7 @@ static void fighter_preprocess(Element* ElementPtr)
 			if (Enroute)
 			{
 				facing = GetFrameIndex(eptr->current.image.frame);
-				if (ElementPtr->turn_wait & LeftFlag)
+				if ((ElementPtr->turn_wait & StatusFlags::Left) != 0)
 				{
 					delta_x += Cosine(FacingToAngle(facing - 4),
 									  DisplayToWorld(ResScale(30)));
@@ -370,7 +370,7 @@ static void fighter_preprocess(Element* ElementPtr)
 					AngleToFacing(ARCTAN(delta_x, delta_y)));
 			}
 		}
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		if (facing != orig_facing)
 		{
@@ -404,8 +404,8 @@ static void fighter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			FighterElementPtr->PrimIndex = primIndex;
 			DisplayArray[primIndex] =
 				DisplayArray[ElementPtr0->PrimIndex];
-			FighterElementPtr->state_flags &= ~PreProcessFlag;
-			FighterElementPtr->state_flags |= Changing;
+			FighterElementPtr->state_flags &= ~ElementFlags::PreProcess;
+			FighterElementPtr->state_flags |= ElementFlags::Changing;
 			FighterElementPtr->next = FighterElementPtr->current;
 			travel_facing = GetVelocityTravelAngle(
 				&FighterElementPtr->velocity);
@@ -414,7 +414,7 @@ static void fighter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 				- travel_facing);
 			if (delta_facing == 0)
 			{
-				if (FighterElementPtr->turn_wait & LeftFlag)
+				if ((FighterElementPtr->turn_wait & StatusFlags::Left) != 0)
 				{
 					travel_facing -= Quadrant;
 				}
@@ -444,31 +444,31 @@ static void fighter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			PutElement(hFighterElement);
 		}
 
-		ElementPtr0->state_flags |= Disappearing | Collision;
+		ElementPtr0->state_flags |= ElementFlags::Disappearing | ElementFlags::Collision;
 	}
 	else if (ElementPtr0->pParent != ElementPtr1->pParent)
 	{
 		ElementPtr0->blast_offset = 0;
 		weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
-		ElementPtr0->state_flags |= Disappearing | Collision;
+		ElementPtr0->state_flags |= ElementFlags::Disappearing | ElementFlags::Collision;
 	}
-	else if (ElementPtr1->state_flags & PlayerShip)
+	else if (testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 	{
 		ProcessSound(GetSound(
 						 /* FIGHTERS_RETURN */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 					 ElementPtr1);
 		DeltaCrew(ElementPtr1, 1);
-		ElementPtr0->state_flags |= Disappearing | Collision;
+		ElementPtr0->state_flags |= ElementFlags::Disappearing | ElementFlags::Collision;
 	}
 
-	if (ElementPtr0->state_flags & Disappearing)
+	if (testFlag(ElementPtr0->state_flags, ElementFlags::Disappearing))
 	{
-		ElementPtr0->state_flags &= ~Disappearing;
+		ElementPtr0->state_flags &= ~ElementFlags::Disappearing;
 
 		ElementPtr0->hit_points = 0;
 		ElementPtr0->life_span = 0;
-		ElementPtr0->state_flags |= Nonsolid;
+		ElementPtr0->state_flags |= ElementFlags::Nonsolid;
 
 		--StarShipPtr->RaceDescPtr->characteristics.special_wait;
 	}
@@ -505,8 +505,8 @@ static void spawn_fighters(Element* ElementPtr)
 		FighterElementPtr->mass_points = FighterMass;
 		FighterElementPtr->thrust_wait = TrackThreshold + 1;
 		FighterElementPtr->playerNr = ElementPtr->playerNr;
-		FighterElementPtr->state_flags = Appearing | FiniteLife
-									   | CrewObject | IgnoreSimilar;
+		FighterElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife
+									   | ElementFlags::CrewObject | ElementFlags::IgnoreSimilar;
 		FighterElementPtr->life_span = FighterLife;
 		SetPrimType(&DisplayArray[FighterElementPtr->PrimIndex],
 					PrimitiveType::Stamp);
@@ -520,14 +520,14 @@ static void spawn_fighters(Element* ElementPtr)
 		FighterElementPtr->current.location = ElementPtr->next.location;
 		if (i == 1)
 		{
-			FighterElementPtr->turn_wait = LeftFlag;
+			FighterElementPtr->turn_wait = *StatusFlags::Left;
 			fighter_facing = NormalizeFacing(facing + 2);
 			FighterElementPtr->current.location.x += delta_x - delta_y;
 			FighterElementPtr->current.location.y += delta_y + delta_x;
 		}
 		else
 		{
-			FighterElementPtr->turn_wait = RightFlag;
+			FighterElementPtr->turn_wait = *StatusFlags::Right;
 			fighter_facing = NormalizeFacing(facing - 2);
 			FighterElementPtr->current.location.x += delta_x + delta_y;
 			FighterElementPtr->current.location.y += delta_y - delta_x;
@@ -560,9 +560,9 @@ static void urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == MovementState::Entice
-		&& (!(lpEvalDesc->ObjectPtr->state_flags & CrewObject)
+		&& (!(testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::CrewObject))
 			|| lpEvalDesc->which_turn <= 8)
-		&& (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
+		&& (!(testFlag(lpEvalDesc->ObjectPtr->state_flags, ElementFlags::FiniteLife))
 			|| (lpEvalDesc->ObjectPtr->mass_points >= 4
 				&& lpEvalDesc->which_turn == 2
 				&& ObjectsOfConcern[*IntelObjectIndex::EnemyShip].which_turn > 16)))
@@ -584,23 +584,22 @@ static void urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 		if (StarShipPtr->special_counter == 0
 			&& lpEvalDesc->ObjectPtr
 			&& StarShipPtr->RaceDescPtr->ship_info.crew_level > (StarShipPtr->RaceDescPtr->ship_info.max_crew >> 2)
-			&& !(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-				 & PointDefense)
+			&& !(testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::PointDefense))
 			&& (StarShipPtr->RaceDescPtr->characteristics.special_wait < 6
 				|| (Maneuverability(
 						&EnemyStarShipPtr->RaceDescPtr->cyborg_control)
 						<= ResolutionCompensated(SlowShip)
-					&& !(EnemyStarShipPtr->cur_status_flags & ShipBeyondMaxSpeed))
+					&& !(testFlag(EnemyStarShipPtr->cur_status_flags, StatusFlags::ShipBeyondMaxSpeed)))
 				|| (lpEvalDesc->which_turn <= 12
-					&& (StarShipPtr->ship_input_state & (LeftFlag | RightFlag))
+					&& (testFlag(StarShipPtr->ship_input_state, (StatusFlags::Left | StatusFlags::Right)))
 					&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= (uint8_t)(StarShipPtr->RaceDescPtr->ship_info.max_energy >> 1)))
 			&& !ObjectCloaked(lpEvalDesc->ObjectPtr))
 		{
-			StarShipPtr->ship_input_state |= SpecialFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Special;
 		}
 		else
 		{
-			StarShipPtr->ship_input_state &= ~SpecialFlag;
+			StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 		}
 	}
 
@@ -612,7 +611,7 @@ static void urquan_postprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& ElementPtr->crew_level > 1
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))

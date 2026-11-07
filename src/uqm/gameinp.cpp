@@ -505,50 +505,50 @@ void FlushInput(void)
 
 static MenuSoundFlags MenuKeysToSoundFlags(const ControllerInputState* state)
 {
-	MenuSoundFlags soundFlags {MenuSoundNone};
+	MenuSoundFlags soundFlags {MenuSoundFlags::None};
 	if (state->menu[*MenuKey::MenuUp])
 	{
-		soundFlags |= MenuSoundUp;
+		soundFlags |= MenuSoundFlags::Up;
 	}
 	if (state->menu[*MenuKey::MenuDown])
 	{
-		soundFlags |= MenuSoundDown;
+		soundFlags |= MenuSoundFlags::Down;
 	}
 	if (state->menu[*MenuKey::MenuLeft])
 	{
-		soundFlags |= MenuSoundLeft;
+		soundFlags |= MenuSoundFlags::Left;
 	}
 	if (state->menu[*MenuKey::MenuRight])
 	{
-		soundFlags |= MenuSoundRight;
+		soundFlags |= MenuSoundFlags::Right;
 	}
 	if (state->menu[*MenuKey::MenuSelect])
 	{
-		soundFlags |= MenuSoundSelect;
+		soundFlags |= MenuSoundFlags::Select;
 	}
 	if (state->menu[*MenuKey::MenuCancel])
 	{
-		soundFlags |= MenuSoundCancel;
+		soundFlags |= MenuSoundFlags::Cancel;
 	}
 	if (state->menu[*MenuKey::MenuSpecial])
 	{
-		soundFlags |= MenuSoundSpecial;
+		soundFlags |= MenuSoundFlags::Special;
 	}
 	if (state->menu[*MenuKey::MenuPageUp])
 	{
-		soundFlags |= MenuSoundPageup;
+		soundFlags |= MenuSoundFlags::PageUp;
 	}
 	if (state->menu[*MenuKey::MenuPageDown])
 	{
-		soundFlags |= MenuSoundPagedown;
+		soundFlags |= MenuSoundFlags::PageDown;
 	}
 	if (state->menu[*MenuKey::MenuDelete])
 	{
-		soundFlags |= MenuSoundDelete;
+		soundFlags |= MenuSoundFlags::Delete;
 	}
 	if (state->menu[*MenuKey::MenuBackspace])
 	{
-		soundFlags |= MenuSoundDelete;
+		soundFlags |= MenuSoundFlags::Delete;
 	}
 
 	return soundFlags;
@@ -570,9 +570,9 @@ void DoInput(void* pInputState, bool resetInput)
 
 		const MenuSoundFlags soundFlags {MenuKeysToSoundFlags(&PulsedInputState)};
 
-		if (MenuSounds && (soundFlags & (sound_0 | sound_1)))
+		if (MenuSounds && testFlag(soundFlags, sound_0 | sound_1))
 		{
-			const SoundRef S {GetSound(MenuSounds, (soundFlags & sound_1) ? MenuSoundEffect::Success : MenuSoundEffect::Move)};
+			const SoundRef S {GetSound(MenuSounds, testFlag(soundFlags, sound_1) ? MenuSoundEffect::Success : MenuSoundEffect::Move)};
 
 			PlaySoundEffect(S, 0, NotPositional(), nullptr, 0);
 		}

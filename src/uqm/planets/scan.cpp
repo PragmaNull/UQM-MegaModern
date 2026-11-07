@@ -1029,7 +1029,7 @@ static bool PickPlanetSide(void)
 		DrawRadarBorder();
 	}
 
-	SetMenuSounds(MenuSoundNone, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::Select);
 
 	PickState.success = false;
 	menuState.InputFunc = DoPickPlanetSide;
@@ -1045,7 +1045,7 @@ static bool PickPlanetSide(void)
 		restorePlanetLocationImage();
 	}
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	return retval;
 }
@@ -1076,7 +1076,7 @@ static void DrawScannedStuff(uint16_t y, uint16_t scan)
 		}
 
 		// XXX: flag this as 'found' scanned object
-		ElementPtr->state_flags |= Appearing;
+		ElementPtr->state_flags |= ElementFlags::Appearing;
 
 		s.origin = ElementPtr->current.location;
 
@@ -1169,7 +1169,7 @@ static void DrawPCScannedStuff(uint16_t scan)
 				uint16_t diff {};
 
 				uint16_t growth {0};
-				ElementPtr->state_flags |= Appearing;
+				ElementPtr->state_flags |= ElementFlags::Appearing;
 				s.origin = ElementPtr->current.location;
 				now = GetTimeCounter() + TimePeriod {17};
 
@@ -1222,7 +1222,7 @@ static void DrawPCScannedStuff(uint16_t scan)
 			}
 			else
 			{
-				ElementPtr->state_flags |= Appearing;
+				ElementPtr->state_flags |= ElementFlags::Appearing;
 				UnlockElement(hElement);
 				hElement = hNextElement;
 			}
@@ -1641,7 +1641,7 @@ void ScanSystem(void)
 		PrintCoarseScanPC();
 	}
 
-	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 
 	menuState.InputFunc = DoScan;
 

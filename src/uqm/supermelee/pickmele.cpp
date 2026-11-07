@@ -319,7 +319,7 @@ static bool DoGetMelee(PickMeleeState* gms)
 	bool done {};
 	uint16_t playerI {};
 
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 
 	if (!gms->Initialized)
 	{

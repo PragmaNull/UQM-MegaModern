@@ -94,7 +94,7 @@ static bool DoPickBattleShip(MenuState* pMS)
 		return (false);
 	}
 
-	SetMenuSounds(MenuSoundNone, MenuSoundNone);
+	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 
 	if (!pMS->Initialized)
 	{
@@ -364,7 +364,7 @@ static StarshipHandle GetArmadaStarShip(void)
 		menuState.flash_rect1.corner = pick_r.corner;
 		menuState.flash_rect1.extent.width = 0;
 
-		SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
+		SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
 		DoInput(&menuState, false);
 
 		SetFlashRect(nullptr, false);

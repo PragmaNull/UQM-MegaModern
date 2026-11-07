@@ -60,7 +60,7 @@ RaceDesc human_desc =
 	{
 		{/* ShipInfoDesc */
 		 "cruiser",
-		 FiresFore | SeekingWeapon | PointDefense,
+		 ShipFlags::FiresFore | ShipFlags::SeekingWeapon | ShipFlags::PointDefense,
 		 11, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergy, MaxEnergy,
@@ -142,7 +142,7 @@ static void nuke_preprocess(Element* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetAbsFrameIndex(ElementPtr->next.image.frame,
 								 facing);
-			ElementPtr->state_flags |= Changing;
+			ElementPtr->state_flags |= ElementFlags::Changing;
 		}
 
 		ElementPtr->turn_wait = TrackWait;
@@ -165,7 +165,7 @@ static void spawn_point_defense(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (ElementPtr->state_flags & PlayerShip)
+	if (testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip))
 	{
 		ElementHandle hDefense {AllocElement()};
 		if (hDefense)
@@ -174,7 +174,7 @@ static void spawn_point_defense(Element* ElementPtr)
 
 			LockElement(hDefense, &DefensePtr);
 			DefensePtr->playerNr = ElementPtr->playerNr;
-			DefensePtr->state_flags = Appearing | Nonsolid | FiniteLife;
+			DefensePtr->state_flags = ElementFlags::Appearing | ElementFlags::Nonsolid | ElementFlags::FiniteLife;
 			DefensePtr->death_func = spawn_point_defense;
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -244,7 +244,7 @@ static void spawn_point_defense(Element* ElementPtr)
 					LaserBlock.ey = ObjectPtr->next.location.y
 								  - ShipPtr->next.location.y;
 					LaserBlock.sender = ShipPtr->playerNr;
-					LaserBlock.flags = IgnoreSimilar;
+					LaserBlock.flags = ElementFlags::IgnoreSimilar;
 					LaserBlock.pixoffs = 0;
 					LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F);
 					hPointDefense = initialize_laser(&LaserBlock);
@@ -278,7 +278,7 @@ static uint16_t initialize_nuke(Element* ShipPtr, ElementHandle NukeArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = 0;
+	MissileBlock.flags = ElementFlags::None;
 	MissileBlock.pixoffs = HumanOffset();
 	MissileBlock.speed = ResScale(MissileSpeed());
 	MissileBlock.hit_points = MissileHits;
@@ -312,11 +312,11 @@ static void human_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 			|| (ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr != nullptr
 				&& ObjectsOfConcern[*IntelObjectIndex::EnemyShip].which_turn <= 4)))
 	{
-		StarShipPtr->ship_input_state |= SpecialFlag;
+		StarShipPtr->ship_input_state |= StatusFlags::Special;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~SpecialFlag;
+		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	}
 	ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr = nullptr;
 
@@ -326,10 +326,10 @@ static void human_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	if (StarShipPtr->weapon_counter == 0)
 	{
 		if (ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr
-			&& (!(StarShipPtr->ship_input_state & (LeftFlag | RightFlag /* | ThrustFlag */))
+			&& (!testFlag(StarShipPtr->ship_input_state, StatusFlags::Left | StatusFlags::Right /* | ThrustFlag */)
 				|| ObjectsOfConcern[*IntelObjectIndex::EnemyShip].which_turn <= 12))
 		{
-			StarShipPtr->ship_input_state |= WeaponFlag;
+			StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 		}
 	}
 }
@@ -339,7 +339,7 @@ static void human_postprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+	if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::Special))
 		&& StarShipPtr->special_counter == 0)
 	{
 		spawn_point_defense(ElementPtr);

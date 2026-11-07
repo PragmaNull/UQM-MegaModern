@@ -86,7 +86,7 @@ static RaceDesc samatra_desc =
 	{
 		{/* ShipInfoDesc */
 		 "samatra",
-		 /* FiresFore | */ ImmediateWeapon | CrewImmune,
+		 /* FiresFore | */ ShipFlags::ImmediateWeapon | ShipFlags::CrewImmune,
 		 16, /* Super Melee cost */
 		 MaxCrew, MaxCrew,
 		 MaxEnergySize, MaxEnergySize,
@@ -172,7 +172,7 @@ static void comet_preprocess(Element* ElementPtr)
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 			++StarShipPtr->RaceDescPtr->characteristics.weapon_wait;
 			spawn_comet(ElementPtr);
-			ElementPtr->state_flags |= Nonsolid;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid;
 
 			GetCurrentVelocityComponents(&ElementPtr->velocity,
 										 &cur_delta_x, &cur_delta_y);
@@ -185,7 +185,7 @@ static void comet_preprocess(Element* ElementPtr)
 	ElementPtr->next.image.frame =
 		SetAbsFrameIndex(
 			ElementPtr->current.image.frame, frame_index);
-	ElementPtr->state_flags |= Changing;
+	ElementPtr->state_flags |= ElementFlags::Changing;
 }
 
 static void comet_collision(Element* ElementPtr0, GfxPoint* pPt0,
@@ -195,7 +195,7 @@ static void comet_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	{
 		uint8_t old_hits {};
 
-		if (ElementPtr1->state_flags & PlayerShip)
+		if (testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 		{
 			ElementPtr0->mass_points = CometDamage;
 		}
@@ -207,11 +207,11 @@ static void comet_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		old_hits = ElementPtr0->hit_points;
 		const uint16_t old_life {ElementPtr0->life_span};
 		ElementHandle hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
-		if (ElementPtr1->state_flags & PlayerShip)
+		if (testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 		{
 			ElementPtr0->hit_points = old_hits;
 			ElementPtr0->life_span = old_life;
-			ElementPtr0->state_flags &= ~(Disappearing | Nonsolid | Collision);
+			ElementPtr0->state_flags &= ~(ElementFlags::Disappearing | ElementFlags::Nonsolid | ElementFlags::Collision);
 
 			if (hBlastElement)
 			{
@@ -220,7 +220,7 @@ static void comet_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			}
 		}
 
-		if (ElementPtr0->state_flags & Disappearing)
+		if (testFlag(ElementPtr0->state_flags, ElementFlags::Disappearing))
 		{
 			Starship* StarShipPtr {};
 
@@ -242,7 +242,7 @@ static ElementHandle spawn_comet(Element* ElementPtr)
 	MissileBlock.face = 0;
 	MissileBlock.index = 24;
 	MissileBlock.sender = ElementPtr->playerNr;
-	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.flags = ElementFlags::IgnoreSimilar;
 	MissileBlock.pixoffs = 0;
 	MissileBlock.speed = 0;
 	MissileBlock.hit_points = CometHits();
@@ -266,7 +266,7 @@ static ElementHandle spawn_comet(Element* ElementPtr)
 
 			CometPtr->turn_wait = ElementPtr->turn_wait;
 			CometPtr->hTarget = ElementPtr->hTarget;
-			if (ElementPtr->state_flags & PlayerShip)
+			if (testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip))
 			{
 				CometPtr->turn_wait = 0;
 				facing = (uint16_t)uqm::random().next();
@@ -313,7 +313,7 @@ static void turret_preprocess(Element* ElementPtr)
 		ElementPtr->next.image.frame =
 			SetAbsFrameIndex(ElementPtr->current.image.frame,
 							 (GetFrameIndex(ElementPtr->current.image.frame) % 10) + 1);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = TurretWait;
 	}
@@ -329,12 +329,12 @@ static void gate_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		GetElementStarShip(ElementPtr0, &StarShipPtr);
 		if (StarShipPtr->RaceDescPtr->characteristics.max_thrust == 0)
 		{
-			if (!(ElementPtr1->state_flags & FiniteLife))
+			if (!(testFlag(ElementPtr1->state_flags, ElementFlags::FiniteLife)))
 			{
-				ElementPtr0->state_flags |= Collision;
+				ElementPtr0->state_flags |= ElementFlags::Collision;
 			}
 
-			if ((ElementPtr1->state_flags & PlayerShip)
+			if ((testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 				&& GetPrimType(
 					   &DisplayArray[ElementPtr0->PrimIndex])
 					   == PrimitiveType::StampFill
@@ -345,7 +345,7 @@ static void gate_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		}
 		else
 		{
-			if (ElementPtr1->state_flags & PlayerShip)
+			if (testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 			{
 				ElementPtr0->mass_points = GateDamage;
 			}
@@ -356,7 +356,7 @@ static void gate_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 			ElementPtr0->hit_points = GateHits;
 			ElementHandle hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
-			ElementPtr0->state_flags &= ~(Disappearing | Nonsolid | Collision);
+			ElementPtr0->state_flags &= ~(ElementFlags::Disappearing | ElementFlags::Nonsolid | ElementFlags::Collision);
 			ElementPtr0->life_span = NormalLife;
 
 			if (hBlastElement)
@@ -376,7 +376,7 @@ static void gate_preprocess(Element* ElementPtr)
 	if (StarShipPtr->RaceDescPtr->characteristics.max_thrust == 0)
 	{
 		ElementPtr->mass_points = ShipMass;
-		ElementPtr->state_flags &= ~FiniteLife;
+		ElementPtr->state_flags &= ~ElementFlags::FiniteLife;
 		ElementPtr->life_span = NormalLife + 1;
 		ElementPtr->preprocess_func = 0;
 		SetPrimColor(
@@ -398,19 +398,19 @@ static void gate_preprocess(Element* ElementPtr)
 					ElementPtr->next.image.frame, 11);
 		}
 
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 }
 
 static void generator_death(Element* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & FiniteLife))
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::FiniteLife)))
 	{
 		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		--StarShipPtr->RaceDescPtr->characteristics.max_thrust;
-		ElementPtr->state_flags |= FiniteLife | Nonsolid;
+		ElementPtr->state_flags |= ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 		ElementPtr->preprocess_func = 0;
 		ElementPtr->turn_wait = 12;
 		ElementPtr->thrust_wait = 0;
@@ -422,14 +422,14 @@ static void generator_death(Element* ElementPtr)
 	if (ElementPtr->thrust_wait)
 	{
 		--ElementPtr->thrust_wait;
-		ElementPtr->state_flags &= ~Disappearing;
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags &= ~ElementFlags::Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 		++ElementPtr->life_span;
 	}
 	else if (ElementPtr->turn_wait--)
 	{
-		ElementPtr->state_flags &= ~Disappearing;
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags &= ~ElementFlags::Disappearing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 		++ElementPtr->life_span;
 
 		ElementPtr->next.image.frame = IncFrameIndex(
@@ -454,16 +454,16 @@ static void generator_preprocess(Element* ElementPtr)
 		ElementPtr->next.image.frame =
 			SetAbsFrameIndex(ElementPtr->current.image.frame,
 							 (GetFrameIndex(ElementPtr->current.image.frame) + 1) % 10);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 	}
 }
 
 static void generator_collision(Element* ElementPtr0, GfxPoint* pPt0,
 								Element* ElementPtr1, GfxPoint* pPt1)
 {
-	if (!(ElementPtr1->state_flags & FiniteLife))
+	if (!(testFlag(ElementPtr1->state_flags, ElementFlags::FiniteLife)))
 	{
-		ElementPtr0->state_flags |= Collision;
+		ElementPtr0->state_flags |= ElementFlags::Collision;
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
@@ -486,7 +486,7 @@ static void sentinel_preprocess(Element* ElementPtr)
 		ElementPtr->next.image.frame =
 			SetAbsFrameIndex(ElementPtr->current.image.frame,
 							 (GetFrameIndex(ElementPtr->current.image.frame) + 1) % 6);
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->thrust_wait = AnimationWait;
 	}
@@ -500,14 +500,14 @@ static void sentinel_preprocess(Element* ElementPtr)
 		uint16_t facing {};
 		ElementHandle hTarget {};
 
-		if (!(ElementPtr->state_flags & Nonsolid))
+		if (!(testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid)))
 		{
 			facing = AngleToFacing(
 				GetVelocityTravelAngle(&ElementPtr->velocity));
 		}
 		else
 		{
-			ElementPtr->state_flags &= ~Nonsolid;
+			ElementPtr->state_flags &= ~ElementFlags::Nonsolid;
 			facing = (uint16_t)uqm::random().next();
 			SetVelocityVector(&ElementPtr->velocity,
 							  SentinelSpeed(), facing);
@@ -635,7 +635,7 @@ static void sentinel_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	if (ElementPtr1->playerNr == NpcPlayerNum)
 	{
 		if (ElementPtr0->preprocess_func == ElementPtr1->preprocess_func
-			&& !(ElementPtr0->state_flags & DefyPhysics)
+			&& !(testFlag(ElementPtr0->state_flags, ElementFlags::DefyPhysics))
 			&& (pPt0->x != ElementPtr0->IntersectControl.IntersectStamp.origin.x
 				|| pPt0->y != ElementPtr0->IntersectControl.IntersectStamp.origin.y))
 		{
@@ -645,7 +645,7 @@ static void sentinel_collision(Element* ElementPtr0, GfxPoint* pPt0,
 								  Cosine(angle, WorldToVelocity(SentinelSpeed())),
 								  Sine(angle, WorldToVelocity(SentinelSpeed())));
 			ElementPtr0->turn_wait = TrackWait;
-			ElementPtr0->state_flags |= Collision | DefyPhysics;
+			ElementPtr0->state_flags |= ElementFlags::Collision | ElementFlags::DefyPhysics;
 		}
 	}
 	else
@@ -658,7 +658,7 @@ static void sentinel_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		ElementHandle hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 		ElementPtr0->thrust_wait = 0;
 
-		if ((ElementPtr1->state_flags & PlayerShip)
+		if ((testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 			&& ElementPtr1->crew_level
 			&& !GravityMass(ElementPtr1->mass_points + 1))
 		{
@@ -667,13 +667,13 @@ static void sentinel_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 			ElementPtr0->life_span = old_life;
 			ElementPtr0->hit_points = old_hits;
-			ElementPtr0->state_flags &= ~Disappearing;
-			ElementPtr0->state_flags |= DefyPhysics;
+			ElementPtr0->state_flags &= ~ElementFlags::Disappearing;
+			ElementPtr0->state_flags |= ElementFlags::DefyPhysics;
 			ElementPtr0->turn_wait = (c_gameSecond / BattleFrameRateTicks) >> 1;
 
 			GetElementStarShip(ElementPtr1, &StarShipPtr);
 			StarShipPtr->cur_status_flags &=
-				~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
+				~(StatusFlags::ShipAtMaxSpeed | StatusFlags::ShipBeyondMaxSpeed);
 			if (ElementPtr1->turn_wait < CollisionTurnWait)
 			{
 				ElementPtr1->turn_wait += CollisionTurnWait;
@@ -722,7 +722,7 @@ static void sentinel_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			ZeroVelocityComponents(&ElementPtr0->velocity);
 		}
 
-		if (ElementPtr0->state_flags & Disappearing)
+		if (testFlag(ElementPtr0->state_flags, ElementFlags::Disappearing))
 		{
 			GetElementStarShip(ElementPtr0, &StarShipPtr);
 			--StarShipPtr->RaceDescPtr->characteristics.special_wait;
@@ -779,7 +779,7 @@ static void samatra_postprocess(Element* ElementPtr)
 			MissileBlock.face = 0;
 			MissileBlock.index = 0;
 			MissileBlock.sender = ElementPtr->playerNr;
-			MissileBlock.flags = 0;
+			MissileBlock.flags = ElementFlags::None;
 			MissileBlock.pixoffs = 0;
 			MissileBlock.speed = SentinelSpeed();
 			MissileBlock.hit_points = SentinelHits();
@@ -814,7 +814,7 @@ static void samatra_preprocess(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	StarShipPtr->RaceDescPtr->characteristics.weapon_wait = 0;
 	StarShipPtr->RaceDescPtr->characteristics.special_wait = 0;
-	if (!(ElementPtr->state_flags & Appearing))
+	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Appearing)))
 	{
 		++ElementPtr->turn_wait;
 		++ElementPtr->thrust_wait;
@@ -861,7 +861,7 @@ static void samatra_preprocess(Element* ElementPtr)
 				GeneratorPtr->mass_points = MaxShipMass * 10;
 				GeneratorPtr->life_span = NormalLife;
 				GeneratorPtr->playerNr = ElementPtr->playerNr;
-				GeneratorPtr->state_flags = Appearing | IgnoreSimilar;
+				GeneratorPtr->state_flags = ElementFlags::Appearing | ElementFlags::IgnoreSimilar;
 				SetPrimType(
 					&DisplayArray[GeneratorPtr->PrimIndex],
 					PrimitiveType::Stamp);
@@ -901,7 +901,7 @@ static void samatra_preprocess(Element* ElementPtr)
 				TurretPtr->hit_points = 1;
 				TurretPtr->life_span = NormalLife;
 				TurretPtr->playerNr = ElementPtr->playerNr;
-				TurretPtr->state_flags = Appearing | IgnoreSimilar | Nonsolid;
+				TurretPtr->state_flags = ElementFlags::Appearing | ElementFlags::IgnoreSimilar | ElementFlags::Nonsolid;
 				SetPrimType(
 					&DisplayArray[TurretPtr->PrimIndex],
 					PrimitiveType::Stamp);
@@ -933,8 +933,8 @@ static void samatra_preprocess(Element* ElementPtr)
 				GatePtr->mass_points = GateDamage;
 				GatePtr->life_span = 2;
 				GatePtr->playerNr = ElementPtr->playerNr;
-				GatePtr->state_flags = Appearing | FiniteLife
-									 | IgnoreSimilar;
+				GatePtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife
+									 | ElementFlags::IgnoreSimilar;
 				SetPrimType(
 					&DisplayArray[GatePtr->PrimIndex],
 					PrimitiveType::Stamp);

@@ -41,11 +41,11 @@ void spawn_planet(void)
 		LockElement(hPlanetElement, &PlanetElementPtr);
 		PlanetElementPtr->playerNr = NeutralPlayerNum;
 		PlanetElementPtr->hit_points = 200;
-		PlanetElementPtr->state_flags = Appearing;
+		PlanetElementPtr->state_flags = ElementFlags::Appearing;
 		PlanetElementPtr->life_span = NormalLife + 1;
 		if (uqm::UQMOptions::read().meleeObstacles && !isNetwork())
 		{ // Invisible planet with cheats
-			PlanetElementPtr->state_flags |= Nonsolid;
+			PlanetElementPtr->state_flags |= ElementFlags::Nonsolid;
 			SetPrimType(&DisplayArray[PlanetElementPtr->PrimIndex], PrimitiveType::Point);
 			SetPrimColor(&DisplayArray[PlanetElementPtr->PrimIndex],
 						 BuildColorRgba(0x00, 0x00, 0x00, 0x00));
@@ -108,7 +108,7 @@ static void spawn_rubble(Element* AsteroidElementPtr)
 		PutElement(hRubbleElement);
 		LockElement(hRubbleElement, &RubbleElementPtr);
 		RubbleElementPtr->playerNr = AsteroidElementPtr->playerNr;
-		RubbleElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
+		RubbleElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 		RubbleElementPtr->life_span = 5;
 		RubbleElementPtr->turn_wait = RubbleElementPtr->next_turn = 0;
 		SetPrimType(&DisplayArray[RubbleElementPtr->PrimIndex], PrimitiveType::Stamp);
@@ -159,7 +159,7 @@ static void asteroid_preprocess(Element* ElementPtr)
 			ElementPtr->next.image.frame = SetAbsFrameIndex(ElementPtr->current.image.frame, frame_index % 30);
 		}
 
-		ElementPtr->state_flags |= Changing;
+		ElementPtr->state_flags |= ElementFlags::Changing;
 
 		ElementPtr->turn_wait = (unsigned char)(ElementPtr->thrust_wait & ((1 << 7) - 1));
 	}
@@ -173,7 +173,7 @@ void spawn_asteroid(Element* ElementPtr)
 	{
 		if (ElementPtr != 0)
 		{
-			ElementPtr->state_flags &= ~Disappearing;
+			ElementPtr->state_flags &= ~ElementFlags::Disappearing;
 			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NoPrim);
 			ElementPtr->life_span = 1;
 		}
@@ -188,7 +188,7 @@ void spawn_asteroid(Element* ElementPtr)
 		AsteroidElementPtr->hit_points = 1;
 		AsteroidElementPtr->mass_points = 3;
 		AsteroidElementPtr->state_flags =
-			uqm::UQMOptions::read().meleeObstacles && !isNetwork() ? Disappearing : Appearing;
+			uqm::UQMOptions::read().meleeObstacles && !isNetwork() ? ElementFlags::Disappearing : ElementFlags::Appearing;
 		AsteroidElementPtr->life_span = NormalLife;
 		SetPrimType(&DisplayArray[AsteroidElementPtr->PrimIndex], PrimitiveType::Stamp);
 		if ((val = (uint16_t)uqm::random().next()) & (1 << 0))
@@ -253,12 +253,12 @@ void do_damage(Element* ElementPtr, int16_t damage)
 	{
 		damage = 0;
 	}
-	if (ElementPtr->state_flags & PlayerShip)
+	if (testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip))
 	{
 		if (!DeltaCrew(ElementPtr, -damage))
 		{
 			ElementPtr->life_span = 0;
-			ElementPtr->state_flags |= Nonsolid;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid;
 		}
 	}
 	else if (!GravityMass(ElementPtr->mass_points))
@@ -271,7 +271,7 @@ void do_damage(Element* ElementPtr, int16_t damage)
 		{
 			ElementPtr->hit_points = 0;
 			ElementPtr->life_span = 0;
-			ElementPtr->state_flags |= Nonsolid;
+			ElementPtr->state_flags |= ElementFlags::Nonsolid;
 		}
 	}
 }
@@ -289,7 +289,7 @@ void crew_preprocess(Element* ElementPtr)
 							   CrewColorLowIntensity;
 	SetPrimColor(&DisplayArray[ElementPtr->PrimIndex], newColor);
 
-	ElementPtr->state_flags |= Changing;
+	ElementPtr->state_flags |= ElementFlags::Changing;
 
 	hTarget = ElementPtr->hTarget;
 	if (hTarget == 0)
@@ -346,14 +346,14 @@ void crew_preprocess(Element* ElementPtr)
 void crew_collision(Element* ElementPtr0, GfxPoint* pPt0,
 					Element* ElementPtr1, GfxPoint* pPt1)
 {
-	if ((ElementPtr1->state_flags & PlayerShip)
+	if ((testFlag(ElementPtr1->state_flags, ElementFlags::PlayerShip))
 		&& ElementPtr1->life_span >= NormalLife
 		&& ElementPtr0->hit_points > 0)
 	{
 		Starship* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
-		if (!(StarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune))
+		if (!(testFlag(StarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::CrewImmune)))
 		{
 			ProcessSound(GetSound(GameSounds, SoundEffect::GrabCrew), ElementPtr1);
 			DeltaCrew(ElementPtr1, 1);
@@ -362,7 +362,7 @@ void crew_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 	ElementPtr0->hit_points = 0;
 	ElementPtr0->life_span = 0;
-	ElementPtr0->state_flags |= Collision | Disappearing | Nonsolid;
+	ElementPtr0->state_flags |= ElementFlags::Collision | ElementFlags::Disappearing | ElementFlags::Nonsolid;
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
@@ -381,7 +381,7 @@ void AbandonShip(Element* ShipPtr, Element* TargetPtr,
 	IntersectInfo ShipIntersect;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	if (StarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune)
+	if (testFlag(StarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::CrewImmune))
 	{
 		return;
 	}
@@ -415,7 +415,7 @@ void AbandonShip(Element* ShipPtr, Element* TargetPtr,
 		LockElement(hCrew, &CrewPtr);
 		CrewPtr->playerNr = NeutralPlayerNum;
 		CrewPtr->hit_points = 1;
-		CrewPtr->state_flags = Appearing | FiniteLife | CrewObject;
+		CrewPtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife | ElementFlags::CrewObject;
 		CrewPtr->life_span = CrewLife;
 		if (!IsHd())
 		{
