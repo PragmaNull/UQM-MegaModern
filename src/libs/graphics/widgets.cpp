@@ -191,7 +191,7 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 	GfxRect r;
 	FontRef oldfont = 0;
 	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
-	const Color oldtext = SetContextForeGroundColor(WidgetTooltipColor);
+	const ForegroundColorScope colorScope {WidgetTooltipColor};
 	GfxText t;
 	const char* amperBang = "&!";
 	const size_t abSize = strlen(amperBang);
@@ -239,7 +239,6 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 	{
 		SetContextFont(oldfont);
 	}
-	SetContextForeGroundColor(oldtext);
 }
 
 void Widget_DrawMenuScreen(Widget* _self, int x, int y)

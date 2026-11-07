@@ -738,7 +738,7 @@ static void flashPlanetLocation(void)
 
 void RedrawSurfaceScan(const GfxPoint* newLoc)
 {
-	GfxContextRef OldContext {SetContext(ScanContext)};
+	const ContextScope contextScope {ScanContext};
 
 	BatchGraphics();
 	DrawPlanet(0, BlackColor);
@@ -749,8 +749,6 @@ void RedrawSurfaceScan(const GfxPoint* newLoc)
 		drawPlanetCursor(false);
 	}
 	UnbatchGraphics();
-
-	SetContext(OldContext);
 }
 
 static uint16_t getLandingFuelNeeded(void)
@@ -1539,7 +1537,7 @@ static GfxContextRef CreateScanContext(bool inSpace)
 	int16_t x_offset {};
 
 	// ScanContext rect is relative to SpaceContext
-	GfxContextRef oldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	GetContextClipRect(&r);
 
 	GfxContextRef context {CreateContext("ScanContext")};
@@ -1558,8 +1556,6 @@ static GfxContextRef CreateScanContext(bool inSpace)
 	r.extent.height = MapHeight();
 
 	SetContextClipRect(&r);
-
-	SetContext(oldContext);
 
 	return context;
 }

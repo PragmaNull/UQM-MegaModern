@@ -196,12 +196,11 @@ void FlattenOscilloscope(void)
 {
 	GfxStamp s;
 
-	GfxContextRef OldContext {SetContext(RadarContext)};
+	const ContextScope contextScope {RadarContext};
 
 	DrawOscilloscopeLines(&s, nullptr, false, false);
 	s.origin = MAKE_POINT(0, 0);
 	DrawStamp(&s);
-	SetContext(OldContext);
 }
 
 static GfxStamp sliderStamp;

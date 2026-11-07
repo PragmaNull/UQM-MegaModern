@@ -43,9 +43,9 @@ bool WarpFromMenu = false;
 
 static void DrawConfirmationWindow(bool answer, bool confirm)
 {
-	const Color oldfg = SetContextForeGroundColor(ShadowboxDarkColor);
-	FontRef oldfont = SetContextFont(StarConFont);
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const ForegroundColorScope colorScope {ShadowboxDarkColor};
+	const FontScope fontScope {StarConFont};
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxRect r;
 	GfxText t;
 
@@ -86,10 +86,6 @@ static void DrawConfirmationWindow(bool answer, bool confirm)
 	font_DrawText(&t);
 
 	UnbatchGraphics();
-
-	SetContextFontEffect(oldFontEffect);
-	SetContextFont(oldfont);
-	SetContextForeGroundColor(oldfg);
 }
 
 bool DoConfirmExit(void)
@@ -107,7 +103,6 @@ bool DoConfirmExit(void)
 		GfxRect r;
 		GfxStamp s;
 		GfxRect ctxRect;
-		GfxRect oldRect;
 		bool response = false;
 		Color OldColor;
 		DrawMode mode;
@@ -116,8 +111,8 @@ bool DoConfirmExit(void)
 
 		deltaT = GetTimeCounter();
 
-		GfxContextRef oldContext {SetContext(ScreenContext)};
-		GetContextClipRect(&oldRect);
+		const ContextScope contextScope {ScreenContext};
+		const ClipRectScope clipRectScope {};
 		SetContextClipRect(nullptr);
 
 		GetContextClipRect(&ctxRect);
@@ -202,8 +197,6 @@ bool DoConfirmExit(void)
 		ExitRequested = false;
 		GamePaused = false;
 		FlushInput();
-		SetContextClipRect(&oldRect);
-		SetContext(oldContext);
 	}
 
 	if (FlashPaused)

@@ -388,7 +388,7 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 	int16_t num_frames = 3;
 	const int16_t* level_tab {};
 
-	FrameRef OldFrame {SetContextFGFrame(mask)};
+	const FGFrameScope frameScope {mask};
 	oldOrigin = SetContextOrigin(MAKE_POINT(0, 0));
 	GetContextClipRect(&ClipRect);
 	SetContextClipRect(nullptr);
@@ -479,7 +479,6 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 	}
 	SetContextClipRect(&ClipRect);
 	SetContextOrigin(oldOrigin);
-	SetContextFGFrame(OldFrame);
 }
 
 static void RenderTopography(FrameRef DstFrame, int8_t* pTopoData, int w, int h,
@@ -1134,7 +1133,7 @@ static void ApplyShieldTint(void)
 	GfxRect r;
 
 	// TopoFrame will be permanently changed
-	FrameRef oldFrame {SetContextFGFrame(pSolarSysState->TopoFrame)};
+	const FGFrameScope frameScope {pSolarSysState->TopoFrame};
 	SetContextClipRect(nullptr);
 	GetContextClipRect(&r);
 
@@ -1148,7 +1147,6 @@ static void ApplyShieldTint(void)
 	SetContextForeGroundColor(tint);
 	DrawFilledRectangle(&r);
 	SetContextDrawMode(oldMode);
-	SetContextFGFrame(oldFrame);
 }
 
 static inline uint8_t calc_map_light(uint8_t val, uint32_t dif, int lvf)

@@ -235,8 +235,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
 			if (piece >= ModuleType::BombModule0)
 			{ // Blue glow around the bomb - mimic PC-DOS pre-rendered cutscene
-				const Color oldColor = SetContextForeGroundColor(
-					BuildColorRgb(0x00, 0x00, 0x5F));
+				const ForegroundColorScope colorScope {BuildColorRgb(0x00, 0x00, 0x5F)};
 
 				s.origin.y += ResScale(2);
 				DrawFilledStamp(&s);
@@ -254,7 +253,6 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 				DrawFilledStamp(&s);
 
 				s.origin.y -= ResScale(1);
-				SetContextForeGroundColor(oldColor);
 			}
 			DrawStamp(&s);
 		}
@@ -1358,16 +1356,15 @@ static bool DoPresentation(void* pIS)
 
 static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 {
-	GfxRect OldRect;
 	PresentationInputState pis;
 
 	memset(&pis, 0, sizeof(pis));
 	pis.Commands = &commands;
 	pis.OperIndex = 0;
 
-	GfxContextRef OldContext {SetContext(ScreenContext)};
-	GetContextClipRect(&OldRect);
-	FontRef OldFont {SetContextFont(nullptr)};
+	const ContextScope contextScope {ScreenContext};
+	const ClipRectScope clipRectScope {};
+	const FontScope fontScope {nullptr};
 	SetContextBackGroundColor(BlackColor);
 
 	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
@@ -1393,10 +1390,6 @@ static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& comman
 	{
 		DestroyFont(font);
 	}
-
-	SetContextFont(OldFont);
-	SetContextClipRect(&OldRect);
-	SetContext(OldContext);
 
 	return true;
 }

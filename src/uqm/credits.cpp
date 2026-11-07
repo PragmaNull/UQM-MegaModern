@@ -107,10 +107,9 @@ static FrameRef Credits_MakeTransFrame(int w, int h, Color TransColor)
 	FrameRef f {CaptureDrawable(CreateDrawable(CreateFlags::WantPixmap, w, h, 1))};
 	SetFrameTransparentColor(f, TransColor);
 
-	FrameRef OldFrame {SetContextFGFrame(f)};
+	const FGFrameScope frameScope {f};
 	SetContextBackGroundColor(TransColor);
 	ClearDrawable();
-	SetContextFGFrame(OldFrame);
 
 	return f;
 }
@@ -260,7 +259,7 @@ static void RenderCreditsScreen(GfxContextRef targetContext)
 {
 	GfxStamp s;
 
-	GfxContextRef oldContext {SetContext(targetContext)};
+	const ContextScope contextScope {targetContext};
 	// draw background
 	s.origin.x = 0;
 	s.origin.y = 0;
@@ -284,8 +283,6 @@ static void RenderCreditsScreen(GfxContextRef targetContext)
 		SetContextForeGroundColor(BrightBlueColor);
 		DrawFilledRectangle(&CommWndRect);
 	}
-
-	SetContext(oldContext);
 }
 
 static void InitCredits(void)

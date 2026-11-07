@@ -156,10 +156,9 @@ void DrawPlanetSphere(int x, int y, bool back)
 
 void DrawDefaultPlanetSphere(void)
 {
-	GfxContextRef oldContext {SetContext(PlanetContext)};
+	const ContextScope contextScope {PlanetContext};
 	DrawPlanetSphere(
 		ResScale(OrigSisScreenWidth() >> 1), PlanetOrgY(), true);
-	SetContext(oldContext);
 }
 
 void RerenderPlanetSphere(void)
@@ -525,7 +524,7 @@ static void renderTintFrame(Color tintColor)
 		is_red = 0.5;
 	}
 
-	GfxContextRef oldContext {SetContext(OffScreenContext)};
+	const ContextScope contextScope {OffScreenContext};
 	SetContextFGFrame(Orbit->TintFrame);
 	SetContextClipRect(nullptr);
 	// get the rect of the whole context (or our frame really)
@@ -544,8 +543,6 @@ static void renderTintFrame(Color tintColor)
 	SetContextForeGroundColor(tintColor);
 	DrawFilledRectangle(&r);
 	SetContextDrawMode(oldMode);
-
-	SetContext(oldContext);
 }
 
 void DrawPCScanTint(uint16_t scan)

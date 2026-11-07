@@ -238,7 +238,7 @@ static void DrawControlText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(MicroThinFont)};
+	const FontScope fontScope {MicroThinFont};
 
 	GetFrameRect(stamp.frame, &r);
 
@@ -266,8 +266,6 @@ static void DrawControlText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 			t.baseline.y += leading;
 		}
 	}
-
-	SetContextFont(OldFont);
 }
 
 static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
@@ -283,7 +281,7 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(LabelFont)};
+	const FontScope fontScope {LabelFont};
 
 	GetFrameRect(stamp.frame, &r);
 
@@ -309,8 +307,6 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 	font_DrawText(&t);
 
 	SetContextFontEffect(OldFontEffect);
-
-	SetContextFont(OldFont);
 }
 
 static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
@@ -406,7 +402,7 @@ void DrawShipPickerText(GfxStamp stamp)
 		}
 	}
 
-	FontRef OldFont {SetContextFont(LabelFont)};
+	const FontScope fontScope {LabelFont};
 
 	GetFrameRect(stamp.frame, &r);
 
@@ -444,8 +440,6 @@ void DrawShipPickerText(GfxStamp stamp)
 	pt.y = s.origin.y + r.extent.height + ResScale(9);
 
 	DrawVerticalText(GameString(GameStringBase::MeleeString + 24), pt);
-
-	SetContextFont(OldFont);
 }
 
 static auto TpPadding() { return ResScale(3); }
@@ -791,15 +785,14 @@ static void DrawTeams(void)
 void QuickRepair(uint16_t whichFrame, GfxRect* pRect)
 {
 	GfxRect r;
-	GfxRect OldRect;
 	GfxPoint oldOrigin;
 
 	r.corner.x = pRect->corner.x;
 	r.corner.y = pRect->corner.y;
 	r.extent = pRect->extent;
 
-	GfxContextRef OldContext {SetContext(SpaceContext)};
-	GetContextClipRect(&OldRect);
+	const ContextScope contextScope {SpaceContext};
+	const ClipRectScope clipRectScope {};
 	SetContextClipRect(&r);
 
 	if (IsPad())
@@ -815,8 +808,6 @@ void QuickRepair(uint16_t whichFrame, GfxRect* pRect)
 	DrawMeleeIcon(whichFrame, false);
 
 	SetContextOrigin(oldOrigin);
-	SetContextClipRect(&OldRect);
-	SetContext(OldContext);
 }
 
 static void DrawSuperMeleeTitle(void)
@@ -1151,7 +1142,7 @@ static void DrawMeleeStatusMessage(const char* message)
 {
 	GfxRect r;
 
-	GfxContextRef oldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 
 	r.corner.x = MeleeStatusXOffs();
 	r.corner.y = MeleeStatusYOffs();
@@ -1174,8 +1165,6 @@ static void DrawMeleeStatusMessage(const char* message)
 		multiLineDrawText(&lfText, &r);
 		UnbatchGraphics();
 	}
-
-	SetContext(oldContext);
 }
 
 static void UpdateMeleeStatusMessage(ssize_t player)
@@ -1396,7 +1385,7 @@ void Melee_flashSelection(MeleeState* pMS)
 		NextTime = Now + ((pMS->MeleeOption != MeleeMenuItem::BuildPick || is3DO(uqm::UQMOptions::read().whichMenu)) ? FlashRate : BlinkRate);
 		select = !select;
 
-		GfxContextRef OldContext {SetContext(SpaceContext)};
+		const ContextScope contextScope {SpaceContext};
 		if (select)
 		{
 			Select(pMS->MeleeOption);
@@ -1405,7 +1394,6 @@ void Melee_flashSelection(MeleeState* pMS)
 		{
 			Deselect(pMS->MeleeOption);
 		}
-		SetContext(OldContext);
 	}
 }
 
@@ -1435,7 +1423,7 @@ void DrawMeleeShipStrings(MeleeState* pMS, MeleeShip NewStarShip)
 	GfxRect r;
 	GfxRect OldRect;
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 	GetContextClipRect(&OldRect);
 	r = OldRect;
 	r.corner.x -= NsafeNumScl(3);
@@ -1498,7 +1486,6 @@ void DrawMeleeShipStrings(MeleeState* pMS, MeleeShip NewStarShip)
 
 	UnbatchGraphics();
 	SetContextClipRect(&OldRect);
-	SetContext(OldContext);
 }
 
 // Set the currently displayed ship to the ship for the slot indicated by

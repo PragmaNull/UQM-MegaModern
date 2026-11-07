@@ -123,7 +123,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 
 	DrawPCMenuFrame(r);
 
-	FontRef OldFont {SetContextFont(StarConFont)};
+	const FontScope fontScope {StarConFont};
 	t.align = TextAlign::Left;
 	t.baseline.x = r->corner.x + ResScale(2);
 	t.baseline.y = r->corner.y + PcMenuHeight() - ResScale(1);
@@ -186,7 +186,6 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 		}
 		t.baseline.y += PcMenuHeight();
 	}
-	SetContextFont(OldFont);
 }
 
 /* Determine the last text item to display */
@@ -1083,7 +1082,7 @@ void DrawBorder(BorderFrameIndex Visible)
 {
 	GfxStamp s;
 
-	GfxContextRef OldContext {SetContext(ScreenContext)};
+	const ContextScope contextScope {ScreenContext};
 
 	s.origin.x = 0;
 	s.origin.y = 0;
@@ -1098,8 +1097,6 @@ void DrawBorder(BorderFrameIndex Visible)
 		s.frame = SetAbsFrameIndex(HDBorderFrame, Visible);
 		DrawStamp(&s);
 	}
-
-	SetContext(OldContext);
 }
 
 void FunkyMenu(uint8_t m, GfxStamp stmp)

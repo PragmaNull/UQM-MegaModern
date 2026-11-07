@@ -212,7 +212,7 @@ static void DrawModuleDisplay(ModulesMenuState* modState)
 
 static void DrawModules(ModulesMenuState* modState, uint16_t NewItem)
 {
-	GfxContextRef OldContext = SetContext(StatusContext);
+	const ContextScope contextScope {StatusContext};
 
 	BatchGraphics();
 
@@ -221,8 +221,6 @@ static void DrawModules(ModulesMenuState* modState, uint16_t NewItem)
 					 NewItem - modState->topIndex, true);
 
 	UnbatchGraphics();
-
-	SetContext(OldContext);
 }
 
 static void ManipulateModules(int16_t NewState)
@@ -329,7 +327,7 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 	GfxRect r;
 	GfxStamp s;
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 	GetContextClipRect(&r);
 	s.origin.x = RadarX() - r.corner.x;
 	s.origin.y = RadarY() - r.corner.y;
@@ -440,19 +438,17 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 		}
 	}
 	UnbatchGraphics();
-	SetContext(OldContext);
 }
 
 static void RedistributeFuel(void)
 {
-	const GfxContextRef OldContext = SetContext(SpaceContext);
+	const ContextScope contextScope {SpaceContext};
 
 	BatchGraphics();
 
 	DrawFuelInFTanks(true);
 
 	UnbatchGraphics();
-	SetContext(OldContext);
 }
 
 static void DrawEscapePodText(GfxRect rect)
@@ -1226,10 +1222,9 @@ static void ChangeFuelQuantity(void)
 
 	{ // Make fuel gauge flash.
 		GfxRect r;
-		GfxContextRef oldContext = SetContext(StatusContext);
+		const ContextScope contextScope {StatusContext};
 		GetGaugeRect(&r, false);
 		SetFlashRect(&r, false);
-		SetContext(oldContext);
 	}
 }
 

@@ -81,7 +81,7 @@ static void DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 {
 	GfxText Text;
 
-	FontRef OldFont {SetContextFont(StarConFont)};
+	const FontScope fontScope {StarConFont};
 
 	Text.pStr = pStr;
 	Text.CharCount = CharCount;
@@ -96,8 +96,6 @@ static void DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 	Text.baseline.y -= ResScale(1);
 	SetContextForeGroundColor(BlackColor);
 	font_DrawText(&Text);
-
-	SetContextFont(OldFont);
 }
 
 void ClearShipStatus(int16_t y)
@@ -174,7 +172,7 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 		}
 	}
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 	if (pClipRect)
 	{
 		GetContextClipRect(&oldClipRect);
@@ -308,7 +306,7 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 			uqstl::array<char, 30> buf {};
 			GfxText Text;
 
-			FontRef OldFont {SetContextFont(MenuBool(TinyFontBold, TinyFont))};
+			const FontScope fontScope {MenuBool(TinyFontBold, TinyFont)};
 
 			if (!StarShipPtr)
 			{ // In Melee menu
@@ -337,8 +335,6 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 
 			SetContextForeGroundColor(BlackColor);
 			font_DrawText(&Text);
-
-			SetContextFont(OldFont);
 		}
 	}
 	else if (StarShipPtr->playerNr == RpgPlayerNum)
@@ -365,8 +361,6 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 		SetContextOrigin(oldOrigin);
 		SetContextClipRect(&oldClipRect);
 	}
-
-	SetContext(OldContext);
 }
 
 static constexpr auto CrewUnitColor {BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)};

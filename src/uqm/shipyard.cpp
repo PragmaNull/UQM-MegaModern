@@ -285,7 +285,7 @@ static void DrawShipsDisplay(ShipyardShipsState* shipState)
 
 static void DrawShips(ShipyardShipsState* shipState, uint16_t NewItem)
 {
-	GfxContextRef OldContext = SetContext(StatusContext);
+	const ContextScope contextScope {StatusContext};
 	const uint16_t pos = NewItem - shipState->topIndex;
 
 	BatchGraphics();
@@ -294,8 +294,6 @@ static void DrawShips(ShipyardShipsState* shipState, uint16_t NewItem)
 	DrawShipsStatus(NewItem, pos, true);
 
 	UnbatchGraphics();
-
-	SetContext(OldContext);
 }
 
 static void ManipulateShips(int16_t NewState)
@@ -707,12 +705,11 @@ static void SpinStarShip(MenuState* pMS, FleetInfoHandle hStarShip)
 
 static void on_input_frame(void)
 {
-	GfxContextRef oldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	if (!DoShipSpins)
 	{
 		animatePowerLines(nullptr);
 	}
-	SetContext(oldContext);
 }
 
 // Count the ships which can be built by the player.
@@ -839,7 +836,7 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 	GfxStamp s;
 
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 	GetContextClipRect(&r);
 	s.origin.x = RadarX() - r.corner.x;
 	s.origin.y = RadarY() - r.corner.y;
@@ -1047,7 +1044,6 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 		}
 	}
 	UnbatchGraphics();
-	SetContext(OldContext);
 }
 
 // Width of an escort ship window.
@@ -1510,7 +1506,6 @@ static constexpr auto ModifyCrewFlag {1 << 8};
 static bool DMS_SpinShip(MenuState* pMS, ShipFragmentHandle hStarShip)
 {
 	FleetInfoHandle hSpinShip = 0;
-	GfxRect OldClipRect;
 
 	// No spinning the flagship.
 	if (uqm::highNibble(pMS->CurState) != 0)
@@ -1557,13 +1552,10 @@ static bool DMS_SpinShip(MenuState* pMS, ShipFragmentHandle hStarShip)
 
 	SetFlashRect(nullptr, false);
 
-	GfxContextRef OldContext {SetContext(ScreenContext)};
-	GetContextClipRect(&OldClipRect);
+	const ContextScope contextScope {ScreenContext};
+	const ClipRectScope clipRectScope {};
 
 	SpinStarShip(pMS, hSpinShip);
-
-	SetContextClipRect(&OldClipRect);
-	SetContext(OldContext);
 
 	return true;
 }

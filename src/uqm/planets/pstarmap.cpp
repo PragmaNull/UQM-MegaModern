@@ -2087,7 +2087,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			// In HS, display default star search button name.
 			if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 			{
-				GfxContextRef OldContext {SetContext(OffScreenContext)};
+				const ContextScope contextScope {OffScreenContext};
 
 				if (which_starmap == StarmapView::WarEraStarmap)
 				{
@@ -2103,7 +2103,6 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 				}
 
 				DrawSISMessageEx(buf.data(), -1, -1, SisMessageFlags::MyColor);
-				SetContext(OldContext);
 			}
 			else
 			{ // In QS, don't display star search button - the search is
@@ -3249,7 +3248,7 @@ static void DrawStarmapHelper(void)
 	GfxRect r;
 	int16_t leading {};
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 
 	BatchGraphics();
 
@@ -3366,8 +3365,6 @@ static void DrawStarmapHelper(void)
 	font_DrawText(&t);
 
 	UnbatchGraphics();
-
-	SetContext(OldContext);
 }
 
 bool StarMap(void)

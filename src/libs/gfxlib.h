@@ -712,4 +712,66 @@ extern ColorMapPtr GetColorMapAddress(ColorMapRef map, size_t index);
 void SetSystemRect(const GfxRect* pRect);
 void ClearSystemRect(void);
 
+// Sets a value of the drawing context, and restores the previous value on destruction.
+template <typename T, T (*Set)(T)>
+class ContextValueScope
+{
+public:
+	explicit ContextValueScope(T value)
+		: m_previous {Set(value)}
+	{
+	}
+
+	~ContextValueScope()
+	{
+		Set(m_previous);
+	}
+
+	ContextValueScope(const ContextValueScope&) = delete;
+	ContextValueScope& operator=(const ContextValueScope&) = delete;
+
+	[[nodiscard]] T previous() const
+	{
+		return m_previous;
+	}
+
+private:
+	T m_previous;
+};
+
+using ContextScope = ContextValueScope<GfxContextRef, &SetContext>;
+using FontScope = ContextValueScope<FontRef, &SetContextFont>;
+using FontEffectScope = ContextValueScope<FrameRef, &SetContextFontEffect>;
+using ForegroundColorScope = ContextValueScope<Color, &SetContextForeGroundColor>;
+using BackgroundColorScope = ContextValueScope<Color, &SetContextBackGroundColor>;
+using FGFrameScope = ContextValueScope<FrameRef, &SetContextFGFrame>;
+using DrawModeScope = ContextValueScope<DrawMode, &SetContextDrawMode>;
+using OriginScope = ContextValueScope<GfxPoint, &SetContextOrigin>;
+
+// Saves the clip rectangle of the drawing context, and restores it on destruction.
+class ClipRectScope
+{
+public:
+	ClipRectScope()
+	{
+		GetContextClipRect(&m_previous);
+	}
+
+	~ClipRectScope()
+	{
+		SetContextClipRect(&m_previous);
+	}
+
+	ClipRectScope(const ClipRectScope&) = delete;
+	ClipRectScope& operator=(const ClipRectScope&) = delete;
+
+	[[nodiscard]] const GfxRect& previous() const
+	{
+		return m_previous;
+	}
+
+private:
+	GfxRect m_previous {};
+};
+
 #endif // UQM_LIBS_GFXLIB_H

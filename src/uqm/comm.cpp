@@ -763,11 +763,10 @@ static void UpdateSpeechGraphics(void)
 
 	NextTime = GetTimeCounter() + OscilloscopeRate();
 
-	GfxContextRef OldContext {SetContext(RadarContext)};
+	const ContextScope contextScope {RadarContext};
 	DrawOscilloscope();
 	SetContext(SpaceContext);
 	DrawSlider();
-	SetContext(OldContext);
 }
 
 static void UpdateAnimations(bool paused)
@@ -781,7 +780,7 @@ static void UpdateAnimations(bool paused)
 
 	NextTime = GetTimeCounter() + CommAnimRate;
 
-	GfxContextRef OldContext {SetContext(AnimContext)};
+	const ContextScope contextScope {AnimContext};
 	BatchGraphics();
 	// Advance and draw ambient, transit and talk animations
 	const bool change {ProcessCommAnimations(clear_subtitles, paused)};
@@ -791,7 +790,6 @@ static void UpdateAnimations(bool paused)
 	}
 	UnbatchGraphics();
 	clear_subtitles = false;
-	SetContext(OldContext);
 }
 
 void UpdateDuty(bool talk)

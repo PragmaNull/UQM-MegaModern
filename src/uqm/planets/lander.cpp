@@ -207,7 +207,7 @@ GfxContextRef CreatePCLanderContext(void)
 	GfxRect r;
 
 	// PCLanderContext rect is relative to SpaceContext
-	GfxContextRef oldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	GetContextClipRect(&r);
 
 	GfxContextRef context {CreateContext("PCLanderContext")};
@@ -220,8 +220,6 @@ GfxContextRef CreatePCLanderContext(void)
 				   + SafePos(1);
 	r.extent.height = MapHeight();
 	SetContextClipRect(&r);
-
-	SetContext(oldContext);
 
 	return context;
 }

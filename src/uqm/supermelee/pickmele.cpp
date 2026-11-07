@@ -442,7 +442,7 @@ static void CrossOutShip(FrameRef frame, uint16_t shipNr)
 	const uint8_t row = PickMelee_GetShipRow(shipNr);
 	const uint8_t col = PickMelee_GetShipColumn(shipNr);
 
-	GfxContextRef OldContext {SetContext(OffScreenContext)};
+	const ContextScope contextScope {OffScreenContext};
 
 	SetContextFGFrame(frame);
 
@@ -451,8 +451,6 @@ static void CrossOutShip(FrameRef frame, uint16_t shipNr)
 	s.frame = SetAbsFrameIndex(StatusFrame, 3);
 	// Cross for through the ship image.
 	DrawStamp(&s);
-
-	SetContext(OldContext);
 }
 
 // Draw the value of the fleet in the top right of the PickMeleeFrame.
@@ -464,7 +462,7 @@ static void UpdatePickMeleeFleetValue(FrameRef frame, uint16_t which_player)
 
 	uint16_t value {GetRaceQueueValue(&race_q[which_player])};
 
-	GfxContextRef OldContext {SetContext(OffScreenContext)};
+	const ContextScope contextScope {OffScreenContext};
 	SetContextFGFrame(frame);
 
 	// Erase the old value text.
@@ -495,8 +493,6 @@ static void UpdatePickMeleeFleetValue(FrameRef frame, uint16_t which_player)
 	}
 	SetContextForeGroundColor(PickValueColor);
 	font_DrawText(&t);
-
-	SetContext(OldContext);
 }
 
 // Create a frame for each player to display their current fleet in,
@@ -504,7 +500,7 @@ static void UpdatePickMeleeFleetValue(FrameRef frame, uint16_t which_player)
 void BuildPickMeleeFrame(void)
 {
 	GfxStamp s;
-	GfxContextRef OldContext = SetContext(OffScreenContext);
+	const ContextScope contextScope {OffScreenContext};
 
 	if (PickMeleeFrame)
 	{
@@ -525,8 +521,6 @@ void BuildPickMeleeFrame(void)
 	DrawStamp(&s);
 
 	DestroyDrawable(ReleaseDrawable(s.frame));
-
-	SetContext(OldContext);
 }
 
 // Put the ship icons in the PickMeleeFrame, and create a queue
@@ -655,14 +649,12 @@ static void DrawPickMeleeFrame(uint16_t which_player)
 {
 	GfxStamp s;
 
-	GfxContextRef oldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	s.frame = SetAbsFrameIndex(PickMeleeFrame, which_player);
 	s.origin.x = PickXOffs() - ResScale(3);
 	s.origin.y = PickYOffs() - ResScale(9) + ((1 - which_player) * PickSideOffs());
 	DrawStamp(&s);
 	// Draw the selection box to screen.
-
-	SetContext(oldContext);
 }
 
 // Pre: caller holds the graphics lock.

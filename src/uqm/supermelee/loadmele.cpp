@@ -247,7 +247,7 @@ static void SelectFileString(MeleeState* pMS, bool hilite)
 
 	viewI = pMS->load.cur - pMS->load.top;
 
-	GfxContextRef OldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	SetContextFont(MicroFont);
 	BatchGraphics();
 
@@ -256,7 +256,6 @@ static void SelectFileString(MeleeState* pMS, bool hilite)
 	DrawFileString(pMS->load.view[viewI], &origin, false, hilite);
 
 	UnbatchGraphics();
-	SetContext(OldContext);
 }
 
 static void DrawFileStrings(MeleeState* pMS)
@@ -266,7 +265,7 @@ static void DrawFileStrings(MeleeState* pMS)
 	origin.x = FileStringOriginX();
 	origin.y = FileStringOriginY();
 
-	GfxContextRef OldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	SetContextFont(MicroFont);
 	BatchGraphics();
 
@@ -283,7 +282,6 @@ static void DrawFileStrings(MeleeState* pMS)
 	}
 
 	UnbatchGraphics();
-	SetContext(OldContext);
 }
 
 static void RefocusView(MeleeState* pMS, uint16_t index)
@@ -314,9 +312,8 @@ static void flashSelectedTeam(MeleeState* pMS)
 		NextTime = Now + FlashRate;
 		hilite ^= 1;
 
-		GfxContextRef OldContext {SetContext(SpaceContext)};
+		const ContextScope contextScope {SpaceContext};
 		SelectFileString(pMS, hilite);
-		SetContext(OldContext);
 	}
 }
 

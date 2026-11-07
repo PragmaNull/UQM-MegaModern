@@ -151,7 +151,7 @@ static void FlashCursor(void)
 	{
 		NextTime = GetTimeCounter() + BlinkRate;
 
-		GfxContextRef OldContext {SetContext(curContext)};
+		const ContextScope contextScope {curContext};
 
 		if (curContext == OffScreenContext)
 		{
@@ -169,8 +169,6 @@ static void FlashCursor(void)
 		DrawFilledRectangle(&cursor);
 
 		cycle_index = (cycle_index + 1) % cycleCount;
-
-		SetContext(OldContext);
 	}
 }
 

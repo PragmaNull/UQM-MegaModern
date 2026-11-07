@@ -494,7 +494,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 	GfxStamp s;
 	GfxText t;
 
-	GfxContextRef OldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 
 	BatchGraphics();
 
@@ -606,8 +606,6 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 	}
 
 	UnbatchGraphics();
-
-	SetContext(OldContext);
 }
 
 } // namespace uqm

@@ -56,14 +56,13 @@ static void CreateRadar(void)
 		GfxRect r;
 
 		RadarContext = CreateContext("RadarContext");
-		GfxContextRef OldContext {SetContext(RadarContext)};
+		const ContextScope contextScope {RadarContext};
 		SetContextFGFrame(Screen);
 		r.corner.x = RadarX();
 		r.corner.y = RadarY();
 		r.extent.width = RadarWidth();
 		r.extent.height = RadarHeight();
 		SetContextClipRect(&r);
-		SetContext(OldContext);
 	}
 }
 

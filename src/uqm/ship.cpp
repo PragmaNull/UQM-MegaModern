@@ -199,13 +199,12 @@ void ship_preprocess(Element* ElementPtr)
 		{ // Sa-Matra
 			GfxStamp s;
 
-			GfxContextRef OldContext {SetContext(StatusContext)};
+			const ContextScope contextScope {StatusContext};
 			s.origin.x = s.origin.y = 0;
 			s.frame = RDPtr->ship_data.captain_control.background;
 			DrawStamp(&s);
 			DestroyDrawable(ReleaseDrawable(s.frame));
 			RDPtr->ship_data.captain_control.background = 0;
-			SetContext(OldContext);
 		}
 		else if (uqm::activityKind(uqm::currentActivity()) <= ActivityKind::InEncounter)
 		{

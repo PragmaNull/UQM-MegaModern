@@ -167,7 +167,7 @@ static void DrawDiffChooser(MenuState* pMS, int answer, bool confirm)
 
 	DrawToolTips(pMS, answer);
 
-	FontRef oldFont {SetContextFont(MicroFont)};
+	const FontScope fontScope {MicroFont};
 
 	t.align = TextAlign::Center;
 	t.baseline.x = s.origin.x;
@@ -187,8 +187,6 @@ static void DrawDiffChooser(MenuState* pMS, int answer, bool confirm)
 
 		t.baseline.y += ResScale(23);
 	}
-
-	SetContextFont(oldFont);
 }
 
 static bool DoDiffChooser(MenuState* pMS)

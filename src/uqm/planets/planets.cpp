@@ -169,7 +169,7 @@ static void CreatePlanetContext(void)
 	assert(PlanetContext == nullptr);
 
 	// PlanetContext rect is relative to SpaceContext
-	GfxContextRef oldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	GetContextClipRect(&r);
 
 	PlanetContext = CreateContext("PlanetContext");
@@ -177,8 +177,6 @@ static void CreatePlanetContext(void)
 	SetContextFGFrame(Screen);
 	r.extent.height -= MapHeight() + MapBorderHeight();
 	SetContextClipRect(&r);
-
-	SetContext(oldContext);
 }
 
 static void DestroyPlanetContext(void)
@@ -224,7 +222,7 @@ void DrawPlanetSurfaceBorder(void)
 	GfxRect clipRect;
 	GfxRect r;
 
-	GfxContextRef oldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	GetContextClipRect(&oldClipRect);
 
 	// Expand the context clip-rect so that we can tweak the existing border
@@ -307,7 +305,6 @@ void DrawPlanetSurfaceBorder(void)
 	UnbatchGraphics();
 
 	SetContextClipRect(&oldClipRect);
-	SetContext(oldContext);
 }
 
 enum class DrawOrbitalMode

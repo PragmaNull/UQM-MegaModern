@@ -1226,7 +1226,7 @@ static void DrawBombPodText(GfxStamp* s)
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(SquareFont)};
+	const FontScope fontScope {SquareFont};
 	OldColor = SetContextForeGroundColor(BlackColor);
 
 	GetContextFontLeading(&leading);
@@ -1284,7 +1284,6 @@ static void DrawBombPodText(GfxStamp* s)
 	}
 
 	SetContextForeGroundColor(OldColor);
-	SetContextFont(OldFont);
 }
 
 static void DrawNoLimit(void)

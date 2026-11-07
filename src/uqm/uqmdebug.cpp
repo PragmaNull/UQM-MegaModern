@@ -151,9 +151,8 @@ void resetEnergyBattle(void)
 
 	delta = StarShipPtr->RaceDescPtr->ship_info.max_energy - StarShipPtr->RaceDescPtr->ship_info.energy_level;
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 	DeltaEnergy((Element*)StarShipPtr->hShip, delta);
-	SetContext(OldContext);
 }
 
 // Kills the opponent of the player controlled ship
@@ -2059,7 +2058,7 @@ static void drawContext(GfxContextRef context, double hue /* no pun intended */)
 static void describeContext(FILE* out, const GfxContextRef context)
 {
 	GfxRect rect;
-	GfxContextRef oldContext = SetContext(context);
+	const ContextScope contextScope {context};
 
 	GetContextClipRect(&rect);
 	fmt::print(out, "Context '{}':\n"
@@ -2069,8 +2068,6 @@ static void describeContext(FILE* out, const GfxContextRef context)
 			   rect.corner.x + rect.extent.width,
 			   rect.corner.y + rect.extent.height,
 			   rect.extent.width, rect.extent.height);
-
-	SetContext(oldContext);
 }
 
 

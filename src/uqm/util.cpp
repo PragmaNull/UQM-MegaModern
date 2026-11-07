@@ -177,7 +177,7 @@ void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, BevelLevel type,
 
 	if (filled)
 	{
-		const Color OldColor = SetContextForeGroundColor(fill_color);
+		const ForegroundColorScope colorScope {fill_color};
 
 		if (type == BevelLevel::SpecialBevel)
 		{
@@ -196,8 +196,6 @@ void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, BevelLevel type,
 			r->extent.width += ResScale(8);
 			r->extent.height += ResScale(8);
 		}
-
-		SetContextForeGroundColor(OldColor);
 	}
 
 	stamp.frame = custom ? CustBevelFrame : DefBevelFrame;
@@ -262,7 +260,7 @@ void DrawBorderPadding(uint32_t videoWidth)
 		return;
 	}
 
-	GfxContextRef OldContext {SetContext(ScreenContext)};
+	const ContextScope contextScope {ScreenContext};
 
 	if (videoWidth)
 	{
@@ -297,8 +295,6 @@ void DrawBorderPadding(uint32_t videoWidth)
 	r.extent.width = safe_x;
 	r.extent.height = CanvasHeight;
 	DrawFilledRectangle(&r);
-
-	SetContext(OldContext);
 }
 
 void DrawRadarBorder(void)
@@ -310,7 +306,7 @@ void DrawRadarBorder(void)
 		return;
 	}
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 
 	r.corner.x = ResScale(4) - ResScale(1);
 	r.corner.y = RadarY() - ResScale(1);
@@ -328,8 +324,6 @@ void DrawRadarBorder(void)
 					   AltShadowboxBottomRight, false, Transparent, false,
 					   Transparent);
 	}
-
-	SetContext(OldContext);
 }
 
 uint32_t SeedRandomNumbers(void)

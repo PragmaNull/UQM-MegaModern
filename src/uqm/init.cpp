@@ -251,12 +251,10 @@ int16_t InitShips(void)
 
 		SetContextBackGroundColor(BlackColor);
 		{
-			GfxContextRef OldContext {SetContext(ScreenContext)};
+			const ContextScope contextScope {ScreenContext};
 
 			SetContextBackGroundColor(BlackColor);
 			ClearDrawable();
-
-			SetContext(OldContext);
 		}
 
 		if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)

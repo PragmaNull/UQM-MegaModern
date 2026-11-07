@@ -36,7 +36,7 @@ void BuildBuildPickFrame(void)
 {
 	GfxStamp s;
 	GfxRect r;
-	GfxContextRef OldContext = SetContext(OffScreenContext);
+	const ContextScope contextScope {OffScreenContext};
 
 	// create team building ship selection box
 	s.origin.x = 0;
@@ -58,8 +58,6 @@ void BuildBuildPickFrame(void)
 	}
 
 	DrawShipPickerText(s);
-
-	SetContext(OldContext);
 }
 
 void DestroyBuildPickFrame(void)
@@ -91,7 +89,6 @@ Color GetShipFlashColor(void)
 void RepairBuildPickFrame(GfxRect* pRect, GfxPoint* origin)
 {
 	GfxRect r;
-	GfxRect OldRect;
 	GfxPoint oldOrigin;
 	GfxStamp s;
 
@@ -99,8 +96,8 @@ void RepairBuildPickFrame(GfxRect* pRect, GfxPoint* origin)
 	r.corner.y = origin->y;
 	r.extent.width = r.extent.height = ResScale(16);
 
-	GfxContextRef OldContext {SetContext(SpaceContext)};
-	GetContextClipRect(&OldRect);
+	const ContextScope contextScope {SpaceContext};
+	const ClipRectScope clipRectScope {};
 	SetContextClipRect(&r);
 	if (IsPad())
 	{
@@ -120,8 +117,6 @@ void RepairBuildPickFrame(GfxRect* pRect, GfxPoint* origin)
 	DrawStamp(&s);
 
 	SetContextOrigin(oldOrigin);
-	SetContextClipRect(&OldRect);
-	SetContext(OldContext);
 }
 
 // Draw a ship icon in the ship selection popup.
@@ -194,10 +189,10 @@ void DrawTooltip(ShipInfoDesc* SIPtr)
 	Text.baseline.y = r.corner.y + ResScale(8) + ResScale(1);
 	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + ResScale(1);
 
-	GfxContextRef oldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	DrawTooltipBox();
 
-	FontRef oldFont {SetContextFont(StarConFont)};
+	const FontScope fontScope {StarConFont};
 	oldColor = SetContextForeGroundColor(TooltipColorNameBack);
 	font_DrawText(&Text);
 
@@ -225,8 +220,6 @@ void DrawTooltip(ShipInfoDesc* SIPtr)
 	}
 
 	SetContextForeGroundColor(oldColor);
-	SetContextFont(oldFont);
-	SetContext(oldContext);
 }
 
 void DrawPickFrame(MeleeState* pMS)

@@ -2733,7 +2733,7 @@ static FrameRef CreateStarBackGround(uqm::UQMRandom& SysRNG, FrameRef nebula, Fr
 	const bool hdScaled = (!uqm::UQMOptions::read().unscaledStarSystem || !IsHd());
 
 	// Use SpaceContext to find out the dimensions of the background
-	GfxContextRef oldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	GetContextClipRect(&clipRect);
 
 	// Prepare a pre-drawn stars frame for this system
@@ -2756,8 +2756,6 @@ static FrameRef CreateStarBackGround(uqm::UQMRandom& SysRNG, FrameRef nebula, Fr
 						SysRNG, junk);
 
 	DrawNebula(nebula);
-
-	SetContext(oldContext);
 
 	return frame;
 }

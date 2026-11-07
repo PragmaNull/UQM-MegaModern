@@ -730,7 +730,7 @@ static void Flash_drawFrame(FlashContext* context, FrameRef frame, bool pcRect)
 {
 	GfxStamp stamp;
 
-	GfxContextRef oldGfxContext {SetContext(context->gfxContext)};
+	const ContextScope contextScope {context->gfxContext};
 
 	if (!pcRect)
 	{
@@ -745,8 +745,6 @@ static void Flash_drawFrame(FlashContext* context, FrameRef frame, bool pcRect)
 			&context->rect, ResScale(1), color, color, false,
 			Transparent, false, Transparent);
 	}
-
-	SetContext(oldGfxContext);
 }
 
 static void Flash_drawCacheFrame(FlashContext* context, uint16_t index)

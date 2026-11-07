@@ -55,7 +55,7 @@ void ShowRemainingCapacity(void)
 	GfxText t;
 	uqstl::array<char, 40> buf;
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		SetContextFont(TinyFont);
@@ -87,8 +87,6 @@ void ShowRemainingCapacity(void)
 	SetContextForeGroundColor(CargoWorthColor);
 	font_DrawText(&t);
 	UnbatchGraphics();
-
-	SetContext(OldContext);
 }
 
 static void DrawElementAmount(uint16_t Element, bool selected)
@@ -263,7 +261,7 @@ static void DrawCargoDisplay(void)
 
 void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 {
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		SetContextFont(TinyFont);
@@ -294,7 +292,6 @@ void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 	}
 
 	UnbatchGraphics();
-	SetContext(OldContext);
 }
 
 static void DrawElementDescription(uint16_t Element)
@@ -309,7 +306,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	GfxRect r;
 	uqstl::array<char, 40> buf;
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 
 	r.corner.x = ResScale(2);
 	r.extent.width = FieldWidth() + ResScale(1);
@@ -404,7 +401,6 @@ void DrawRainbowPlanet(uint16_t planet)
 	}
 
 	UnbatchGraphics();
-	SetContext(OldContext);
 }
 
 static bool DoDiscardCargo(MenuState* pMS)
