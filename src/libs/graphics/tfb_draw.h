@@ -147,7 +147,7 @@ void TFB_DrawCanvas_Rescale_Trilinear(TFB_Canvas src, TFB_Canvas mipmap,
 									  GfxExtent* size, HOT_SPOT* dst_hs);
 void TFB_DrawCanvas_GetScaledExtent(TFB_Canvas src_canvas, HOT_SPOT* src_hs,
 									TFB_Canvas src_mipmap, HOT_SPOT* mm_hs,
-									int scale, int type, GfxExtent* size, HOT_SPOT* hs);
+									int scale, uqm::TFBScaleMode type, GfxExtent* size, HOT_SPOT* hs);
 void TFB_DrawCanvas_Rotate(TFB_Canvas src, TFB_Canvas dst, int angle,
 						   GfxExtent size);
 void TFB_DrawCanvas_GetRotatedExtent(TFB_Canvas src, int angle, GfxExtent* size);

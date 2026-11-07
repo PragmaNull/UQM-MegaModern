@@ -22,7 +22,7 @@ enum class TFBRedraw
 	Yes,
 };
 
-enum TFBScaleMode : int
+enum class TFBScaleMode : int
 {
 	None,
 	Step,

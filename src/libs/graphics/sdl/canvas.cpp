@@ -1169,7 +1169,7 @@ void TFB_DrawCanvas_SetTransparentColor(TFB_Canvas canvas, Color color,
 
 void TFB_DrawCanvas_GetScaledExtent(TFB_Canvas src_canvas, HOT_SPOT* src_hs,
 									TFB_Canvas src_mipmap, HOT_SPOT* mm_hs,
-									int scale, int type, GfxExtent* size, HOT_SPOT* hs)
+									int scale, uqm::TFBScaleMode type, GfxExtent* size, HOT_SPOT* hs)
 {
 	const SDL_Surface* src = (SDL_Surface*)src_canvas;
 	int32_t x {};
