@@ -193,7 +193,6 @@ static bool DoDiffChooser(MenuState* pMS)
 {
 	static TimeCount LastInputTime;
 	static TimePeriod InactTimeOut;
-	GfxRect oldRect;
 	GfxStamp s;
 	bool response = false;
 	bool done = false;
@@ -202,8 +201,8 @@ static bool DoDiffChooser(MenuState* pMS)
 	InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 	LastInputTime = GetTimeCounter();
 
-	GfxContextRef oldContext {SetContext(ScreenContext)};
-	GetContextClipRect(&oldRect);
+	const ContextScope contextScope {ScreenContext};
+	const ClipRectScope clipRectScope {};
 	s = SaveContextFrame(nullptr);
 
 	DrawDiffChooser(pMS, a, false);
@@ -217,6 +216,7 @@ static bool DoDiffChooser(MenuState* pMS)
 
 		if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 		{
+			DestroyDrawable(ReleaseDrawable(s.frame));
 			return false;
 		}
 		else if (PulsedInputState.menu[*MenuKey::MenuSelect])
@@ -302,9 +302,6 @@ static bool DoDiffChooser(MenuState* pMS)
 
 	DestroyDrawable(ReleaseDrawable(s.frame));
 	FlushInput();
-
-	SetContextClipRect(&oldRect);
-	SetContext(oldContext);
 
 	return response;
 }
