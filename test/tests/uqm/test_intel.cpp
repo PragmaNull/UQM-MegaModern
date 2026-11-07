@@ -1,8 +1,6 @@
 #include <gtest/gtest.h>
 #include "uqm/intel.h"
 #include "uqm/element.h"
-#include "uqm/setup.h"
-#include "options.h"
 #include "options/OptionDefs.h"
 
 // hack.. but I don't want to have to include uqm/setup.cpp as well

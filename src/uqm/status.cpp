@@ -20,12 +20,9 @@
 #include "colors.h"
 #include "globdata.h"
 #include "races.h"
-#include "ship.h"
 #include "setup.h"
-#include "options.h"
 #include "init.h"
 // for NumPlayers
-#include "menustat.h"
 #include "util.h"
 #include "intel.h"
 

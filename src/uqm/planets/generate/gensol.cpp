@@ -28,8 +28,6 @@
 #include "../../nameref.h"
 #include "../../sounds.h"
 #include "../../state.h"
-#include "libs/mathlib.h"
-#include "options.h"
 #include "../../setup.h"
 #include <math.h>
 #include "uqm/random/UQMRandom.h"

@@ -24,11 +24,9 @@
 #include "../../gendef.h"
 #include "../../globdata.h"
 #include "../../nameref.h"
-#include "../../setup.h"
 #include "../../sounds.h"
 #include "../../starmap.h"
 #include "../../state.h"
-#include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

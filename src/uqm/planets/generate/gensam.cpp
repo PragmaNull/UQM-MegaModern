@@ -22,7 +22,6 @@
 #include "../../build.h"
 #include "../../comm.h"
 #include "../../encount.h"
-#include "../../gamestr.h"
 #include "../../gendef.h"
 #include "../../globdata.h"
 #include "../../grpinfo.h"
@@ -31,7 +30,6 @@
 #include "../../sounds.h"
 #include "../../starmap.h"
 #include "../../state.h"
-#include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
 

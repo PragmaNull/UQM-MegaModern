@@ -17,11 +17,9 @@
  */
 
 #include "core/types/enum.h"
-#include "port.h"
 #include "sdl_common.h"
 #include "primitives.h"
 #include <cmath>
-#include "uqm/units.h"
 
 
 // Pixel drawing routines

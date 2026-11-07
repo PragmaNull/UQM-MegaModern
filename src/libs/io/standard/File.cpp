@@ -1,7 +1,6 @@
 // Buffered open file. Closes the file when destroyed.
 #include "libs/io/standard/File.h"
 
-#include "core/stl/stl.h"
 
 namespace uqm::io::standard
 {

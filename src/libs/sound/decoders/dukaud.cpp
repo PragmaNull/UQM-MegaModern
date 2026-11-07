@@ -20,13 +20,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "port.h"
 #include <cstdint>
 #include "libs/reslib.h"
 #include "dukaud.h"
 #include "decoder.h"
 #include "core/misc/bittricks.h"
-#include "core/stl/stl.h"
 #include "core/string/StringUtils.h"
 
 static constexpr auto DataBufSize {0x8000};

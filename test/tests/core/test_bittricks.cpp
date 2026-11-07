@@ -3,8 +3,6 @@
 
 #include "core/misc/bittricks.h"
 
-#include "core/stl/array.h"
-#include "core/stl/bit.h"
 
 using namespace uqm;
 

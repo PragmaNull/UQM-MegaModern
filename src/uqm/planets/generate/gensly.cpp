@@ -20,7 +20,6 @@
 #include "../planets.h"
 #include "../../comm.h"
 #include "../../gamestr.h"
-#include "uqm/random/UQMRandom.h"
 
 
 namespace uqm

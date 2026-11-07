@@ -21,16 +21,9 @@
 #include "races.h"
 #include "ship.h"
 #include "status.h"
-#include "setup.h"
 #include "sounds.h"
 #include "weapon.h"
-#include "libs/mathlib.h"
-#include "options.h" // For God Mode invincibility
-#include "settings.h"
-#include "setupmenu.h"
 #include "intel.h"
-#include "igfxres.h"
-#include "nameref.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

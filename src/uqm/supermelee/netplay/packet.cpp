@@ -21,7 +21,6 @@
 
 #include "uqmversion.h"
 
-#include "netrcv.h"
 #include "packethandlers.h"
 
 #include <assert.h>

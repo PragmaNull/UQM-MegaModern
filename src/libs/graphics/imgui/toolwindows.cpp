@@ -1,7 +1,6 @@
 // Windows that the ImGui overlay lists in its menu bar.
 
 #include "toolwindows.h"
-#include "core/stl/vector.h"
 
 namespace uqm
 {

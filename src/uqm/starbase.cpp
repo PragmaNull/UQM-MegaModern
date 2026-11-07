@@ -25,14 +25,12 @@
 #include "save.h"
 #include "starbase.h"
 #include "sis.h"
-#include "resinst.h"
 #include "nameref.h"
 #include "settings.h"
 #include "setup.h"
 #include "sounds.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/time/timelib.h"
-#include "core/log/log.h"
 #include "planets/planets.h"
 #include <math.h>
 

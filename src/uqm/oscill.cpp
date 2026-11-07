@@ -20,16 +20,11 @@
 #include <cmath>
 #include "setup.h"
 // for OffScreenContext
-#include "libs/graphics/gfx_common.h"
 #include "libs/graphics/drawable.h"
 #include "libs/sound/sound.h"
 #include "libs/sound/trackplayer.h"
-#include "core/log/log.h"
-#include "core/stl/vector.h"
 #include "colors.h"
-#include "menustat.h"
 #include "util.h"
-#include "options.h"
 
 namespace uqm
 {

@@ -16,7 +16,6 @@
 
 #include "video.h"
 
-#include "vidintrn.h"
 #include "options.h"
 #include "vidplayer.h"
 #include "libs/sndlib.h"

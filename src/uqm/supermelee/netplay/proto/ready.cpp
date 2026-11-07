@@ -17,7 +17,6 @@
  */
 
 #define NETCONNECTION_INTERNAL
-#include "../netplay.h"
 #include "ready.h"
 
 #include <cstdint>

@@ -29,8 +29,6 @@
 // for EncounterGroup
 #include "../gamestr.h"
 #include "../nameref.h"
-#include "../resinst.h"
-#include "../settings.h"
 #include "../util.h" // for get_fuel_to_sol()
 #include "../process.h"
 #include "../setup.h"
@@ -38,14 +36,10 @@
 #include "../state.h"
 #include "../sis.h"
 #include "../save.h"
-#include "../starmap.h"
-#include "../gendef.h"
-#include "options.h"
 #include "core/string/StringUtils.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/drawable.h"
 #include "libs/inplib.h"
-#include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

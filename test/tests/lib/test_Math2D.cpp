@@ -1,13 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "core/stl/stl.h"
-#include "core/stl/sstream.h"
-#include "core/stl/limits.h"
-#include "core/stl/array.h"
 
 #include "lib/Math2D/Math2D.h"
 #include "lib/Math2D/Math2DStringUtils.h"
-#include "core/string/StringUtils.h" // for span helpers if needed
 #include <fmt/format.h>
 
 using namespace uqm;

@@ -19,10 +19,8 @@
 #include "master.h"
 
 #include "build.h"
-#include "resinst.h"
 #include "displist.h"
 #include "fmv.h"
-#include "supermelee/melee.h"
 
 
 namespace uqm

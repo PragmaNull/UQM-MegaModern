@@ -27,11 +27,9 @@
 #include "../../globdata.h"
 #include "../../ipdisp.h"
 #include "../../nameref.h"
-#include "../../sounds.h"
 #include "../../starmap.h"
 #include "../../state.h"
 #include "../../gamestr.h"
-#include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
 

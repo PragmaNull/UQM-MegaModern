@@ -18,7 +18,6 @@
 
 #include "genall.h"
 #include "../../build.h"
-#include "../../globdata.h"
 #include "../../grpinfo.h"
 #include "../../state.h"
 

@@ -20,7 +20,6 @@
 
 #include "units.h"
 #include "core/misc/bittricks.h"
-#include "core/log/log.h"
 
 namespace uqm
 {

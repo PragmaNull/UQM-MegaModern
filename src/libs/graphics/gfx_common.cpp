@@ -16,12 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "gfxintrn.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/drawcmd.h"
 #include "libs/time/timelib.h"
-#include "core/stl/atomic.h"
-#include "options.h"
 #include <SDL3/SDL.h>
 
 int fs_height = 0;

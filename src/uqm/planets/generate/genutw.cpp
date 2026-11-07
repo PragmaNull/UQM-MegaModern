@@ -29,7 +29,6 @@
 #include "../../setup.h"
 #include "../../state.h"
 #include "../../gamestr.h"
-#include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
 

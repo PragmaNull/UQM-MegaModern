@@ -19,7 +19,6 @@
 // See doc/devel/planettopo for details.
 
 #include "libs/gfxlib.h"
-#include "libs/mathlib.h"
 #include "planets.h"
 
 namespace uqm

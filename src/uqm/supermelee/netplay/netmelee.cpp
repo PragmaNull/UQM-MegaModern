@@ -16,16 +16,12 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "port.h"
 #include "netmelee.h"
 #include "libs/callback/async.h"
 #include "libs/callback/callback.h"
-#include "core/log/log.h"
 #include "netcontext.h"
 #include "netinput.h"
 #include "netmisc.h"
-#include "netsend.h"
-#include "notify.h"
 #include "packetq.h"
 #include "proto/npconfirm.h"
 #include "proto/ready.h"

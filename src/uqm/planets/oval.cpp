@@ -19,14 +19,10 @@
 #include "../units.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/context.h"
-#include "libs/graphics/drawable.h"
-#include "../nameref.h"
-#include "../igfxres.h"
 #include "../init.h"
 #include <math.h>
 
 #include "planets.h"
-#include "uqm/setup.h"
 
 namespace uqm
 {

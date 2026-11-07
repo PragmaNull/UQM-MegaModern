@@ -18,11 +18,9 @@
 
 #include "colors.h"
 #include "globdata.h"
-#include "options.h"
 #include "status.h"
 #include "setup.h"
 #include "libs/gfxlib.h"
-#include "menustat.h"
 #include "util.h"
 
 namespace uqm

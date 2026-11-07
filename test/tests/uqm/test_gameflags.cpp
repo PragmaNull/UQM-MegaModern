@@ -1,7 +1,6 @@
 // Tests the table of game state flags and the lookup by name.
 
 #include <gtest/gtest.h>
-#include "core/stl/set.h"
 #include "uqm/session/GameFlags.h"
 
 namespace

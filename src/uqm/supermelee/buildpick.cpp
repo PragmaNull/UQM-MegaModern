@@ -25,7 +25,6 @@
 #include "../setup.h"
 #include "../sounds.h"
 #include "libs/gfxlib.h"
-#include "../gamestr.h"
 
 namespace uqm
 {

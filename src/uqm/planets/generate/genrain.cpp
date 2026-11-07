@@ -24,7 +24,6 @@
 #include "../../starmap.h"
 #include "../../state.h"
 #include "../../globdata.h"
-#include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

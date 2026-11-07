@@ -18,7 +18,6 @@
 
 #include "sound.h"
 #include "sndintrn.h"
-#include "core/misc/bittricks.h"
 #include "libs/inplib.h"
 
 

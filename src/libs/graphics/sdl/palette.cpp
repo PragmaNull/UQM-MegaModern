@@ -17,7 +17,6 @@
  */
 
 #include "palette.h"
-#include "core/log/log.h"
 
 NativePalette* AllocNativePalette(void)
 {

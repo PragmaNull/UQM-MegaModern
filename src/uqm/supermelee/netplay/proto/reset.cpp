@@ -19,7 +19,6 @@
 // See doc/devel/netplay/protocol
 
 #define NETCONNECTION_INTERNAL
-#include "../netplay.h"
 #include "reset.h"
 
 #include <cstdint>

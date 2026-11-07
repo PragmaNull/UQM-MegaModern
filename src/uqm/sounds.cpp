@@ -17,7 +17,6 @@
 #include "settings.h"
 #include "sounds.h"
 #include "units.h"
-#include "options.h"
 
 namespace uqm
 {

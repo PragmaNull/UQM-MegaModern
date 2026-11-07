@@ -18,7 +18,6 @@
 
 #include "genall.h"
 #include "../planets.h"
-#include "uqm/random/UQMRandom.h"
 #include "uqm/globdata.h"
 
 

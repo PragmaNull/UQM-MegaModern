@@ -18,14 +18,12 @@
 
 
 #include "libs/gfxlib.h"
-#include "libs/time/timelib.h"
 #include "colors.h"
 #include "setup.h"
 #include "sis.h"
 #include "units.h"
 #include "util.h"
 #include "menustat.h"
-#include "options.h"
 
 
 namespace uqm

@@ -21,7 +21,6 @@
 #include "../../globdata.h"
 #include "../../grpinfo.h"
 #include "../../istrtab.h"
-#include "../../nameref.h"
 #include "../../sounds.h"
 #include "../../state.h"
 #include "../../gamestr.h"

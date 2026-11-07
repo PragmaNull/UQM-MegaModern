@@ -1,8 +1,5 @@
 #include <gtest/gtest.h>
 
-#include "core/stl/string.h"
-#include "core/stl/sstream.h"
-#include "core/stl/stl.h"
 
 #include "core/log/BacktraceCaptureSink.h"
 #include <spdlog/details/log_msg.h>

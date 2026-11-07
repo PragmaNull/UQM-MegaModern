@@ -22,7 +22,6 @@
 #include "uqm/nameref.h"
 #include "uqm/igfxres.h"
 #include "widgets.h"
-#include "libs/strlib.h"
 #include "uqm/colors.h"
 #include "uqm/units.h"
 #include "uqm/util.h"

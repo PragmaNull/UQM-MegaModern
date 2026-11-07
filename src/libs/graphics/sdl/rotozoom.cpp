@@ -13,7 +13,6 @@
 #include <string.h>
 #include <cmath>
 #include "sdl_common.h"
-#include "port.h"
 #include "rotozoom.h"
 
 

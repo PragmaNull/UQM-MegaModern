@@ -4,8 +4,6 @@
 #include "core/thread/Mutex.h"
 #include "core/thread/Thread.h"
 
-#include "core/stl/atomic.h"
-#include "core/stl/vector.h"
 
 namespace uqm
 {

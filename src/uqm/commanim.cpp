@@ -20,13 +20,7 @@
 #include "commanim.h"
 
 #include "comm.h"
-#include "element.h"
-#include "options.h"
-#include "setup.h"
-#include "core/misc/bittricks.h"
 #include "libs/graphics/cmap.h"
-#include "libs/graphics/drawable.h"
-#include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
 

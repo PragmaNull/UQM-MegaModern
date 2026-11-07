@@ -5,10 +5,6 @@
 #include <cfloat>
 #include <imgui.h>
 #include <fmt/format.h>
-#include "core/stl/array.h"
-#include "core/stl/optional.h"
-#include "core/stl/string.h"
-#include "core/stl/vector.h"
 #include "core/string/StringUtils.h"
 #include "libs/graphics/imgui/toolwindows.h"
 #include "uqm/clock.h"

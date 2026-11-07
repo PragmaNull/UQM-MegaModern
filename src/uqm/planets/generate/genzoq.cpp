@@ -26,7 +26,6 @@
 #include "../../setup.h"
 #include "../../starmap.h"
 #include "../../state.h"
-#include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 
 

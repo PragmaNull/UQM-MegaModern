@@ -17,7 +17,6 @@
  */
 
 #include "units.h"
-#include "core/misc/bittricks.h"
 
 
 namespace uqm

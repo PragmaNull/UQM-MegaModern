@@ -1,7 +1,6 @@
 // The network context that the netplay connections use.
 #include "netcontext.h"
 
-#include "core/stl/optional.h"
 
 namespace uqm
 {

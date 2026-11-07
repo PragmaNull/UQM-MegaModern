@@ -22,21 +22,16 @@
 #include "races.h"
 #include "element.h"
 #include "tactrans.h"
-#include "pickship.h"
 #include "process.h"
 #include "globdata.h"
 #include "encount.h"
 #include "hyper.h"
 #include "init.h"
-#include "port.h"
-#include "resinst.h"
 #include "libs/reslib.h"
 #include "nameref.h"
 #include "setup.h"
 #include "units.h"
-#include "intel.h"
 #include "master.h"
-#include "libs/input/input_common.h"
 
 
 namespace uqm

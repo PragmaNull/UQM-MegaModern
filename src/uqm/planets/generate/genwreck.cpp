@@ -21,10 +21,8 @@
 #include "../planets.h"
 #include "../../globdata.h"
 #include "../../nameref.h"
-#include "../../resinst.h"
 #include "../../state.h"
 #include "../../build.h"
-#include "libs/mathlib.h"
 #include "../../comm.h"
 #include "uqm/random/UQMRandom.h"
 
