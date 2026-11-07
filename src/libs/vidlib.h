@@ -35,7 +35,12 @@ enum class VideoType
 	Software
 };
 
-typedef struct TFB_VideoClip* VIDEO_REF;
+namespace tfb
+{
+struct VideoClip;
+} // namespace tfb
+
+typedef struct tfb::VideoClip* VIDEO_REF;
 typedef struct LegacyVideoDesc* LEGACY_VIDEO;
 typedef struct legacy_video_ref* LEGACY_VIDEO_REF;
 

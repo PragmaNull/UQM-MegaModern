@@ -42,7 +42,7 @@ bool TFB_SetGamma(float gamma);
 void TFB_UploadTransitionScreen(GfxRect* pRect);
 int TFB_SupportsHardwareScaling(void);
 // This function should not be called directly
-void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw);
+void TFB_SwapBuffers(tfb::Redraw force_full_redraw);
 // True if the ImGui overlay shows, and the screen must update each frame.
 bool TFB_ImGuiVisible(void);
 
@@ -52,8 +52,8 @@ void LoadIntoExtraScreen(GfxRect* r);
 void DrawFromExtraScreen(GfxRect* r);
 int SetGraphicScale(int scale);
 int GetGraphicScale(void);
-uqm::TFBScaleMode SetGraphicScaleMode(uqm::TFBScaleMode mode);
-uqm::TFBScaleMode GetGraphicScaleMode();
+tfb::ScaleMode SetGraphicScaleMode(tfb::ScaleMode mode);
+tfb::ScaleMode GetGraphicScaleMode();
 void SetTransitionSource(const GfxRect* pRect);
 void ScreenTransition(uqm::EmulationMode transition, const GfxRect* pRect);
 

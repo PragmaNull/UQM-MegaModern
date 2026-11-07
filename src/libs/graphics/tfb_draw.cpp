@@ -25,7 +25,7 @@ const static HOT_SPOT NullHs = {0, 0};
 void TFB_DrawScreen_Line(int x1, int y1, int x2, int y2, Color color,
 						 DrawMode mode, ScreenBuffer dest, uint8_t thickness)
 {
-	TFB_DrawCommand DC;
+	tfb::DrawCommand DC;
 
 	DC.Type = DrawCommandType::Line;
 	DC.data.line.x1 = x1;
@@ -43,7 +43,7 @@ void TFB_DrawScreen_Line(int x1, int y1, int x2, int y2, Color color,
 void TFB_DrawScreen_Rect(GfxRect* rect, Color color, DrawMode mode, ScreenBuffer dest)
 {
 	GfxRect locRect;
-	TFB_DrawCommand DC;
+	tfb::DrawCommand DC;
 
 	if (!rect)
 	{
@@ -62,10 +62,10 @@ void TFB_DrawScreen_Rect(GfxRect* rect, Color color, DrawMode mode, ScreenBuffer
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_Image(TFB_Image* img, int x, int y, int scale,
-						  uqm::TFBScaleMode scaleMode, TFB_ColorMap* cmap, DrawMode mode, ScreenBuffer dest)
+void TFB_DrawScreen_Image(tfb::Image* img, int x, int y, int scale,
+						  tfb::ScaleMode scaleMode, tfb::ColorMap* cmap, DrawMode mode, ScreenBuffer dest)
 {
-	TFB_DrawCommand DC;
+	tfb::DrawCommand DC;
 
 	DC.Type = DrawCommandType::Image;
 	DC.data.image.image = img;
@@ -80,10 +80,10 @@ void TFB_DrawScreen_Image(TFB_Image* img, int x, int y, int scale,
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_FilledImage(TFB_Image* img, int x, int y, int scale,
-								uqm::TFBScaleMode scaleMode, Color color, DrawMode mode, ScreenBuffer dest)
+void TFB_DrawScreen_FilledImage(tfb::Image* img, int x, int y, int scale,
+								tfb::ScaleMode scaleMode, Color color, DrawMode mode, ScreenBuffer dest)
 {
-	TFB_DrawCommand DC;
+	tfb::DrawCommand DC;
 
 	DC.Type = DrawCommandType::FilledImage;
 	DC.data.filledimage.image = img;
@@ -98,10 +98,10 @@ void TFB_DrawScreen_FilledImage(TFB_Image* img, int x, int y, int scale,
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_FontChar(TFB_Char* fontChar, TFB_Image* backing,
+void TFB_DrawScreen_FontChar(tfb::Char* fontChar, tfb::Image* backing,
 							 int x, int y, DrawMode mode, ScreenBuffer dest)
 {
-	TFB_DrawCommand DC;
+	tfb::DrawCommand DC;
 
 	DC.Type = DrawCommandType::FontChar;
 	DC.data.fontchar.fontchar = fontChar;
@@ -114,9 +114,9 @@ void TFB_DrawScreen_FontChar(TFB_Char* fontChar, TFB_Image* backing,
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GfxRect* r, ScreenBuffer src)
+void TFB_DrawScreen_CopyToImage(tfb::Image* img, const GfxRect* r, ScreenBuffer src)
 {
-	TFB_DrawCommand DC;
+	tfb::DrawCommand DC;
 
 	DC.Type = DrawCommandType::CopyToImage;
 	DC.data.copytoimage.rect = *r;
@@ -129,7 +129,7 @@ void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GfxRect* r, ScreenBuffer s
 void TFB_DrawScreen_Copy(const GfxRect* r, ScreenBuffer src, ScreenBuffer dest)
 {
 	GfxRect locRect;
-	TFB_DrawCommand DC;
+	tfb::DrawCommand DC;
 
 	if (!r)
 	{
@@ -147,9 +147,9 @@ void TFB_DrawScreen_Copy(const GfxRect* r, ScreenBuffer src, ScreenBuffer dest)
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx, int hoty)
+void TFB_DrawScreen_SetMipmap(tfb::Image* img, tfb::Image* mmimg, int hotx, int hoty)
 {
-	TFB_DrawCommand DC;
+	tfb::DrawCommand DC;
 
 	DC.Type = DrawCommandType::SetMipmap;
 	DC.data.setmipmap.image = img;
@@ -160,11 +160,11 @@ void TFB_DrawScreen_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx, int ho
 	TFB_EnqueueDrawCommand(&DC);
 }
 
-void TFB_DrawScreen_DeleteImage(TFB_Image* img)
+void TFB_DrawScreen_DeleteImage(tfb::Image* img)
 {
 	if (img)
 	{
-		TFB_DrawCommand DC;
+		tfb::DrawCommand DC;
 
 		DC.Type = DrawCommandType::DeleteImage;
 		DC.data.deleteimage.image = img;
@@ -178,7 +178,7 @@ void TFB_DrawScreen_DeleteData(uint8_t* data)
 {
 	if (data)
 	{
-		TFB_DrawCommand DC;
+		tfb::DrawCommand DC;
 
 		DC.Type = DrawCommandType::DeleteData;
 		DC.data.deletedata.data = data;
@@ -191,7 +191,7 @@ void TFB_DrawScreen_WaitForSignal(void)
 {
 	// The renderer releases this when it reaches the command.
 	thread_local uqstl::binary_semaphore flushed {0};
-	TFB_DrawCommand DrawCommand;
+	tfb::DrawCommand DrawCommand;
 	DrawCommand.Type = DrawCommandType::SendSignal;
 	DrawCommand.data.sendsignal.sem = &flushed;
 	Lock_DCQ(1);
@@ -203,7 +203,7 @@ void TFB_DrawScreen_WaitForSignal(void)
 
 void TFB_DrawScreen_ReinitVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, int height)
 {
-	TFB_DrawCommand DrawCommand;
+	tfb::DrawCommand DrawCommand;
 	DrawCommand.Type = DrawCommandType::ReinitVideo;
 	DrawCommand.data.reinitvideo.driver = driver;
 	DrawCommand.data.reinitvideo.flags = flags;
@@ -214,7 +214,7 @@ void TFB_DrawScreen_ReinitVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int 
 
 void TFB_DrawScreen_Callback(void (*callback)(void* arg), void* arg)
 {
-	TFB_DrawCommand DrawCommand;
+	tfb::DrawCommand DrawCommand;
 	DrawCommand.Type = DrawCommandType::Callback;
 	DrawCommand.data.callback.callback = callback;
 	DrawCommand.data.callback.arg = arg;
@@ -222,22 +222,22 @@ void TFB_DrawScreen_Callback(void (*callback)(void* arg), void* arg)
 }
 
 void TFB_DrawImage_Line(int x1, int y1, int x2, int y2, Color color,
-						DrawMode mode, TFB_Image* target, uint8_t thickness)
+						DrawMode mode, tfb::Image* target, uint8_t thickness)
 {
 	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_Line(x1, y1, x2, y2, color, mode, target->NormalImg, thickness);
 	target->dirty = true;
 }
 
-void TFB_DrawImage_Rect(GfxRect* rect, Color color, DrawMode mode, TFB_Image* target)
+void TFB_DrawImage_Rect(GfxRect* rect, Color color, DrawMode mode, tfb::Image* target)
 {
 	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_Rect(rect, color, mode, target->NormalImg);
 	target->dirty = true;
 }
 
-void TFB_DrawImage_Image(TFB_Image* img, int x, int y, int scale,
-						 uqm::TFBScaleMode scaleMode, TFB_ColorMap* cmap, DrawMode mode, TFB_Image* target)
+void TFB_DrawImage_Image(tfb::Image* img, int x, int y, int scale,
+						 tfb::ScaleMode scaleMode, tfb::ColorMap* cmap, DrawMode mode, tfb::Image* target)
 {
 	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_Image(img, x, y, scale, scaleMode, cmap,
@@ -245,8 +245,8 @@ void TFB_DrawImage_Image(TFB_Image* img, int x, int y, int scale,
 	target->dirty = true;
 }
 
-void TFB_DrawImage_FilledImage(TFB_Image* img, int x, int y, int scale,
-							   uqm::TFBScaleMode scaleMode, Color color, DrawMode mode, TFB_Image* target)
+void TFB_DrawImage_FilledImage(tfb::Image* img, int x, int y, int scale,
+							   tfb::ScaleMode scaleMode, Color color, DrawMode mode, tfb::Image* target)
 {
 	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_FilledImage(img, x, y, scale, scaleMode, color,
@@ -254,15 +254,15 @@ void TFB_DrawImage_FilledImage(TFB_Image* img, int x, int y, int scale,
 	target->dirty = true;
 }
 
-void TFB_DrawImage_FontChar(TFB_Char* fontChar, TFB_Image* backing,
-							int x, int y, DrawMode mode, TFB_Image* target)
+void TFB_DrawImage_FontChar(tfb::Char* fontChar, tfb::Image* backing,
+							int x, int y, DrawMode mode, tfb::Image* target)
 {
 	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_FontChar(fontChar, backing, x, y, mode, target->NormalImg);
 	target->dirty = true;
 }
 
-void TFB_DrawImage_MaskImage(TFB_Image* img, DrawMode mode, TFB_Image* target, Color* fill)
+void TFB_DrawImage_MaskImage(tfb::Image* img, DrawMode mode, tfb::Image* target, Color* fill)
 {
 	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_MaskImage(img, mode, target->NormalImg, fill);
@@ -270,9 +270,9 @@ void TFB_DrawImage_MaskImage(TFB_Image* img, DrawMode mode, TFB_Image* target, C
 }
 
 
-TFB_Image* TFB_DrawImage_New(TFB_Canvas canvas)
+tfb::Image* TFB_DrawImage_New(tfb::Canvas canvas)
 {
-	auto* img {new TFB_Image {}};
+	auto* img {new tfb::Image {}};
 	img->ScaledImg = nullptr;
 	img->MipmapImg = nullptr;
 	img->FilledImg = nullptr;
@@ -281,7 +281,7 @@ TFB_Image* TFB_DrawImage_New(TFB_Canvas canvas)
 	img->NormalHs = NullHs;
 	img->MipmapHs = NullHs;
 	img->last_scale_hs = NullHs;
-	img->last_scale_type = uqm::TFBScaleMode::None;
+	img->last_scale_type = tfb::ScaleMode::None;
 	img->last_scale = 0;
 	img->dirty = false;
 	TFB_DrawCanvas_GetExtent(canvas, &img->extent);
@@ -298,9 +298,9 @@ TFB_Image* TFB_DrawImage_New(TFB_Canvas canvas)
 	return img;
 }
 
-TFB_Image* TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
+tfb::Image* TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 {
-	auto* img {new TFB_Image {}};
+	auto* img {new tfb::Image {}};
 	img->ScaledImg = nullptr;
 	img->MipmapImg = nullptr;
 	img->FilledImg = nullptr;
@@ -309,7 +309,7 @@ TFB_Image* TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 	img->NormalHs = NullHs;
 	img->MipmapHs = NullHs;
 	img->last_scale_hs = NullHs;
-	img->last_scale_type = uqm::TFBScaleMode::None;
+	img->last_scale_type = tfb::ScaleMode::None;
 	img->last_scale = 0;
 	img->extent.width = w;
 	img->extent.height = h;
@@ -319,11 +319,11 @@ TFB_Image* TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 	return img;
 }
 
-TFB_Image* TFB_DrawImage_New_Rotated(TFB_Image* img, int angle)
+tfb::Image* TFB_DrawImage_New_Rotated(tfb::Image* img, int angle)
 {
-	TFB_Canvas dst {};
+	tfb::Canvas dst {};
 	GfxExtent size;
-	TFB_Image* newimg {};
+	tfb::Image* newimg {};
 
 	/* sanity check */
 	if (!img->NormalImg)
@@ -347,7 +347,7 @@ TFB_Image* TFB_DrawImage_New_Rotated(TFB_Image* img, int angle)
 	return newimg;
 }
 
-void TFB_DrawImage_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx, int hoty)
+void TFB_DrawImage_SetMipmap(tfb::Image* img, tfb::Image* mmimg, int hotx, int hoty)
 {
 	if (!img || !mmimg)
 	{
@@ -375,7 +375,7 @@ void TFB_DrawImage_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx, int hot
 	}
 }
 
-void TFB_DrawImage_Delete(TFB_Image* image)
+void TFB_DrawImage_Delete(tfb::Image* image)
 {
 	if (image == 0)
 	{
@@ -404,7 +404,7 @@ void TFB_DrawImage_Delete(TFB_Image* image)
 	delete image;
 }
 
-void TFB_DrawImage_FixScaling(TFB_Image* image, int scaleTarget, uqm::TFBScaleMode type)
+void TFB_DrawImage_FixScaling(tfb::Image* image, int scaleTarget, tfb::ScaleMode type)
 {
 	if (image->dirty || !image->ScaledImg || scaleTarget != image->last_scale || type != image->last_scale_type)
 	{
@@ -412,13 +412,13 @@ void TFB_DrawImage_FixScaling(TFB_Image* image, int scaleTarget, uqm::TFBScaleMo
 		image->ScaledImg = TFB_DrawCanvas_New_ScaleTarget(image->NormalImg,
 														  image->ScaledImg, type, image->last_scale_type);
 
-		if (type == uqm::TFBScaleMode::Nearest)
+		if (type == tfb::ScaleMode::Nearest)
 		{
 			TFB_DrawCanvas_Rescale_Nearest(image->NormalImg,
 										   image->ScaledImg, scaleTarget, &image->NormalHs,
 										   &image->extent, &image->last_scale_hs);
 		}
-		else if (type == uqm::TFBScaleMode::Bilinear)
+		else if (type == tfb::ScaleMode::Bilinear)
 		{
 			TFB_DrawCanvas_Rescale_Bilinear(image->NormalImg,
 											image->ScaledImg, scaleTarget, &image->NormalHs,
@@ -437,8 +437,8 @@ void TFB_DrawImage_FixScaling(TFB_Image* image, int scaleTarget, uqm::TFBScaleMo
 	}
 }
 
-bool TFB_DrawImage_Intersect(TFB_Image* img1, GfxPoint img1org,
-							 TFB_Image* img2, GfxPoint img2org, const GfxRect* interRect)
+bool TFB_DrawImage_Intersect(tfb::Image* img1, GfxPoint img1org,
+							 tfb::Image* img2, GfxPoint img2org, const GfxRect* interRect)
 {
 	const uqm::LockGuard lock1 {img1->mutex};
 	const uqm::LockGuard lock2 {img2->mutex};
@@ -446,8 +446,8 @@ bool TFB_DrawImage_Intersect(TFB_Image* img1, GfxPoint img1org,
 									img2->NormalImg, img2org, interRect);
 }
 
-void TFB_DrawImage_CopyRect(TFB_Image* source, const GfxRect* srcRect,
-							TFB_Image* target, GfxPoint dstPt)
+void TFB_DrawImage_CopyRect(tfb::Image* source, const GfxRect* srcRect,
+							tfb::Image* target, GfxPoint dstPt)
 {
 	const uqm::LockGuard sourceLock {source->mutex};
 	const uqm::LockGuard targetLock {target->mutex};

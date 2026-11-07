@@ -28,16 +28,19 @@
 #include "libs/graphics/gfx_common.h"
 
 // The Graphics Backend vtable
-struct TFB_GraphicsBackend
+namespace tfb
 {
-	void (*preprocess)(uqm::TFBRedraw force_redraw, int transition_amount, int fade_amount);
+struct GraphicsBackend
+{
+	void (*preprocess)(Redraw force_redraw, int transition_amount, int fade_amount);
 	void (*postprocess)(bool hd);
 	void (*uploadTransitionScreen)(void);
 	void (*screen)(ScreenBuffer screen, Uint8 alpha, SDL_Rect* rect);
 	void (*color)(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect);
 };
+} // namespace tfb
 
-extern TFB_GraphicsBackend* graphics_backend;
+extern tfb::GraphicsBackend* graphics_backend;
 
 extern SDL_Surface* SDL_Screen;
 extern SDL_Surface* TransitionScreen;

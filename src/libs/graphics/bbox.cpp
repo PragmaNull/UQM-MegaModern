@@ -17,7 +17,7 @@
 #include "port.h"
 #include "libs/graphics/bbox.h"
 
-TFB_BoundingBox TFB_BBox;
+tfb::BoundingBox TFB_BBox;
 int maxWidth;
 int maxHeight;
 
@@ -141,7 +141,7 @@ void TFB_BBox_RegisterRect(const GfxRect* r)
 						   r->corner.y + r->extent.height - 1);
 }
 
-void TFB_BBox_RegisterCanvas(TFB_Canvas c, int x, int y)
+void TFB_BBox_RegisterCanvas(tfb::Canvas c, int x, int y)
 {
 	GfxRect r;
 	r.corner.x = x;

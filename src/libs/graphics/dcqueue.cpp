@@ -85,9 +85,9 @@ private:
 
 } // namespace
 
-static TFB_DrawCommand DCQ[DcqMax] UQM_GUARDED_BY(s_dcqMutex);
+static tfb::DrawCommand DCQ[DcqMax] UQM_GUARDED_BY(s_dcqMutex);
 
-static TFB_DrawCommandQueue DrawCommandQueue UQM_GUARDED_BY(s_dcqMutex);
+static tfb::DrawCommandQueue DrawCommandQueue UQM_GUARDED_BY(s_dcqMutex);
 
 static inline constexpr uint32_t DCQueueFPS {20};
 static inline constexpr auto DCQueueTicksForFps {getTicksForFramerate(DCQueueFPS)};
@@ -221,7 +221,7 @@ void Uninit_DrawCommandQueue(void)
 {
 }
 
-void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command)
+void TFB_DrawCommandQueue_Push(tfb::DrawCommand* Command)
 {
 	lockDcqWithSpace(1);
 	DCQ[DrawCommandQueue.InsertionPoint] = *Command;
@@ -232,7 +232,7 @@ void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command)
 	unlockDcq();
 }
 
-int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
+int TFB_DrawCommandQueue_Pop(tfb::DrawCommand* target)
 {
 	lockDcq();
 
@@ -273,7 +273,7 @@ void TFB_DrawCommandQueue_Clear()
 	unlockDcq();
 }
 
-static void checkExclusiveThread(TFB_DrawCommand* DrawCommand)
+static void checkExclusiveThread(tfb::DrawCommand* DrawCommand)
 {
 #ifdef DEBUG_DCQ_THREADS
 	static uqstl::thread::id exclusiveThreadId {};
@@ -299,7 +299,7 @@ static void checkExclusiveThread(TFB_DrawCommand* DrawCommand)
 #endif
 }
 
-void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand)
+void TFB_EnqueueDrawCommand(tfb::DrawCommand* DrawCommand)
 {
 	if (TFB_DEBUG_HALT)
 	{
@@ -319,7 +319,7 @@ void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand)
 			|| (!_pCurContext && scissor_rect.extent.width != 0))
 		{
 			// Enqueue command to set the glScissor spec
-			TFB_DrawCommand DC;
+			tfb::DrawCommand DC;
 
 			if (_pCurContext)
 			{
@@ -395,7 +395,7 @@ static void drawFPSText(uqstl::string_view text, int x, int y, Color color)
 	int16_t h {};
 
 	GetFontDims(&w, &h);
-	TFB_Image* img = TFB_DrawImage_CreateForScreen(w, h, true);
+	tfb::Image* img = TFB_DrawImage_CreateForScreen(w, h, true);
 	tr.corner.x = tr.corner.y = 0;
 	tr.extent.width = w;
 	tr.extent.height = h;
@@ -403,7 +403,7 @@ static void drawFPSText(uqstl::string_view text, int x, int y, Color color)
 
 	for (const char c : text)
 	{
-		TFB_Char* ch = GetFrameForFPS(static_cast<unsigned char>(c));
+		tfb::Char* ch = GetFrameForFPS(static_cast<unsigned char>(c));
 		if (ch && ch->disp.width)
 		{
 			TFB_DrawCanvas_FontChar(ch, img, x, y, MAKE_DRAW_MODE(DrawKind::Alpha, 0xff), TFB_GetFPSCanvas());
@@ -454,7 +454,7 @@ void TFB_FlushGraphics(void)
 
 		if ((current_fade != 255 && current_fade != last_fade) || (current_transition != 255 && current_transition != last_transition) || (current_fade == 255 && last_fade != 255) || (current_transition == 255 && last_transition != 255))
 		{
-			TFB_SwapBuffers(uqm::TFBRedraw::Fading);
+			TFB_SwapBuffers(tfb::Redraw::Fading);
 			// if fading, redraw every frame
 			if (showFps)
 			{
@@ -468,7 +468,7 @@ void TFB_FlushGraphics(void)
 			if (start - s_lastOverlayFrame >= uqstl::chrono::microseconds {16'667})
 			{
 				s_lastOverlayFrame = start;
-				TFB_SwapBuffers(uqm::TFBRedraw::Expose);
+				TFB_SwapBuffers(tfb::Redraw::Expose);
 			}
 			TaskSwitch();
 		}
@@ -505,7 +505,7 @@ void TFB_FlushGraphics(void)
 
 	for (;;)
 	{
-		TFB_DrawCommand DC;
+		tfb::DrawCommand DC;
 
 		if (!TFB_DrawCommandQueue_Pop(&DC))
 		{
@@ -526,7 +526,7 @@ void TFB_FlushGraphics(void)
 		{
 			case DrawCommandType::SetMipmap:
 				{
-					const TFB_DrawCommand_SetMipmap* cmd = &DC.data.setmipmap;
+					const tfb::DrawCommandSetMipmap* cmd = &DC.data.setmipmap;
 					TFB_DrawImage_SetMipmap(cmd->image, cmd->mipmap,
 											cmd->hotx, cmd->hoty);
 					break;
@@ -534,8 +534,8 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::Image:
 				{
-					const TFB_DrawCommand_Image* cmd = &DC.data.image;
-					TFB_Image* DC_image = cmd->image;
+					const tfb::DrawCommandImage* cmd = &DC.data.image;
+					tfb::Image* DC_image = cmd->image;
 					const int x = cmd->x;
 					const int y = cmd->y;
 
@@ -566,8 +566,8 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::FilledImage:
 				{
-					const TFB_DrawCommand_FilledImage* cmd = &DC.data.filledimage;
-					TFB_Image* DC_image = cmd->image;
+					const tfb::DrawCommandFilledImage* cmd = &DC.data.filledimage;
+					tfb::Image* DC_image = cmd->image;
 					const int x = cmd->x;
 					const int y = cmd->y;
 
@@ -598,8 +598,8 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::FontChar:
 				{
-					const TFB_DrawCommand_FontChar* cmd = &DC.data.fontchar;
-					TFB_Char* DC_char = cmd->fontchar;
+					const tfb::DrawCommandFontChar* cmd = &DC.data.fontchar;
+					tfb::Char* DC_char = cmd->fontchar;
 					const int x = cmd->x;
 					const int y = cmd->y;
 
@@ -623,7 +623,7 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::Line:
 				{
-					const TFB_DrawCommand_Line* cmd = &DC.data.line;
+					const tfb::DrawCommandLine* cmd = &DC.data.line;
 
 					if (cmd->destBuffer == ScreenBuffer::Main)
 					{
@@ -644,7 +644,7 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::Rectangle:
 				{
-					TFB_DrawCommand_Rect* cmd = &DC.data.rect;
+					tfb::DrawCommandRect* cmd = &DC.data.rect;
 
 					if (cmd->destBuffer == ScreenBuffer::Main)
 					{
@@ -658,7 +658,7 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::ScissorEnable:
 				{
-					const TFB_DrawCommand_Scissor* cmd = &DC.data.scissor;
+					const tfb::DrawCommandScissor* cmd = &DC.data.scissor;
 
 					TFB_DrawCanvas_SetClipRect(
 						TFB_GetScreenCanvas(ScreenBuffer::Main), &cmd->rect);
@@ -674,8 +674,8 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::CopyToImage:
 				{
-					const TFB_DrawCommand_CopyToImage* cmd = &DC.data.copytoimage;
-					TFB_Image* DC_image = cmd->image;
+					const tfb::DrawCommandCopyToImage* cmd = &DC.data.copytoimage;
+					tfb::Image* DC_image = cmd->image;
 					const GfxPoint dstPt = {0, 0};
 
 					if (DC_image == 0)
@@ -693,7 +693,7 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::Copy:
 				{
-					const TFB_DrawCommand_Copy* cmd = &DC.data.copy;
+					const tfb::DrawCommandCopy* cmd = &DC.data.copy;
 					const GfxRect r = cmd->rect;
 
 					if (cmd->destBuffer == ScreenBuffer::Main)
@@ -709,7 +709,7 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::DeleteImage:
 				{
-					TFB_Image* DC_image = DC.data.deleteimage.image;
+					tfb::Image* DC_image = DC.data.deleteimage.image;
 					TFB_DrawImage_Delete(DC_image);
 					break;
 				}
@@ -726,7 +726,7 @@ void TFB_FlushGraphics(void)
 
 			case DrawCommandType::ReinitVideo:
 				{
-					const TFB_DrawCommand_ReinitVideo* cmd = &DC.data.reinitvideo;
+					const tfb::DrawCommandReinitVideo* cmd = &DC.data.reinitvideo;
 					const uqm::GfxDriver oldDriver = GraphicsDriver;
 					const uqm::GfxFlags oldFlags = g_gfxFlags;
 					const int oldWidth = WindowWidth;
@@ -749,7 +749,7 @@ void TFB_FlushGraphics(void)
 							exit(EXIT_FAILURE);
 						}
 					}
-					TFB_SwapBuffers(uqm::TFBRedraw::Yes);
+					TFB_SwapBuffers(tfb::Redraw::Yes);
 					break;
 				}
 
@@ -771,7 +771,7 @@ void TFB_FlushGraphics(void)
 		RenderFPS(fps, renderFps);
 	}
 
-	TFB_SwapBuffers(uqm::TFBRedraw::No);
+	TFB_SwapBuffers(tfb::Redraw::No);
 	RenderedFrames++;
 	if (showFps)
 	{
@@ -785,7 +785,7 @@ void TFB_PurgeDanglingGraphics(void)
 
 	for (;;)
 	{
-		TFB_DrawCommand DC;
+		tfb::DrawCommand DC;
 
 		if (!TFB_DrawCommandQueue_Pop(&DC))
 		{
@@ -797,7 +797,7 @@ void TFB_PurgeDanglingGraphics(void)
 		{
 			case DrawCommandType::DeleteImage:
 				{
-					TFB_Image* DC_image = DC.data.deleteimage.image;
+					tfb::Image* DC_image = DC.data.deleteimage.image;
 					TFB_DrawImage_Delete(DC_image);
 					break;
 				}
@@ -808,7 +808,7 @@ void TFB_PurgeDanglingGraphics(void)
 				}
 			case DrawCommandType::Image:
 				{
-					TFB_ColorMap* cmap = DC.data.image.colormap;
+					tfb::ColorMap* cmap = DC.data.image.colormap;
 					if (cmap)
 					{
 						TFB_ReturnColorMap(cmap);

@@ -22,9 +22,12 @@
 
 void Scale_Init(void);
 
-typedef void (*TFB_ScaleFunc)(SDL_Surface* src, SDL_Surface* dst,
-							  SDL_Rect* r);
+namespace tfb
+{
+using ScaleFunc = void (*)(SDL_Surface* src, SDL_Surface* dst,
+						   SDL_Rect* r);
+} // namespace tfb
 
-TFB_ScaleFunc Scale_PrepPlatform(uqm::GfxFlags flags, const SDL_PixelFormatDetails* fmt);
+tfb::ScaleFunc Scale_PrepPlatform(uqm::GfxFlags flags, const SDL_PixelFormatDetails* fmt);
 
 #endif // UQM_LIBS_GRAPHICS_SDL_SCALERS_H

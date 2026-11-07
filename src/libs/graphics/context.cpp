@@ -140,7 +140,7 @@ bool DestroyContext(GFXCONTEXT ContextRef)
 	}
 #endif /* DEBUG */
 
-	TFB_Image* img {ContextRef->FontBacking};
+	tfb::Image* img {ContextRef->FontBacking};
 	if (img)
 	{
 		TFB_DrawImage_Delete(img);
@@ -340,7 +340,7 @@ void FixContextFontEffect(void)
 		return;
 	}
 
-	TFB_Image* img {_pCurContext->FontBacking};
+	tfb::Image* img {_pCurContext->FontBacking};
 	if (img)
 	{
 		TFB_DrawScreen_DeleteImage(img);
@@ -353,7 +353,7 @@ void FixContextFontEffect(void)
 
 		TFB_DrawImage_Image(EffectFrame->image,
 							-EffectFrame->HotSpot.x, -EffectFrame->HotSpot.y,
-							0, uqm::TFBScaleMode::None, nullptr, DrawReplaceMode, img);
+							0, tfb::ScaleMode::None, nullptr, DrawReplaceMode, img);
 	}
 	else
 	{ // solid color backing

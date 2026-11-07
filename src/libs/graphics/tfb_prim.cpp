@@ -18,7 +18,7 @@
 
 /* The original Primitive routines do various elaborate checks to
  * ensure we're within bounds for the clipping.  Since clipping is
- * handled by the underlying TFB_Canvas implementation, we need not
+ * handled by the underlying tfb::Canvas implementation, we need not
  * worry about this. */
 
 #include "gfxintrn.h"
@@ -134,7 +134,7 @@ void TFB_Prim_Stamp(GfxStamp* stmp, DrawMode mode, GfxPoint ctxOrigin, bool unsc
 {
 	int x {};
 	int y {};
-	TFB_ColorMap* cmap = nullptr;
+	tfb::ColorMap* cmap = nullptr;
 	int scaleMode {};
 
 	FRAME SrcFramePtr {stmp->frame};
@@ -145,7 +145,7 @@ void TFB_Prim_Stamp(GfxStamp* stmp, DrawMode mode, GfxPoint ctxOrigin, bool unsc
 					   (void*)stmp);
 		return;
 	}
-	TFB_Image* img {SrcFramePtr->image};
+	tfb::Image* img {SrcFramePtr->image};
 
 	if (!img)
 	{
@@ -203,7 +203,7 @@ void TFB_Prim_StampFill(GfxStamp* stmp, Color color, DrawMode mode, GfxPoint ctx
 					   (void*)stmp);
 		return;
 	}
-	TFB_Image* img {SrcFramePtr->image};
+	tfb::Image* img {SrcFramePtr->image};
 
 	if (!img)
 	{
@@ -241,7 +241,7 @@ void TFB_Prim_StampFill(GfxStamp* stmp, Color color, DrawMode mode, GfxPoint ctx
 	}
 }
 
-void TFB_Prim_FontChar(GfxPoint charOrigin, TFB_Char* fontChar, TFB_Image* backing,
+void TFB_Prim_FontChar(GfxPoint charOrigin, tfb::Char* fontChar, tfb::Image* backing,
 					   DrawMode mode, GfxPoint ctxOrigin)
 {
 	int x {};
@@ -267,7 +267,7 @@ void TFB_Prim_FontChar(GfxPoint charOrigin, TFB_Char* fontChar, TFB_Image* backi
 
 void TFB_Prim_MaskFrame(FRAME layer, FRAME base, DrawMode mode, Color* fill)
 {
-	TFB_Image* img {};
+	tfb::Image* img {};
 
 	if (!base)
 	{
@@ -289,7 +289,7 @@ void TFB_Prim_MaskFrame(FRAME layer, FRAME base, DrawMode mode, Color* fill)
 		}
 	}
 
-	TFB_Image* bas {base->image};
+	tfb::Image* bas {base->image};
 
 	if (!bas)
 	{

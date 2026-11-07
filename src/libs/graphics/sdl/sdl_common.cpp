@@ -59,7 +59,7 @@ static uqstl::atomic<bool> abortFlag {false};
 
 uqm::GfxFlags g_gfxFlags {uqm::GfxFlags::None};
 
-TFB_GraphicsBackend* graphics_backend = nullptr;
+tfb::GraphicsBackend* graphics_backend = nullptr;
 
 uqstl::atomic<int> QuitPosted {0};
 uqstl::atomic<int> GameActive {1}; // Track the SDL_ACTIVEEVENT state SDL_APPACTIVE
@@ -152,12 +152,12 @@ void TFB_ProcessEvents()
 				break;
 			case SDL_EVENT_WINDOW_EXPOSED:
 				/* Screen needs to be redrawn */
-				TFB_SwapBuffers(uqm::TFBRedraw::Expose);
+				TFB_SwapBuffers(tfb::Redraw::Expose);
 				break;
 			case SDL_EVENT_RENDER_TARGETS_RESET:
 			case SDL_EVENT_RENDER_DEVICE_RESET:
 				// The textures lost their contents, so upload all of the screen again.
-				TFB_SwapBuffers(uqm::TFBRedraw::Yes);
+				TFB_SwapBuffers(tfb::Redraw::Yes);
 				break;
 			default:
 				break;
@@ -182,7 +182,7 @@ void ClearSystemRect(void)
 	system_box_active = false;
 }
 
-void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
+void TFB_SwapBuffers(tfb::Redraw force_full_redraw)
 {
 	static int last_fade_amount = 255;
 	static int last_transition_amount = 255;
@@ -193,7 +193,7 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 	fade_amount = GetFadeAmount();
 	transition_amount = TransitionAmount;
 
-	if (force_full_redraw == uqm::TFBRedraw::No)
+	if (force_full_redraw == tfb::Redraw::No)
 	{
 		if (!TFB_BBox.valid && fade_amount == 255 && transition_amount == 255 && last_fade_amount == 255 && last_transition_amount == 255)
 		{
@@ -202,7 +202,7 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 
 		if (fade_amount != 255 || transition_amount != 255 || last_fade_amount != 255 || last_transition_amount != 255)
 		{
-			force_full_redraw = uqm::TFBRedraw::Fading;
+			force_full_redraw = tfb::Redraw::Fading;
 		}
 	}
 
@@ -296,13 +296,13 @@ SDL_Surface* TFB_DisplayFormatAlpha(SDL_Surface* surface)
 }
 
 // This function should only be called from the graphics thread,
-// like from a TFB_DrawCommand_Callback command.
-TFB_Canvas TFB_GetScreenCanvas(ScreenBuffer screen)
+// like from a tfb::DrawCommandCallback command.
+tfb::Canvas TFB_GetScreenCanvas(ScreenBuffer screen)
 {
 	return SDL_Screens[*screen];
 }
 
-TFB_Canvas TFB_GetFPSCanvas(void)
+tfb::Canvas TFB_GetFPSCanvas(void)
 {
 	return SDL_Screen_fps;
 }

@@ -35,14 +35,14 @@ static TimePeriod musicFadeInterval UQM_GUARDED_BY(fade_mutex);
 static int musicFadeStartVolume UQM_GUARDED_BY(fade_mutex);
 static int musicFadeDelta UQM_GUARDED_BY(fade_mutex);
 
-static void add_scope_data(TFB_SoundSource* source, uint32_t bytes) UQM_REQUIRES(source->stream_mutex);
+static void add_scope_data(tfb::SoundSource* source, uint32_t bytes) UQM_REQUIRES(source->stream_mutex);
 
 
-void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool scope,
+void PlayStream(tfb::SoundSample* sample, uint32_t source, bool looping, bool scope,
 				bool rewind)
 {
 	int32_t offset {};
-	TFB_SoundDecoder* decoder {};
+	tfb::SoundDecoder* decoder {};
 
 	if (!sample)
 	{
@@ -55,7 +55,7 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 		return; // callback failed
 	}
 
-	uqstl::ranges::fill(sample->buffer_tag, TFB_SoundTag {});
+	uqstl::ranges::fill(sample->buffer_tag, tfb::SoundTag {});
 
 	decoder = sample->decoder;
 	offset = sample->offset;
@@ -174,7 +174,7 @@ void ResumeStream(uint32_t source)
 
 void SeekStream(uint32_t source, uint32_t pos)
 {
-	TFB_SoundSample* sample = soundSource[source].sample;
+	tfb::SoundSample* sample = soundSource[source].sample;
 	bool looping {};
 
 	if (!sample)
@@ -191,7 +191,7 @@ void SeekStream(uint32_t source, uint32_t pos)
 
 uint32_t GetStreamFrame(uint32_t source)
 {
-	const TFB_SoundSample* sample = soundSource[source].sample;
+	const tfb::SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
@@ -203,7 +203,7 @@ uint32_t GetStreamFrame(uint32_t source)
 
 uint16_t GetNumTrackerPos(uint32_t source)
 {
-	const TFB_SoundSample* sample = soundSource[source].sample;
+	const tfb::SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
@@ -215,7 +215,7 @@ uint16_t GetNumTrackerPos(uint32_t source)
 
 bool IsTracker(uint32_t source)
 {
-	const TFB_SoundSample* sample = soundSource[source].sample;
+	const tfb::SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
@@ -229,7 +229,7 @@ bool IsTracker(uint32_t source)
 
 float GetStreamLength(uint32_t source)
 {
-	const TFB_SoundSample* sample = soundSource[source].sample;
+	const tfb::SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
@@ -241,7 +241,7 @@ float GetStreamLength(uint32_t source)
 
 uint32_t GetStreamTime(uint32_t source)
 {
-	const TFB_SoundSample* sample = soundSource[source].sample;
+	const tfb::SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
@@ -258,10 +258,10 @@ bool PlayingStream(uint32_t source)
 }
 
 
-TFB_SoundSample* TFB_CreateSoundSample(TFB_SoundDecoder* decoder, uint32_t num_buffers,
-									   const TFB_SoundCallbacks* pcbs /* can be nullptr */)
+tfb::SoundSample* TFB_CreateSoundSample(tfb::SoundDecoder* decoder, uint32_t num_buffers,
+										const tfb::SoundCallbacks* pcbs /* can be nullptr */)
 {
-	auto* sample {new TFB_SoundSample {}};
+	auto* sample {new tfb::SoundSample {}};
 	sample->decoder = decoder;
 	sample->num_buffers = num_buffers;
 	sample->buffer.assign(num_buffers, 0);
@@ -274,25 +274,25 @@ TFB_SoundSample* TFB_CreateSoundSample(TFB_SoundDecoder* decoder, uint32_t num_b
 	return sample;
 }
 
-// Deletes all TFB_SoundSample data structures, except decoder
-void TFB_DestroySoundSample(TFB_SoundSample* sample)
+// Deletes all tfb::SoundSample data structures, except decoder
+void TFB_DestroySoundSample(tfb::SoundSample* sample)
 {
 	audio_DeleteBuffers(sample->num_buffers, sample->buffer.data());
 	delete sample;
 }
 
-void TFB_SetSoundSampleData(TFB_SoundSample* sample, void* data)
+void TFB_SetSoundSampleData(tfb::SoundSample* sample, void* data)
 {
 	sample->data = data;
 }
 
-void* TFB_GetSoundSampleData(TFB_SoundSample* sample)
+void* TFB_GetSoundSampleData(tfb::SoundSample* sample)
 {
 	return sample->data;
 }
 
-void TFB_SetSoundSampleCallbacks(TFB_SoundSample* sample,
-								 const TFB_SoundCallbacks* pcbs /* can be nullptr */)
+void TFB_SetSoundSampleCallbacks(tfb::SoundSample* sample,
+								 const tfb::SoundCallbacks* pcbs /* can be nullptr */)
 {
 	if (pcbs)
 	{
@@ -304,12 +304,12 @@ void TFB_SetSoundSampleCallbacks(TFB_SoundSample* sample,
 	}
 }
 
-TFB_SoundDecoder* TFB_GetSoundSampleDecoder(TFB_SoundSample* sample)
+tfb::SoundDecoder* TFB_GetSoundSampleDecoder(tfb::SoundSample* sample)
 {
 	return sample->decoder;
 }
 
-TFB_SoundTag* TFB_FindTaggedBuffer(TFB_SoundSample* sample, audio_Object buffer)
+tfb::SoundTag* TFB_FindTaggedBuffer(tfb::SoundSample* sample, audio_Object buffer)
 {
 	uint32_t buf_num {};
 
@@ -328,13 +328,13 @@ TFB_SoundTag* TFB_FindTaggedBuffer(TFB_SoundSample* sample, audio_Object buffer)
 			 nullptr;
 }
 
-bool TFB_TagBuffer(TFB_SoundSample* sample, audio_Object buffer, intptr_t data)
+bool TFB_TagBuffer(tfb::SoundSample* sample, audio_Object buffer, intptr_t data)
 {
 	uint32_t buf_num {};
 
 	if (sample->buffer_tag.empty())
 	{
-		sample->buffer_tag.assign(sample->num_buffers, TFB_SoundTag {});
+		sample->buffer_tag.assign(sample->num_buffers, tfb::SoundTag {});
 	}
 
 	for (buf_num = 0;
@@ -354,13 +354,13 @@ bool TFB_TagBuffer(TFB_SoundSample* sample, audio_Object buffer, intptr_t data)
 	return true;
 }
 
-void TFB_ClearBufferTag(TFB_SoundTag* ptag)
+void TFB_ClearBufferTag(tfb::SoundTag* ptag)
 {
 	ptag->in_use = 0;
 	ptag->buf_name = 0;
 }
 
-static void remove_scope_data(TFB_SoundSource* source, audio_Object buffer) UQM_REQUIRES(source->stream_mutex)
+static void remove_scope_data(tfb::SoundSource* source, audio_Object buffer) UQM_REQUIRES(source->stream_mutex)
 {
 	audio_IntVal buf_size {};
 
@@ -372,7 +372,7 @@ static void remove_scope_data(TFB_SoundSource* source, audio_Object buffer) UQM_
 	source->sbuf_lasttime = GetTimeCounter();
 }
 
-static void add_scope_data(TFB_SoundSource* source, uint32_t bytes)
+static void add_scope_data(tfb::SoundSource* source, uint32_t bytes)
 {
 	uint8_t* sbuffer = source->sbuffer.data();
 	const uint8_t* dec_buf = (uint8_t*)source->sample->decoder->buffer;
@@ -412,10 +412,10 @@ static void add_scope_data(TFB_SoundSource* source, uint32_t bytes)
 	}
 }
 
-static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_mutex)
+static void process_stream(tfb::SoundSource* source) UQM_REQUIRES(source->stream_mutex)
 {
-	TFB_SoundSample* sample = source->sample;
-	TFB_SoundDecoder* decoder = sample->decoder;
+	tfb::SoundSample* sample = source->sample;
+	tfb::SoundDecoder* decoder = sample->decoder;
 	bool end_chunk_failed = false;
 	audio_IntVal processed {};
 	audio_IntVal queued {};
@@ -474,7 +474,7 @@ static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_
 		// Process a callback on a tagged buffer, if any
 		if (sample->callbacks.OnTaggedBuffer)
 		{
-			TFB_SoundTag* tag = TFB_FindTaggedBuffer(sample, buffer);
+			tfb::SoundTag* tag = TFB_FindTaggedBuffer(sample, buffer);
 			if (tag)
 			{
 				sample->callbacks.OnTaggedBuffer(sample, tag);
@@ -610,7 +610,7 @@ static void StreamDecoderTaskFunc(uqstl::stop_token stopToken)
 
 		for (i = MusicSource; i < NumSoundsources; ++i)
 		{
-			TFB_SoundSource* source = &soundSource[i];
+			tfb::SoundSource* source = &soundSource[i];
 
 			source->stream_mutex.lock();
 
@@ -657,7 +657,7 @@ static inline int32_t readSoundSample(void* ptr, int sample_size)
 int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 						  bool wantSpeech)
 {
-	TFB_SoundDecoder* decoder {};
+	tfb::SoundDecoder* decoder {};
 	int channels {};
 	int sample_size {};
 	int step {};
@@ -696,7 +696,7 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 
 	// Prefer speech to music
 	int source_num {SpeechSource};
-	TFB_SoundSource* source {&soundSource[source_num]};
+	tfb::SoundSource* source {&soundSource[source_num]};
 	source->stream_mutex.lock();
 	if (wantSpeech && (!source->sample || !source->sample->decoder || !source->sample->decoder->is_null))
 	{ // Use speech waveform, since it's available

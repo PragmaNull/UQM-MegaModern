@@ -31,7 +31,7 @@ const static SoundPosition notPositional = {false, 0, 0};
 void PlayChannel(uint16_t channel, SOUND snd, SoundPosition pos,
 				 void* positional_object, unsigned char priority)
 {
-	TFB_SoundSample* const sample {snd};
+	tfb::SoundSample* const sample {snd};
 
 	StopSource(channel);
 	// all finished (stopped) channels can be cleaned up at this point
@@ -147,7 +147,7 @@ static constexpr int32_t c_missingSoundMs {100};
 
 void* _GetSoundBankData(const ResourceFile& resource)
 {
-	uqstl::vector<TFB_SoundSample*> samples {};
+	uqstl::vector<tfb::SoundSample*> samples {};
 
 	const auto text {readResourceText(resource)};
 	const auto sounds {text ? uqm::soundBankFromJson(*text) : uqstl::nullopt};
@@ -165,7 +165,7 @@ void* _GetSoundBankData(const ResourceFile& resource)
 		uqm::log::debug("_GetSoundBankData(): loading {}", filename);
 
 		// A missing sound gets a silent decoder.
-		TFB_SoundDecoder* const decoder {SoundDecoder_Load(uqm::contentDir(), filename.data(), 4096, 0, -c_missingSoundMs)};
+		tfb::SoundDecoder* const decoder {SoundDecoder_Load(uqm::contentDir(), filename.data(), 4096, 0, -c_missingSoundMs)};
 		if (!decoder)
 		{
 			uqm::log::warn("_GetSoundBankData(): couldn't load {}", filename);
@@ -177,7 +177,7 @@ void* _GetSoundBankData(const ResourceFile& resource)
 		}
 
 		// SFX samples don't have decoders, everything is pre-decoded below
-		TFB_SoundSample* const sample {TFB_CreateSoundSample(nullptr, 1, nullptr)};
+		tfb::SoundSample* const sample {TFB_CreateSoundSample(nullptr, 1, nullptr)};
 
 		// Decode everything and stash it in 1 buffer
 		const uint32_t decoded_bytes {SoundDecoder_DecodeAll(decoder)};
@@ -213,14 +213,14 @@ bool _ReleaseSoundBankData(void* Snd)
 namespace uqm
 {
 
-SoundBank::SoundBank(uqstl::vector<TFB_SoundSample*> samples)
+SoundBank::SoundBank(uqstl::vector<tfb::SoundSample*> samples)
 	: m_samples {uqstl::move(samples)}
 {
 }
 
 SoundBank::~SoundBank()
 {
-	for (TFB_SoundSample* const sample : m_samples)
+	for (tfb::SoundSample* const sample : m_samples)
 	{
 		// Check all sources and see if we are currently playing this sample
 		for (int i {0}; i < NumSoundsources; ++i)
@@ -241,7 +241,7 @@ SoundBank::~SoundBank()
 	}
 }
 
-TFB_SoundSample* SoundBank::sample(size_t index) const
+tfb::SoundSample* SoundBank::sample(size_t index) const
 {
 	return m_samples.empty() ? nullptr : m_samples[index % m_samples.size()];
 }

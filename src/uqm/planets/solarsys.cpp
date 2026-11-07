@@ -1864,7 +1864,7 @@ static void DrawTexturedBody(SystemPlanet* planet, GfxStamp s)
 	const uint16_t size = PBodySize[planet->size];
 
 	BatchGraphics();
-	const uqm::TFBScaleMode oldMode = SetGraphicScaleMode(uqm::TFBScaleMode::Bilinear);
+	const tfb::ScaleMode oldMode = SetGraphicScaleMode(tfb::ScaleMode::Bilinear);
 
 	if (worldIsMoon(pSolarSysState, planet))
 	{

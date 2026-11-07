@@ -35,7 +35,7 @@
 #include <fmt/format.h>
 
 
-static void process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int cel_ct)
+static void process_image(FRAME FramePtr, tfb::Canvas img[], const uqm::AniFrame* ani, int cel_ct)
 {
 	FramePtr->Type = RomDrawable;
 	FramePtr->Index = cel_ct;
@@ -67,7 +67,7 @@ static void process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame*
 
 	FramePtr->image = TFB_DrawImage_New(img[cel_ct]);
 
-	TFB_Image* tfbimg {FramePtr->image};
+	tfb::Image* tfbimg {FramePtr->image};
 	tfbimg->colormap_index = ani[cel_ct].colormapIndex;
 	img[cel_ct] = tfbimg->NormalImg;
 
@@ -99,7 +99,7 @@ static void process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame*
 #endif
 }
 
-static void processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
+static void processFontChar(tfb::Char* CharPtr, tfb::Canvas canvas, FONT fontPtr)
 {
 	size_t dpitch {};
 
@@ -157,7 +157,7 @@ void* _GetCelData(const ResourceFile& resource)
 
 	const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
 	const auto count {static_cast<int>(frames->size())};
-	uqstl::vector<TFB_Canvas> img(frames->size());
+	uqstl::vector<tfb::Canvas> img(frames->size());
 	for (int i {0}; i < count; ++i)
 	{
 		const uqstl::string path {uqm::io::path::join(parent, (*frames)[i].image)};
@@ -198,7 +198,7 @@ bool _ReleaseCelData(void* handle)
 
 	for (FrameDesc& frame : DrawablePtr->Frame)
 	{
-		if (TFB_Image * img {frame.image})
+		if (tfb::Image * img {frame.image})
 		{
 			frame.image = nullptr;
 			TFB_DrawScreen_DeleteImage(img);
@@ -211,7 +211,7 @@ bool _ReleaseCelData(void* handle)
 
 struct BuildCharDesc
 {
-	TFB_Canvas canvas;
+	tfb::Canvas canvas;
 	uqm::UniChar index;
 };
 
@@ -279,7 +279,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 			continue;
 		}
 
-		TFB_Canvas canvas {TFB_DrawCanvas_LoadFromFile(*fontDirHandle, char_name)};
+		tfb::Canvas canvas {TFB_DrawCanvas_LoadFromFile(*fontDirHandle, char_name)};
 		if (canvas == nullptr)
 		{
 			continue;
@@ -368,7 +368,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 				{
 					// Process one character.
 					BuildCharDesc* bcd = &bcds[bcdI];
-					TFB_Char* destChar =
+					tfb::Char* destChar =
 						&page->charDesc[bcd->index - page->firstChar];
 
 					if (destChar->data != nullptr)
@@ -438,7 +438,7 @@ bool _ReleaseFontData(void* handle)
 		{
 			for (size_t charI {0}; charI < page->numChars; charI++)
 			{
-				const TFB_Char* c = &page->charDesc[charI];
+				const tfb::Char* c = &page->charDesc[charI];
 
 				if (c->data == nullptr)
 				{

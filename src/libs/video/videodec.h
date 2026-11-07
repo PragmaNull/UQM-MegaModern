@@ -25,52 +25,55 @@
 #include "core/stl/string.h"
 
 // forward-declare
-typedef struct tfb_videodecoder TFB_VideoDecoder;
+namespace tfb
+{
+struct VideoDecoder;
 
-
-struct TFB_VideoDecoderFuncs
+struct VideoDecoderFuncs
 {
 	const char* (*GetName)(void);
 	bool (*InitModule)(int flags);
 	void (*TermModule)(void);
-	// Make and delete the decoder struct, which starts with a TFB_VideoDecoder.
-	TFB_VideoDecoder* (*Create)(void);
-	void (*Destroy)(TFB_VideoDecoder*);
-	int (*GetError)(TFB_VideoDecoder*);
-	bool (*Init)(TFB_VideoDecoder*, TFB_PixelFormat* fmt);
-	void (*Term)(TFB_VideoDecoder*);
-	bool (*Open)(TFB_VideoDecoder*, const uqm::io::Directory& dir, const char* filename);
-	void (*Close)(TFB_VideoDecoder*);
-	int (*DecodeNext)(TFB_VideoDecoder*);
-	uint32_t (*SeekFrame)(TFB_VideoDecoder*, uint32_t frame);
-	float (*SeekTime)(TFB_VideoDecoder*, float time);
-	uint32_t (*GetFrame)(TFB_VideoDecoder*);
-	float (*GetTime)(TFB_VideoDecoder*);
+	// Make and delete the decoder struct, which starts with a VideoDecoder.
+	VideoDecoder* (*Create)(void);
+	void (*Destroy)(VideoDecoder*);
+	int (*GetError)(VideoDecoder*);
+	bool (*Init)(VideoDecoder*, PixelFormat* fmt);
+	void (*Term)(VideoDecoder*);
+	bool (*Open)(VideoDecoder*, const uqm::io::Directory& dir, const char* filename);
+	void (*Close)(VideoDecoder*);
+	int (*DecodeNext)(VideoDecoder*);
+	uint32_t (*SeekFrame)(VideoDecoder*, uint32_t frame);
+	float (*SeekTime)(VideoDecoder*, float time);
+	uint32_t (*GetFrame)(VideoDecoder*);
+	float (*GetTime)(VideoDecoder*);
 };
+} // namespace tfb
 
 // decoder will call these to get info
 // from the player
-struct TFB_VideoCallbacks
+namespace tfb
+{
+struct VideoCallbacks
 {
 	// any decoder calls these
-	void (*BeginFrame)(TFB_VideoDecoder*);
-	void (*EndFrame)(TFB_VideoDecoder*);
-	void* (*GetCanvasLine)(TFB_VideoDecoder*, uint32_t line);
+	void (*BeginFrame)(VideoDecoder*);
+	void (*EndFrame)(VideoDecoder*);
+	void* (*GetCanvasLine)(VideoDecoder*, uint32_t line);
 	// non-audio-driven decoders call this to figure out
 	// when the next frame should be drawn
-	uint32_t (*GetTicks)(TFB_VideoDecoder*);
+	uint32_t (*GetTicks)(VideoDecoder*);
 	// non-audio-driven decoders call this to inform
 	// the player when the next frame should be drawn
-	bool (*SetTimer)(TFB_VideoDecoder*, uint32_t msecs);
+	bool (*SetTimer)(VideoDecoder*, uint32_t msecs);
 };
 
-
-struct tfb_videodecoder
+struct VideoDecoder
 {
 	// decoder virtual funcs - R/O
-	const TFB_VideoDecoderFuncs* funcs;
+	const VideoDecoderFuncs* funcs;
 	// video formats - R/O
-	const TFB_PixelFormat* format;
+	const PixelFormat* format;
 	// decoder-set data - R/O
 	uint32_t w, h;
 	float length; // total length in seconds
@@ -78,7 +81,7 @@ struct tfb_videodecoder
 	uint32_t interframe_wait; // nominal interframe delay in msecs
 	bool audio_synced;
 	// decoder callbacks
-	TFB_VideoCallbacks callbacks;
+	VideoCallbacks callbacks;
 
 	// other - public
 	bool looping;
@@ -91,6 +94,7 @@ struct tfb_videodecoder
 	// semi-private
 	uqstl::string filename;
 };
+} // namespace tfb
 
 // return values
 enum class VideoDecoderStatus
@@ -102,24 +106,27 @@ enum class VideoDecoderStatus
 template <>
 inline constexpr bool IsArithmeticEnum<VideoDecoderStatus> = true;
 
-typedef struct TFB_RegVideoDecoder TFB_RegVideoDecoder;
+namespace tfb
+{
+struct RegVideoDecoder;
+} // namespace tfb
 
-TFB_RegVideoDecoder* VideoDecoder_Register(const char* fileext,
-										   TFB_VideoDecoderFuncs* decvtbl);
-void VideoDecoder_Unregister(TFB_RegVideoDecoder* regdec);
-const TFB_VideoDecoderFuncs* VideoDecoder_Lookup(const char* fileext);
+tfb::RegVideoDecoder* VideoDecoder_Register(const char* fileext,
+											tfb::VideoDecoderFuncs* decvtbl);
+void VideoDecoder_Unregister(tfb::RegVideoDecoder* regdec);
+const tfb::VideoDecoderFuncs* VideoDecoder_Lookup(const char* fileext);
 
 bool VideoDecoder_Init(int flags, int depth, uint32_t Rmask, uint32_t Gmask,
 					   uint32_t Bmask, uint32_t Amask);
 void VideoDecoder_Uninit(void);
-TFB_VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir,
-									const char* filename);
-int VideoDecoder_Decode(TFB_VideoDecoder* decoder);
-float VideoDecoder_Seek(TFB_VideoDecoder* decoder, float time_pos);
-uint32_t VideoDecoder_SeekFrame(TFB_VideoDecoder* decoder, uint32_t frame_pos);
-void VideoDecoder_Rewind(TFB_VideoDecoder* decoder);
-void VideoDecoder_Free(TFB_VideoDecoder* decoder);
-const char* VideoDecoder_GetName(TFB_VideoDecoder* decoder);
+tfb::VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir,
+									 const char* filename);
+int VideoDecoder_Decode(tfb::VideoDecoder* decoder);
+float VideoDecoder_Seek(tfb::VideoDecoder* decoder, float time_pos);
+uint32_t VideoDecoder_SeekFrame(tfb::VideoDecoder* decoder, uint32_t frame_pos);
+void VideoDecoder_Rewind(tfb::VideoDecoder* decoder);
+void VideoDecoder_Free(tfb::VideoDecoder* decoder);
+const char* VideoDecoder_GetName(tfb::VideoDecoder* decoder);
 
 
 #endif // UQM_LIBS_VIDEO_VIDEODEC_H

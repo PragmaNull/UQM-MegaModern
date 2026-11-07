@@ -33,20 +33,20 @@
 
 
 const static char* moda_GetName(void);
-static bool moda_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
+static bool moda_InitModule(AudioFlags flags, const tfb::DecoderFormats*);
 static void moda_TermModule(void);
-static TFB_SoundDecoder* moda_Create(void);
-static void moda_Destroy(TFB_SoundDecoder* decoder);
-static int moda_GetError(TFB_SoundDecoder* This);
-static bool moda_Init(TFB_SoundDecoder* This);
-static void moda_Term(TFB_SoundDecoder* This);
-static bool moda_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
-static void moda_Close(TFB_SoundDecoder* This);
-static int moda_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize);
-static uint32_t moda_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos);
-static uint32_t moda_GetFrame(TFB_SoundDecoder* This);
+static tfb::SoundDecoder* moda_Create(void);
+static void moda_Destroy(tfb::SoundDecoder* decoder);
+static int moda_GetError(tfb::SoundDecoder* This);
+static bool moda_Init(tfb::SoundDecoder* This);
+static void moda_Term(tfb::SoundDecoder* This);
+static bool moda_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
+static void moda_Close(tfb::SoundDecoder* This);
+static int moda_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize);
+static uint32_t moda_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos);
+static uint32_t moda_GetFrame(tfb::SoundDecoder* This);
 
-TFB_SoundDecoderFuncs moda_DecoderVtbl =
+tfb::SoundDecoderFuncs moda_DecoderVtbl =
 	{
 		moda_GetName,
 		moda_InitModule,
@@ -63,15 +63,18 @@ TFB_SoundDecoderFuncs moda_DecoderVtbl =
 		moda_GetFrame,
 };
 
-struct TFB_ModSoundDecoder
+namespace tfb
+{
+struct ModSoundDecoder
 {
 	// always the first member
-	TFB_SoundDecoder decoder;
+	SoundDecoder decoder;
 
 	// private
 	int32_t last_error;
 	MODULE* module;
 };
+} // namespace tfb
 
 
 // MikMod Output driver
@@ -167,7 +170,7 @@ static MDRIVER moda_mmout_drv =
 		VC_VoiceRealVolume};
 
 
-const static TFB_DecoderFormats* moda_formats = nullptr;
+const static tfb::DecoderFormats* moda_formats = nullptr;
 
 // MikMod READER interface
 //  we provide our own so that we can do loading via libs/io
@@ -228,7 +231,7 @@ const static char* moda_GetName(void)
 	return "MikMod";
 }
 
-static bool moda_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
+static bool moda_InitModule(AudioFlags flags, const tfb::DecoderFormats* fmts)
 {
 	MikMod_RegisterDriver(&moda_mmout_drv);
 	MikMod_RegisterAllLoaders();
@@ -275,41 +278,41 @@ static void moda_TermModule(void)
 	MikMod_Exit();
 }
 
-static TFB_SoundDecoder* moda_Create(void)
+static tfb::SoundDecoder* moda_Create(void)
 {
-	return &(new TFB_ModSoundDecoder {})->decoder;
+	return &(new tfb::ModSoundDecoder {})->decoder;
 }
 
-static void moda_Destroy(TFB_SoundDecoder* decoder)
+static void moda_Destroy(tfb::SoundDecoder* decoder)
 {
-	delete reinterpret_cast<TFB_ModSoundDecoder*>(decoder);
+	delete reinterpret_cast<tfb::ModSoundDecoder*>(decoder);
 }
 
-static int moda_GetError(TFB_SoundDecoder* This)
+static int moda_GetError(tfb::SoundDecoder* This)
 {
-	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
+	tfb::ModSoundDecoder* moda = (tfb::ModSoundDecoder*)This;
 	const int ret = moda->last_error;
 	moda->last_error = 0;
 	return ret;
 }
 
-static bool moda_Init(TFB_SoundDecoder* This)
+static bool moda_Init(tfb::SoundDecoder* This)
 {
-	//TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*) This;
+	//tfb::ModSoundDecoder* moda = (tfb::ModSoundDecoder*) This;
 	This->need_swap =
 		moda_formats->big_endian != moda_formats->want_big_endian;
 	return true;
 }
 
-static void moda_Term(TFB_SoundDecoder* This)
+static void moda_Term(tfb::SoundDecoder* This)
 {
-	//TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*) This;
+	//tfb::ModSoundDecoder* moda = (tfb::ModSoundDecoder*) This;
 	moda_Close(This); // ensure cleanup
 }
 
-static bool moda_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
+static bool moda_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
-	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
+	tfb::ModSoundDecoder* moda = (tfb::ModSoundDecoder*)This;
 
 	uqgsl::owner<uqm::io::File*> fp {res_NewResFile(dir, filename)};
 	if (!fp)
@@ -354,9 +357,9 @@ static bool moda_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, con
 	return true;
 }
 
-static void moda_Close(TFB_SoundDecoder* This)
+static void moda_Close(tfb::SoundDecoder* This)
 {
-	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
+	tfb::ModSoundDecoder* moda = (tfb::ModSoundDecoder*)This;
 
 	if (moda->module)
 	{
@@ -365,9 +368,9 @@ static void moda_Close(TFB_SoundDecoder* This)
 	}
 }
 
-static int moda_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
+static int moda_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
 {
-	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
+	const tfb::ModSoundDecoder* moda = (tfb::ModSoundDecoder*)This;
 	const volatile ULONG* poutsize {};
 
 	Player_Start(moda->module);
@@ -382,9 +385,9 @@ static int moda_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 	return *poutsize;
 }
 
-static uint32_t moda_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
+static uint32_t moda_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos)
 {
-	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
+	const tfb::ModSoundDecoder* moda = (tfb::ModSoundDecoder*)This;
 
 	Player_Start(moda->module);
 	Player_SetPosition(pcm_pos);
@@ -392,8 +395,8 @@ static uint32_t moda_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 	return 0;
 }
 
-static uint32_t moda_GetFrame(TFB_SoundDecoder* This)
+static uint32_t moda_GetFrame(tfb::SoundDecoder* This)
 {
-	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
+	const tfb::ModSoundDecoder* moda = (tfb::ModSoundDecoder*)This;
 	return moda->module->sngpos;
 }

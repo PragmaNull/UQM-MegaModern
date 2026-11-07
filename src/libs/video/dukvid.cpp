@@ -31,20 +31,20 @@
 const static char* dukv_GetName(void);
 static bool dukv_InitModule(int flags);
 static void dukv_TermModule(void);
-static TFB_VideoDecoder* dukv_Create(void);
-static void dukv_Destroy(TFB_VideoDecoder* decoder);
-static int dukv_GetError(TFB_VideoDecoder* This);
-static bool dukv_Init(TFB_VideoDecoder* This, TFB_PixelFormat* fmt);
-static void dukv_Term(TFB_VideoDecoder* This);
-static bool dukv_Open(TFB_VideoDecoder* This, const uqm::io::Directory& dir, const char* filename);
-static void dukv_Close(TFB_VideoDecoder* This);
-static int dukv_DecodeNext(TFB_VideoDecoder* This);
-static uint32_t dukv_SeekFrame(TFB_VideoDecoder* This, uint32_t frame);
-static float dukv_SeekTime(TFB_VideoDecoder* This, float time);
-static uint32_t dukv_GetFrame(TFB_VideoDecoder* This);
-static float dukv_GetTime(TFB_VideoDecoder* This);
+static tfb::VideoDecoder* dukv_Create(void);
+static void dukv_Destroy(tfb::VideoDecoder* decoder);
+static int dukv_GetError(tfb::VideoDecoder* This);
+static bool dukv_Init(tfb::VideoDecoder* This, tfb::PixelFormat* fmt);
+static void dukv_Term(tfb::VideoDecoder* This);
+static bool dukv_Open(tfb::VideoDecoder* This, const uqm::io::Directory& dir, const char* filename);
+static void dukv_Close(tfb::VideoDecoder* This);
+static int dukv_DecodeNext(tfb::VideoDecoder* This);
+static uint32_t dukv_SeekFrame(tfb::VideoDecoder* This, uint32_t frame);
+static float dukv_SeekTime(tfb::VideoDecoder* This, float time);
+static uint32_t dukv_GetFrame(tfb::VideoDecoder* This);
+static float dukv_GetTime(tfb::VideoDecoder* This);
 
-TFB_VideoDecoderFuncs dukv_DecoderVtbl =
+tfb::VideoDecoderFuncs dukv_DecoderVtbl =
 	{
 		dukv_GetName,
 		dukv_InitModule,
@@ -63,7 +63,9 @@ TFB_VideoDecoderFuncs dukv_DecoderVtbl =
 		dukv_GetTime,
 };
 
-struct TFB_DuckVideoHeader
+namespace tfb
+{
+struct DuckVideoHeader
 {
 	uint32_t version;
 	uint32_t scrn_x_ofs; // horz screen offset in pixels
@@ -72,22 +74,28 @@ struct TFB_DuckVideoHeader
 	int16_t lumas[8];	 // future luminance deltas
 	int16_t chromas[8];	 // future chrominance deltas
 };
+} // namespace tfb
 
 static constexpr auto NumVecItems {0x010};
 static constexpr auto NumVectors {0x100};
 
-struct TFB_DuckVideoDeltas
+namespace tfb
+{
+struct DuckVideoDeltas
 {
 	int32_t lumas[NumVectors][NumVecItems];
 	int32_t chromas[NumVectors][NumVecItems];
 };
+} // namespace tfb
 
-// specific video decoder struct derived from TFB_VideoDecoder
+// specific video decoder struct derived from tfb::VideoDecoder
 // the only sane way in C one can :)
-struct TFB_DuckVideoDecoder
+namespace tfb
+{
+struct DuckVideoDecoder
 {
 	// always the first member
-	TFB_VideoDecoder decoder;
+	VideoDecoder decoder;
 
 	int32_t last_error;
 	uqstl::string basename;
@@ -101,18 +109,19 @@ struct TFB_DuckVideoDecoder
 	uint32_t wb, hb; // width, height in blocks
 
 	// generated
-	TFB_DuckVideoDeltas d;
+	DuckVideoDeltas d;
 
 	uqstl::vector<uint8_t> inbuf;
 	uqstl::vector<uint32_t> decbuf;
 };
+} // namespace tfb
 
 static constexpr auto DuckGeneralFps {14.622f};
 static constexpr auto DuckMaxFrameSize {0x8000U};
 static constexpr auto DuckEndOfSequence {1};
 
 static void dukv_DecodeFrame(uint8_t* src_p, uint32_t* dst_p, uint32_t wb, uint32_t hb,
-							 TFB_DuckVideoDeltas* deltas)
+							 tfb::DuckVideoDeltas* deltas)
 {
 	uint32_t x {};
 	int32_t w {};
@@ -209,7 +218,7 @@ static void dukv_DecodeFrame(uint8_t* src_p, uint32_t* dst_p, uint32_t wb, uint3
 }
 
 static void dukv_DecodeFrameV3(uint8_t* src_p, uint32_t* dst_p, uint32_t wb, uint32_t hb,
-							   TFB_DuckVideoDeltas* deltas)
+							   tfb::DuckVideoDeltas* deltas)
 {
 	uint32_t x {};
 	int32_t w {};
@@ -275,7 +284,7 @@ static void dukv_DecodeFrameV3(uint8_t* src_p, uint32_t* dst_p, uint32_t wb, uin
 	}
 }
 
-static bool dukv_OpenStream(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
+static bool dukv_OpenStream(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
 {
 	char filename[280] {};
 	fmt::format_to_sz_n(filename, "{}.duk", dukv->basename);
@@ -284,7 +293,7 @@ static bool dukv_OpenStream(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory
 	return dukv->stream != nullptr;
 }
 
-static bool dukv_ReadFrames(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
+static bool dukv_ReadFrames(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
 {
 	char filename[280] {};
 	uqstl::optional<uqm::io::File> fp {};
@@ -315,7 +324,7 @@ static bool dukv_ReadFrames(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory
 	return true;
 }
 
-static bool dukv_ReadVectors(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir, uint8_t* vectors)
+static bool dukv_ReadVectors(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir, uint8_t* vectors)
 {
 	uqstl::optional<uqm::io::File> fp {};
 	char filename[280] {};
@@ -333,11 +342,11 @@ static bool dukv_ReadVectors(TFB_DuckVideoDecoder* dukv, const uqm::io::Director
 	return ret == NumVectors;
 }
 
-static bool dukv_ReadHeader(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir, int32_t* pl, int32_t* pc)
+static bool dukv_ReadHeader(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir, int32_t* pl, int32_t* pc)
 {
 	uqstl::optional<uqm::io::File> fp {};
 	char filename[280] {};
-	TFB_DuckVideoHeader hdr;
+	tfb::DuckVideoHeader hdr;
 
 	fmt::format_to_sz_n(filename, "{}.hdr", dukv->basename);
 
@@ -423,7 +432,7 @@ static void dukv_DecodeVector(uint8_t* vec, int32_t* p, bool is_chroma, int32_t*
 	}
 }
 
-static void dukv_InitDeltas(TFB_DuckVideoDecoder* dukv, uint8_t* vectors,
+static void dukv_InitDeltas(tfb::DuckVideoDecoder* dukv, uint8_t* vectors,
 							int32_t* pl, int32_t* pc)
 {
 	for (int i {0}; i < NumVectors; ++i)
@@ -434,7 +443,7 @@ static void dukv_InitDeltas(TFB_DuckVideoDecoder* dukv, uint8_t* vectors,
 	}
 }
 
-static inline uint32_t dukv_PixelConv(uint16_t pix, const TFB_PixelFormat* fmt)
+static inline uint32_t dukv_PixelConv(uint16_t pix, const tfb::PixelFormat* fmt)
 {
 	uint32_t r {};
 	uint32_t g {};
@@ -447,10 +456,10 @@ static inline uint32_t dukv_PixelConv(uint16_t pix, const TFB_PixelFormat* fmt)
 	return ((r >> fmt->Rloss) << fmt->Rshift) | ((g >> fmt->Gloss) << fmt->Gshift) | ((b >> fmt->Bloss) << fmt->Bshift);
 }
 
-static void dukv_RenderFrame(TFB_VideoDecoder* This)
+static void dukv_RenderFrame(tfb::VideoDecoder* This)
 {
-	TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
-	const TFB_PixelFormat* fmt = This->format;
+	tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*)This;
+	const tfb::PixelFormat* fmt = This->format;
 	uint32_t h {};
 	uint32_t x {};
 	uint32_t y {};
@@ -591,38 +600,38 @@ static void dukv_TermModule(void)
 	// do an extensive search on the word 'nothing'
 }
 
-static TFB_VideoDecoder* dukv_Create(void)
+static tfb::VideoDecoder* dukv_Create(void)
 {
-	return &(new TFB_DuckVideoDecoder {})->decoder;
+	return &(new tfb::DuckVideoDecoder {})->decoder;
 }
 
-static void dukv_Destroy(TFB_VideoDecoder* decoder)
+static void dukv_Destroy(tfb::VideoDecoder* decoder)
 {
-	delete reinterpret_cast<TFB_DuckVideoDecoder*>(decoder);
+	delete reinterpret_cast<tfb::DuckVideoDecoder*>(decoder);
 }
 
-static int dukv_GetError(TFB_VideoDecoder* This)
+static int dukv_GetError(tfb::VideoDecoder* This)
 {
 	return This->error;
 }
 
-static bool dukv_Init(TFB_VideoDecoder* This, TFB_PixelFormat* fmt)
+static bool dukv_Init(tfb::VideoDecoder* This, tfb::PixelFormat* fmt)
 {
 	This->format = fmt;
 	This->audio_synced = true;
 	return true;
 }
 
-static void dukv_Term(TFB_VideoDecoder* This)
+static void dukv_Term(tfb::VideoDecoder* This)
 {
-	//TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*) This;
+	//tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*) This;
 
 	dukv_Close(This);
 }
 
-static bool dukv_Open(TFB_VideoDecoder* This, const uqm::io::Directory& dir, const char* filename)
+static bool dukv_Open(tfb::VideoDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
-	TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
+	tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*)This;
 	int32_t lumas[8];
 	int32_t chromas[8];
 	uqstl::vector<uint8_t> vectors(NumVecItems * NumVectors);
@@ -656,9 +665,9 @@ static bool dukv_Open(TFB_VideoDecoder* This, const uqm::io::Directory& dir, con
 	return true;
 }
 
-static void dukv_Close(TFB_VideoDecoder* This)
+static void dukv_Close(tfb::VideoDecoder* This)
 {
-	TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
+	tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*)This;
 
 	dukv->basename.clear();
 	dukv->frames = {};
@@ -668,9 +677,9 @@ static void dukv_Close(TFB_VideoDecoder* This)
 	dukv->decbuf = {};
 }
 
-static int dukv_DecodeNext(TFB_VideoDecoder* This)
+static int dukv_DecodeNext(tfb::VideoDecoder* This)
 {
-	TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
+	tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*)This;
 	uint32_t fh[2];
 
 	if (!dukv->stream || dukv->iframe >= dukv->cframes)
@@ -726,9 +735,9 @@ static int dukv_DecodeNext(TFB_VideoDecoder* This)
 	return 1;
 }
 
-static uint32_t dukv_SeekFrame(TFB_VideoDecoder* This, uint32_t frame)
+static uint32_t dukv_SeekFrame(tfb::VideoDecoder* This, uint32_t frame)
 {
-	TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
+	tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*)This;
 
 	if (frame > dukv->cframes)
 	{
@@ -738,25 +747,25 @@ static uint32_t dukv_SeekFrame(TFB_VideoDecoder* This, uint32_t frame)
 	return dukv->iframe = frame;
 }
 
-static float dukv_SeekTime(TFB_VideoDecoder* This, float time)
+static float dukv_SeekTime(tfb::VideoDecoder* This, float time)
 {
-	//TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*) This;
+	//tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*) This;
 	const uint32_t frame = (uint32_t)(time * DuckGeneralFps);
 
 	// Note that DuckGeneralFps is a float constant
 	return dukv_SeekFrame(This, frame) / DuckGeneralFps;
 }
 
-static uint32_t dukv_GetFrame(TFB_VideoDecoder* This)
+static uint32_t dukv_GetFrame(tfb::VideoDecoder* This)
 {
-	const TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
+	const tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*)This;
 
 	return dukv->iframe;
 }
 
-static float dukv_GetTime(TFB_VideoDecoder* This)
+static float dukv_GetTime(tfb::VideoDecoder* This)
 {
-	const TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
+	const tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*)This;
 
 	return (float)dukv->iframe / DuckGeneralFps;
 }

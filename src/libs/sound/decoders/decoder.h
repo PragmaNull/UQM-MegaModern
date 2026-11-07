@@ -37,7 +37,9 @@
 #endif /* _MSC_VER */
 #endif /* OVCODEC_NONE */
 
-struct TFB_DecoderFormats
+namespace tfb
+{
+struct DecoderFormats
 {
 	bool big_endian;
 	bool want_big_endian;
@@ -46,6 +48,7 @@ struct TFB_DecoderFormats
 	uint32_t mono16;
 	uint32_t stereo16;
 };
+} // namespace tfb
 
 enum class AudioFileType
 {
@@ -60,34 +63,34 @@ template <>
 inline constexpr bool IsArithmeticEnum<AudioFileType> = true;
 
 // forward-declare
-typedef struct tfb_sounddecoder TFB_SoundDecoder;
+namespace tfb
+{
+struct SoundDecoder;
 
-
-struct TFB_SoundDecoderFuncs
+struct SoundDecoderFuncs
 {
 	const char* (*GetName)(void);
-	bool (*InitModule)(AudioFlags flags, const TFB_DecoderFormats*);
+	bool (*InitModule)(AudioFlags flags, const DecoderFormats*);
 	void (*TermModule)(void);
-	// Make and delete the decoder struct, which starts with a TFB_SoundDecoder.
-	TFB_SoundDecoder* (*Create)(void);
-	void (*Destroy)(TFB_SoundDecoder*);
-	int (*GetError)(TFB_SoundDecoder*);
-	bool (*Init)(TFB_SoundDecoder*);
-	void (*Term)(TFB_SoundDecoder*);
-	bool (*Open)(TFB_SoundDecoder*, const uqm::io::Directory& dir, const char* filename);
-	void (*Close)(TFB_SoundDecoder*);
-	int (*Decode)(TFB_SoundDecoder*, void* buf, int32_t bufsize);
+	// Make and delete the decoder struct, which starts with a SoundDecoder.
+	SoundDecoder* (*Create)(void);
+	void (*Destroy)(SoundDecoder*);
+	int (*GetError)(SoundDecoder*);
+	bool (*Init)(SoundDecoder*);
+	void (*Term)(SoundDecoder*);
+	bool (*Open)(SoundDecoder*, const uqm::io::Directory& dir, const char* filename);
+	void (*Close)(SoundDecoder*);
+	int (*Decode)(SoundDecoder*, void* buf, int32_t bufsize);
 	// returns <0 on error, ==0 when no more data, >0 bytes returned
-	uint32_t (*Seek)(TFB_SoundDecoder*, uint32_t pcm_pos);
+	uint32_t (*Seek)(SoundDecoder*, uint32_t pcm_pos);
 	// returns the pcm position set
-	uint32_t (*GetFrame)(TFB_SoundDecoder*);
+	uint32_t (*GetFrame)(SoundDecoder*);
 };
 
-
-struct tfb_sounddecoder
+struct SoundDecoder
 {
 	// decoder virtual funcs - R/O
-	const TFB_SoundDecoderFuncs* funcs;
+	const SoundDecoderFuncs* funcs;
 
 	// public R/O, set by decoder
 	uint32_t format;
@@ -110,7 +113,7 @@ struct tfb_sounddecoder
 	// semi-private
 	uqstl::string filename;
 	// Deletes the decoder. The functions can change to the buffer decoder after creation.
-	void (*destroy)(TFB_SoundDecoder*);
+	void (*destroy)(SoundDecoder*);
 	// The read position in 'storage' after the decoder switched to the buffer decoder.
 	uint32_t buffered_max_pcm;
 	uint32_t buffered_cur_pcm;
@@ -123,6 +126,7 @@ struct tfb_sounddecoder
 	uint32_t filename_hash;
 	// for music resume
 };
+} // namespace tfb
 
 // return values
 enum class SoundDecoderStatus
@@ -134,25 +138,28 @@ enum class SoundDecoderStatus
 template <>
 inline constexpr bool IsArithmeticEnum<SoundDecoderStatus> = true;
 
-typedef struct TFB_RegSoundDecoder TFB_RegSoundDecoder;
+namespace tfb
+{
+struct RegSoundDecoder;
+} // namespace tfb
 
-TFB_RegSoundDecoder* SoundDecoder_Register(const char* fileext,
-										   TFB_SoundDecoderFuncs* decvtbl);
-void SoundDecoder_Unregister(TFB_RegSoundDecoder* regdec);
-const TFB_SoundDecoderFuncs* SoundDecoder_Lookup(const char* fileext);
+tfb::RegSoundDecoder* SoundDecoder_Register(const char* fileext,
+											tfb::SoundDecoderFuncs* decvtbl);
+void SoundDecoder_Unregister(tfb::RegSoundDecoder* regdec);
+const tfb::SoundDecoderFuncs* SoundDecoder_Lookup(const char* fileext);
 
 void SoundDecoder_SwapWords(uint16_t* data, uint32_t size);
-int32_t SoundDecoder_Init(AudioFlags flags, TFB_DecoderFormats* formats);
+int32_t SoundDecoder_Init(AudioFlags flags, tfb::DecoderFormats* formats);
 void SoundDecoder_Uninit(void);
-TFB_SoundDecoder* SoundDecoder_Load(const uqm::io::Directory& dir,
-									const char* filename, uint32_t buffer_size, uint32_t startTime, int32_t runTime);
-uint32_t SoundDecoder_Decode(TFB_SoundDecoder* decoder);
-uint32_t SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder);
-float SoundDecoder_GetTime(TFB_SoundDecoder* decoder);
-uint32_t SoundDecoder_GetFrame(TFB_SoundDecoder* decoder);
-void SoundDecoder_Seek(TFB_SoundDecoder* decoder, uint32_t msecs);
-void SoundDecoder_Rewind(TFB_SoundDecoder* decoder);
-void SoundDecoder_Free(TFB_SoundDecoder* decoder);
-const char* SoundDecoder_GetName(TFB_SoundDecoder* decoder);
+tfb::SoundDecoder* SoundDecoder_Load(const uqm::io::Directory& dir,
+									 const char* filename, uint32_t buffer_size, uint32_t startTime, int32_t runTime);
+uint32_t SoundDecoder_Decode(tfb::SoundDecoder* decoder);
+uint32_t SoundDecoder_DecodeAll(tfb::SoundDecoder* decoder);
+float SoundDecoder_GetTime(tfb::SoundDecoder* decoder);
+uint32_t SoundDecoder_GetFrame(tfb::SoundDecoder* decoder);
+void SoundDecoder_Seek(tfb::SoundDecoder* decoder, uint32_t msecs);
+void SoundDecoder_Rewind(tfb::SoundDecoder* decoder);
+void SoundDecoder_Free(tfb::SoundDecoder* decoder);
+const char* SoundDecoder_GetName(tfb::SoundDecoder* decoder);
 
 #endif // UQM_LIBS_SOUND_DECODERS_DECODER_H

@@ -51,7 +51,7 @@ int TFB_DEBUG_HALT = 0;
 uqstl::atomic<int> TransitionAmount {255};
 
 static int gscale = GscaleIdentity;
-static uqm::TFBScaleMode gscale_mode = uqm::TFBScaleMode::Nearest;
+static tfb::ScaleMode gscale_mode = tfb::ScaleMode::Nearest;
 
 void DrawFromExtraScreen(GfxRect* r)
 {
@@ -75,15 +75,15 @@ int GetGraphicScale(void)
 	return gscale;
 }
 
-uqm::TFBScaleMode SetGraphicScaleMode(uqm::TFBScaleMode mode)
+tfb::ScaleMode SetGraphicScaleMode(tfb::ScaleMode mode)
 {
-	const uqm::TFBScaleMode old_mode = gscale_mode;
-	assert(mode >= uqm::TFBScaleMode::Nearest && mode <= uqm::TFBScaleMode::Trilinear);
+	const tfb::ScaleMode old_mode = gscale_mode;
+	assert(mode >= tfb::ScaleMode::Nearest && mode <= tfb::ScaleMode::Trilinear);
 	gscale_mode = mode;
 	return old_mode;
 }
 
-uqm::TFBScaleMode GetGraphicScaleMode(void)
+tfb::ScaleMode GetGraphicScaleMode(void)
 {
 	return gscale_mode;
 }

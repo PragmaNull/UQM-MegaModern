@@ -46,7 +46,7 @@ struct FrameDesc
 	uint16_t Index;
 	HOT_SPOT HotSpot;
 	GfxExtent Bounds;
-	TFB_Image* image;
+	tfb::Image* image;
 	struct DrawableDesc* parent;
 };
 

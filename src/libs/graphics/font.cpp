@@ -28,9 +28,9 @@
 
 #include "uqm/setup.h"
 
-static inline TFB_Char* getCharFrame(FontDesc* fontPtr, uqm::UniChar ch);
+static inline tfb::Char* getCharFrame(FontDesc* fontPtr, uqm::UniChar ch);
 
-TFB_Char* GetFrameForFPS(uqm::UniChar ch)
+tfb::Char* GetFrameForFPS(uqm::UniChar ch)
 {
 	if (StarConFont && !(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
@@ -385,7 +385,7 @@ bool TextRect(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta)
 				}
 			}
 
-			const TFB_Char* charFrame {getCharFrame(FontPtr, ch)};
+			const tfb::Char* charFrame {getCharFrame(FontPtr, ch)};
 			if (charFrame != nullptr && charFrame->disp.width)
 			{
 				int16_t y {};
@@ -468,7 +468,7 @@ void _text_blt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin)
 	{
 		return;
 	}
-	TFB_Image* backing {_get_context_font_backing()};
+	tfb::Image* backing {_get_context_font_backing()};
 	if (!backing)
 	{
 		return;
@@ -501,7 +501,7 @@ void _text_blt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin)
 			}
 		}
 
-		TFB_Char* fontChar {getCharFrame(FontPtr, ch)};
+		tfb::Char* fontChar {getCharFrame(FontPtr, ch)};
 		if (fontChar != nullptr && fontChar->disp.width)
 		{
 			GfxRect r;
@@ -537,9 +537,9 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 	const char* pStr {};
 	GfxPoint origin;
 	int16_t leading {};
-	TFB_Image* b_first {};
-	TFB_Image* b_second {};
-	TFB_Image* b_clear {};
+	tfb::Image* b_first {};
+	tfb::Image* b_second {};
+	tfb::Image* b_clear {};
 	const DrawMode mode = _get_context_draw_mode();
 
 	FONT FontPtr {_CurFontPtr};
@@ -588,7 +588,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 	}
 	while (num_chars--)
 	{
-		TFB_Char* fontChar {};
+		tfb::Char* fontChar {};
 
 		while (next_ch == ' ')
 		{
@@ -630,7 +630,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 				if (repair && !*skip)
 				{
 					TFB_DrawImage_Image(repair->image, -r.corner.x, -r.corner.y,
-										0, uqm::TFBScaleMode::None, nullptr, DrawReplaceMode, b_clear);
+										0, tfb::ScaleMode::None, nullptr, DrawReplaceMode, b_clear);
 					TFB_Prim_FontChar(origin, fontChar, b_clear, MAKE_DRAW_MODE(DrawKind::Grayscale, 0xff),
 									  ctxOrigin);
 				}
@@ -726,7 +726,7 @@ bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap,
 		}
 		while (num_chars--)
 		{
-			const TFB_Char* charFrame {};
+			const tfb::Char* charFrame {};
 
 			const int16_t last_width {width};
 
@@ -833,7 +833,7 @@ uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, 
 	// for chars only in 1 font
 	const char* pStr {};
 	GfxPoint origin;
-	TFB_Image* ext {};
+	tfb::Image* ext {};
 	const DrawMode mode = _get_context_draw_mode();
 	uint8_t leading_step {};
 
@@ -842,7 +842,7 @@ uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, 
 	{
 		return 0;
 	}
-	TFB_Image* stock {_get_context_font_backing()};
+	tfb::Image* stock {_get_context_font_backing()};
 	if (!stock)
 	{
 		return 0;
@@ -888,10 +888,10 @@ uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, 
 	{
 		num_chars = 0;
 	}
-	TFB_Image* backing {stock};
+	tfb::Image* backing {stock};
 	while (num_chars--)
 	{
-		TFB_Char* fontChar {};
+		tfb::Char* fontChar {};
 
 		const uqm::UniChar ch {next_ch};
 		if (num_chars > 0)
@@ -956,7 +956,7 @@ uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, 
 	return swap;
 }
 
-static inline TFB_Char* getCharFrame(FontDesc* fontPtr, uqm::UniChar ch)
+static inline tfb::Char* getCharFrame(FontDesc* fontPtr, uqm::UniChar ch)
 {
 	const uqm::UniChar pageStart = ch & CharacterPageMask;
 

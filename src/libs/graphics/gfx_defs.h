@@ -4,17 +4,11 @@
 
 #include "core/types/enum.h"
 
-namespace uqm
+namespace tfb
 {
-
-// driver for TFB_InitGraphics
-enum class GfxDriver
-{
-	SDL_Pure,
-};
 
 // forced redraw
-enum class TFBRedraw
+enum class Redraw
 {
 	No,
 	Fading,
@@ -22,13 +16,24 @@ enum class TFBRedraw
 	Yes,
 };
 
-enum class TFBScaleMode : int
+enum class ScaleMode : int
 {
 	None,
 	Step,
 	Nearest,
 	Bilinear,
 	Trilinear,
+};
+
+} // namespace tfb
+
+namespace uqm
+{
+
+// driver for TFB_InitGraphics
+enum class GfxDriver
+{
+	SDL_Pure,
 };
 
 // flags for TFB_InitGraphics

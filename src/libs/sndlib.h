@@ -33,7 +33,10 @@
 extern "C" {
 #endif
 
-typedef struct tfb_soundsample TFB_SoundSample;
+namespace tfb
+{
+struct SoundSample;
+} // namespace tfb
 
 namespace uqm
 {
@@ -42,7 +45,7 @@ namespace uqm
 class SoundBank
 {
 public:
-	explicit SoundBank(uqstl::vector<TFB_SoundSample*> samples);
+	explicit SoundBank(uqstl::vector<tfb::SoundSample*> samples);
 	// Stops the sources that play the samples, and destroys the samples.
 	~SoundBank();
 	SoundBank(const SoundBank&) = delete;
@@ -53,16 +56,16 @@ public:
 		return m_samples.size();
 	}
 	// The sample 'index'. The index wraps at the number of samples.
-	[[nodiscard]] TFB_SoundSample* sample(size_t index) const;
+	[[nodiscard]] tfb::SoundSample* sample(size_t index) const;
 
 private:
-	uqstl::vector<TFB_SoundSample*> m_samples {};
+	uqstl::vector<tfb::SoundSample*> m_samples {};
 };
 
 } // namespace uqm
 
 typedef uqm::SoundBank* SOUND_REF;
-typedef TFB_SoundSample* SOUND;
+typedef tfb::SoundSample* SOUND;
 
 struct SoundPosition
 {
@@ -87,7 +90,7 @@ using SoundBankPtr = uqstl::unique_ptr<SoundBank>;
 // Returns an empty pointer if the resource is not a sound bank.
 [[nodiscard]] SoundBankPtr loadSoundBank(RESOURCE res);
 } // namespace uqm
-typedef TFB_SoundSample** MUSIC_REF;
+typedef tfb::SoundSample** MUSIC_REF;
 
 extern bool InitSound(int argc, char* argv[]);
 extern void UninitSound(void);

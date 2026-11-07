@@ -46,7 +46,9 @@ enum class DrawCommandType
 	Callback,
 };
 
-struct TFB_DrawCommand_Line
+namespace tfb
+{
+struct DrawCommandLine
 {
 	int x1, y1, x2, y2;
 	Color color;
@@ -55,7 +57,7 @@ struct TFB_DrawCommand_Line
 	uint8_t thickness;
 };
 
-struct TFB_DrawCommand_Rect
+struct DrawCommandRect
 {
 	GfxRect rect;
 	Color color;
@@ -63,79 +65,79 @@ struct TFB_DrawCommand_Rect
 	ScreenBuffer destBuffer;
 };
 
-struct TFB_DrawCommand_Image
+struct DrawCommandImage
 {
-	TFB_Image* image;
+	Image* image;
 	int x, y;
 	ScreenBuffer destBuffer;
-	TFB_ColorMap* colormap;
+	ColorMap* colormap;
 	DrawMode drawMode;
 	int scale;
-	uqm::TFBScaleMode scaleMode;
+	ScaleMode scaleMode;
 };
 
-struct TFB_DrawCommand_FilledImage
+struct DrawCommandFilledImage
 {
-	TFB_Image* image;
+	Image* image;
 	int x, y;
 	Color color;
 	ScreenBuffer destBuffer;
 	DrawMode drawMode;
 	int scale;
-	uqm::TFBScaleMode scaleMode;
+	ScaleMode scaleMode;
 };
 
-struct TFB_DrawCommand_FontChar
+struct DrawCommandFontChar
 {
-	TFB_Char* fontchar;
-	TFB_Image* backing;
+	Char* fontchar;
+	Image* backing;
 	int x, y;
 	DrawMode drawMode;
 	ScreenBuffer destBuffer;
 };
 
-struct TFB_DrawCommand_Copy
+struct DrawCommandCopy
 {
 	GfxRect rect;
 	ScreenBuffer srcBuffer, destBuffer;
 };
 
-struct TFB_DrawCommand_CopyToImage
+struct DrawCommandCopyToImage
 {
-	TFB_Image* image;
+	Image* image;
 	GfxRect rect;
 	ScreenBuffer srcBuffer;
 };
 
-struct TFB_DrawCommand_Scissor
+struct DrawCommandScissor
 {
 	GfxRect rect;
 };
 
-struct TFB_DrawCommand_SetMipmap
+struct DrawCommandSetMipmap
 {
-	TFB_Image* image;
-	TFB_Image* mipmap;
+	Image* image;
+	Image* mipmap;
 	int hotx, hoty;
 };
 
-struct TFB_DrawCommand_DeleteImage
+struct DrawCommandDeleteImage
 {
-	TFB_Image* image;
+	Image* image;
 };
 
-struct TFB_DrawCommand_DeleteData
+struct DrawCommandDeleteData
 {
 	// Made with new[].
 	uint8_t* data;
 };
 
-struct TFB_DrawCommand_SendSignal
+struct DrawCommandSendSignal
 {
 	uqstl::binary_semaphore* sem;
 };
 
-struct TFB_DrawCommand_ReinitVideo
+struct DrawCommandReinitVideo
 {
 	uqm::GfxDriver driver;
 	uqm::GfxFlags flags;
@@ -143,37 +145,40 @@ struct TFB_DrawCommand_ReinitVideo
 	int height;
 };
 
-struct TFB_DrawCommand_Callback
+struct DrawCommandCallback
 {
 	void (*callback)(void* arg);
 	void* arg;
 };
 
-struct TFB_DrawCommand
+struct DrawCommand
 {
 	DrawCommandType Type {};
 	union
 	{
-		TFB_DrawCommand_Line line;
-		TFB_DrawCommand_Rect rect;
-		TFB_DrawCommand_Image image;
-		TFB_DrawCommand_FilledImage filledimage;
-		TFB_DrawCommand_FontChar fontchar;
-		TFB_DrawCommand_Copy copy;
-		TFB_DrawCommand_CopyToImage copytoimage;
-		TFB_DrawCommand_Scissor scissor;
-		TFB_DrawCommand_SetMipmap setmipmap;
-		TFB_DrawCommand_DeleteImage deleteimage;
-		TFB_DrawCommand_DeleteData deletedata;
-		TFB_DrawCommand_SendSignal sendsignal;
-		TFB_DrawCommand_ReinitVideo reinitvideo;
-		TFB_DrawCommand_Callback callback;
+		DrawCommandLine line;
+		DrawCommandRect rect;
+		DrawCommandImage image;
+		DrawCommandFilledImage filledimage;
+		DrawCommandFontChar fontchar;
+		DrawCommandCopy copy;
+		DrawCommandCopyToImage copytoimage;
+		DrawCommandScissor scissor;
+		DrawCommandSetMipmap setmipmap;
+		DrawCommandDeleteImage deleteimage;
+		DrawCommandDeleteData deletedata;
+		DrawCommandSendSignal sendsignal;
+		DrawCommandReinitVideo reinitvideo;
+		DrawCommandCallback callback;
 	} data {};
 };
+} // namespace tfb
 
 // Queue Stuff
 
-struct TFB_DrawCommandQueue
+namespace tfb
+{
+struct DrawCommandQueue
 {
 	int Front;
 	int Back;
@@ -182,6 +187,7 @@ struct TFB_DrawCommandQueue
 	int FullSize;
 	int Size;
 };
+} // namespace tfb
 
 void Init_DrawCommandQueue(void);
 
@@ -193,13 +199,13 @@ void TFB_UnbatchGraphics(void);
 
 void TFB_BatchReset(void);
 
-void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command);
+void TFB_DrawCommandQueue_Push(tfb::DrawCommand* Command);
 
-int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* Command);
+int TFB_DrawCommandQueue_Pop(tfb::DrawCommand* Command);
 
 void TFB_DrawCommandQueue_Clear(void);
 
-void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand);
+void TFB_EnqueueDrawCommand(tfb::DrawCommand* DrawCommand);
 
 void Lock_DCQ(int slots);
 

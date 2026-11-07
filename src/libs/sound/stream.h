@@ -25,7 +25,7 @@ int InitStreamDecoder(void);
 void UninitStreamDecoder(void);
 
 // The caller must hold the stream lock of the source.
-void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping,
+void PlayStream(tfb::SoundSample* sample, uint32_t source, bool looping,
 				bool scope, bool rewind) UQM_REQUIRES(soundSource[source].stream_mutex);
 void StopStream(uint32_t source) UQM_REQUIRES(soundSource[source].stream_mutex);
 void PauseStream(uint32_t source) UQM_REQUIRES(soundSource[source].stream_mutex);

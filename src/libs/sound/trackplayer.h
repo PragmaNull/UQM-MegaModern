@@ -57,7 +57,12 @@ extern void SpliceMultiTrack(const char* const TrackNames[], const char* TrackTe
 
 extern int GetTrackPosition(int in_units);
 
-typedef struct tfb_soundchunk* SUBTITLE_REF;
+namespace tfb
+{
+struct SoundChunk;
+} // namespace tfb
+
+typedef struct tfb::SoundChunk* SUBTITLE_REF;
 
 extern SUBTITLE_REF GetFirstTrackSubtitle(void);
 extern SUBTITLE_REF GetNextTrackSubtitle(SUBTITLE_REF LastRef);

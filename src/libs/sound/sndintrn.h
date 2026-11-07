@@ -38,23 +38,28 @@ extern bool _ReleaseSoundBankData(void* handle);
 extern char* CheckMusicResName(char* filename);
 
 // audio data
-struct tfb_soundsample
+namespace tfb
 {
-	TFB_SoundDecoder* decoder; // decoder to read from
-	float length;			   // total length of decoder chain in seconds
+struct SoundSample
+{
+	SoundDecoder* decoder; // decoder to read from
+	float length;				// total length of decoder chain in seconds
 	uqstl::vector<audio_Object> buffer;
 	uint32_t num_buffers;
-	uqstl::vector<TFB_SoundTag> buffer_tag;
-	int32_t offset;				  // initial offset
-	void* data;					  // user-defined data
-	TFB_SoundCallbacks callbacks; // user-defined callbacks
+	uqstl::vector<SoundTag> buffer_tag;
+	int32_t offset;				   // initial offset
+	void* data;					   // user-defined data
+	SoundCallbacks callbacks; // user-defined callbacks
 };
+} // namespace tfb
 
 // equivalent to channel in legacy sound code
-struct TFB_SoundSource
+namespace tfb
+{
+struct SoundSource
 {
 	uqm::RecursiveMutex stream_mutex;
-	TFB_SoundSample* sample;
+	SoundSample* sample;
 	audio_Object handle;
 	bool stream_should_be_playing UQM_GUARDED_BY(stream_mutex);
 	TimeCount start_time UQM_GUARDED_BY(stream_mutex); // for tracks played-time math
@@ -70,7 +75,8 @@ struct TFB_SoundSource
 	uint32_t sbuf_head UQM_GUARDED_BY(stream_mutex);
 	TimeCount sbuf_lasttime UQM_GUARDED_BY(stream_mutex); // timestamp of the first queued buffer
 };
+} // namespace tfb
 
-extern TFB_SoundSource soundSource[];
+extern tfb::SoundSource soundSource[];
 
 #endif // UQM_LIBS_SOUND_SNDINTRN_H

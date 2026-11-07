@@ -27,10 +27,12 @@
 #include "core/thread/Mutex.h"
 
 
-struct TFB_VideoClip
+namespace tfb
 {
-	TFB_VideoDecoder* decoder; // decoder to read from
-	float length;			   // total length of clip seconds
+struct VideoClip
+{
+	VideoDecoder* decoder; // decoder to read from
+	float length;				// total length of clip seconds
 	uint32_t w, h;
 
 	// video player data
@@ -38,7 +40,7 @@ struct TFB_VideoClip
 	GfxRect src_rect; // source rect
 	MUSIC_REF hAudio;
 	TimeCount frame_time; // time when next frame should be rendered
-	TFB_Image* frame;	  // frame preped and optimized for rendering
+	Image* frame;	  // frame preped and optimized for rendering
 	uint32_t cur_frame;	  // index of frame currently displayed
 	bool playing;
 	bool own_audio;
@@ -51,6 +53,7 @@ struct TFB_VideoClip
 
 	void* data; // user-defined data
 };
+} // namespace tfb
 
 extern VIDEO_REF _init_video_file(const char* pStr);
 

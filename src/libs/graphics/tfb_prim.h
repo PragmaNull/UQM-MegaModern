@@ -30,8 +30,8 @@ void TFB_Prim_Rect(GfxRect*, Color, DrawMode, GfxPoint ctxOrigin, bool scaled);
 void TFB_Prim_FillRect(GfxRect*, Color, DrawMode, GfxPoint ctxOrigin);
 void TFB_Prim_Stamp(GfxStamp*, DrawMode, GfxPoint ctxOrigin, bool unscaled);
 void TFB_Prim_StampFill(GfxStamp*, Color, DrawMode, GfxPoint ctxOrigin, bool unscaled);
-void TFB_Prim_FontChar(GfxPoint charOrigin, TFB_Char* fontChar,
-					   TFB_Image* backing, DrawMode, GfxPoint ctxOrigin);
+void TFB_Prim_FontChar(GfxPoint charOrigin, tfb::Char* fontChar,
+					   tfb::Image* backing, DrawMode, GfxPoint ctxOrigin);
 void TFB_Prim_MaskFrame(FRAME layer, FRAME base, DrawMode mode, Color* fill);
 
 #endif // UQM_LIBS_GRAPHICS_TFB_PRIM_H

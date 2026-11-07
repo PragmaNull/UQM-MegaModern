@@ -26,7 +26,7 @@ int musicVolume = NormalVolume;
 float musicVolumeScale;
 float sfxVolumeScale;
 float speechVolumeScale;
-TFB_SoundSource soundSource[NumSoundsources];
+tfb::SoundSource soundSource[NumSoundsources];
 
 
 void StopSound(void)
@@ -64,7 +64,7 @@ bool SoundPlaying(void)
 {
 	for (int i {0}; i < NumSoundsources; ++i)
 	{
-		const TFB_SoundSample* sample {};
+		const tfb::SoundSample* sample {};
 		sample = soundSource[i].sample;
 		if (sample && sample->decoder)
 		{

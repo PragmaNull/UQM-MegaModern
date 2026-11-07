@@ -225,7 +225,7 @@ static uint16_t CalcReduction(int32_t dx, int32_t dy)
 	uqm::log::debug("CalcReduction:");
 #endif
 
-	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
+	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Step)
 	{
 		if (uqm::activityKind(uqm::currentActivity()) > ActivityKind::InEncounter)
 		{
@@ -333,7 +333,7 @@ static ViewState CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
 	int32_t dy {((int32_t)(LogSpaceHeight() >> 1) - pNewScrollPt->y)};
 	dx = WrapDeltaX(dx);
 	dy = WrapDeltaY(dy);
-	const bool meleeScaleModeIsTFBStep {uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step};
+	const bool meleeScaleModeIsTFBStep {uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Step};
 	if (ships_alive == 1 && (!meleeScaleModeIsTFBStep || isNetwork()))
 	{
 		const auto OrgJumpX = [&] {
@@ -706,7 +706,7 @@ static ViewState PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 	sides_active = (battle_counter[0] ? 1 : 0)
 				 + (battle_counter[1] ? 1 : 0);
 
-	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
+	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Step)
 	{
 		min_reduction = max_reduction = MaxVisReduction + 1;
 	}
@@ -817,7 +817,7 @@ static ViewState PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 		&& (min_reduction = max_reduction) > opt_max_zoom_out
 		&& (min_reduction = zoom_out) > opt_max_zoom_out)
 	{
-		if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
+		if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Step)
 		{
 			min_reduction = 0;
 		}
@@ -877,7 +877,7 @@ PRIM_LINKS DisplayLinks;
 
 static inline int16_t CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reduction)
 {
-	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
+	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Step)
 	{ /* old fixed-step zoom style */
 		return (c - orgc) >> reduction;
 	}
@@ -895,7 +895,7 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 #ifdef KDEBUG
 	uqm::log::debug("PostProcess:");
 #endif
-	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
+	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Step)
 	{
 		reduction = zoom_out + OneShift;
 	}
@@ -1015,7 +1015,7 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 							uint16_t index {};
 							uint16_t scale = GscaleIdentity;
 
-							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
+							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Step)
 							{
 								index = zoom_out;
 							}
@@ -1028,7 +1028,7 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 								ElementPtr->next.image.farray[index],
 								ElementPtr->next.image.frame);
 
-							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Trilinear && index < 2 && scale != GscaleIdentity)
+							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Trilinear && index < 2 && scale != GscaleIdentity)
 							{
 								// enqueues drawcommand to assign next
 								// (smaller) zoom level image as mipmap,
@@ -1079,7 +1079,7 @@ void InitDisplayList(void)
 {
 	uint16_t i {};
 
-	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
+	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Step)
 	{
 		zoom_out = MaxVisReduction + 1;
 		opt_max_zoom_out = MaxVisReduction;
@@ -1133,7 +1133,7 @@ void RedrawQueue(bool clear)
 				ClearDrawable(); // this is for BatchBuildPage effect, but not scaled by SetGraphicScale
 			}
 
-			if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) != uqm::TFBScaleMode::Step)
+			if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) != tfb::ScaleMode::Step)
 			{
 				uint16_t index {};
 				uint16_t scale {};

@@ -34,26 +34,29 @@ inline constexpr auto MusicSource {LastSfxSource + 1};
 inline constexpr auto SpeechSource {MusicSource + 1};
 inline constexpr auto NumSoundsources {SpeechSource + 1};
 
-struct TFB_SoundTag
+namespace tfb
+{
+struct SoundTag
 {
 	int in_use;
 	audio_Object buf_name;
 	intptr_t data; // user-defined data
 };
 
-struct TFB_SoundCallbacks
+struct SoundCallbacks
 {
 	// return true to continue, false to abort
-	bool (*OnStartStream)(TFB_SoundSample*);
+	bool (*OnStartStream)(SoundSample*);
 	// return true to continue, false to abort
-	bool (*OnEndChunk)(TFB_SoundSample*, audio_Object);
+	bool (*OnEndChunk)(SoundSample*, audio_Object);
 	// return true to continue, false to abort
-	void (*OnEndStream)(TFB_SoundSample*);
+	void (*OnEndStream)(SoundSample*);
 	// tagged buffer callback
-	void (*OnTaggedBuffer)(TFB_SoundSample*, TFB_SoundTag*);
+	void (*OnTaggedBuffer)(SoundSample*, SoundTag*);
 	// buffer just queued
-	void (*OnQueueBuffer)(TFB_SoundSample*, audio_Object);
+	void (*OnQueueBuffer)(SoundSample*, audio_Object);
 };
+} // namespace tfb
 
 
 extern int musicVolume;
@@ -67,18 +70,18 @@ void CleanSource(int iSource);
 void SetSFXVolume(float volume);
 void SetSpeechVolume(float volume);
 
-TFB_SoundSample* TFB_CreateSoundSample(TFB_SoundDecoder*, uint32_t num_buffers,
-									   const TFB_SoundCallbacks* /* can be nullptr */);
-void TFB_DestroySoundSample(TFB_SoundSample*);
-void TFB_SetSoundSampleData(TFB_SoundSample*, void* data);
-void* TFB_GetSoundSampleData(TFB_SoundSample*);
-void TFB_SetSoundSampleCallbacks(TFB_SoundSample*,
-								 const TFB_SoundCallbacks* /* can be nullptr */);
-TFB_SoundDecoder* TFB_GetSoundSampleDecoder(TFB_SoundSample*);
+tfb::SoundSample* TFB_CreateSoundSample(tfb::SoundDecoder*, uint32_t num_buffers,
+										const tfb::SoundCallbacks* /* can be nullptr */);
+void TFB_DestroySoundSample(tfb::SoundSample*);
+void TFB_SetSoundSampleData(tfb::SoundSample*, void* data);
+void* TFB_GetSoundSampleData(tfb::SoundSample*);
+void TFB_SetSoundSampleCallbacks(tfb::SoundSample*,
+								 const tfb::SoundCallbacks* /* can be nullptr */);
+tfb::SoundDecoder* TFB_GetSoundSampleDecoder(tfb::SoundSample*);
 
-TFB_SoundTag* TFB_FindTaggedBuffer(TFB_SoundSample*, audio_Object buffer);
-void TFB_ClearBufferTag(TFB_SoundTag*);
-bool TFB_TagBuffer(TFB_SoundSample*, audio_Object buffer, intptr_t data);
+tfb::SoundTag* TFB_FindTaggedBuffer(tfb::SoundSample*, audio_Object buffer);
+void TFB_ClearBufferTag(tfb::SoundTag*);
+bool TFB_TagBuffer(tfb::SoundSample*, audio_Object buffer, intptr_t data);
 
 #include "stream.h"
 

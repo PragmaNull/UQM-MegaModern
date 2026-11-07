@@ -23,7 +23,7 @@
 #include "core/types/enum.h"
 #include "decoder.h"
 
-extern TFB_SoundDecoderFuncs aifa_DecoderVtbl;
+extern tfb::SoundDecoderFuncs aifa_DecoderVtbl;
 
 enum class AiffError
 {

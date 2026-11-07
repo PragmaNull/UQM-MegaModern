@@ -81,7 +81,7 @@ extern YUV_VECTOR RGB15_to_YUV[0x8000];
 struct Scale_FuncDef_t
 {
 	uqm::GfxFlags flag;
-	TFB_ScaleFunc func;
+	tfb::ScaleFunc func;
 };
 
 

@@ -22,6 +22,6 @@
 
 #include "decoder.h"
 
-extern TFB_SoundDecoderFuncs ova_DecoderVtbl;
+extern tfb::SoundDecoderFuncs ova_DecoderVtbl;
 
 #endif // UQM_LIBS_SOUND_DECODERS_OGGAUD_H

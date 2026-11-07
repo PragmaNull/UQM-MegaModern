@@ -21,7 +21,7 @@
 #include "core/types/enum.h"
 #include "libs/video/videodec.h"
 
-extern TFB_VideoDecoderFuncs dukv_DecoderVtbl;
+extern tfb::VideoDecoderFuncs dukv_DecoderVtbl;
 
 enum class DukVidError
 {

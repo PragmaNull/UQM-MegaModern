@@ -40,7 +40,7 @@ struct GraphicsContextDesc
 	GfxRect ClipRect;
 
 	FRAME FontEffect;
-	TFB_Image* FontBacking;
+	tfb::Image* FontBacking;
 	FBK_FLAGS BackingFlags;
 
 #ifdef DEBUG
@@ -60,7 +60,7 @@ inline FRAME& _get_context_fg_frame() { return _pCurContext->ForeGroundFrame; }
 inline FONT& _get_context_font() { return _pCurContext->Font; }
 inline FBK_FLAGS& _get_context_fbk_flags() { return _pCurContext->BackingFlags; }
 inline FRAME& _get_context_fonteff() { return _pCurContext->FontEffect; }
-inline TFB_Image*& _get_context_font_backing() { return _pCurContext->FontBacking; }
+inline tfb::Image*& _get_context_font_backing() { return _pCurContext->FontBacking; }
 inline DrawMode& _get_context_draw_mode() { return _pCurContext->Mode; }
 
 inline void SwitchContextDrawMode(DrawMode m) { _pCurContext->Mode = m; }

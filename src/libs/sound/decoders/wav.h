@@ -22,6 +22,6 @@
 
 #include "decoder.h"
 
-extern TFB_SoundDecoderFuncs wava_DecoderVtbl;
+extern tfb::SoundDecoderFuncs wava_DecoderVtbl;
 
 #endif // UQM_LIBS_SOUND_DECODERS_WAV_H

@@ -57,15 +57,15 @@ static constexpr auto SpareColormaps {20};
 // Colormaps are rapidly replaced in some parts of the game, so
 // it pays to have some spares on hand
 static uqm::Mutex s_mapLock {};
-static TFB_ColorMap* poolhead UQM_GUARDED_BY(s_mapLock);
+static tfb::ColorMap* poolhead UQM_GUARDED_BY(s_mapLock);
 static int poolcount UQM_GUARDED_BY(s_mapLock);
 
-static TFB_ColorMap* colormaps[MaxColormaps] UQM_GUARDED_BY(s_mapLock);
+static tfb::ColorMap* colormaps[MaxColormaps] UQM_GUARDED_BY(s_mapLock);
 static int mapcount UQM_GUARDED_BY(s_mapLock);
 
 
-static void release_colormap(TFB_ColorMap* map) UQM_REQUIRES(s_mapLock);
-static void delete_colormap(TFB_ColorMap* map);
+static void release_colormap(tfb::ColorMap* map) UQM_REQUIRES(s_mapLock);
+static void delete_colormap(tfb::ColorMap* map);
 
 
 void InitColorMaps(void)
@@ -81,12 +81,12 @@ void InitColorMaps(void)
 
 void UninitColorMaps(void)
 {
-	TFB_ColorMap* next {};
+	tfb::ColorMap* next {};
 
 	const uqm::LockGuard lock {s_mapLock};
 	for (int i {0}; i < MaxColormaps; ++i)
 	{
-		TFB_ColorMap* map = colormaps[i];
+		tfb::ColorMap* map = colormaps[i];
 		if (!map)
 		{
 			continue;
@@ -103,10 +103,10 @@ void UninitColorMaps(void)
 	}
 }
 
-static inline TFB_ColorMap* alloc_colormap(void) UQM_REQUIRES(s_mapLock)
+static inline tfb::ColorMap* alloc_colormap(void) UQM_REQUIRES(s_mapLock)
 // returns an addrefed object
 {
-	TFB_ColorMap* map {};
+	tfb::ColorMap* map {};
 
 	if (poolhead)
 	{ // have some spares
@@ -116,7 +116,7 @@ static inline TFB_ColorMap* alloc_colormap(void) UQM_REQUIRES(s_mapLock)
 	}
 	else
 	{ // no spares, need a new one
-		map = new TFB_ColorMap {};
+		map = new tfb::ColorMap {};
 		map->palette = AllocNativePalette();
 	}
 	map->next = nullptr;
@@ -127,10 +127,10 @@ static inline TFB_ColorMap* alloc_colormap(void) UQM_REQUIRES(s_mapLock)
 	return map;
 }
 
-static TFB_ColorMap* clone_colormap(TFB_ColorMap* from, int index) UQM_REQUIRES(s_mapLock)
+static tfb::ColorMap* clone_colormap(tfb::ColorMap* from, int index) UQM_REQUIRES(s_mapLock)
 // returns an addrefed object
 {
-	TFB_ColorMap* map {alloc_colormap()};
+	tfb::ColorMap* map {alloc_colormap()};
 	if (!map)
 	{
 		uqm::log::warn("FATAL: clone_colormap(): "
@@ -150,13 +150,13 @@ static TFB_ColorMap* clone_colormap(TFB_ColorMap* from, int index) UQM_REQUIRES(
 	return map;
 }
 
-static void delete_colormap(TFB_ColorMap* map)
+static void delete_colormap(tfb::ColorMap* map)
 {
 	FreeNativePalette(map->palette);
 	delete map;
 }
 
-static inline void free_colormap(TFB_ColorMap* map) UQM_REQUIRES(s_mapLock)
+static inline void free_colormap(tfb::ColorMap* map) UQM_REQUIRES(s_mapLock)
 {
 	if (!map)
 	{
@@ -176,9 +176,9 @@ static inline void free_colormap(TFB_ColorMap* map) UQM_REQUIRES(s_mapLock)
 	}
 }
 
-static inline TFB_ColorMap* get_colormap(int index) UQM_REQUIRES(s_mapLock)
+static inline tfb::ColorMap* get_colormap(int index) UQM_REQUIRES(s_mapLock)
 {
-	TFB_ColorMap* map {colormaps[index]};
+	tfb::ColorMap* map {colormaps[index]};
 	if (!map)
 	{
 		uqm::log::critical("BUG: get_colormap(): map not present");
@@ -189,7 +189,7 @@ static inline TFB_ColorMap* get_colormap(int index) UQM_REQUIRES(s_mapLock)
 	return map;
 }
 
-static void release_colormap(TFB_ColorMap* map)
+static void release_colormap(tfb::ColorMap* map)
 {
 	if (!map)
 	{
@@ -209,19 +209,19 @@ static void release_colormap(TFB_ColorMap* map)
 	}
 }
 
-void TFB_ReturnColorMap(TFB_ColorMap* map)
+void TFB_ReturnColorMap(tfb::ColorMap* map)
 {
 	const uqm::LockGuard lock {s_mapLock};
 	release_colormap(map);
 }
 
-TFB_ColorMap* TFB_GetColorMap(int index)
+tfb::ColorMap* TFB_GetColorMap(int index)
 {
 	const uqm::LockGuard lock {s_mapLock};
 	return get_colormap(index);
 }
 
-void GetColorMapColors(Color* colors, TFB_ColorMap* map)
+void GetColorMapColors(Color* colors, tfb::ColorMap* map)
 {
 	if (!map)
 	{
@@ -277,10 +277,10 @@ bool SetColorMap(COLORMAPPTR map)
 	}
 
 	// parse the supplied PLUTs into our colormaps
-	for (TFB_ColorMap** mpp {colormaps + start}; start <= end; ++start, ++mpp)
+	for (tfb::ColorMap** mpp {colormaps + start}; start <= end; ++start, ++mpp)
 	{
-		TFB_ColorMap* oldmap {*mpp};
-		TFB_ColorMap* newmap {clone_colormap(oldmap, start)};
+		tfb::ColorMap* oldmap {*mpp};
+		tfb::ColorMap* newmap {clone_colormap(oldmap, start)};
 
 		for (int i {0}; i < NumberOfPlutvals; ++i, colors += PlutvalByteSize)
 		{
@@ -432,7 +432,7 @@ bool XFormColorMap_step(void)
 		ColorTransformControl* control = &XFormControl.TaskControl[x];
 		const int index = control->CMapIndex;
 		const int TicksLeft {static_cast<int>((control->EndTime - Now).count())};
-		TFB_ColorMap* curmap {};
+		tfb::ColorMap* curmap {};
 
 		if (index < 0)
 		{
@@ -445,7 +445,7 @@ bool XFormColorMap_step(void)
 			if (curmap && TicksLeft > 0)
 			{
 				constexpr auto XformScale {0x10000};
-				TFB_ColorMap* newmap = nullptr;
+				tfb::ColorMap* newmap = nullptr;
 				int i {};
 
 				newmap = clone_colormap(curmap, index);
@@ -508,7 +508,7 @@ static void FlushPLUTXForms(void)
 
 static TimeCount XFormPLUT(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 {
-	TFB_ColorMap* map {};
+	tfb::ColorMap* map {};
 	int x {};
 	int first_avail = -1;
 	TimeCount EndTime;
@@ -611,7 +611,7 @@ static void DoTransformColorMap(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t
 	const int p_index = *(uint8_t*)ColorMapPtr;
 	const uqm::LockGuard lock {s_mapLock};
 
-	TFB_ColorMap* map {colormaps[p_index]};
+	tfb::ColorMap* map {colormaps[p_index]};
 	if (!map)
 	{
 		uqm::log::error("BUG: XFormColorMap_step(): no current map");
@@ -619,7 +619,7 @@ static void DoTransformColorMap(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t
 	}
 
 	{
-		TFB_ColorMap* newmap = nullptr;
+		tfb::ColorMap* newmap = nullptr;
 		uint8_t* newPtr = (uint8_t*)ColorMapPtr + 2;
 
 		newmap = clone_colormap(map, p_index);

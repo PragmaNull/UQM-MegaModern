@@ -27,7 +27,9 @@
 #include "libs/graphics/imgui/imguilayer.h"
 
 
-struct TFB_SdlScreenInfo
+namespace tfb
+{
+struct SdlScreenInfo
 {
 	SDL_Surface* scaled;
 	SDL_Texture* texture;
@@ -36,14 +38,15 @@ struct TFB_SdlScreenInfo
 	bool dirty, active;
 	SDL_Rect updated;
 };
+} // namespace tfb
 
-static TFB_SdlScreenInfo ScreenTextures[*ScreenBuffer::Count];
+static tfb::SdlScreenInfo ScreenTextures[*ScreenBuffer::Count];
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
 const static char* rendererBackend = nullptr;
 
-static TFB_ScaleFunc scaler = nullptr;
+static tfb::ScaleFunc scaler = nullptr;
 
 namespace
 {
@@ -88,7 +91,7 @@ static constexpr auto GMask {0x00ff0000};
 static constexpr auto RMask {0xff000000};
 #endif
 
-static void TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw,
+static void TFB_SDL_Preprocess(tfb::Redraw force_full_redraw,
 							   int transition_amount, int fade_amount);
 static void TFB_SDL_Postprocess(bool hd);
 static void TFB_SDL_UploadTransitionScreen(void);
@@ -101,21 +104,21 @@ static void TFB_SDL_GpuScaled_ScreenLayer(ScreenBuffer screen, Uint8 a,
 static void TFB_SDL_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
 							   SDL_Rect* rect);
 
-static TFB_GraphicsBackend sdl_scaled_backend = {
+static tfb::GraphicsBackend sdl_scaled_backend = {
 	TFB_SDL_Preprocess,
 	TFB_SDL_Postprocess,
 	TFB_SDL_UploadTransitionScreen,
 	TFB_SDL_Scaled_ScreenLayer,
 	TFB_SDL_ColorLayer};
 
-static TFB_GraphicsBackend sdl_gpu_scaled_backend = {
+static tfb::GraphicsBackend sdl_gpu_scaled_backend = {
 	TFB_SDL_Preprocess,
 	TFB_SDL_Postprocess,
 	TFB_SDL_UploadTransitionScreen,
 	TFB_SDL_GpuScaled_ScreenLayer,
 	TFB_SDL_ColorLayer};
 
-static TFB_GraphicsBackend sdl_unscaled_backend = {
+static tfb::GraphicsBackend sdl_unscaled_backend = {
 	TFB_SDL_Preprocess,
 	TFB_SDL_Postprocess,
 	TFB_SDL_UploadTransitionScreen,
@@ -579,7 +582,7 @@ void TFB_Pure_UninitGraphics(void)
 		// This also destroys the screen textures.
 		SDL_DestroyRenderer(renderer);
 		renderer = nullptr;
-		for (TFB_SdlScreenInfo& screen : ScreenTextures)
+		for (tfb::SdlScreenInfo& screen : ScreenTextures)
 		{
 			screen.texture = nullptr;
 			screen.scaledTarget = nullptr;
@@ -724,13 +727,13 @@ static void FinishGammaPass(void)
 	SDL_SetRenderLogicalPresentation(renderer, WindowWidth, WindowHeight, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 }
 
-static void TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_amount,
+static void TFB_SDL_Preprocess(tfb::Redraw force_full_redraw, int transition_amount,
 							   int fade_amount)
 {
 	(void)transition_amount;
 	(void)fade_amount;
 
-	if (force_full_redraw == uqm::TFBRedraw::Yes)
+	if (force_full_redraw == tfb::Redraw::Yes)
 	{
 		ScreenTextures[*ScreenBuffer::Main].updated.x = 0;
 		ScreenTextures[*ScreenBuffer::Main].updated.y = 0;
@@ -844,7 +847,7 @@ static void TFB_SDL_Scaled_ScreenLayer(ScreenBuffer screen, Uint8 a, SDL_Rect* r
 
 static void TFB_SDL_GpuScaled_ScreenLayer(ScreenBuffer screen, Uint8 a, SDL_Rect* rect)
 {
-	TFB_SdlScreenInfo& info {ScreenTextures[*screen]};
+	tfb::SdlScreenInfo& info {ScreenTextures[*screen]};
 	if (info.dirty)
 	{
 		TFB_SDL_UpdateTexture(info.texture, SDL_Screens[*screen], &info.updated);

@@ -325,7 +325,7 @@ void SetFrameTransparentColor(FRAME frame, Color color)
 
 	assert(frame->Type != ScreenDrawable);
 
-	TFB_Image* img {frame->image};
+	tfb::Image* img {frame->image};
 	const uqm::LockGuard imageLock {img->mutex};
 
 	// TODO: This should defer to TFB_DrawImage instead
@@ -343,7 +343,7 @@ Color GetFramePixel(FRAME frame, GfxPoint pixelPt)
 
 	assert(frame->Type != ScreenDrawable);
 
-	TFB_Image* img {frame->image};
+	tfb::Image* img {frame->image};
 	const uqm::LockGuard imageLock {img->mutex};
 
 	// TODO: This should defer to TFB_DrawImage instead
@@ -482,12 +482,12 @@ DRAWABLE RescaleFrame(FRAME frame, int width, int height)
 	newFrame->HotSpot.x = frame->HotSpot.x * width / frame->Bounds.width;
 	newFrame->HotSpot.y = frame->HotSpot.y * height / frame->Bounds.height;
 
-	TFB_Image* img {frame->image};
+	tfb::Image* img {frame->image};
 	const uqm::LockGuard imageLock {img->mutex};
 	// NOTE: We do not lock the target image because nothing has a
 	//   reference to it yet!
-	TFB_Canvas src {img->NormalImg};
-	TFB_Canvas dst {newFrame->image->NormalImg};
+	tfb::Canvas src {img->NormalImg};
+	tfb::Canvas dst {newFrame->image->NormalImg};
 
 	TFB_DrawCanvas_Rescale_Nearest(src, dst, -1, nullptr, nullptr, nullptr);
 
@@ -522,12 +522,12 @@ DRAWABLE RescalePercentage(FRAME frame, float percentage)
 	newFrame->HotSpot.x = (int16_t)(frame->HotSpot.x * percentage);
 	newFrame->HotSpot.y = (int16_t)(frame->HotSpot.y * percentage);
 
-	TFB_Image* img {frame->image};
+	tfb::Image* img {frame->image};
 	const uqm::LockGuard imageLock {img->mutex};
 	// NOTE: We do not lock the target image because nothing has a
 	//   reference to it yet!
-	TFB_Canvas src {img->NormalImg};
-	TFB_Canvas dst {newFrame->image->NormalImg};
+	tfb::Canvas src {img->NormalImg};
+	tfb::Canvas dst {newFrame->image->NormalImg};
 
 	TFB_DrawCanvas_Rescale_Bilinear(src, dst, -1, nullptr, nullptr, nullptr);
 
@@ -544,7 +544,7 @@ bool ReadFramePixelColors(FRAME frame, Color* pixels, int width, int height)
 	assert(frame->Type != ScreenDrawable);
 
 	// TODO: Do we need to lock the img->mutex here?
-	const TFB_Image* img {frame->image};
+	const tfb::Image* img {frame->image};
 	return TFB_DrawCanvas_GetPixelColors(img->NormalImg, pixels,
 										 width, height);
 }
@@ -560,7 +560,7 @@ bool WriteFramePixelColors(FRAME frame, const Color* pixels, int width, int heig
 	assert(frame->Type != ScreenDrawable);
 
 	// TODO: Do we need to lock the img->mutex here?
-	const TFB_Image* img {frame->image};
+	const tfb::Image* img {frame->image};
 	return TFB_DrawCanvas_SetPixelColors(img->NormalImg, pixels,
 										 width, height);
 }
@@ -575,7 +575,7 @@ bool ReadFramePixelIndexes(FRAME frame, uint8_t* pixels, int width, int height, 
 	assert(frame->Type != ScreenDrawable);
 
 	// TODO: Do we need to lock the img->mutex here?
-	const TFB_Image* img {frame->image};
+	const tfb::Image* img {frame->image};
 
 	// JMS_GFX: Don't try to read pixel indexes for non-indexed images.
 	if (paletted)
@@ -600,7 +600,7 @@ bool WriteFramePixelIndexes(FRAME frame, const uint8_t* pixels, int width, int h
 	assert(frame->Type != ScreenDrawable);
 
 	// TODO: Do we need to lock the img->mutex here?
-	const TFB_Image* img {frame->image};
+	const tfb::Image* img {frame->image};
 	return TFB_DrawCanvas_SetPixelIndexes(img->NormalImg, pixels,
 										  width, height);
 }

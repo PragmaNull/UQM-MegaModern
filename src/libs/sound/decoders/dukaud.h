@@ -23,7 +23,7 @@
 #include "core/types/enum.h"
 #include "decoder.h"
 
-extern TFB_SoundDecoderFuncs duka_DecoderVtbl;
+extern tfb::SoundDecoderFuncs duka_DecoderVtbl;
 
 enum class DukAudError
 {

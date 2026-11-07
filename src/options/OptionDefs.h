@@ -101,38 +101,38 @@ enum class MeleeScaleMode : int
 	Console3DO,
 	Smooth,
 };
-static constexpr TFBScaleMode toTFBScaleMode(const MeleeScaleMode mode)
+static constexpr tfb::ScaleMode toTFBScaleMode(const MeleeScaleMode mode)
 {
 	switch (mode)
 	{
 		case MeleeScaleMode::Step:
-			return TFBScaleMode::Step;
+			return tfb::ScaleMode::Step;
 		case MeleeScaleMode::PC:
-			return TFBScaleMode::Step;
+			return tfb::ScaleMode::Step;
 		case MeleeScaleMode::Nearest:
-			return TFBScaleMode::Nearest;
+			return tfb::ScaleMode::Nearest;
 		case MeleeScaleMode::Bilinear:
-			return TFBScaleMode::Bilinear;
+			return tfb::ScaleMode::Bilinear;
 		case MeleeScaleMode::Console3DO:
-			return TFBScaleMode::Trilinear;
+			return tfb::ScaleMode::Trilinear;
 		case MeleeScaleMode::Smooth:
-			return TFBScaleMode::Trilinear;
+			return tfb::ScaleMode::Trilinear;
 	}
-	return TFBScaleMode::Step;
+	return tfb::ScaleMode::Step;
 }
-static constexpr MeleeScaleMode toMeleeScaleMode(const TFBScaleMode mode)
+static constexpr MeleeScaleMode toMeleeScaleMode(const tfb::ScaleMode mode)
 {
 	switch (mode)
 	{
-		case TFBScaleMode::None:
+		case tfb::ScaleMode::None:
 			break;
-		case TFBScaleMode::Step:
+		case tfb::ScaleMode::Step:
 			return MeleeScaleMode::PC; // also MeleeScaleMode::Step
-		case TFBScaleMode::Nearest:
+		case tfb::ScaleMode::Nearest:
 			return MeleeScaleMode::Nearest;
-		case TFBScaleMode::Bilinear:
+		case tfb::ScaleMode::Bilinear:
 			return MeleeScaleMode::Bilinear;
-		case TFBScaleMode::Trilinear:
+		case tfb::ScaleMode::Trilinear:
 			return MeleeScaleMode::Console3DO; // also MeleeScaleMode::Smooth
 	}
 	return MeleeScaleMode::Step;

@@ -30,7 +30,7 @@ static MUSIC_REF _cur_speech = 0;
 bool InitVideoPlayer(bool useCDROM)
 //useCDROM doesn't really apply to us
 {
-	TFB_PixelFormat fmt;
+	tfb::PixelFormat fmt;
 
 	TFB_DrawCanvas_GetScreenFormat(&fmt);
 	if (!VideoDecoder_Init(0, fmt.BitsPerPixel, fmt.Rmask,
@@ -170,13 +170,13 @@ VideoType VidPlay(VIDEO_REF VidRef)
 
 VIDEO_REF _init_video_file(const char* pStr)
 {
-	TFB_VideoDecoder* dec {VideoDecoder_Load(uqm::contentDir(), pStr)};
+	tfb::VideoDecoder* dec {VideoDecoder_Load(uqm::contentDir(), pStr)};
 	if (!dec)
 	{
 		return NullVideoRef;
 	}
 
-	TFB_VideoClip* vid {new TFB_VideoClip {}};
+	tfb::VideoClip* vid {new tfb::VideoClip {}};
 	vid->decoder = dec;
 	vid->length = dec->length;
 	vid->w = vid->decoder->w - IfHd(4);

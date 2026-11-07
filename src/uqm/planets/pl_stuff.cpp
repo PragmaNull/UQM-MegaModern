@@ -445,7 +445,7 @@ void ZoomInPlanetSphere(void)
 			RepairBackRect(&repairRect);
 		}
 
-		const uqm::TFBScaleMode oldMode = SetGraphicScaleMode(uqm::TFBScaleMode::Bilinear);
+		const tfb::ScaleMode oldMode = SetGraphicScaleMode(tfb::ScaleMode::Bilinear);
 		oldScale = SetGraphicScale((int)(base * scale + 0.5));
 		DrawPlanetSphere(pt.x, pt.y, false);
 		SetGraphicScale(oldScale);

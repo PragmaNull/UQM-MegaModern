@@ -59,20 +59,20 @@ struct wave_ChunkHeader
 
 
 const static char* wava_GetName(void);
-static bool wava_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
+static bool wava_InitModule(AudioFlags flags, const tfb::DecoderFormats*);
 static void wava_TermModule(void);
-static TFB_SoundDecoder* wava_Create(void);
-static void wava_Destroy(TFB_SoundDecoder* decoder);
-static int wava_GetError(TFB_SoundDecoder* This);
-static bool wava_Init(TFB_SoundDecoder* This);
-static void wava_Term(TFB_SoundDecoder* This);
-static bool wava_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
-static void wava_Close(TFB_SoundDecoder* This);
-static int wava_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize);
-static uint32_t wava_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos);
-static uint32_t wava_GetFrame(TFB_SoundDecoder* This);
+static tfb::SoundDecoder* wava_Create(void);
+static void wava_Destroy(tfb::SoundDecoder* decoder);
+static int wava_GetError(tfb::SoundDecoder* This);
+static bool wava_Init(tfb::SoundDecoder* This);
+static void wava_Term(tfb::SoundDecoder* This);
+static bool wava_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
+static void wava_Close(tfb::SoundDecoder* This);
+static int wava_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize);
+static uint32_t wava_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos);
+static uint32_t wava_GetFrame(tfb::SoundDecoder* This);
 
-TFB_SoundDecoderFuncs wava_DecoderVtbl =
+tfb::SoundDecoderFuncs wava_DecoderVtbl =
 	{
 		wava_GetName,
 		wava_InitModule,
@@ -89,10 +89,12 @@ TFB_SoundDecoderFuncs wava_DecoderVtbl =
 		wava_GetFrame,
 };
 
-struct TFB_WaveSoundDecoder
+namespace tfb
+{
+struct WaveSoundDecoder
 {
 	// always the first member
-	TFB_SoundDecoder decoder;
+	SoundDecoder decoder;
 
 	// private
 	int32_t last_error;
@@ -103,8 +105,9 @@ struct TFB_WaveSoundDecoder
 	uint32_t max_pcm;
 	uint32_t cur_pcm;
 };
+} // namespace tfb
 
-const static TFB_DecoderFormats* wava_formats = nullptr;
+const static tfb::DecoderFormats* wava_formats = nullptr;
 
 
 const static char* wava_GetName(void)
@@ -112,7 +115,7 @@ const static char* wava_GetName(void)
 	return "Wave";
 }
 
-static bool wava_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
+static bool wava_InitModule(AudioFlags flags, const tfb::DecoderFormats* fmts)
 {
 	wava_formats = fmts;
 	return true;
@@ -125,34 +128,34 @@ static void wava_TermModule(void)
 	// no specific module term
 }
 
-static TFB_SoundDecoder* wava_Create(void)
+static tfb::SoundDecoder* wava_Create(void)
 {
-	return &(new TFB_WaveSoundDecoder {})->decoder;
+	return &(new tfb::WaveSoundDecoder {})->decoder;
 }
 
-static void wava_Destroy(TFB_SoundDecoder* decoder)
+static void wava_Destroy(tfb::SoundDecoder* decoder)
 {
-	delete reinterpret_cast<TFB_WaveSoundDecoder*>(decoder);
+	delete reinterpret_cast<tfb::WaveSoundDecoder*>(decoder);
 }
 
-static int wava_GetError(TFB_SoundDecoder* This)
+static int wava_GetError(tfb::SoundDecoder* This)
 {
-	TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*)This;
+	tfb::WaveSoundDecoder* wava = (tfb::WaveSoundDecoder*)This;
 	const int ret = wava->last_error;
 	wava->last_error = 0;
 	return ret;
 }
 
-static bool wava_Init(TFB_SoundDecoder* This)
+static bool wava_Init(tfb::SoundDecoder* This)
 {
-	//TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*) This;
+	//tfb::WaveSoundDecoder* wava = (tfb::WaveSoundDecoder*) This;
 	This->need_swap = wava_formats->want_big_endian;
 	return true;
 }
 
-static void wava_Term(TFB_SoundDecoder* This)
+static void wava_Term(tfb::SoundDecoder* This)
 {
-	//TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*) This;
+	//tfb::WaveSoundDecoder* wava = (tfb::WaveSoundDecoder*) This;
 	wava_Close(This); // ensure cleanup
 }
 
@@ -176,7 +179,7 @@ static bool read_le_32(uqm::io::File* fp, uint32_t* v)
 	return true;
 }
 
-static bool wava_readFileHeader(TFB_WaveSoundDecoder* wava, wave_FileHeader* hdr)
+static bool wava_readFileHeader(tfb::WaveSoundDecoder* wava, wave_FileHeader* hdr)
 {
 	if (!read_le_32(wava->fp, &hdr->id) || !read_le_32(wava->fp, &hdr->size) || !read_le_32(wava->fp, &hdr->type))
 	{
@@ -186,7 +189,7 @@ static bool wava_readFileHeader(TFB_WaveSoundDecoder* wava, wave_FileHeader* hdr
 	return true;
 }
 
-static bool wava_readChunkHeader(TFB_WaveSoundDecoder* wava, wave_ChunkHeader* chunk)
+static bool wava_readChunkHeader(tfb::WaveSoundDecoder* wava, wave_ChunkHeader* chunk)
 {
 	if (!read_le_32(wava->fp, &chunk->id) || !read_le_32(wava->fp, &chunk->size))
 	{
@@ -196,7 +199,7 @@ static bool wava_readChunkHeader(TFB_WaveSoundDecoder* wava, wave_ChunkHeader* c
 	return true;
 }
 
-static bool wava_readFormatHeader(TFB_WaveSoundDecoder* wava, wave_FormatHeader* fmt)
+static bool wava_readFormatHeader(tfb::WaveSoundDecoder* wava, wave_FormatHeader* fmt)
 {
 	if (!read_le_16(wava->fp, &fmt->format) || !read_le_16(wava->fp, &fmt->channels) || !read_le_32(wava->fp, &fmt->samplesPerSec) || !read_le_32(wava->fp, &fmt->bytesPerSec) || !read_le_16(wava->fp, &fmt->blockAlign) || !read_le_16(wava->fp, &fmt->bitsPerSample))
 	{
@@ -206,9 +209,9 @@ static bool wava_readFormatHeader(TFB_WaveSoundDecoder* wava, wave_FormatHeader*
 	return true;
 }
 
-static bool wava_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
+static bool wava_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
-	TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*)This;
+	tfb::WaveSoundDecoder* wava = (tfb::WaveSoundDecoder*)This;
 	wave_FileHeader fileHdr;
 	wave_ChunkHeader chunkHdr;
 	long dataLeft {};
@@ -321,9 +324,9 @@ static bool wava_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, con
 	return true;
 }
 
-static void wava_Close(TFB_SoundDecoder* This)
+static void wava_Close(tfb::SoundDecoder* This)
 {
-	TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*)This;
+	tfb::WaveSoundDecoder* wava = (tfb::WaveSoundDecoder*)This;
 
 	if (wava->fp)
 	{
@@ -332,9 +335,9 @@ static void wava_Close(TFB_SoundDecoder* This)
 	}
 }
 
-static int wava_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
+static int wava_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
 {
-	TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*)This;
+	tfb::WaveSoundDecoder* wava = (tfb::WaveSoundDecoder*)This;
 	uint32_t dec_pcm {};
 
 	dec_pcm = bufsize / wava->fmtHdr.blockAlign;
@@ -349,9 +352,9 @@ static int wava_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 	return dec_pcm * wava->fmtHdr.blockAlign;
 }
 
-static uint32_t wava_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
+static uint32_t wava_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos)
 {
-	TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*)This;
+	tfb::WaveSoundDecoder* wava = (tfb::WaveSoundDecoder*)This;
 
 	if (pcm_pos > wava->max_pcm)
 	{
@@ -364,9 +367,9 @@ static uint32_t wava_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 	return pcm_pos;
 }
 
-static uint32_t wava_GetFrame(TFB_SoundDecoder* This)
+static uint32_t wava_GetFrame(tfb::SoundDecoder* This)
 {
-	//TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*) This;
+	//tfb::WaveSoundDecoder* wava = (tfb::WaveSoundDecoder*) This;
 	return 0; // only 1 frame for now
 
 	(void)This; // laugh at compiler warning

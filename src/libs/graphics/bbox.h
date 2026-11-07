@@ -27,19 +27,22 @@
  * of which are only callable by the thread that is permitted to touch
  * the screen.  No explicit locks should therefore be required. */
 
-struct TFB_BoundingBox
+namespace tfb
+{
+struct BoundingBox
 {
 	int valid;		// If zero, the next point registered becomes the region
 	GfxRect region; // The actual modified rectangle
 	GfxRect clip;	// Points outside of this rectangle are pushed to
 					// the closest border point
 };
+} // namespace tfb
 
-extern TFB_BoundingBox TFB_BBox;
+extern tfb::BoundingBox TFB_BBox;
 
 void TFB_BBox_RegisterPoint(int x, int y);
 void TFB_BBox_RegisterRect(const GfxRect* r);
-void TFB_BBox_RegisterCanvas(TFB_Canvas c, int x, int y);
+void TFB_BBox_RegisterCanvas(tfb::Canvas c, int x, int y);
 
 void TFB_BBox_Init(int width, int height);
 void TFB_BBox_Reset(void);

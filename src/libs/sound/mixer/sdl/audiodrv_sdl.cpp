@@ -129,7 +129,7 @@ int32_t mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 {
 	SDL_AudioSpec desired {};
 	MixerQuality quality;
-	TFB_DecoderFormats formats =
+	tfb::DecoderFormats formats =
 		{
 			uqstl::endian::native == uqstl::endian::big, uqstl::endian::native == uqstl::endian::big,
 			*AudioEnum::FormatMono8, *AudioEnum::FormatStereo8,

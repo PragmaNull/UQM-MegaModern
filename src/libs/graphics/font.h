@@ -33,13 +33,13 @@ struct FontPage
 	uqm::UniChar pageStart;
 	uqm::UniChar firstChar;
 	size_t numChars;
-	uqstl::vector<TFB_Char> charDesc;
+	uqstl::vector<tfb::Char> charDesc;
 };
 
 static inline FontPage* AllocFontPage(int numChars)
 {
 	auto* result {new FontPage {}};
-	result->charDesc.assign(numChars, TFB_Char {});
+	result->charDesc.assign(numChars, tfb::Char {});
 	return result;
 }
 
@@ -66,7 +66,7 @@ extern FONT _CurFontPtr;
 // A font is a directory of glyph images, or a zip archive of them.
 extern void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path);
 extern bool _ReleaseFontData(void* handle);
-extern TFB_Char* GetFrameForFPS(uqm::UniChar ch);
+extern tfb::Char* GetFrameForFPS(uqm::UniChar ch);
 extern void GetFontDims(int16_t* w, int16_t* h);
 extern int GetFontCharSpace(void);
 extern bool GoodToGoFPS(void);

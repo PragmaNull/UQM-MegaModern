@@ -71,7 +71,7 @@ static void checkPrimitiveMode(SDL_Surface* surf, Color* color, DrawMode* mode)
 }
 
 void TFB_DrawCanvas_Line(int x1, int y1, int x2, int y2, Color color,
-						 DrawMode mode, TFB_Canvas target, uint8_t thickness)
+						 DrawMode mode, tfb::Canvas target, uint8_t thickness)
 {
 	SDL_Surface* dst = (SDL_Surface*)target;
 	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(dst->format);
@@ -116,7 +116,7 @@ void TFB_DrawCanvas_Line(int x1, int y1, int x2, int y2, Color color,
 	}
 }
 
-void TFB_DrawCanvas_Rect(GfxRect* rect, Color color, DrawMode mode, TFB_Canvas target)
+void TFB_DrawCanvas_Rect(GfxRect* rect, Color color, DrawMode mode, tfb::Canvas target)
 {
 	SDL_Surface* dst = (SDL_Surface*)target;
 	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(dst->format);
@@ -217,8 +217,8 @@ static void TFB_DrawCanvas_Blit(SDL_Surface* src, SDL_Rect* src_r,
 
 // XXX: If a colormap is passed in, it has to have been acquired via
 // TFB_GetColorMap(). We release the colormap at the end.
-void TFB_DrawCanvas_Image(TFB_Image* img, int x, int y, int scale,
-						  uqm::TFBScaleMode scaleMode, TFB_ColorMap* cmap, DrawMode mode, TFB_Canvas target)
+void TFB_DrawCanvas_Image(tfb::Image* img, int x, int y, int scale,
+						  tfb::ScaleMode scaleMode, tfb::ColorMap* cmap, DrawMode mode, tfb::Canvas target)
 {
 	SDL_Rect srcRect;
 	SDL_Rect targetRect;
@@ -243,7 +243,7 @@ void TFB_DrawCanvas_Image(TFB_Image* img, int x, int y, int scale,
 
 	if (scale != 0 && scale != GscaleIdentity)
 	{
-		if (scaleMode == uqm::TFBScaleMode::Trilinear)
+		if (scaleMode == tfb::ScaleMode::Trilinear)
 		{
 			if (img->MipmapImg)
 			{
@@ -257,7 +257,7 @@ void TFB_DrawCanvas_Image(TFB_Image* img, int x, int y, int scale,
 			else
 			{
 				// Do bilinear scaling instead when mipmap is unavailable
-				scaleMode = uqm::TFBScaleMode::Bilinear;
+				scaleMode = tfb::ScaleMode::Bilinear;
 			}
 		}
 
@@ -448,8 +448,8 @@ static void TFB_DrawCanvas_Fill(SDL_Surface* src, Uint32 fillcolor, SDL_Surface*
 	// the surface in different ways to diff targets
 }
 
-void TFB_DrawCanvas_FilledImage(TFB_Image* img, int x, int y, int scale,
-								uqm::TFBScaleMode scaleMode, Color color, DrawMode mode, TFB_Canvas target)
+void TFB_DrawCanvas_FilledImage(tfb::Image* img, int x, int y, int scale,
+								tfb::ScaleMode scaleMode, Color color, DrawMode mode, tfb::Canvas target)
 {
 	SDL_Surface* dst = (SDL_Surface*)target;
 	SDL_Rect srcRect;
@@ -472,9 +472,9 @@ void TFB_DrawCanvas_FilledImage(TFB_Image* img, int x, int y, int scale,
 
 	if (scale != 0 && scale != GscaleIdentity)
 	{
-		if (scaleMode == uqm::TFBScaleMode::Trilinear)
+		if (scaleMode == tfb::ScaleMode::Trilinear)
 		{
-			scaleMode = uqm::TFBScaleMode::Bilinear;
+			scaleMode = tfb::ScaleMode::Bilinear;
 		}
 		// no point in trilinear for filled images
 
@@ -579,8 +579,8 @@ void TFB_DrawCanvas_FilledImage(TFB_Image* img, int x, int y, int scale,
 	TFB_DrawCanvas_Blit(surf, pSrcRect, dst, &targetRect, mode);
 }
 
-void TFB_DrawCanvas_FontChar(TFB_Char* fontChar, TFB_Image* backing,
-							 int x, int y, DrawMode mode, TFB_Canvas target)
+void TFB_DrawCanvas_FontChar(tfb::Char* fontChar, tfb::Image* backing,
+							 int x, int y, DrawMode mode, tfb::Canvas target)
 {
 	SDL_Surface* dst = (SDL_Surface*)target;
 	SDL_Rect srcRect;
@@ -777,7 +777,7 @@ static void TFB_DrawCanvas_Mask(SDL_Surface* layer, SDL_Surface* base, DrawMode 
 	}
 }
 
-void TFB_DrawCanvas_MaskImage(TFB_Image* img, DrawMode mode, TFB_Canvas target, Color* fill)
+void TFB_DrawCanvas_MaskImage(tfb::Image* img, DrawMode mode, tfb::Canvas target, Color* fill)
 {
 	if (!img) // No layer - do a fill instead
 	{
@@ -790,7 +790,7 @@ void TFB_DrawCanvas_MaskImage(TFB_Image* img, DrawMode mode, TFB_Canvas target, 
 
 		if (SDL_GetSurfacePalette(surf))
 		{
-			TFB_ColorMap* cmap = nullptr;
+			tfb::ColorMap* cmap = nullptr;
 			cmap = TFB_GetColorMap(img->colormap_index);
 			TFB_SetColors((SDL_Surface*)img->NormalImg, cmap->palette->colors, 0, 256);
 			TFB_ReturnColorMap(cmap);
@@ -800,7 +800,7 @@ void TFB_DrawCanvas_MaskImage(TFB_Image* img, DrawMode mode, TFB_Canvas target, 
 	}
 }
 
-TFB_Canvas TFB_DrawCanvas_New_TrueColor(int w, int h, bool hasalpha)
+tfb::Canvas TFB_DrawCanvas_New_TrueColor(int w, int h, bool hasalpha)
 {
 	SDL_Surface* new_surf {};
 	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(format_conv_surf->format);
@@ -810,14 +810,14 @@ TFB_Canvas TFB_DrawCanvas_New_TrueColor(int w, int h, bool hasalpha)
 								 hasalpha ? fmt->Amask : 0);
 	if (!new_surf)
 	{
-		uqm::log::critical("INTERNAL PANIC: Failed to create TFB_Canvas: {}",
+		uqm::log::critical("INTERNAL PANIC: Failed to create tfb::Canvas: {}",
 						   SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 	return new_surf;
 }
 
-TFB_Canvas TFB_DrawCanvas_New_ForScreen(int w, int h, bool withalpha)
+tfb::Canvas TFB_DrawCanvas_New_ForScreen(int w, int h, bool withalpha)
 {
 	SDL_Surface* new_surf {};
 	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(SDL_Screen->format);
@@ -844,20 +844,20 @@ TFB_Canvas TFB_DrawCanvas_New_ForScreen(int w, int h, bool withalpha)
 	if (!new_surf)
 	{
 		uqm::log::critical("TFB_DrawCanvas_New_ForScreen() INTERNAL PANIC:"
-						   "Failed to create TFB_Canvas: {}",
+						   "Failed to create tfb::Canvas: {}",
 						   SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 	return new_surf;
 }
 
-TFB_Canvas TFB_DrawCanvas_New_Paletted(int w, int h, Color palette[256],
-									   int transparent_index)
+tfb::Canvas TFB_DrawCanvas_New_Paletted(int w, int h, Color palette[256],
+										int transparent_index)
 {
 	SDL_Surface* new_surf {TFB_CreateSurface(w, h, 8, 0, 0, 0, 0)};
 	if (!new_surf)
 	{
-		uqm::log::critical("INTERNAL PANIC: Failed to create TFB_Canvas: {}",
+		uqm::log::critical("INTERNAL PANIC: Failed to create tfb::Canvas: {}",
 						   SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
@@ -876,20 +876,20 @@ TFB_Canvas TFB_DrawCanvas_New_Paletted(int w, int h, Color palette[256],
 	return new_surf;
 }
 
-TFB_Canvas TFB_DrawCanvas_New_ScaleTarget(TFB_Canvas canvas, TFB_Canvas oldcanvas, uqm::TFBScaleMode type, uqm::TFBScaleMode last_type)
+tfb::Canvas TFB_DrawCanvas_New_ScaleTarget(tfb::Canvas canvas, tfb::Canvas oldcanvas, tfb::ScaleMode type, tfb::ScaleMode last_type)
 {
 	SDL_Surface* src = (SDL_Surface*)canvas;
 	SDL_Surface* old = (SDL_Surface*)oldcanvas;
 	SDL_Surface* newsurf = nullptr;
 
 	// For the purposes of this function, bilinear == trilinear
-	if (type == uqm::TFBScaleMode::Trilinear)
+	if (type == tfb::ScaleMode::Trilinear)
 	{
-		type = uqm::TFBScaleMode::Bilinear;
+		type = tfb::ScaleMode::Bilinear;
 	}
-	if (last_type == uqm::TFBScaleMode::Trilinear)
+	if (last_type == tfb::ScaleMode::Trilinear)
 	{
-		last_type = uqm::TFBScaleMode::Bilinear;
+		last_type = tfb::ScaleMode::Bilinear;
 	}
 
 	if (old && type != last_type)
@@ -902,7 +902,7 @@ TFB_Canvas TFB_DrawCanvas_New_ScaleTarget(TFB_Canvas canvas, TFB_Canvas oldcanva
 		return old; /* can just reuse the old one */
 	}
 
-	if (type == uqm::TFBScaleMode::Nearest)
+	if (type == tfb::ScaleMode::Nearest)
 	{
 		newsurf = TFB_CreateSurface(src->w,
 									src->h, src->format);
@@ -925,7 +925,7 @@ TFB_Canvas TFB_DrawCanvas_New_ScaleTarget(TFB_Canvas canvas, TFB_Canvas oldcanva
 	return newsurf;
 }
 
-TFB_Canvas TFB_DrawCanvas_New_RotationTarget(TFB_Canvas src_canvas, int angle)
+tfb::Canvas TFB_DrawCanvas_New_RotationTarget(tfb::Canvas src_canvas, int angle)
 {
 	SDL_Surface* src = (SDL_Surface*)src_canvas;
 	GfxExtent size;
@@ -936,7 +936,7 @@ TFB_Canvas TFB_DrawCanvas_New_RotationTarget(TFB_Canvas src_canvas, int angle)
 	if (!newsurf)
 	{
 		uqm::log::critical("TFB_DrawCanvas_New_RotationTarget()"
-						   " INTERNAL PANIC: Failed to create TFB_Canvas: {}",
+						   " INTERNAL PANIC: Failed to create tfb::Canvas: {}",
 						   SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
@@ -945,7 +945,7 @@ TFB_Canvas TFB_DrawCanvas_New_RotationTarget(TFB_Canvas src_canvas, int angle)
 	return newsurf;
 }
 
-TFB_Canvas TFB_DrawCanvas_LoadFromFile(const uqm::io::Directory& dir, const char* fileName)
+tfb::Canvas TFB_DrawCanvas_LoadFromFile(const uqm::io::Directory& dir, const char* fileName)
 {
 	SDL_Surface* surf = sdl_loadImage(dir, fileName);
 	if (!surf)
@@ -963,7 +963,7 @@ TFB_Canvas TFB_DrawCanvas_LoadFromFile(const uqm::io::Directory& dir, const char
 	return surf;
 }
 
-void TFB_DrawCanvas_Delete(TFB_Canvas canvas)
+void TFB_DrawCanvas_Delete(tfb::Canvas canvas)
 {
 	if (!canvas)
 	{
@@ -977,7 +977,7 @@ void TFB_DrawCanvas_Delete(TFB_Canvas canvas)
 	}
 }
 
-bool TFB_DrawCanvas_GetFontCharData(TFB_Canvas canvas, uint8_t* outData,
+bool TFB_DrawCanvas_GetFontCharData(tfb::Canvas canvas, uint8_t* outData,
 									unsigned dataPitch)
 {
 	SDL_Surface* surf = (SDL_Surface*)canvas;
@@ -1025,7 +1025,7 @@ bool TFB_DrawCanvas_GetFontCharData(TFB_Canvas canvas, uint8_t* outData,
 	return true;
 }
 
-uqstl::optional<uqstl::array<Color, 256>> TFB_DrawCanvas_ExtractPalette(TFB_Canvas canvas)
+uqstl::optional<uqstl::array<Color, 256>> TFB_DrawCanvas_ExtractPalette(tfb::Canvas canvas)
 {
 	SDL_Surface* surf = (SDL_Surface*)canvas;
 	const SDL_Palette* palette = SDL_GetSurfacePalette(surf);
@@ -1046,7 +1046,7 @@ uqstl::optional<uqstl::array<Color, 256>> TFB_DrawCanvas_ExtractPalette(TFB_Canv
 	return result;
 }
 
-TFB_Canvas TFB_DrawCanvas_ToScreenFormat(TFB_Canvas canvas)
+tfb::Canvas TFB_DrawCanvas_ToScreenFormat(tfb::Canvas canvas)
 {
 	SDL_Surface* result = TFB_DisplayFormatAlpha((SDL_Surface*)canvas);
 	if (result == nullptr)
@@ -1068,12 +1068,12 @@ TFB_Canvas TFB_DrawCanvas_ToScreenFormat(TFB_Canvas canvas)
 	return canvas;
 }
 
-bool TFB_DrawCanvas_IsPaletted(TFB_Canvas canvas)
+bool TFB_DrawCanvas_IsPaletted(tfb::Canvas canvas)
 {
 	return (bool)(SDL_GetSurfacePalette(((SDL_Surface*)canvas)) != nullptr);
 }
 
-void TFB_DrawCanvas_SetPalette(TFB_Canvas target, Color palette[256])
+void TFB_DrawCanvas_SetPalette(tfb::Canvas target, Color palette[256])
 {
 	SDL_Color colors[256];
 
@@ -1085,7 +1085,7 @@ void TFB_DrawCanvas_SetPalette(TFB_Canvas target, Color palette[256])
 	TFB_SetColors((SDL_Surface*)target, colors, 0, 256);
 }
 
-int TFB_DrawCanvas_GetTransparentIndex(TFB_Canvas canvas)
+int TFB_DrawCanvas_GetTransparentIndex(tfb::Canvas canvas)
 {
 	Uint32 colorkey {};
 	if (TFB_GetColorKey((SDL_Surface*)canvas, &colorkey))
@@ -1095,7 +1095,7 @@ int TFB_DrawCanvas_GetTransparentIndex(TFB_Canvas canvas)
 	return -1;
 }
 
-void TFB_DrawCanvas_SetTransparentIndex(TFB_Canvas canvas, int index, bool rleaccel)
+void TFB_DrawCanvas_SetTransparentIndex(tfb::Canvas canvas, int index, bool rleaccel)
 {
 	if (index >= 0)
 	{
@@ -1113,8 +1113,8 @@ void TFB_DrawCanvas_SetTransparentIndex(TFB_Canvas canvas, int index, bool rleac
 	}
 }
 
-void TFB_DrawCanvas_CopyTransparencyInfo(TFB_Canvas src_canvas,
-										 TFB_Canvas dst_canvas)
+void TFB_DrawCanvas_CopyTransparencyInfo(tfb::Canvas src_canvas,
+										 tfb::Canvas dst_canvas)
 {
 	SDL_Surface* src = (SDL_Surface*)src_canvas;
 
@@ -1133,7 +1133,7 @@ void TFB_DrawCanvas_CopyTransparencyInfo(TFB_Canvas src_canvas,
 	}
 }
 
-bool TFB_DrawCanvas_GetTransparentColor(TFB_Canvas canvas, Color* color)
+bool TFB_DrawCanvas_GetTransparentColor(tfb::Canvas canvas, Color* color)
 {
 	Uint32 colorkey {};
 	if (!TFB_DrawCanvas_IsPaletted(canvas)
@@ -1152,7 +1152,7 @@ bool TFB_DrawCanvas_GetTransparentColor(TFB_Canvas canvas, Color* color)
 	return false;
 }
 
-void TFB_DrawCanvas_SetTransparentColor(TFB_Canvas canvas, Color color,
+void TFB_DrawCanvas_SetTransparentColor(tfb::Canvas canvas, Color color,
 										bool rleaccel)
 {
 	Uint32 sdlColor {};
@@ -1167,9 +1167,9 @@ void TFB_DrawCanvas_SetTransparentColor(TFB_Canvas canvas, Color color,
 	}
 }
 
-void TFB_DrawCanvas_GetScaledExtent(TFB_Canvas src_canvas, HOT_SPOT* src_hs,
-									TFB_Canvas src_mipmap, HOT_SPOT* mm_hs,
-									int scale, uqm::TFBScaleMode type, GfxExtent* size, HOT_SPOT* hs)
+void TFB_DrawCanvas_GetScaledExtent(tfb::Canvas src_canvas, HOT_SPOT* src_hs,
+									tfb::Canvas src_mipmap, HOT_SPOT* mm_hs,
+									int scale, tfb::ScaleMode type, GfxExtent* size, HOT_SPOT* hs)
 {
 	const SDL_Surface* src = (SDL_Surface*)src_canvas;
 	int32_t x {};
@@ -1203,7 +1203,7 @@ void TFB_DrawCanvas_GetScaledExtent(TFB_Canvas src_canvas, HOT_SPOT* src_hs,
 		y = mm_hs->y * GscaleIdentity + (src_hs->y - mm_hs->y) * ratio;
 	}
 
-	if (type != uqm::TFBScaleMode::Nearest)
+	if (type != tfb::ScaleMode::Nearest)
 	{
 		// align hotspot on an whole pixel
 		if (x & (GscaleIdentity - 1))
@@ -1242,7 +1242,7 @@ void TFB_DrawCanvas_GetScaledExtent(TFB_Canvas src_canvas, HOT_SPOT* src_hs,
 	}
 }
 
-void TFB_DrawCanvas_GetExtent(TFB_Canvas canvas, GfxExtent* size)
+void TFB_DrawCanvas_GetExtent(tfb::Canvas canvas, GfxExtent* size)
 {
 	const SDL_Surface* src = (SDL_Surface*)canvas;
 
@@ -1250,7 +1250,7 @@ void TFB_DrawCanvas_GetExtent(TFB_Canvas canvas, GfxExtent* size)
 	size->height = src->h;
 }
 
-void TFB_DrawCanvas_Rescale_Nearest(TFB_Canvas src_canvas, TFB_Canvas dst_canvas,
+void TFB_DrawCanvas_Rescale_Nearest(tfb::Canvas src_canvas, tfb::Canvas dst_canvas,
 									int scale, HOT_SPOT* src_hs, GfxExtent* size, HOT_SPOT* dst_hs)
 {
 	SDL_Surface* src = (SDL_Surface*)src_canvas;
@@ -1267,7 +1267,7 @@ void TFB_DrawCanvas_Rescale_Nearest(TFB_Canvas src_canvas, TFB_Canvas dst_canvas
 	if (scale > 0)
 	{
 		TFB_DrawCanvas_GetScaledExtent(src, src_hs, nullptr, nullptr, scale,
-									   uqm::TFBScaleMode::Nearest, size, dst_hs);
+									   tfb::ScaleMode::Nearest, size, dst_hs);
 
 		w = size->width;
 		h = size->height;
@@ -1480,8 +1480,8 @@ static inline Uint32 scale_get_pixel(SDL_Surface* src, Uint32 mask, Uint32 key, 
 	return scale_read_pixel((Uint8*)src->pixels + y * src->pitch + x * SDL_GetPixelFormatDetails(src->format)->bytes_per_pixel, SDL_GetPixelFormatDetails(src->format), pal, mask, key);
 }
 
-void TFB_DrawCanvas_Rescale_Trilinear(TFB_Canvas src_canvas, TFB_Canvas src_mipmap,
-									  TFB_Canvas dst_canvas, int scale, HOT_SPOT* src_hs, HOT_SPOT* mm_hs,
+void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mipmap,
+									  tfb::Canvas dst_canvas, int scale, HOT_SPOT* src_hs, HOT_SPOT* mm_hs,
 									  GfxExtent* size, HOT_SPOT* dst_hs)
 {
 	SDL_Surface* src = (SDL_Surface*)src_canvas;
@@ -1538,7 +1538,7 @@ void TFB_DrawCanvas_Rescale_Trilinear(TFB_Canvas src_canvas, TFB_Canvas src_mipm
 	{
 		// Use (scale / GscaleIdentity) sizing factor
 		TFB_DrawCanvas_GetScaledExtent(src, src_hs, mm, mm_hs, scale,
-									   uqm::TFBScaleMode::Trilinear, size, dst_hs);
+									   tfb::ScaleMode::Trilinear, size, dst_hs);
 
 		w = size->width;
 		h = size->height;
@@ -1814,7 +1814,7 @@ void TFB_DrawCanvas_Rescale_Trilinear(TFB_Canvas src_canvas, TFB_Canvas src_mipm
 	SDL_UnlockSurface(src);
 }
 
-void TFB_DrawCanvas_Rescale_Bilinear(TFB_Canvas src_canvas, TFB_Canvas dst_canvas,
+void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_canvas,
 									 int scale, HOT_SPOT* src_hs, GfxExtent* size, HOT_SPOT* dst_hs)
 {
 	SDL_Surface* src = (SDL_Surface*)src_canvas;
@@ -1852,7 +1852,7 @@ void TFB_DrawCanvas_Rescale_Bilinear(TFB_Canvas src_canvas, TFB_Canvas dst_canva
 	{
 		// Use (scale / GscaleIdentity) sizing factor
 		TFB_DrawCanvas_GetScaledExtent(src, src_hs, nullptr, nullptr, scale,
-									   uqm::TFBScaleMode::Bilinear, size, dst_hs);
+									   tfb::ScaleMode::Bilinear, size, dst_hs);
 
 		w = size->width;
 		h = size->height;
@@ -2011,19 +2011,19 @@ void TFB_DrawCanvas_Rescale_Bilinear(TFB_Canvas src_canvas, TFB_Canvas dst_canva
 	SDL_UnlockSurface(src);
 }
 
-void TFB_DrawCanvas_Lock(TFB_Canvas canvas)
+void TFB_DrawCanvas_Lock(tfb::Canvas canvas)
 {
 	SDL_Surface* surf = (SDL_Surface*)canvas;
 	SDL_LockSurface(surf);
 }
 
-void TFB_DrawCanvas_Unlock(TFB_Canvas canvas)
+void TFB_DrawCanvas_Unlock(tfb::Canvas canvas)
 {
 	SDL_Surface* surf = (SDL_Surface*)canvas;
 	SDL_UnlockSurface(surf);
 }
 
-void TFB_DrawCanvas_GetScreenFormat(TFB_PixelFormat* fmt)
+void TFB_DrawCanvas_GetScreenFormat(tfb::PixelFormat* fmt)
 {
 	const SDL_PixelFormatDetails* sdl = SDL_GetPixelFormatDetails(SDL_Screen->format);
 
@@ -2048,19 +2048,19 @@ void TFB_DrawCanvas_GetScreenFormat(TFB_PixelFormat* fmt)
 	}
 }
 
-int TFB_DrawCanvas_GetStride(TFB_Canvas canvas)
+int TFB_DrawCanvas_GetStride(tfb::Canvas canvas)
 {
 	const SDL_Surface* surf = (SDL_Surface*)canvas;
 	return surf->pitch;
 }
 
-void* TFB_DrawCanvas_GetLine(TFB_Canvas canvas, int line)
+void* TFB_DrawCanvas_GetLine(tfb::Canvas canvas, int line)
 {
 	const SDL_Surface* surf = (SDL_Surface*)canvas;
 	return (uint8_t*)surf->pixels + surf->pitch * line;
 }
 
-Color TFB_DrawCanvas_GetPixel(TFB_Canvas canvas, int x, int y)
+Color TFB_DrawCanvas_GetPixel(tfb::Canvas canvas, int x, int y)
 {
 	SDL_Surface* surf = (SDL_Surface*)canvas;
 	Color c = {0, 0, 0, 0};
@@ -2081,7 +2081,7 @@ Color TFB_DrawCanvas_GetPixel(TFB_Canvas canvas, int x, int y)
 	return c;
 }
 
-void TFB_DrawCanvas_Rotate(TFB_Canvas src_canvas, TFB_Canvas dst_canvas,
+void TFB_DrawCanvas_Rotate(tfb::Canvas src_canvas, tfb::Canvas dst_canvas,
 						   int angle, GfxExtent size)
 {
 	SDL_Surface* src = (SDL_Surface*)src_canvas;
@@ -2113,7 +2113,7 @@ void TFB_DrawCanvas_Rotate(TFB_Canvas src_canvas, TFB_Canvas dst_canvas,
 	}
 }
 
-void TFB_DrawCanvas_GetRotatedExtent(TFB_Canvas src_canvas, int angle, GfxExtent* size)
+void TFB_DrawCanvas_GetRotatedExtent(tfb::Canvas src_canvas, int angle, GfxExtent* size)
 {
 	int dstw {};
 	int dsth {};
@@ -2124,8 +2124,8 @@ void TFB_DrawCanvas_GetRotatedExtent(TFB_Canvas src_canvas, int angle, GfxExtent
 	size->width = dstw;
 }
 
-void TFB_DrawCanvas_CopyRect(TFB_Canvas source, const GfxRect* srcRect,
-							 TFB_Canvas target, GfxPoint dstPt)
+void TFB_DrawCanvas_CopyRect(tfb::Canvas source, const GfxRect* srcRect,
+							 tfb::Canvas target, GfxPoint dstPt)
 {
 	SDL_Rect sourceRect;
 	SDL_Rect targetRect;
@@ -2152,7 +2152,7 @@ void TFB_DrawCanvas_CopyRect(TFB_Canvas source, const GfxRect* srcRect,
 	SDL_BlitSurface((SDL_Surface*)source, &sourceRect, (SDL_Surface*)target, &targetRect);
 }
 
-void TFB_DrawCanvas_SetClipRect(TFB_Canvas canvas, const GfxRect* clipRect)
+void TFB_DrawCanvas_SetClipRect(tfb::Canvas canvas, const GfxRect* clipRect)
 {
 	if (canvas == 0)
 	{
@@ -2176,8 +2176,8 @@ void TFB_DrawCanvas_SetClipRect(TFB_Canvas canvas, const GfxRect* clipRect)
 	}
 }
 
-bool TFB_DrawCanvas_Intersect(TFB_Canvas canvas1, GfxPoint c1org,
-							  TFB_Canvas canvas2, GfxPoint c2org, const GfxRect* interRect)
+bool TFB_DrawCanvas_Intersect(tfb::Canvas canvas1, GfxPoint c1org,
+							  tfb::Canvas canvas2, GfxPoint c2org, const GfxRect* interRect)
 {
 	bool ret = false;
 	SDL_Surface* surf1 = (SDL_Surface*)canvas1;
@@ -2255,7 +2255,7 @@ bool TFB_DrawCanvas_Intersect(TFB_Canvas canvas1, GfxPoint c1org,
 // The pixels array is assumed to be at least width * height large.
 // The pixels array can be wider/narrower or taller/shorter than the canvas,
 // and in that case, only the relevant pixels will be transfered.
-static bool TFB_DrawCanvas_TransferColors(TFB_Canvas canvas, bool write,
+static bool TFB_DrawCanvas_TransferColors(tfb::Canvas canvas, bool write,
 										  Color* pixels, int width, int height)
 {
 	SDL_Surface* surf = (SDL_Surface*)canvas;
@@ -2307,7 +2307,7 @@ static bool TFB_DrawCanvas_TransferColors(TFB_Canvas canvas, bool write,
 
 // Read the canvas pixels in a Color format understood by the core.
 // See TFB_DrawCanvas_TransferColors() for pixels array info
-bool TFB_DrawCanvas_GetPixelColors(TFB_Canvas canvas, Color* pixels,
+bool TFB_DrawCanvas_GetPixelColors(tfb::Canvas canvas, Color* pixels,
 								   int width, int height)
 {
 	return TFB_DrawCanvas_TransferColors(canvas, false, pixels,
@@ -2316,7 +2316,7 @@ bool TFB_DrawCanvas_GetPixelColors(TFB_Canvas canvas, Color* pixels,
 
 // Write the canvas pixels from a Color format understood by the core.
 // See TFB_DrawCanvas_TransferColors() for pixels array info
-bool TFB_DrawCanvas_SetPixelColors(TFB_Canvas canvas, const Color* pixels,
+bool TFB_DrawCanvas_SetPixelColors(tfb::Canvas canvas, const Color* pixels,
 								   int width, int height)
 {
 	// unconst pixels, but it is safe -- it will not be written to
@@ -2328,7 +2328,7 @@ bool TFB_DrawCanvas_SetPixelColors(TFB_Canvas canvas, const Color* pixels,
 // The data array is assumed to be at least width * height large.
 // The data array can be wider/narrower or taller/shorter than the canvas,
 // and in that case, only the relevant pixels will be transfered.
-static bool TFB_DrawCanvas_TransferIndexes(TFB_Canvas canvas, bool write,
+static bool TFB_DrawCanvas_TransferIndexes(tfb::Canvas canvas, bool write,
 										   uint8_t* data, int width, int height)
 {
 	SDL_Surface* surf = (SDL_Surface*)canvas;
@@ -2379,7 +2379,7 @@ static bool TFB_DrawCanvas_TransferIndexes(TFB_Canvas canvas, bool write,
 
 // Read the indexed canvas pixels as palette indexes.
 // See TFB_DrawCanvas_TransferIndexes() for data array info.
-bool TFB_DrawCanvas_GetPixelIndexes(TFB_Canvas canvas, uint8_t* data,
+bool TFB_DrawCanvas_GetPixelIndexes(tfb::Canvas canvas, uint8_t* data,
 									int width, int height)
 {
 	return TFB_DrawCanvas_TransferIndexes(canvas, false, data,
@@ -2388,7 +2388,7 @@ bool TFB_DrawCanvas_GetPixelIndexes(TFB_Canvas canvas, uint8_t* data,
 
 // Write the indexed canvas pixels as palette indexes.
 // See TFB_DrawCanvas_TransferIndexes() for data array info.
-bool TFB_DrawCanvas_SetPixelIndexes(TFB_Canvas canvas, const uint8_t* data,
+bool TFB_DrawCanvas_SetPixelIndexes(tfb::Canvas canvas, const uint8_t* data,
 									int width, int height)
 {
 	// unconst data, but it is safe -- it will not be written to

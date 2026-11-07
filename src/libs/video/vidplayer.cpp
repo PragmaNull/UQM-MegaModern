@@ -24,14 +24,14 @@
 #include "uqm/units.h"
 
 // video callbacks
-static void vp_BeginFrame(TFB_VideoDecoder*);
-static void vp_EndFrame(TFB_VideoDecoder*);
-static void* vp_GetCanvasLine(TFB_VideoDecoder*, uint32_t line);
-static uint32_t vp_GetTicks(TFB_VideoDecoder*);
-static bool vp_SetTimer(TFB_VideoDecoder*, uint32_t msecs);
+static void vp_BeginFrame(tfb::VideoDecoder*);
+static void vp_EndFrame(tfb::VideoDecoder*);
+static void* vp_GetCanvasLine(tfb::VideoDecoder*, uint32_t line);
+static uint32_t vp_GetTicks(tfb::VideoDecoder*);
+static bool vp_SetTimer(tfb::VideoDecoder*, uint32_t msecs);
 
 
-const static TFB_VideoCallbacks vp_DecoderCBs =
+const static tfb::VideoCallbacks vp_DecoderCBs =
 	{
 		vp_BeginFrame,
 		vp_EndFrame,
@@ -40,12 +40,12 @@ const static TFB_VideoCallbacks vp_DecoderCBs =
 		vp_SetTimer};
 
 // audio stream callbacks
-static bool vp_AudioStart(TFB_SoundSample* sample);
-static void vp_AudioEnd(TFB_SoundSample* sample);
-static void vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag);
-static void vp_QueueBuffer(TFB_SoundSample* sample, audio_Object buffer);
+static bool vp_AudioStart(tfb::SoundSample* sample);
+static void vp_AudioEnd(tfb::SoundSample* sample);
+static void vp_BufferTag(tfb::SoundSample* sample, tfb::SoundTag* tag);
+static void vp_QueueBuffer(tfb::SoundSample* sample, audio_Object buffer);
 
-const static TFB_SoundCallbacks vp_AudioCBs =
+const static tfb::SoundCallbacks vp_AudioCBs =
 	{
 		vp_AudioStart,
 		nullptr,
@@ -143,7 +143,7 @@ static bool processAudioSyncedFrame(VIDEO_REF vid)
 	// We have the cliprect precalculated and don't need the rest
 	GFXCONTEXT oldContext {SetContext(nullptr)};
 	TFB_DrawScreen_Image(vid->frame,
-						 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
+						 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, tfb::ScaleMode::None,
 						 nullptr, DrawReplaceMode, ScreenBuffer::Main);
 	SetContext(oldContext);
 	FlushGraphics(); // needed to prevent half-frame updates
@@ -192,7 +192,7 @@ static bool processMuteFrame(VIDEO_REF vid)
 		// We have the cliprect precalculated and don't need the rest
 		GFXCONTEXT oldContext {SetContext(nullptr)};
 		TFB_DrawScreen_Image(vid->frame,
-							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
+							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, tfb::ScaleMode::None,
 							 nullptr, DrawReplaceMode, ScreenBuffer::Main);
 		SetContext(oldContext);
 		FlushGraphics(); // needed to prevent half-frame updates
@@ -411,9 +411,9 @@ bool TFB_SeekVideo(VIDEO_REF vid, uint32_t pos)
 	}
 }
 
-static void vp_BeginFrame(TFB_VideoDecoder* decoder)
+static void vp_BeginFrame(tfb::VideoDecoder* decoder)
 {
-	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	const tfb::VideoClip* vid = (tfb::VideoClip*)decoder->data;
 
 	if (vid)
 	{
@@ -421,9 +421,9 @@ static void vp_BeginFrame(TFB_VideoDecoder* decoder)
 	}
 }
 
-static void vp_EndFrame(TFB_VideoDecoder* decoder)
+static void vp_EndFrame(tfb::VideoDecoder* decoder)
 {
-	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	const tfb::VideoClip* vid = (tfb::VideoClip*)decoder->data;
 
 	if (vid)
 	{
@@ -431,9 +431,9 @@ static void vp_EndFrame(TFB_VideoDecoder* decoder)
 	}
 }
 
-static void* vp_GetCanvasLine(TFB_VideoDecoder* decoder, uint32_t line)
+static void* vp_GetCanvasLine(tfb::VideoDecoder* decoder, uint32_t line)
 {
-	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	const tfb::VideoClip* vid = (tfb::VideoClip*)decoder->data;
 
 	if (!vid)
 	{
@@ -443,7 +443,7 @@ static void* vp_GetCanvasLine(TFB_VideoDecoder* decoder, uint32_t line)
 	return TFB_DrawCanvas_GetLine(vid->frame->NormalImg, line);
 }
 
-static uint32_t vp_GetTicks(TFB_VideoDecoder* decoder)
+static uint32_t vp_GetTicks(tfb::VideoDecoder* decoder)
 {
 	return static_cast<uint32_t>(
 		uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(GetTimeCounter().time_since_epoch()).count());
@@ -451,9 +451,9 @@ static uint32_t vp_GetTicks(TFB_VideoDecoder* decoder)
 	(void)decoder; // gobble up compiler warning
 }
 
-static bool vp_SetTimer(TFB_VideoDecoder* decoder, uint32_t msecs)
+static bool vp_SetTimer(tfb::VideoDecoder* decoder, uint32_t msecs)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	tfb::VideoClip* vid = (tfb::VideoClip*)decoder->data;
 
 	if (!vid)
 	{
@@ -465,14 +465,14 @@ static bool vp_SetTimer(TFB_VideoDecoder* decoder, uint32_t msecs)
 	return true;
 }
 
-static bool vp_AudioStart(TFB_SoundSample* sample)
+static bool vp_AudioStart(tfb::SoundSample* sample)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
+	tfb::VideoClip* vid = (tfb::VideoClip*)TFB_GetSoundSampleData(sample);
 
 	assert(sizeof(intptr_t) >= sizeof(vid));
 	assert(vid != nullptr);
 
-	TFB_SoundDecoder* decoder {TFB_GetSoundSampleDecoder(sample)};
+	tfb::SoundDecoder* decoder {TFB_GetSoundSampleDecoder(sample)};
 
 	{
 		const uqm::LockGuard lock {vid->guard};
@@ -482,9 +482,9 @@ static bool vp_AudioStart(TFB_SoundSample* sample)
 	return true;
 }
 
-static void vp_AudioEnd(TFB_SoundSample* sample)
+static void vp_AudioEnd(tfb::SoundSample* sample)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
+	tfb::VideoClip* vid = (tfb::VideoClip*)TFB_GetSoundSampleData(sample);
 
 	assert(vid != nullptr);
 
@@ -494,9 +494,9 @@ static void vp_AudioEnd(TFB_SoundSample* sample)
 	}
 }
 
-static void vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
+static void vp_BufferTag(tfb::SoundSample* sample, tfb::SoundTag* tag)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
+	tfb::VideoClip* vid = (tfb::VideoClip*)TFB_GetSoundSampleData(sample);
 	const uint32_t frame = (uint32_t)tag->data;
 
 	assert(sizeof(tag->data) >= sizeof(frame));
@@ -508,10 +508,10 @@ static void vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 	}
 }
 
-static void vp_QueueBuffer(TFB_SoundSample* sample, audio_Object buffer)
+static void vp_QueueBuffer(tfb::SoundSample* sample, audio_Object buffer)
 {
-	//TFB_VideoClip* vid = (TFB_VideoClip*) TFB_GetSoundSampleData (sample);
-	TFB_SoundDecoder* decoder = TFB_GetSoundSampleDecoder(sample);
+	//tfb::VideoClip* vid = (tfb::VideoClip*) TFB_GetSoundSampleData (sample);
+	tfb::SoundDecoder* decoder = TFB_GetSoundSampleDecoder(sample);
 
 	TFB_TagBuffer(sample, buffer,
 				  (intptr_t)SoundDecoder_GetFrame(decoder));

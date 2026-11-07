@@ -130,7 +130,7 @@ static void openAL_ConvertObjectArrayFromALuints(uint32_t n, audio_Object* arr)
 
 int32_t openAL_Init(audio_Driver* driver, AudioFlags flags)
 {
-	TFB_DecoderFormats formats =
+	tfb::DecoderFormats formats =
 		{
 			uqstl::endian::native == uqstl::endian::big, uqstl::endian::native == uqstl::endian::big,
 			*AudioEnum::FormatMono8, *AudioEnum::FormatStereo8,

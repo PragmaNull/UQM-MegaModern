@@ -37,16 +37,16 @@ static int no_page_break; // set when combining several tracks into one
 // this sample while it is playing. StreamDecoderTaskFunc() picks up the
 // changes *mostly* seamlessly (keyword: mostly).
 // This is technically a hack, but a decent one ;)
-static TFB_SoundSample* sound_sample;
+static tfb::SoundSample* sound_sample;
 
 static uqstl::atomic<uint32_t> tracks_length {}; // total length of tracks in game units
 
-static TFB_SoundChunk* chunks_head; // first decoder in linked list
-static TFB_SoundChunk* chunks_tail; // last decoder in linked list
-static TFB_SoundChunk* last_sub;	// last chunk in the list with a subtitle
+static tfb::SoundChunk* chunks_head; // first decoder in linked list
+static tfb::SoundChunk* chunks_tail; // last decoder in linked list
+static tfb::SoundChunk* last_sub;	 // last chunk in the list with a subtitle
 
-static TFB_SoundChunk* cur_chunk;	  // currently playing chunk
-static TFB_SoundChunk* cur_sub_chunk; // currently displayed subtitle chunk
+static tfb::SoundChunk* cur_chunk;	   // currently playing chunk
+static tfb::SoundChunk* cur_sub_chunk; // currently displayed subtitle chunk
 
 // Accesses to cur_chunk and cur_sub_chunk are guarded by stream_mutex,
 // because these should only be accesses by the DoInput and the
@@ -60,12 +60,12 @@ static TFB_SoundChunk* cur_sub_chunk; // currently displayed subtitle chunk
 static void seek_track(int32_t offset) UQM_REQUIRES(soundSource[SpeechSource].stream_mutex);
 
 // stream callbacks
-static bool OnStreamStart(TFB_SoundSample* sample);
-static bool OnChunkEnd(TFB_SoundSample* sample, audio_Object buffer);
-static void OnStreamEnd(TFB_SoundSample* sample);
-static void OnBufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag);
+static bool OnStreamStart(tfb::SoundSample* sample);
+static bool OnChunkEnd(tfb::SoundSample* sample, audio_Object buffer);
+static void OnStreamEnd(tfb::SoundSample* sample);
+static void OnBufferTag(tfb::SoundSample* sample, tfb::SoundTag* tag);
 
-static TFB_SoundCallbacks trackCBs =
+static tfb::SoundCallbacks trackCBs =
 	{
 		OnStreamStart,
 		OnChunkEnd,
@@ -73,7 +73,7 @@ static TFB_SoundCallbacks trackCBs =
 		OnBufferTag,
 		nullptr};
 
-static inline int32_t chunk_end_time(TFB_SoundChunk* chunk)
+static inline int32_t chunk_end_time(tfb::SoundChunk* chunk)
 {
 	return static_cast<int32_t>(
 		uqstl::chrono::duration_cast<GameTicks>(FloatSeconds {chunk->start_time + chunk->decoder->length}).count());
@@ -203,7 +203,7 @@ void StopTrack(void)
 	}
 }
 
-static void DoTrackTag(TFB_SoundChunk* chunk)
+static void DoTrackTag(tfb::SoundChunk* chunk)
 {
 	soundSource[SpeechSource].stream_mutex.lock();
 	if (chunk->callback)
@@ -218,7 +218,7 @@ static void DoTrackTag(TFB_SoundChunk* chunk)
 // This func is called by PlayStream() when stream is about
 // to start. We have a chance to tweak the stream here.
 // This is called on the DoInput thread.
-static bool OnStreamStart(TFB_SoundSample* sample)
+static bool OnStreamStart(tfb::SoundSample* sample)
 {
 	if (sample != sound_sample)
 	{
@@ -245,7 +245,7 @@ static bool OnStreamStart(TFB_SoundSample* sample)
 // This func is called by StreamDecoderTaskFunc() when the last buffer
 // of the current chunk has been decoded (not when it has been *played*).
 // This is called on the stream task thread.
-static bool OnChunkEnd(TFB_SoundSample* sample, audio_Object buffer)
+static bool OnChunkEnd(tfb::SoundSample* sample, audio_Object buffer)
 {
 	if (sample != sound_sample)
 	{
@@ -276,7 +276,7 @@ static bool OnChunkEnd(TFB_SoundSample* sample, audio_Object buffer)
 
 // This func is called by StreamDecoderTaskFunc() when stream has ended
 // This is called on the stream task thread.
-static void OnStreamEnd(TFB_SoundSample* sample)
+static void OnStreamEnd(tfb::SoundSample* sample)
 {
 	if (sample != sound_sample)
 	{
@@ -290,9 +290,9 @@ static void OnStreamEnd(TFB_SoundSample* sample)
 // This func is called by StreamDecoderTaskFunc() when a tagged buffer
 // has finished playing.
 // This is called on the stream task thread.
-static void OnBufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
+static void OnBufferTag(tfb::SoundSample* sample, tfb::SoundTag* tag)
 {
-	TFB_SoundChunk* chunk = (TFB_SoundChunk*)tag->data;
+	tfb::SoundChunk* chunk = (tfb::SoundChunk*)tag->data;
 
 	assert(sizeof(tag->data) >= sizeof(chunk));
 
@@ -395,7 +395,7 @@ void SpliceMultiTrack(const char* const TrackNames[], const char* TrackText)
 {
 	constexpr auto MaxMultiTracks {20};
 	constexpr auto MaxMultiBuffers {100};
-	TFB_SoundDecoder* track_decs[MaxMultiTracks + 1];
+	tfb::SoundDecoder* track_decs[MaxMultiTracks + 1];
 	int tracks {};
 
 	if (!TrackText)
@@ -498,7 +498,7 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 		// Add the rest of the pages
 		for (page = 1; page < num_pages; ++page)
 		{
-			TFB_SoundChunk* next_sub = find_next_page(last_sub);
+			tfb::SoundChunk* next_sub = find_next_page(last_sub);
 			if (next_sub)
 			{ // nodes prepared by previous call, just fill in the subs
 				next_sub->text = uqstl::move(pages[page]);
@@ -506,8 +506,8 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 			}
 			else
 			{ // probably no timestamps were provided, so need more work
-				TFB_SoundDecoder* decoder = SoundDecoder_Load(uqm::contentDir(),
-															  last_track_name, 4096, dec_offset, time_stamps[page]);
+				tfb::SoundDecoder* decoder = SoundDecoder_Load(uqm::contentDir(),
+															   last_track_name, 4096, dec_offset, time_stamps[page]);
 				if (!decoder)
 				{
 					uqm::log::warn("SpliceTrack(): couldn't load {}", TrackName);
@@ -577,8 +577,8 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 		dec_offset = 0;
 		for (page = 0; page < num_timestamps; ++page)
 		{
-			TFB_SoundDecoder* decoder = SoundDecoder_Load(uqm::contentDir(),
-														  TrackName, 4096, dec_offset, time_stamps[page]);
+			tfb::SoundDecoder* decoder = SoundDecoder_Load(uqm::contentDir(),
+														   TrackName, 4096, dec_offset, time_stamps[page]);
 			if (!decoder)
 			{
 				uqm::log::warn("SpliceTrack(): couldn't load {}", TrackName);
@@ -630,8 +630,8 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 //   adjustments. It may be simpler to just call PlayStream().
 static void seek_track(int32_t offset)
 {
-	TFB_SoundChunk* cur {};
-	TFB_SoundChunk* last_tag = nullptr;
+	tfb::SoundChunk* cur {};
+	tfb::SoundChunk* last_tag = nullptr;
 
 	if (!sound_sample)
 	{
@@ -748,7 +748,7 @@ void FastReverse_Page(void)
 	}
 
 	soundSource[SpeechSource].stream_mutex.lock();
-	TFB_SoundChunk* prev {find_prev_page(cur_sub_chunk)};
+	tfb::SoundChunk* prev {find_prev_page(cur_sub_chunk)};
 	if (prev)
 	{ // Set the chunk to be played
 		cur_chunk = prev;
@@ -767,7 +767,7 @@ void FastForward_Page(void)
 	}
 
 	soundSource[SpeechSource].stream_mutex.lock();
-	TFB_SoundChunk* next {find_next_page(cur_sub_chunk)};
+	tfb::SoundChunk* next {find_next_page(cur_sub_chunk)};
 	if (next)
 	{ // Set the chunk to be played
 		cur_chunk = next;
@@ -804,17 +804,17 @@ int GetTrackPosition(int in_units)
 	return in_units * offset / length;
 }
 
-TFB_SoundChunk* create_SoundChunk(TFB_SoundDecoder* decoder, float start_time)
+tfb::SoundChunk* create_SoundChunk(tfb::SoundDecoder* decoder, float start_time)
 {
-	auto* chunk {new TFB_SoundChunk {}};
+	auto* chunk {new tfb::SoundChunk {}};
 	chunk->decoder = decoder;
 	chunk->start_time = start_time;
 	return chunk;
 }
 
-void destroy_SoundChunk_list(TFB_SoundChunk* chunk)
+void destroy_SoundChunk_list(tfb::SoundChunk* chunk)
 {
-	TFB_SoundChunk* next = nullptr;
+	tfb::SoundChunk* next = nullptr;
 	for (; chunk; chunk = next)
 	{
 		next = chunk->next;
@@ -827,7 +827,7 @@ void destroy_SoundChunk_list(TFB_SoundChunk* chunk)
 }
 
 // Returns the next chunk with a subtitle
-TFB_SoundChunk* find_next_page(TFB_SoundChunk* cur)
+tfb::SoundChunk* find_next_page(tfb::SoundChunk* cur)
 {
 	if (!cur)
 	{
@@ -840,16 +840,16 @@ TFB_SoundChunk* find_next_page(TFB_SoundChunk* cur)
 
 // Returns the previous chunk with a subtitle.
 // cur == 0 is treated as end of the list.
-TFB_SoundChunk* find_prev_page(TFB_SoundChunk* cur)
+tfb::SoundChunk* find_prev_page(tfb::SoundChunk* cur)
 {
-	TFB_SoundChunk* last_valid = chunks_head;
+	tfb::SoundChunk* last_valid = chunks_head;
 
 	if (cur == chunks_head)
 	{
 		return cur; // cannot go below the first track
 	}
 
-	for (TFB_SoundChunk* prev {chunks_head}; prev && prev != cur; prev = prev->next)
+	for (tfb::SoundChunk* prev {chunks_head}; prev && prev != cur; prev = prev->next)
 	{
 		if (prev->tag_me)
 		{
@@ -923,7 +923,7 @@ uint16_t GetSubtitleNumber(const char* sub)
 		return -1;
 	}
 
-	TFB_SoundChunk* now {chunks_head};
+	tfb::SoundChunk* now {chunks_head};
 
 	while (GetTrackSubtitleText(now) != sub && now->next != nullptr)
 	{
@@ -943,7 +943,7 @@ uint16_t GetSubtitleNumberByTrack(uint16_t track)
 		return i;
 	}
 
-	const TFB_SoundChunk* now {chunks_head};
+	const tfb::SoundChunk* now {chunks_head};
 
 	while (now->next != nullptr && now->track_num != track)
 	{

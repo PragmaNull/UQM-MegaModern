@@ -25,17 +25,20 @@
 static constexpr auto MaxRegDecoders {31};
 
 static bool vd_inited = false;
-static TFB_PixelFormat vd_vidfmt;
+static tfb::PixelFormat vd_vidfmt;
 static int vd_flags = 0;
 
-struct TFB_RegVideoDecoder
+namespace tfb
+{
+struct RegVideoDecoder
 {
 	bool builtin;
 	bool used; // ever used indicator
 	const char* ext;
-	const TFB_VideoDecoderFuncs* funcs;
+	const VideoDecoderFuncs* funcs;
 };
-static TFB_RegVideoDecoder vd_decoders[MaxRegDecoders + 1] =
+} // namespace tfb
+static tfb::RegVideoDecoder vd_decoders[MaxRegDecoders + 1] =
 	{
 		{true,  true,	 "duk",	&dukv_DecoderVtbl},
 		{false, false, nullptr, nullptr		   }, // null term
@@ -43,7 +46,7 @@ static TFB_RegVideoDecoder vd_decoders[MaxRegDecoders + 1] =
 
 static void vd_computeMasks(uint32_t mask, uint32_t* shift, uint32_t* loss);
 
-const char* VideoDecoder_GetName(TFB_VideoDecoder* decoder)
+const char* VideoDecoder_GetName(tfb::VideoDecoder* decoder)
 {
 	if (!decoder || !decoder->funcs)
 	{
@@ -85,7 +88,7 @@ bool VideoDecoder_Init(int flags, int depth, uint32_t Rmask, uint32_t Gmask,
 	// END: adapted from SDL
 
 	// init built-in decoders
-	for (const TFB_RegVideoDecoder* info {vd_decoders}; info->ext; info++)
+	for (const tfb::RegVideoDecoder* info {vd_decoders}; info->ext; info++)
 	{
 		if (!info->funcs->InitModule(flags))
 		{
@@ -105,7 +108,7 @@ void VideoDecoder_Uninit(void)
 {
 	// uninit all decoders
 	// and unregister loaded decoders
-	for (TFB_RegVideoDecoder* info {vd_decoders}; info->used; info++)
+	for (tfb::RegVideoDecoder* info {vd_decoders}; info->used; info++)
 	{
 		if (info->ext) // check if present
 		{
@@ -122,10 +125,10 @@ void VideoDecoder_Uninit(void)
 	vd_inited = false;
 }
 
-TFB_RegVideoDecoder* VideoDecoder_Register(const char* fileext, TFB_VideoDecoderFuncs* decvtbl)
+tfb::RegVideoDecoder* VideoDecoder_Register(const char* fileext, tfb::VideoDecoderFuncs* decvtbl)
 {
-	TFB_RegVideoDecoder* info {};
-	TFB_RegVideoDecoder* newslot = nullptr;
+	tfb::RegVideoDecoder* info {};
+	tfb::RegVideoDecoder* newslot = nullptr;
 
 	if (!decvtbl)
 	{
@@ -186,7 +189,7 @@ TFB_RegVideoDecoder* VideoDecoder_Register(const char* fileext, TFB_VideoDecoder
 	return newslot;
 }
 
-void VideoDecoder_Unregister(TFB_RegVideoDecoder* regdec)
+void VideoDecoder_Unregister(tfb::RegVideoDecoder* regdec)
 {
 	if (regdec < vd_decoders || regdec >= vd_decoders + MaxRegDecoders || !regdec->ext || !regdec->funcs)
 	{
@@ -200,9 +203,9 @@ void VideoDecoder_Unregister(TFB_RegVideoDecoder* regdec)
 	regdec->funcs = nullptr;
 }
 
-const TFB_VideoDecoderFuncs* VideoDecoder_Lookup(const char* fileext)
+const tfb::VideoDecoderFuncs* VideoDecoder_Lookup(const char* fileext)
 {
-	const TFB_RegVideoDecoder* info {};
+	const tfb::RegVideoDecoder* info {};
 
 	for (info = vd_decoders; info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
 		 ++info)
@@ -210,9 +213,9 @@ const TFB_VideoDecoderFuncs* VideoDecoder_Lookup(const char* fileext)
 	return info->ext ? info->funcs : nullptr;
 }
 
-TFB_VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
+tfb::VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 {
-	const TFB_RegVideoDecoder* info {};
+	const tfb::RegVideoDecoder* info {};
 
 
 	if (!vd_inited)
@@ -237,7 +240,7 @@ TFB_VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir, const char* f
 		return nullptr;
 	}
 
-	TFB_VideoDecoder* decoder {info->funcs->Create()};
+	tfb::VideoDecoder* decoder {info->funcs->Create()};
 	decoder->funcs = info->funcs;
 	if (!decoder->funcs->Init(decoder, &vd_vidfmt))
 	{
@@ -270,7 +273,7 @@ TFB_VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir, const char* f
 }
 
 // return: >0 = OK, 0 = EOF, <0 = Error
-int VideoDecoder_Decode(TFB_VideoDecoder* decoder)
+int VideoDecoder_Decode(tfb::VideoDecoder* decoder)
 {
 	if (!decoder)
 	{
@@ -297,7 +300,7 @@ int VideoDecoder_Decode(TFB_VideoDecoder* decoder)
 	return ret;
 }
 
-float VideoDecoder_Seek(TFB_VideoDecoder* decoder, float pos)
+float VideoDecoder_Seek(tfb::VideoDecoder* decoder, float pos)
 {
 	if (!decoder)
 	{
@@ -310,7 +313,7 @@ float VideoDecoder_Seek(TFB_VideoDecoder* decoder, float pos)
 	return decoder->pos;
 }
 
-uint32_t VideoDecoder_SeekFrame(TFB_VideoDecoder* decoder, uint32_t frame)
+uint32_t VideoDecoder_SeekFrame(tfb::VideoDecoder* decoder, uint32_t frame)
 {
 	if (!decoder)
 	{
@@ -323,7 +326,7 @@ uint32_t VideoDecoder_SeekFrame(TFB_VideoDecoder* decoder, uint32_t frame)
 	return decoder->cur_frame;
 }
 
-void VideoDecoder_Rewind(TFB_VideoDecoder* decoder)
+void VideoDecoder_Rewind(tfb::VideoDecoder* decoder)
 {
 	if (!decoder)
 	{
@@ -333,7 +336,7 @@ void VideoDecoder_Rewind(TFB_VideoDecoder* decoder)
 	VideoDecoder_Seek(decoder, 0);
 }
 
-void VideoDecoder_Free(TFB_VideoDecoder* decoder)
+void VideoDecoder_Free(tfb::VideoDecoder* decoder)
 {
 	if (!decoder)
 	{

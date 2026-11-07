@@ -31,7 +31,7 @@ static MusicPosition resumeMusicArray[PATH_MAX];
 
 void PLRPlaySong(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
 {
-	TFB_SoundSample* const* pmus = MusicRef;
+	tfb::SoundSample* const* pmus = MusicRef;
 
 	if (pmus)
 	{
@@ -180,7 +180,7 @@ uint32_t PLRGetFilenameHash(void)
 
 void snd_PlaySpeech(MUSIC_REF SpeechRef)
 {
-	TFB_SoundSample* const* pmus = SpeechRef;
+	tfb::SoundSample* const* pmus = SpeechRef;
 
 	if (pmus)
 	{
@@ -236,15 +236,15 @@ void* _GetMusicData(const ResourceFile& resource)
 	CheckMusicResName(filename);
 
 	uqm::log::debug("_GetMusicData(): loading {}", filename);
-	TFB_SoundDecoder* decoder {SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0)};
+	tfb::SoundDecoder* decoder {SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0)};
 	if (!decoder)
 	{
 		uqm::log::warn("_GetMusicData(): couldn't load {}", filename);
 		return nullptr;
 	}
 
-	TFB_SoundSample* sample {TFB_CreateSoundSample(decoder, 64, nullptr)};
-	MUSIC_REF h {new TFB_SoundSample* {sample}};
+	tfb::SoundSample* sample {TFB_CreateSoundSample(decoder, 64, nullptr)};
+	MUSIC_REF h {new tfb::SoundSample* {sample}};
 
 	uqm::log::info("    decoder: {}, rate {} format {:x}",
 				   SoundDecoder_GetName(sample->decoder),
@@ -255,18 +255,18 @@ void* _GetMusicData(const ResourceFile& resource)
 
 bool _ReleaseMusicData(void* data)
 {
-	TFB_SoundSample* const* pmus = (TFB_SoundSample**)data;
+	tfb::SoundSample* const* pmus = (tfb::SoundSample**)data;
 
 	if (pmus == nullptr)
 	{
 		return (false);
 	}
 
-	TFB_SoundSample* sample {*pmus};
+	tfb::SoundSample* sample {*pmus};
 	assert(sample != 0);
 	if (sample->decoder)
 	{
-		TFB_SoundDecoder* decoder = sample->decoder;
+		tfb::SoundDecoder* decoder = sample->decoder;
 		soundSource[MusicSource].stream_mutex.lock();
 		if (soundSource[MusicSource].sample == sample)
 		{ // Currently playing this sample! Not good.

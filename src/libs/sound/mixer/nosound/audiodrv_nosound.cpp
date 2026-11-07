@@ -125,7 +125,7 @@ static void noSound_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object*
 
 int32_t noSound_Init(audio_Driver* driver, AudioFlags flags)
 {
-	TFB_DecoderFormats formats =
+	tfb::DecoderFormats formats =
 		{
 			0, 0,
 			*AudioEnum::FormatMono8, *AudioEnum::FormatStereo8,

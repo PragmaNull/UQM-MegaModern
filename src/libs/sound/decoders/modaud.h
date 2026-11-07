@@ -22,6 +22,6 @@
 
 #include "decoder.h"
 
-extern TFB_SoundDecoderFuncs moda_DecoderVtbl;
+extern tfb::SoundDecoderFuncs moda_DecoderVtbl;
 
 #endif // UQM_LIBS_SOUND_DECODERS_MODAUD_H

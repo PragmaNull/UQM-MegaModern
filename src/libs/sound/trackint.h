@@ -22,23 +22,26 @@
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
 
-struct tfb_soundchunk
+namespace tfb
 {
-	TFB_SoundDecoder* decoder;			 // decoder for this chunk
+struct SoundChunk
+{
+	SoundDecoder* decoder;			 // decoder for this chunk
 	float start_time;					 // relative time from track start
 	int tag_me;							 // set for chunks with subtitles
 	uint32_t track_num;					 // logical track #, comm code needs this
 	uqstl::optional<uqstl::string> text; // subtitle text
 	CallbackFunction callback;			 // comm callback, executed on chunk start
-	struct tfb_soundchunk* next;
+	struct SoundChunk* next;
 };
 
-typedef struct tfb_soundchunk TFB_SoundChunk;
+struct SoundChunk;
+} // namespace tfb
 
-TFB_SoundChunk* create_SoundChunk(TFB_SoundDecoder* decoder, float start_time);
-void destroy_SoundChunk_list(TFB_SoundChunk* chain);
-TFB_SoundChunk* find_next_page(TFB_SoundChunk* cur);
-TFB_SoundChunk* find_prev_page(TFB_SoundChunk* cur);
+tfb::SoundChunk* create_SoundChunk(tfb::SoundDecoder* decoder, float start_time);
+void destroy_SoundChunk_list(tfb::SoundChunk* chain);
+tfb::SoundChunk* find_next_page(tfb::SoundChunk* cur);
+tfb::SoundChunk* find_prev_page(tfb::SoundChunk* cur);
 
 
 #endif // UQM_LIBS_SOUND_TRACKINT_H
