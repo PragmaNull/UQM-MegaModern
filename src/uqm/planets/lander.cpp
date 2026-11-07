@@ -1568,7 +1568,7 @@ static void ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 
 	BuildObjectList();
 
-	DrawBatch(DisplayArray, DisplayLinks, 0);
+	DrawBatch(DisplayArray, DisplayLinks, BatchFlags::None);
 
 	// Draw the lander while is still alive and keep drawing for a few
 	// frames while it is exploding

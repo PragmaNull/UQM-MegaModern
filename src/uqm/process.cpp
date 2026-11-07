@@ -1144,7 +1144,7 @@ void RedrawQueue(bool clear)
 				SetGraphicScale(scale);
 			}
 
-			DrawBatch(DisplayArray, DisplayLinks, 0); //BatchBuildPage);
+			DrawBatch(DisplayArray, DisplayLinks, BatchFlags::None); //BatchBuildPage);
 			SetGraphicScale(0);
 		}
 

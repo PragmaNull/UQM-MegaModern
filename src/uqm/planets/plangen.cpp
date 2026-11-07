@@ -339,7 +339,7 @@ static void ExpandLevelMasks(PlanetOrbit* Orbit)
 	if (PlanetInfo->AxialTilt == 0)
 	{
 		Orbit->TopoMask = CaptureDrawable(
-			CreateDrawable(WantPixmap, halfBound, height, 1));
+			CreateDrawable(CreateFlags::WantPixmap, halfBound, height, 1));
 
 		WriteFramePixelColors(Orbit->TopoMask, colors, halfBound, height);
 	}
@@ -362,7 +362,7 @@ static void ExpandLevelMasks(PlanetOrbit* Orbit)
 		// Get the closest acceptable value (always ceil)
 
 		dupe = CaptureDrawable(
-			CreateDrawable(WantPixmap, halfBound, height, 1));
+			CreateDrawable(CreateFlags::WantPixmap, halfBound, height, 1));
 		WriteFramePixelColors(dupe, colors, halfBound, height);
 
 		Orbit->TopoMask = CaptureDrawable(
@@ -464,7 +464,7 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 
 					if (--i == 0)
 					{ // flush the batch and start the next one
-						DrawBatch(BatchArray, 0, 0);
+						DrawBatch(BatchArray, 0, BatchFlags::None);
 						i = NumBatchPoints;
 						pBatch = &BatchArray[i];
 					}
@@ -474,7 +474,7 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 
 		if (i < NumBatchPoints)
 		{
-			DrawBatch(BatchArray, i, 0);
+			DrawBatch(BatchArray, i, BatchFlags::None);
 		}
 	}
 	SetContextClipRect(&ClipRect);
@@ -937,7 +937,7 @@ static FrameRef CreateShieldMask(uint16_t radius)
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
 
 	ShieldFrame = CaptureDrawable(
-		CreateDrawable(WantPixmap | WantAlpha,
+		CreateDrawable(CreateFlags::WantPixmap | CreateFlags::WantAlpha,
 					   shielddiam, shielddiam, 1));
 
 	Color* pix {Orbit->ScratchArray};
@@ -1408,7 +1408,7 @@ void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FrameRef MaskFrame, int offset)
 				RotateFrame(dupeframe, PlanetInfo->AxialTilt));
 			GetFrameRect(rotFrame, &r);
 			baseframe = CaptureDrawable(
-				CreateDrawable(WantPixmap, (int16_t)width, trueheight, 1));
+				CreateDrawable(CreateFlags::WantPixmap, (int16_t)width, trueheight, 1));
 
 			// Draw everything in offscreen context
 			GfxContextRef oldContext {SetContext(OffScreenContext)};
@@ -2052,7 +2052,7 @@ static void planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		if (forOrbit && uqm::UQMOptions::read().scanStyle != uqm::EmulationMode::PC)
 		{
 			Orbit->TintFrame = CaptureDrawable(CreateDrawable(
-				WantPixmap, width, height, 1));
+				CreateFlags::WantPixmap, width, height, 1));
 		}
 		else
 		{
@@ -2084,7 +2084,7 @@ static void planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 	if (!forOrbit || uqm::UQMOptions::read().sphereType)
 	{ // UQM & 3DO sphere
 		Orbit->SphereFrame = CaptureDrawable(CreateDrawable(
-			WantPixmap | WantAlpha, diameter, diameter, 2));
+			CreateFlags::WantPixmap | CreateFlags::WantAlpha, diameter, diameter, 2));
 
 		Orbit->TopoColors = new Color[height * (width + spherespanx)];
 
@@ -2128,7 +2128,7 @@ static void planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 			CaptureDrawable(LoadGraphic(DosPlanetMaskAnimRes));
 
 		Orbit->TopoMask = CaptureDrawable(CreateDrawable(
-			WantPixmap, (int16_t)width, (int16_t)height, 1));
+			CreateFlags::WantPixmap, (int16_t)width, (int16_t)height, 1));
 
 		Orbit->sphereBytes = new uint8_t[GetFrameWidth(Orbit->SphereFrame) * GetFrameHeight(Orbit->SphereFrame)];
 
@@ -2726,7 +2726,7 @@ void generate_surface_frame(uint16_t width, uint16_t height, PlanetOrbit* Orbit,
 			break;
 	}
 	pSolarSysState->TopoFrame = CaptureDrawable(
-		CreateDrawable(WantPixmap, (int16_t)width,
+		CreateDrawable(CreateFlags::WantPixmap, (int16_t)width,
 					   (int16_t)height, 1));
 
 	RenderTopography(pSolarSysState->TopoFrame,
@@ -2939,7 +2939,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FrameRef SurfDefFrame,
 				uint16_t x {};
 
 				pSolarSysState->ScanFrame[i] = CaptureDrawable(
-					CreateDrawable(WantPixmap, (int16_t)width,
+					CreateDrawable(CreateFlags::WantPixmap, (int16_t)width,
 								   (int16_t)height, 1));
 
 				uqstl::vector<Color> mapBuf(width * height);
@@ -2968,7 +2968,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FrameRef SurfDefFrame,
 			for (i = 0; i < ScanType::Count; i++)
 			{
 				pSolarSysState->ScanFrame[i] = CaptureDrawable(
-					CreateDrawable(WantPixmap, (int16_t)width,
+					CreateDrawable(CreateFlags::WantPixmap, (int16_t)width,
 								   (int16_t)height, 1));
 
 				RenderTopography(pSolarSysState->ScanFrame[i],
@@ -2994,7 +2994,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FrameRef SurfDefFrame,
 			uqstl::vector<int8_t> scaledTopo(ScaledMapWidth() * 4 * MapHeight() * 4);
 
 			Orbit->TopoZoomFrame = CaptureDrawable(CreateDrawable(
-				WantPixmap, width << 2, height << 2, 1));
+				CreateFlags::WantPixmap, width << 2, height << 2, 1));
 
 			TopoScale4x(scaledTopo.data(), Orbit->lpTopoData,
 						PlanDataPtr->num_faults, PlanDataPtr->fault_depth * (Planalgo(PlanDataPtr->Type) == CrateredAlgo ? 2 : 1));

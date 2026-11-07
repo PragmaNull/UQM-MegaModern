@@ -427,7 +427,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 				if (quad_visible & FullVisibility)
 				{
-					DrawBatch(prim, StartPrim, 0);
+					DrawBatch(prim, StartPrim, BatchFlags::None);
 				}
 				else
 				{
@@ -485,7 +485,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 					if (render > 0)
 					{
-						DrawBatch(prim, StartPrim, 0);
+						DrawBatch(prim, StartPrim, BatchFlags::None);
 					}
 				}
 				off = num_off_pixels;
@@ -517,7 +517,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 				if (quad_visible & FullVisibility)
 				{
-					DrawBatch(prim, StartPrim, 0);
+					DrawBatch(prim, StartPrim, BatchFlags::None);
 				}
 				else
 				{
@@ -575,7 +575,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 					if (render > 0)
 					{
-						DrawBatch(prim, StartPrim, 0);
+						DrawBatch(prim, StartPrim, BatchFlags::None);
 					}
 				}
 				off = num_off_pixels;
@@ -610,7 +610,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 				if (quad_visible & FullVisibility)
 				{
-					DrawBatch(prim, StartPrim, 0);
+					DrawBatch(prim, StartPrim, BatchFlags::None);
 				}
 				else
 				{
@@ -668,7 +668,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 					if (render > 0)
 					{
-						DrawBatch(prim, StartPrim, 0);
+						DrawBatch(prim, StartPrim, BatchFlags::None);
 					}
 				}
 				off = num_off_pixels;
@@ -700,7 +700,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 				if (quad_visible & FullVisibility)
 				{
-					DrawBatch(prim, StartPrim, 0);
+					DrawBatch(prim, StartPrim, BatchFlags::None);
 				}
 				else
 				{
@@ -758,7 +758,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 					if (render > 0)
 					{
-						DrawBatch(prim, StartPrim, 0);
+						DrawBatch(prim, StartPrim, BatchFlags::None);
 					}
 				}
 				off = num_off_pixels;
@@ -894,7 +894,7 @@ void DrawFilledOval(LargeRect* pRect)
 
 			if (lines_r > 0)
 			{
-				DrawBatch(prim, StartPrim, 0);
+				DrawBatch(prim, StartPrim, BatchFlags::None);
 			}
 
 			--y;
@@ -943,7 +943,7 @@ void DrawFilledOval(LargeRect* pRect)
 
 		if (lines_r > 0)
 		{
-			DrawBatch(prim, StartPrim, 0);
+			DrawBatch(prim, StartPrim, BatchFlags::None);
 		}
 
 		if (d < 0)

@@ -2604,7 +2604,7 @@ static void DrawSystem(int16_t radius, bool IsInnerSystem)
 		GfxRect clipRect;
 
 		GetContextClipRect(&clipRect);
-		SolarSysFrame = CaptureDrawable(CreateDrawable(WantPixmap,
+		SolarSysFrame = CaptureDrawable(CreateDrawable(CreateFlags::WantPixmap,
 													   clipRect.extent.width, clipRect.extent.height, 1));
 	}
 
@@ -2738,7 +2738,7 @@ static FrameRef CreateStarBackGround(uqm::UQMRandom& SysRNG, FrameRef nebula, Fr
 	GetContextClipRect(&clipRect);
 
 	// Prepare a pre-drawn stars frame for this system
-	frame = CaptureDrawable(CreateDrawable(WantPixmap,
+	frame = CaptureDrawable(CreateDrawable(CreateFlags::WantPixmap,
 										   clipRect.extent.width, clipRect.extent.height, 1));
 	SetContext(OffScreenContext);
 	SetContextFGFrame(frame);

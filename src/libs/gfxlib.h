@@ -183,17 +183,21 @@ static inline Color CreateAvgShade(Color first_color, Color second_color)
 }
 
 
-using CreateFlags = uint8_t;
-// WantMask is deprecated (and non-functional). It used to generate a bitmap
-// of changed pixels for a target DrawableRef, so that DRAW_SUBTRACTIVE could
-// paint background pixels over them, i.e. a revert draw. The backgrounds
-// are fully erased now instead.
-inline constexpr auto WantMask {(CreateFlags)(1 << 0)};
-inline constexpr auto WantPixmap {(CreateFlags)(1 << 1)};
-// MappedToDisplay is deprecated but still checked by LoadDisplayPixmap().
-// Its former use was to indicate a pre-scaled graphic for the display.
-inline constexpr auto MappedToDisplay {(CreateFlags)(1 << 2)};
-inline constexpr auto WantAlpha {(CreateFlags)(1 << 3)};
+enum class CreateFlags : uint8_t
+{
+	None = 0,
+	// WantMask is deprecated (and non-functional). It used to generate a bitmap
+	// of changed pixels for a target DrawableRef, so that DRAW_SUBTRACTIVE could
+	// paint background pixels over them, i.e. a revert draw. The backgrounds
+	// are fully erased now instead.
+	WantMask = 1 << 0,
+	WantPixmap = 1 << 1,
+	// MappedToDisplay is deprecated but still checked by LoadDisplayPixmap().
+	// Its former use was to indicate a pre-scaled graphic for the display.
+	MappedToDisplay = 1 << 2,
+	WantAlpha = 1 << 3,
+};
+ENUM_BITWISE_OPS(CreateFlags)
 
 struct GfxExtent
 {
@@ -447,9 +451,13 @@ const typedef void* COLORMAPPTR;
 #include "graphics/prim.h"
 
 
-using BatchFlags = uint8_t;
-// This flag is currently unused but it might make sense to restore it
-inline constexpr auto BatchBuildPage {(BatchFlags)(1 << 0)};
+enum class BatchFlags : uint8_t
+{
+	None = 0,
+	// This flag is currently unused but it might make sense to restore it
+	BuildPage = 1 << 0,
+};
+ENUM_BITWISE_OPS(BatchFlags)
 
 struct IntersectInfo
 {

@@ -212,7 +212,7 @@ void InitSphereRotation(int direction, bool shielded, uint16_t width,
 		// We need a scratch frame so that we can apply throbbing
 		// to the shield, so create one
 		Orbit->ObjectFrame = CaptureDrawable(CreateDrawable(
-			WantPixmap | WantAlpha,
+			CreateFlags::WantPixmap | CreateFlags::WantAlpha,
 			GetFrameWidth(Orbit->ObjectFrame),
 			GetFrameHeight(Orbit->ObjectFrame), 2));
 	}

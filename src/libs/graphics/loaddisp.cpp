@@ -30,7 +30,7 @@ DrawableRef LoadDisplayPixmap(const GfxRect* area, FrameRef frame)
 
 	if (!buffer)
 	{ // asked to create a new DrawableRef instead
-		buffer = CreateDrawable(WantPixmap | MappedToDisplay,
+		buffer = CreateDrawable(CreateFlags::WantPixmap | CreateFlags::MappedToDisplay,
 								area->extent.width, area->extent.height, 1);
 		if (!buffer)
 		{
@@ -48,7 +48,7 @@ DrawableRef LoadDisplayPixmap(const GfxRect* area, FrameRef frame)
 
 	if (_CurFramePtr->Type != ScreenDrawable
 		|| frame->Type == ScreenDrawable
-		|| !(GetFrameParentDrawable(frame)->Flags & MappedToDisplay))
+		|| !testFlag(GetFrameParentDrawable(frame)->Flags, CreateFlags::MappedToDisplay))
 	{
 		uqm::log::warn("Unimplemented function activated: "
 					   "LoadDisplayPixmap()");

@@ -104,7 +104,7 @@ static FontSizeDef CreditsFont[] =
 
 static FrameRef Credits_MakeTransFrame(int w, int h, Color TransColor)
 {
-	FrameRef f {CaptureDrawable(CreateDrawable(WantPixmap, w, h, 1))};
+	FrameRef f {CaptureDrawable(CreateDrawable(CreateFlags::WantPixmap, w, h, 1))};
 	SetFrameTransparentColor(f, TransColor);
 
 	FrameRef OldFrame {SetContextFGFrame(f)};

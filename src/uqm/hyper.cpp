@@ -211,7 +211,7 @@ decorate_vortex (Element *ElementPtr)
 						vortex_ships[EncounterPtr->race_id] =
 								CaptureDrawable (
 									CreateDrawable (
-										WantPixmap | WantAlpha,
+										CreateFlags::WantPixmap | CreateFlags::WantAlpha,
 										GetFrameWidth (
 											ElementPtr->next.image.frame),
 										GetFrameHeight (

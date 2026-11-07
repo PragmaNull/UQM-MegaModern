@@ -700,7 +700,7 @@ static inline void Flash_prepareCacheFrame(FlashContext* context, uint16_t index
 	else
 #endif /* BEGIN_AND_END_FRMAE_EXCEPTIONS */
 	{
-		context->cache[index] = CaptureDrawable(CreateDrawable(WantPixmap,
+		context->cache[index] = CaptureDrawable(CreateDrawable(CreateFlags::WantPixmap,
 															   context->rect.extent.width, context->rect.extent.height, 1));
 		Flash_makeFrame(context, context->cache[index],
 						index, context->cacheSize - 1);
@@ -811,7 +811,7 @@ static inline void Flash_drawUncachedFrame(FlashContext* context, int numer, int
 		// Painting to the screen; we need a temporary frame to draw to.
 		FrameRef work {};
 
-		work = CaptureDrawable(CreateDrawable(WantPixmap,
+		work = CaptureDrawable(CreateDrawable(CreateFlags::WantPixmap,
 											  context->rect.extent.width, context->rect.extent.height, 1));
 		Flash_makeFrame(context, work, numer, denom);
 		Flash_drawFrame(context, work, false);

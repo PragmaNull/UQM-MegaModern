@@ -342,7 +342,7 @@ static void InitPulseText(void)
 	{
 		t.pStr = GameString(GameStringBase::MainmenuString + 69 + i);
 
-		frame = CaptureDrawable(CreateDrawable(WantPixmap, CanvasWidth,
+		frame = CaptureDrawable(CreateDrawable(CreateFlags::WantPixmap, CanvasWidth,
 											   CanvasHeight, 1));
 		SetFrameTransparentColor(frame, BlackColor);
 		OldFrame = SetContextFGFrame(frame);

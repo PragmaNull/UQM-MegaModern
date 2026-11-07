@@ -512,7 +512,7 @@ void BuildPickMeleeFrame(void)
 	}
 
 	PickMeleeFrame = CaptureDrawable(CreateDrawable(
-		WantPixmap, MeleeWidth(), MeleeHeight(), 2));
+		CreateFlags::WantPixmap, MeleeWidth(), MeleeHeight(), 2));
 	s.origin.x = 0;
 	s.origin.y = 0;
 

@@ -119,7 +119,7 @@ bool LoadKernel(int argc, char* argv[])
 		return false;
 	}
 
-	Screen = CaptureDrawable(CreateDisplay(WantMask | WantPixmap,
+	Screen = CaptureDrawable(CreateDisplay(CreateFlags::WantMask | CreateFlags::WantPixmap,
 										   &screen_width, &screen_height));
 	if (Screen == nullptr)
 	{

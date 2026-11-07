@@ -48,7 +48,7 @@ void InitOscilloscope(FrameRef scopeBg)
 		const GfxExtent size = GetFrameBounds(scope_frame);
 
 		scopeWork = CaptureDrawable(CreateDrawable(
-			WantPixmap | MappedToDisplay,
+			CreateFlags::WantPixmap | CreateFlags::MappedToDisplay,
 			size.width, size.height, 1));
 
 		// assume and subtract the borders

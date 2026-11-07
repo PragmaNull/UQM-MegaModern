@@ -49,7 +49,7 @@ void BuildBuildPickFrame(void)
 	GetFrameRect(s.frame, &r);
 
 	BuildPickFrame = CaptureDrawable(CreateDrawable(
-		WantPixmap, r.extent.width, r.extent.height, 1));
+		CreateFlags::WantPixmap, r.extent.width, r.extent.height, 1));
 	SetContextFGFrame(BuildPickFrame);
 	SetFrameHot(s.frame, MAKE_HOT_SPOT(0, 0));
 	DrawStamp(&s);

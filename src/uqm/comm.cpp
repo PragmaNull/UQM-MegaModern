@@ -1865,7 +1865,7 @@ static void HailAlien(void)
 	//		SisScreenHeight() - SliderY() - SliderHeight() + 2, 1));
 	// BW: previous lines were just a complex and wrong way of obtaining 107
 	TextCacheFrame = CaptureDrawable(
-		CreateDrawable(WantPixmap, SisScreenWidth(), SliderY(), 1));
+		CreateDrawable(CreateFlags::WantPixmap, SisScreenWidth(), SliderY(), 1));
 	SetContext(TextCacheContext);
 	SetContextFGFrame(TextCacheFrame);
 	TextBack = BuildColor(MakeRgb15(0x00, 0x00, 0x01), 0x00);

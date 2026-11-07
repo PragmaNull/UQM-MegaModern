@@ -113,7 +113,7 @@ void DrawBatch(Primitive* lpBasePrim, PrimLinks primLinks,
 
 		BatchGraphics();
 
-		if (batchFlags & BatchBuildPage)
+		if (testFlag(batchFlags, BatchFlags::BuildPage))
 		{
 			ClearBackGround(&ValidRect);
 		}

@@ -83,7 +83,7 @@ static DrawableRef request_drawable(uint16_t NumFrames, DrawableType drawableTyp
 		if (drawableType == RamDrawable && width > 0 && height > 0)
 		{
 			FramePtr->image = TFB_DrawImage_New(TFB_DrawCanvas_New_TrueColor(
-				width, height, (flags & WantAlpha) ? true : false));
+				width, height, testFlag(flags, CreateFlags::WantAlpha)));
 		}
 
 		FramePtr->Type = drawableType;
@@ -104,7 +104,7 @@ static DrawableRef request_indexed_drawable(Color* palette, int16_t width, int16
 		return nullptr;
 	}
 
-	Drawable->Flags = WantPixmap;
+	Drawable->Flags = CreateFlags::WantPixmap;
 	Drawable->MaxIndex = 0;
 
 	{
@@ -136,7 +136,7 @@ DrawableRef CreateDisplay(CreateFlags createFlags, int16_t* pwidth, int16_t* phe
 	// TODO: CanvasWidth and CanvasHeight should be passed in
 	//   instead of returned.
 	Drawable = request_drawable(1, ScreenDrawable,
-								(createFlags & (WantPixmap | WantMask)),
+								(createFlags & (CreateFlags::WantPixmap | CreateFlags::WantMask)),
 								CanvasWidth, CanvasHeight);
 	if (Drawable)
 	{
@@ -175,7 +175,7 @@ DrawableRef CreateDrawable(CreateFlags createFlags, int16_t width, int16_t heigh
 	DrawableRef Drawable {};
 
 	Drawable = request_drawable(num_frames, RamDrawable,
-								(createFlags & (WantMask | WantPixmap | WantAlpha | MappedToDisplay)),
+								(createFlags & (CreateFlags::WantMask | CreateFlags::WantPixmap | CreateFlags::WantAlpha | CreateFlags::MappedToDisplay)),
 								width, height);
 	if (Drawable)
 	{
@@ -280,7 +280,7 @@ DrawableRef RotateFrame(FrameRef Frame, int angle_deg)
 
 	assert(Frame->Type != ScreenDrawable);
 
-	DrawableRef Drawable {request_drawable(1, RamDrawable, WantPixmap, 0, 0)};
+	DrawableRef Drawable {request_drawable(1, RamDrawable, CreateFlags::WantPixmap, 0, 0)};
 	if (!Drawable)
 	{
 		return 0;
@@ -357,7 +357,7 @@ static FrameRef makeMatchingFrame(FrameRef frame, int width, int height)
 	const bool dst_has_alpha =
 		SDL_GetPixelFormatDetails(((SDL_Surface*)(frame->image->NormalImg))->format)->Amask != 0;
 
-	const CreateFlags flags {dst_has_alpha ? WantAlpha : GetFrameParentDrawable(frame)->Flags};
+	const CreateFlags flags {dst_has_alpha ? CreateFlags::WantAlpha : GetFrameParentDrawable(frame)->Flags};
 	DrawableRef drawable {CreateDrawable(flags, width, height, 1)};
 	if (!drawable)
 	{

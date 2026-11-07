@@ -188,7 +188,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 
 	GetFrameRect(SkelFrame, &r);
 	SisFrame = CaptureDrawable(CreateDrawable(
-		WantPixmap | WantAlpha, r.extent.width, r.extent.height, 1));
+		CreateFlags::WantPixmap | CreateFlags::WantAlpha, r.extent.width, r.extent.height, 1));
 	SetContextFGFrame(SisFrame);
 	SetContextClipRect(nullptr);
 	SisBack = BuildColorRgba(0, 0, 0, 0);
