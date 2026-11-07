@@ -91,3 +91,9 @@ The list contains only bugs that are in MegaMod at the fork commit `18e1f3d1`. I
 - **MegaMod:** `crc32b` in `src/libs/math/sqrt.c`.
 - **Problem:** the loop sign-extends bytes above 127, so file names that are not ASCII get a different hash from the standard CRC-32. ASCII names are not affected.
 - **Fix here:** `3a518697`. The hash uses the CRC-32 of zlib.
+
+### The netplay CRC loop does not advance
+
+- **MegaMod:** `crc_processBytes` in `src/uqm/supermelee/netplay/crc.c`.
+- **Problem:** the loop does not increment `buf`, so it never ends for a buffer that is not empty. No code calls the function.
+- **Fix here:** `09df871e`.
