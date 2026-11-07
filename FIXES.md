@@ -8,6 +8,12 @@ The list contains only bugs that are in MegaMod at the fork commit `18e1f3d1`. I
 
 ## Memory leaks
 
+### The difficulty menu leaks its screen copy when it is aborted
+
+- **MegaMod:** `DoDiffChooser` in `src/uqm/restart.c`.
+- **Problem:** when the game aborts while the difficulty menu is open, the function returns without freeing the saved screen frame and without restoring the drawing context and its clip rect.
+- **Fix here:** `8f232a8c`.
+
 ### Conversation string tables do not free their name entries
 
 - **MegaMod:** `FreeStringTable` in `src/libs/strings/strings.c`. Checked.
