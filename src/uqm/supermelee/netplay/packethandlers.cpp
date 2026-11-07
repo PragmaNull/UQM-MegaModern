@@ -52,7 +52,7 @@ static bool testNetState(bool condition, PacketType type)
 	{
 		uqm::log::error("Packet of type '{}' received from wrong "
 						"state.\n",
-						packetTypeData[+type].name);
+						packetTypeData[*type].name);
 	}
 	return condition;
 }

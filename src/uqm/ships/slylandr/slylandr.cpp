@@ -278,17 +278,17 @@ static void slylandro_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 	// visited the starbase yet or difficulty is set to Hard
 	if ((uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER) && uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE) && !isDifficulty(uqm::Difficulty::Hard))
 	{
-		ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = 0;
+		ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr = 0;
 	}
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0
 		&& StarShipPtr->RaceDescPtr->ship_info.energy_level == 0
-		&& ObjectsOfConcern[GRAVITY_MASS_INDEX].ObjectPtr == 0)
+		&& ObjectsOfConcern[*IntelObjectIndex::GravityMass].ObjectPtr == 0)
 	{
-		ConcernCounter = FIRST_EMPTY_INDEX + 1;
+		ConcernCounter = *IntelObjectIndex::FirstEmpty + 1;
 	}
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Pursue
 		&& lpEvalDesc->which_turn <= 6)
@@ -312,7 +312,7 @@ static void slylandro_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 	StarShipPtr->ship_input_state &= ~SpecialFlag;
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level < StarShipPtr->RaceDescPtr->ship_info.max_energy)
 	{
-		lpEvalDesc = &ObjectsOfConcern[FIRST_EMPTY_INDEX];
+		lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::FirstEmpty];
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 14)
 		{
 			StarShipPtr->ship_input_state |= SpecialFlag;

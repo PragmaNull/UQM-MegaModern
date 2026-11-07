@@ -19,6 +19,8 @@
 #ifndef LIBS_SNDLIB_H_
 #define LIBS_SNDLIB_H_
 
+
+#include "core/types/enum.h"
 #include <fmt/base.h>
 #include "port.h"
 #include "libs/time/timelib.h"
@@ -71,6 +73,11 @@ struct SoundPosition
 inline SOUND GetSound(SOUND_REF bank, size_t index)
 {
 	return bank != nullptr ? bank->sample(index) : nullptr;
+}
+
+inline SOUND GetSound(SOUND_REF bank, ArithmeticEnum auto index)
+{
+	return GetSound(bank, static_cast<size_t>(*index));
 }
 
 namespace uqm

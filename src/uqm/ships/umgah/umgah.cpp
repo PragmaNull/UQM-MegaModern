@@ -191,7 +191,7 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	Starship* EnemyStarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 	{
 		if (lpEvalDesc->which_turn > 3
@@ -210,9 +210,9 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		}
 	}
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 	if (StarShipPtr->special_counter
-		|| ObjectsOfConcern[GRAVITY_MASS_INDEX].ObjectPtr
+		|| ObjectsOfConcern[*IntelObjectIndex::GravityMass].ObjectPtr
 		|| lpEvalDesc->ObjectPtr == 0)
 	{
 		StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = CloseRangeWeapon;

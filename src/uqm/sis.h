@@ -17,6 +17,7 @@
 #ifndef SIS_H_INCL__
 #define SIS_H_INCL__
 
+#include "core/types/enum.h"
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "planets/elemdata.h" // for NUM_ELEMENT_CATEGORIES
@@ -266,36 +267,40 @@ extern void DrawCaptainsName(bool NewGame);
 extern void DrawFuelInFTanks(bool isOutfit);
 extern FRAME hdFuelFrame; // Frame for HdResolutionFactor fuel with smooth gradient
 
-typedef enum
+enum class BorderFrameIndex
 {
-	SIS_MAIN_FRAME = 0,
-	SIS_STAT_FRAME,
-	DEVICE_CARGO_FRAME,
-	SIS_STAT_REPAIR_FRAME,
-	SIS_STAT_SUMM_FRAME,
-	SIS_MSG_FRAME,
-	SIS_TITLE_FRAME,
-	CAPTAIN_FRAME,
-	CAP_NAME_FRAME,
-	STAT_MSG_FRAME,
-	SIS_RADAR_FRAME,
-	TEXT_LABEL_FRAME,
-	SIS_REPAIR_FRAME,
-	LANDER_3DO_FRAME,
-	LANDER_DOS_FRAME,
-	SIS_COMM_FRAME,
-} BORDER_ORDER;
+	SisMain = 0,
+	SisStat,
+	DeviceCargo,
+	SisStatRepair,
+	SisStatSumm,
+	SisMsg,
+	SisTitle,
+	Captain,
+	CapName,
+	StatMsg,
+	SisRadar,
+	TextLabel,
+	SisRepair,
+	Lander3do,
+	LanderDos,
+	SisComm,
+};
+template <>
+inline constexpr bool IsArithmeticEnum<BorderFrameIndex> = true;
 
-typedef enum
+enum class BevelLevel
 {
-	DOS_MENU_HILITE = 0,
-	SPECIAL_BEVEL,
-	THIN_INNER_BEVEL = SPECIAL_BEVEL + 8,
-	THICK_INNER_BEVEL = THIN_INNER_BEVEL + 8,
-	THIN_OUTER_BEVEL = THICK_INNER_BEVEL + 8,
-	THICK_OUTER_BEVEL = THIN_OUTER_BEVEL + 8,
-	THICK_OUT_INV_BEVEL = THICK_OUTER_BEVEL + 8,
-} BEVEL_LEVEL;
+	DosMenuHilite = 0,
+	SpecialBevel,
+	ThinInnerBevel = SpecialBevel + 8,
+	ThickInnerBevel = ThinInnerBevel + 8,
+	ThinOuterBevel = ThickInnerBevel + 8,
+	ThickOuterBevel = ThinOuterBevel + 8,
+	ThickOutInvBevel = ThickOuterBevel + 8,
+};
+template <>
+inline constexpr bool IsArithmeticEnum<BevelLevel> = true;
 
 
 #endif /* SIS_H_INCL__ */

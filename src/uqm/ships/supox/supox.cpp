@@ -132,7 +132,7 @@ static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (StarShipPtr->special_counter || lpEvalDesc->ObjectPtr == 0)
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
@@ -184,7 +184,7 @@ static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		StarShipPtr->ship_input_state |= ThrustFlag | WeaponFlag;
 	}
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
+	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon];
 	if (StarShipPtr->special_counter == 0
 		&& lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == MovementState::Avoid

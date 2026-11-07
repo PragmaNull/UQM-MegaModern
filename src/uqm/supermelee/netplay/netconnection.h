@@ -71,9 +71,9 @@ struct NetConnectionError
 struct NetStatistics
 {
 	size_t packetsReceived;
-	size_t packetTypeReceived[+PacketType::Count];
+	size_t packetTypeReceived[*PacketType::Count];
 	size_t packetsSent;
-	size_t packetTypeSent[+PacketType::Count];
+	size_t packetTypeSent[*PacketType::Count];
 };
 #endif
 

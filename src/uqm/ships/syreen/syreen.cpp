@@ -240,7 +240,7 @@ static void syreen_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	ship_intelligence(ShipPtr,
 					  ObjectsOfConcern, ConcernCounter);
 
-	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (lpEvalDesc->ObjectPtr != nullptr)
 	{
 		Starship* StarShipPtr {};

@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "gameopt.h"
 
 #include "build.h"
@@ -99,34 +100,38 @@ void ConfirmSaveLoad(GfxStamp* MsgStamp)
 	font_DrawText(&t);
 }
 
-enum
+enum class GameMenuItem
 {
-	SAVE_GAME = 0,
-	LOAD_GAME,
-	QUIT_GAME,
-	SETTINGS,
-	EXIT_GAME_MENU,
+	SaveGame = 0,
+	LoadGame,
+	QuitGame,
+	Settings,
+	Exit,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<GameMenuItem> = true;
 
-enum
+enum class SettingsMenuItem
 {
-	SOUND_ON_SETTING,
-	SOUND_OFF_SETTING,
-	MUSIC_ON_SETTING,
-	MUSIC_OFF_SETTING,
-	CYBORG_OFF_SETTING,
-	CYBORG_NORMAL_SETTING,
-	CYBORG_DOUBLE_SETTING,
-	CYBORG_SUPER_SETTING,
-	READ_VERY_SLOW_SETTING,
-	READ_SLOW_SETTING,
-	READ_MODERATE_SETTING,
-	READ_FAST_SETTING,
-	READ_VERY_FAST_SETTING,
-	CHANGE_CAPTAIN_SETTING,
-	CHANGE_SHIP_SETTING,
-	EXIT_SETTINGS_MENU,
+	SoundOn,
+	SoundOff,
+	MusicOn,
+	MusicOff,
+	CyborgOff,
+	CyborgNormal,
+	CyborgDouble,
+	CyborgSuper,
+	ReadVerySlow,
+	ReadSlow,
+	ReadModerate,
+	ReadFast,
+	ReadVeryFast,
+	ChangeCaptain,
+	ChangeShip,
+	ExitSettingsMenu,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<SettingsMenuItem> = true;
 
 // Shows the seed of the game in the message field at the top of the screen.
 static void DrawSeedMessage(void)
@@ -180,27 +185,27 @@ static void FeedbackSetting(uint8_t which_setting)
 
 	switch (which_setting)
 	{
-		case SOUND_ON_SETTING:
-		case SOUND_OFF_SETTING:
+		case *SettingsMenuItem::SoundOn:
+		case *SettingsMenuItem::SoundOff:
 			fmt::format_to_sz_n(buf, "{} {}",
 								GameString(OPTION_STRING_BASE + 0),
 								uqm::globalFlags() & SoundDisabled ? GameString(OPTION_STRING_BASE + 3) :
 																	 GameString(OPTION_STRING_BASE + 4));
 			break;
-		case MUSIC_ON_SETTING:
-		case MUSIC_OFF_SETTING:
+		case *SettingsMenuItem::MusicOn:
+		case *SettingsMenuItem::MusicOff:
 			fmt::format_to_sz_n(buf, "{} {}",
 								GameString(OPTION_STRING_BASE + 1),
 								uqm::globalFlags() & MusicDisabled ? GameString(OPTION_STRING_BASE + 3) :
 																	 GameString(OPTION_STRING_BASE + 4));
 			break;
-		case CYBORG_OFF_SETTING:
-		case CYBORG_NORMAL_SETTING:
-		case CYBORG_DOUBLE_SETTING:
-		case CYBORG_SUPER_SETTING:
-			if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC && which_setting > CYBORG_NORMAL_SETTING)
+		case *SettingsMenuItem::CyborgOff:
+		case *SettingsMenuItem::CyborgNormal:
+		case *SettingsMenuItem::CyborgDouble:
+		case *SettingsMenuItem::CyborgSuper:
+			if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC && which_setting > SettingsMenuItem::CyborgNormal)
 			{
-				if (which_setting == CYBORG_DOUBLE_SETTING)
+				if (which_setting == SettingsMenuItem::CyborgDouble)
 				{
 					tmpstr = "+";
 				}
@@ -219,17 +224,17 @@ static void FeedbackSetting(uint8_t which_setting)
 																		GameString(OPTION_STRING_BASE + 4),
 								tmpstr);
 			break;
-		case READ_VERY_SLOW_SETTING:
-		case READ_SLOW_SETTING:
-		case READ_MODERATE_SETTING:
-		case READ_FAST_SETTING:
-		case READ_VERY_FAST_SETTING:
+		case *SettingsMenuItem::ReadVerySlow:
+		case *SettingsMenuItem::ReadSlow:
+		case *SettingsMenuItem::ReadModerate:
+		case *SettingsMenuItem::ReadFast:
+		case *SettingsMenuItem::ReadVeryFast:
 			fmt::format_to_sz_n(buf, "{}",
 								GameString(OPTION_STRING_BASE + 5
 										   + (uqm::globalFlags() & ReadSpeedMask)));
 			break;
-		case CHANGE_CAPTAIN_SETTING:
-		case CHANGE_SHIP_SETTING:
+		case *SettingsMenuItem::ChangeCaptain:
+		case *SettingsMenuItem::ChangeShip:
 			uqm::strncpy_safe(buf, GameString(
 									   NAMING_STRING_BASE + (is3DO(uqm::UQMOptions::read().whichFonts) ? 7 : 0)));
 			break;
@@ -324,7 +329,7 @@ static bool DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 
 		if (uqm::UQMOptions::read().customBorder)
 		{
-			DrawBorder(SIS_STAT_REPAIR_FRAME);
+			DrawBorder(BorderFrameIndex::SisStatRepair);
 		}
 
 		const uint8_t* pchar_deltas {char_deltas};
@@ -472,7 +477,7 @@ static void NameCaptainOrShip(bool nameCaptain, bool gamestart)
 
 	DrawNameString(nameCaptain, buf, CursPos, DdshsNormal);
 
-	DrawBorder(SIS_STAT_REPAIR_FRAME);
+	DrawBorder(BorderFrameIndex::SisStatRepair);
 
 	TextEntry3DO = false;
 
@@ -694,43 +699,43 @@ static bool DoSettings(MenuState* pMS)
 	{
 		i++;
 		pMS->CurState =
-			i > 1 ? CHANGE_SHIP_SETTING : CHANGE_CAPTAIN_SETTING;
-		PulsedInputState.menu[KEY_MENU_SELECT] = 65535;
+			*(i > 1 ? SettingsMenuItem::ChangeShip : SettingsMenuItem::ChangeCaptain);
+		PulsedInputState.menu[*MenuKey::MenuSelect] = 65535;
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL]
-		|| (PulsedInputState.menu[KEY_MENU_SELECT]
-			&& pMS->CurState == EXIT_SETTINGS_MENU))
+	if (PulsedInputState.menu[*MenuKey::MenuCancel]
+		|| (PulsedInputState.menu[*MenuKey::MenuSelect]
+			&& pMS->CurState == SettingsMenuItem::ExitSettingsMenu))
 	{
 		return false;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		switch (pMS->CurState)
 		{
-			case SOUND_ON_SETTING:
-			case SOUND_OFF_SETTING:
+			case *SettingsMenuItem::SoundOn:
+			case *SettingsMenuItem::SoundOff:
 				ToggleSoundEffect();
 				pMS->CurState ^= 1;
-				DrawMenuStateStrings(PM_SOUND_ON, pMS->CurState);
+				DrawMenuStateStrings(MenuString::SoundOn, pMS->CurState);
 				break;
-			case MUSIC_ON_SETTING:
-			case MUSIC_OFF_SETTING:
+			case *SettingsMenuItem::MusicOn:
+			case *SettingsMenuItem::MusicOff:
 				ToggleMusic();
 				pMS->CurState ^= 1;
-				DrawMenuStateStrings(PM_SOUND_ON, pMS->CurState);
+				DrawMenuStateStrings(MenuString::SoundOn, pMS->CurState);
 				break;
-			case CHANGE_CAPTAIN_SETTING:
-			case CHANGE_SHIP_SETTING:
+			case *SettingsMenuItem::ChangeCaptain:
+			case *SettingsMenuItem::ChangeShip:
 				SetFlashRect(nullptr, false);
-				DrawMenuStateStrings(PM_SOUND_ON, pMS->CurState);
-				NameCaptainOrShip(pMS->CurState == CHANGE_CAPTAIN_SETTING,
+				DrawMenuStateStrings(MenuString::SoundOn, pMS->CurState);
+				NameCaptainOrShip(pMS->CurState == SettingsMenuItem::ChangeCaptain,
 								  NewGameInit);
 				break;
-			case CYBORG_OFF_SETTING:
-			case CYBORG_NORMAL_SETTING:
-			case CYBORG_DOUBLE_SETTING:
-			case CYBORG_SUPER_SETTING:
+			case *SettingsMenuItem::CyborgOff:
+			case *SettingsMenuItem::CyborgNormal:
+			case *SettingsMenuItem::CyborgDouble:
+			case *SettingsMenuItem::CyborgSuper:
 				if (cur_speed++ < NumCombatSpeeds - 1)
 				{
 					uqm::globalFlags() |= CyborgEnabled;
@@ -743,14 +748,14 @@ static bool DoSettings(MenuState* pMS)
 				uqm::globalFlags() =
 					((uqm::globalFlags() & ~CombatSpeedMask)
 					 | (cur_speed << CombatSpeedShift));
-				pMS->CurState = CYBORG_OFF_SETTING + cur_speed;
-				DrawMenuStateStrings(PM_SOUND_ON, pMS->CurState);
+				pMS->CurState = *SettingsMenuItem::CyborgOff + cur_speed;
+				DrawMenuStateStrings(MenuString::SoundOn, pMS->CurState);
 				break;
-			case READ_VERY_SLOW_SETTING:
-			case READ_SLOW_SETTING:
-			case READ_MODERATE_SETTING:
-			case READ_FAST_SETTING:
-			case READ_VERY_FAST_SETTING:
+			case *SettingsMenuItem::ReadVerySlow:
+			case *SettingsMenuItem::ReadSlow:
+			case *SettingsMenuItem::ReadModerate:
+			case *SettingsMenuItem::ReadFast:
+			case *SettingsMenuItem::ReadVeryFast:
 				if (read_speed == NumReadSpeeds - 1)
 				{
 					read_speed = 0;
@@ -763,20 +768,20 @@ static bool DoSettings(MenuState* pMS)
 				uqm::globalFlags() =
 					((uqm::globalFlags() & ~ReadSpeedMask)
 					 | read_speed);
-				pMS->CurState = READ_VERY_SLOW_SETTING + read_speed;
-				DrawMenuStateStrings(PM_SOUND_ON, pMS->CurState);
+				pMS->CurState = *SettingsMenuItem::ReadVerySlow + read_speed;
+				DrawMenuStateStrings(MenuString::SoundOn, pMS->CurState);
 				break;
 			default:
-				DrawMenuStateStrings(PM_SOUND_ON, pMS->CurState);
+				DrawMenuStateStrings(MenuString::SoundOn, pMS->CurState);
 		}
 		if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 		{
-			DrawMenuStateStrings(PM_SOUND_ON, pMS->CurState);
+			DrawMenuStateStrings(MenuString::SoundOn, pMS->CurState);
 		}
 
 		FeedbackSetting(pMS->CurState);
 	}
-	else if (DoMenuChooser(pMS, PM_SOUND_ON))
+	else if (DoMenuChooser(pMS, MenuString::SoundOn))
 	{
 		FeedbackSetting(pMS->CurState);
 	}
@@ -806,16 +811,16 @@ void SettingsMenu(bool NameFlagship)
 
 	if (NewGameInit)
 	{
-		menuState.CurState = !NameFlagship ?
-								 CHANGE_CAPTAIN_SETTING :
-								 CHANGE_SHIP_SETTING;
+		menuState.CurState = *(!NameFlagship ?
+								   SettingsMenuItem::ChangeCaptain :
+								   SettingsMenuItem::ChangeShip);
 	}
 	else
 	{
-		menuState.CurState = SOUND_ON_SETTING;
+		menuState.CurState = *SettingsMenuItem::SoundOn;
 	}
 
-	DrawMenuStateStrings(PM_SOUND_ON, menuState.CurState);
+	DrawMenuStateStrings(MenuString::SoundOn, menuState.CurState);
 	FeedbackSetting(menuState.CurState);
 
 	menuState.InputFunc = DoSettings;
@@ -1407,7 +1412,7 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 		DateToString(buf, sizeof buf,
 					 pSD->month_index, pSD->day_index, pSD->year_index);
 		ClearSISRect(DrawSisDisplay);
-		DrawBorder(SIS_STAT_SUMM_FRAME);
+		DrawBorder(BorderFrameIndex::SisStatSumm);
 		DrawStatusMessage(buf);
 		uqm::gameState().game().built_ship_q.release();
 
@@ -1731,12 +1736,12 @@ static bool DoPickGame(MenuState* pMS)
 		return false;
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL])
+	if (PulsedInputState.menu[*MenuKey::MenuCancel])
 	{
 		pickState->success = false;
 		return false;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		pSD = &pickState->summary[pMS->CurState];
 		if (pickState->saving || pSD->year_index)
@@ -1762,17 +1767,17 @@ static bool DoPickGame(MenuState* pMS)
 				}
 			}
 
-			PlayMenuSound(MENU_SOUND_SUCCESS);
+			PlayMenuSound(MenuSoundEffect::Success);
 			pickState->success = true;
 			return false;
 		}
-		PlayMenuSound(MENU_SOUND_FAILURE);
+		PlayMenuSound(MenuSoundEffect::Failure);
 	}
 	else
 	{
 		NewState = pMS->CurState;
-		if (PulsedInputState.menu[KEY_MENU_LEFT]
-			|| PulsedInputState.menu[KEY_MENU_PAGE_UP])
+		if (PulsedInputState.menu[*MenuKey::MenuLeft]
+			|| PulsedInputState.menu[*MenuKey::MenuPageUp])
 		{
 			if (NewState == 0)
 			{
@@ -1787,8 +1792,8 @@ static bool DoPickGame(MenuState* pMS)
 				NewState = 0;
 			}
 		}
-		else if (PulsedInputState.menu[KEY_MENU_RIGHT]
-				 || PulsedInputState.menu[KEY_MENU_PAGE_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuRight]
+				 || PulsedInputState.menu[*MenuKey::MenuPageDown])
 		{
 			if (NewState == MaxSavedGames - 1)
 			{
@@ -1803,7 +1808,7 @@ static bool DoPickGame(MenuState* pMS)
 				NewState = MaxSavedGames - 1;
 			}
 		}
-		else if (PulsedInputState.menu[KEY_MENU_UP])
+		else if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			if (NewState == 0)
 			{
@@ -1814,7 +1819,7 @@ static bool DoPickGame(MenuState* pMS)
 				NewState--;
 			}
 		}
-		else if (PulsedInputState.menu[KEY_MENU_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
 			if (NewState == MaxSavedGames - 1)
 			{
@@ -1860,7 +1865,7 @@ static bool SaveLoadGame(PickGameState* pickState, uint16_t gameIndex, bool* can
 		uqm::strncpy_safe(nameBuf, desc->SaveName);
 		if (NameSaveGame(gameIndex, nameBuf))
 		{
-			PlayMenuSound(MENU_SOUND_SUCCESS);
+			PlayMenuSound(MenuSoundEffect::Success);
 			ConfirmSaveLoad(pickState->saving ? &saveStamp : nullptr);
 			success = SaveGame(gameIndex, desc, nameBuf);
 		}
@@ -1917,7 +1922,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 	DlgStamp = SaveContextFrame(nullptr);
 	GetContextClipRect(&DlgRect);
 
-	DrawMenuStateStrings(PM_SAVE_GAME, !saving);
+	DrawMenuStateStrings(MenuString::SaveGame, !saving);
 
 	SleepThreadUntil(TimeOut);
 	PauseMusic();
@@ -2067,49 +2072,49 @@ static bool DoGameOptions(MenuState* pMS)
 		return false;
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL]
-		|| (PulsedInputState.menu[KEY_MENU_SELECT]
-			&& pMS->CurState == EXIT_GAME_MENU))
+	if (PulsedInputState.menu[*MenuKey::MenuCancel]
+		|| (PulsedInputState.menu[*MenuKey::MenuSelect]
+			&& pMS->CurState == GameMenuItem::Exit))
 	{
 		return false;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		switch (pMS->CurState)
 		{
-			case SAVE_GAME:
-			case LOAD_GAME:
+			case *GameMenuItem::SaveGame:
+			case *GameMenuItem::LoadGame:
 				SetFlashRect(nullptr, false);
-				if (PickGame(pMS->CurState == SAVE_GAME, false))
+				if (PickGame(pMS->CurState == GameMenuItem::SaveGame, false))
 				{
 					return false;
 				}
-				DrawMenuStateStrings(PM_SAVE_GAME, pMS->CurState);
+				DrawMenuStateStrings(MenuString::SaveGame, pMS->CurState);
 				DrawSeedMessage();
 				SetFlashRect(SfrMenu3do(), false);
 				break;
-			case QUIT_GAME:
-				DrawMenuStateStrings(PM_SAVE_GAME, pMS->CurState);
+			case *GameMenuItem::QuitGame:
+				DrawMenuStateStrings(MenuString::SaveGame, pMS->CurState);
 				if (ConfirmExit())
 				{
 					return false;
 				}
 				else
 				{
-					DrawMenuStateStrings(PM_SAVE_GAME, pMS->CurState);
+					DrawMenuStateStrings(MenuString::SaveGame, pMS->CurState);
 					DrawSeedMessage();
 				}
 				break;
-			case SETTINGS:
+			case *GameMenuItem::Settings:
 				SettingsMenu(false);
-				DrawMenuStateStrings(PM_SAVE_GAME, pMS->CurState);
+				DrawMenuStateStrings(MenuString::SaveGame, pMS->CurState);
 				DrawSeedMessage();
 				break;
 		}
 	}
 	else
 	{
-		DoMenuChooser(pMS, PM_SAVE_GAME);
+		DoMenuChooser(pMS, MenuString::SaveGame);
 	}
 
 	return true;
@@ -2137,7 +2142,7 @@ bool GameOptions(void)
 			return false;
 		}
 
-		DrawMenuStateStrings(PM_SAVE_GAME, LOAD_GAME);
+		DrawMenuStateStrings(MenuString::SaveGame, *GameMenuItem::LoadGame);
 		const bool success {PickGame(false, true)};
 		if (!success)
 		{ // Selected LOAD from main menu, and canceled
@@ -2149,8 +2154,8 @@ bool GameOptions(void)
 	const bool inStarbase {uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0};
 	const uint8_t outfitOrShipyard {OutfitOrShipyard};
 
-	menuState.CurState = SAVE_GAME;
-	DrawMenuStateStrings(PM_SAVE_GAME, menuState.CurState);
+	menuState.CurState = *GameMenuItem::SaveGame;
+	DrawMenuStateStrings(MenuString::SaveGame, menuState.CurState);
 	DrawSeedMessage();
 
 	SetFlashRect(SfrMenu3do(), false);

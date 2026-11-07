@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "restart.h"
 
 #include "colors.h"
@@ -54,22 +55,26 @@
 #include "uqm/session/GameSession.h"
 // for StringBank_Create() & SplitString()
 
-enum
+enum class MainMenuItem
 {
-	START_NEW_GAME = 0,
-	LOAD_SAVED_GAME,
-	PLAY_SUPER_MELEE,
-	SETUP_GAME,
-	QUIT_GAME,
-	NUM_MENU_ELEMENTS
+	StartNewGame = 0,
+	LoadSavedGame,
+	PlaySuperMelee,
+	SetupGame,
+	QuitGame,
+	Count
 };
+template <>
+inline constexpr bool IsArithmeticEnum<MainMenuItem> = true;
 
-enum
+enum class DifficultyMenuItem
 {
-	EASY_DIFF = 0,
-	ORIGINAL_DIFF,
-	HARD_DIFF
+	Easy = 0,
+	Original,
+	Hard
 };
+template <>
+inline constexpr bool IsArithmeticEnum<DifficultyMenuItem> = true;
 
 static auto ChooserX() { return (CanvasWidth >> 1); }
 static auto ChooserY() { return ((CanvasHeight >> 1) - ResScale(12)); }
@@ -216,41 +221,41 @@ static bool DoDiffChooser(MenuState* pMS)
 		{
 			return false;
 		}
-		else if (PulsedInputState.menu[KEY_MENU_SELECT])
+		else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 		{
 			done = true;
 			response = true;
 			DrawDiffChooser(pMS, a, true);
-			PlayMenuSound(MENU_SOUND_SUCCESS);
+			PlayMenuSound(MenuSoundEffect::Success);
 		}
-		else if (PulsedInputState.menu[KEY_MENU_CANCEL]
-				 || CurrentInputState.menu[KEY_EXIT])
+		else if (PulsedInputState.menu[*MenuKey::MenuCancel]
+				 || CurrentInputState.menu[*MenuKey::Exit])
 		{
 			done = true;
 			response = false;
 			DrawStamp(&s);
 		}
-		else if (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT])
+		else if (PulsedInputState.menu[*MenuKey::MenuUp] || PulsedInputState.menu[*MenuKey::MenuDown] || PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuRight])
 		{
 			uint8_t NewState {a};
-			if (PulsedInputState.menu[KEY_MENU_UP]
-				|| PulsedInputState.menu[KEY_MENU_LEFT])
+			if (PulsedInputState.menu[*MenuKey::MenuUp]
+				|| PulsedInputState.menu[*MenuKey::MenuLeft])
 			{
-				if (NewState == EASY_DIFF)
+				if (NewState == DifficultyMenuItem::Easy)
 				{
-					NewState = HARD_DIFF;
+					NewState = *DifficultyMenuItem::Hard;
 				}
 				else
 				{
 					--NewState;
 				}
 			}
-			else if (PulsedInputState.menu[KEY_MENU_DOWN]
-					 || PulsedInputState.menu[KEY_MENU_RIGHT])
+			else if (PulsedInputState.menu[*MenuKey::MenuDown]
+					 || PulsedInputState.menu[*MenuKey::MenuRight])
 			{
-				if (NewState == HARD_DIFF)
+				if (NewState == DifficultyMenuItem::Hard)
 				{
-					NewState = EASY_DIFF;
+					NewState = *DifficultyMenuItem::Easy;
 				}
 				else
 				{
@@ -265,7 +270,7 @@ static bool DoDiffChooser(MenuState* pMS)
 				a = NewState;
 			}
 
-			PlayMenuSound(MENU_SOUND_MOVE);
+			PlayMenuSound(MenuSoundEffect::Move);
 
 			LastInputTime = GetTimeCounter();
 		}
@@ -332,7 +337,7 @@ static void InitPulseText(void)
 	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 
-	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
+	for (uint16_t i {*MainMenuItem::StartNewGame}; i < MainMenuItem::Count; i++)
 	{
 		t.pStr = GameString(MAINMENU_STRING_BASE + 69 + i);
 
@@ -388,7 +393,7 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 
 	SetContextForeGroundColor(MainMenuTextColor);
 
-	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
+	for (uint16_t i {*MainMenuItem::StartNewGame}; i < MainMenuItem::Count; i++)
 	{
 		t.pStr = GameString(MAINMENU_STRING_BASE + 69 + i);
 		font_DrawText(&t);
@@ -485,13 +490,13 @@ static bool DoRestart(MenuState* pMS)
 
 	if (optSuperMelee && !optLoadGame)
 	{
-		pMS->CurState = PLAY_SUPER_MELEE;
-		PulsedInputState.menu[KEY_MENU_SELECT] = 65535;
+		pMS->CurState = *MainMenuItem::PlaySuperMelee;
+		PulsedInputState.menu[*MenuKey::MenuSelect] = 65535;
 	}
 	else if ((optLoadGame || HasPlaySave()) && !optSuperMelee)
 	{
-		pMS->CurState = LOAD_SAVED_GAME;
-		PulsedInputState.menu[KEY_MENU_SELECT] = 65535;
+		pMS->CurState = *MainMenuItem::LoadSavedGame;
+		PulsedInputState.menu[*MenuKey::MenuSelect] = 65535;
 	}
 
 	if (pMS->Initialized && !(uqm::currentActivity() & CHECK_ABORT))
@@ -533,11 +538,11 @@ static bool DoRestart(MenuState* pMS)
 			FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 		return false;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		switch (pMS->CurState)
 		{
-			case START_NEW_GAME:
+			case *MainMenuItem::StartNewGame:
 				if (uqm::UQMOptions::read().customSeed == 404)
 				{
 					SetFlashRect(nullptr, false);
@@ -596,17 +601,17 @@ static bool DoRestart(MenuState* pMS)
 				LastActivity = CHECK_LOAD | CHECK_RESTART;
 				uqm::currentActivity() = IN_INTERPLANETARY;
 				break;
-			case LOAD_SAVED_GAME:
+			case *MainMenuItem::LoadSavedGame:
 				LastActivity = CHECK_LOAD;
 				uqm::currentActivity() = IN_INTERPLANETARY;
 				optLoadGame = false;
 				break;
-			case PLAY_SUPER_MELEE:
+			case *MainMenuItem::PlaySuperMelee:
 				ReloadMasterShipList(nullptr);
 				uqm::currentActivity() = SUPER_MELEE;
 				optSuperMelee = false;
 				break;
-			case SETUP_GAME:
+			case *MainMenuItem::SetupGame:
 				Flash_pause(pMS->flashContext);
 				Flash_setState(pMS->flashContext, FlashState::FadeIn,
 							   (3 * c_gameSecond) / 16);
@@ -633,7 +638,7 @@ static bool DoRestart(MenuState* pMS)
 				RestartMessage();
 
 				return true;
-			case QUIT_GAME:
+			case *MainMenuItem::QuitGame:
 				SleepThreadUntil(
 					FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 				uqm::currentActivity() = CHECK_ABORT;
@@ -644,25 +649,25 @@ static bool DoRestart(MenuState* pMS)
 
 		return false;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN])
+	else if (PulsedInputState.menu[*MenuKey::MenuUp] || PulsedInputState.menu[*MenuKey::MenuDown])
 	{
 		uint8_t NewState {pMS->CurState};
-		if (PulsedInputState.menu[KEY_MENU_UP])
+		if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
-			if (NewState == START_NEW_GAME)
+			if (NewState == MainMenuItem::StartNewGame)
 			{
-				NewState = QUIT_GAME;
+				NewState = *MainMenuItem::QuitGame;
 			}
 			else
 			{
 				--NewState;
 			}
 		}
-		else if (PulsedInputState.menu[KEY_MENU_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
-			if (NewState == QUIT_GAME)
+			if (NewState == MainMenuItem::QuitGame)
 			{
-				NewState = START_NEW_GAME;
+				NewState = *MainMenuItem::StartNewGame;
 			}
 			else
 			{
@@ -679,7 +684,7 @@ static bool DoRestart(MenuState* pMS)
 
 		LastInputTime = GetTimeCounter();
 	}
-	else if (PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT])
+	else if (PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuRight])
 	{ // Does nothing, but counts as input for timeout purposes
 		LastInputTime = GetTimeCounter();
 	}
@@ -818,7 +823,7 @@ static bool RestartMenu(MenuState* pMS)
 	DestroyDrawable(ReleaseDrawable(pMS->CurFrame));
 	pMS->CurFrame = 0;
 
-	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
+	for (uint16_t i {*MainMenuItem::StartNewGame}; i < MainMenuItem::Count; i++)
 	{
 		DestroyDrawable(ReleaseDrawable(TextCache[i]));
 		TextCache[i] = 0;

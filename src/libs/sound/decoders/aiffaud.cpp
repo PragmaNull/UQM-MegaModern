@@ -306,7 +306,7 @@ static int aifa_readCommonChunk(TFB_AiffSoundDecoder* aifa, uint32_t size,
 	memset(fmt, 0, sizeof(*fmt));
 	if (size < AiffCommSize)
 	{
-		aifa->last_error = +AiffError::BadFile;
+		aifa->last_error = *AiffError::BadFile;
 		return 0;
 	}
 

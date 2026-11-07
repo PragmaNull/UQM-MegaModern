@@ -204,7 +204,7 @@ static void spathi_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~SpecialFlag;
 
-	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (StarShipPtr->special_counter == 0
 		&& lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->which_turn <= 24)

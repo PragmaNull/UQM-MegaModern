@@ -243,7 +243,7 @@ static void mycon_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 {
 	Starship* StarShipPtr {};
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 	{
 		if ((lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
@@ -260,12 +260,12 @@ static void mycon_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	if (ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == MovementState::Pursue)
+	if (ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState == MovementState::Pursue)
 	{
 		StarShipPtr->ship_input_state &= ~ThrustFlag; /* don't pursue seekers */
 	}
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 	if (StarShipPtr->weapon_counter == 0
 		&& lpEvalDesc->ObjectPtr
 		&& (lpEvalDesc->which_turn <= 16

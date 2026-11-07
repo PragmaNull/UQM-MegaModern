@@ -305,10 +305,10 @@ static void human_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0
-		&& ((ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr != nullptr
-			 && ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 2)
-			|| (ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr != nullptr
-				&& ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn <= 4)))
+		&& ((ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr != nullptr
+			 && ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].which_turn <= 2)
+			|| (ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr != nullptr
+				&& ObjectsOfConcern[*IntelObjectIndex::EnemyShip].which_turn <= 4)))
 	{
 		StarShipPtr->ship_input_state |= SpecialFlag;
 	}
@@ -316,16 +316,16 @@ static void human_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
 	}
-	ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = nullptr;
+	ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr = nullptr;
 
 	ship_intelligence(ShipPtr,
 					  ObjectsOfConcern, ConcernCounter);
 
 	if (StarShipPtr->weapon_counter == 0)
 	{
-		if (ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr
+		if (ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr
 			&& (!(StarShipPtr->ship_input_state & (LeftFlag | RightFlag /* | ThrustFlag */))
-				|| ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn <= 12))
+				|| ObjectsOfConcern[*IntelObjectIndex::EnemyShip].which_turn <= 12))
 		{
 			StarShipPtr->ship_input_state |= WeaponFlag;
 		}

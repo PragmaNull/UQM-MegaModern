@@ -143,31 +143,31 @@ void audio_Sourcei(audio_Object srcobj, audio_SourceProp pname,
 				   audio_IntVal value)
 
 {
-	audiodrv.Sourcei(srcobj, audiodrv.EnumLookup[+pname], value);
+	audiodrv.Sourcei(srcobj, audiodrv.EnumLookup[*pname], value);
 }
 
 void audio_Sourcef(audio_Object srcobj, audio_SourceProp pname,
 				   float value)
 {
-	audiodrv.Sourcef(srcobj, audiodrv.EnumLookup[+pname], value);
+	audiodrv.Sourcef(srcobj, audiodrv.EnumLookup[*pname], value);
 }
 
 void audio_Sourcefv(audio_Object srcobj, audio_SourceProp pname,
 					float* value)
 {
-	audiodrv.Sourcefv(srcobj, audiodrv.EnumLookup[+pname], value);
+	audiodrv.Sourcefv(srcobj, audiodrv.EnumLookup[*pname], value);
 }
 
 void audio_GetSourcei(audio_Object srcobj, audio_SourceProp pname,
 					  audio_IntVal* value)
 {
-	audiodrv.GetSourcei(srcobj, audiodrv.EnumLookup[+pname], value);
+	audiodrv.GetSourcei(srcobj, audiodrv.EnumLookup[*pname], value);
 }
 
 void audio_GetSourcef(audio_Object srcobj, audio_SourceProp pname,
 					  float* value)
 {
-	audiodrv.GetSourcef(srcobj, audiodrv.EnumLookup[+pname], value);
+	audiodrv.GetSourcef(srcobj, audiodrv.EnumLookup[*pname], value);
 }
 
 void audio_SourceRewind(audio_Object srcobj)
@@ -225,7 +225,7 @@ bool audio_IsBuffer(audio_Object bufobj)
 void audio_GetBufferi(audio_Object bufobj, audio_BufferProp pname,
 					  audio_IntVal* value)
 {
-	audiodrv.GetBufferi(bufobj, audiodrv.EnumLookup[+pname], value);
+	audiodrv.GetBufferi(bufobj, audiodrv.EnumLookup[*pname], value);
 }
 
 void audio_BufferData(audio_Object bufobj, uint32_t format, void* data,

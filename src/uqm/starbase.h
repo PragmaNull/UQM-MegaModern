@@ -19,19 +19,22 @@
 #ifndef UQM_STARBASE_H_
 #define UQM_STARBASE_H_
 
+#include "core/types/enum.h"
 #include "menustat.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
-enum
+enum class StarbaseMenuItem
 {
-	TALK_COMMANDER = 0,
-	OUTFIT_STARSHIP,
-	SHIPYARD,
-	DEPART_BASE
+	TalkCommander = 0,
+	OutfitStarship,
+	Shipyard,
+	DepartBase
 };
+template <>
+inline constexpr bool IsArithmeticEnum<StarbaseMenuItem> = true;
 typedef uint8_t STARBASE_STATE;
 
 extern void InstallBombAtEarth(void);

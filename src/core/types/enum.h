@@ -26,9 +26,9 @@ inline constexpr bool IsFlagEnum = false;
 template <typename E>
 concept BitFlagEnum = EnumType<E> && IsFlagEnum<E>;
 
-// The value of an arithmetic enum as an integer, for example as an array index: array[+Race::Arilou].
+// The value of an arithmetic enum as an integer, for example as an array index: array[*Race::Arilou].
 template <ArithmeticEnum E>
-[[nodiscard]] constexpr auto operator+(E e) noexcept
+[[nodiscard]] constexpr auto operator*(E e) noexcept
 {
 	return static_cast<std::underlying_type_t<E>>(e);
 }
@@ -42,25 +42,25 @@ template <ArithmeticEnum E>
 template <ArithmeticEnum E, std::integral I>
 [[nodiscard]] constexpr E operator+(E e, I n) noexcept
 {
-	return static_cast<E>(+e + n);
+	return static_cast<E>(*e + n);
 }
 
 template <ArithmeticEnum E, std::integral I>
 [[nodiscard]] constexpr E operator+(I n, E e) noexcept
 {
-	return static_cast<E>(n + +e);
+	return static_cast<E>(n + *e);
 }
 
 template <ArithmeticEnum E, std::integral I>
 [[nodiscard]] constexpr E operator-(E e, I n) noexcept
 {
-	return static_cast<E>(+e - n);
+	return static_cast<E>(*e - n);
 }
 
 template <ArithmeticEnum E>
 [[nodiscard]] constexpr int operator-(E a, E b) noexcept
 {
-	return +a - +b;
+	return *a - *b;
 }
 
 template <ArithmeticEnum E>
@@ -94,17 +94,17 @@ constexpr E operator--(E& e, int) noexcept
 template <ArithmeticEnum E, std::integral I>
 [[nodiscard]] constexpr bool operator==(E e, I n) noexcept
 {
-	return uqstl::cmp_equal(+e, n);
+	return uqstl::cmp_equal(*e, n);
 }
 
 template <ArithmeticEnum E, std::integral I>
 [[nodiscard]] constexpr uqstl::strong_ordering operator<=>(E e, I n) noexcept
 {
-	if (uqstl::cmp_less(+e, n))
+	if (uqstl::cmp_less(*e, n))
 	{
 		return uqstl::strong_ordering::less;
 	}
-	if (uqstl::cmp_greater(+e, n))
+	if (uqstl::cmp_greater(*e, n))
 	{
 		return uqstl::strong_ordering::greater;
 	}

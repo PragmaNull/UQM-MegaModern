@@ -267,13 +267,13 @@ static void Flash_fixState(FlashContext* context)
 		{
 			break;
 		}
-		context->state = static_cast<FlashState>((+context->state + 1) & 0x3);
+		context->state = static_cast<FlashState>((*context->state + 1) & 0x3);
 	}
 }
 
 static void Flash_nextState(FlashContext* context)
 {
-	context->state = static_cast<FlashState>((+context->state + 1) & 0x3);
+	context->state = static_cast<FlashState>((*context->state + 1) & 0x3);
 	Flash_fixState(context);
 }
 

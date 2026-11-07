@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "planets.h"
 
 #include "core/string/StringUtils.h"
@@ -42,17 +43,19 @@
 
 
 // PlanetOrbitMenu() items
-enum PlanetMenuItems
+enum class PlanetMenuItem
 {
 	// XXX: Must match the enum in menustat.h
-	SCAN = 0,
-	STARMAP,
-	EQUIP_DEVICE,
-	CARGO,
-	ROSTER,
-	GAME_MENU,
-	NAVIGATION,
+	Scan = 0,
+	Starmap,
+	EquipDevice,
+	Cargo,
+	Roster,
+	GameMenu,
+	Navigation,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<PlanetMenuItem> = true;
 
 GFXCONTEXT PlanetContext;
 // Context for rotating planet view and lander surface view
@@ -294,11 +297,11 @@ void DrawPlanetSurfaceBorder(void)
 		SetContextForeGroundColor(SisLeftBorderColor);
 		DrawFilledRectangle(&r);
 
-		DrawBorder(LANDER_DOS_FRAME);
+		DrawBorder(BorderFrameIndex::LanderDos);
 	}
 	else
 	{
-		DrawBorder(LANDER_3DO_FRAME);
+		DrawBorder(BorderFrameIndex::Lander3do);
 	}
 
 	UnbatchGraphics();
@@ -461,16 +464,16 @@ static void DrawOrbitalDisplay(DrawOrbitalMode Mode)
 	else if (Mode == DrawOrbitalMode::Full)
 	{
 		DrawDefaultPlanetSphere();
-		DrawMenuStateStrings(PM_SCAN, SCAN);
+		DrawMenuStateStrings(MenuString::Scan, *PlanetMenuItem::Scan);
 	}
 	else if (Mode == DrawOrbitalMode::FromStarmap)
 	{
 		DrawDefaultPlanetSphere();
-		DrawMenuStateStrings(PM_SCAN, STARMAP);
+		DrawMenuStateStrings(MenuString::Scan, *PlanetMenuItem::Starmap);
 	}
 	else
 	{
-		DrawMenuStateStrings(PM_SCAN, SCAN);
+		DrawMenuStateStrings(MenuString::Scan, *PlanetMenuItem::Scan);
 	}
 
 	if (Mode != DrawOrbitalMode::Wait)
@@ -628,7 +631,7 @@ void FreeLanderFont(PlanetData* info)
 
 static bool DoPlanetOrbit(MenuState* pMS)
 {
-	bool select = (bool)PulsedInputState.menu[KEY_MENU_SELECT];
+	bool select = (bool)PulsedInputState.menu[*MenuKey::MenuSelect];
 
 	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
@@ -637,7 +640,7 @@ static bool DoPlanetOrbit(MenuState* pMS)
 	}
 
 	// XXX: pMS actually refers to pSolarSysState->menuState
-	const bool handled {DoMenuChooser(pMS, PM_SCAN)};
+	const bool handled {DoMenuChooser(pMS, MenuString::Scan)};
 	if (handled)
 	{
 		return true;
@@ -652,14 +655,14 @@ static bool DoPlanetOrbit(MenuState* pMS)
 
 	switch (pMS->CurState)
 	{
-		case SCAN:
+		case *PlanetMenuItem::Scan:
 			ScanSystem();
 			if (uqm::currentActivity() & START_ENCOUNTER)
 			{ // Found Fwiffo on Pluto
 				return false;
 			}
 			break;
-		case EQUIP_DEVICE:
+		case *PlanetMenuItem::EquipDevice:
 			select = DevicesMenu();
 			if (uqm::currentActivity() & START_ENCOUNTER)
 			{ // Invoked Talking Pet, a Caster or Sun Device over Chmmr,
@@ -668,19 +671,19 @@ static bool DoPlanetOrbit(MenuState* pMS)
 				return false;
 			}
 			break;
-		case CARGO:
+		case *PlanetMenuItem::Cargo:
 			CargoMenu();
 			break;
-		case ROSTER:
+		case *PlanetMenuItem::Roster:
 			select = RosterMenu();
 			break;
-		case GAME_MENU:
+		case *PlanetMenuItem::GameMenu:
 			if (!GameOptions())
 			{
 				return false; // abort or load
 			}
 			break;
-		case STARMAP:
+		case *PlanetMenuItem::Starmap:
 			{
 				// Deactivate planet rotation
 				InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
@@ -703,7 +706,7 @@ static bool DoPlanetOrbit(MenuState* pMS)
 				}
 				FALLTHROUGH; // Fall through !!!
 			}
-		case NAVIGATION:
+		case *PlanetMenuItem::Navigation:
 			return false;
 	}
 
@@ -713,11 +716,11 @@ static bool DoPlanetOrbit(MenuState* pMS)
 		{ // 3DO menu jumps to NAVIGATE after a successful submenu run
 			if (uqm::UQMOptions::read().whichMenu != uqm::EmulationMode::PC)
 			{
-				pMS->CurState = NAVIGATION;
+				pMS->CurState = *PlanetMenuItem::Navigation;
 			}
-			if (pMS->CurState != STARMAP)
+			if (pMS->CurState != PlanetMenuItem::Starmap)
 			{
-				DrawMenuStateStrings(PM_SCAN, pMS->CurState);
+				DrawMenuStateStrings(MenuString::Scan, pMS->CurState);
 			}
 		}
 		SetFlashRect(SfrMenu3do(), false);
@@ -742,7 +745,7 @@ void PlanetOrbitMenu(void)
 
 	SetFlashRect(SfrMenu3do(), false);
 
-	menuState.CurState = SCAN;
+	menuState.CurState = *PlanetMenuItem::Scan;
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	InputFrameCallback* oldCallback {SetInputCallback(on_input_frame)};
 
@@ -754,6 +757,6 @@ void PlanetOrbitMenu(void)
 	SetFlashRect(nullptr, false);
 	if (!(uqm::currentActivity() & CHECK_LOAD))
 	{
-		DrawMenuStateStrings(PM_STARMAP, -NAVIGATION);
+		DrawMenuStateStrings(MenuString::Starmap, -PlanetMenuItem::Navigation);
 	}
 }

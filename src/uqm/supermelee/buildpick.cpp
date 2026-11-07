@@ -288,19 +288,19 @@ static bool DoPickShip(MeleeState* pMS)
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
-	if (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])
+	if (PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel])
 	{
 		// Confirm selection or cancel.
-		pMS->buildPickConfirmed = !PulsedInputState.menu[KEY_MENU_CANCEL];
+		pMS->buildPickConfirmed = !PulsedInputState.menu[*MenuKey::MenuCancel];
 		return false;
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_SPECIAL]
+	if (PulsedInputState.menu[*MenuKey::MenuSpecial]
 		&& (pMS->currentShip != MELEE_NONE))
 	{
 		if (isPC(uqm::UQMOptions::read().whichIntro))
 		{
-			PlayMenuSound(MENU_SOUND_SUCCESS);
+			PlayMenuSound(MenuSoundEffect::Success);
 		}
 		// Show ship spin video.
 		DoShipSpin(pMS->currentShip, pMS->hMusic);
@@ -313,7 +313,7 @@ static bool DoPickShip(MeleeState* pMS)
 
 		newSelectedShip = pMS->currentShip;
 
-		if (PulsedInputState.menu[KEY_MENU_LEFT])
+		if (PulsedInputState.menu[*MenuKey::MenuLeft])
 		{
 			if (newSelectedShip % NumPickCols == 0)
 			{
@@ -321,7 +321,7 @@ static bool DoPickShip(MeleeState* pMS)
 			}
 			--newSelectedShip;
 		}
-		else if (PulsedInputState.menu[KEY_MENU_RIGHT])
+		else if (PulsedInputState.menu[*MenuKey::MenuRight])
 		{
 			++newSelectedShip;
 			if (newSelectedShip % NumPickCols == 0)
@@ -330,7 +330,7 @@ static bool DoPickShip(MeleeState* pMS)
 			}
 		}
 
-		if (PulsedInputState.menu[KEY_MENU_UP])
+		if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			if (newSelectedShip >= NumPickCols)
 			{
@@ -341,7 +341,7 @@ static bool DoPickShip(MeleeState* pMS)
 				newSelectedShip += NumPickCols * (NumPickRows - 1);
 			}
 		}
-		else if (PulsedInputState.menu[KEY_MENU_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
 			if (newSelectedShip < NumPickCols * (NumPickRows - 1))
 			{

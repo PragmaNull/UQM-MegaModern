@@ -34,38 +34,38 @@ const static audio_Driver mixSDL_Driver =
 		mixSDL_GetError,
 		AudioDriverType::MixSDL,
 		{/* Errors */
-		 +MixerError::NoError,
-				  +MixerError::InvalidName,
-				  +MixerError::InvalidEnum,
-				  +MixerError::InvalidValue,
-				  +MixerError::InvalidOperation,
-				  +MixerError::OutOfMemory,
-				  +MixerError::DriverFailure,
+		 *MixerError::NoError,
+				  *MixerError::InvalidName,
+				  *MixerError::InvalidEnum,
+				  *MixerError::InvalidValue,
+				  *MixerError::InvalidOperation,
+				  *MixerError::OutOfMemory,
+				  *MixerError::DriverFailure,
 
 				  /* Source properties */
-		 +MixerSourceProp::Position,
-				  +MixerSourceProp::Looping,
-				  +MixerSourceProp::Buffer,
-				  +MixerSourceProp::Gain,
-				  +MixerSourceProp::SourceState,
-				  +MixerSourceProp::BuffersQueued,
-				  +MixerSourceProp::BuffersProcessed,
+		 *MixerSourceProp::Position,
+				  *MixerSourceProp::Looping,
+				  *MixerSourceProp::Buffer,
+				  *MixerSourceProp::Gain,
+				  *MixerSourceProp::SourceState,
+				  *MixerSourceProp::BuffersQueued,
+				  *MixerSourceProp::BuffersProcessed,
 
 				  /* Source state information */
-		 +MixerSourceState::Initial,
-				  +MixerSourceState::Stopped,
-				  +MixerSourceState::Playing,
-				  +MixerSourceState::Paused,
+		 *MixerSourceState::Initial,
+				  *MixerSourceState::Stopped,
+				  *MixerSourceState::Playing,
+				  *MixerSourceState::Paused,
 
 				  /* Sound buffer properties */
-		 +MixerBufferProp::Frequency,
-				  +MixerBufferProp::Bits,
-				  +MixerBufferProp::Channels,
-				  +MixerBufferProp::Size,
-				  +MixerFormat::Mono16,
-				  +MixerFormat::Stereo16,
-				  +MixerFormat::Mono8,
-				  +MixerFormat::Stereo8},
+		 *MixerBufferProp::Frequency,
+				  *MixerBufferProp::Bits,
+				  *MixerBufferProp::Channels,
+				  *MixerBufferProp::Size,
+				  *MixerFormat::Mono16,
+				  *MixerFormat::Stereo16,
+				  *MixerFormat::Mono8,
+				  *MixerFormat::Stereo8},
 
 		/* Sources */
 		mixSDL_GenSources,
@@ -132,8 +132,8 @@ int32_t mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	TFB_DecoderFormats formats =
 		{
 			uqstl::endian::native == uqstl::endian::big, uqstl::endian::native == uqstl::endian::big,
-			+AudioEnum::FormatMono8, +AudioEnum::FormatStereo8,
-			+AudioEnum::FormatMono16, +AudioEnum::FormatStereo16};
+			*AudioEnum::FormatMono8, *AudioEnum::FormatStereo8,
+			*AudioEnum::FormatMono16, *AudioEnum::FormatStereo16};
 
 	uqm::log::info("Initializing SDL audio subsystem.");
 	if (!SDL_InitSubSystem(SDL_INIT_AUDIO))
@@ -274,20 +274,20 @@ int32_t mixSDL_GetError(void)
 	switch (value)
 	{
 		case MixerError::NoError:
-			return +AudioEnum::NoError;
+			return *AudioEnum::NoError;
 		case MixerError::InvalidName:
-			return +AudioEnum::InvalidName;
+			return *AudioEnum::InvalidName;
 		case MixerError::InvalidEnum:
-			return +AudioEnum::InvalidEnum;
+			return *AudioEnum::InvalidEnum;
 		case MixerError::InvalidValue:
-			return +AudioEnum::InvalidValue;
+			return *AudioEnum::InvalidValue;
 		case MixerError::InvalidOperation:
-			return +AudioEnum::InvalidOperation;
+			return *AudioEnum::InvalidOperation;
 		case MixerError::OutOfMemory:
-			return +AudioEnum::OutOfMemory;
+			return *AudioEnum::OutOfMemory;
 		default:
 			uqm::log::debug("mixSDL_GetError: unknown value {:x}", value);
-			return +AudioEnum::DriverFailure;
+			return *AudioEnum::DriverFailure;
 			break;
 	}
 }
@@ -347,19 +347,19 @@ void mixSDL_GetSourcei(audio_Object srcobj, int32_t pname,
 		switch (static_cast<MixerSourceState>(*value))
 		{
 			case MixerSourceState::Initial:
-				*value = +AudioEnum::Initial;
+				*value = *AudioEnum::Initial;
 				break;
 			case MixerSourceState::Stopped:
-				*value = +AudioEnum::Stopped;
+				*value = *AudioEnum::Stopped;
 				break;
 			case MixerSourceState::Playing:
-				*value = +AudioEnum::Playing;
+				*value = *AudioEnum::Playing;
 				break;
 			case MixerSourceState::Paused:
-				*value = +AudioEnum::Paused;
+				*value = *AudioEnum::Paused;
 				break;
 			default:
-				*value = +AudioEnum::DriverFailure;
+				*value = *AudioEnum::DriverFailure;
 		}
 	}
 }

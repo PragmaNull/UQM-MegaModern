@@ -100,7 +100,7 @@ static bool GenerateWreck_generateOrbital(SolarSystemState* solarSys,
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if (isDifficulty(uqm::Difficulty::Hard) && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << PROBE_ENCOUNTER))
+		if (isDifficulty(uqm::Difficulty::Hard) && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << *HardModeEncounter::Probe))
 		{
 			uint16_t sum {};
 
@@ -150,7 +150,7 @@ static bool GenerateWreck_generateOrbital(SolarSystemState* solarSys,
 
 					state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 
-					state |= 1 << PROBE_ENCOUNTER;
+					state |= 1 << *HardModeEncounter::Probe;
 
 					uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 				}

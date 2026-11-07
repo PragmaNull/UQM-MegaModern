@@ -46,7 +46,7 @@
 SDL_Surface* SDL_Screen;
 SDL_Surface* TransitionScreen;
 
-SDL_Surface* SDL_Screens[+ScreenBuffer::Count];
+SDL_Surface* SDL_Screens[*ScreenBuffer::Count];
 SDL_Surface* SDL_Screen_fps;
 bool SDL_Screen_fps_changed {};
 
@@ -299,7 +299,7 @@ SDL_Surface* TFB_DisplayFormatAlpha(SDL_Surface* surface)
 // like from a TFB_DrawCommand_Callback command.
 TFB_Canvas TFB_GetScreenCanvas(ScreenBuffer screen)
 {
-	return SDL_Screens[+screen];
+	return SDL_Screens[*screen];
 }
 
 TFB_Canvas TFB_GetFPSCanvas(void)

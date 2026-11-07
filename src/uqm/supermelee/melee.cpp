@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "melee.h"
 
 #include "core/string/StringUtils.h"
@@ -74,30 +75,11 @@ static void StartMelee(MeleeState* pMS);
 static ssize_t numPlayersReady(void);
 #endif /* NETPLAY */
 
-enum
-{
-#ifdef NETPLAY
-	NET_TOP,
-#endif
-	CONTROLS_TOP,
-	SAVE_TOP,
-	LOAD_TOP,
-	START_MELEE,
-	LOAD_BOT,
-	SAVE_BOT,
-	CONTROLS_BOT,
-	//#ifdef NETPLAY
-	//	NET_BOT,
-	//#endif
-	QUIT_BOT,
-	EDIT_MELEE, // Editing a fleet or the team name
-	BUILD_PICK	// Selecting a ship to add to a fleet
-};
 
 #ifdef NETPLAY
-static constexpr auto TopEntry {NET_TOP};
+static constexpr auto TopEntry {MeleeMenuItem::NetTop};
 #else
-static constexpr auto TopEntry {CONTROLS_TOP};
+static constexpr auto TopEntry {MeleeMenuItem::ControlsTop};
 #endif
 
 // Top Melee Menu
@@ -193,51 +175,51 @@ static int ButtonText(uint16_t which_icon)
 {
 	switch (which_icon)
 	{
-		case HUMAN_CON_TOP:
-		case HUMAN_CON_TOP_HL:
-		case HUMAN_CON_BOTT:
-		case HUMAN_CON_BOTT_HL:
+		case *MeleeFrameIndex::HumanConTop:
+		case *MeleeFrameIndex::HumanConTopHl:
+		case *MeleeFrameIndex::HumanConBott:
+		case *MeleeFrameIndex::HumanConBottHl:
 			return 10; // "HUMAN CONTROL"
-		case WEAK_CYBORG_TOP:
-		case WEAK_CYBORG_TOP_HL:
-		case WEAK_CYBORG_BOTT:
-		case WEAK_CYBORG_BOTT_HL:
+		case *MeleeFrameIndex::WeakCyborgTop:
+		case *MeleeFrameIndex::WeakCyborgTopHl:
+		case *MeleeFrameIndex::WeakCyborgBott:
+		case *MeleeFrameIndex::WeakCyborgBottHl:
 			return 11; // "WEAK CYBORG"
-		case GOOD_CYBORG_TOP:
-		case GOOD_CYBORG_TOP_HL:
-		case GOOD_CYBORG_BOTT:
-		case GOOD_CYBORG_BOTT_HL:
+		case *MeleeFrameIndex::GoodCyborgTop:
+		case *MeleeFrameIndex::GoodCyborgTopHl:
+		case *MeleeFrameIndex::GoodCyborgBott:
+		case *MeleeFrameIndex::GoodCyborgBottHl:
 			return 12; // "GOOD CYBORG"
-		case AWES_CYBORG_TOP:
-		case AWES_CYBORG_TOP_HL:
-		case AWES_CYBORG_BOTT:
-		case AWES_CYBORG_BOTT_HL:
+		case *MeleeFrameIndex::AwesCyborgTop:
+		case *MeleeFrameIndex::AwesCyborgTopHl:
+		case *MeleeFrameIndex::AwesCyborgBott:
+		case *MeleeFrameIndex::AwesCyborgBottHl:
 			return 13; // "AWESOME CYBORG"
-		case LOAD_BUTTON_TOP:
-		case LOAD_BUTTON_TOP_HL:
-		case LOAD_BUTTON_BOTT:
-		case LOAD_BUTTON_BOTT_HL:
+		case *MeleeFrameIndex::LoadButtonTop:
+		case *MeleeFrameIndex::LoadButtonTopHl:
+		case *MeleeFrameIndex::LoadButtonBott:
+		case *MeleeFrameIndex::LoadButtonBottHl:
 			return 14; // "LOAD"
-		case SAVE_BUTTON_TOP:
-		case SAVE_BUTTON_TOP_HL:
-		case SAVE_BUTTON_BOTT:
-		case SAVE_BUTTON_BOTT_HL:
+		case *MeleeFrameIndex::SaveButtonTop:
+		case *MeleeFrameIndex::SaveButtonTopHl:
+		case *MeleeFrameIndex::SaveButtonBott:
+		case *MeleeFrameIndex::SaveButtonBottHl:
 			return 15; // "SAVE"
-		case BATTLE_BUTTON:
-		case BATTLE_BUTTON_HL:
+		case *MeleeFrameIndex::BattleButton:
+		case *MeleeFrameIndex::BattleButtonHl:
 			return 16; // "BATTLE!"
-		case QUIT_BUTTON:
-		case QUIT_BUTTON_HL:
+		case *MeleeFrameIndex::QuitButton:
+		case *MeleeFrameIndex::QuitButtonHl:
 			return 17; // "QUIT"
-		case NETWORK_CON_TOP:
-		case NETWORK_CON_TOP_HL:
-		case NETWORK_CON_BOTT:
-		case NETWORK_CON_BOTT_HL:
+		case *MeleeFrameIndex::NetworkConTop:
+		case *MeleeFrameIndex::NetworkConTopHl:
+		case *MeleeFrameIndex::NetworkConBott:
+		case *MeleeFrameIndex::NetworkConBottHl:
 			return 18; // "NETWORK CONTROL"
-		case NET_BUTTON_TOP:
-		case NET_BUTTON_TOP_HL:
-		case NET_BUTTON_BOTT:
-		case NET_BUTTON_BOTT_HL:
+		case *MeleeFrameIndex::NetButtonTop:
+		case *MeleeFrameIndex::NetButtonTopHl:
+		case *MeleeFrameIndex::NetButtonBott:
+		case *MeleeFrameIndex::NetButtonBottHl:
 			return 19; // "NET..."
 		default:
 			return 0;
@@ -432,7 +414,7 @@ void DrawShipPickerText(GfxStamp stamp)
 	pt.y = r.corner.y + SpYPadding();
 
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   CONFIRM_PC + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
+							   MeleeFrameIndex::ConfirmPc + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
 	s.origin = pt;
 
 	DrawStamp(&s);
@@ -450,7 +432,7 @@ void DrawShipPickerText(GfxStamp stamp)
 	pt.y = r.corner.y + SpYPadding();
 
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   SPECIAL_PC + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
+							   MeleeFrameIndex::SpecialPc + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
 
 	GetFrameRect(s.frame, &r);
 	pt.x -= r.extent.width;
@@ -501,7 +483,7 @@ static void DrawTeamPickerText(GfxStamp stamp)
 	pt.y = r.corner.y + r.extent.height - TpPadding();
 
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   CONFIRM_PC + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
+							   MeleeFrameIndex::ConfirmPc + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
 
 	GetFrameRect(s.frame, &r);
 	pt.y -= r.extent.height;
@@ -530,7 +512,7 @@ static void DrawTeamPickerText(GfxStamp stamp)
 		}
 
 		s.frame = SetAbsFrameIndex(MeleeFrame,
-								   CANCEL_PC + i + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
+								   MeleeFrameIndex::CancelPc + i + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
 		s.origin.x = text_r.extent.width + t.baseline.x + TpPadding()
 				   + ResScale(1);
 		DrawStamp(&s);
@@ -549,48 +531,48 @@ static int WhichText(uint16_t which_icon)
 {
 	switch (which_icon)
 	{
-		case HUMAN_CON_TOP:
-		case HUMAN_CON_TOP_HL:
-		case HUMAN_CON_BOTT:
-		case HUMAN_CON_BOTT_HL:
-		case WEAK_CYBORG_TOP:
-		case WEAK_CYBORG_TOP_HL:
-		case WEAK_CYBORG_BOTT:
-		case WEAK_CYBORG_BOTT_HL:
-		case GOOD_CYBORG_TOP:
-		case GOOD_CYBORG_TOP_HL:
-		case GOOD_CYBORG_BOTT:
-		case GOOD_CYBORG_BOTT_HL:
-		case AWES_CYBORG_TOP:
-		case AWES_CYBORG_TOP_HL:
-		case AWES_CYBORG_BOTT:
-		case AWES_CYBORG_BOTT_HL:
-		case NETWORK_CON_TOP:
-		case NETWORK_CON_TOP_HL:
-		case NETWORK_CON_BOTT:
-		case NETWORK_CON_BOTT_HL:
+		case *MeleeFrameIndex::HumanConTop:
+		case *MeleeFrameIndex::HumanConTopHl:
+		case *MeleeFrameIndex::HumanConBott:
+		case *MeleeFrameIndex::HumanConBottHl:
+		case *MeleeFrameIndex::WeakCyborgTop:
+		case *MeleeFrameIndex::WeakCyborgTopHl:
+		case *MeleeFrameIndex::WeakCyborgBott:
+		case *MeleeFrameIndex::WeakCyborgBottHl:
+		case *MeleeFrameIndex::GoodCyborgTop:
+		case *MeleeFrameIndex::GoodCyborgTopHl:
+		case *MeleeFrameIndex::GoodCyborgBott:
+		case *MeleeFrameIndex::GoodCyborgBottHl:
+		case *MeleeFrameIndex::AwesCyborgTop:
+		case *MeleeFrameIndex::AwesCyborgTopHl:
+		case *MeleeFrameIndex::AwesCyborgBott:
+		case *MeleeFrameIndex::AwesCyborgBottHl:
+		case *MeleeFrameIndex::NetworkConTop:
+		case *MeleeFrameIndex::NetworkConTopHl:
+		case *MeleeFrameIndex::NetworkConBott:
+		case *MeleeFrameIndex::NetworkConBottHl:
 			return 1;
-		case LOAD_BUTTON_TOP:
-		case LOAD_BUTTON_TOP_HL:
-		case LOAD_BUTTON_BOTT:
-		case LOAD_BUTTON_BOTT_HL:
-		case SAVE_BUTTON_TOP:
-		case SAVE_BUTTON_TOP_HL:
-		case SAVE_BUTTON_BOTT:
-		case SAVE_BUTTON_BOTT_HL:
-		case QUIT_BUTTON:
-		case QUIT_BUTTON_HL:
-		case NET_BUTTON_TOP:
-		case NET_BUTTON_TOP_HL:
-		case NET_BUTTON_BOTT:
-		case NET_BUTTON_BOTT_HL:
+		case *MeleeFrameIndex::LoadButtonTop:
+		case *MeleeFrameIndex::LoadButtonTopHl:
+		case *MeleeFrameIndex::LoadButtonBott:
+		case *MeleeFrameIndex::LoadButtonBottHl:
+		case *MeleeFrameIndex::SaveButtonTop:
+		case *MeleeFrameIndex::SaveButtonTopHl:
+		case *MeleeFrameIndex::SaveButtonBott:
+		case *MeleeFrameIndex::SaveButtonBottHl:
+		case *MeleeFrameIndex::QuitButton:
+		case *MeleeFrameIndex::QuitButtonHl:
+		case *MeleeFrameIndex::NetButtonTop:
+		case *MeleeFrameIndex::NetButtonTopHl:
+		case *MeleeFrameIndex::NetButtonBott:
+		case *MeleeFrameIndex::NetButtonBottHl:
 			return 3;
-		case BATTLE_BUTTON:
-		case BATTLE_BUTTON_HL:
+		case *MeleeFrameIndex::BattleButton:
+		case *MeleeFrameIndex::BattleButtonHl:
 			return 2;
-		case TEAM_PICK_KB:
-		case TEAM_PICK_XB:
-		case TEAM_PICK_PS:
+		case *MeleeFrameIndex::TeamPickKb:
+		case *MeleeFrameIndex::TeamPickXb:
+		case *MeleeFrameIndex::TeamPickPs:
 			return 4;
 		default:
 			return 0;
@@ -887,7 +869,7 @@ void RepairMeleeFrame(const GfxRect* pRect)
 											-r.corner.y + SafeY()));
 	BatchGraphics();
 
-	DrawMeleeIcon(MELEE_BACKGROUND, false); // Entire melee background
+	DrawMeleeIcon(*MeleeFrameIndex::MeleeBackground, false); // Entire melee background
 
 	DrawTeams();
 
@@ -898,20 +880,20 @@ void RepairMeleeFrame(const GfxRect* pRect)
 
 		DrawSuperMeleeTitle();
 
-		DrawMeleeIcon(LOAD_BUTTON_TOP, false);
-		DrawMeleeIcon(SAVE_BUTTON_TOP, false);
-		DrawMeleeIcon(LOAD_BUTTON_BOTT, false);
-		DrawMeleeIcon(SAVE_BUTTON_BOTT, false);
-		DrawMeleeIcon(QUIT_BUTTON, false);
+		DrawMeleeIcon(*MeleeFrameIndex::LoadButtonTop, false);
+		DrawMeleeIcon(*MeleeFrameIndex::SaveButtonTop, false);
+		DrawMeleeIcon(*MeleeFrameIndex::LoadButtonBott, false);
+		DrawMeleeIcon(*MeleeFrameIndex::SaveButtonBott, false);
+		DrawMeleeIcon(*MeleeFrameIndex::QuitButton, false);
 
 #ifdef NETPLAY
-		DrawMeleeIcon(NET_BUTTON_TOP, false);
+		DrawMeleeIcon(*MeleeFrameIndex::NetButtonTop, false);
 		//DrawMeleeIcon (NET_BUTTON_BOTT, false);
 #endif
-		DrawMeleeIcon(BATTLE_BUTTON_HL, true);
+		DrawMeleeIcon(*MeleeFrameIndex::BattleButtonHl, true);
 	}
 
-	if (pMeleeState->MeleeOption == BUILD_PICK)
+	if (pMeleeState->MeleeOption == MeleeMenuItem::BuildPick)
 	{
 		DrawPickFrame(pMeleeState);
 	}
@@ -1249,33 +1231,33 @@ static void UpdateMeleeStatusMessage(ssize_t player)
 #endif /* NETPLAY */
 
 // XXX: this function is called when the current selection is blinking off.
-static void Deselect(uint8_t opt)
+static void Deselect(MELEE_OPTIONS opt)
 {
 	switch (opt)
 	{
-		case START_MELEE:
-			DrawMeleeIcon(BATTLE_BUTTON, false);
+		case MeleeMenuItem::StartMelee:
+			DrawMeleeIcon(*MeleeFrameIndex::BattleButton, false);
 			// "Battle!" (not highlighted)
 			break;
-		case LOAD_TOP:
-			DrawMeleeIcon(LOAD_BUTTON_TOP, false);
+		case MeleeMenuItem::LoadTop:
+			DrawMeleeIcon(*MeleeFrameIndex::LoadButtonTop, false);
 			// "Load" (top, not highlighted)
 			break;
-		case LOAD_BOT:
-			DrawMeleeIcon(LOAD_BUTTON_BOTT, false);
+		case MeleeMenuItem::LoadBot:
+			DrawMeleeIcon(*MeleeFrameIndex::LoadButtonBott, false);
 			// "Load" (bottom, not highlighted)
 			break;
-		case SAVE_TOP:
-			DrawMeleeIcon(SAVE_BUTTON_TOP, false);
+		case MeleeMenuItem::SaveTop:
+			DrawMeleeIcon(*MeleeFrameIndex::SaveButtonTop, false);
 			// "Save" (top, not highlighted)
 			break;
-		case SAVE_BOT:
-			DrawMeleeIcon(SAVE_BUTTON_BOTT, false);
+		case MeleeMenuItem::SaveBot:
+			DrawMeleeIcon(*MeleeFrameIndex::SaveButtonBott, false);
 			// "Save" (bottom, not highlighted)
 			break;
 #ifdef NETPLAY
-		case NET_TOP:
-			DrawMeleeIcon(NET_BUTTON_TOP, false);
+		case MeleeMenuItem::NetTop:
+			DrawMeleeIcon(*MeleeFrameIndex::NetButtonTop, false);
 			// "Net..." (top, not highlighted)
 			break;
 			//case NET_BOT:
@@ -1283,20 +1265,20 @@ static void Deselect(uint8_t opt)
 			//		// "Net..." (bottom, not highlighted)
 			//	break;
 #endif
-		case QUIT_BOT:
-			DrawMeleeIcon(QUIT_BUTTON, false);
+		case MeleeMenuItem::QuitBot:
+			DrawMeleeIcon(*MeleeFrameIndex::QuitButton, false);
 			// "Quit" (not highlighted)
 			break;
-		case CONTROLS_TOP:
-		case CONTROLS_BOT:
+		case MeleeMenuItem::ControlsTop:
+		case MeleeMenuItem::ControlsBot:
 			{
 				uint16_t which_side {};
 
-				which_side = opt == CONTROLS_TOP ? 1 : 0;
+				which_side = opt == MeleeMenuItem::ControlsTop ? 1 : 0;
 				DrawControls(which_side, false);
 				break;
 			}
-		case EDIT_MELEE:
+		case MeleeMenuItem::EditMelee:
 			if (pMeleeState->InputFunc == DoEdit)
 			{
 				if (pMeleeState->row < NumMeleeRows)
@@ -1318,40 +1300,40 @@ static void Deselect(uint8_t opt)
 				}
 			}
 			break;
-		case BUILD_PICK:
+		case MeleeMenuItem::BuildPick:
 			DrawPickIcon(pMeleeState->currentShip, false);
 			break;
 	}
 }
 
 // XXX: this function is called when the current selection is blinking off.
-static void Select(uint8_t opt)
+static void Select(MELEE_OPTIONS opt)
 {
 	switch (opt)
 	{
-		case START_MELEE:
-			DrawMeleeIcon(BATTLE_BUTTON_HL, true);
+		case MeleeMenuItem::StartMelee:
+			DrawMeleeIcon(*MeleeFrameIndex::BattleButtonHl, true);
 			/* "Battle!" (highlighted) */
 			break;
-		case LOAD_TOP:
-			DrawMeleeIcon(LOAD_BUTTON_TOP_HL, true);
+		case MeleeMenuItem::LoadTop:
+			DrawMeleeIcon(*MeleeFrameIndex::LoadButtonTopHl, true);
 			/* "Load" (top, highlighted) */
 			break;
-		case LOAD_BOT:
-			DrawMeleeIcon(LOAD_BUTTON_BOTT_HL, true);
+		case MeleeMenuItem::LoadBot:
+			DrawMeleeIcon(*MeleeFrameIndex::LoadButtonBottHl, true);
 			/* "Load" (bottom, highlighted) */
 			break;
-		case SAVE_TOP:
-			DrawMeleeIcon(SAVE_BUTTON_TOP_HL, true);
+		case MeleeMenuItem::SaveTop:
+			DrawMeleeIcon(*MeleeFrameIndex::SaveButtonTopHl, true);
 			/* "Save" (top; highlighted) */
 			break;
-		case SAVE_BOT:
-			DrawMeleeIcon(SAVE_BUTTON_BOTT_HL, true);
+		case MeleeMenuItem::SaveBot:
+			DrawMeleeIcon(*MeleeFrameIndex::SaveButtonBottHl, true);
 			/* "Save" (bottom; highlighted) */
 			break;
 #ifdef NETPLAY
-		case NET_TOP:
-			DrawMeleeIcon(NET_BUTTON_TOP_HL, true);
+		case MeleeMenuItem::NetTop:
+			DrawMeleeIcon(*MeleeFrameIndex::NetButtonTopHl, true);
 			/* "Net..." (top; highlighted) */
 			break;
 			//case NET_BOT:
@@ -1359,20 +1341,20 @@ static void Select(uint8_t opt)
 			//		/* "Net..." (bottom; highlighted) */
 			//	break;
 #endif
-		case QUIT_BOT:
-			DrawMeleeIcon(QUIT_BUTTON_HL, true);
+		case MeleeMenuItem::QuitBot:
+			DrawMeleeIcon(*MeleeFrameIndex::QuitButtonHl, true);
 			/* "Quit" (highlighted) */
 			break;
-		case CONTROLS_TOP:
-		case CONTROLS_BOT:
+		case MeleeMenuItem::ControlsTop:
+		case MeleeMenuItem::ControlsBot:
 			{
 				uint16_t which_side {};
 
-				which_side = (opt == CONTROLS_TOP) ? 1 : 0;
+				which_side = (opt == MeleeMenuItem::ControlsTop) ? 1 : 0;
 				DrawControls(which_side, true);
 				break;
 			}
-		case EDIT_MELEE:
+		case MeleeMenuItem::EditMelee:
 			if (pMeleeState->InputFunc == DoEdit)
 			{
 				if (pMeleeState->row < NumMeleeRows)
@@ -1394,7 +1376,7 @@ static void Select(uint8_t opt)
 				}
 			}
 			break;
-		case BUILD_PICK:
+		case MeleeMenuItem::BuildPick:
 			DrawPickIcon(pMeleeState->currentShip, (true & is3DO(uqm::UQMOptions::read().whichMenu)));
 			break;
 	}
@@ -1411,7 +1393,7 @@ void Melee_flashSelection(MeleeState* pMS)
 
 	if (Now >= NextTime)
 	{
-		NextTime = Now + ((pMS->MeleeOption != BUILD_PICK || is3DO(uqm::UQMOptions::read().whichMenu)) ? FlashRate : BlinkRate);
+		NextTime = Now + ((pMS->MeleeOption != MeleeMenuItem::BuildPick || is3DO(uqm::UQMOptions::read().whichMenu)) ? FlashRate : BlinkRate);
 		select = !select;
 
 		GFXCONTEXT OldContext {SetContext(SpaceContext)};
@@ -1506,7 +1488,7 @@ void DrawMeleeShipStrings(MeleeState* pMS, MeleeShip NewStarShip)
 
 		InitShipStatus(&MasterPtr->ShipInfo, nullptr, nullptr, true);
 
-		if (uqm::UQMOptions::read().meleeToolTips && pMS->MeleeOption == BUILD_PICK)
+		if (uqm::UQMOptions::read().meleeToolTips && pMS->MeleeOption == MeleeMenuItem::BuildPick)
 		{
 			DrawTooltip(&MasterPtr->ShipInfo);
 		}
@@ -1563,7 +1545,7 @@ static void DeleteCurrentShip(MeleeState* pMS)
 
 static bool isShipSlotSelected(MeleeState* pMS, uint16_t side, FleetShipIndex index)
 {
-	if (pMS->MeleeOption != EDIT_MELEE)
+	if (pMS->MeleeOption != MeleeMenuItem::EditMelee)
 	{
 		return false;
 	}
@@ -1628,7 +1610,7 @@ static bool TeamNameFrameCallback(TextEntryState* pTES)
 
 static void BuildPickShipPopup(MeleeState* pMS)
 {
-	pMS->MeleeOption = BUILD_PICK;
+	pMS->MeleeOption = MeleeMenuItem::BuildPick;
 
 	const bool buildOk {BuildPickShip(pMS)};
 	if (buildOk)
@@ -1640,7 +1622,7 @@ static void BuildPickShipPopup(MeleeState* pMS)
 		AdvanceCursor(pMS);
 	}
 
-	pMS->MeleeOption = EDIT_MELEE;
+	pMS->MeleeOption = MeleeMenuItem::EditMelee;
 	// Must set this before the call to RepairMeleeFrame(), so that
 	// it will not redraw the BuildPickFrame.
 
@@ -1686,39 +1668,39 @@ static bool DoEdit(MeleeState* pMS)
 	netInput();
 #endif
 	if ((pMS->row < NumMeleeRows || pMS->currentShip == MELEE_NONE)
-		&& (PulsedInputState.menu[KEY_MENU_CANCEL]
-			|| (PulsedInputState.menu[KEY_MENU_RIGHT]
+		&& (PulsedInputState.menu[*MenuKey::MenuCancel]
+			|| (PulsedInputState.menu[*MenuKey::MenuRight]
 				&& (pMS->col == NumMeleeColumns() - 1
 					|| pMS->row == NumMeleeRows))))
 	{
 		// Done editing the teams.
-		Deselect(EDIT_MELEE);
+		Deselect(MeleeMenuItem::EditMelee);
 		pMS->currentShip = MELEE_NONE;
-		pMS->MeleeOption = START_MELEE;
+		pMS->MeleeOption = MeleeMenuItem::StartMelee;
 		pMS->InputFunc = DoMelee;
 		pMS->LastInputTime = GetTimeCounter();
 	}
 	else if (pMS->row < NumMeleeRows
-			 && PulsedInputState.menu[KEY_MENU_SELECT])
+			 && PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		// Show a popup to add a new ship to the current team.
-		Select(EDIT_MELEE);
+		Select(MeleeMenuItem::EditMelee);
 		BuildPickShipPopup(pMS);
 	}
 	else if (pMS->row < NumMeleeRows
-			 && PulsedInputState.menu[KEY_MENU_SPECIAL])
+			 && PulsedInputState.menu[*MenuKey::MenuSpecial])
 	{
 		// TODO: this is a stub; Should we display a ship spin?
-		Deselect(EDIT_MELEE);
+		Deselect(MeleeMenuItem::EditMelee);
 		if (pMS->currentShip != MELEE_NONE)
 		{
 			// Do something with pMS->currentShip here
 		}
 	}
-	else if (pMS->row < NumMeleeRows && PulsedInputState.menu[KEY_MENU_DELETE])
+	else if (pMS->row < NumMeleeRows && PulsedInputState.menu[*MenuKey::MenuDelete])
 	{
 		// Remove the currently selected ship from the current team.
-		Deselect(EDIT_MELEE);
+		Deselect(MeleeMenuItem::EditMelee);
 		DeleteCurrentShip(pMS);
 		AdvanceCursor(pMS);
 		UpdateCurrentShip(pMS);
@@ -1732,7 +1714,7 @@ static bool DoEdit(MeleeState* pMS)
 		if (row == NumMeleeRows)
 		{
 			// Edit the name of the current team.
-			if (PulsedInputState.menu[KEY_MENU_SELECT])
+			if (PulsedInputState.menu[*MenuKey::MenuSelect])
 			{
 				TextEntryState tes;
 				char buf[MaxTeamChars + 1] {};
@@ -1768,14 +1750,14 @@ static bool DoEdit(MeleeState* pMS)
 		}
 
 		{
-			if (PulsedInputState.menu[KEY_MENU_LEFT])
+			if (PulsedInputState.menu[*MenuKey::MenuLeft])
 			{
 				if (col > 0)
 				{
 					--col;
 				}
 			}
-			else if (PulsedInputState.menu[KEY_MENU_RIGHT])
+			else if (PulsedInputState.menu[*MenuKey::MenuRight])
 			{
 				if (col < NumMeleeColumns() - 1)
 				{
@@ -1783,7 +1765,7 @@ static bool DoEdit(MeleeState* pMS)
 				}
 			}
 
-			if (PulsedInputState.menu[KEY_MENU_UP])
+			if (PulsedInputState.menu[*MenuKey::MenuUp])
 			{
 				if (row-- == 0)
 				{
@@ -1798,7 +1780,7 @@ static bool DoEdit(MeleeState* pMS)
 					}
 				}
 			}
-			else if (PulsedInputState.menu[KEY_MENU_DOWN])
+			else if (PulsedInputState.menu[*MenuKey::MenuDown])
 			{
 				if (row++ == NumMeleeRows)
 				{
@@ -1817,7 +1799,7 @@ static bool DoEdit(MeleeState* pMS)
 
 		if (col != pMS->col || row != pMS->row || side != pMS->side)
 		{
-			Deselect(EDIT_MELEE);
+			Deselect(MeleeMenuItem::EditMelee);
 			pMS->side = side;
 			pMS->row = row;
 			pMS->col = col;
@@ -1883,7 +1865,7 @@ static bool DoConfirmSettings(MeleeState* pMS)
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL])
+	if (PulsedInputState.menu[*MenuKey::MenuCancel])
 	{
 		// The connection is explicitely cancelled, locally.
 		pMS->InputFunc = DoMelee;
@@ -1895,7 +1877,7 @@ static bool DoConfirmSettings(MeleeState* pMS)
 		return true;
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN])
+	if (PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuUp] || PulsedInputState.menu[*MenuKey::MenuDown])
 	{
 		// The player moves the cursor; cancel the confirmation.
 		pMS->InputFunc = DoMelee;
@@ -2112,7 +2094,7 @@ static void StartMeleeButtonPressed(MeleeState* pMS)
 	// Either fleet must at least have one ship.
 	if (MeleeSetup_getFleetValue(pMS->meleeSetup, 0) == 0 || MeleeSetup_getFleetValue(pMS->meleeSetup, 1) == 0)
 	{
-		PlayMenuSound(MENU_SOUND_FAILURE);
+		PlayMenuSound(MenuSoundEffect::Failure);
 		return;
 	}
 
@@ -2187,7 +2169,7 @@ static void StartMeleeButtonPressed(MeleeState* pMS)
 		}
 		if (!netReady)
 		{
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 			return;
 		}
 
@@ -2208,7 +2190,7 @@ static void StartMeleeButtonPressed(MeleeState* pMS)
 static bool DoConnectingDialog(MeleeState* pMS)
 {
 	const TimeCount TimeIn {GetTimeCounter()};
-	const uint16_t which_side = (pMS->MeleeOption == NET_TOP) ? 1 : 0;
+	const uint16_t which_side = (pMS->MeleeOption == MeleeMenuItem::NetTop) ? 1 : 0;
 	const NetConnection* conn {};
 
 	/* Cancel any presses of the Pause key. */
@@ -2277,7 +2259,7 @@ static bool DoConnectingDialog(MeleeState* pMS)
 
 	netInput();
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL])
+	if (PulsedInputState.menu[*MenuKey::MenuCancel])
 	{
 		// Terminate a network connection.
 		if (netConnections[which_side] != nullptr)
@@ -2310,7 +2292,7 @@ static bool DoConnectingDialog(MeleeState* pMS)
 			pMS->InputFunc = DoMelee;
 			pMS->LastInputTime = GetTimeCounter();
 			Deselect(pMS->MeleeOption);
-			pMS->MeleeOption = START_MELEE;
+			pMS->MeleeOption = MeleeMenuItem::StartMelee;
 		}
 	}
 
@@ -2390,7 +2372,7 @@ static void nextControlType(uint16_t which_side)
 
 static MELEE_OPTIONS MeleeOptionDown(MELEE_OPTIONS current)
 {
-	if (current == QUIT_BOT)
+	if (current == MeleeMenuItem::QuitBot)
 	{
 		return TopEntry;
 	}
@@ -2401,7 +2383,7 @@ static MELEE_OPTIONS MeleeOptionUp(MELEE_OPTIONS current)
 {
 	if (current == TopEntry)
 	{
-		return QUIT_BOT;
+		return MeleeMenuItem::QuitBot;
 	}
 	return current - 1;
 }
@@ -2410,37 +2392,37 @@ static void MeleeOptionSelect(MeleeState* pMS)
 {
 	switch (pMS->MeleeOption)
 	{
-		case START_MELEE:
+		case MeleeMenuItem::StartMelee:
 			StartMeleeButtonPressed(pMS);
 			break;
-		case LOAD_TOP:
-		case LOAD_BOT:
+		case MeleeMenuItem::LoadTop:
+		case MeleeMenuItem::LoadBot:
 			pMS->Initialized = false;
-			pMS->side = pMS->MeleeOption == LOAD_TOP ? 0 : 1;
+			pMS->side = pMS->MeleeOption == MeleeMenuItem::LoadTop ? 0 : 1;
 			DoLoadTeam(pMS);
 			break;
-		case SAVE_TOP:
-		case SAVE_BOT:
-			pMS->side = pMS->MeleeOption == SAVE_TOP ? 0 : 1;
+		case MeleeMenuItem::SaveTop:
+		case MeleeMenuItem::SaveBot:
+			pMS->side = pMS->MeleeOption == MeleeMenuItem::SaveTop ? 0 : 1;
 			if (MeleeSetup_getFleetValue(pMS->meleeSetup, pMS->side) > 0)
 			{
 				DoSaveTeam(pMS);
 			}
 			else
 			{
-				PlayMenuSound(MENU_SOUND_FAILURE);
+				PlayMenuSound(MenuSoundEffect::Failure);
 			}
 			break;
-		case QUIT_BOT:
+		case MeleeMenuItem::QuitBot:
 			uqm::currentActivity() |= CHECK_ABORT;
 			break;
 #ifdef NETPLAY
-		case NET_TOP:
+		case MeleeMenuItem::NetTop:
 			//case NET_BOT:
 			{
 				uint16_t which_side {};
 
-				which_side = pMS->MeleeOption == NET_TOP ? 1 : 0;
+				which_side = pMS->MeleeOption == MeleeMenuItem::NetTop ? 1 : 0;
 				const bool confirmed {MeleeConnectDialog(which_side)};
 				RedrawMeleeFrame();
 				pMS->LastInputTime = GetTimeCounter();
@@ -2452,13 +2434,15 @@ static void MeleeOptionSelect(MeleeState* pMS)
 				break;
 			}
 #endif /* NETPLAY */
-		case CONTROLS_TOP:
-		case CONTROLS_BOT:
+		case MeleeMenuItem::ControlsTop:
+		case MeleeMenuItem::ControlsBot:
 			{
-				const uint16_t which_side = (pMS->MeleeOption == CONTROLS_TOP) ? 1 : 0;
+				const uint16_t which_side = (pMS->MeleeOption == MeleeMenuItem::ControlsTop) ? 1 : 0;
 				nextControlType(which_side);
 				break;
 			}
+		default:
+			break;
 	}
 }
 
@@ -2487,7 +2471,7 @@ bool DoMelee(MeleeState* pMS)
 		pMS->hMusic = 0;
 		pMS->Initialized = true;
 
-		pMS->MeleeOption = START_MELEE;
+		pMS->MeleeOption = MeleeMenuItem::StartMelee;
 
 		if (uqm::UQMOptions::read().mainMenuMusic)
 		{
@@ -2507,14 +2491,14 @@ bool DoMelee(MeleeState* pMS)
 	netInput();
 #endif
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL] || PulsedInputState.menu[KEY_MENU_LEFT])
+	if (PulsedInputState.menu[*MenuKey::MenuCancel] || PulsedInputState.menu[*MenuKey::MenuLeft])
 	{
 		// Start editing the teams.
 		pMS->LastInputTime = GetTimeCounter();
 		Deselect(pMS->MeleeOption);
-		pMS->MeleeOption = EDIT_MELEE;
+		pMS->MeleeOption = MeleeMenuItem::EditMelee;
 		pMS->Initialized = false;
-		if (PulsedInputState.menu[KEY_MENU_CANCEL])
+		if (PulsedInputState.menu[*MenuKey::MenuCancel])
 		{
 			pMS->side = 0;
 			pMS->row = 0;
@@ -2531,12 +2515,12 @@ bool DoMelee(MeleeState* pMS)
 	else
 	{
 		MELEE_OPTIONS NewMeleeOption {pMS->MeleeOption};
-		if (PulsedInputState.menu[KEY_MENU_UP])
+		if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			pMS->LastInputTime = GetTimeCounter();
 			NewMeleeOption = MeleeOptionUp(pMS->MeleeOption);
 		}
-		else if (PulsedInputState.menu[KEY_MENU_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
 			pMS->LastInputTime = GetTimeCounter();
 			NewMeleeOption = MeleeOptionDown(pMS->MeleeOption);
@@ -2546,13 +2530,13 @@ bool DoMelee(MeleeState* pMS)
 			&& GetTimeCounter() - pMS->LastInputTime > c_gameSecond * 10)
 		{
 			force_select = true;
-			NewMeleeOption = START_MELEE;
+			NewMeleeOption = MeleeMenuItem::StartMelee;
 		}
 
 		if (NewMeleeOption != pMS->MeleeOption)
 		{
 #ifdef NETPLAY
-			if (pMS->MeleeOption == CONTROLS_TOP || pMS->MeleeOption == CONTROLS_BOT)
+			if (pMS->MeleeOption == MeleeMenuItem::ControlsTop || pMS->MeleeOption == MeleeMenuItem::ControlsBot)
 			{
 				UpdateMeleeStatusMessage(-1);
 			}
@@ -2561,9 +2545,9 @@ bool DoMelee(MeleeState* pMS)
 			pMS->MeleeOption = NewMeleeOption;
 			Select(pMS->MeleeOption);
 #ifdef NETPLAY
-			if (NewMeleeOption == CONTROLS_TOP || NewMeleeOption == CONTROLS_BOT)
+			if (NewMeleeOption == MeleeMenuItem::ControlsTop || NewMeleeOption == MeleeMenuItem::ControlsBot)
 			{
-				const uint16_t side = (NewMeleeOption == CONTROLS_TOP) ? 1 : 0;
+				const uint16_t side = (NewMeleeOption == MeleeMenuItem::ControlsTop) ? 1 : 0;
 				if (testFlag(PlayerControl[side], PlayerControlFlags::Network))
 				{
 					UpdateMeleeStatusMessage(side);
@@ -2576,7 +2560,7 @@ bool DoMelee(MeleeState* pMS)
 #endif
 		}
 
-		if (PulsedInputState.menu[KEY_MENU_SELECT] || force_select)
+		if (PulsedInputState.menu[*MenuKey::MenuSelect] || force_select)
 		{
 			MeleeOptionSelect(pMS);
 			if (uqm::currentActivity() & CHECK_ABORT)
@@ -2777,7 +2761,7 @@ void connectedFeedback(NetConnection* conn)
 	}
 	// "Top player is connected."
 
-	PlayMenuSound(MENU_SOUND_INVOKED);
+	PlayMenuSound(MenuSoundEffect::Invoked);
 }
 
 const static char* abortReasonString(NetplayAbortReason reason)

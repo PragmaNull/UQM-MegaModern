@@ -347,7 +347,7 @@ static bool GenerateSaMatra_generateOrbital(SolarSystemState* solarSys,
 				}
 				else
 				{
-					if (isDifficulty(uqm::Difficulty::Hard) && (uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << NO_HELP_FROM_PKUNK))
+					if (isDifficulty(uqm::Difficulty::Hard) && (uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << *HardModeEncounter::NoHelpFromPkunk))
 					{
 						return true;
 					}

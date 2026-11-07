@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "hyper.h"
 
 #include "build.h"
@@ -57,16 +58,18 @@ static uint8_t fuel_ticks;
 static uint16_t hyper_dx, hyper_dy, hyper_extra;
 
 // HyperspaceMenu() items
-enum HyperMenuItems
+enum class HyperMenuItem
 {
 	// XXX: Must match the enum in menustat.h
-	STARMAP = 1,
-	EQUIP_DEVICE,
-	CARGO,
-	ROSTER,
-	GAME_MENU,
-	NAVIGATION,
+	Starmap = 1,
+	EquipDevice,
+	Cargo,
+	Roster,
+	GameMenu,
+	Navigation,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<HyperMenuItem> = true;
 
 static inline int16_t RaceHyperSpeed(RACE_ID Index)
 {
@@ -2218,7 +2221,7 @@ void SeedUniverse(void)
 
 static bool DoHyperspaceMenu(MenuState* pMS)
 {
-	bool select = PulsedInputState.menu[KEY_MENU_SELECT];
+	bool select = PulsedInputState.menu[*MenuKey::MenuSelect];
 
 	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
@@ -2226,7 +2229,7 @@ static bool DoHyperspaceMenu(MenuState* pMS)
 		return false;
 	}
 
-	const bool handled {DoMenuChooser(pMS, PM_STARMAP)};
+	const bool handled {DoMenuChooser(pMS, MenuString::Starmap)};
 	if (handled)
 	{
 		return true;
@@ -2241,7 +2244,7 @@ static bool DoHyperspaceMenu(MenuState* pMS)
 
 	switch (pMS->CurState)
 	{
-		case EQUIP_DEVICE:
+		case *HyperMenuItem::EquipDevice:
 			select = DevicesMenu();
 			if (uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER))
 			{ // A player-induced portal to QuasiSpace is opening
@@ -2252,22 +2255,22 @@ static bool DoHyperspaceMenu(MenuState* pMS)
 				return false;
 			}
 			break;
-		case CARGO:
+		case *HyperMenuItem::Cargo:
 			CargoMenu();
 			break;
-		case ROSTER:
+		case *HyperMenuItem::Roster:
 			select = RosterMenu();
 			break;
-		case GAME_MENU:
+		case *HyperMenuItem::GameMenu:
 			if (!GameOptions())
 			{
 				return false; // abort or load
 			}
 			break;
-		case STARMAP:
+		case *HyperMenuItem::Starmap:
 			StarMap();
 			return false;
-		case NAVIGATION:
+		case *HyperMenuItem::Navigation:
 			return false;
 	}
 
@@ -2277,9 +2280,9 @@ static bool DoHyperspaceMenu(MenuState* pMS)
 		{ // 3DO menu jumps to NAVIGATE after a successful submenu run
 			if (uqm::UQMOptions::read().whichMenu != uqm::EmulationMode::PC)
 			{
-				pMS->CurState = NAVIGATION;
+				pMS->CurState = *HyperMenuItem::Navigation;
 			}
-			DrawMenuStateStrings(PM_STARMAP, pMS->CurState);
+			DrawMenuStateStrings(MenuString::Starmap, pMS->CurState);
 		}
 		SetFlashRect(SfrMenu3do(), false);
 	}
@@ -2301,9 +2304,9 @@ void HyperspaceMenu(void)
 	memset(&menuState, 0, sizeof(menuState));
 	menuState.InputFunc = DoHyperspaceMenu;
 	menuState.Initialized = true;
-	menuState.CurState = STARMAP;
+	menuState.CurState = *HyperMenuItem::Starmap;
 
-	DrawMenuStateStrings(PM_STARMAP, STARMAP);
+	DrawMenuStateStrings(MenuString::Starmap, *HyperMenuItem::Starmap);
 	SetFlashRect(SfrMenu3do(), false);
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);

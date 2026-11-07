@@ -101,11 +101,11 @@ static bool DoPickBattleShip(MenuState* pMS)
 
 		goto ChangeSelection;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		if ((HSTARSHIP)pMS->CurFrame)
 		{
-			PlayMenuSound(MENU_SOUND_SUCCESS);
+			PlayMenuSound(MenuSoundEffect::Success);
 			return (false);
 		}
 	}
@@ -113,19 +113,19 @@ static bool DoPickBattleShip(MenuState* pMS)
 	{
 		int16_t new_row; // NOLINT(cppcoreguidelines-init-variables)
 		int16_t new_col; // NOLINT(cppcoreguidelines-init-variables)
-		if (PulsedInputState.menu[KEY_MENU_RIGHT])
+		if (PulsedInputState.menu[*MenuKey::MenuRight])
 		{
 			dx = 1;
 		}
-		if (PulsedInputState.menu[KEY_MENU_LEFT])
+		if (PulsedInputState.menu[*MenuKey::MenuLeft])
 		{
 			dx = -1;
 		}
-		if (PulsedInputState.menu[KEY_MENU_UP])
+		if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			dy = -1;
 		}
-		if (PulsedInputState.menu[KEY_MENU_DOWN])
+		if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
 			dy = 1;
 		}
@@ -160,7 +160,7 @@ static bool DoPickBattleShip(MenuState* pMS)
 				new_row = 0;
 			}
 
-			PlayMenuSound(MENU_SOUND_MOVE);
+			PlayMenuSound(MenuSoundEffect::Move);
 
 
 #ifdef NEVER

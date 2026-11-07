@@ -34,7 +34,7 @@ struct audio_Driver
 	void (*Uninitialize)(void);
 	int32_t (*GetError)(void);
 	AudioDriverType driverID;
-	int32_t EnumLookup[+AudioEnum::Count];
+	int32_t EnumLookup[*AudioEnum::Count];
 
 	/* Sources */
 	void (*GenSources)(uint32_t n, audio_Object* psrcobj);

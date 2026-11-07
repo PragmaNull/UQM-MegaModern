@@ -60,7 +60,7 @@ static void DrawConfirmationWindow(bool answer, bool confirm)
 	else
 	{
 		DrawRenderedBox(&r, true, AltShadowboxBackgroundColor,
-						THICK_OUTER_BEVEL, false);
+						BevelLevel::ThickOuterBevel, false);
 	}
 
 
@@ -155,22 +155,22 @@ bool DoConfirmExit(void)
 				done = true;
 				response = true;
 			}
-			else if (PulsedInputState.menu[KEY_MENU_SELECT])
+			else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 			{
 				done = true;
-				PlayMenuSound(MENU_SOUND_SUCCESS);
+				PlayMenuSound(MenuSoundEffect::Success);
 			}
-			else if (PulsedInputState.menu[KEY_MENU_CANCEL])
+			else if (PulsedInputState.menu[*MenuKey::MenuCancel])
 			{
 				done = true;
 				response = false;
 			}
-			else if (PulsedInputState.menu[KEY_MENU_LEFT]
-					 || PulsedInputState.menu[KEY_MENU_RIGHT])
+			else if (PulsedInputState.menu[*MenuKey::MenuLeft]
+					 || PulsedInputState.menu[*MenuKey::MenuRight])
 			{
 				response = !response;
 				DrawConfirmationWindow(response, false);
-				PlayMenuSound(MENU_SOUND_MOVE);
+				PlayMenuSound(MenuSoundEffect::Move);
 			}
 			SleepThread(c_gameSecond / 30);
 		};
@@ -227,7 +227,7 @@ static bool DoPopup(struct PopupState* self)
 {
 	(void)self;
 	SleepThread(c_gameSecond / 20);
-	return !(PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT));
+	return !(PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & CHECK_ABORT));
 }
 
 void DoPopupWindow(const char* msg)

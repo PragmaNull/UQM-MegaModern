@@ -862,7 +862,7 @@ static void ExplodeCritter(Element* ElementPtr)
 
 		ExplosionElementPtr->mass_points = DeathExplosion;
 		ExplosionElementPtr->state_flags = FiniteLife;
-		ExplosionElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
+		ExplosionElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 		ExplosionElementPtr->next.location = ElementPtr->next.location;
 		ExplosionElementPtr->preprocess_func = object_animation;
 		ExplosionElementPtr->turn_wait = uqm::makeByte(2, 2);
@@ -1239,7 +1239,7 @@ static void AddLightning(void)
 
 		LockElement(hLightningElement, &LightningElementPtr);
 
-		LightningElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
+		LightningElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 		LightningElementPtr->state_flags = FiniteLife;
 		LightningElementPtr->preprocess_func = lightning_process;
 		if (uqm::random().next() % 100 >= 25)
@@ -1303,7 +1303,7 @@ static HELEMENT AddGroundDisaster(uint16_t which_disaster)
 
 		Primitive* pPrim {&DisplayArray[GroundDisasterElementPtr->PrimIndex]};
 		GroundDisasterElementPtr->mass_points = which_disaster;
-		GroundDisasterElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
+		GroundDisasterElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 		GroundDisasterElementPtr->state_flags = FiniteLife;
 		GroundDisasterElementPtr->preprocess_func = object_animation;
 
@@ -1946,7 +1946,7 @@ static void LanderFire(int16_t facing)
 
 	LockElement(hWeaponElement, &WeaponElementPtr);
 
-	WeaponElementPtr->playerNr = +PlanetsidePlayer::Human;
+	WeaponElementPtr->playerNr = *PlanetsidePlayer::Human;
 	WeaponElementPtr->mass_points = 1;
 	WeaponElementPtr->life_span = 12;
 	WeaponElementPtr->state_flags = FiniteLife;
@@ -1958,8 +1958,8 @@ static void LanderFire(int16_t facing)
 						 /* shot images immediately follow the lander images */
 						 facing + AngleToFacing(FullCircle));
 
-	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP]
-		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_THRUST])
+	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Up]
+		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Thrust])
 	{
 		GetCurrentVelocityComponents(&uqm::flagship().velocity, &wdx, &wdy);
 	}
@@ -2011,7 +2011,7 @@ static void put_node(Element* ElementPtr)
 
 	NodeElementPtr->scan_node =
 		uqm::makeWord(MINERAL_SCAN, ElementPtr->cycle + 1);
-	NodeElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
+	NodeElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 	NodeElementPtr->current.location = info.loc_pt;
 
 	SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], PrimitiveType::Stamp);
@@ -2077,7 +2077,7 @@ static void spawn_node(Element* ElementPtr)
 				   - half_dist))
 		   << 1;
 
-		NodeElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
+		NodeElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 		NodeElementPtr->mass_points = 1;
 		NodeElementPtr->life_span = 1;
 		NodeElementPtr->state_flags = FiniteLife | Nonsolid;
@@ -2131,7 +2131,7 @@ static void LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amo
 
 	LockElement(hNodeElement, &NodeElementPtr);
 
-	NodeElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
+	NodeElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 	NodeElementPtr->mass_points = 1;
 	NodeElementPtr->life_span = dist;
 	NodeElementPtr->state_flags = FiniteLife | Nonsolid | Appearing;
@@ -2208,7 +2208,7 @@ static bool LanderExplosion(void)
 
 	LockElement(hExplosionElement, &ExplosionElementPtr);
 
-	ExplosionElementPtr->playerNr = +PlanetsidePlayer::Human;
+	ExplosionElementPtr->playerNr = *PlanetsidePlayer::Human;
 	ExplosionElementPtr->mass_points = DeathExplosion;
 	ExplosionElementPtr->state_flags = FiniteLife;
 	ExplosionElementPtr->next.location = curLanderLoc;
@@ -2274,14 +2274,14 @@ static bool DoPlanetSide(LanderInputState* pMS)
 		return true;
 	}
 	else if (crew_left /* alive and taking off */
-			 && ((CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE] || CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_SPECIAL])
+			 && ((CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Escape] || CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Special])
 				 || planetSideDesc->InTransit))
 	{
 		return false;
 	}
 
 #ifdef DEBUG
-	if (PulsedInputState.menu[KEY_DEBUG_2])
+	if (PulsedInputState.menu[*MenuKey::Debug2])
 	{
 		KillLanderCrewSeq(crew_left, c_gameSecond / 20);
 	}
@@ -2322,12 +2322,12 @@ static bool DoPlanetSide(LanderInputState* pMS)
 			{
 				--turn_wait;
 			}
-			else if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_LEFT] || CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_RIGHT])
+			else if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Left] || CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Right])
 			{
 				uint16_t landerSpeedNumer {};
 				uint16_t angle {};
 
-				if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_LEFT])
+				if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Left])
 				{
 					--index;
 				}
@@ -2356,8 +2356,8 @@ static bool DoPlanetSide(LanderInputState* pMS)
 
 				turn_wait = ShuttleTurnWait();
 			}
-			if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_THRUST]
-				|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP])
+			if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Thrust]
+				|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Up])
 			{
 				GetNextVelocityComponents(
 					&uqm::flagship().velocity, &dx, &dy, 1);
@@ -2371,7 +2371,7 @@ static bool DoPlanetSide(LanderInputState* pMS)
 			{
 				--weapon_wait;
 			}
-			else if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_WEAPON])
+			else if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Weapon])
 			{
 				LanderFire(index);
 

@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "build.h"
 #include "colors.h"
 #include "controls.h"
@@ -81,12 +82,14 @@ static auto HangarRows() { return (HangarShips / HangarShipsRow()); }
 
 static auto HangarAnimRate() { return ResScale(15); } // fps
 
-enum
+enum class ShipyardMenuItem
 {
-	SHIPYARD_CREW,
-	SHIPYARD_SAVELOAD,
-	SHIPYARD_EXIT
+	Crew,
+	SaveLoad,
+	Exit
 };
+template <>
+inline constexpr bool IsArithmeticEnum<ShipyardMenuItem> = true;
 
 // Editing mode for DoModifyShips()
 enum class DmsMode
@@ -242,7 +245,7 @@ static void DrawShipsDisplay(ShipyardShipsState* shipState)
 	}
 	else
 	{
-		DrawBorder(DEVICE_CARGO_FRAME);
+		DrawBorder(BorderFrameIndex::DeviceCargo);
 	}
 
 	// print the "SHIPS" title
@@ -699,7 +702,7 @@ static void SpinStarShip(MenuState* pMS, HFLEETINFO hStarShip)
 	{
 		if (isPC(uqm::UQMOptions::read().whichIntro))
 		{
-			PlayMenuSound(MENU_SOUND_SUCCESS);
+			PlayMenuSound(MenuSoundEffect::Success);
 		}
 		DoShipSpins = true;
 		DoShipSpin(Index, pMS->hMusic);
@@ -810,7 +813,7 @@ static void DrawShipyardShipText(GfxRect* r, int Index)
 	}
 	else
 	{
-		DrawBorder(TEXT_LABEL_FRAME);
+		DrawBorder(BorderFrameIndex::TextLabel);
 	}
 
 	text.align = TextAlign::Center;
@@ -863,7 +866,7 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 		textRect = r;
 	}
 
-	DrawBorder(SIS_RADAR_FRAME);
+	DrawBorder(BorderFrameIndex::SisRadar);
 
 	if (!IsDos())
 	{
@@ -892,7 +895,7 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 		else
 		{
 			DrawRenderedBox(&dosRect, true, BlackColor,
-							THIN_INNER_BEVEL, uqm::UQMOptions::read().customBorder);
+							BevelLevel::ThinInnerBevel, uqm::UQMOptions::read().customBorder);
 		}
 	}
 
@@ -1367,7 +1370,7 @@ static void CrewTransaction(int16_t crew_delta)
 				&& crew_bought - crew_delta < CrewExpenseThreshold)
 			{
 				uqm::gameState().game().CrewCost += 2;
-				DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
+				DrawMenuStateStrings(MenuString::Crew, *ShipyardMenuItem::Crew);
 			}
 		}
 		else
@@ -1376,7 +1379,7 @@ static void CrewTransaction(int16_t crew_delta)
 				&& crew_bought - crew_delta >= CrewExpenseThreshold)
 			{
 				uqm::gameState().game().CrewCost -= 2;
-				DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
+				DrawMenuStateStrings(MenuString::Crew, *ShipyardMenuItem::Crew);
 			}
 		}
 		if (CheckAlliance(SHOFIXTI_SHIP) != RaceAllegiance::Good)
@@ -1767,7 +1770,7 @@ static int16_t DMS_DismissEscortShipCrew(ShipFragment* StarShipPtr)
 	}
 	else
 	{ // no crew to dismiss
-		PlayMenuSound(MENU_SOUND_FAILURE);
+		PlayMenuSound(MenuSoundEffect::Failure);
 	}
 
 	PreUpdateFlashRect();
@@ -1799,7 +1802,7 @@ static void DMS_ModifyCrew(MenuState* pMS, HSHIPFRAG hStarShip, int8_t dy)
 
 	if (abs(dy) == 50)
 	{
-		PlayMenuSound(MENU_SOUND_INVOKED);
+		PlayMenuSound(MenuSoundEffect::Invoked);
 	}
 
 	if (hStarShip)
@@ -1892,7 +1895,7 @@ static void DMS_ModifyCrew(MenuState* pMS, HSHIPFRAG hStarShip, int8_t dy)
 
 	if (crew_delta == 0)
 	{
-		PlayMenuSound(MENU_SOUND_FAILURE);
+		PlayMenuSound(MenuSoundEffect::Failure);
 	}
 
 	if (hStarShip)
@@ -1921,8 +1924,8 @@ static void DMS_TryAddEscortShip(MenuState* pMS)
 	{
 		ShowCombatShip(pMS, pMS->CurState, nullptr);
 		// Reset flash rectangle
-		DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
-		DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
+		DrawMenuStateStrings(MenuString::Crew, *ShipyardMenuItem::Crew);
+		DrawMenuStateStrings(MenuString::Crew, *ShipyardMenuItem::Crew);
 		// twice to reset menu selection
 
 		DeltaSISGauges(UndefinedDelta, UndefinedDelta, -(int)shipCost);
@@ -1934,7 +1937,7 @@ static void DMS_TryAddEscortShip(MenuState* pMS)
 	{
 		// not enough RUs to build, cloning the ship failed,
 		// or fleet point limit reached
-		PlayMenuSound(MENU_SOUND_FAILURE);
+		PlayMenuSound(MenuSoundEffect::Failure);
 	}
 }
 
@@ -1964,8 +1967,8 @@ static void DMS_TryUnstowEscortShip(MenuState* pMS)
 
 		ShowCombatShip(pMS, pMS->CurState, nullptr);
 		// Reset flash rectangle
-		DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
-		DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
+		DrawMenuStateStrings(MenuString::Crew, *ShipyardMenuItem::Crew);
+		DrawMenuStateStrings(MenuString::Crew, *ShipyardMenuItem::Crew);
 		// twice to reset menu selection
 
 		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
@@ -1987,7 +1990,7 @@ static void DMS_TryUnstowEscortShip(MenuState* pMS)
 	else
 	{
 		// Cloning the ship failed or fleet point limit reached
-		PlayMenuSound(MENU_SOUND_FAILURE);
+		PlayMenuSound(MenuSoundEffect::Failure);
 		UnlockShipFrag(&uqm::gameState().game().stowed_ship_q, hStowShip);
 	}
 }
@@ -2020,8 +2023,8 @@ static void DMS_AddEscortShip(MenuState* pMS, bool special, bool select,
 		pMS->delta_item &= ~ModifyCrewFlag;
 		SetFlashRect(nullptr, false);
 
-		DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
-		DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
+		DrawMenuStateStrings(MenuString::Crew, *ShipyardMenuItem::Crew);
+		DrawMenuStateStrings(MenuString::Crew, *ShipyardMenuItem::Crew);
 		// twice to reset menu selection
 		DMS_SetMode(pMS, DmsMode::Navigate);
 
@@ -2050,7 +2053,7 @@ static void DMS_AddEscortShip(MenuState* pMS, bool special, bool select,
 		// "dy" switches between stowed ships and buying.
 		if (stowCount == 0)
 		{
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 		}
 		else
 		{
@@ -2222,7 +2225,7 @@ static void DMS_EditCrewMode(MenuState* pMS, HSHIPFRAG hStarShip,
 			const uint16_t max_crew = StarShipPtr->max_crew;
 			if (stowCount == MaxStowedShips && crew_level > max_crew)
 			{
-				PlayMenuSound(MENU_SOUND_FAILURE);
+				PlayMenuSound(MenuSoundEffect::Failure);
 				UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 				return;
 			}
@@ -2347,8 +2350,8 @@ static void DMS_NavigateShipSlots(MenuState* pMS, bool special, bool select,
 	{
 		// Leave escort ship editor.
 		pMS->InputFunc = DoShipyard;
-		pMS->CurState = SHIPYARD_CREW;
-		DrawMenuStateStrings(PM_CREW, pMS->CurState);
+		pMS->CurState = *ShipyardMenuItem::Crew;
+		DrawMenuStateStrings(MenuString::Crew, pMS->CurState);
 		DMS_SetMode(pMS, DmsMode::Exit);
 	}
 }
@@ -2381,9 +2384,9 @@ static bool DoModifyShips(MenuState* pMS)
 	}
 	else
 	{
-		bool special = (PulsedInputState.menu[KEY_MENU_SPECIAL] != 0);
-		const bool select = (PulsedInputState.menu[KEY_MENU_SELECT] != 0);
-		const bool cancel = (PulsedInputState.menu[KEY_MENU_CANCEL] != 0);
+		bool special = (PulsedInputState.menu[*MenuKey::MenuSpecial] != 0);
+		const bool select = (PulsedInputState.menu[*MenuKey::MenuSelect] != 0);
+		const bool cancel = (PulsedInputState.menu[*MenuKey::MenuCancel] != 0);
 		int8_t dx = 0;
 		int8_t dy = 0;
 
@@ -2391,19 +2394,19 @@ static bool DoModifyShips(MenuState* pMS)
 		if (!(pMS->delta_item & ModifyCrewFlag))
 		{
 			// Navigating through the ship slots.
-			if (PulsedInputState.menu[KEY_MENU_RIGHT])
+			if (PulsedInputState.menu[*MenuKey::MenuRight])
 			{
 				dx = 1;
 			}
-			if (PulsedInputState.menu[KEY_MENU_LEFT])
+			if (PulsedInputState.menu[*MenuKey::MenuLeft])
 			{
 				dx = -1;
 			}
-			if (PulsedInputState.menu[KEY_MENU_UP])
+			if (PulsedInputState.menu[*MenuKey::MenuUp])
 			{
 				dy = -1;
 			}
-			if (PulsedInputState.menu[KEY_MENU_DOWN])
+			if (PulsedInputState.menu[*MenuKey::MenuDown])
 			{
 				dy = 1;
 			}
@@ -2419,31 +2422,31 @@ static bool DoModifyShips(MenuState* pMS)
 			{
 				// Cursor is over an empty escort ship slot, while we're
 				// in 'add escort ship' mode.
-				if (PulsedInputState.menu[KEY_MENU_RIGHT])
+				if (PulsedInputState.menu[*MenuKey::MenuRight])
 				{
 					dx = 1;
 				}
-				if (PulsedInputState.menu[KEY_MENU_LEFT])
+				if (PulsedInputState.menu[*MenuKey::MenuLeft])
 				{
 					dx = -1;
 				}
-				if (PulsedInputState.menu[KEY_MENU_UP])
+				if (PulsedInputState.menu[*MenuKey::MenuUp])
 				{
 					dx = -1;
 				}
-				if (PulsedInputState.menu[KEY_MENU_DOWN])
+				if (PulsedInputState.menu[*MenuKey::MenuDown])
 				{
 					dx = 1;
 				}
-				if (PulsedInputState.menu[KEY_MENU_ZOOM_IN])
+				if (PulsedInputState.menu[*MenuKey::MenuZoomIn])
 				{
 					dx = 5;
 				}
-				if (PulsedInputState.menu[KEY_MENU_ZOOM_OUT])
+				if (PulsedInputState.menu[*MenuKey::MenuZoomOut])
 				{
 					dx = -5;
 				}
-				if (PulsedInputState.menu[KEY_MENU_NEXT])
+				if (PulsedInputState.menu[*MenuKey::MenuNext])
 				{
 					dy = 1;
 				}
@@ -2453,32 +2456,32 @@ static bool DoModifyShips(MenuState* pMS)
 			else
 			{
 				// Crew editing mode.
-				if (PulsedInputState.menu[KEY_MENU_UP])
+				if (PulsedInputState.menu[*MenuKey::MenuUp])
 				{
 					dy = -1;
 				}
-				if (PulsedInputState.menu[KEY_MENU_DOWN])
+				if (PulsedInputState.menu[*MenuKey::MenuDown])
 				{
 					dy = 1;
 				}
-				if (PulsedInputState.menu[KEY_MENU_RIGHT])
+				if (PulsedInputState.menu[*MenuKey::MenuRight])
 				{
 					dy = -10;
 				}
-				if (PulsedInputState.menu[KEY_MENU_LEFT])
+				if (PulsedInputState.menu[*MenuKey::MenuLeft])
 				{
 					dy = 10;
 				}
-				if (PulsedInputState.menu[KEY_MENU_ZOOM_IN])
+				if (PulsedInputState.menu[*MenuKey::MenuZoomIn])
 				{
 					dy = -50;
 				}
-				if (PulsedInputState.menu[KEY_MENU_ZOOM_OUT])
+				if (PulsedInputState.menu[*MenuKey::MenuZoomOut])
 				{
 					dy = 50;
 				}
 				special = false;
-				if (PulsedInputState.menu[KEY_MENU_NEXT])
+				if (PulsedInputState.menu[*MenuKey::MenuNext])
 				{
 					special = true;
 				}
@@ -2524,7 +2527,7 @@ static void DrawBluePrint(MenuState* pMS)
 	{
 		const uint8_t which_piece {uqm::gameState().sis().ModuleSlots[num_frames]};
 
-		if (!(pMS->CurState == SHIPYARD
+		if (!(pMS->CurState == StarbaseMenuItem::Shipyard
 			  && (which_piece == CREW_POD || which_piece == STORAGE_BAY)))
 		{
 			DrawShipPiece(ModuleFrame, which_piece, num_frames, true);
@@ -2536,7 +2539,7 @@ static void DrawBluePrint(MenuState* pMS)
 	for (num_frames = 0; num_frames < NumModuleSlots; ++num_frames)
 	{
 		const uint8_t which_piece {uqm::gameState().sis().ModuleSlots[num_frames]};
-		if (pMS->CurState == SHIPYARD
+		if (pMS->CurState == StarbaseMenuItem::Shipyard
 			&& (which_piece == CREW_POD || which_piece == STORAGE_BAY))
 		{
 			DrawShipPiece(ModuleFrame, which_piece, num_frames, true);
@@ -2599,8 +2602,8 @@ bool DoShipyard(MenuState* pMS)
 		goto ExitShipyard;
 	}
 
-	select = PulsedInputState.menu[KEY_MENU_SELECT];
-	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
+	select = PulsedInputState.menu[*MenuKey::MenuSelect];
+	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
 
 	OutfitOrShipyard = 3;
 
@@ -2644,8 +2647,8 @@ bool DoShipyard(MenuState* pMS)
 			SetContext(SpaceContext);
 			DrawBluePrint(pMS);
 
-			pMS->CurState = SHIPYARD_CREW;
-			DrawMenuStateStrings(PM_CREW, pMS->CurState);
+			pMS->CurState = *ShipyardMenuItem::Crew;
+			DrawMenuStateStrings(MenuString::Crew, pMS->CurState);
 
 			SetContext(SpaceContext);
 			s.origin.x = 0;
@@ -2668,7 +2671,7 @@ bool DoShipyard(MenuState* pMS)
 
 				if (uqm::UQMOptions::read().customBorder)
 				{
-					DrawBorder(SIS_REPAIR_FRAME);
+					DrawBorder(BorderFrameIndex::SisRepair);
 				}
 
 				SetContextClipRect(&old_r);
@@ -2708,15 +2711,15 @@ bool DoShipyard(MenuState* pMS)
 
 		pMS->Initialized = true;
 	}
-	else if (cancel || (select && pMS->CurState == SHIPYARD_EXIT))
+	else if (cancel || (select && pMS->CurState == ShipyardMenuItem::Exit))
 	{
 ExitShipyard:
 		SetInputCallback(nullptr);
 
 
-		if (pMS->CurState < SHIPYARD_EXIT)
+		if (pMS->CurState < ShipyardMenuItem::Exit)
 		{
-			DrawMenuStateStrings(PM_CREW, SHIPYARD_EXIT);
+			DrawMenuStateStrings(MenuString::Crew, *ShipyardMenuItem::Exit);
 		}
 
 		DestroyDrawable(ReleaseDrawable(pMS->ModuleFrame));
@@ -2736,10 +2739,10 @@ ExitShipyard:
 	}
 	else if (select)
 	{
-		if (pMS->CurState != SHIPYARD_SAVELOAD)
+		if (pMS->CurState != ShipyardMenuItem::SaveLoad)
 		{
 			pMS->Initialized = false;
-			DrawMenuStateStrings(PM_CREW, pMS->CurState);
+			DrawMenuStateStrings(MenuString::Crew, pMS->CurState);
 			DoModifyShips(pMS);
 		}
 		else
@@ -2749,13 +2752,13 @@ ExitShipyard:
 			{
 				goto ExitShipyard;
 			}
-			DrawMenuStateStrings(PM_CREW, pMS->CurState);
+			DrawMenuStateStrings(MenuString::Crew, pMS->CurState);
 			SetFlashRect(SfrMenu3do(), false);
 		}
 	}
 	else
 	{
-		DoMenuChooser(pMS, PM_CREW);
+		DoMenuChooser(pMS, MenuString::Crew);
 	}
 
 	if (uqm::UQMOptions::read().infiniteRU)

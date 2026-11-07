@@ -17,6 +17,7 @@
  */
 
 /* ----------------------------- INCLUDES ---------------------------- */
+#include "core/types/enum.h"
 #include "planets.h"
 #include "uqm/starmap.h"
 #include "uqm/gendef.h"
@@ -36,15 +37,17 @@ static constexpr auto MedTempBonus {25};
 static constexpr auto HighTempBonus {50};
 static constexpr auto MaxTectonics {255};
 
-enum
+enum class SunIntensity
 {
-	RED_SUN_INTENSITY = 0,
-	ORANGE_SUN_INTENSITY,
-	YELLOW_SUN_INTENSITY,
-	GREEN_SUN_INTENSITY,
-	BLUE_SUN_INTENSITY,
-	WHITE_SUN_INTENSITY
+	Red = 0,
+	Orange,
+	Yellow,
+	Green,
+	Blue,
+	White
 };
+template <>
+inline constexpr bool IsArithmeticEnum<SunIntensity> = true;
 
 static uint16_t CalcFromBase(uint16_t base, uint16_t variance)
 {
@@ -62,22 +65,22 @@ static void CalcSysInfo(SolarSystemInfo* SysInfoPtr)
 	switch (StarColor(CurStarDescPtr()->Type))
 	{
 		case BLUE_BODY:
-			SysInfoPtr->StarIntensity = BLUE_SUN_INTENSITY;
+			SysInfoPtr->StarIntensity = *SunIntensity::Blue;
 			break;
 		case GREEN_BODY:
-			SysInfoPtr->StarIntensity = GREEN_SUN_INTENSITY;
+			SysInfoPtr->StarIntensity = *SunIntensity::Green;
 			break;
 		case ORANGE_BODY:
-			SysInfoPtr->StarIntensity = ORANGE_SUN_INTENSITY;
+			SysInfoPtr->StarIntensity = *SunIntensity::Orange;
 			break;
 		case RED_BODY:
-			SysInfoPtr->StarIntensity = RED_SUN_INTENSITY;
+			SysInfoPtr->StarIntensity = *SunIntensity::Red;
 			break;
 		case WHITE_BODY:
-			SysInfoPtr->StarIntensity = WHITE_SUN_INTENSITY;
+			SysInfoPtr->StarIntensity = *SunIntensity::White;
 			break;
 		case YELLOW_BODY:
-			SysInfoPtr->StarIntensity = YELLOW_SUN_INTENSITY;
+			SysInfoPtr->StarIntensity = *SunIntensity::Yellow;
 			break;
 	}
 
@@ -188,7 +191,7 @@ static int16_t CalcTemp(SolarSystemInfo* SysInfoPtr, int16_t radius)
 	uint32_t alb {100 - GenericAlbedo};
 	alb = square_root(square_root(alb * 100 * 10000))
 		* PlanetTempConstant * SysInfoPtr->StarEnergy
-		/ ((YELLOW_SUN_INTENSITY + 1) * DwarfEnergy);
+		/ ((*SunIntensity::Yellow + 1) * DwarfEnergy);
 
 	centigrade = (int16_t)(alb / square_root(radius * 10000L / EarthRadius))
 			   - AdjustForKelvin;

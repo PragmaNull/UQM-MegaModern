@@ -218,7 +218,7 @@ static bool AdvanceAmbientSequence(AnimSequence* pSeq)
 	}
 	else
 	{
-		pSeq->NextIndex += +pSeq->Direction;
+		pSeq->NextIndex += *pSeq->Direction;
 	}
 
 	return active;
@@ -356,7 +356,7 @@ static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 	else
 	{ // next frame
 		pSeq->Alarm = randomFrameRate(pSeq);
-		pSeq->CurIndex += +pSeq->Direction;
+		pSeq->CurIndex += *pSeq->Direction;
 	}
 
 	return done;

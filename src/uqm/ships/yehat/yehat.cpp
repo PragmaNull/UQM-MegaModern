@@ -163,7 +163,7 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	Starship* StarShipPtr {};
 
 	int16_t ShieldStatus {-1};
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 	{
 		ShieldStatus = 0;
@@ -225,7 +225,7 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		}
 	}
 
-	if ((lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX])->ObjectPtr)
+	if ((lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip])->ObjectPtr)
 	{
 		Starship* EnemyStarShipPtr {};
 

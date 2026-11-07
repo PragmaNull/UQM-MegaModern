@@ -433,8 +433,8 @@ static void shofixti_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 	}
 	else
 	{
-		const ObjectEvaluation* lpWeaponEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
-		const ObjectEvaluation* lpShipEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+		const ObjectEvaluation* lpWeaponEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
+		const ObjectEvaluation* lpShipEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 		if (StarShipPtr->RaceDescPtr->ship_data.special[0]
 			&& (StarShipPtr->RaceDescPtr->ship_data.captain_control.special_offset < 4
 				|| (lpShipEvalDesc->ObjectPtr != nullptr

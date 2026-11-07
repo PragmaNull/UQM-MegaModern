@@ -250,7 +250,7 @@ bool DoTextEntry(TextEntryState* pTES)
 	{
 		ch = UnicharTab;
 	}
-	if (!ch && PulsedInputState.menu[KEY_MENU_ANY])
+	if (!ch && PulsedInputState.menu[*MenuKey::MenuAny])
 	{ // keyboard repeat, but only when buffer empty
 		ch = GetLastCharacter();
 	}
@@ -273,7 +273,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			}
 			else
 			{ // does not fit
-				PlayMenuSound(MENU_SOUND_FAILURE);
+				PlayMenuSound(MenuSoundEffect::Failure);
 			}
 		}
 		ch = GetNextCharacter();
@@ -283,7 +283,7 @@ bool DoTextEntry(TextEntryState* pTES)
 		}
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_DELETE])
+	if (PulsedInputState.menu[*MenuKey::MenuDelete])
 	{
 		if (len)
 		{
@@ -295,7 +295,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			changed = true;
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_BACKSPACE])
+	else if (PulsedInputState.menu[*MenuKey::MenuBackspace])
 	{
 		if (pStr > pTES->BaseStr)
 		{
@@ -308,7 +308,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			changed = true;
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_LEFT])
+	else if (PulsedInputState.menu[*MenuKey::MenuLeft])
 	{
 		if (pStr > pTES->BaseStr)
 		{
@@ -321,7 +321,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			changed = true;
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_RIGHT])
+	else if (PulsedInputState.menu[*MenuKey::MenuRight])
 	{
 		if (len > 0)
 		{
@@ -334,7 +334,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			changed = true;
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_HOME])
+	else if (PulsedInputState.menu[*MenuKey::MenuHome])
 	{
 		if (pStr > pTES->BaseStr)
 		{
@@ -344,7 +344,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			changed = true;
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_END])
+	else if (PulsedInputState.menu[*MenuKey::MenuEnd])
 	{
 		if (len > 0)
 		{
@@ -355,7 +355,7 @@ bool DoTextEntry(TextEntryState* pTES)
 		}
 	}
 
-	if (!pTES->JoyAlpha.empty() && (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_PAGE_UP] || PulsedInputState.menu[KEY_MENU_PAGE_DOWN]))
+	if (!pTES->JoyAlpha.empty() && (PulsedInputState.menu[*MenuKey::MenuUp] || PulsedInputState.menu[*MenuKey::MenuDown] || PulsedInputState.menu[*MenuKey::MenuPageUp] || PulsedInputState.menu[*MenuKey::MenuPageDown]))
 	{ // do joystick text
 		joy_char_t ch;
 		joy_char_t newch;
@@ -383,7 +383,7 @@ bool DoTextEntry(TextEntryState* pTES)
 		// find current char in the alphabet
 		int i {JoyCharFindIn(&cmpch, pTES->JoyAlpha.data(), pTES->JoyAlphaLength)};
 
-		if (PulsedInputState.menu[KEY_MENU_UP])
+		if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			--i;
 			if (i < 0)
@@ -392,7 +392,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			}
 			newch = pTES->JoyAlpha[i];
 		}
-		else if (PulsedInputState.menu[KEY_MENU_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
 			++i;
 			if (i >= pTES->JoyAlphaLength)
@@ -402,7 +402,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			newch = pTES->JoyAlpha[i];
 		}
 
-		if (PulsedInputState.menu[KEY_MENU_PAGE_UP] || PulsedInputState.menu[KEY_MENU_PAGE_DOWN])
+		if (PulsedInputState.menu[*MenuKey::MenuPageUp] || PulsedInputState.menu[*MenuKey::MenuPageDown])
 		{
 			if (len)
 			{ // single char change
@@ -461,18 +461,18 @@ bool DoTextEntry(TextEntryState* pTES)
 				}
 				else
 				{ // does not fit
-					PlayMenuSound(MENU_SOUND_FAILURE);
+					PlayMenuSound(MenuSoundEffect::Failure);
 				}
 			}
 		}
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_SELECT])
+	if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{ // done entering
 		pTES->Success = true;
 		return false;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_EDIT_CANCEL])
+	else if (PulsedInputState.menu[*MenuKey::MenuEditCancel])
 	{ // canceled entering
 		pTES->Success = false;
 		return false;
@@ -488,7 +488,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			pTES->InsPt = CacheInsPt;
 			pTES->CursorPos = CacheCursorPos;
 
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 		}
 	}
 

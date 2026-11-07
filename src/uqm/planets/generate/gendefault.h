@@ -17,6 +17,7 @@
 #ifndef GENDEFAULT_H
 #define GENDEFAULT_H
 
+#include "core/types/enum.h"
 #include <cstdint>
 #include "../planets.h"
 #include "core/misc/bittricks.h"
@@ -75,18 +76,20 @@ extern uint8_t PlanetByteGen(SystemPlanet* pPDesc);
 
 const extern GenerateFunctions generateDefaultFunctions;
 
-typedef enum
+enum class HardModeEncounter
 {
-	ILWRATH_ENCOUNTER,	 // 14/6 ships at procyon even if ilwrath left
-	PROBE_ENCOUNTER,	 // 4/2 probes at dreadnought wreck
-	URQUAN_ENCOUNTER,	 // 6 dreadnoughts at vault if the shuttle is on board
-	EGGCASE00_ENCOUNTER, // 4 mycon
-	EGGCASE01_ENCOUNTER, // 4 mycon
-	EGGCASE02_ENCOUNTER, // 4 mycon
-	THRADDASH_ENCOUNTER, // 12/6 thraddash minimum at all time
-	NO_HELP_FROM_PKUNK,	 // no help before final battle if pkunk are absorbed before the revolt
-	READY_TO_BARGAIN	 // druuge sell rosy sphere on second deal
-} HARDMODE_ENCOUNTERS;
+	Ilwrath,		 // 14/6 ships at procyon even if ilwrath left
+	Probe,			 // 4/2 probes at dreadnought wreck
+	Urquan,			 // 6 dreadnoughts at vault if the shuttle is on board
+	Eggcase00,		 // 4 mycon
+	Eggcase01,		 // 4 mycon
+	Eggcase02,		 // 4 mycon
+	Thraddash,		 // 12/6 thraddash minimum at all time
+	NoHelpFromPkunk, // no help before final battle if pkunk are absorbed before the revolt
+	ReadyToBargain	 // druuge sell rosy sphere on second deal
+};
+template <>
+inline constexpr bool IsArithmeticEnum<HardModeEncounter> = true;
 
 #if 0 //defined(__cplusplus)
 }

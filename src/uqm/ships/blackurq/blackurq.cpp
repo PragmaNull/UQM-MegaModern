@@ -370,7 +370,7 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 {
 	Starship* StarShipPtr {};
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == MovementState::Entice
 		&& (lpEvalDesc->ObjectPtr->state_flags & CrewObject)
@@ -393,7 +393,7 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 		StarShipPtr->ship_input_state |= SpecialFlag;
 	}
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 	if (lpEvalDesc->ObjectPtr)
 	{
 		HELEMENT h {};

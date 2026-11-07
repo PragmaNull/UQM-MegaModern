@@ -416,7 +416,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~SpecialFlag;
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		Starship* EnemyStarShipPtr {};
@@ -439,11 +439,11 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 	}
 
 	if (StarShipPtr->special_counter == 1
-		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
-		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == MovementState::Entice
-		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 8)
+		&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr
+		&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState == MovementState::Entice
+		&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].which_turn <= 8)
 	{
-		lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
+		lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon];
 	}
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
@@ -467,20 +467,20 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 				&& CrystalPtr->life_span > 0
 				&& elementsOfSamePlayer(CrystalPtr, ShipPtr))
 			{
-				if (ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr)
+				if (ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr)
 				{
 					uint16_t which_turn {};
 					bool crystal_would_miss = false;
 
-					if (!IsHd() || lpEvalDesc != &ObjectsOfConcern[ENEMY_SHIP_INDEX])
+					if (!IsHd() || lpEvalDesc != &ObjectsOfConcern[*IntelObjectIndex::EnemyShip])
 					{
 						crystal_would_miss = ((which_turn = PlotIntercept(CrystalPtr,
-																		  ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr,
+																		  ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr,
 																		  CrystalPtr->life_span, FragmentRange() / 2))
 												  == 0
 											  || (which_turn == 1
 												  && PlotIntercept(CrystalPtr,
-																   ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr,
+																   ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr,
 																   CrystalPtr->life_span, 0)
 														 == 0));
 					}
@@ -488,8 +488,8 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 					{
 						uint32_t curr_dist = 0;
 
-						const int32_t dx {CrystalPtr->next.location.x - ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr->next.location.x};
-						const int32_t dy {CrystalPtr->next.location.y - ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr->next.location.y};
+						const int32_t dx {CrystalPtr->next.location.x - ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr->next.location.x};
+						const int32_t dy {CrystalPtr->next.location.y - ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr->next.location.y};
 
 						curr_dist = square_root((long)dx * dx + (long)dy * dy);
 
@@ -497,7 +497,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 							ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr,
 							CrystalPtr->life_span, FragmentRange() / 3);*/
 						crystal_would_miss = ((PlotIntercept(CrystalPtr,
-															 ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr,
+															 ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr,
 															 CrystalPtr->life_span, FragmentRange() * 8)
 											   == 0)
 											  || curr_dist > old_dist[ShipPtr->playerNr]);
@@ -510,10 +510,10 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 
 						// JMS: Let's try to stop Chenjesu's stupid over-rapid firing behavior in hires modes...
 						if (IsHd()
-							&& ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn > 16
-							&& ((ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
-								 && ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn > 8)
-								|| !(ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr)))
+							&& ObjectsOfConcern[*IntelObjectIndex::EnemyShip].which_turn > 16
+							&& ((ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr
+								 && ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].which_turn > 8)
+								|| !(ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr)))
 						{
 							StarShipPtr->weapon_counter = 10;
 						}
@@ -521,7 +521,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 					else if (StarShipPtr->weapon_counter == 0)
 					{
 						StarShipPtr->ship_input_state |= WeaponFlag;
-						lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+						lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 					}
 
 					UnlockElement(h);
@@ -538,7 +538,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 			{
 				StarShipPtr->ship_input_state &= ~WeaponFlag;
 				old_dist[ShipPtr->playerNr] = (uint32_t)~0;
-				if (lpEvalDesc == &ObjectsOfConcern[ENEMY_WEAPON_INDEX])
+				if (lpEvalDesc == &ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon])
 				{
 					StarShipPtr->weapon_counter = 3;
 				}

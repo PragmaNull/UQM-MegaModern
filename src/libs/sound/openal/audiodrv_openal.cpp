@@ -45,7 +45,7 @@ const static audio_Driver openAL_Driver =
 				  AL_INVALID_VALUE,
 				  AL_INVALID_OPERATION,
 				  AL_OUT_OF_MEMORY,
-				  +AudioEnum::DriverFailure,
+				  *AudioEnum::DriverFailure,
 
 				  /* Source properties */
 		 AL_POSITION,
@@ -133,8 +133,8 @@ int32_t openAL_Init(audio_Driver* driver, AudioFlags flags)
 	TFB_DecoderFormats formats =
 		{
 			uqstl::endian::native == uqstl::endian::big, uqstl::endian::native == uqstl::endian::big,
-			+AudioEnum::FormatMono8, +AudioEnum::FormatStereo8,
-			+AudioEnum::FormatMono16, +AudioEnum::FormatStereo16};
+			*AudioEnum::FormatMono8, *AudioEnum::FormatStereo8,
+			*AudioEnum::FormatMono16, *AudioEnum::FormatStereo16};
 
 	uqm::log::info("Initializing OpenAL.");
 	alcDevice = alcOpenDevice(nullptr);
@@ -252,20 +252,20 @@ int32_t openAL_GetError(void)
 	switch (value)
 	{
 		case AL_FALSE:
-			return +AudioEnum::NoError;
+			return *AudioEnum::NoError;
 		case AL_INVALID_NAME:
-			return +AudioEnum::InvalidName;
+			return *AudioEnum::InvalidName;
 		case AL_INVALID_ENUM:
-			return +AudioEnum::InvalidEnum;
+			return *AudioEnum::InvalidEnum;
 		case AL_INVALID_VALUE:
-			return +AudioEnum::InvalidValue;
+			return *AudioEnum::InvalidValue;
 		case AL_INVALID_OPERATION:
-			return +AudioEnum::InvalidOperation;
+			return *AudioEnum::InvalidOperation;
 		case AL_OUT_OF_MEMORY:
-			return +AudioEnum::OutOfMemory;
+			return *AudioEnum::OutOfMemory;
 		default:
 			uqm::log::debug("openAL_GetError: unknown value {:x}", value);
-			return +AudioEnum::DriverFailure;
+			return *AudioEnum::DriverFailure;
 			break;
 	}
 }
@@ -323,21 +323,21 @@ void openAL_GetSourcei(audio_Object srcobj, int32_t pname,
 		switch (*value)
 		{
 			case AL_INITIAL:
-				*value = +AudioEnum::Initial;
+				*value = *AudioEnum::Initial;
 				break;
 			case AL_STOPPED:
-				*value = +AudioEnum::Stopped;
+				*value = *AudioEnum::Stopped;
 				break;
 			case AL_PLAYING:
-				*value = +AudioEnum::Playing;
+				*value = *AudioEnum::Playing;
 				break;
 			case AL_PAUSED:
-				*value = +AudioEnum::Paused;
+				*value = *AudioEnum::Paused;
 				break;
 			default:
 				uqm::log::debug("openAL_GetSourcei(): unknown value {:x}",
 								*value);
-				*value = +AudioEnum::DriverFailure;
+				*value = *AudioEnum::DriverFailure;
 		}
 	}
 }

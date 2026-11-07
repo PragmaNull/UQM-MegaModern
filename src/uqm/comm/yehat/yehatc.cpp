@@ -307,7 +307,7 @@ static void ExitConversation(RESPONSE_REF R)
 
 			state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 
-			state |= 1 << NO_HELP_FROM_PKUNK;
+			state |= 1 << *HardModeEncounter::NoHelpFromPkunk;
 
 			uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 		}

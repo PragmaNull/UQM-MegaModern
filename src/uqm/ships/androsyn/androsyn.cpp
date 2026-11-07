@@ -277,11 +277,11 @@ static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsO
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	/* in blazer form */
 	if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 	{
-		ObjectsOfConcern[CREW_OBJECT_INDEX].ObjectPtr = 0;
+		ObjectsOfConcern[*IntelObjectIndex::CrewObject].ObjectPtr = 0;
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 		{
 			if ((lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
@@ -301,7 +301,7 @@ static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsO
 	{
 		Starship* pEnemyStarShip = nullptr;
 
-		lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+		lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 		if (lpEvalDesc->ObjectPtr)
 		{
 			GetElementStarShip(lpEvalDesc->ObjectPtr, &pEnemyStarShip);
@@ -322,8 +322,8 @@ static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsO
 		if (StarShipPtr->special_counter == 0)
 		{
 			StarShipPtr->ship_input_state &= ~SpecialFlag;
-			if ((ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
-				 && ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 4)
+			if ((ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr
+				 && ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].which_turn <= 4)
 				|| (lpEvalDesc->ObjectPtr
 					&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= MaxEnergy / 3
 					&& (GetWeaponRange(&pEnemyStarShip->RaceDescPtr->cyborg_control) >= GetWeaponRange(&StarShipPtr->RaceDescPtr->cyborg_control) << 1

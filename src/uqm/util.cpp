@@ -157,7 +157,7 @@ void DrawStarConBox(GfxRect* pRect, int16_t BorderWidth, Color TopLeftColor,
 	UnbatchGraphics();
 }
 
-void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, int type,
+void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, BevelLevel type,
 					 int custom)
 {
 	int i {};
@@ -176,7 +176,7 @@ void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, int type,
 	{
 		const Color OldColor = SetContextForeGroundColor(fill_color);
 
-		if (type == SPECIAL_BEVEL)
+		if (type == BevelLevel::SpecialBevel)
 		{
 			r->corner.x += ResScale(4);
 			r->corner.y += ResScale(4);
@@ -186,7 +186,7 @@ void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, int type,
 
 		DrawFilledRectangle(r);
 
-		if (type == SPECIAL_BEVEL)
+		if (type == BevelLevel::SpecialBevel)
 		{
 			r->corner.x -= ResScale(4);
 			r->corner.y -= ResScale(4);
@@ -199,7 +199,7 @@ void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, int type,
 
 	stamp.frame = custom ? CustBevelFrame : DefBevelFrame;
 
-	if (type == SPECIAL_BEVEL)
+	if (type == BevelLevel::SpecialBevel)
 	{
 		columns -= ResScale(8);
 		rows -= ResScale(8);
@@ -316,7 +316,7 @@ void DrawRadarBorder(void)
 
 	if (IsHd() || uqm::UQMOptions::read().customBorder)
 	{
-		DrawRenderedBox(&r, false, NullColor, THIN_INNER_BEVEL,
+		DrawRenderedBox(&r, false, NullColor, BevelLevel::ThinInnerBevel,
 						uqm::UQMOptions::read().customBorder);
 	}
 	else
@@ -457,19 +457,19 @@ bool PauseGame(void)
 
 	FlushGraphics();
 
-	while (ImmediateInputState.menu[KEY_PAUSE] && GamePaused)
+	while (ImmediateInputState.menu[*MenuKey::Pause] && GamePaused)
 	{
 		BeginInputFrame();
 		TaskSwitch();
 	}
 
-	while (!ImmediateInputState.menu[KEY_PAUSE] && GamePaused)
+	while (!ImmediateInputState.menu[*MenuKey::Pause] && GamePaused)
 	{
 		BeginInputFrame();
 		TaskSwitch();
 	}
 
-	while (ImmediateInputState.menu[KEY_PAUSE] && GamePaused)
+	while (ImmediateInputState.menu[*MenuKey::Pause] && GamePaused)
 	{
 		BeginInputFrame();
 		TaskSwitch();
@@ -683,7 +683,7 @@ void DrawFlagStatDisplay(const char* str)
 	}
 	else
 	{
-		DrawBorder(DEVICE_CARGO_FRAME);
+		DrawBorder(BorderFrameIndex::DeviceCargo);
 	}
 
 	// print the "str" title

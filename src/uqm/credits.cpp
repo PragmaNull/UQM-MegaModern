@@ -626,23 +626,23 @@ static bool DoCreditsInput(void* pIS)
 	}
 
 	if ((uqm::currentActivity() & CHECK_ABORT)
-		|| (pCIS->AllowCancel && (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])))
+		|| (pCIS->AllowCancel && (PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel])))
 	{ // aborted
 		return false;
 	}
 
 	if (pCIS->AllowSpeedChange
-		&& (PulsedInputState.menu[KEY_MENU_UP]
-			|| PulsedInputState.menu[KEY_MENU_DOWN]))
+		&& (PulsedInputState.menu[*MenuKey::MenuUp]
+			|| PulsedInputState.menu[*MenuKey::MenuDown]))
 	{ // speed adjustment
 		int newrate = CreditsRate;
 		const int step = abs(CreditsRate) / 5 + 1;
 
-		if (PulsedInputState.menu[KEY_MENU_DOWN])
+		if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
 			newrate += step;
 		}
-		else if (PulsedInputState.menu[KEY_MENU_UP])
+		else if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			newrate -= step;
 		}
@@ -676,8 +676,8 @@ static bool DoCreditsInput(void* pIS)
 	}
 
 	if (!CreditsRunning
-		&& (PulsedInputState.menu[KEY_MENU_SELECT]
-			|| PulsedInputState.menu[KEY_MENU_CANCEL]))
+		&& (PulsedInputState.menu[*MenuKey::MenuSelect]
+			|| PulsedInputState.menu[*MenuKey::MenuCancel]))
 	{ // credits finished and exit requested
 		return false;
 	}

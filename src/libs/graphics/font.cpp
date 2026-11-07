@@ -622,7 +622,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 				{
 					TFB_Prim_FontChar(origin, fontChar, b_first, mode,
 									  ctxOrigin);
-					PlayMenuSound(MENU_SOUND_TEXT);
+					PlayMenuSound(MenuSoundEffect::Text);
 
 					SleepThread(getTicksForFramerate(16));
 				}
@@ -664,7 +664,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 			}
 		}
 		UpdateInputState();
-		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
+		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & CHECK_ABORT))
 		{
 			*skip = true;
 		}

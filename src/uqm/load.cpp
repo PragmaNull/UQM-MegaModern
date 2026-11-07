@@ -269,7 +269,7 @@ void LoadRaceQueue(SaveReader& reader, yyjson_val* root, Queue* pQueue)
 		reader.get(item, "allied_state", FleetPtr->allied_state);
 		if (FleetPtr->allied_state > 2)
 		{
-			FleetPtr->allied_state = +RaceAllegiance::Bad;
+			FleetPtr->allied_state = *RaceAllegiance::Bad;
 		}
 		reader.get(item, "days_left", FleetPtr->days_left);
 		reader.get(item, "growth_fract", FleetPtr->growth_fract);

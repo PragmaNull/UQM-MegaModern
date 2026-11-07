@@ -19,6 +19,7 @@
 #ifndef UQM_SUPERMELEE_MELEE_H_
 #define UQM_SUPERMELEE_MELEE_H_
 
+#include "core/types/enum.h"
 #include "../init.h"
 #include "libs/gfxlib.h"
 #include "libs/mathlib.h"
@@ -53,7 +54,28 @@ inline constexpr auto MaxTeamChars {30};
 inline constexpr auto NumPickCols {5};
 inline constexpr auto NumPickRows {5};
 
-typedef uint8_t MELEE_OPTIONS;
+enum class MeleeMenuItem
+{
+#ifdef NETPLAY
+	NetTop,
+#endif
+	ControlsTop,
+	SaveTop,
+	LoadTop,
+	StartMelee,
+	LoadBot,
+	SaveBot,
+	ControlsBot,
+	//#ifdef NETPLAY
+	//	NET_BOT,
+	//#endif
+	QuitBot,
+	EditMelee, // Editing a fleet or the team name
+	BuildPick  // Selecting a ship to add to a fleet
+};
+template <>
+inline constexpr bool IsArithmeticEnum<MeleeMenuItem> = true;
+using MELEE_OPTIONS = MeleeMenuItem;
 
 #if 0 //defined(__cplusplus)
 }
@@ -104,6 +126,7 @@ extern void Melee(void);
 
 // Some prototypes for use by loadmele.c:
 bool DoMelee(MeleeState* pMS);
+enum class MeleeFrameIndex;
 void DrawMeleeIcon(uint16_t which_icon, bool HiLite);
 void GetShipBox(GfxRect* pRect, uint16_t side, uint16_t row, uint16_t col);
 void RepairMeleeFrame(const GfxRect* pRect);
@@ -141,82 +164,84 @@ void Melee_RemoteChange_teamName(MeleeState* pMS, NetConnection* conn,
 
 void DrawShipPickerText(GfxStamp stamp);
 
-enum
+enum class MeleeFrameIndex
 { // meleemenu.ani enumerator
-	MELEE_BACKGROUND = 0,
+	MeleeBackground = 0,
 
-	HUMAN_CON_TOP,
-	WEAK_CYBORG_TOP,
-	GOOD_CYBORG_TOP,
-	AWES_CYBORG_TOP,
+	HumanConTop,
+	WeakCyborgTop,
+	GoodCyborgTop,
+	AwesCyborgTop,
 
-	HUMAN_CON_TOP_HL,
-	WEAK_CYBORG_TOP_HL,
-	GOOD_CYBORG_TOP_HL,
-	AWES_CYBORG_TOP_HL,
+	HumanConTopHl,
+	WeakCyborgTopHl,
+	GoodCyborgTopHl,
+	AwesCyborgTopHl,
 
-	HUMAN_CON_BOTT,
-	WEAK_CYBORG_BOTT,
-	GOOD_CYBORG_BOTT,
-	AWES_CYBORG_BOTT,
+	HumanConBott,
+	WeakCyborgBott,
+	GoodCyborgBott,
+	AwesCyborgBott,
 
-	HUMAN_CON_BOTT_HL,
-	WEAK_CYBORG_BOTT_HL,
-	GOOD_CYBORG_BOTT_HL,
-	AWES_CYBORG_BOTT_HL,
+	HumanConBottHl,
+	WeakCyborgBottHl,
+	GoodCyborgBottHl,
+	AwesCyborgBottHl,
 
-	LOAD_BUTTON_TOP,
-	SAVE_BUTTON_TOP,
-	LOAD_BUTTON_TOP_HL,
-	SAVE_BUTTON_TOP_HL,
+	LoadButtonTop,
+	SaveButtonTop,
+	LoadButtonTopHl,
+	SaveButtonTopHl,
 
-	SAVE_BUTTON_BOTT,
-	LOAD_BUTTON_BOTT,
-	SAVE_BUTTON_BOTT_HL,
-	LOAD_BUTTON_BOTT_HL,
+	SaveButtonBott,
+	LoadButtonBott,
+	SaveButtonBottHl,
+	LoadButtonBottHl,
 
-	BATTLE_BUTTON,
-	BATTLE_BUTTON_HL,
+	BattleButton,
+	BattleButtonHl,
 
-	SHIP_PICK_KB,
-	SHIP_PICK_XB,
-	SHIP_PICK_PS,
+	ShipPickKb,
+	ShipPickXb,
+	ShipPickPs,
 
-	TEAM_PICK_KB,
-	TEAM_PICK_XB,
-	TEAM_PICK_PS,
+	TeamPickKb,
+	TeamPickXb,
+	TeamPickPs,
 
-	QUIT_BUTTON,
-	QUIT_BUTTON_HL,
+	QuitButton,
+	QuitButtonHl,
 
-	NETWORK_CON_TOP,
-	NETWORK_CON_TOP_HL,
+	NetworkConTop,
+	NetworkConTopHl,
 
-	NETWORK_CON_BOTT,
-	NETWORK_CON_BOTT_HL,
+	NetworkConBott,
+	NetworkConBottHl,
 
-	NET_BUTTON_TOP,
-	NET_BUTTON_TOP_HL,
-	NET_BUTTON_BOTT,
-	NET_BUTTON_BOTT_HL,
+	NetButtonTop,
+	NetButtonTopHl,
+	NetButtonBott,
+	NetButtonBottHl,
 
-	SHIP_DESC,
+	ShipDesc,
 
-	CONFIRM_PC,
-	CANCEL_PC,
-	UP_DOWN_PC,
-	SPECIAL_PC,
+	ConfirmPc,
+	CancelPc,
+	UpDownPc,
+	SpecialPc,
 
-	CONFIRM_XB,
-	CANCEL_XB,
-	UP_DOWN_XB,
-	SPECIAL_XB,
+	ConfirmXb,
+	CancelXb,
+	UpDownXb,
+	SpecialXb,
 
-	CONFIRM_PS,
-	CANCEL_PS,
-	UP_DOWN_PS,
-	SPECIAL_PS,
+	ConfirmPs,
+	CancelPs,
+	UpDownPs,
+	SpecialPs,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<MeleeFrameIndex> = true;
 
 #if 0 //defined(__cplusplus)
 }

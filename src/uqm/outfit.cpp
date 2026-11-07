@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "options.h"
 #include "colors.h"
 #include "controls.h"
@@ -43,14 +44,16 @@
 static constexpr auto ShieldLocationInModuleAni {(23 + 2 * NUM_PURCHASE_MODULES)};
 static auto DosMenu() { return (uqm::UQMOptions::read().dosMenus || IsDos()); } // The DOS Menu window
 
-enum
+enum class OutfitMenuItem
 {
-	OUTFIT_FUEL,
-	OUTFIT_MODULES,
-	OUTFIT_SAVELOAD,
-	OUTFIT_EXIT,
-	OUTFIT_DOFUEL
+	Fuel,
+	Modules,
+	SaveLoad,
+	Exit,
+	DoFuel
 };
+template <>
+inline constexpr bool IsArithmeticEnum<OutfitMenuItem> = true;
 
 GfxPoint lander_pos[MaxLanders];
 FONT ModuleFont;
@@ -181,7 +184,7 @@ static void DrawModuleDisplay(ModulesMenuState* modState)
 	}
 	else
 	{
-		DrawBorder(DEVICE_CARGO_FRAME);
+		DrawBorder(BorderFrameIndex::DeviceCargo);
 	}
 
 	// print the "MODULES" title
@@ -294,7 +297,7 @@ static void DrawModuleMenuText(GfxRect* r, int Index)
 	}
 	else
 	{
-		DrawBorder(TEXT_LABEL_FRAME);
+		DrawBorder(BorderFrameIndex::TextLabel);
 	}
 
 	text.baseline.x = r->corner.x + (r->extent.width >> 1);
@@ -349,7 +352,7 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 		}
 	}
 
-	DrawBorder(SIS_RADAR_FRAME);
+	DrawBorder(BorderFrameIndex::SisRadar);
 
 	if (IsDos())
 	{
@@ -380,7 +383,7 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 			else
 			{
 				DrawRenderedBox(&dosRect, true, BlackColor,
-								THIN_INNER_BEVEL, uqm::UQMOptions::read().customBorder);
+								BevelLevel::ThinInnerBevel, uqm::UQMOptions::read().customBorder);
 			}
 		}
 	}
@@ -630,9 +633,9 @@ static bool DoInstallModule(MenuState* pMS)
 		return (true);
 	}
 
-	select = PulsedInputState.menu[KEY_MENU_SELECT];
-	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
-	const bool motion {PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT] || PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN]};
+	select = PulsedInputState.menu[*MenuKey::MenuSelect];
+	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
+	const bool motion {PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuRight] || PulsedInputState.menu[*MenuKey::MenuUp] || PulsedInputState.menu[*MenuKey::MenuDown]};
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
@@ -697,7 +700,7 @@ static bool DoInstallModule(MenuState* pMS)
 				if (uqm::gameState().sis().ResUnits < (uint32_t)(uqm::gameState().game().ModuleCost[new_slot_piece]
 																 * ModuleCostScale))
 				{ // not enough RUs to build
-					PlayMenuSound(MENU_SOUND_FAILURE);
+					PlayMenuSound(MenuSoundEffect::Failure);
 					return (true);
 				}
 			}
@@ -709,7 +712,7 @@ static bool DoInstallModule(MenuState* pMS)
 						> CrewPodCapacity
 							  * (CountSISPieces(CREW_POD) - 1))
 					{ // crew pod still needed for crew recruited
-						PlayMenuSound(MENU_SOUND_FAILURE);
+						PlayMenuSound(MenuSoundEffect::Failure);
 						return (true);
 					}
 				}
@@ -727,7 +730,7 @@ static bool DoInstallModule(MenuState* pMS)
 					{ // fuel tank still needed for the fuel on board
 						if (!uqm::UQMOptions::read().infiniteFuel)
 						{
-							PlayMenuSound(MENU_SOUND_FAILURE);
+							PlayMenuSound(MenuSoundEffect::Failure);
 							return (true);
 						}
 						else
@@ -749,7 +752,7 @@ static bool DoInstallModule(MenuState* pMS)
 						> StorageBayCapacity
 							  * (CountSISPieces(STORAGE_BAY) - 1))
 					{ // storage bay still needed for the cargo
-						PlayMenuSound(MENU_SOUND_FAILURE);
+						PlayMenuSound(MenuSoundEffect::Failure);
 						return (true);
 					}
 				}
@@ -868,7 +871,7 @@ static bool DoInstallModule(MenuState* pMS)
 		else
 		{
 			SetContext(StatusContext);
-			DrawMenuStateStrings(PM_FUEL, pMS->CurState = OUTFIT_MODULES);
+			DrawMenuStateStrings(MenuString::Fuel, pMS->CurState = *OutfitMenuItem::Modules);
 			SetFlashRect(SfrMenu3do(), false);
 
 			pMS->InputFunc = DoOutfit;
@@ -883,10 +886,10 @@ static bool DoInstallModule(MenuState* pMS)
 		do
 		{
 			if (NewState >= EmptySlot
-				&& (PulsedInputState.menu[KEY_MENU_UP]
-					|| PulsedInputState.menu[KEY_MENU_DOWN]))
+				&& (PulsedInputState.menu[*MenuKey::MenuUp]
+					|| PulsedInputState.menu[*MenuKey::MenuDown]))
 			{
-				if (PulsedInputState.menu[KEY_MENU_UP])
+				if (PulsedInputState.menu[*MenuKey::MenuUp])
 				{
 					if (NewState-- == EmptySlot)
 					{
@@ -905,7 +908,7 @@ static bool DoInstallModule(MenuState* pMS)
 				{
 					if (NewState == EmptySlot + 3)
 					{
-						NewState = PulsedInputState.menu[KEY_MENU_UP] ?
+						NewState = PulsedInputState.menu[*MenuKey::MenuUp] ?
 									   EmptySlot + 2 :
 									   EmptySlot;
 					}
@@ -916,14 +919,14 @@ static bool DoInstallModule(MenuState* pMS)
 				}
 				pMS->delta_item = NewItem;
 			}
-			else if (PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_UP])
+			else if (PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuUp])
 			{
 				if (NewItem-- == FirstItem)
 				{
 					NewItem = LastItem;
 				}
 			}
-			else if (PulsedInputState.menu[KEY_MENU_RIGHT] || PulsedInputState.menu[KEY_MENU_DOWN])
+			else if (PulsedInputState.menu[*MenuKey::MenuRight] || PulsedInputState.menu[*MenuKey::MenuDown])
 			{
 				if (NewItem++ == LastItem)
 				{
@@ -1154,27 +1157,27 @@ static void ChangeFuelQuantity(void)
 		GetFuelTankCapacity() - (int32_t)uqm::gameState().sis().FuelOnBoard;
 	const int32_t minFit = -(int32_t)uqm::gameState().sis().FuelOnBoard;
 
-	if (PulsedInputState.menu[KEY_MENU_UP])
+	if (PulsedInputState.menu[*MenuKey::MenuUp])
 	{
 		incr = FuelTankScale; // +1 Unit
 	}
-	else if (PulsedInputState.menu[KEY_MENU_DOWN])
+	else if (PulsedInputState.menu[*MenuKey::MenuDown])
 	{
 		incr = -FuelTankScale; // -1 Unit
 	}
-	else if (PulsedInputState.menu[KEY_MENU_RIGHT])
+	else if (PulsedInputState.menu[*MenuKey::MenuRight])
 	{
 		incr = (FuelTankScale * 10); // +1 Bar
 	}
-	else if (PulsedInputState.menu[KEY_MENU_LEFT])
+	else if (PulsedInputState.menu[*MenuKey::MenuLeft])
 	{
 		incr = -(FuelTankScale * 10); // -1 Bar
 	}
-	else if (PulsedInputState.menu[KEY_MENU_ZOOM_IN])
+	else if (PulsedInputState.menu[*MenuKey::MenuZoomIn])
 	{
 		incr = maxFit; // Fill to max
 	}
-	else if (PulsedInputState.menu[KEY_MENU_ZOOM_OUT])
+	else if (PulsedInputState.menu[*MenuKey::MenuZoomOut])
 	{
 		incr = minFit; // Empty the tanks
 	}
@@ -1183,10 +1186,10 @@ static void ChangeFuelQuantity(void)
 		return;
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_ZOOM_IN]
-		|| PulsedInputState.menu[KEY_MENU_ZOOM_OUT])
+	if (PulsedInputState.menu[*MenuKey::MenuZoomIn]
+		|| PulsedInputState.menu[*MenuKey::MenuZoomOut])
 	{
-		PlayMenuSound(MENU_SOUND_INVOKED);
+		PlayMenuSound(MenuSoundEffect::Invoked);
 	}
 
 	// Clamp incr to what we can afford/hold/have.
@@ -1212,7 +1215,7 @@ static void ChangeFuelQuantity(void)
 	if (!incr)
 	{
 		// No more room, not enough RUs, or no fuel left to drain.
-		PlayMenuSound(MENU_SOUND_FAILURE);
+		PlayMenuSound(MenuSoundEffect::Failure);
 	}
 	else
 	{
@@ -1267,7 +1270,7 @@ bool DoOutfit(MenuState* pMS)
 			pMS->CurFrame = CaptureDrawable(
 				LoadGraphic(ModulesPmapAnimRes));
 			pMS->hMusic = LoadMusicInstance(OutfitMusicRes);
-			pMS->CurState = OUTFIT_FUEL;
+			pMS->CurState = *OutfitMenuItem::Fuel;
 			pMS->ModuleFrame = CaptureDrawable(
 				LoadGraphic(SismodsMaskPmapAnimRes));
 			s.origin.x = IsPad() ? (-SafeX() + ResScale(3)) : 0;
@@ -1356,7 +1359,7 @@ bool DoOutfit(MenuState* pMS)
 				}
 			}
 
-			DrawMenuStateStrings(PM_FUEL, pMS->CurState);
+			DrawMenuStateStrings(MenuString::Fuel, pMS->CurState);
 			DrawFlagshipName(false, false);
 
 			DrawFlagshipStats();
@@ -1378,22 +1381,22 @@ bool DoOutfit(MenuState* pMS)
 
 		SetContext(StatusContext);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_CANCEL]
-			 || (PulsedInputState.menu[KEY_MENU_SELECT]
-				 && pMS->CurState == OUTFIT_EXIT))
+	else if (PulsedInputState.menu[*MenuKey::MenuCancel]
+			 || (PulsedInputState.menu[*MenuKey::MenuSelect]
+				 && pMS->CurState == OutfitMenuItem::Exit))
 	{
-		if (pMS->CurState == OUTFIT_DOFUEL)
+		if (pMS->CurState == OutfitMenuItem::DoFuel)
 		{
-			pMS->CurState = OUTFIT_FUEL;
-			DrawMenuStateStrings(PM_FUEL, pMS->CurState);
+			pMS->CurState = *OutfitMenuItem::Fuel;
+			DrawMenuStateStrings(MenuString::Fuel, pMS->CurState);
 			SetFlashRect(SfrMenu3do(), false);
 		}
 		else
 		{
 ExitOutfit:
-			if (pMS->CurState < OUTFIT_EXIT)
+			if (pMS->CurState < OutfitMenuItem::Exit)
 			{
-				DrawMenuStateStrings(PM_FUEL, OUTFIT_EXIT);
+				DrawMenuStateStrings(MenuString::Fuel, *OutfitMenuItem::Exit);
 			}
 			DestroyDrawable(ReleaseDrawable(pMS->CurFrame));
 			pMS->CurFrame = 0;
@@ -1413,26 +1416,26 @@ ExitOutfit:
 			return (false);
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		switch (pMS->CurState)
 		{
-			case OUTFIT_FUEL:
+			case *OutfitMenuItem::Fuel:
 				{
 					GfxRect r;
-					DrawMenuStateStrings(PM_FUEL, pMS->CurState);
-					pMS->CurState = OUTFIT_DOFUEL;
+					DrawMenuStateStrings(MenuString::Fuel, pMS->CurState);
+					pMS->CurState = *OutfitMenuItem::DoFuel;
 					SetContext(StatusContext);
 					GetGaugeRect(&r, false);
 					SetFlashRect(&r, false);
 					break;
 				}
-			case OUTFIT_DOFUEL:
-				pMS->CurState = OUTFIT_FUEL;
-				DrawMenuStateStrings(PM_FUEL, pMS->CurState);
+			case *OutfitMenuItem::DoFuel:
+				pMS->CurState = *OutfitMenuItem::Fuel;
+				DrawMenuStateStrings(MenuString::Fuel, pMS->CurState);
 				SetFlashRect(SfrMenu3do(), false);
 				break;
-			case OUTFIT_MODULES:
+			case *OutfitMenuItem::Modules:
 
 				if (DosMenu())
 				{
@@ -1441,7 +1444,7 @@ ExitOutfit:
 														 NUM_PURCHASE_MODULES);
 				}
 
-				DrawMenuStateStrings(PM_FUEL, pMS->CurState);
+				DrawMenuStateStrings(MenuString::Fuel, pMS->CurState);
 				pMS->CurState = EmptySlot + 2;
 				if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) != 3)
 				{
@@ -1455,13 +1458,13 @@ ExitOutfit:
 				pMS->Initialized = 0;
 				DoInstallModule(pMS);
 				break;
-			case OUTFIT_SAVELOAD:
+			case *OutfitMenuItem::SaveLoad:
 				// Clearing FlashRect is not necessary
 				if (!GameOptions())
 				{
 					goto ExitOutfit;
 				}
-				DrawMenuStateStrings(PM_FUEL, pMS->CurState);
+				DrawMenuStateStrings(MenuString::Fuel, pMS->CurState);
 				SetFlashRect(SfrMenu3do(), false);
 				break;
 		}
@@ -1470,7 +1473,7 @@ ExitOutfit:
 	{
 		switch (pMS->CurState)
 		{
-			case OUTFIT_DOFUEL:
+			case *OutfitMenuItem::DoFuel:
 				SetMenuSounds(MenuSoundArrows,
 							  MenuSoundPage | MenuSoundAction);
 				break;
@@ -1479,7 +1482,7 @@ ExitOutfit:
 				break;
 		}
 
-		if (pMS->CurState == OUTFIT_DOFUEL)
+		if (pMS->CurState == OutfitMenuItem::DoFuel)
 		{
 			if (!uqm::UQMOptions::read().infiniteFuel)
 			{
@@ -1490,7 +1493,7 @@ ExitOutfit:
 		}
 		else
 		{
-			DoMenuChooser(pMS, PM_FUEL);
+			DoMenuChooser(pMS, MenuString::Fuel);
 		}
 	}
 

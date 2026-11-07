@@ -141,7 +141,7 @@ static void thraddash_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 
 	Starship* StarShipPtr {};
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		int32_t dx {};
@@ -165,15 +165,15 @@ static void thraddash_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 	if (StarShipPtr->special_counter == 0)
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
-		if (ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
-			&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == MovementState::Entice)
+		if (ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr
+			&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState == MovementState::Entice)
 		{
 			if ((StarShipPtr->ship_input_state & ThrustFlag)
 				|| (ShipPtr->turn_wait == 0
 					&& !(StarShipPtr->ship_input_state & (LeftFlag | RightFlag)))
 				|| NormalizeFacing(AngleToFacing(
 									   GetVelocityTravelAngle(
-										   &ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->velocity)
+										   &ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr->velocity)
 									   + HalfCircle + Octant)
 								   - StarShipPtr->ShipFacing)
 					   > AngleToFacing(Quadrant))

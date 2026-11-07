@@ -665,6 +665,10 @@ extern bool GetContextFontDispWidth(int16_t* pwidth);
 extern uint16_t GetFrameCount(FRAME Frame);
 extern uint16_t GetFrameIndex(FRAME Frame);
 extern FRAME SetAbsFrameIndex(FRAME Frame, uint16_t FrameIndex);
+inline FRAME SetAbsFrameIndex(FRAME Frame, ArithmeticEnum auto FrameIndex)
+{
+	return SetAbsFrameIndex(Frame, static_cast<uint16_t>(*FrameIndex));
+}
 extern FRAME SetRelFrameIndex(FRAME Frame, int16_t FrameOffs);
 extern FRAME SetEquFrameIndex(FRAME DstFrame, FRAME SrcFrame);
 extern FRAME IncFrameIndex(FRAME Frame);

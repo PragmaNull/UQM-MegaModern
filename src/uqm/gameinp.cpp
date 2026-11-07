@@ -58,8 +58,8 @@ struct InputStateDesc
 template <typename T>
 struct MenuAnnotations
 {
-	T key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
-	T menu[NUM_MENU_KEYS];
+	T key[uqstl::to_underlying(ControlTemplate::NUM)][*BattleKey::NumKeys];
+	T menu[*MenuKey::NumMenuKeys];
 };
 
 
@@ -121,35 +121,35 @@ static int scriptMenuKey(uqm::ScriptKey key)
 	switch (key)
 	{
 		case uqm::ScriptKey::Up:
-			return KEY_MENU_UP;
+			return *MenuKey::MenuUp;
 		case uqm::ScriptKey::Down:
-			return KEY_MENU_DOWN;
+			return *MenuKey::MenuDown;
 		case uqm::ScriptKey::Left:
-			return KEY_MENU_LEFT;
+			return *MenuKey::MenuLeft;
 		case uqm::ScriptKey::Right:
-			return KEY_MENU_RIGHT;
+			return *MenuKey::MenuRight;
 		case uqm::ScriptKey::Select:
-			return KEY_MENU_SELECT;
+			return *MenuKey::MenuSelect;
 		case uqm::ScriptKey::Cancel:
-			return KEY_MENU_CANCEL;
+			return *MenuKey::MenuCancel;
 		case uqm::ScriptKey::Special:
-			return KEY_MENU_SPECIAL;
+			return *MenuKey::MenuSpecial;
 		case uqm::ScriptKey::Delete:
-			return KEY_MENU_DELETE;
+			return *MenuKey::MenuDelete;
 		case uqm::ScriptKey::Backspace:
-			return KEY_MENU_BACKSPACE;
+			return *MenuKey::MenuBackspace;
 		case uqm::ScriptKey::PageUp:
-			return KEY_MENU_PAGE_UP;
+			return *MenuKey::MenuPageUp;
 		case uqm::ScriptKey::PageDown:
-			return KEY_MENU_PAGE_DOWN;
+			return *MenuKey::MenuPageDown;
 		case uqm::ScriptKey::Home:
-			return KEY_MENU_HOME;
+			return *MenuKey::MenuHome;
 		case uqm::ScriptKey::End:
-			return KEY_MENU_END;
+			return *MenuKey::MenuEnd;
 		case uqm::ScriptKey::Screenshot:
-			return KEY_SCREENSHOT;
+			return *MenuKey::Screenshot;
 	}
-	return KEY_MENU_SELECT;
+	return *MenuKey::MenuSelect;
 }
 
 // Adds the scripted key, if any, to the input of this frame.
@@ -162,7 +162,7 @@ static void applyInputScript(void)
 	if (step.press == uqm::ScriptKey::Screenshot)
 	{
 		// The main thread takes screenshots from the immediate input state.
-		ImmediateInputState.menu[KEY_SCREENSHOT] = 1;
+		ImmediateInputState.menu[*MenuKey::Screenshot] = 1;
 	}
 	else if (step.press)
 	{
@@ -221,13 +221,13 @@ static void _clear_menu_state(void)
 	int j {};
 	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
-		for (j = 0; j < NUM_KEYS; j++)
+		for (j = 0; j < BattleKey::NumKeys; j++)
 		{
 			PulsedInputState.key[i][j] = 0;
 			CachedInputState.key[i][j] = 0;
 		}
 	}
-	for (i = 0; i < NUM_MENU_KEYS; i++)
+	for (i = 0; i < MenuKey::NumMenuKeys; i++)
 	{
 		PulsedInputState.menu[i] = 0;
 		CachedInputState.menu[i] = 0;
@@ -242,13 +242,13 @@ void ResetKeyRepeat(void)
 	int j {};
 	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
-		for (j = 0; j < NUM_KEYS; j++)
+		for (j = 0; j < BattleKey::NumKeys; j++)
 		{
 			RepeatDelays.key[i][j] = _max_accel;
 			Times.key[i][j] = initTime;
 		}
 	}
-	for (i = 0; i < NUM_MENU_KEYS; i++)
+	for (i = 0; i < MenuKey::NumMenuKeys; i++)
 	{
 		RepeatDelays.menu[i] = _max_accel;
 		Times.menu[i] = initTime;
@@ -302,13 +302,13 @@ static void _check_gestalt(TimeCount NewTime)
 	bool CurrentGestalt {0};
 	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
-		for (j = 0; j < NUM_KEYS; j++)
+		for (j = 0; j < BattleKey::NumKeys; j++)
 		{
 			CachedGestalt |= (bool)ImmediateInputState.key[i][j];
 			CurrentGestalt |= (bool)PulsedInputState.key[i][j];
 		}
 	}
-	for (i = 0; i < NUM_MENU_KEYS; i++)
+	for (i = 0; i < MenuKey::NumMenuKeys; i++)
 	{
 		CachedGestalt |= (bool)ImmediateInputState.menu[i];
 		CurrentGestalt |= (bool)PulsedInputState.menu[i];
@@ -320,12 +320,12 @@ static void _check_gestalt(TimeCount NewTime)
 		{
 			for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 			{
-				for (j = 0; j < NUM_KEYS; j++)
+				for (j = 0; j < BattleKey::NumKeys; j++)
 				{
 					PulsedInputState.key[i][j] = 0;
 				}
 			}
-			for (i = 0; i < NUM_MENU_KEYS; i++)
+			for (i = 0; i < MenuKey::NumMenuKeys; i++)
 			{
 				PulsedInputState.menu[i] = 0;
 			}
@@ -334,12 +334,12 @@ static void _check_gestalt(TimeCount NewTime)
 		{
 			for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 			{
-				for (j = 0; j < NUM_KEYS; j++)
+				for (j = 0; j < BattleKey::NumKeys; j++)
 				{
 					PulsedInputState.key[i][j] = CachedInputState.key[i][j];
 				}
 			}
-			for (i = 0; i < NUM_MENU_KEYS; i++)
+			for (i = 0; i < MenuKey::NumMenuKeys; i++)
 			{
 				PulsedInputState.menu[i] = CachedInputState.menu[i];
 			}
@@ -358,12 +358,12 @@ static void _check_gestalt(TimeCount NewTime)
 	{
 		for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 		{
-			for (j = 0; j < NUM_KEYS; j++)
+			for (j = 0; j < BattleKey::NumKeys; j++)
 			{
 				PulsedInputState.key[i][j] = CachedInputState.key[i][j];
 			}
 		}
-		for (i = 0; i < NUM_MENU_KEYS; i++)
+		for (i = 0; i < MenuKey::NumMenuKeys; i++)
 		{
 			PulsedInputState.menu[i] = CachedInputState.menu[i];
 		}
@@ -416,7 +416,7 @@ void UpdateInputState(void)
 		int j {};
 		for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 		{
-			for (j = 0; j < NUM_KEYS; j++)
+			for (j = 0; j < BattleKey::NumKeys; j++)
 			{
 				_check_for_pulse(&PulsedInputState.key[i][j],
 								 &CachedInputState.key[i][j],
@@ -424,7 +424,7 @@ void UpdateInputState(void)
 								 &NewTime, &Times.key[i][j]);
 			}
 		}
-		for (i = 0; i < NUM_MENU_KEYS; i++)
+		for (i = 0; i < MenuKey::NumMenuKeys; i++)
 		{
 			_check_for_pulse(&PulsedInputState.menu[i],
 							 &CachedInputState.menu[i], &OldInputState.menu[i],
@@ -432,30 +432,30 @@ void UpdateInputState(void)
 		}
 	}
 
-	if (CurrentInputState.menu[KEY_PAUSE])
+	if (CurrentInputState.menu[*MenuKey::Pause])
 	{
 		GamePaused = true;
 	}
 
-	if (CurrentInputState.menu[KEY_EXIT])
+	if (CurrentInputState.menu[*MenuKey::Exit])
 	{
 		ExitRequested = true;
 	}
 
 #if defined(DEBUG) || defined(USE_DEBUG_KEY)
-	if (PulsedInputState.menu[KEY_DEBUG])
+	if (PulsedInputState.menu[*MenuKey::Debug])
 	{
 		debugKeyPressedSynchronous();
 	}
-	if (PulsedInputState.menu[KEY_DEBUG_2])
+	if (PulsedInputState.menu[*MenuKey::Debug2])
 	{
 		debugKey2PressedSynchronous();
 	}
-	if (PulsedInputState.menu[KEY_DEBUG_3])
+	if (PulsedInputState.menu[*MenuKey::Debug3])
 	{
 		debugKey3PressedSynchronous();
 	}
-	if (PulsedInputState.menu[KEY_DEBUG_4])
+	if (PulsedInputState.menu[*MenuKey::Debug4])
 	{
 		debugKey4PressedSynchronous();
 	}
@@ -503,47 +503,47 @@ void FlushInput(void)
 static MENU_SOUND_FLAGS MenuKeysToSoundFlags(const ControllerInputState* state)
 {
 	MENU_SOUND_FLAGS soundFlags {MenuSoundNone};
-	if (state->menu[KEY_MENU_UP])
+	if (state->menu[*MenuKey::MenuUp])
 	{
 		soundFlags |= MenuSoundUp;
 	}
-	if (state->menu[KEY_MENU_DOWN])
+	if (state->menu[*MenuKey::MenuDown])
 	{
 		soundFlags |= MenuSoundDown;
 	}
-	if (state->menu[KEY_MENU_LEFT])
+	if (state->menu[*MenuKey::MenuLeft])
 	{
 		soundFlags |= MenuSoundLeft;
 	}
-	if (state->menu[KEY_MENU_RIGHT])
+	if (state->menu[*MenuKey::MenuRight])
 	{
 		soundFlags |= MenuSoundRight;
 	}
-	if (state->menu[KEY_MENU_SELECT])
+	if (state->menu[*MenuKey::MenuSelect])
 	{
 		soundFlags |= MenuSoundSelect;
 	}
-	if (state->menu[KEY_MENU_CANCEL])
+	if (state->menu[*MenuKey::MenuCancel])
 	{
 		soundFlags |= MenuSoundCancel;
 	}
-	if (state->menu[KEY_MENU_SPECIAL])
+	if (state->menu[*MenuKey::MenuSpecial])
 	{
 		soundFlags |= MenuSoundSpecial;
 	}
-	if (state->menu[KEY_MENU_PAGE_UP])
+	if (state->menu[*MenuKey::MenuPageUp])
 	{
 		soundFlags |= MenuSoundPageup;
 	}
-	if (state->menu[KEY_MENU_PAGE_DOWN])
+	if (state->menu[*MenuKey::MenuPageDown])
 	{
 		soundFlags |= MenuSoundPagedown;
 	}
-	if (state->menu[KEY_MENU_DELETE])
+	if (state->menu[*MenuKey::MenuDelete])
 	{
 		soundFlags |= MenuSoundDelete;
 	}
-	if (state->menu[KEY_MENU_BACKSPACE])
+	if (state->menu[*MenuKey::MenuBackspace])
 	{
 		soundFlags |= MenuSoundDelete;
 	}
@@ -569,7 +569,7 @@ void DoInput(void* pInputState, bool resetInput)
 
 		if (MenuSounds && (soundFlags & (sound_0 | sound_1)))
 		{
-			const SOUND S {GetSound(MenuSounds, (soundFlags & sound_1) ? MENU_SOUND_SUCCESS : 0)};
+			const SOUND S {GetSound(MenuSounds, (soundFlags & sound_1) ? MenuSoundEffect::Success : MenuSoundEffect::Move)};
 
 			PlaySoundEffect(S, 0, NotPositional(), nullptr, 0);
 		}
@@ -603,35 +603,35 @@ static BATTLE_INPUT_STATE ControlInputToBattleInput(const int* keyState)
 {
 	BATTLE_INPUT_STATE InputState = 0;
 
-	if (keyState[KEY_UP])
+	if (keyState[*BattleKey::Up])
 	{
 		InputState |= BattleThrust;
 	}
-	if (keyState[KEY_LEFT])
+	if (keyState[*BattleKey::Left])
 	{
 		InputState |= BattleLeft;
 	}
-	if (keyState[KEY_RIGHT])
+	if (keyState[*BattleKey::Right])
 	{
 		InputState |= BattleRight;
 	}
-	if (keyState[KEY_WEAPON])
+	if (keyState[*BattleKey::Weapon])
 	{
 		InputState |= BattleWeapon;
 	}
-	if (keyState[KEY_SPECIAL])
+	if (keyState[*BattleKey::Special])
 	{
 		InputState |= BattleSpecial;
 	}
-	if (keyState[KEY_ESCAPE])
+	if (keyState[*BattleKey::Escape])
 	{
 		InputState |= BattleEscape;
 	}
-	if (keyState[KEY_DOWN])
+	if (keyState[*BattleKey::Down])
 	{
 		InputState |= BattleDown;
 	}
-	if (keyState[KEY_THRUST])
+	if (keyState[*BattleKey::Thrust])
 	{
 		InputState |= BattleThrustAlt;
 	}
@@ -659,7 +659,7 @@ bool AnyButtonPress(bool CheckSpecial)
 	UpdateInputState();
 	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
-		for (j = 0; j < NUM_KEYS; j++)
+		for (j = 0; j < BattleKey::NumKeys; j++)
 		{
 			if (CurrentInputState.key[i][j])
 			{
@@ -667,7 +667,7 @@ bool AnyButtonPress(bool CheckSpecial)
 			}
 		}
 	}
-	for (i = 0; i < NUM_MENU_KEYS; i++)
+	for (i = 0; i < MenuKey::NumMenuKeys; i++)
 	{
 		if (CurrentInputState.menu[i])
 		{
@@ -680,7 +680,7 @@ bool AnyButtonPress(bool CheckSpecial)
 bool DirKeysPress(void)
 {
 	return (
-		CurrentInputState.menu[KEY_MENU_LEFT] || CurrentInputState.menu[KEY_MENU_RIGHT] || CurrentInputState.menu[KEY_MENU_UP] || CurrentInputState.menu[KEY_MENU_DOWN]);
+		CurrentInputState.menu[*MenuKey::MenuLeft] || CurrentInputState.menu[*MenuKey::MenuRight] || CurrentInputState.menu[*MenuKey::MenuUp] || CurrentInputState.menu[*MenuKey::MenuDown]);
 }
 
 bool ActKeysPress(void)
@@ -688,12 +688,12 @@ bool ActKeysPress(void)
 	UpdateInputState();
 
 	return (
-		CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_WEAPON]
-		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_SPECIAL]
-		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE]
-		|| CurrentInputState.menu[KEY_MENU_SELECT]
-		|| CurrentInputState.menu[KEY_MENU_CANCEL]
-		|| CurrentInputState.menu[KEY_MENU_SPECIAL]);
+		CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Weapon]
+		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Special]
+		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Escape]
+		|| CurrentInputState.menu[*MenuKey::MenuSelect]
+		|| CurrentInputState.menu[*MenuKey::MenuCancel]
+		|| CurrentInputState.menu[*MenuKey::MenuSpecial]);
 }
 
 bool ConfirmExit(void)

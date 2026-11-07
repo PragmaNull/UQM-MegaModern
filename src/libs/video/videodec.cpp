@@ -250,7 +250,7 @@ TFB_VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir, const char* f
 	}
 
 	decoder->filename = filename;
-	decoder->error = +VideoDecoderStatus::Ok;
+	decoder->error = *VideoDecoderStatus::Ok;
 
 	if (!decoder->funcs->Open(decoder, dir, filename))
 	{
@@ -283,15 +283,15 @@ int VideoDecoder_Decode(TFB_VideoDecoder* decoder)
 	const int ret {decoder->funcs->DecodeNext(decoder)};
 	if (ret == 0)
 	{
-		decoder->error = +VideoDecoderStatus::Eof;
+		decoder->error = *VideoDecoderStatus::Eof;
 	}
 	else if (ret < 0)
 	{
-		decoder->error = +VideoDecoderStatus::Error;
+		decoder->error = *VideoDecoderStatus::Error;
 	}
 	else
 	{
-		decoder->error = +VideoDecoderStatus::Ok;
+		decoder->error = *VideoDecoderStatus::Ok;
 	}
 
 	return ret;

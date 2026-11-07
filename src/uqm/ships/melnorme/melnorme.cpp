@@ -673,7 +673,7 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 		StarShipPtr->weapon_counter = 0;
 	}
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SpecialEnergyCost
@@ -716,7 +716,7 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 
 		++ShipPtr->turn_wait;
 		++ShipPtr->thrust_wait;
-		ship_intelligence(ShipPtr, ObjectsOfConcern, ENEMY_SHIP_INDEX + 1);
+		ship_intelligence(ShipPtr, ObjectsOfConcern, *IntelObjectIndex::EnemyShip + 1);
 		--ShipPtr->thrust_wait;
 		--ShipPtr->turn_wait;
 

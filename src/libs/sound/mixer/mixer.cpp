@@ -551,7 +551,7 @@ void mixer_GetSourcei(mixer_Object srcobj, MixerSourceProp pname,
 				*value = (mixer_IntVal)src->firstqueued;
 				break;
 			case MixerSourceProp::SourceState:
-				*value = +src->state;
+				*value = *src->state;
 				break;
 			case MixerSourceProp::BuffersQueued:
 				*value = src->cqueued;

@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "lander.h"
 #include "lifeform.h"
 #include "scan.h"
@@ -63,12 +64,14 @@ static FRAME eraseFrame;
 
 // ScanSystem() menu items
 // The first three are from enum PlanetScanTypes in planets.h
-enum ScanMenuItems
+enum class ScanMenuItem
 {
-	EXIT_SCAN = NUM_SCAN_TYPES,
-	AUTO_SCAN,
-	DISPATCH_SHUTTLE,
+	ExitScan = NUM_SCAN_TYPES,
+	AutoScan,
+	DispatchShuttle,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<ScanMenuItem> = true;
 
 
 void RepairBackRect(GfxRect* pRect)
@@ -860,8 +863,8 @@ static bool DoPickPlanetSide(MenuState* pMS)
 	bool select {};
 	bool cancel {};
 
-	select = PulsedInputState.menu[KEY_MENU_SELECT];
-	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
+	select = PulsedInputState.menu[*MenuKey::MenuSelect];
+	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -895,25 +898,25 @@ static bool DoPickPlanetSide(MenuState* pMS)
 
 		if (tNext == TimeCount {} || TimeIn >= tNext)
 		{
-			if (CurrentInputState.menu[KEY_MENU_LEFT])
+			if (CurrentInputState.menu[*MenuKey::MenuLeft])
 			{
 				dx = -ResScale(1);
 			}
-			if (CurrentInputState.menu[KEY_MENU_RIGHT])
+			if (CurrentInputState.menu[*MenuKey::MenuRight])
 			{
 				dx = ResScale(1);
 			}
-			if (CurrentInputState.menu[KEY_MENU_UP])
+			if (CurrentInputState.menu[*MenuKey::MenuUp])
 			{
 				dy = -ResScale(1);
 			}
-			if (CurrentInputState.menu[KEY_MENU_DOWN])
+			if (CurrentInputState.menu[*MenuKey::MenuDown])
 			{
 				dy = ResScale(1);
 			}
 
 			// Triple the cursor speed when the "Next" key is held down
-			if (DirKeysPress() && CurrentInputState.menu[KEY_MENU_NEXT])
+			if (DirKeysPress() && CurrentInputState.menu[*MenuKey::MenuNext])
 			{
 				dx *= 3;
 				dy *= 3;
@@ -1306,7 +1309,7 @@ static void ScanPlanet(uint16_t scanType)
 			ScanBiologicalTintColor,
 		};
 
-	if (scanType == AUTO_SCAN)
+	if (scanType == ScanMenuItem::AutoScan)
 	{
 		startScan = MINERAL_SCAN;
 		endScan = BIOLOGICAL_SCAN;
@@ -1322,7 +1325,7 @@ static void ScanPlanet(uint16_t scanType)
 		return;
 	}
 
-	DrawMenuStateStrings(PM_MIN_SCAN, scanType);
+	DrawMenuStateStrings(MenuString::MinScan, scanType);
 
 	for (uint16_t scan {startScan}; scan <= endScan; ++scan)
 	{
@@ -1411,7 +1414,7 @@ static void ScanPlanet(uint16_t scanType)
 				return;
 			}
 
-			if (scanType == AUTO_SCAN)
+			if (scanType == ScanMenuItem::AutoScan)
 			{ // delay between scans
 				TimeOut = GetTimeCounter() + c_gameSecond;
 				while (GetTimeCounter() < TimeOut
@@ -1450,7 +1453,7 @@ static void ScanPlanet(uint16_t scanType)
 		RerenderPlanetSphere();
 	}
 
-	if (scanType == AUTO_SCAN || uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::PC)
+	if (scanType == ScanMenuItem::AutoScan || uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::PC)
 	{ // clear the last scan
 		DrawPlanet(0, BlackColor);
 		DrawDefaultPlanetSphere();
@@ -1465,26 +1468,26 @@ static bool DoScan(MenuState* pMS)
 	bool select {};
 	bool cancel {};
 
-	select = PulsedInputState.menu[KEY_MENU_SELECT];
-	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
+	select = PulsedInputState.menu[*MenuKey::MenuSelect];
+	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
 
-	if (cancel || (select && pMS->CurState == EXIT_SCAN))
+	if (cancel || (select && pMS->CurState == ScanMenuItem::ExitScan))
 	{
 		return false;
 	}
 	else if (select)
 	{
-		if (pMS->CurState == DISPATCH_SHUTTLE)
+		if (pMS->CurState == ScanMenuItem::DispatchShuttle)
 		{
 			if (pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED
 				|| pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == GasGiantAtmosphere)
 			{ // cannot dispatch to shielded planets or gas giants
-				PlayMenuSound(MENU_SOUND_FAILURE);
+				PlayMenuSound(MenuSoundEffect::Failure);
 				return true;
 			}
 
@@ -1493,19 +1496,19 @@ static bool DoScan(MenuState* pMS)
 				|| uqm::gameState().sis().NumLanders == 0
 				|| uqm::gameState().sis().CrewEnlisted == 0)
 			{
-				PlayMenuSound(MENU_SOUND_FAILURE);
+				PlayMenuSound(MenuSoundEffect::Failure);
 				return true;
 			}
 
 			SetFlashRect(nullptr, false);
-			DrawMenuStateStrings(PM_MIN_SCAN, pMS->CurState);
+			DrawMenuStateStrings(MenuString::MinScan, pMS->CurState);
 
 			if (!PickPlanetSide())
 			{
 				return false;
 			}
 
-			DrawMenuStateStrings(PM_MIN_SCAN, pMS->CurState);
+			DrawMenuStateStrings(MenuString::MinScan, pMS->CurState);
 			SetFlashRect(SfrMenu3do(), false);
 
 			return true;
@@ -1514,20 +1517,20 @@ static bool DoScan(MenuState* pMS)
 		// Various scans
 		if (pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED)
 		{ // cannot scan shielded planets
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 			return true;
 		}
 
 		ScanPlanet(pMS->CurState);
-		if (pMS->CurState == AUTO_SCAN)
+		if (pMS->CurState == ScanMenuItem::AutoScan)
 		{
-			pMS->CurState = DISPATCH_SHUTTLE;
+			pMS->CurState = *ScanMenuItem::DispatchShuttle;
 		}
-		DrawMenuStateStrings(PM_MIN_SCAN, pMS->CurState);
+		DrawMenuStateStrings(MenuString::MinScan, pMS->CurState);
 	}
 	else if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC || (!(pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED) && pSolarSysState->SysInfo.PlanetInfo.AtmoDensity != GasGiantAtmosphere))
 	{
-		DoMenuChooser(pMS, PM_MIN_SCAN);
+		DoMenuChooser(pMS, MenuString::MinScan);
 	}
 
 	return true;
@@ -1610,11 +1613,11 @@ void ScanSystem(void)
 
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::Console3DO && ((pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED) || pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == GasGiantAtmosphere))
 	{
-		menuState.CurState = EXIT_SCAN;
+		menuState.CurState = *ScanMenuItem::ExitScan;
 	}
 	else
 	{
-		menuState.CurState = AUTO_SCAN;
+		menuState.CurState = *ScanMenuItem::AutoScan;
 		planetLoc.x = (ScaledMapWidth() >> 1) << MagShift;
 		planetLoc.y = (MapHeight() >> 1) << MagShift;
 
@@ -1623,7 +1626,7 @@ void ScanSystem(void)
 		DrawScannedObjects(false);
 	}
 
-	DrawMenuStateStrings(PM_MIN_SCAN, menuState.CurState);
+	DrawMenuStateStrings(MenuString::MinScan, menuState.CurState);
 
 	SetFlashRect(SfrMenu3do(), false);
 
@@ -1774,7 +1777,7 @@ void GeneratePlanetSide(void)
 									scan, &info);
 
 			NodeElementPtr->scan_node = uqm::makeWord(scan, num_nodes + 1);
-			NodeElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
+			NodeElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 			NodeElementPtr->current.location.x = info.loc_pt.x;
 			NodeElementPtr->current.location.y = info.loc_pt.y;
 

@@ -79,7 +79,7 @@ void RepairSISBorder(void)
 	r.extent.height = ResScale(1);
 	DrawFilledRectangle(&r);
 
-	DrawBorder(SIS_REPAIR_FRAME);
+	DrawBorder(BorderFrameIndex::SisRepair);
 
 	UnbatchGraphics();
 
@@ -106,7 +106,7 @@ void ClearSISRect(uint8_t ClearFlags)
 
 	if (ClearFlags & ClearSisRadar)
 	{
-		DrawMenuStateStrings((uint8_t)~0, 1);
+		DrawMenuStateStrings(static_cast<MenuString>(0xFF), 1);
 #ifdef NEVER
 		r.corner.x = RadarX() - ResScale(1);
 		r.corner.y = RadarY() - ResScale(1);
@@ -167,7 +167,7 @@ void DrawSISTitle(const char* pStr)
 	SetContextBackGroundColor(SisTitleBackgroundColor);
 	ClearDrawable();
 
-	DrawBorder(SIS_TITLE_FRAME);
+	DrawBorder(BorderFrameIndex::SisTitle);
 
 	// Text color
 	SetContextForeGroundColor(SisTitleTextColor);
@@ -350,7 +350,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 	{ // normal state
 		ClearDrawable();
 
-		DrawBorder(SIS_MSG_FRAME);
+		DrawBorder(BorderFrameIndex::SisMsg);
 		t.align = TextAlign::Center;
 		font_DrawText(&t);
 	}
@@ -381,7 +381,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 #endif
 
 		ClearDrawable();
-		DrawBorder(SIS_MSG_FRAME);
+		DrawBorder(BorderFrameIndex::SisMsg);
 
 		if (CurPos >= 0 && CurPos <= t.CharCount)
 		{ // calc and draw the cursor
@@ -548,7 +548,7 @@ void DrawStatusMessage(const char* pStr)
 	SetContextBackGroundColor(StatusMessageBackgroundColor);
 	ClearDrawable();
 
-	DrawBorder(STAT_MSG_FRAME);
+	DrawBorder(BorderFrameIndex::StatMsg);
 
 	if (!pStr)
 	{
@@ -674,7 +674,7 @@ void DrawCaptainsName(bool NewGame)
 
 	if (!NewGame)
 	{
-		DrawBorder(CAP_NAME_FRAME);
+		DrawBorder(BorderFrameIndex::CapName);
 	}
 
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
@@ -746,7 +746,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 
 	if (!NewGame)
 	{
-		DrawBorder(SIS_STAT_REPAIR_FRAME);
+		DrawBorder(BorderFrameIndex::SisStatRepair);
 	}
 
 	t.baseline.x =
@@ -1192,7 +1192,7 @@ static void Draw_SIS(void)
 	SetContextForeGroundColor(PcCaptainStringBackgroundColor);
 	DrawFilledRectangle(&r);
 
-	DrawBorder(CAPTAIN_FRAME);
+	DrawBorder(BorderFrameIndex::Captain);
 
 	// Text "CAPTAIN".
 	SetContextForeGroundColor(flat ? ThreedoCaptainStringTextColor : PcCaptainStringTextColor);
@@ -1480,7 +1480,7 @@ void DeltaSISGauges(int16_t crew_delta, int32_t fuel_delta, int resunit_delta)
 			DrawStamp(&s);
 		}
 
-		DrawBorder(SIS_STAT_FRAME);
+		DrawBorder(BorderFrameIndex::SisStat);
 
 		Draw_SIS();
 

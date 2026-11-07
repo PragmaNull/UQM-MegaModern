@@ -173,7 +173,7 @@ static bool GenerateChmmr_generateOrbital(SolarSystemState* solarSys,
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const bool HardModeBS = isDifficulty(uqm::Difficulty::Hard) && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
-							 && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << ILWRATH_ENCOUNTER);
+							 && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << *HardModeEncounter::Ilwrath);
 
 		if (RaceDead(CHMMR_SHIP))
 		{
@@ -257,7 +257,7 @@ static bool GenerateChmmr_generateOrbital(SolarSystemState* solarSys,
 			}
 
 			state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
-			state |= 1 << ILWRATH_ENCOUNTER;
+			state |= 1 << *HardModeEncounter::Ilwrath;
 			uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 
 			RepairSISBorder();

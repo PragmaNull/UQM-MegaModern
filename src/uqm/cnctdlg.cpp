@@ -568,31 +568,31 @@ static bool DoMeleeConnectDialog(ConnectDialogState* state)
 
 	changed = true;
 
-	if (PulsedInputState.menu[KEY_MENU_UP])
+	if (PulsedInputState.menu[*MenuKey::MenuUp])
 	{
 		Widget_Event(WidgetEvent::Up);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_DOWN])
+	else if (PulsedInputState.menu[*MenuKey::MenuDown])
 	{
 		Widget_Event(WidgetEvent::Down);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_LEFT])
+	else if (PulsedInputState.menu[*MenuKey::MenuLeft])
 	{
 		Widget_Event(WidgetEvent::Left);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_RIGHT])
+	else if (PulsedInputState.menu[*MenuKey::MenuRight])
 	{
 		Widget_Event(WidgetEvent::Right);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		Widget_Event(WidgetEvent::Select);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_CANCEL])
+	else if (PulsedInputState.menu[*MenuKey::MenuCancel])
 	{
 		Widget_Event(WidgetEvent::Cancel);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_DELETE])
+	else if (PulsedInputState.menu[*MenuKey::MenuDelete])
 	{
 		Widget_Event(WidgetEvent::Delete);
 	}

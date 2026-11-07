@@ -278,21 +278,21 @@ static void vux_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 {
 	Starship* StarShipPtr {};
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	lpEvalDesc->MoveState = MovementState::Pursue;
-	if (ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr != 0
-		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == MovementState::Entice)
+	if (ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr != 0
+		&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState == MovementState::Entice)
 	{
-		if ((ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->state_flags
+		if ((ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr->state_flags
 			 & FiniteLife)
-			&& !(ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->state_flags
+			&& !(ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr->state_flags
 				 & CrewObject))
 		{
-			ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState = MovementState::Avoid;
+			ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState = MovementState::Avoid;
 		}
 		else
 		{
-			ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState = MovementState::Pursue;
+			ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState = MovementState::Pursue;
 		}
 	}
 

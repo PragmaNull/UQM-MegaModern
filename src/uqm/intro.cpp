@@ -290,7 +290,7 @@ static void DoSpinLine(GfxLine* l, Color front, Color back, bool* skip)
 	{
 		SetContextForeGroundColor(back);
 		DrawLine(l, ResScale(1));
-		PlayMenuSound(MENU_SOUND_TEXT);
+		PlayMenuSound(MenuSoundEffect::Text);
 		SleepThread(c_gameSecond / 16);
 	}
 	SetContextForeGroundColor(front);
@@ -302,7 +302,7 @@ static void DoSpinStatBox(GfxRect* r, Color front, Color back, bool* skip)
 	if (!*skip)
 	{
 		DrawStarConBox(r, ResScale(1), back, back, false, BlackColor, false, BlackColor);
-		PlayMenuSound(MENU_SOUND_TEXT);
+		PlayMenuSound(MenuSoundEffect::Text);
 		SleepThread(c_gameSecond / 16);
 	}
 	DrawStarConBox(r, ResScale(1), front, front, false, BlackColor, false, BlackColor);
@@ -333,7 +333,7 @@ static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_
 	{
 		SetContextForeGroundColor(back);
 		font_DrawText(&Text);
-		PlayMenuSound(MENU_SOUND_TEXT);
+		PlayMenuSound(MenuSoundEffect::Text);
 		SleepThread(c_gameSecond / 16);
 	}
 	SetContextForeGroundColor(front);
@@ -345,7 +345,7 @@ static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_
 		{
 			SetContextForeGroundColor(back);
 			DrawFilledRectangle(&sq);
-			PlayMenuSound(MENU_SOUND_TEXT);
+			PlayMenuSound(MenuSoundEffect::Text);
 			SleepThread(c_gameSecond / 16);
 		}
 		SetContextForeGroundColor(front);
@@ -353,7 +353,7 @@ static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_
 		sq.corner.x += ResScale(6);
 
 		UpdateInputState();
-		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
+		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & CHECK_ABORT))
 		{
 			*skip = true;
 		}
@@ -375,7 +375,7 @@ static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_
 			{
 				DrawPoint(&c);
 			}
-			PlayMenuSound(MENU_SOUND_TEXT);
+			PlayMenuSound(MenuSoundEffect::Text);
 			SleepThread(c_gameSecond / 16);
 		}
 		SetContextForeGroundColor(front);
@@ -392,7 +392,7 @@ static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_
 		sq.corner.x += ResScale(6);
 
 		UpdateInputState();
-		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
+		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & CHECK_ABORT))
 		{
 			*skip = true;
 		}
@@ -671,7 +671,7 @@ static bool DoPresentation(void* pIS)
 {
 	PresentationInputState* pPIS = (PresentationInputState*)pIS;
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL]
+	if (PulsedInputState.menu[*MenuKey::MenuCancel]
 		|| (uqm::currentActivity() & CHECK_ABORT))
 	{
 		return false; /* abort requested - we are done */
@@ -700,7 +700,7 @@ static bool DoPresentation(void* pIS)
 			}
 		}
 
-		if (pPIS->TimeOutOnSkip && (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_SPECIAL] || PulsedInputState.menu[KEY_MENU_RIGHT]))
+		if (pPIS->TimeOutOnSkip && (PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuSpecial] || PulsedInputState.menu[*MenuKey::MenuRight]))
 		{ /* skip requested - continue normal ops */
 			pPIS->TimeOut = TimeCount {};
 			pPIS->MovieFrame = -1; /* abort any movie in progress */
@@ -804,7 +804,7 @@ static bool DoPresentation(void* pIS)
 				{ /* wait for ditty to end */
 					while (PlayingStream(MusicSource))
 					{
-						if (CurrentInputState.menu[KEY_MENU_CANCEL]
+						if (CurrentInputState.menu[*MenuKey::MenuCancel]
 							|| (uqm::currentActivity() & CHECK_ABORT))
 						{
 							StopMusic();
@@ -823,7 +823,7 @@ static bool DoPresentation(void* pIS)
 						const TimeCount TimeOut {GetTimeCounter() + cmd.ms * c_gameSecond / 1000};
 						while (GetTimeCounter() < TimeOut)
 						{
-							if (CurrentInputState.menu[KEY_MENU_CANCEL]
+							if (CurrentInputState.menu[*MenuKey::MenuCancel]
 								|| (uqm::currentActivity() & CHECK_ABORT))
 							{
 								Present_BatchGraphics(pPIS);
@@ -1405,22 +1405,22 @@ static bool DoVideoInput(void* pIS)
 		return false;
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_SELECT]
-		|| PulsedInputState.menu[KEY_MENU_CANCEL]
-		|| PulsedInputState.menu[KEY_MENU_SPECIAL]
+	if (PulsedInputState.menu[*MenuKey::MenuSelect]
+		|| PulsedInputState.menu[*MenuKey::MenuCancel]
+		|| PulsedInputState.menu[*MenuKey::MenuSpecial]
 		|| (uqm::currentActivity() & CHECK_ABORT))
 	{ // abort movie
 		return false;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_LEFT]
-			 || PulsedInputState.menu[KEY_MENU_RIGHT])
+	else if (PulsedInputState.menu[*MenuKey::MenuLeft]
+			 || PulsedInputState.menu[*MenuKey::MenuRight])
 	{
 		int32_t newpos = VidGetPosition();
-		if (PulsedInputState.menu[KEY_MENU_LEFT])
+		if (PulsedInputState.menu[*MenuKey::MenuLeft])
 		{
 			newpos -= 2000;
 		}
-		else if (PulsedInputState.menu[KEY_MENU_RIGHT])
+		else if (PulsedInputState.menu[*MenuKey::MenuRight])
 		{
 			newpos += 1000;
 		}

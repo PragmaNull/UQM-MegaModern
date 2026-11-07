@@ -153,12 +153,12 @@ static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCo
 {
 	Starship* StarShipPtr {};
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	lpEvalDesc->MoveState = MovementState::Pursue;
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 10)
 	{
 		/* don't want to dodge when you could be flaming */
-		ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = 0;
+		ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr = 0;
 	}
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
@@ -167,7 +167,7 @@ static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCo
 	if (lpEvalDesc->ObjectPtr
 		&& (lpEvalDesc->which_turn <= 6
 			|| (lpEvalDesc->which_turn <= 10
-				&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 10)))
+				&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].which_turn <= 10)))
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
 		if (ObjectCloaked(ShipPtr))

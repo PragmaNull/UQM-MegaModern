@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "scan.h"
 #include "../colors.h"
 #include "../controls.h"
@@ -55,15 +56,17 @@
 #include "uqm/setupmenu.h"
 #include "uqm/random/UQMRandom.h"
 
-typedef enum
+enum class StarmapView
 {
-	NORMAL_STARMAP,
-	WAR_ERA_STARMAP,
-	CONSTELLATION_MAP,
-	HOMEWORLDS_MAP,
-	RAINBOW_MAP,
-	NUM_STARMAPS
-} CURRENT_STARMAP_SHOWN;
+	NormalStarmap,
+	WarEraStarmap,
+	ConstellationMap,
+	HomeworldsMap,
+	RainbowMap,
+	Count
+};
+template <>
+inline constexpr bool IsArithmeticEnum<StarmapView> = true;
 
 struct Nameplate
 {
@@ -87,7 +90,7 @@ static GfxPoint cursorLoc;
 static GfxPoint mapOrigin;
 static int zoomLevel;
 static FRAME StarMapFrame;
-static CURRENT_STARMAP_SHOWN which_starmap;
+static StarmapView which_starmap;
 
 static inline long signedDivWithError(long val, long divisor)
 {
@@ -1211,7 +1214,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 	}
 	ClearDrawable();
 
-	if (which_starmap != CONSTELLATION_MAP
+	if (which_starmap != StarmapView::ConstellationMap
 		&& (race_update == 0 && which_space < 2)
 		&& !(uqm::UQMOptions::read().infiniteFuel || uqm::gameState().sis().FuelOnBoard == 0))
 	{ // Draw the fuel range circle
@@ -1258,7 +1261,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 		DrawFilledRectangle(&r);
 	}
 
-	if (which_starmap != CONSTELLATION_MAP
+	if (which_starmap != StarmapView::ConstellationMap
 		&& (race_update == 0 && which_space < 2)
 		&& !(uqm::UQMOptions::read().infiniteFuel || uqm::gameState().sis().FuelOnBoard == 0)
 		&& (testFlag(uqm::UQMOptions::read().optFuelRange, uqm::FuelRangeDisplay::FuelAtDestination))
@@ -1268,7 +1271,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 	}
 
 	FRAME star_frame {SetRelFrameIndex(StarMapFrame, 2)};
-	if (which_space <= 1 && which_starmap != CONSTELLATION_MAP)
+	if (which_space <= 1 && which_starmap != StarmapView::ConstellationMap)
 	{
 		uint16_t index {};
 		const uint16_t race_index = (race_update & 0x1F) - 1;
@@ -1284,11 +1287,11 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 			FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 			hNextShip = _GetSuccLink(FleetPtr);
 
-			if ((FleetPtr->known_strength && which_starmap != WAR_ERA_STARMAP) || (which_starmap == WAR_ERA_STARMAP && WarEraStrength(FleetPtr->SpeciesID) && index < NUM_BUILDABLE_SHIPS))
+			if ((FleetPtr->known_strength && which_starmap != StarmapView::WarEraStarmap) || (which_starmap == StarmapView::WarEraStarmap && WarEraStrength(FleetPtr->SpeciesID) && index < NUM_BUILDABLE_SHIPS))
 			{
 				GfxRect repair_r;
 
-				if (which_starmap == WAR_ERA_STARMAP)
+				if (which_starmap == StarmapView::WarEraStarmap)
 				{
 					GetWarEraSphereRect(FleetPtr, &r, &repair_r);
 				}
@@ -1345,7 +1348,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 					t.align = TextAlign::Center;
 
 					// For drawing War-Era starmap.
-					if (which_starmap == WAR_ERA_STARMAP)
+					if (which_starmap == StarmapView::WarEraStarmap)
 					{
 						switch (index)
 						{
@@ -1525,7 +1528,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 
 	// Kruzen: This draws the constellation lines on the constellation
 	// starmap.
-	if (which_space <= 1 && which_starmap == CONSTELLATION_MAP)
+	if (which_space <= 1 && which_starmap == StarmapView::ConstellationMap)
 	{
 // Debug toy, it prints out a color map
 #ifdef DEBUG_COLOR_PALETTE
@@ -1583,7 +1586,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 
 	// This draws markers over known alien Homeworlds
 	// and labels the quasispace portal locations in hyperspace.
-	if (which_space <= 1 && which_starmap == HOMEWORLDS_MAP)
+	if (which_space <= 1 && which_starmap == StarmapView::HomeworldsMap)
 	{
 		uint16_t i {};
 
@@ -1618,7 +1621,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 	}
 
 	// This draws markers over the Rainbow worlds
-	if (which_space <= 1 && which_starmap == RAINBOW_MAP)
+	if (which_space <= 1 && which_starmap == StarmapView::RainbowMap)
 	{
 		uint16_t rainbow_mask {};
 
@@ -1628,7 +1631,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 
 		if (rainbow_mask == 0)
 		{
-			which_starmap = NORMAL_STARMAP;
+			which_starmap = StarmapView::NormalStarmap;
 		}
 		else
 		{
@@ -1654,14 +1657,14 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 		s.origin.y = UniverseToDispy(SDPtr->star_pt.y);
 		if (which_space <= 1)
 		{
-			if (which_starmap == NORMAL_STARMAP
+			if (which_starmap == StarmapView::NormalStarmap
 				&& isStarMarked(i, "PLYR_MARKER"))
 			{ // This draws markers over tagged star systems
 				DrawMarker(SDPtr->star_pt, 2);
 			}
 
 			if (uqm::UQMOptions::read().showVisitedStars && isStarMarked(i, "VISITED")
-				&& which_starmap == NORMAL_STARMAP
+				&& which_starmap == StarmapView::NormalStarmap
 				&& SDPtr->Index != SOL_DEFINED)
 			{
 				s.frame = SetRelFrameIndex(visitedStarsFrame,
@@ -1926,7 +1929,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 	StarDesc* SDPtr {};
 	StarDesc* BestSDPtr {};
 
-	if (which_starmap == NORMAL_STARMAP)
+	if (which_starmap == StarmapView::NormalStarmap)
 	{ // "(Star Search: F6 | Toggle Maps: F7)"
 		uqm::utf8StringCopy(buf, sizeof(buf), GameString(FEEDBACK_STRING_BASE + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())));
 	}
@@ -2084,7 +2087,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			{
 				GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 
-				if (which_starmap == WAR_ERA_STARMAP)
+				if (which_starmap == StarmapView::WarEraStarmap)
 				{
 					SetContextForeGroundColor(
 						BuildColor(
@@ -2466,16 +2469,16 @@ static bool OnStarNameFrame(TextEntryState* pTES)
 {
 	StarSearchState* pSS = (StarSearchState*)pTES->CbParam;
 
-	if (PulsedInputState.menu[KEY_MENU_NEXT])
+	if (PulsedInputState.menu[*MenuKey::MenuNext])
 	{ // search for next match
 
 		MatchNextStar(pSS, false);
 
 		if (pSS->CurIndex < 0)
 		{ // nothing found
-			if (PulsedInputState.menu[KEY_MENU_NEXT])
+			if (PulsedInputState.menu[*MenuKey::MenuNext])
 			{
-				PlayMenuSound(MENU_SOUND_FAILURE);
+				PlayMenuSound(MenuSoundEffect::Failure);
 			}
 			return true;
 		}
@@ -2591,7 +2594,7 @@ static bool DoStarSearch(MenuState* pMS)
 
 void DoBubbleWarp(bool UseFuel)
 {
-	PlayMenuSound(MENU_SOUND_BUBBLEWARP);
+	PlayMenuSound(MenuSoundEffect::BubbleWarp);
 
 	if (UseFuel)
 	{
@@ -2709,7 +2712,7 @@ static bool DoMoveCursor(MenuState* pMS)
 
 		return true;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_CANCEL])
+	else if (PulsedInputState.menu[*MenuKey::MenuCancel])
 	{
 		FlushInput();
 
@@ -2740,7 +2743,7 @@ static bool DoMoveCursor(MenuState* pMS)
 
 		return false;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		/*printf ("Fuel Available: {} | Fuel Requirement: {}\n",
 				GLOBAL_SIS (FuelOnBoard), FuelRequired());*/
@@ -2767,9 +2770,9 @@ static bool DoMoveCursor(MenuState* pMS)
 			DrawStarMap(0, nullptr);
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SEARCH]
-			 || (PulsedInputState.menu[KEY_MENU_ZOOM_IN]
-				 && PulsedInputState.menu[KEY_MENU_ZOOM_OUT]))
+	else if (PulsedInputState.menu[*MenuKey::MenuSearch]
+			 || (PulsedInputState.menu[*MenuKey::MenuZoomIn]
+				 && PulsedInputState.menu[*MenuKey::MenuZoomOut]))
 	{
 		FlushInput();
 
@@ -2793,21 +2796,21 @@ static bool DoMoveCursor(MenuState* pMS)
 		}
 		else
 		{ // no search in QuasiSpace
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_TOGGLEMAP])
+	else if (PulsedInputState.menu[*MenuKey::MenuTogglemap])
 	{
 		FlushInput();
 
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
 			uint8_t NewState {};
-			NewState = which_starmap;
+			NewState = *which_starmap;
 
-			if (NewState == RAINBOW_MAP)
+			if (NewState == StarmapView::RainbowMap)
 			{
-				NewState = NORMAL_STARMAP;
+				NewState = *StarmapView::NormalStarmap;
 			}
 			else
 			{
@@ -2816,10 +2819,10 @@ static bool DoMoveCursor(MenuState* pMS)
 
 			if (NewState != which_starmap)
 			{
-				which_starmap = (CURRENT_STARMAP_SHOWN)NewState;
+				which_starmap = (StarmapView)NewState;
 			}
 
-			PlayMenuSound(MENU_SOUND_MOVE);
+			PlayMenuSound(MenuSoundEffect::Move);
 
 			DrawStarMap(0, nullptr);
 			last_buf[0] = '\0';
@@ -2827,10 +2830,10 @@ static bool DoMoveCursor(MenuState* pMS)
 		}
 		else
 		{ // no alternate maps in QuasiSpace
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SPECIAL])
+	else if (PulsedInputState.menu[*MenuKey::MenuSpecial])
 	{
 		FlushInput();
 
@@ -2842,10 +2845,10 @@ static bool DoMoveCursor(MenuState* pMS)
 		}
 		else
 		{
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 		}
 	}
-	else if (PulsedInputState.menu[KEY_MENU_DELETE])
+	else if (PulsedInputState.menu[*MenuKey::MenuDelete])
 	{
 		FlushInput();
 
@@ -2863,7 +2866,7 @@ static bool DoMoveCursor(MenuState* pMS)
 		}
 		else
 		{
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 		}
 	}
 	else
@@ -2874,11 +2877,11 @@ static bool DoMoveCursor(MenuState* pMS)
 		int16_t ZoomOut {};
 
 		ZoomIn = ZoomOut = 0;
-		if (PulsedInputState.menu[KEY_MENU_ZOOM_IN])
+		if (PulsedInputState.menu[*MenuKey::MenuZoomIn])
 		{
 			ZoomIn = 1;
 		}
-		else if (PulsedInputState.menu[KEY_MENU_ZOOM_OUT])
+		else if (PulsedInputState.menu[*MenuKey::MenuZoomOut])
 		{
 			ZoomOut = 1;
 		}
@@ -2886,25 +2889,25 @@ static bool DoMoveCursor(MenuState* pMS)
 		ZoomStarMap(ZoomIn - ZoomOut);
 
 		sx = sy = 0;
-		if (PulsedInputState.menu[KEY_MENU_LEFT])
+		if (PulsedInputState.menu[*MenuKey::MenuLeft])
 		{
 			sx = -1;
 		}
-		if (PulsedInputState.menu[KEY_MENU_RIGHT])
+		if (PulsedInputState.menu[*MenuKey::MenuRight])
 		{
 			sx = 1;
 		}
-		if (PulsedInputState.menu[KEY_MENU_UP])
+		if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			sy = -1;
 		}
-		if (PulsedInputState.menu[KEY_MENU_DOWN])
+		if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
 			sy = 1;
 		}
 
 		// Double the cursor speed when the "Next" key is held down
-		if (DirKeysPress() && CurrentInputState.menu[KEY_MENU_NEXT])
+		if (DirKeysPress() && CurrentInputState.menu[*MenuKey::MenuNext])
 		{
 			sx *= 2;
 			sy *= 2;
@@ -3374,7 +3377,7 @@ bool StarMap(void)
 
 	memset(&menuState, 0, sizeof(menuState));
 
-	which_starmap = NORMAL_STARMAP;
+	which_starmap = StarmapView::NormalStarmap;
 
 	zoomLevel = 0;
 	mapOrigin.x = MaxXUniverse >> 1;
@@ -3401,11 +3404,11 @@ bool StarMap(void)
 	{
 		if (playerInPlanetOrbit())
 		{
-			DrawMenuStateStrings(PM_ALT_SCAN, 1);
+			DrawMenuStateStrings(MenuString::AltScan, 1);
 		}
 		else
 		{
-			DrawMenuStateStrings(PM_ALT_STARMAP, 0);
+			DrawMenuStateStrings(MenuString::AltStarmap, 0);
 		}
 	}
 

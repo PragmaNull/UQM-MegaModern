@@ -235,7 +235,7 @@ static void check_race_growth(void)
 			if (delta_strength <= 0)
 			{
 				delta_strength = 0;
-				FleetPtr->allied_state = +RaceAllegiance::Dead;
+				FleetPtr->allied_state = *RaceAllegiance::Dead;
 			}
 			else if (delta_strength > MaxFleetStrength)
 			{
@@ -325,7 +325,7 @@ static int advance_pkunk_mission(int arg)
 		if (PkunkPtr->actual_strength == 0)
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK, static_cast<uint32_t>(1));
-			PkunkPtr->allied_state = +RaceAllegiance::Dead;
+			PkunkPtr->allied_state = *RaceAllegiance::Dead;
 			StartSphereTracking(YEHAT_SHIP);
 		}
 		else
@@ -443,7 +443,7 @@ static int zoqfot_death_event(int arg)
 									   ZOQFOTPIK_SHIP);
 		FleetInfo* ZoqFotPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hZoqFot)};
 		ZoqFotPtr->actual_strength = 0;
-		ZoqFotPtr->allied_state = +RaceAllegiance::Dead;
+		ZoqFotPtr->allied_state = *RaceAllegiance::Dead;
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hZoqFot);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_DISTRESS, static_cast<uint32_t>(2));
@@ -627,7 +627,7 @@ static int kohr_ah_genocide_event(int arg)
 			if (dx == 0 && dy == 0)
 			{
 				// Arrived at the victim's home world. Cleanse it.
-				FleetPtr->allied_state = +RaceAllegiance::Dead;
+				FleetPtr->allied_state = *RaceAllegiance::Dead;
 				FleetPtr->actual_strength = 0;
 			}
 			else if (FleetPtr->actual_strength)
@@ -750,11 +750,11 @@ static int advance_ilwrath_mission(int arg)
 	if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 	{
 		IlwrathPtr->actual_strength = 0;
-		IlwrathPtr->allied_state = +RaceAllegiance::Dead;
+		IlwrathPtr->allied_state = *RaceAllegiance::Dead;
 		if ((IsExtended() && ThraddPtr->allied_state != RaceAllegiance::Good) || !IsExtended())
 		{
 			ThraddPtr->actual_strength = 0;
-			ThraddPtr->allied_state = +RaceAllegiance::Dead;
+			ThraddPtr->allied_state = *RaceAllegiance::Dead;
 		}
 	}
 	else if (IlwrathPtr->actual_strength)

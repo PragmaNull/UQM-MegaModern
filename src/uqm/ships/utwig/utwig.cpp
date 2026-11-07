@@ -200,7 +200,7 @@ static void utwig_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level == 0)
 	{
 		ShieldStatus = 0;
@@ -259,7 +259,7 @@ static void utwig_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	}
 
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level
-		&& (lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX])->ObjectPtr)
+		&& (lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip])->ObjectPtr)
 	{
 		Starship* EnemyStarShipPtr {};
 

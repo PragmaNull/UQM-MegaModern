@@ -61,7 +61,7 @@ static bool DoSelectAction(MenuState* pMS)
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
-		pMS->CurState = +EncounterAction::Attack + 1;
+		pMS->CurState = *EncounterAction::Attack + 1;
 		return (false);
 	}
 	if (!pMS->Initialized)
@@ -69,32 +69,32 @@ static bool DoSelectAction(MenuState* pMS)
 		pMS->Initialized = true;
 		pMS->InputFunc = DoSelectAction;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		switch (pMS->CurState)
 		{
-			case +EncounterAction::Hail:
-			case +EncounterAction::Attack:
-				DrawMenuStateStrings(PM_CONVERSE, pMS->CurState);
+			case *EncounterAction::Hail:
+			case *EncounterAction::Attack:
+				DrawMenuStateStrings(MenuString::Converse, pMS->CurState);
 				if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 				{
-					pMS->CurState = +EncounterAction::Hail;
+					pMS->CurState = *EncounterAction::Hail;
 				}
 				return (false);
-			case +EncounterAction::Attack + 1:
+			case *EncounterAction::Attack + 1:
 				// Clearing FlashRect is not necessary
 				if (!GameOptions())
 				{
 					return false;
 				}
-				DrawMenuStateStrings(PM_CONVERSE, pMS->CurState);
+				DrawMenuStateStrings(MenuString::Converse, pMS->CurState);
 				SetFlashRect(SfrMenu3do(), false);
 				break;
 			default:
 				fmt::print("Unknown option: {}\n", pMS->CurState);
 		}
 	}
-	DoMenuChooser(pMS, PM_CONVERSE);
+	DoMenuChooser(pMS, MenuString::Converse);
 	return (true);
 }
 
@@ -470,7 +470,7 @@ uint16_t InitEncounter(void)
 		menuState.InputFunc = DoSelectAction;
 		menuState.Initialized = false;
 
-		DrawMenuStateStrings(PM_CONVERSE, menuState.CurState = +EncounterAction::Hail);
+		DrawMenuStateStrings(MenuString::Converse, menuState.CurState = *EncounterAction::Hail);
 		SetFlashRect(SfrMenu3do(), false);
 
 		DoInput(&menuState, true);
@@ -895,10 +895,10 @@ uint16_t UninitEncounter(void)
 #endif /* NEVER */
 
 			WaitForAnyButton(true, c_gameSecond * 3, false);
-			if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE])
+			if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Escape])
 			{
 				DrawFadeText(str1, str2, false, &scavenge_r);
-				if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE])
+				if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Escape])
 				{
 					SetContextForeGroundColor(BlackColor);
 					r.corner.x = scavenge_r.corner.x + ResScale(10);
@@ -926,7 +926,7 @@ uint16_t UninitEncounter(void)
 
 					DrawFadeText(str1, str2, true, &scavenge_r);
 					WaitForAnyButton(true, c_gameSecond * 2, false);
-					if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE])
+					if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Escape])
 					{
 						DrawFadeText(str1, str2, false, &scavenge_r);
 					}
@@ -987,7 +987,7 @@ uint16_t UninitEncounter(void)
 					if (actualStrength <= 0)
 					{
 						EncounterPtr->actual_strength = 0;
-						EncounterPtr->allied_state = +RaceAllegiance::Dead;
+						EncounterPtr->allied_state = *RaceAllegiance::Dead;
 					}
 					else
 					{

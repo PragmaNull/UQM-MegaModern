@@ -21,14 +21,16 @@ inline constexpr auto LongRangeWeaponHd {DisplayToWorld(4000)};
 // is calculated in InitCyborg () (cyborg.c).
 
 
-enum
+enum class IntelObjectIndex
 {
-	ENEMY_SHIP_INDEX = 0,
-	CREW_OBJECT_INDEX,
-	ENEMY_WEAPON_INDEX,
-	GRAVITY_MASS_INDEX,
-	FIRST_EMPTY_INDEX
+	EnemyShip = 0,
+	CrewObject,
+	EnemyWeapon,
+	GravityMass,
+	FirstEmpty
 };
+template <>
+inline constexpr bool IsArithmeticEnum<IntelObjectIndex> = true;
 
 
 enum class PlayerControlFlags : uint8_t

@@ -37,7 +37,7 @@ struct TFB_SdlScreenInfo
 	SDL_Rect updated;
 };
 
-static TFB_SdlScreenInfo ScreenTextures[+ScreenBuffer::Count];
+static TFB_SdlScreenInfo ScreenTextures[*ScreenBuffer::Count];
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
@@ -595,11 +595,11 @@ void TFB_Pure_UninitGraphics(void)
 
 static void TFB_SDL_UploadTransitionScreen(void)
 {
-	ScreenTextures[+ScreenBuffer::Transition].updated.x = 0;
-	ScreenTextures[+ScreenBuffer::Transition].updated.y = 0;
-	ScreenTextures[+ScreenBuffer::Transition].updated.w = CanvasWidth;
-	ScreenTextures[+ScreenBuffer::Transition].updated.h = CanvasHeight;
-	ScreenTextures[+ScreenBuffer::Transition].dirty = true;
+	ScreenTextures[*ScreenBuffer::Transition].updated.x = 0;
+	ScreenTextures[*ScreenBuffer::Transition].updated.y = 0;
+	ScreenTextures[*ScreenBuffer::Transition].updated.w = CanvasWidth;
+	ScreenTextures[*ScreenBuffer::Transition].updated.h = CanvasHeight;
+	ScreenTextures[*ScreenBuffer::Transition].dirty = true;
 }
 
 static void TFB_SDL_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
@@ -732,21 +732,21 @@ static void TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_
 
 	if (force_full_redraw == uqm::TFBRedraw::Yes)
 	{
-		ScreenTextures[+ScreenBuffer::Main].updated.x = 0;
-		ScreenTextures[+ScreenBuffer::Main].updated.y = 0;
-		ScreenTextures[+ScreenBuffer::Main].updated.w = CanvasWidth;
-		ScreenTextures[+ScreenBuffer::Main].updated.h = CanvasHeight;
-		ScreenTextures[+ScreenBuffer::Main].dirty = true;
+		ScreenTextures[*ScreenBuffer::Main].updated.x = 0;
+		ScreenTextures[*ScreenBuffer::Main].updated.y = 0;
+		ScreenTextures[*ScreenBuffer::Main].updated.w = CanvasWidth;
+		ScreenTextures[*ScreenBuffer::Main].updated.h = CanvasHeight;
+		ScreenTextures[*ScreenBuffer::Main].dirty = true;
 	}
 	else if (TFB_BBox.valid)
 	{
-		ScreenTextures[+ScreenBuffer::Main].updated.x = TFB_BBox.region.corner.x;
-		ScreenTextures[+ScreenBuffer::Main].updated.y = TFB_BBox.region.corner.y;
-		ScreenTextures[+ScreenBuffer::Main].updated.w =
+		ScreenTextures[*ScreenBuffer::Main].updated.x = TFB_BBox.region.corner.x;
+		ScreenTextures[*ScreenBuffer::Main].updated.y = TFB_BBox.region.corner.y;
+		ScreenTextures[*ScreenBuffer::Main].updated.w =
 			TFB_BBox.region.extent.width;
-		ScreenTextures[+ScreenBuffer::Main].updated.h =
+		ScreenTextures[*ScreenBuffer::Main].updated.h =
 			TFB_BBox.region.extent.height;
-		ScreenTextures[+ScreenBuffer::Main].dirty = true;
+		ScreenTextures[*ScreenBuffer::Main].dirty = true;
 	}
 
 	s_gammaPass = s_gpuShaders && s_gamma != 1.0f && PrepareFrameTarget();
@@ -762,12 +762,12 @@ static void TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_
 
 static void TFB_SDL_Unscaled_ScreenLayer(ScreenBuffer screen, Uint8 a, SDL_Rect* rect)
 {
-	SDL_Texture* texture = ScreenTextures[+screen].texture;
-	if (ScreenTextures[+screen].dirty)
+	SDL_Texture* texture = ScreenTextures[*screen].texture;
+	if (ScreenTextures[*screen].dirty)
 	{
-		TFB_SDL_UpdateTexture(texture, SDL_Screens[+screen],
-							  &ScreenTextures[+screen].updated);
-		ScreenTextures[+screen].dirty = false;
+		TFB_SDL_UpdateTexture(texture, SDL_Screens[*screen],
+							  &ScreenTextures[*screen].updated);
+		ScreenTextures[*screen].dirty = false;
 	}
 	if (a == 255)
 	{
@@ -826,28 +826,28 @@ static void DrawScaledScreen(SDL_Texture* texture, Uint8 a, SDL_Rect* rect)
 
 static void TFB_SDL_Scaled_ScreenLayer(ScreenBuffer screen, Uint8 a, SDL_Rect* rect)
 {
-	SDL_Texture* texture = ScreenTextures[+screen].texture;
-	if (ScreenTextures[+screen].dirty)
+	SDL_Texture* texture = ScreenTextures[*screen].texture;
+	if (ScreenTextures[*screen].dirty)
 	{
-		SDL_Surface* src = ScreenTextures[+screen].scaled;
-		SDL_Rect scaled_update = ScreenTextures[+screen].updated;
-		scaler(SDL_Screens[+screen], src, &ScreenTextures[+screen].updated);
+		SDL_Surface* src = ScreenTextures[*screen].scaled;
+		SDL_Rect scaled_update = ScreenTextures[*screen].updated;
+		scaler(SDL_Screens[*screen], src, &ScreenTextures[*screen].updated);
 		scaled_update.x *= 2;
 		scaled_update.y *= 2;
 		scaled_update.w *= 2;
 		scaled_update.h *= 2;
 		TFB_SDL_UpdateTexture(texture, src, &scaled_update);
-		ScreenTextures[+screen].dirty = false;
+		ScreenTextures[*screen].dirty = false;
 	}
 	DrawScaledScreen(texture, a, rect);
 }
 
 static void TFB_SDL_GpuScaled_ScreenLayer(ScreenBuffer screen, Uint8 a, SDL_Rect* rect)
 {
-	TFB_SdlScreenInfo& info {ScreenTextures[+screen]};
+	TFB_SdlScreenInfo& info {ScreenTextures[*screen]};
 	if (info.dirty)
 	{
-		TFB_SDL_UpdateTexture(info.texture, SDL_Screens[+screen], &info.updated);
+		TFB_SDL_UpdateTexture(info.texture, SDL_Screens[*screen], &info.updated);
 		SDL_Texture* const target {SDL_GetRenderTarget(renderer)};
 		SDL_SetRenderTarget(renderer, info.scaledTarget);
 		SDL_SetGPURenderState(renderer, s_gpuScaler);

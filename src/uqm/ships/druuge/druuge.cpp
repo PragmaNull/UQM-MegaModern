@@ -204,7 +204,7 @@ static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed)
 	{
 		lpEvalDesc->MoveState = MovementState::Entice;
@@ -231,8 +231,8 @@ static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 
 	if (!(StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed)
 		&& (lpEvalDesc->which_turn <= 12
-			|| (ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
-				&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 6)))
+			|| (ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr
+				&& ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].which_turn <= 6)))
 	{
 		StarShipPtr->ship_input_state |= WeaponFlag;
 		if (ShipPtr->thrust_wait < WeaponWait + 1)

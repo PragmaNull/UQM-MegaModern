@@ -722,7 +722,7 @@ void StartShipExplosion(Element* ShipPtr, bool playSound)
 
 	if (playSound)
 	{
-		PlaySound(GetSound(GameSounds, SHIP_EXPLODES),
+		PlaySound(GetSound(GameSounds, SoundEffect::ShipExplodes),
 				  CalcSoundPosition(ShipPtr), ShipPtr, GameSoundPriority + 1);
 	}
 }

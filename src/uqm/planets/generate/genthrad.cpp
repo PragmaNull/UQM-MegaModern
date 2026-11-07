@@ -157,7 +157,7 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 				 && CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
 				 && !uqm::gameState().flag(uqm::GameFlag::HELIX_UNPROTECTED)
 				 && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS)
-					  & 1 << THRADDASH_ENCOUNTER)
+					  & 1 << *HardModeEncounter::Thraddash)
 				 && (StartSphereTracking(THRADDASH_SHIP)
 					 || !(uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))))
 		{
@@ -210,7 +210,7 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 
 					state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 
-					state |= 1 << THRADDASH_ENCOUNTER;
+					state |= 1 << *HardModeEncounter::Thraddash;
 
 					uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 				}

@@ -206,7 +206,7 @@ static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 	CanTransform = (bool)(StarShipPtr->special_counter == 0
 						  && StarShipPtr->RaceDescPtr->ship_info.energy_level >= StarShipPtr->RaceDescPtr->characteristics.special_energy_cost);
 
-	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);

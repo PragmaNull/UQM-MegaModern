@@ -315,7 +315,7 @@ void NetConnection_setState(NetConnection* conn, NetState state)
 	{
 		uqm::log::warn("NETPLAY: [{}]     Connection state set to {} "
 					   "while already in that state.\n",
-					   conn->player, netStateData[+state].name);
+					   conn->player, netStateData[*state].name);
 	}
 #endif
 	conn->state = state;

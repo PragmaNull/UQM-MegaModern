@@ -178,7 +178,7 @@ bool setShipSelected(PickMeleeState* gms, uint16_t playerI, uint16_t choice,
 
 	gms->player[playerI].choice = choice;
 	gms->player[playerI].hBattleShip = ship;
-	PlayMenuSound(MENU_SOUND_SUCCESS);
+	PlayMenuSound(MenuSoundEffect::Success);
 #ifdef NETPLAY
 	if (reportNetwork)
 	{
@@ -260,7 +260,7 @@ static bool SelectShip_processInput(PickMeleeState* gms, uint16_t playerI,
 			gms->player[playerI].row = new_row;
 			gms->player[playerI].col = new_col;
 
-			PlayMenuSound(MENU_SOUND_MOVE);
+			PlayMenuSound(MenuSoundEffect::Move);
 			PickMelee_ChangedSelection(gms, playerI);
 		}
 	}
@@ -682,11 +682,11 @@ void MeleeGameOver(void)
 
 	TimeOut = GetTimeCounter() + (c_gameSecond * 4);
 
-	bool PressState {PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL]};
+	bool PressState {PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel]};
 	do
 	{
 		UpdateInputState();
-		ButtonState = PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL];
+		ButtonState = PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel];
 		if (PressState)
 		{
 			PressState = ButtonState;

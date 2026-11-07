@@ -271,14 +271,14 @@ static bool DoModifyRoster(MenuState* pMS)
 		return false;
 	}
 
-	select = PulsedInputState.menu[KEY_MENU_SELECT];
-	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
-	up = PulsedInputState.menu[KEY_MENU_UP];
-	down = PulsedInputState.menu[KEY_MENU_DOWN];
+	select = PulsedInputState.menu[*MenuKey::MenuSelect];
+	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
+	up = PulsedInputState.menu[*MenuKey::MenuUp];
+	down = PulsedInputState.menu[*MenuKey::MenuDown];
 	// Left or right produces the same effect because there are 2 columns
-	const bool horiz {PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT]};
-	pgup = PulsedInputState.menu[KEY_MENU_ZOOM_IN];
-	pgdn = PulsedInputState.menu[KEY_MENU_ZOOM_OUT];
+	const bool horiz {PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuRight]};
+	pgup = PulsedInputState.menu[*MenuKey::MenuZoomIn];
+	pgdn = PulsedInputState.menu[*MenuKey::MenuZoomOut];
 
 	if (cancel && !rosterState->modifyingCrew)
 	{
@@ -339,7 +339,7 @@ static bool DoModifyRoster(MenuState* pMS)
 
 		if (failed)
 		{ // not enough room or crew
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 		}
 	}
 	else
@@ -483,7 +483,7 @@ bool RosterMenu(void)
 
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
-		DrawMenuStateStrings(PM_ALT_CARGO, 2);
+		DrawMenuStateStrings(MenuString::AltCargo, 2);
 	}
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);

@@ -105,7 +105,7 @@ static bool GenerateVault_generateOrbital(SolarSystemState* solarSys,
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP))
 		{
-			if (isDifficulty(uqm::Difficulty::Hard) && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << URQUAN_ENCOUNTER)
+			if (isDifficulty(uqm::Difficulty::Hard) && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << *HardModeEncounter::Urquan)
 				&& !(uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)))
 			{
 				uint16_t state {};
@@ -141,7 +141,7 @@ static bool GenerateVault_generateOrbital(SolarSystemState* solarSys,
 				}
 
 				state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
-				state |= 1 << URQUAN_ENCOUNTER;
+				state |= 1 << *HardModeEncounter::Urquan;
 
 				uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 

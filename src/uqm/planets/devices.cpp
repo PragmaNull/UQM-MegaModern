@@ -164,7 +164,7 @@ static void DrawDevicesDisplay(DevicesMenuState* devState)
 	}
 	else
 	{
-		DrawBorder(DEVICE_CARGO_FRAME);
+		DrawBorder(BorderFrameIndex::DeviceCargo);
 	}
 
 	// print the "DEVICES" title
@@ -344,7 +344,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 			if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 				&& playerInPlanetOrbit())
 			{
-				PlayMenuSound(MENU_SOUND_INVOKED);
+				PlayMenuSound(MenuSoundEffect::Invoked);
 				SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToWhite, c_gameSecond * 1)
 								 + (c_gameSecond * 2));
 				if (CurStarDescPtr()->Index != CHMMR_DEFINED
@@ -508,11 +508,11 @@ bool InvokeSpawner(void)
 	const DeviceStatus status = InvokeDevice(PORTAL_SPAWNER_DEVICE);
 	if (status == DeviceStatus::Failure)
 	{
-		PlayMenuSound(MENU_SOUND_FAILURE);
+		PlayMenuSound(MenuSoundEffect::Failure);
 	}
 	else if (status == DeviceStatus::Success)
 	{
-		PlayMenuSound(MENU_SOUND_INVOKED);
+		PlayMenuSound(MenuSoundEffect::Invoked);
 	}
 
 	return (status == DeviceStatus::Failure);
@@ -527,13 +527,13 @@ static bool DoManipulateDevices(MenuState* pMS)
 	bool pagefwd {};
 	bool pageback {};
 
-	select = PulsedInputState.menu[KEY_MENU_SELECT];
-	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
-	const bool back {PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_LEFT]};
-	forward = PulsedInputState.menu[KEY_MENU_DOWN]
-		   || PulsedInputState.menu[KEY_MENU_RIGHT];
-	pagefwd = PulsedInputState.menu[KEY_MENU_PAGE_DOWN];
-	pageback = PulsedInputState.menu[KEY_MENU_PAGE_UP];
+	select = PulsedInputState.menu[*MenuKey::MenuSelect];
+	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
+	const bool back {PulsedInputState.menu[*MenuKey::MenuUp] || PulsedInputState.menu[*MenuKey::MenuLeft]};
+	forward = PulsedInputState.menu[*MenuKey::MenuDown]
+		   || PulsedInputState.menu[*MenuKey::MenuRight];
+	pagefwd = PulsedInputState.menu[*MenuKey::MenuPageDown];
+	pageback = PulsedInputState.menu[*MenuKey::MenuPageUp];
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -551,11 +551,11 @@ static bool DoManipulateDevices(MenuState* pMS)
 		status = InvokeDevice(devState->list[pMS->CurState]);
 		if (status == DeviceStatus::Failure)
 		{
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 		}
 		else if (status == DeviceStatus::Success)
 		{
-			PlayMenuSound(MENU_SOUND_INVOKED);
+			PlayMenuSound(MenuSoundEffect::Invoked);
 		}
 
 		return (status == DeviceStatus::Failure);
@@ -739,7 +739,7 @@ bool DevicesMenu(void)
 
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
-		DrawMenuStateStrings(PM_ALT_CARGO, 1);
+		DrawMenuStateStrings(MenuString::AltCargo, 1);
 	}
 
 	menuState.InputFunc = DoManipulateDevices;

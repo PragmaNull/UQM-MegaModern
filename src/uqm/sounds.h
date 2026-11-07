@@ -19,6 +19,7 @@
 #ifndef UQM_SOUNDS_H_
 #define UQM_SOUNDS_H_
 
+#include "core/types/enum.h"
 #include "element.h"
 #include "core/misc/bittricks.h"
 #include "libs/sndlib.h"
@@ -30,25 +31,29 @@
 extern "C" {
 #endif
 
-typedef enum
+enum class SoundEffect
 {
-	GRAB_CREW = 0,
-	SHIP_EXPLODES,
-	TARGET_DAMAGED_FOR_1_PT,
-	TARGET_DAMAGED_FOR_2_3_PT,
-	TARGET_DAMAGED_FOR_4_5_PT,
-	TARGET_DAMAGED_FOR_6_PLUS_PT
-} SOUND_EFFECTS;
+	GrabCrew = 0,
+	ShipExplodes,
+	TargetDamagedFor1Pt,
+	TargetDamagedFor23Pt,
+	TargetDamagedFor45Pt,
+	TargetDamagedFor6PlusPt
+};
+template <>
+inline constexpr bool IsArithmeticEnum<SoundEffect> = true;
 
-typedef enum
+enum class MenuSoundEffect
 {
-	MENU_SOUND_MOVE = 0,
-	MENU_SOUND_SUCCESS,
-	MENU_SOUND_FAILURE,
-	MENU_SOUND_INVOKED,
-	MENU_SOUND_BUBBLEWARP,
-	MENU_SOUND_TEXT,
-} MENU_SOUND_EFFECT;
+	Move = 0,
+	Success,
+	Failure,
+	Invoked,
+	BubbleWarp,
+	Text,
+};
+template <>
+inline constexpr bool IsArithmeticEnum<MenuSoundEffect> = true;
 
 extern SOUND_REF MenuSounds;
 extern SOUND_REF GameSounds;
@@ -77,7 +82,7 @@ extern void GetMenuSounds(MENU_SOUND_FLAGS* sound_0,
 
 extern void PlaySound(SOUND S, SoundPosition Pos,
 					  Element* PositionalObject, uint8_t Priority);
-extern void PlayMenuSound(MENU_SOUND_EFFECT S);
+extern void PlayMenuSound(MenuSoundEffect S);
 extern void ProcessSound(SOUND Sound, Element* PositionalObject);
 // Removes the queued sounds, and ignores new sounds until FlushSounds().
 extern void SuppressSounds(void);

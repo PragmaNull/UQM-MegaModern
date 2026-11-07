@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "solarsys.h"
 #include "lander.h"
 #include "../build.h"
@@ -89,16 +90,18 @@ static int16_t widthPick(void);
 static int16_t heightPick(void);
 
 // SolarSysMenu() items
-enum SolarSysMenuMenuItems
+enum class SolarSysMenuItem
 {
 	// XXX: Must match the enum in menustat.h
-	STARMAP = 1,
-	EQUIP_DEVICE,
-	CARGO,
-	ROSTER,
-	GAME_MENU,
-	NAVIGATION,
+	Starmap = 1,
+	EquipDevice,
+	Cargo,
+	Roster,
+	GameMenu,
+	Navigation,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<SolarSysMenuItem> = true;
 
 SolarSystemState* pSolarSysState;
 FRAME SISIPFrame;
@@ -1488,8 +1491,8 @@ static void ProcessShipControls(void)
 	uint16_t index {};
 	int16_t delta_y {};
 
-	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP]
-		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_THRUST])
+	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Up]
+		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Thrust])
 	{
 		delta_y = -1;
 	}
@@ -1500,11 +1503,11 @@ static void ProcessShipControls(void)
 
 	int16_t delta_x {0};
 
-	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_LEFT])
+	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Left])
 	{
 		delta_x -= 1;
 	}
-	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_RIGHT])
+	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Right])
 	{
 		delta_x += 1;
 	}
@@ -2136,7 +2139,7 @@ void ResetSolarSys(void)
 	// was probably needed on 3DO when IP_frame() was a task.
 	assert(!pSolarSysState->InIpFlight);
 
-	DrawMenuStateStrings(PM_STARMAP, -(PM_NAVIGATE - PM_SCAN));
+	DrawMenuStateStrings(MenuString::Starmap, -(MenuString::Navigate - MenuString::Scan));
 
 	InitDisplayList();
 	// This also spawns the flagship Element
@@ -3091,7 +3094,7 @@ void SaveSolarSysLocation(void)
 
 static bool DoSolarSysMenu(MenuState* pMS)
 {
-	bool select = PulsedInputState.menu[KEY_MENU_SELECT];
+	bool select = PulsedInputState.menu[*MenuKey::MenuSelect];
 
 	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
@@ -3099,7 +3102,7 @@ static bool DoSolarSysMenu(MenuState* pMS)
 		return false;
 	}
 
-	const bool handled {DoMenuChooser(pMS, PM_STARMAP)};
+	const bool handled {DoMenuChooser(pMS, MenuString::Starmap)};
 	if (handled)
 	{
 		return true;
@@ -3119,7 +3122,7 @@ static bool DoSolarSysMenu(MenuState* pMS)
 
 	switch (pMS->CurState)
 	{
-		case EQUIP_DEVICE:
+		case *SolarSysMenuItem::EquipDevice:
 			select = DevicesMenu();
 			if (uqm::currentActivity() & START_ENCOUNTER)
 			{ // Invoked Talking Pet or a Caster for Ilwrath
@@ -3127,19 +3130,19 @@ static bool DoSolarSysMenu(MenuState* pMS)
 				return false;
 			}
 			break;
-		case CARGO:
+		case *SolarSysMenuItem::Cargo:
 			CargoMenu();
 			break;
-		case ROSTER:
+		case *SolarSysMenuItem::Roster:
 			select = RosterMenu();
 			break;
-		case GAME_MENU:
+		case *SolarSysMenuItem::GameMenu:
 			if (!GameOptions())
 			{
 				return false; // abort or load
 			}
 			break;
-		case STARMAP:
+		case *SolarSysMenuItem::Starmap:
 			StarMap();
 			if (uqm::currentActivity() & CHECK_ABORT)
 			{
@@ -3150,10 +3153,10 @@ static bool DoSolarSysMenu(MenuState* pMS)
 
 			if (uqm::UQMOptions::read().whichMenu != uqm::EmulationMode::PC)
 			{
-				DrawMenuStateStrings(PM_STARMAP, NAVIGATION);
+				DrawMenuStateStrings(MenuString::Starmap, *SolarSysMenuItem::Navigation);
 			}
 			// Fall through !!!
-		case NAVIGATION:
+		case *SolarSysMenuItem::Navigation:
 			return false;
 	}
 
@@ -3163,9 +3166,9 @@ static bool DoSolarSysMenu(MenuState* pMS)
 		{ // 3DO menu jumps to NAVIGATE after a successful submenu run
 			if (uqm::UQMOptions::read().whichMenu != uqm::EmulationMode::PC)
 			{
-				pMS->CurState = NAVIGATION;
+				pMS->CurState = *SolarSysMenuItem::Navigation;
 			}
-			DrawMenuStateStrings(PM_STARMAP, pMS->CurState);
+			DrawMenuStateStrings(MenuString::Starmap, pMS->CurState);
 		}
 		SetFlashRect(SfrMenu3do(), false);
 	}
@@ -3181,12 +3184,12 @@ static void SolarSysMenu(void)
 
 	if (LastActivity == CHECK_LOAD)
 	{ // Selected LOAD from main menu
-		menuState.CurState = GAME_MENU;
+		menuState.CurState = *SolarSysMenuItem::GameMenu;
 	}
 	else
 	{
-		DrawMenuStateStrings(PM_STARMAP, STARMAP);
-		menuState.CurState = STARMAP;
+		DrawMenuStateStrings(MenuString::Starmap, *SolarSysMenuItem::Starmap);
+		menuState.CurState = *SolarSysMenuItem::Starmap;
 	}
 
 	DrawStatusMessage(nullptr);
@@ -3198,14 +3201,14 @@ static void SolarSysMenu(void)
 
 	if (!(uqm::currentActivity() & CHECK_LOAD))
 	{
-		DrawMenuStateStrings(PM_STARMAP, -NAVIGATION);
+		DrawMenuStateStrings(MenuString::Starmap, -SolarSysMenuItem::Navigation);
 	}
 }
 
 static bool DoIpFlight(SolarSystemState* pSS)
 {
 	//static TimeCount NextTime; unused
-	const bool cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
+	const bool cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
 
 	if (pSS->InOrbit)
 	{ // CheckShipLocation() or InitSolarSys() sent us to orbital

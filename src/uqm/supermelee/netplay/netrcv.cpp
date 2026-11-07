@@ -55,12 +55,12 @@ static uqstl::expected<size_t, uqstl::error_code> dataReceivedSingle(NetConnecti
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (packetLen < packetTypeData[+type].len)
+	if (packetLen < packetTypeData[*type].len)
 	{
 		// Bad len field of packet.
 		uqm::log::warn("Packet with bad length field received (type="
 					   "{}, lenfield={}.\n",
-					   packetTypeData[+type].name,
+					   packetTypeData[*type].name,
 					   packetLen);
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -73,7 +73,7 @@ static uqstl::expected<size_t, uqstl::error_code> dataReceivedSingle(NetConnecti
 
 #ifdef NETPLAY_STATISTICS
 	NetConnection_getStatistics(conn)->packetsReceived++;
-	NetConnection_getStatistics(conn)->packetTypeReceived[+type]++;
+	NetConnection_getStatistics(conn)->packetTypeReceived[*type]++;
 #endif
 
 #ifdef NETPLAY_DEBUG
@@ -94,7 +94,7 @@ static uqstl::expected<size_t, uqstl::error_code> dataReceivedSingle(NetConnecti
 #endif /* NETPLAY_DEBUG_FILE */
 #endif /* NETPLAY_DEBUG */
 
-	if (NetResult result {packetTypeData[+type].handler(conn, data)}; !result)
+	if (NetResult result {packetTypeData[*type].handler(conn, data)}; !result)
 	{
 		return uqstl::unexpected {result.error()};
 	}

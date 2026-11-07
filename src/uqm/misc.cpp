@@ -360,7 +360,7 @@ void crew_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		if (!(StarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune))
 		{
-			ProcessSound(GetSound(GameSounds, GRAB_CREW), ElementPtr1);
+			ProcessSound(GetSound(GameSounds, SoundEffect::GrabCrew), ElementPtr1);
 			DeltaCrew(ElementPtr1, 1);
 		}
 	}

@@ -151,7 +151,7 @@ static void SelectAlienZOQ(CallbackArg arg)
 		{
 			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
 		}
-		LastAlien = +ZoqFotPikAlien::Zoq;
+		LastAlien = *ZoqFotPikAlien::Zoq;
 		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
 		CommData.AlienTransitionDesc.StartIndex = FotToZoq;
 		CommData.AlienTalkDesc.StartIndex = ZoqTalkIndex;
@@ -177,7 +177,7 @@ static void SelectAlienPIK(CallbackArg arg)
 		{
 			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
 		}
-		LastAlien = +ZoqFotPikAlien::Pik;
+		LastAlien = *ZoqFotPikAlien::Pik;
 		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
 		CommData.AlienTransitionDesc.StartIndex = FotToPik;
 		CommData.AlienTalkDesc.StartIndex = PikTalkIndex;
@@ -195,7 +195,7 @@ static void SelectAlienPIK(CallbackArg arg)
 
 static void ZFPTalkSegue(uint16_t wait_track)
 {
-	LastAlien = +ZoqFotPikAlien::Fot;
+	LastAlien = *ZoqFotPikAlien::Fot;
 	SelectAlienZOQ(0);
 	AlienTalkSegue(wait_track);
 }

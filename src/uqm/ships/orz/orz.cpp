@@ -264,7 +264,7 @@ static void orz_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 	--TurretPtr->turn_wait;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (lpEvalDesc->ObjectPtr == 0)
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;

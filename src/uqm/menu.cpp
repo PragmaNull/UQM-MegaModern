@@ -40,7 +40,7 @@ static uint8_t GetBeginMenuState(uint8_t BaseState);
 static uint8_t FixMenuState(uint8_t BadState);
 static uint8_t NextMenuState(uint8_t BaseState, uint8_t CurState);
 static uint8_t PreviousMenuState(uint8_t BaseState, uint8_t CurState);
-static bool GetAlternateMenu(uint8_t* BaseState, uint8_t* CurState);
+static bool GetAlternateMenu(MenuString* BaseState, uint8_t* CurState);
 static uint8_t ConvertAlternateMenu(uint8_t BaseState, uint8_t NewState);
 void FunkyMenu(uint8_t m, GfxStamp stmp);
 
@@ -52,7 +52,7 @@ static void DrawPCMenuFrame(GfxRect* r)
 	if (IsHd() || uqm::UQMOptions::read().customBorder)
 	{
 		DrawRenderedBox(r, true, PcmenuBackgroundColor,
-						uqm::UQMOptions::read().customBorder ? SPECIAL_BEVEL : THIN_INNER_BEVEL,
+						uqm::UQMOptions::read().customBorder ? BevelLevel::SpecialBevel : BevelLevel::ThinInnerBevel,
 						uqm::UQMOptions::read().customBorder);
 	}
 	else
@@ -105,7 +105,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 		DrawFilledRectangle(&rt);
 	}
 
-	DrawBorder(SIS_RADAR_FRAME);
+	DrawBorder(BorderFrameIndex::SisRadar);
 
 	if (num_items * PcMenuHeight() > r->extent.height)
 	{
@@ -133,14 +133,14 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 	for (uint16_t i {beg_index}; i <= end_index; i++)
 	{
 		// To compensate for the read speed menu entries
-		j = i > PM_EXIT_SETTINGS ?
-				(i - (PM_CHANGE_CAPTAIN - PM_READ_VERY_SLOW)) :
+		j = i > MenuString::ExitSettings ?
+				(i - (MenuString::ChangeCaptain - MenuString::ReadVerySlow)) :
 				i;
 
 		uqm::utf8StringCopy(buf, sizeof buf,
-							(i == PM_FUEL) ? pm_fuel_str :
-							(i == PM_CREW) ? pm_crew_str :
-											 GameString(MAINMENU_STRING_BASE + j));
+							(i == MenuString::Fuel) ? pm_fuel_str :
+							(i == MenuString::Crew) ? pm_crew_str :
+													  GameString(MAINMENU_STRING_BASE + j));
 		if (hilite && pos == i)
 		{
 			// Currently selected menu option.
@@ -158,7 +158,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 					s.origin = r->corner;
 
 					s.frame = SetAbsFrameIndex(CustBevelFrame,
-											   DOS_MENU_HILITE);
+											   BevelLevel::DosMenuHilite);
 					DrawStamp(&s);
 				}
 				else
@@ -193,37 +193,37 @@ static uint8_t GetEndMenuState(uint8_t BaseState)
 {
 	switch (BaseState)
 	{
-		case PM_SCAN:
-		case PM_STARMAP:
-			return PM_NAVIGATE;
+		case *MenuString::Scan:
+		case *MenuString::Starmap:
+			return *MenuString::Navigate;
 			break;
-		case PM_MIN_SCAN:
-			return PM_LAUNCH_LANDER;
+		case *MenuString::MinScan:
+			return *MenuString::LaunchLander;
 			break;
-		case PM_SAVE_GAME:
-			return PM_EXIT_GAME_MENU;
+		case *MenuString::SaveGame:
+			return *MenuString::ExitGameMenu;
 			break;
-		case PM_CONVERSE:
-			return PM_ENCOUNTER_GAME_MENU;
+		case *MenuString::Converse:
+			return *MenuString::EncounterGameMenu;
 			break;
-		case PM_FUEL:
-			return PM_EXIT_OUTFIT;
+		case *MenuString::Fuel:
+			return *MenuString::ExitOutfit;
 			break;
-		case PM_CREW:
-			return PM_EXIT_SHIPYARD;
+		case *MenuString::Crew:
+			return *MenuString::ExitShipyard;
 			break;
-		case PM_SOUND_ON:
-			return PM_EXIT_SETTINGS;
+		case *MenuString::SoundOn:
+			return *MenuString::ExitSettings;
 			break;
-		case PM_ALT_SCAN:
-		case PM_ALT_STARMAP:
-			return PM_ALT_NAVIGATE;
+		case *MenuString::AltScan:
+		case *MenuString::AltStarmap:
+			return *MenuString::AltNavigate;
 			break;
-		case PM_ALT_CARGO:
-			return PM_ALT_EXIT_MANIFEST;
+		case *MenuString::AltCargo:
+			return *MenuString::AltExitManifest;
 			break;
-		case PM_ALT_MSCAN:
-			return PM_ALT_EXIT_SCAN;
+		case *MenuString::AltMscan:
+			return *MenuString::AltExitScan;
 			break;
 	}
 	return BaseState;
@@ -239,28 +239,28 @@ static uint8_t FixMenuState(uint8_t BadState)
 {
 	switch (BadState)
 	{
-		case PM_SOUND_ON:
+		case *MenuString::SoundOn:
 			if (uqm::globalFlags() & SoundDisabled)
 			{
-				return PM_SOUND_OFF;
+				return *MenuString::SoundOff;
 			}
 			else
 			{
-				return PM_SOUND_ON;
+				return *MenuString::SoundOn;
 			}
-		case PM_MUSIC_ON:
+		case *MenuString::MusicOn:
 			if (uqm::globalFlags() & MusicDisabled)
 			{
-				return PM_MUSIC_OFF;
+				return *MenuString::MusicOff;
 			}
 			else
 			{
-				return PM_MUSIC_ON;
+				return *MenuString::MusicOn;
 			}
-		case PM_CYBORG_OFF:
-			return (PM_CYBORG_OFF + ((uint8_t)(uqm::globalFlags() & CombatSpeedMask) >> CombatSpeedShift));
-		case PM_READ_VERY_SLOW:
-			return (PM_READ_VERY_SLOW + (uint8_t)(uqm::globalFlags() & ReadSpeedMask));
+		case *MenuString::CyborgOff:
+			return *(MenuString::CyborgOff + ((uint8_t)(uqm::globalFlags() & CombatSpeedMask) >> CombatSpeedShift));
+		case *MenuString::ReadVerySlow:
+			return *(MenuString::ReadVerySlow + (uint8_t)(uqm::globalFlags() & ReadSpeedMask));
 	}
 	return BadState;
 }
@@ -271,40 +271,40 @@ static uint8_t NextMenuState(uint8_t BaseState, uint8_t CurState)
 	uint8_t NextState {};
 	uint8_t AdjBase = BaseState;
 
-	if (BaseState == PM_STARMAP)
+	if (BaseState == MenuString::Starmap)
 	{
 		AdjBase--;
 	}
 
 	switch (AdjBase + CurState)
 	{
-		case PM_SOUND_ON:
-		case PM_SOUND_OFF:
-			NextState = PM_MUSIC_ON;
+		case *MenuString::SoundOn:
+		case *MenuString::SoundOff:
+			NextState = *MenuString::MusicOn;
 			break;
-		case PM_MUSIC_ON:
-		case PM_MUSIC_OFF:
-			NextState = PM_CYBORG_OFF;
+		case *MenuString::MusicOn:
+		case *MenuString::MusicOff:
+			NextState = *MenuString::CyborgOff;
 			break;
-		case PM_CYBORG_OFF:
-		case PM_CYBORG_NORMAL:
-		case PM_CYBORG_DOUBLE:
-		case PM_CYBORG_SUPER:
+		case *MenuString::CyborgOff:
+		case *MenuString::CyborgNormal:
+		case *MenuString::CyborgDouble:
+		case *MenuString::CyborgSuper:
 			if ((isPC(uqm::UQMOptions::read().smoothScroll) && !usingSpeech) || isPC(uqm::UQMOptions::read().whichMenu))
 			{
-				NextState = PM_READ_VERY_SLOW;
+				NextState = *MenuString::ReadVerySlow;
 			}
 			else
 			{
-				NextState = PM_CHANGE_CAPTAIN;
+				NextState = *MenuString::ChangeCaptain;
 			}
 			break;
-		case PM_READ_VERY_SLOW:
-		case PM_READ_SLOW:
-		case PM_READ_MODERATE:
-		case PM_READ_FAST:
-		case PM_READ_VERY_FAST:
-			NextState = PM_CHANGE_CAPTAIN;
+		case *MenuString::ReadVerySlow:
+		case *MenuString::ReadSlow:
+		case *MenuString::ReadModerate:
+		case *MenuString::ReadFast:
+		case *MenuString::ReadVeryFast:
+			NextState = *MenuString::ChangeCaptain;
 			break;
 		default:
 			NextState = AdjBase + CurState + 1;
@@ -322,41 +322,41 @@ uint8_t PreviousMenuState(uint8_t BaseState, uint8_t CurState)
 	int16_t NextState {};
 	uint8_t AdjBase = BaseState;
 
-	if (BaseState == PM_STARMAP)
+	if (BaseState == MenuString::Starmap)
 	{
 		AdjBase--;
 	}
 
 	switch (AdjBase + CurState)
 	{
-		case PM_SOUND_OFF:
-			NextState = PM_EXIT_SETTINGS;
+		case *MenuString::SoundOff:
+			NextState = *MenuString::ExitSettings;
 			break;
-		case PM_MUSIC_ON:
-		case PM_MUSIC_OFF:
-			NextState = PM_SOUND_ON;
+		case *MenuString::MusicOn:
+		case *MenuString::MusicOff:
+			NextState = *MenuString::SoundOn;
 			break;
-		case PM_CYBORG_OFF:
-		case PM_CYBORG_NORMAL:
-		case PM_CYBORG_DOUBLE:
-		case PM_CYBORG_SUPER:
-			NextState = PM_MUSIC_ON;
+		case *MenuString::CyborgOff:
+		case *MenuString::CyborgNormal:
+		case *MenuString::CyborgDouble:
+		case *MenuString::CyborgSuper:
+			NextState = *MenuString::MusicOn;
 			break;
-		case PM_READ_VERY_SLOW:
-		case PM_READ_SLOW:
-		case PM_READ_MODERATE:
-		case PM_READ_FAST:
-		case PM_READ_VERY_FAST:
-			NextState = PM_CYBORG_OFF;
+		case *MenuString::ReadVerySlow:
+		case *MenuString::ReadSlow:
+		case *MenuString::ReadModerate:
+		case *MenuString::ReadFast:
+		case *MenuString::ReadVeryFast:
+			NextState = *MenuString::CyborgOff;
 			break;
-		case PM_CHANGE_CAPTAIN:
+		case *MenuString::ChangeCaptain:
 			if ((isPC(uqm::UQMOptions::read().smoothScroll) && !usingSpeech) || isPC(uqm::UQMOptions::read().whichMenu))
 			{
-				NextState = PM_READ_VERY_SLOW;
+				NextState = *MenuString::ReadVerySlow;
 			}
 			else
 			{
-				NextState = PM_CYBORG_OFF;
+				NextState = *MenuString::CyborgOff;
 			}
 			break;
 		default:
@@ -371,11 +371,11 @@ uint8_t PreviousMenuState(uint8_t BaseState, uint8_t CurState)
 
 
 /* When using PC hierarchy, convert 3do->PC */
-static bool GetAlternateMenu(uint8_t* BaseState, uint8_t* CurState)
+static bool GetAlternateMenu(MenuString* BaseState, uint8_t* CurState)
 {
-	uint8_t AdjBase = *BaseState;
+	uint8_t AdjBase = *(*BaseState);
 	uint8_t adj = 0;
-	if (*BaseState == PM_STARMAP)
+	if (*BaseState == MenuString::Starmap)
 	{
 		AdjBase--;
 		adj = 1;
@@ -385,12 +385,12 @@ static bool GetAlternateMenu(uint8_t* BaseState, uint8_t* CurState)
 		switch (*CurState)
 		{
 			case AltManifest:
-				*BaseState = PM_ALT_SCAN + adj;
-				*CurState = PM_ALT_MANIFEST - PM_ALT_SCAN - adj;
+				*BaseState = MenuString::AltScan + adj;
+				*CurState = MenuString::AltManifest - MenuString::AltScan - adj;
 				return true;
 			case AltExitManifest:
-				*BaseState = PM_ALT_CARGO;
-				*CurState = PM_ALT_EXIT_MANIFEST - PM_ALT_CARGO;
+				*BaseState = MenuString::AltCargo;
+				*CurState = MenuString::AltExitManifest - MenuString::AltCargo;
 				return true;
 		}
 		uqm::log::error("Unknown state combination: {}, {}",
@@ -401,57 +401,57 @@ static bool GetAlternateMenu(uint8_t* BaseState, uint8_t* CurState)
 	{
 		switch (AdjBase + *CurState)
 		{
-			case PM_SCAN:
-				*BaseState = PM_ALT_SCAN;
-				*CurState = PM_ALT_SCAN - PM_ALT_SCAN;
+			case *MenuString::Scan:
+				*BaseState = MenuString::AltScan;
+				*CurState = MenuString::AltScan - MenuString::AltScan;
 				return true;
-			case PM_STARMAP:
-				*BaseState = PM_ALT_SCAN + adj;
-				*CurState = PM_ALT_STARMAP - PM_ALT_SCAN - adj;
+			case *MenuString::Starmap:
+				*BaseState = MenuString::AltScan + adj;
+				*CurState = MenuString::AltStarmap - MenuString::AltScan - adj;
 				return true;
-			case PM_DEVICES:
-				*BaseState = PM_ALT_CARGO;
-				*CurState = PM_ALT_DEVICES - PM_ALT_CARGO;
+			case *MenuString::Devices:
+				*BaseState = MenuString::AltCargo;
+				*CurState = MenuString::AltDevices - MenuString::AltCargo;
 				return true;
-			case PM_CARGO:
-				*BaseState = PM_ALT_CARGO;
-				*CurState = PM_ALT_CARGO - PM_ALT_CARGO;
+			case *MenuString::Cargo:
+				*BaseState = MenuString::AltCargo;
+				*CurState = MenuString::AltCargo - MenuString::AltCargo;
 				return true;
-			case PM_ROSTER:
-				*BaseState = PM_ALT_CARGO;
-				*CurState = PM_ALT_ROSTER - PM_ALT_CARGO;
+			case *MenuString::Roster:
+				*BaseState = MenuString::AltCargo;
+				*CurState = MenuString::AltRoster - MenuString::AltCargo;
 				return true;
-			case PM_GAME_MENU:
-				*BaseState = PM_ALT_SCAN + adj;
-				*CurState = PM_ALT_GAME_MENU - PM_ALT_SCAN - adj;
+			case *MenuString::GameMenu:
+				*BaseState = MenuString::AltScan + adj;
+				*CurState = MenuString::AltGameMenu - MenuString::AltScan - adj;
 				return true;
-			case PM_NAVIGATE:
-				*BaseState = PM_ALT_SCAN + adj;
-				*CurState = PM_ALT_NAVIGATE - PM_ALT_SCAN - adj;
+			case *MenuString::Navigate:
+				*BaseState = MenuString::AltScan + adj;
+				*CurState = MenuString::AltNavigate - MenuString::AltScan - adj;
 				return true;
-			case PM_MIN_SCAN:
-				*BaseState = PM_ALT_MSCAN;
-				*CurState = PM_ALT_MSCAN - PM_ALT_MSCAN;
+			case *MenuString::MinScan:
+				*BaseState = MenuString::AltMscan;
+				*CurState = MenuString::AltMscan - MenuString::AltMscan;
 				return true;
-			case PM_ENE_SCAN:
-				*BaseState = PM_ALT_MSCAN;
-				*CurState = PM_ALT_ESCAN - PM_ALT_MSCAN;
+			case *MenuString::EneScan:
+				*BaseState = MenuString::AltMscan;
+				*CurState = MenuString::AltEscan - MenuString::AltMscan;
 				return true;
-			case PM_BIO_SCAN:
-				*BaseState = PM_ALT_MSCAN;
-				*CurState = PM_ALT_BSCAN - PM_ALT_MSCAN;
+			case *MenuString::BioScan:
+				*BaseState = MenuString::AltMscan;
+				*CurState = MenuString::AltBscan - MenuString::AltMscan;
 				return true;
-			case PM_EXIT_SCAN:
-				*BaseState = PM_ALT_MSCAN;
-				*CurState = PM_ALT_EXIT_SCAN - PM_ALT_MSCAN;
+			case *MenuString::ExitScan:
+				*BaseState = MenuString::AltMscan;
+				*CurState = MenuString::AltExitScan - MenuString::AltMscan;
 				return true;
-			case PM_AUTO_SCAN:
-				*BaseState = PM_ALT_MSCAN;
-				*CurState = PM_ALT_ASCAN - PM_ALT_MSCAN;
+			case *MenuString::AutoScan:
+				*BaseState = MenuString::AltMscan;
+				*CurState = MenuString::AltAscan - MenuString::AltMscan;
 				return true;
-			case PM_LAUNCH_LANDER:
-				*BaseState = PM_ALT_MSCAN;
-				*CurState = PM_ALT_DISPATCH - PM_ALT_MSCAN;
+			case *MenuString::LaunchLander:
+				*BaseState = MenuString::AltMscan;
+				*CurState = MenuString::AltDispatch - MenuString::AltMscan;
 				return true;
 		}
 		return false;
@@ -463,94 +463,94 @@ static uint8_t ConvertAlternateMenu(uint8_t BaseState, uint8_t NewState)
 {
 	switch (BaseState + NewState)
 	{
-		case PM_ALT_SCAN:
-			return (PM_SCAN - PM_SCAN);
-		case PM_ALT_STARMAP:
-			return (PM_STARMAP - PM_SCAN);
-		case PM_ALT_MANIFEST:
+		case *MenuString::AltScan:
+			return (MenuString::Scan - MenuString::Scan);
+		case *MenuString::AltStarmap:
+			return (MenuString::Starmap - MenuString::Scan);
+		case *MenuString::AltManifest:
 			return (AltManifest);
-		case PM_ALT_GAME_MENU:
-			return (PM_GAME_MENU - PM_SCAN);
-		case PM_ALT_NAVIGATE:
-			return (PM_NAVIGATE - PM_SCAN);
-		case PM_ALT_CARGO:
-			return (PM_CARGO - PM_SCAN);
-		case PM_ALT_DEVICES:
-			return (PM_DEVICES - PM_SCAN);
-		case PM_ALT_ROSTER:
-			return (PM_ROSTER - PM_SCAN);
-		case PM_ALT_EXIT_MANIFEST:
+		case *MenuString::AltGameMenu:
+			return (MenuString::GameMenu - MenuString::Scan);
+		case *MenuString::AltNavigate:
+			return (MenuString::Navigate - MenuString::Scan);
+		case *MenuString::AltCargo:
+			return (MenuString::Cargo - MenuString::Scan);
+		case *MenuString::AltDevices:
+			return (MenuString::Devices - MenuString::Scan);
+		case *MenuString::AltRoster:
+			return (MenuString::Roster - MenuString::Scan);
+		case *MenuString::AltExitManifest:
 			return (AltExitManifest);
-		case PM_ALT_MSCAN:
-			return (PM_MIN_SCAN - PM_MIN_SCAN);
-		case PM_ALT_ESCAN:
-			return (PM_ENE_SCAN - PM_MIN_SCAN);
-		case PM_ALT_BSCAN:
-			return (PM_BIO_SCAN - PM_MIN_SCAN);
-		case PM_ALT_ASCAN:
-			return (PM_AUTO_SCAN - PM_MIN_SCAN);
-		case PM_ALT_DISPATCH:
-			return (PM_LAUNCH_LANDER - PM_MIN_SCAN);
-		case PM_ALT_EXIT_SCAN:
-			return (PM_EXIT_SCAN - PM_MIN_SCAN);
+		case *MenuString::AltMscan:
+			return (MenuString::MinScan - MenuString::MinScan);
+		case *MenuString::AltEscan:
+			return (MenuString::EneScan - MenuString::MinScan);
+		case *MenuString::AltBscan:
+			return (MenuString::BioScan - MenuString::MinScan);
+		case *MenuString::AltAscan:
+			return (MenuString::AutoScan - MenuString::MinScan);
+		case *MenuString::AltDispatch:
+			return (MenuString::LaunchLander - MenuString::MinScan);
+		case *MenuString::AltExitScan:
+			return (MenuString::ExitScan - MenuString::MinScan);
 	}
 	return (NewState);
 }
 
-bool DoMenuChooser(MenuState* pMS, uint8_t BaseState)
+bool DoMenuChooser(MenuState* pMS, MenuString BaseState)
 {
 	uint8_t NewState = pMS->CurState;
-	const uint8_t OrigBase = BaseState;
+	const MenuString OrigBase {BaseState};
 	bool useAltMenu = false;
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
 		useAltMenu = GetAlternateMenu(&BaseState, &NewState);
 	}
-	if (PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_UP])
+	if (PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuUp])
 	{
-		NewState = PreviousMenuState(BaseState, NewState);
+		NewState = PreviousMenuState(*BaseState, NewState);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_RIGHT] || PulsedInputState.menu[KEY_MENU_DOWN])
+	else if (PulsedInputState.menu[*MenuKey::MenuRight] || PulsedInputState.menu[*MenuKey::MenuDown])
 	{
-		NewState = NextMenuState(BaseState, NewState);
+		NewState = NextMenuState(*BaseState, NewState);
 	}
-	else if (useAltMenu && PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (useAltMenu && PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
-		NewState = ConvertAlternateMenu(BaseState, NewState);
+		NewState = ConvertAlternateMenu(*BaseState, NewState);
 		if (NewState == AltManifest)
 		{
-			DrawMenuStateStrings(PM_ALT_CARGO, 0);
-			pMS->CurState = PM_CARGO - PM_SCAN;
+			DrawMenuStateStrings(MenuString::AltCargo, 0);
+			pMS->CurState = MenuString::Cargo - MenuString::Scan;
 			return true;
 		}
 		if (NewState == AltExitManifest)
 		{
-			if (OrigBase == PM_SCAN)
+			if (OrigBase == MenuString::Scan)
 			{
-				DrawMenuStateStrings(PM_ALT_SCAN,
-									 PM_ALT_MANIFEST - PM_ALT_SCAN);
+				DrawMenuStateStrings(MenuString::AltScan,
+									 MenuString::AltManifest - MenuString::AltScan);
 			}
 			else
 			{
-				DrawMenuStateStrings(PM_ALT_STARMAP,
-									 PM_ALT_MANIFEST - PM_ALT_STARMAP);
+				DrawMenuStateStrings(MenuString::AltStarmap,
+									 MenuString::AltManifest - MenuString::AltStarmap);
 			}
 			pMS->CurState = AltManifest;
 			return true;
 		}
 		return false;
 	}
-	else if ((uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC) && PulsedInputState.menu[KEY_MENU_CANCEL] && (BaseState == PM_ALT_CARGO))
+	else if ((uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC) && PulsedInputState.menu[*MenuKey::MenuCancel] && (BaseState == MenuString::AltCargo))
 	{
-		if (OrigBase == PM_SCAN)
+		if (OrigBase == MenuString::Scan)
 		{
-			DrawMenuStateStrings(PM_ALT_SCAN,
-								 PM_ALT_MANIFEST - PM_ALT_SCAN);
+			DrawMenuStateStrings(MenuString::AltScan,
+								 MenuString::AltManifest - MenuString::AltScan);
 		}
 		else
 		{
-			DrawMenuStateStrings(PM_ALT_STARMAP,
-								 PM_ALT_MANIFEST - PM_ALT_STARMAP);
+			DrawMenuStateStrings(MenuString::AltStarmap,
+								 MenuString::AltManifest - MenuString::AltStarmap);
 		}
 		pMS->CurState = AltManifest;
 		return true;
@@ -563,7 +563,7 @@ bool DoMenuChooser(MenuState* pMS, uint8_t BaseState)
 	DrawMenuStateStrings(BaseState, NewState);
 	if (useAltMenu)
 	{
-		NewState = ConvertAlternateMenu(BaseState, NewState);
+		NewState = ConvertAlternateMenu(*BaseState, NewState);
 	}
 	pMS->CurState = NewState;
 
@@ -574,69 +574,69 @@ const char* IndexToText(int Index)
 {
 	int i = -1;
 
-	if (Index < PM_EXIT_GAME_MENU)
+	if (Index < MenuString::ExitGameMenu)
 	{
 		i = Index;
 	}
 
 	switch (Index)
 	{
-		case PM_ENCOUNTER_GAME_MENU:
-		case PM_OUTFIT_GAME_MENU:
-		case PM_SHIPYARD_GAME_MENU:
-			i = GAMESTR_GAME_MENU;
+		case *MenuString::EncounterGameMenu:
+		case *MenuString::OutfitGameMenu:
+		case *MenuString::ShipyardGameMenu:
+			i = *GameMenuString::GameMenu;
 			break;
-		case PM_EXIT_GAME_MENU:
-		case PM_EXIT_OUTFIT:
-		case PM_EXIT_SHIPYARD:
-		case PM_EXIT_SETTINGS:
-			i = GAMESTR_EXIT_MENU;
+		case *MenuString::ExitGameMenu:
+		case *MenuString::ExitOutfit:
+		case *MenuString::ExitShipyard:
+		case *MenuString::ExitSettings:
+			i = *GameMenuString::ExitMenu;
 			break;
-		case PM_CONVERSE:
-			i = GAMESTR_CONVERSE;
+		case *MenuString::Converse:
+			i = *GameMenuString::Converse;
 			break;
-		case PM_ATTACK:
-			i = GAMESTR_ATTACK;
+		case *MenuString::Attack:
+			i = *GameMenuString::Attack;
 			break;
-		case PM_FUEL:
-			i = GAMESTR_FUEL;
+		case *MenuString::Fuel:
+			i = *GameMenuString::Fuel;
 			break;
-		case PM_MODULE:
-			i = GAMESTR_MODULE;
+		case *MenuString::Module:
+			i = *GameMenuString::Module;
 			break;
-		case PM_CREW:
-			i = GAMESTR_CREW;
+		case *MenuString::Crew:
+			i = *GameMenuString::Crew;
 			break;
-		case PM_SOUND_ON:
-			i = GAMESTR_SND_ON;
+		case *MenuString::SoundOn:
+			i = *GameMenuString::SndOn;
 			break;
-		case PM_SOUND_OFF:
-			i = GAMESTR_SND_OFF;
+		case *MenuString::SoundOff:
+			i = *GameMenuString::SndOff;
 			break;
-		case PM_MUSIC_ON:
-			i = GAMESTR_MUS_ON;
+		case *MenuString::MusicOn:
+			i = *GameMenuString::MusOn;
 			break;
-		case PM_MUSIC_OFF:
-			i = GAMESTR_MUS_OFF;
+		case *MenuString::MusicOff:
+			i = *GameMenuString::MusOff;
 			break;
-		case PM_CYBORG_OFF:
-		case PM_CYBORG_NORMAL:
-		case PM_CYBORG_DOUBLE:
-		case PM_CYBORG_SUPER:
-			i = GAMESTR_COMBAT;
+		case *MenuString::CyborgOff:
+		case *MenuString::CyborgNormal:
+		case *MenuString::CyborgDouble:
+		case *MenuString::CyborgSuper:
+			i = *GameMenuString::Combat;
 			break;
-		case PM_READ_VERY_SLOW:
-		case PM_READ_SLOW:
-		case PM_READ_MODERATE:
-		case PM_READ_FAST:
-		case PM_READ_VERY_FAST:
-			i = GAMESTR_READING;
+		case *MenuString::ReadVerySlow:
+		case *MenuString::ReadSlow:
+		case *MenuString::ReadModerate:
+		case *MenuString::ReadFast:
+		case *MenuString::ReadVeryFast:
+			i = *GameMenuString::Reading;
 			break;
-		case PM_CHANGE_CAPTAIN:
-			i = GAMESTR_CHANGE_CAP;
+		case *MenuString::ChangeCaptain:
+			i = *GameMenuString::ChangeCap;
 			break;
-		case PM_CHANGE_SHIP:
-			i = GAMESTR_CHANGE_SIS;
+		case *MenuString::ChangeShip:
+			i = *GameMenuString::ChangeSis;
 			break;
 		default:
 			break;
@@ -676,7 +676,7 @@ static void Draw3DOMenuText(GfxRect* r, int Index)
 	}
 	else
 	{
-		DrawBorder(TEXT_LABEL_FRAME);
+		DrawBorder(BorderFrameIndex::TextLabel);
 	}
 
 	text.align = TextAlign::Center;
@@ -693,7 +693,7 @@ static void Draw3DOMenuText(GfxRect* r, int Index)
 	SetContextForeGroundColor(OldColor);
 }
 
-void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
+void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)
 {
 	GfxRect r;
 	GfxStamp s;
@@ -718,14 +718,14 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 		NewState = tmpState;
 	}
 
-	if (beg_index == PM_STARMAP)
+	if (beg_index == MenuString::Starmap)
 	{
 		NewState--;
 	}
-	uint8_t end_index {GetEndMenuState(beg_index)};
+	uint8_t end_index {GetEndMenuState(*beg_index)};
 
 	s.frame = 0;
-	if (NewState <= end_index - beg_index)
+	if (NewState <= end_index - *beg_index)
 	{
 		s.frame = SetAbsFrameIndex(PlayFrame, beg_index + NewState);
 	}
@@ -750,64 +750,66 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 	if (s.frame && uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
-		if (beg_index == PM_CREW)
+		if (beg_index == MenuString::Crew)
 		{
 			fmt::format_to_sz_n(pm_crew_str, "{}({})",
-								GameString(MAINMENU_STRING_BASE + static_cast<int>(PM_CREW)),
+								GameString(MAINMENU_STRING_BASE + static_cast<int>(MenuString::Crew)),
 								uqm::gameState().game().CrewCost);
 		}
-		if (beg_index == PM_FUEL)
+		if (beg_index == MenuString::Fuel)
 		{
 			fmt::format_to_sz_n(pm_fuel_str, "{}({})",
-								GameString(MAINMENU_STRING_BASE + static_cast<int>(PM_FUEL)),
+								GameString(MAINMENU_STRING_BASE + static_cast<int>(MenuString::Fuel)),
 								uqm::gameState().game().FuelCost);
 		}
-		if (beg_index == PM_SOUND_ON)
+		if (beg_index == MenuString::SoundOn)
 		{
-			end_index = beg_index + 6;
+			end_index = *beg_index + 6;
 
 			switch (beg_index + NewState)
 			{
-				case PM_SOUND_ON:
-				case PM_SOUND_OFF:
+				case MenuString::SoundOn:
+				case MenuString::SoundOff:
 					NewState = 0;
 					break;
-				case PM_MUSIC_ON:
-				case PM_MUSIC_OFF:
+				case MenuString::MusicOn:
+				case MenuString::MusicOff:
 					NewState = 1;
 					break;
-				case PM_CYBORG_OFF:
-				case PM_CYBORG_NORMAL:
-				case PM_CYBORG_DOUBLE:
-				case PM_CYBORG_SUPER:
+				case MenuString::CyborgOff:
+				case MenuString::CyborgNormal:
+				case MenuString::CyborgDouble:
+				case MenuString::CyborgSuper:
 					NewState = 2;
 					break;
-				case PM_READ_VERY_SLOW:
-				case PM_READ_SLOW:
-				case PM_READ_MODERATE:
-				case PM_READ_FAST:
-				case PM_READ_VERY_FAST:
+				case MenuString::ReadVerySlow:
+				case MenuString::ReadSlow:
+				case MenuString::ReadModerate:
+				case MenuString::ReadFast:
+				case MenuString::ReadVeryFast:
 					NewState = 3;
 					break;
-				case PM_CHANGE_CAPTAIN:
+				case MenuString::ChangeCaptain:
 					NewState = 4;
 					break;
-				case PM_CHANGE_SHIP:
+				case MenuString::ChangeShip:
 					NewState = 5;
 					break;
-				case PM_EXIT_SETTINGS:
+				case MenuString::ExitSettings:
 					NewState = 6;
+					break;
+				default:
 					break;
 			}
 		}
 		r.extent.height = RadarHeight() + ResScale(12);
 
-		DrawPCMenu(beg_index, end_index, (uint8_t)NewState, hilite, &r);
+		DrawPCMenu(*beg_index, end_index, (uint8_t)NewState, hilite, &r);
 		s.frame = 0;
 
 		if (uqm::UQMOptions::read().submenu)
 		{
-			FunkyMenu(beg_index + (uint8_t)NewState, s);
+			FunkyMenu(*beg_index + (uint8_t)NewState, s);
 		}
 	}
 	else
@@ -826,28 +828,28 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 		}
 		else
 		{
-			DrawBorder(SIS_RADAR_FRAME);
+			DrawBorder(BorderFrameIndex::SisRadar);
 		}
 	}
 	if (s.frame)
 	{
 		if (uqm::UQMOptions::read().submenu)
 		{
-			FunkyMenu(beg_index + (uint8_t)NewState, s);
+			FunkyMenu(*beg_index + (uint8_t)NewState, s);
 		}
 		else
 		{
 			DrawStamp(&s);
 		}
 
-		Draw3DOMenuText(&r, beg_index + NewState);
+		Draw3DOMenuText(&r, *beg_index + NewState);
 
 		GfxText t;
 		char buf[20];
 
 		switch (beg_index + NewState)
 		{
-			case PM_CREW:
+			case MenuString::Crew:
 				t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
 				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
 				t.align = TextAlign::Right;
@@ -865,7 +867,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 				SetContextForeGroundColor(ThreedomenuTextColor);
 				font_DrawText(&t);
 				break;
-			case PM_FUEL:
+			case MenuString::Fuel:
 				t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
 				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
 				t.align = TextAlign::Right;
@@ -882,6 +884,8 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 				}
 				SetContextForeGroundColor(ThreedomenuTextColor);
 				font_DrawText(&t);
+				break;
+			default:
 				break;
 		}
 	}
@@ -1074,7 +1078,7 @@ void DrawMineralHelpers(void)
 	SetContext(OldContext);
 }
 
-void DrawBorder(uint8_t Visible)
+void DrawBorder(BorderFrameIndex Visible)
 {
 	GfxStamp s;
 
@@ -1101,9 +1105,9 @@ void FunkyMenu(uint8_t m, GfxStamp stmp)
 {
 	static bool subMenuFlag;
 
-	if ((!stmp.frame && m >= PM_ALT_MSCAN
-		 && m <= PM_ALT_EXIT_SCAN)
-		|| m == PM_LAUNCH_LANDER)
+	if ((!stmp.frame && m >= MenuString::AltMscan
+		 && m <= MenuString::AltExitScan)
+		|| m == MenuString::LaunchLander)
 	{
 		if (stmp.frame)
 		{

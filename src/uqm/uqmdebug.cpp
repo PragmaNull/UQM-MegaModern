@@ -782,7 +782,7 @@ void activateAllShips(void)
 		if (FleetPtr->icons != nullptr)
 		// Skip the Ur-Quan probe.
 		{
-			FleetPtr->allied_state = +RaceAllegiance::Good;
+			FleetPtr->allied_state = *RaceAllegiance::Good;
 		}
 
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
@@ -2082,7 +2082,7 @@ struct WaitState
 static bool
 waitForKey(struct WaitState* self)
 {
-	if (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])
+	if (PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel])
 	{
 		return false;
 	}

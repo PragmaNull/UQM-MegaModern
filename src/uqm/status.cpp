@@ -435,7 +435,7 @@ void DrawCaptainsWindow(Starship* StarShipPtr)
 		r.corner.y = y - 4;
 		r.extent.width = CaptainWidth() + 8;
 		r.extent.height = CaptainHeight() + 8;
-		DrawRenderedBox(&r, true, BlackColor, THIN_INNER_BEVEL, false);
+		DrawRenderedBox(&r, true, BlackColor, BevelLevel::ThinInnerBevel, false);
 	}
 
 	s.frame = RDPtr->ship_data.captain_control.background;

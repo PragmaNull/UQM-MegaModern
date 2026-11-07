@@ -343,9 +343,9 @@ bool DoLoadTeam(MeleeState* pMS)
 		return true;
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])
+	if (PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel])
 	{
-		if (PulsedInputState.menu[KEY_MENU_SELECT])
+		if (PulsedInputState.menu[*MenuKey::MenuSelect])
 		{
 			// Copy the selected fleet to the player.
 			Melee_LocalChange_team(pMS, pMS->side,
@@ -367,7 +367,7 @@ bool DoLoadTeam(MeleeState* pMS)
 		uint16_t newTop = pMS->load.top;
 		uint16_t newIndex = pMS->load.cur;
 
-		if (PulsedInputState.menu[KEY_MENU_UP])
+		if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			if (newIndex > 0)
 			{
@@ -380,7 +380,7 @@ bool DoLoadTeam(MeleeState* pMS)
 				}
 			}
 		}
-		else if (PulsedInputState.menu[KEY_MENU_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
 			const uint16_t numEntries = pMS->load.numIndices + pMS->load.preBuiltCount;
 			if (newIndex + 1 < numEntries)
@@ -392,7 +392,7 @@ bool DoLoadTeam(MeleeState* pMS)
 				}
 			}
 		}
-		else if (PulsedInputState.menu[KEY_MENU_PAGE_UP])
+		else if (PulsedInputState.menu[*MenuKey::MenuPageUp])
 		{
 			newIndex = (newIndex < LoadTeamViewSize) ?
 						   0 :
@@ -401,7 +401,7 @@ bool DoLoadTeam(MeleeState* pMS)
 						 0 :
 						 newTop - LoadTeamViewSize;
 		}
-		else if (PulsedInputState.menu[KEY_MENU_PAGE_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuPageDown])
 		{
 			const uint16_t numEntries = pMS->load.numIndices + pMS->load.preBuiltCount;
 			if (newIndex + LoadTeamViewSize < numEntries)

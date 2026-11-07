@@ -285,14 +285,14 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 			r.corner.y = GaugeYoffs() - crew_height + y;
 			r.extent.width = StatWidth() + 8;
 			r.extent.height = crew_height + 8;
-			DrawRenderedBox(&r, true, BlackColor, THIN_INNER_BEVEL,
+			DrawRenderedBox(&r, true, BlackColor, BevelLevel::ThinInnerBevel,
 							false);
 
 			r.corner.x = EnergyXoffs() - 4;
 			r.corner.y = GaugeYoffs() - energy_height + y;
 			r.extent.width = StatWidth() + 8;
 			r.extent.height = energy_height + 8;
-			DrawRenderedBox(&r, true, BlackColor, THIN_INNER_BEVEL,
+			DrawRenderedBox(&r, true, BlackColor, BevelLevel::ThinInnerBevel,
 							false);
 		}
 	}

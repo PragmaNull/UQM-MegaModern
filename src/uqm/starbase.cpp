@@ -56,7 +56,7 @@ static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewStat
 	if (OldState == (STARBASE_STATE)~0)
 	{
 		t.baseline.y = text_base_y + SafeY();
-		for (OldState = TALK_COMMANDER; OldState < DEPART_BASE; ++OldState)
+		for (OldState = *StarbaseMenuItem::TalkCommander; OldState < StarbaseMenuItem::DepartBase; ++OldState)
 		{
 			if (OldState != NewState)
 			{
@@ -340,7 +340,7 @@ bool DoStarBase(MenuState* pMS)
 
 	if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 	{
-		pMS->CurState = DEPART_BASE;
+		pMS->CurState = *StarbaseMenuItem::DepartBase;
 		goto ExitStarBase;
 	}
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
@@ -379,7 +379,7 @@ bool DoStarBase(MenuState* pMS)
 
 		UnbatchGraphics();
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 ExitStarBase:
 		DestroyDrawable(ReleaseDrawable(pMS->CurFrame));
@@ -394,7 +394,7 @@ ExitStarBase:
 			pMS->hMusic = 0;
 		}
 
-		if (pMS->CurState == DEPART_BASE)
+		if (pMS->CurState == StarbaseMenuItem::DepartBase)
 		{
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
@@ -404,7 +404,7 @@ ExitStarBase:
 		}
 
 		pMS->Initialized = false;
-		if (pMS->CurState == TALK_COMMANDER)
+		if (pMS->CurState == StarbaseMenuItem::TalkCommander)
 		{
 			FlushInput();
 			InitCommunication(COMMANDER_CONVERSATION);
@@ -424,10 +424,10 @@ ExitStarBase:
 
 			switch (OldState = pMS->CurState)
 			{
-				case OUTFIT_STARSHIP:
+				case *StarbaseMenuItem::OutfitStarship:
 					pMS->InputFunc = DoOutfit;
 					break;
-				case SHIPYARD:
+				case *StarbaseMenuItem::Shipyard:
 					pMS->InputFunc = DoShipyard;
 					break;
 			}
@@ -449,18 +449,18 @@ ExitStarBase:
 	else
 	{
 		STARBASE_STATE NewState {pMS->CurState};
-		if (PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_UP])
+		if (PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuUp])
 		{
-			if (NewState-- == TALK_COMMANDER)
+			if (NewState-- == StarbaseMenuItem::TalkCommander)
 			{
-				NewState = DEPART_BASE;
+				NewState = *StarbaseMenuItem::DepartBase;
 			}
 		}
-		else if (PulsedInputState.menu[KEY_MENU_RIGHT] || PulsedInputState.menu[KEY_MENU_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuRight] || PulsedInputState.menu[*MenuKey::MenuDown])
 		{
-			if (NewState++ == DEPART_BASE)
+			if (NewState++ == StarbaseMenuItem::DepartBase)
 			{
-				NewState = TALK_COMMANDER;
+				NewState = *StarbaseMenuItem::TalkCommander;
 			}
 		}
 

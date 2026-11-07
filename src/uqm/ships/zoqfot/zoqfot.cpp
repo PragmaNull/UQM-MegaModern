@@ -312,7 +312,7 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
 
-		ObjectEvaluation* lpEnemyEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
+		ObjectEvaluation* lpEnemyEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 		if (lpEnemyEvalDesc->ObjectPtr
 			&& lpEnemyEvalDesc->which_turn <= 4
 #ifdef NEVER
@@ -351,8 +351,8 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 			{
 				--ObjectsOfConcern;
 				if (ObjectsOfConcern->ObjectPtr
-					&& (ConcernCounter == ENEMY_SHIP_INDEX
-						|| (ConcernCounter == ENEMY_WEAPON_INDEX
+					&& (ConcernCounter == IntelObjectIndex::EnemyShip
+						|| (ConcernCounter == IntelObjectIndex::EnemyWeapon
 							&& ObjectsOfConcern->MoveState != MovementState::Avoid
 #ifdef NEVER
 							&& !(StarShipPtr->control & STANDARD_RATING)

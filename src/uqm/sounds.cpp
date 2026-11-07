@@ -79,7 +79,7 @@ void PlaySound(SOUND S, SoundPosition Pos, Element* PositionalObject,
 	PlaySoundEffect(S, chan + MinFxChannel, Pos, PositionalObject, Priority);
 }
 
-void PlayMenuSound(MENU_SOUND_EFFECT S)
+void PlayMenuSound(MenuSoundEffect S)
 {
 	PlaySoundEffect(GetSound(MenuSounds, S),
 					0, NotPositional(), nullptr,

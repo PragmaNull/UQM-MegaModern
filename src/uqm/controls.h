@@ -1,4 +1,5 @@
 //Copyright Paul Reiche, Fred Ford. 1992-2002#include "libs/time/timelib.h"
+#include "core/types/enum.h"
 #include "core/stl/atomic.h"
 
 /*
@@ -31,51 +32,55 @@ extern "C" {
 #endif
 
 // Enumerated type for controls
-enum
+enum class BattleKey
 {
-	KEY_UP,
-	KEY_DOWN,
-	KEY_LEFT,
-	KEY_RIGHT,
-	KEY_WEAPON,
-	KEY_SPECIAL,
-	KEY_ESCAPE,
-	KEY_THRUST,
-	NUM_KEYS
+	Up,
+	Down,
+	Left,
+	Right,
+	Weapon,
+	Special,
+	Escape,
+	Thrust,
+	NumKeys
 };
-enum
+template <>
+inline constexpr bool IsArithmeticEnum<BattleKey> = true;
+enum class MenuKey
 {
-	KEY_PAUSE,
-	KEY_EXIT,
-	KEY_ABORT,
-	KEY_DEBUG,
-	KEY_FULLSCREEN,
-	KEY_MENU_UP,
-	KEY_MENU_DOWN,
-	KEY_MENU_LEFT,
-	KEY_MENU_RIGHT,
-	KEY_MENU_SELECT,
-	KEY_MENU_CANCEL,
-	KEY_MENU_SPECIAL,
-	KEY_MENU_PAGE_UP,
-	KEY_MENU_PAGE_DOWN,
-	KEY_MENU_HOME,
-	KEY_MENU_END,
-	KEY_MENU_ZOOM_IN,
-	KEY_MENU_ZOOM_OUT,
-	KEY_MENU_DELETE,
-	KEY_MENU_BACKSPACE,
-	KEY_MENU_EDIT_CANCEL,
-	KEY_MENU_SEARCH,
-	KEY_MENU_NEXT,
-	KEY_MENU_TOGGLEMAP,
-	KEY_SCREENSHOT,
-	KEY_DEBUG_2,
-	KEY_DEBUG_3,
-	KEY_DEBUG_4,
-	KEY_MENU_ANY, /* abstract char key */
-	NUM_MENU_KEYS
+	Pause,
+	Exit,
+	Abort,
+	Debug,
+	Fullscreen,
+	MenuUp,
+	MenuDown,
+	MenuLeft,
+	MenuRight,
+	MenuSelect,
+	MenuCancel,
+	MenuSpecial,
+	MenuPageUp,
+	MenuPageDown,
+	MenuHome,
+	MenuEnd,
+	MenuZoomIn,
+	MenuZoomOut,
+	MenuDelete,
+	MenuBackspace,
+	MenuEditCancel,
+	MenuSearch,
+	MenuNext,
+	MenuTogglemap,
+	Screenshot,
+	Debug2,
+	Debug3,
+	Debug4,
+	MenuAny, /* abstract char key */
+	NumMenuKeys
 };
+template <>
+inline constexpr bool IsArithmeticEnum<MenuKey> = true;
 
 enum class ControlTemplate
 {
@@ -114,26 +119,26 @@ static constexpr const char* toString(ControlTemplate val)
 // The input that the main thread writes while the game thread reads it.
 struct ImmediateKeyState
 {
-	uqstl::atomic<int> key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
-	uqstl::atomic<int> menu[NUM_MENU_KEYS];
+	uqstl::atomic<int> key[uqstl::to_underlying(ControlTemplate::NUM)][*BattleKey::NumKeys];
+	uqstl::atomic<int> menu[*MenuKey::NumMenuKeys];
 };
 
 struct ControllerInputState
 {
-	int key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
-	int menu[NUM_MENU_KEYS];
+	int key[uqstl::to_underlying(ControlTemplate::NUM)][*BattleKey::NumKeys];
+	int menu[*MenuKey::NumMenuKeys];
 
 	ControllerInputState& operator=(const ImmediateKeyState& rhs)
 	{
 		for (int t = 0; t < uqstl::to_underlying(ControlTemplate::NUM); ++t)
 		{
-			for (int k = 0; k < NUM_KEYS; ++k)
+			for (int k = 0; k < BattleKey::NumKeys; ++k)
 			{
 				key[t][k] = rhs.key[t][k];
 			}
 		}
 
-		for (int mk = 0; mk < NUM_MENU_KEYS; ++mk)
+		for (int mk = 0; mk < MenuKey::NumMenuKeys; ++mk)
 		{
 			menu[mk] = rhs.menu[mk];
 		}

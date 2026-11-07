@@ -174,7 +174,7 @@ void DrawHDMeleeBorder(Starship* StarShipPtr)
 	r.extent.width = StatusWidth();
 	r.extent.height = ShipStatusHeight() - 4;
 
-	DrawRenderedBox(&r, false, NullColor, THICK_OUTER_BEVEL, false);
+	DrawRenderedBox(&r, false, NullColor, BevelLevel::ThickOuterBevel, false);
 }
 
 void ship_preprocess(Element* ElementPtr)
@@ -425,10 +425,10 @@ void collision(Element* ElementPtr0, GfxPoint* pPt0,
 			}
 			do_damage(ElementPtr0, damage);
 
-			damage = TARGET_DAMAGED_FOR_1_PT + (damage >> 1);
-			if (damage > TARGET_DAMAGED_FOR_6_PLUS_PT)
+			damage = *SoundEffect::TargetDamagedFor1Pt + (damage >> 1);
+			if (damage > SoundEffect::TargetDamagedFor6PlusPt)
 			{
-				damage = TARGET_DAMAGED_FOR_6_PLUS_PT;
+				damage = *SoundEffect::TargetDamagedFor6PlusPt;
 			}
 			ProcessSound(GetSound(GameSounds, damage), ElementPtr0);
 		}

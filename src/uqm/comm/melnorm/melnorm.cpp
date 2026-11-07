@@ -515,39 +515,39 @@ static TechSaleData* GetNextTechForSale(void)
 		switch (CurStarDescPtr()->Index)
 		{
 			case MELNORME0_DEFINED:
-				i = +TechId::ModuleCannon;
+				i = *TechId::ModuleCannon;
 				j = i + 1;
 				break;
 			case MELNORME1_DEFINED:
-				i = +TechId::ModuleBlaster;
+				i = *TechId::ModuleBlaster;
 				j = i + 1;
 				break;
 			case MELNORME2_DEFINED:
-				i = +TechId::LanderShieldBio;
+				i = *TechId::LanderShieldBio;
 				j = i + 2; // TECH_LANDER_CARGO
 				break;
 			case MELNORME3_DEFINED:
-				i = +TechId::LanderRapidfire;
+				i = *TechId::LanderRapidfire;
 				j = i + 2; // TECH_LANDER_SHIELD_QUAKE
 				break;
 			case MELNORME4_DEFINED:
-				i = +TechId::ModuleBigfueltank;
+				i = *TechId::ModuleBigfueltank;
 				j = i + 1;
 				break;
 			case MELNORME5_DEFINED:
-				i = +TechId::LanderSpeed;
+				i = *TechId::LanderSpeed;
 				j = i + 2; // TECH_MODULE_ANTIMISSILE
 				break;
 			case MELNORME6_DEFINED:
-				i = +TechId::ModuleTracking;
+				i = *TechId::ModuleTracking;
 				j = i + 1;
 				break;
 			case MELNORME7_DEFINED:
-				i = +TechId::LanderShieldLightning;
+				i = *TechId::LanderShieldLightning;
 				j = i + 2; // TECH_LANDER_SHIELD_HEAT
 				break;
 			case MELNORME8_DEFINED:
-				i = +TechId::ModuleFurnace;
+				i = *TechId::ModuleFurnace;
 				j = i + 1;
 				break;
 			default:

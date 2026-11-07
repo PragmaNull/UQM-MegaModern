@@ -552,8 +552,8 @@ static void urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = MovementState::Pursue;
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectsOfConcern[*IntelObjectIndex::EnemyShip].MoveState = MovementState::Pursue;
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == MovementState::Entice
 		&& (!(lpEvalDesc->ObjectPtr->state_flags & CrewObject)
@@ -561,7 +561,7 @@ static void urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 		&& (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
 			|| (lpEvalDesc->ObjectPtr->mass_points >= 4
 				&& lpEvalDesc->which_turn == 2
-				&& ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn > 16)))
+				&& ObjectsOfConcern[*IntelObjectIndex::EnemyShip].which_turn > 16)))
 	{
 		lpEvalDesc->MoveState = MovementState::Pursue;
 	}
@@ -569,7 +569,7 @@ static void urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	ship_intelligence(ShipPtr,
 					  ObjectsOfConcern, ConcernCounter);
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 	{
 		Starship* EnemyStarShipPtr = nullptr;
 

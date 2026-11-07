@@ -426,27 +426,27 @@ void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 
 					if (meleeScaleModeIsStep)
 					{ /* on PC, the closest stars are images when zoomed out */
-						star_object[0] = +PrimitiveType::Stamp;
+						star_object[0] = *PrimitiveType::Stamp;
 						if (reduction > 0)
 						{
-							star_object[1] = +PrimitiveType::Point;
+							star_object[1] = *PrimitiveType::Point;
 							star_frame[0] = star_frame[1];
 						}
 						else
 						{
-							star_object[1] = +PrimitiveType::Stamp;
+							star_object[1] = *PrimitiveType::Stamp;
 						}
 					}
 					else
 					{ /* on 3DO, the closest stars are pixels when zoomed out */
-						star_object[1] = +PrimitiveType::Point;
+						star_object[1] = *PrimitiveType::Point;
 						if (reduction > (1 << ZoomShift))
 						{
-							star_object[0] = +PrimitiveType::Point;
+							star_object[0] = *PrimitiveType::Point;
 						}
 						else
 						{
-							star_object[0] = +PrimitiveType::Stamp;
+							star_object[0] = *PrimitiveType::Stamp;
 						}
 					}
 				}
@@ -456,7 +456,7 @@ void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 					star_frame[1] = IncFrameIndex(stars_in_space);		 // mid blue
 					star_frame[2] = SetAbsFrameIndex(stars_in_space, 2); // small blue
 
-					star_object[0] = star_object[1] = +PrimitiveType::Stamp;
+					star_object[0] = star_object[1] = *PrimitiveType::Stamp;
 
 					if (meleeScaleModeIsStep && reduction > 0)
 					{

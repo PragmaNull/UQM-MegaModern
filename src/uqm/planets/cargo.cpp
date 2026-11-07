@@ -167,7 +167,7 @@ static void DrawCargoDisplay(void)
 	}
 	else
 	{
-		DrawBorder(DEVICE_CARGO_FRAME);
+		DrawBorder(BorderFrameIndex::DeviceCargo);
 	}
 
 	// draw the "CARGO" title
@@ -324,7 +324,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	}
 	else
 	{
-		DrawBorder(DEVICE_CARGO_FRAME);
+		DrawBorder(BorderFrameIndex::DeviceCargo);
 	}
 
 	// draw the "DATALOG" title
@@ -411,10 +411,10 @@ static bool DoDiscardCargo(MenuState* pMS)
 	bool select {};
 	bool cancel {};
 
-	select = PulsedInputState.menu[KEY_MENU_SELECT];
-	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
-	const bool back {PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_LEFT]};
-	const bool forward {PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_RIGHT]};
+	select = PulsedInputState.menu[*MenuKey::MenuSelect];
+	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
+	const bool back {PulsedInputState.menu[*MenuKey::MenuUp] || PulsedInputState.menu[*MenuKey::MenuLeft]};
+	const bool forward {PulsedInputState.menu[*MenuKey::MenuDown] || PulsedInputState.menu[*MenuKey::MenuRight]};
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -437,7 +437,7 @@ static bool DoDiscardCargo(MenuState* pMS)
 		}
 		else
 		{ // no Element left in cargo hold
-			PlayMenuSound(MENU_SOUND_FAILURE);
+			PlayMenuSound(MenuSoundEffect::Failure);
 		}
 	}
 	else
@@ -483,7 +483,7 @@ void CargoMenu(void)
 
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
-		DrawMenuStateStrings(PM_ALT_CARGO, 0);
+		DrawMenuStateStrings(MenuString::AltCargo, 0);
 	}
 
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);

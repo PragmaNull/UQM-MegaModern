@@ -248,7 +248,7 @@ static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLe
 						uint8_t scale = 0;
 						font_DrawText(&t);
 
-						if (CurrentInputState.menu[KEY_MENU_RIGHT])
+						if (CurrentInputState.menu[*MenuKey::MenuRight])
 						{
 							scale = 2;
 						}

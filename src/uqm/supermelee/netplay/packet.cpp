@@ -35,7 +35,7 @@
 		/* .handler = */ (PacketHandler)PacketHandler_##name, \
 		/* .name = */ #name,                                  \
 	}
-PacketTypeData packetTypeData[+PacketType::Count] = {
+PacketTypeData packetTypeData[*PacketType::Count] = {
 	DEFINE_PACKETDATA(Init),
 	DEFINE_PACKETDATA(Ping),
 	DEFINE_PACKETDATA(Ack),
@@ -68,7 +68,7 @@ static Packet* Packet_create(PacketType type, size_t extraSize)
 	// Alignment requirement.
 	assert(extraSize % 4 == 0);
 
-	len = packetTypeData[+type].len + extraSize;
+	len = packetTypeData[*type].len + extraSize;
 	Packet* result {(Packet*)Packet_alloc(len)};
 	result->header.len = uqm::convertBigEndian<uint16_t>((uint16_t)len);
 	result->header.type = uqm::convertBigEndian<uint16_t>((uint16_t)type);

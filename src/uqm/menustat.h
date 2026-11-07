@@ -19,6 +19,7 @@
 #ifndef UQM_MENUSTAT_H_
 #define UQM_MENUSTAT_H_
 
+#include "core/types/enum.h"
 #include "libs/gfxlib.h"
 #include "libs/sndlib.h"
 #include "flash.h"
@@ -53,103 +54,108 @@ struct MenuState
 };
 
 // XXX: Should probably go to menu.h (does not yet exist)
-enum
+enum class MenuString
 {
-	PM_SCAN = 0,
-	PM_STARMAP,
-	PM_DEVICES,
-	PM_CARGO,
-	PM_ROSTER,
-	PM_GAME_MENU,
-	PM_NAVIGATE,
+	Scan = 0,
+	Starmap,
+	Devices,
+	Cargo,
+	Roster,
+	GameMenu,
+	Navigate,
 
-	PM_MIN_SCAN,
-	PM_ENE_SCAN,
-	PM_BIO_SCAN,
-	PM_EXIT_SCAN,
-	PM_AUTO_SCAN,
-	PM_LAUNCH_LANDER,
+	MinScan,
+	EneScan,
+	BioScan,
+	ExitScan,
+	AutoScan,
+	LaunchLander,
 
-	PM_SAVE_GAME,
-	PM_LOAD_GAME,
-	PM_QUIT_GAME,
-	PM_CHANGE_SETTINGS,
-	PM_EXIT_GAME_MENU,
+	SaveGame,
+	LoadGame,
+	QuitGame,
+	ChangeSettings,
+	ExitGameMenu,
 
-	PM_CONVERSE,
-	PM_ATTACK,
-	PM_ENCOUNTER_GAME_MENU,
+	Converse,
+	Attack,
+	EncounterGameMenu,
 
-	PM_FUEL,
-	PM_MODULE,
-	PM_OUTFIT_GAME_MENU,
-	PM_EXIT_OUTFIT,
+	Fuel,
+	Module,
+	OutfitGameMenu,
+	ExitOutfit,
 
-	PM_CREW,
-	PM_SHIPYARD_GAME_MENU,
-	PM_EXIT_SHIPYARD,
+	Crew,
+	ShipyardGameMenu,
+	ExitShipyard,
 
-	PM_SOUND_ON,
-	PM_SOUND_OFF,
-	PM_MUSIC_ON,
-	PM_MUSIC_OFF,
-	PM_CYBORG_OFF,
-	PM_CYBORG_NORMAL,
-	PM_CYBORG_DOUBLE,
-	PM_CYBORG_SUPER,
+	SoundOn,
+	SoundOff,
+	MusicOn,
+	MusicOff,
+	CyborgOff,
+	CyborgNormal,
+	CyborgDouble,
+	CyborgSuper,
 
-	PM_READ_VERY_SLOW,
-	PM_READ_SLOW,
-	PM_READ_MODERATE,
-	PM_READ_FAST,
-	PM_READ_VERY_FAST,
+	ReadVerySlow,
+	ReadSlow,
+	ReadModerate,
+	ReadFast,
+	ReadVeryFast,
 
-	PM_CHANGE_CAPTAIN,
-	PM_CHANGE_SHIP,
-	PM_EXIT_SETTINGS,
+	ChangeCaptain,
+	ChangeShip,
+	ExitSettings,
 
-	PM_ALT_SCAN,
-	PM_ALT_STARMAP,
-	PM_ALT_MANIFEST,
-	PM_ALT_GAME_MENU,
-	PM_ALT_NAVIGATE,
+	AltScan,
+	AltStarmap,
+	AltManifest,
+	AltGameMenu,
+	AltNavigate,
 
-	PM_ALT_CARGO,
-	PM_ALT_DEVICES,
-	PM_ALT_ROSTER,
-	PM_ALT_EXIT_MANIFEST,
+	AltCargo,
+	AltDevices,
+	AltRoster,
+	AltExitManifest,
 
-	PM_ALT_MSCAN,
-	PM_ALT_ESCAN,
-	PM_ALT_BSCAN,
-	PM_ALT_ASCAN,
-	PM_ALT_DISPATCH,
-	PM_ALT_EXIT_SCAN,
+	AltMscan,
+	AltEscan,
+	AltBscan,
+	AltAscan,
+	AltDispatch,
+	AltExitScan,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<MenuString> = true;
 
-enum
+enum class GameMenuString
 {
-	GAMESTR_GAME_MENU = 5,
-	GAMESTR_EXIT_MENU = 10,
-	GAMESTR_CONVERSE = 17,
-	GAMESTR_ATTACK,
-	GAMESTR_FUEL,
-	GAMESTR_MODULE,
-	GAMESTR_CREW,
-	GAMESTR_SND_ON,
-	GAMESTR_SND_OFF,
-	GAMESTR_MUS_ON,
-	GAMESTR_MUS_OFF,
-	GAMESTR_COMBAT,
-	GAMESTR_READING,
-	GAMESTR_CHANGE_CAP,
-	GAMESTR_CHANGE_SIS,
+	GameMenu = 5,
+	ExitMenu = 10,
+	Converse = 17,
+	Attack,
+	Fuel,
+	Module,
+	Crew,
+	SndOn,
+	SndOff,
+	MusOn,
+	MusOff,
+	Combat,
+	Reading,
+	ChangeCap,
+	ChangeSis,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<GameMenuString> = true;
 
-extern bool DoMenuChooser(MenuState* pMS, uint8_t BaseState);
-extern void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState);
+extern bool DoMenuChooser(MenuState* pMS, MenuString BaseState);
+extern void DrawMenuStateStrings(MenuString beg_index, int16_t NewState);
 extern void DrawMineralHelpers(void);
-extern void DrawBorder(uint8_t Visible);
+enum class BorderFrameIndex;
+extern void DrawBorder(BorderFrameIndex Visible);
 
 #if 0 //defined(__cplusplus)
 }

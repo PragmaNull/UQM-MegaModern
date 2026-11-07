@@ -967,8 +967,8 @@ static void flag_ship_preprocess(Element* ElementPtr)
 			vdx >>= 1;
 			vdy >>= 1;
 		}
-		else if ((CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP]
-				  || CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_THRUST])
+		else if ((CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Up]
+				  || CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][*BattleKey::Thrust])
 				 || (vdx == 0 && vdy == 0))
 		{
 			legacySave = false;

@@ -76,8 +76,8 @@ static WidgetLabel pressToEdit {};
 static uqstl::vector<const char*> pressToEditLines {};
 static WidgetSlider gammaSlider {};
 static WidgetTextEntry layoutName {};
-static WidgetControlEntry controlentries[NUM_KEYS] {};
-static constexpr const char* c_controlNames[NUM_KEYS] {"up", "down", "left", "right", "weapon", "special", "escape", "thrust"};
+static WidgetControlEntry controlentries[*BattleKey::NumKeys] {};
+static constexpr const char* c_controlNames[*BattleKey::NumKeys] {"up", "down", "left", "right", "weapon", "special", "escape", "thrust"};
 
 // The control template that the Edit Controls menu shows.
 static int editTemplate {};
@@ -227,7 +227,7 @@ static void populate_editkeys(int templat)
 
 	uqm::strncpy_safe(layoutName.value, {uqm::input_templates[templat].name, static_cast<uint32_t>(layoutName.maxlen)});
 
-	for (int i {0}; i < NUM_KEYS; i++)
+	for (int i {0}; i < BattleKey::NumKeys; i++)
 	{
 		for (j = 0; j < 2; j++)
 		{
@@ -286,31 +286,31 @@ static bool DoSetupMenu(SetupMenuState* pInputState)
 
 	UnbatchGraphics();
 
-	if (PulsedInputState.menu[KEY_MENU_UP])
+	if (PulsedInputState.menu[*MenuKey::MenuUp])
 	{
 		Widget_Event(WidgetEvent::Up);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_DOWN])
+	else if (PulsedInputState.menu[*MenuKey::MenuDown])
 	{
 		Widget_Event(WidgetEvent::Down);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_LEFT])
+	else if (PulsedInputState.menu[*MenuKey::MenuLeft])
 	{
 		Widget_Event(WidgetEvent::Left);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_RIGHT])
+	else if (PulsedInputState.menu[*MenuKey::MenuRight])
 	{
 		Widget_Event(WidgetEvent::Right);
 	}
-	if (PulsedInputState.menu[KEY_MENU_SELECT])
+	if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		Widget_Event(WidgetEvent::Select);
 	}
-	if (PulsedInputState.menu[KEY_MENU_CANCEL])
+	if (PulsedInputState.menu[*MenuKey::MenuCancel])
 	{
 		Widget_Event(WidgetEvent::Cancel);
 	}
-	if (PulsedInputState.menu[KEY_MENU_DELETE])
+	if (PulsedInputState.menu[*MenuKey::MenuDelete])
 	{
 		Widget_Event(WidgetEvent::Delete);
 	}
@@ -649,7 +649,7 @@ static void init_shared_widgets(void)
 	layoutName.state = TextEntryWidgetState::Normal;
 	layoutName.onChange = rename_template;
 
-	for (int i {0}; i < NUM_KEYS; i++)
+	for (int i {0}; i < BattleKey::NumKeys; i++)
 	{
 		WidgetControlEntry& entry {controlentries[i]};
 		entry = {};
@@ -742,7 +742,7 @@ static void init_widgets(void)
 		{"layoutName", (Widget*)(&layoutName)		 },
 		{"randomSeed", (Widget*)(&randomSeedButton)},
 	};
-	for (int i {0}; i < NUM_KEYS; i++)
+	for (int i {0}; i < BattleKey::NumKeys; i++)
 	{
 		shared.legacy[uqstl::string {"control."} + c_controlNames[i]] = (Widget*)(&controlentries[i]);
 	}

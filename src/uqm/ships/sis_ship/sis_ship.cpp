@@ -409,7 +409,7 @@ static void sis_hyper_postprocess(Element* ElementPtr)
 	uqm::flagship().velocity = ElementPtr->velocity;
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (((StarShipPtr->cur_status_flags & WeaponFlag) || PulsedInputState.menu[KEY_MENU_CANCEL])
+	if (((StarShipPtr->cur_status_flags & WeaponFlag) || PulsedInputState.menu[*MenuKey::MenuCancel])
 		&& StarShipPtr->special_counter == 0)
 	{
 		HyperspaceMenu();
@@ -693,7 +693,7 @@ static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	const FlagshipBattleData* SisData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 
-	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		if (StarShipPtr->RaceDescPtr->characteristics.special_energy_cost)
@@ -701,8 +701,8 @@ static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 			if (StarShipPtr->special_counter == 0
 				&& ((lpEvalDesc->ObjectPtr
 					 && lpEvalDesc->which_turn <= 2)
-					|| (ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr != nullptr
-						&& ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn <= 4)))
+					|| (ObjectsOfConcern[*IntelObjectIndex::EnemyShip].ObjectPtr != nullptr
+						&& ObjectsOfConcern[*IntelObjectIndex::EnemyShip].which_turn <= 4)))
 			{
 				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
@@ -720,7 +720,7 @@ static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 				 && (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
 					 || (lpEvalDesc->ObjectPtr->mass_points >= 4
 						 && lpEvalDesc->which_turn == 2
-						 && ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn > 16)))
+						 && ObjectsOfConcern[*IntelObjectIndex::EnemyShip].which_turn > 16)))
 		{
 			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
@@ -728,7 +728,7 @@ static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 	if (SisData->num_trackers
 		&& StarShipPtr->weapon_counter == 0
 		&& !(StarShipPtr->ship_input_state & WeaponFlag)

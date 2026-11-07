@@ -168,10 +168,10 @@ HELEMENT weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 	{
 		if (damage)
 		{
-			damage = TARGET_DAMAGED_FOR_1_PT + (damage >> 1);
-			if (damage > TARGET_DAMAGED_FOR_6_PLUS_PT)
+			damage = *SoundEffect::TargetDamagedFor1Pt + (damage >> 1);
+			if (damage > SoundEffect::TargetDamagedFor6PlusPt)
 			{
-				damage = TARGET_DAMAGED_FOR_6_PLUS_PT;
+				damage = *SoundEffect::TargetDamagedFor6PlusPt;
 			}
 			ProcessSound(GetSound(GameSounds, damage),
 						 HitElementPtr);

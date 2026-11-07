@@ -560,7 +560,7 @@ void DrawCommBorder(GfxRect r)
 
 	SetContextClipRect(&oldClipRect);
 
-	DrawBorder(SIS_COMM_FRAME);
+	DrawBorder(BorderFrameIndex::SisComm);
 }
 
 static void DrawSISComWindow(void)
@@ -946,7 +946,7 @@ static bool DoTalkSegue(TalkingState* pTS)
 
 	if (uqm::UQMOptions::read().useSpeech || uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO || (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE))
 	{
-		if (PulsedInputState.menu[KEY_MENU_CANCEL])
+		if (PulsedInputState.menu[*MenuKey::MenuCancel])
 		{
 			JumpTrack();
 			pTS->ended = true;
@@ -955,13 +955,13 @@ static bool DoTalkSegue(TalkingState* pTS)
 
 		if (uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC || !uqm::UQMOptions::read().useSpeech)
 		{
-			left = PulsedInputState.menu[KEY_MENU_LEFT] != 0;
-			right = PulsedInputState.menu[KEY_MENU_RIGHT] != 0;
+			left = PulsedInputState.menu[*MenuKey::MenuLeft] != 0;
+			right = PulsedInputState.menu[*MenuKey::MenuRight] != 0;
 		}
 		else if (uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO)
 		{
-			left = CurrentInputState.menu[KEY_MENU_LEFT] != 0;
-			right = CurrentInputState.menu[KEY_MENU_RIGHT] != 0;
+			left = CurrentInputState.menu[*MenuKey::MenuLeft] != 0;
+			right = CurrentInputState.menu[*MenuKey::MenuRight] != 0;
 		}
 
 		curTrack = PlayingTrack();
@@ -1016,15 +1016,15 @@ static bool DoTalkSegue(TalkingState* pTS)
 	{
 		curTrack = PlayingTrack();
 
-		if (PulsedInputState.menu[KEY_MENU_CANCEL]
-			|| PulsedInputState.menu[KEY_MENU_RIGHT])
+		if (PulsedInputState.menu[*MenuKey::MenuCancel]
+			|| PulsedInputState.menu[*MenuKey::MenuRight])
 		{
 			FastForward_Page();
 			FlushInput();
 			next_page = true;
 			return true;
 		}
-		else if (PulsedInputState.menu[KEY_MENU_SPECIAL])
+		else if (PulsedInputState.menu[*MenuKey::MenuSpecial])
 		{
 			JumpTrack();
 			pTS->ended = true;
@@ -1063,13 +1063,13 @@ static bool DoTalkSegue(TalkingState* pTS)
 					UpdateCommGraphics();
 					UpdateInputState();
 
-					if (PulsedInputState.menu[KEY_MENU_CANCEL]
-						|| PulsedInputState.menu[KEY_MENU_RIGHT]
+					if (PulsedInputState.menu[*MenuKey::MenuCancel]
+						|| PulsedInputState.menu[*MenuKey::MenuRight]
 						|| (uqm::currentActivity() & CHECK_ABORT))
 					{
 						awake = true;
 					}
-					else if (PulsedInputState.menu[KEY_MENU_SPECIAL])
+					else if (PulsedInputState.menu[*MenuKey::MenuSpecial])
 					{
 						JumpTrack();
 						pTS->ended = true;
@@ -1316,9 +1316,9 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 	{
 		return false; // bail out
 	}
-	else if (PulsedInputState.menu[KEY_MENU_SELECT]
-			 || PulsedInputState.menu[KEY_MENU_CANCEL]
-			 || PulsedInputState.menu[KEY_MENU_RIGHT])
+	else if (PulsedInputState.menu[*MenuKey::MenuSelect]
+			 || PulsedInputState.menu[*MenuKey::MenuCancel]
+			 || PulsedInputState.menu[*MenuKey::MenuRight])
 	{
 		if (pSS->NextSub)
 		{ // we want the next page
@@ -1542,18 +1542,18 @@ static void PlayerResponseInput(CommEncounterState* pES)
 		RefreshResponses(pES);
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_SELECT])
+	if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
 		SelectResponse(pES);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_CANCEL] && uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE && !IsDarkMode)
+	else if (PulsedInputState.menu[*MenuKey::MenuCancel] && uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE && !IsDarkMode)
 	{
 		SelectConversationSummary(pES);
 	}
 	else
 	{
 		response = pES->cur_response;
-		if (PulsedInputState.menu[KEY_MENU_LEFT] && (uqm::UQMOptions::read().useSpeech || uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO))
+		if (PulsedInputState.menu[*MenuKey::MenuLeft] && (uqm::UQMOptions::read().useSpeech || uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO))
 		{
 			SelectReplay(pES);
 
@@ -1563,12 +1563,12 @@ static void PlayerResponseInput(CommEncounterState* pES)
 				FadeMusic(NormalVolume, c_gameSecond);
 			}
 		}
-		else if (PulsedInputState.menu[KEY_MENU_UP])
+		else if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			response = (uint8_t)((response + (uint8_t)(pES->num_responses - 1))
 								 % pES->num_responses);
 		}
-		else if (PulsedInputState.menu[KEY_MENU_DOWN])
+		else if (PulsedInputState.menu[*MenuKey::MenuDown])
 		{
 			response = (uint8_t)((uint8_t)(response + 1) % pES->num_responses);
 		}
@@ -1629,13 +1629,13 @@ static bool DoLastReplay(LastReplayState* pLRS)
 		return false; // timed out and done
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL] && uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
+	if (PulsedInputState.menu[*MenuKey::MenuCancel] && uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
 		FadeMusic(BackgroundVol(), c_gameSecond);
 		SelectConversationSummary(nullptr);
 		pLRS->TimeOut = FadeMusic(0, c_gameSecond * 2) + c_gameSecond / 60;
 	}
-	else if (PulsedInputState.menu[KEY_MENU_LEFT])
+	else if (PulsedInputState.menu[*MenuKey::MenuLeft])
 	{
 		SelectReplay(nullptr);
 		pLRS->TimeOut = FadeMusic(0, c_gameSecond * 2) + c_gameSecond / 60;
@@ -2098,7 +2098,7 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 	if (uqm::gameState().flag(uqm::GameFlag::BATTLE_SEGUE) == 0)
 	{
 		// Not offered the chance to attack.
-		status = +EncounterAction::Hail;
+		status = *EncounterAction::Hail;
 	}
 	else if ((status = InitEncounter()) == EncounterAction::Hail && LocDataPtr)
 	{
@@ -2108,7 +2108,7 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 	else
 	{
 		// The player chose to attack.
-		status = +EncounterAction::Attack;
+		status = *EncounterAction::Attack;
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 	}
 

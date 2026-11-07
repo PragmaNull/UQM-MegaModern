@@ -464,13 +464,13 @@ static void DoTransaction(RESPONSE_REF R)
 	{
 		uint8_t ship_slots {};
 
-		if (isDifficulty(uqm::Difficulty::Hard) && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << READY_TO_BARGAIN))
+		if (isDifficulty(uqm::Difficulty::Hard) && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << *HardModeEncounter::ReadyToBargain))
 		{
 			uint16_t state {};
 
 			state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 
-			state |= 1 << READY_TO_BARGAIN;
+			state |= 1 << *HardModeEncounter::ReadyToBargain;
 
 			uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 		}
@@ -623,7 +623,7 @@ static void Sell(RESPONSE_REF R)
 
 	if (!uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 	{
-		if ((isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << READY_TO_BARGAIN) || !isDifficulty(uqm::Difficulty::Hard))
+		if ((isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << *HardModeEncounter::ReadyToBargain) || !isDifficulty(uqm::Difficulty::Hard))
 		{
 			RespFunc = (RESPONSE_FUNC)Trade;
 		}

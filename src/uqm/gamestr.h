@@ -23,6 +23,7 @@
 #define UQM_GAMESTR_H_
 
 
+#include "core/types/enum.h"
 #include "libs/strlib.h"
 #include "sis.h"
 
@@ -93,7 +94,8 @@ inline constexpr auto TdoStarbaseStringBase {(DosStarbaseStringBase + NUM_PURCHA
 inline constexpr auto EndStarbaseStringBase {(TdoStarbaseStringBase + NUM_PURCHASE_MODULES)};
 
 extern uqm::StringTablePtr GameStrings;
-inline auto GameString(auto i) { return GameStrings->text(i); }
+inline auto GameString(size_t i) { return GameStrings->text(i); }
+inline auto GameString(ArithmeticEnum auto i) { return GameStrings->text(static_cast<size_t>(*i)); }
 
 extern void SetCursorRect(GfxRect* r, GFXCONTEXT context);
 extern void FlushCursorRect(void);

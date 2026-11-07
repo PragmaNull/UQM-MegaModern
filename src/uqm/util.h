@@ -33,8 +33,9 @@ extern void DrawBorderPadding(uint32_t videoWidth);
 extern void DrawRadarBorder(void);
 extern uint32_t SeedRandomNumbers(void);
 
+enum class BevelLevel;
 extern void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color,
-							int type, int custom);
+							BevelLevel type, int custom);
 
 // saveRect can be nullptr to save the entire context frame
 extern GfxStamp SaveContextFrame(const GfxRect* saveRect);
