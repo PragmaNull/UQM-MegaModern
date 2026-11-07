@@ -514,7 +514,7 @@ void FillOrbits(SolarSystemState* system, uint8_t NumPlanets,
 			{SupergiantRockDist, SupergiantGasgDist},
 	};
 #ifdef DEBUG_ORBITS
-	char buf[256];
+	uqstl::array<char, 256> buf;
 	char stype[] = {'D', 'G', 'S'};
 	char scolor[] = {'B', 'G', 'O', 'R', 'W', 'Y'};
 #endif /* DEBUG_ORBITS */

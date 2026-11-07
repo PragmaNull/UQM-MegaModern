@@ -189,9 +189,9 @@ struct FlagshipData
 
 	uqstl::array<uint16_t, *MineralCategory::NumElementCategories> ElementAmounts;
 
-	char ShipName[SisNameSize];
-	char CommanderName[SisNameSize];
-	char PlanetName[SisNameSize];
+	uqstl::array<char, SisNameSize> ShipName;
+	uqstl::array<char, SisNameSize> CommanderName;
+	uqstl::array<char, SisNameSize> PlanetName;
 	uqm::Difficulty Difficulty;
 	uint8_t Extended;
 	uqm::NomadMode Nomad;

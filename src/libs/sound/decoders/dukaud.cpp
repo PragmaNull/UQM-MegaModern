@@ -380,7 +380,7 @@ static bool duka_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, co
 {
 	tfb::DuckSoundDecoder* duka = (tfb::DuckSoundDecoder*)This;
 	DukAud_AudSubframe aud;
-	char filename[256] {};
+	uqstl::array<char, 256> filename {};
 	uint32_t filelen {};
 
 	filelen = strlen(file);
@@ -391,7 +391,7 @@ static bool duka_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, co
 	uqstl::span<char> filenameDst {filename};
 	uqm::strncpy_safe(filenameDst, {file, filelen});
 
-	uqgsl::owner<uqm::io::File*> duk {res_NewResFile(dir, filename)};
+	uqgsl::owner<uqm::io::File*> duk {res_NewResFile(dir, filename.data())};
 	if (!duk)
 	{
 		duka->last_error = errno;
@@ -401,7 +401,7 @@ static bool duka_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, co
 	// overwrite the extension with 'frm".. weird.
 	filenameDst = filenameDst.subspan(filelen - 3);
 	uqm::strncpy_safe(filenameDst, "frm");
-	uqgsl::owner<uqm::io::File*> frm {res_NewResFile(dir, filename)};
+	uqgsl::owner<uqm::io::File*> frm {res_NewResFile(dir, filename.data())};
 	if (!frm)
 	{
 		duka->last_error = errno;

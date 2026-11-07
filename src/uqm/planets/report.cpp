@@ -96,7 +96,7 @@ static void ClearReportArea(int16_t startx)
 static void MakeReport(SoundBankRef ReadOutSounds, const char* pStr, uint16_t StrLen)
 {
 	int end_page_len {};
-	char end_page_buf[200] {};
+	uqstl::array<char, 200> end_page_buf {};
 	uqm::UniChar last_c = 0;
 	GfxRect r;
 	GfxRect contextRect;
@@ -108,9 +108,9 @@ static void MakeReport(SoundBankRef ReadOutSounds, const char* pStr, uint16_t St
 	int16_t curr_line = -1;
 	uint16_t first_line_length = 0;
 
-	fmt::format_to_n(end_page_buf, sizeof(end_page_buf) - 1, "{}\n",
+	fmt::format_to_n(end_page_buf.data(), sizeof(end_page_buf) - 1, "{}\n",
 					 GameString(static_cast<int>(GameStringBase::ScanString) + static_cast<int>(ScanType::Count)));
-	end_page_len = uqm::utf8StringCount(end_page_buf);
+	end_page_len = uqm::utf8StringCount(end_page_buf.data());
 
 	GetFrameRect(SetAbsFrameIndex(SpaceJunkFrame, 18), &r);
 	GetContextClipRect(&contextRect);
@@ -186,7 +186,7 @@ static void MakeReport(SoundBankRef ReadOutSounds, const char* pStr, uint16_t St
 			&& (StrLen > NumCellCols() || lf_pos > 1))
 		{
 			col_cells = (NumCellCols() >> 1) - (end_page_len >> 1);
-			t.pStr = end_page_buf;
+			t.pStr = end_page_buf.data();
 			StrLen += end_page_len;
 
 			// We're adding lines - compensate for it

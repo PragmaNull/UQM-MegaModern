@@ -1440,12 +1440,12 @@ GfxPoint SeedFleetLocation(FleetInfo* FleetPtr, PlotLocation* plotmap, uint16_t 
 {
 	uint16_t rand_val_x {};
 	uint16_t rand_val_y {};
-	uint16_t home {};			// Plot ID of the homeworld for the fleet
-	uint16_t strength {};		// Strength of the fleet
-	GfxPoint warpoint;			// location being visited, or offset for samatra
-	GfxPoint location = {0, 0}; // The results of the seeding
-	bool myRNG = false;			// If you create RNG, clean up RNG
-	char buf[256] = "";			// For debug string
+	uint16_t home {};				// Plot ID of the homeworld for the fleet
+	uint16_t strength {};			// Strength of the fleet
+	GfxPoint warpoint;				// location being visited, or offset for samatra
+	GfxPoint location = {0, 0};		// The results of the seeding
+	bool myRNG = false;				// If you create RNG, clean up RNG
+	uqstl::array<char, 256> buf {}; // For debug string
 
 	if (!FleetPtr || !plotmap)
 	{

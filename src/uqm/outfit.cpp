@@ -109,7 +109,7 @@ static void DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 {
 	GfxRect r;
 	GfxText t;
-	char buf[10];
+	uqstl::array<char, 10> buf;
 
 	t.align = TextAlign::Left;
 	t.baseline.x = ModuleCol0();
@@ -150,7 +150,7 @@ static void DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 		t.baseline.y -= ResScale(3);
 		fmt::format_to_sz_n(buf, "{}",
 							uqm::gameState().game().ModuleCost[index] * ModuleCostScale);
-		t.pStr = buf;
+		t.pStr = buf.data();
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 	}
@@ -275,7 +275,7 @@ static void DrawModuleMenuText(GfxRect* r, int Index)
 	GfxText text;
 	int16_t leading {};
 	GfxRect block;
-	char buf[256];
+	uqstl::array<char, 256> buf;
 
 	if (IsDos() || !strlen(GameString(TdoStarbaseStringBase + Index)))
 	{
@@ -303,7 +303,7 @@ static void DrawModuleMenuText(GfxRect* r, int Index)
 	text.baseline.y = r->corner.y + leading - ResScale(1);
 	const int16_t og_baseline_x {text.baseline.x};
 
-	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
 						GameString(TdoStarbaseStringBase + Index));
 
 	text.align = TextAlign::Center;
@@ -398,7 +398,7 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 	else if (pMS->CurFrame)
 	{
 		GfxText t;
-		char buf[40] {};
+		uqstl::array<char, 40> buf {};
 
 		// Draw the module image.
 		s.frame = SetAbsFrameIndex(pMS->CurFrame, NewModule);
@@ -412,8 +412,8 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 		t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
 		t.align = TextAlign::Right;
 		t.CharCount = (uint16_t)~0;
-		t.pStr = buf;
-		fmt::format_to_n(buf, sizeof(buf) - 1, "{}",
+		t.pStr = buf.data();
+		fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}",
 						 uqm::gameState().game().ModuleCost[NewModule] * ModuleCostScale);
 		if (isPC(uqm::UQMOptions::read().whichFonts))
 		{
@@ -462,7 +462,7 @@ static void DrawEscapePodText(GfxRect rect)
 	Color OldColor;
 	int16_t leading {};
 	GfxRect block;
-	char buf[256];
+	uqstl::array<char, 256> buf;
 
 	if (!strlen(GameString(EndStarbaseStringBase + 1)))
 	{
@@ -493,7 +493,7 @@ static void DrawEscapePodText(GfxRect rect)
 
 	const int16_t og_baseline_x {text.baseline.x};
 
-	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
 						GameString(EndStarbaseStringBase + 1));
 
 	text.align = TextAlign::Center;

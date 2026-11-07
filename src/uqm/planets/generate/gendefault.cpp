@@ -107,7 +107,7 @@ bool GenerateDefault_generateName(const SolarSystemState* solarSys,
 								  const SystemPlanet* world)
 {
 	const uint16_t i = planetIndex(solarSys, world);
-	uqm::utf8StringCopy(uqm::gameState().sis().PlanetName, sizeof(uqm::gameState().sis().PlanetName),
+	uqm::utf8StringCopy(uqm::gameState().sis().PlanetName.data(), sizeof(uqm::gameState().sis().PlanetName),
 						GameString(GameStringBase::PlanetNumber + (9 + 7) + i));
 	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(world->data_index));
 

@@ -323,7 +323,7 @@ static void DiscussConquer(ResponseRef R)
 	if (PhraseEnabled(PkunkPhrase::ConquerBecause1))
 	{
 #if 0
-		char buf[ALLIANCE_NAME_BUFSIZE];
+		uqstl::array<char, ALLIANCE_NAME_BUFSIZE> buf;
 
 		GetAllianceName (buf, PkunkPhrase::Name1);
 		construct_response (

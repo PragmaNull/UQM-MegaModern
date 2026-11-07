@@ -231,7 +231,7 @@ static void DrawControlText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 	GfxRect r;
 	GfxText t;
 	int16_t leading {};
-	char buf[256];
+	uqstl::array<char, 256> buf;
 
 	if (!ButtonText(which_icon))
 	{
@@ -244,7 +244,7 @@ static void DrawControlText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 
 	GetContextFontLeading(&leading);
 
-	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
 						GameString(GameStringBase::MeleeString + ButtonText(which_icon)));
 
 	t.align = TextAlign::Center;
@@ -253,7 +253,7 @@ static void DrawControlText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 
 	{
 		uqstl::vector<uqstl::string> tokens;
-		uqm::tokenize(uqstl::string_view {(const char*)buf}, tokens, ' ', false);
+		uqm::tokenize(uqstl::string_view {(const char*)buf.data()}, tokens, ' ', false);
 		for (const auto& tok : tokens)
 		{
 			t.pStr = AlignText((const char*)tok.c_str(), &t.baseline.x);
@@ -276,7 +276,7 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 	GfxText t;
 	FrameRef OldFontEffect {};
 	int16_t leading {};
-	char buf[256];
+	uqstl::array<char, 256> buf;
 
 	if (!ButtonText(which_icon))
 	{
@@ -289,7 +289,7 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 
 	GetContextFontLeading(&leading);
 
-	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
 						GameString(GameStringBase::MeleeString + ButtonText(which_icon)));
 
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
@@ -298,7 +298,7 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 
 	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
-	t.pStr = AlignText((const char*)buf, &t.baseline.x);
+	t.pStr = AlignText((const char*)buf.data(), &t.baseline.x);
 
 	font_DrawTracedText(&t, Transparent,
 						HiLite ? BattleTraceHlColor : BattleTraceColor);
@@ -318,7 +318,7 @@ static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 	GfxRect r;
 	GfxText t;
 	Color OldColor;
-	char buf[256];
+	uqstl::array<char, 256> buf;
 
 	if (!ButtonText(which_icon))
 	{
@@ -331,7 +331,7 @@ static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 
 	GetFrameRect(stamp.frame, &r);
 
-	uqm::utf8StringCopy(buf, sizeof(buf),
+	uqm::utf8StringCopy(buf.data(), sizeof(buf),
 						GameString(GameStringBase::MeleeString + ButtonText(which_icon)));
 
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
@@ -339,7 +339,7 @@ static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 
 	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
-	t.pStr = AlignText((const char*)buf, &t.baseline.x);
+	t.pStr = AlignText((const char*)buf.data(), &t.baseline.x);
 
 	font_DrawText(&t);
 
@@ -351,23 +351,23 @@ static void DrawVerticalText(const char* str, GfxPoint point)
 {
 	GfxText t;
 	int16_t leading {};
-	char buf[256];
+	uqstl::array<char, 256> buf;
 	Color OldColor;
 
 	GetContextFontLeading(&leading);
 
 	t.baseline = point;
 
-	uqm::utf8StringCopy(buf, sizeof(buf),
+	uqm::utf8StringCopy(buf.data(), sizeof(buf),
 						AlignText((const char*)AddPadd(
 									  (const char*)str, &leading),
 								  &t.baseline.x));
 
-	const size_t str_len {strlen(buf)};
+	const size_t str_len {strlen(buf.data())};
 
 	t.align = TextAlign::Center;
 	t.CharCount = 1;
-	t.pStr = buf;
+	t.pStr = buf.data();
 
 	OldColor = GetContextForeGroundColor();
 
@@ -457,17 +457,17 @@ static void DrawTeamPickerText(GfxStamp stamp)
 	GfxPoint pt;
 	GfxText t;
 	Color OldColor;
-	char buf[256];
+	uqstl::array<char, 256> buf;
 	GfxStamp s;
 	uint16_t i {};
 	int16_t leading {};
 
 	for (i = 0; i < 3; i++)
 	{ // Check if we actually have text to print
-		uqm::utf8StringCopy(buf, sizeof(buf),
+		uqm::utf8StringCopy(buf.data(), sizeof(buf),
 							GameString(GameStringBase::MeleeString + 20 + i));
 
-		if (!strlen(buf))
+		if (!strlen(buf.data()))
 		{
 			return;
 		}
@@ -491,14 +491,14 @@ static void DrawTeamPickerText(GfxStamp stamp)
 
 	DrawStamp(&s);
 
-	uqm::utf8StringCopy(buf, sizeof(buf),
+	uqm::utf8StringCopy(buf.data(), sizeof(buf),
 						GameString(GameStringBase::MeleeString + 20));
 
 	t.baseline.x = r.extent.width + pt.x + TpPadding();
 	t.baseline.y = pt.y + leading - ResScale(1);
 
 	t.align = TextAlign::Left;
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 
 	for (i = 0; i < 3; ++i)
@@ -517,7 +517,7 @@ static void DrawTeamPickerText(GfxStamp stamp)
 				   + ResScale(1);
 		DrawStamp(&s);
 
-		uqm::utf8StringCopy(buf, sizeof(buf),
+		uqm::utf8StringCopy(buf.data(), sizeof(buf),
 							GameString(GameStringBase::MeleeString + 21 + i));
 		t.baseline.x = s.origin.x + r.extent.width + TpPadding();
 		t.CharCount = (uint16_t)~0;
@@ -956,7 +956,7 @@ static void DrawFleetValue(MeleeState* pMS, uint16_t side, uint16_t HiLiteState)
 {
 	GfxRect r;
 	GfxText rtText;
-	char buf[30] {};
+	uqstl::array<char, 30> buf {};
 
 	GetFleetValueRect(side, &r);
 
@@ -969,8 +969,8 @@ static void DrawFleetValue(MeleeState* pMS, uint16_t side, uint16_t HiLiteState)
 	SetContextFont(MicroFont);
 
 	uint16_t fleetValue {MeleeSetup_getFleetValue(pMS->meleeSetup, side)};
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", fleetValue);
-	rtText.pStr = buf;
+	fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", fleetValue);
+	rtText.pStr = buf.data();
 	rtText.align = TextAlign::Right;
 	rtText.CharCount = (uint16_t)~0;
 	rtText.baseline.y = r.corner.y + r.extent.height - ResScale(3);
@@ -1717,7 +1717,7 @@ static bool DoEdit(MeleeState* pMS)
 			if (PulsedInputState.menu[*MenuKey::MenuSelect])
 			{
 				TextEntryState tes;
-				char buf[MaxTeamChars + 1] {};
+				uqstl::array<char, MaxTeamChars + 1> buf {};
 
 				// going to enter text
 				pMS->CurIndex = 0;
@@ -1727,7 +1727,7 @@ static bool DoEdit(MeleeState* pMS)
 				buf[MaxTeamChars] = '\0';
 
 				tes.Initialized = false;
-				tes.BaseStr = buf;
+				tes.BaseStr = buf.data();
 				tes.CursorPos = 0;
 				tes.MaxSize = MaxTeamChars + 1;
 				tes.CbParam = pMS;
@@ -1737,7 +1737,7 @@ static bool DoEdit(MeleeState* pMS)
 
 				// done entering
 				pMS->CurIndex = MeleeStateIndexDone;
-				if (!tes.Success || !Melee_LocalChange_teamName(pMS, pMS->side, buf))
+				if (!tes.Success || !Melee_LocalChange_teamName(pMS, pMS->side, buf.data()))
 				{
 					// The team name was not changed, so it was not redrawn.
 					// However, because we now leave edit mode, we still

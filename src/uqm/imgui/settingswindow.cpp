@@ -156,7 +156,7 @@ void applyMarker(const SettingBase& setting)
 {
 	if (item.labels == "controlTemplates" && index < uqstl::size(input_templates))
 	{
-		return input_templates[index].name;
+		return input_templates[index].name.data();
 	}
 	return item.options[index].label.c_str();
 }
@@ -237,11 +237,11 @@ void drawSlider(const MenuItemDef& item)
 // A text field that sets the setting when the player presses Enter.
 void drawTextField(const SettingBase& setting, uqgsl::czstring label)
 {
-	char buffer[64] {};
-	fmt::format_to_sz_n(buffer, sizeof(buffer), "{}", setting.valueText());
-	if (ImGui::InputText(label, buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))
+	uqstl::array<char, 64> buffer {};
+	fmt::format_to_sz_n(buffer.data(), sizeof(buffer), "{}", setting.valueText());
+	if (ImGui::InputText(label, buffer.data(), sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))
 	{
-		setSetting(uqstl::string {setting.key()}, buffer);
+		setSetting(uqstl::string {setting.key()}, buffer.data());
 	}
 }
 

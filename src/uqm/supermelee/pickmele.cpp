@@ -479,11 +479,11 @@ static void UpdatePickMeleeFleetValue(FrameRef frame, uint16_t which_player)
 	DrawFilledRectangle(&r);
 
 	// Draw the new value text.
-	char buf[40] {};
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", value);
+	uqstl::array<char, 40> buf {};
+	fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", value);
 	t.baseline.y = ResScale(7);
 	t.align = TextAlign::Right;
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
@@ -580,13 +580,13 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 		SetContextForeGroundColor(PickshipTeamNameTextColor);
 		font_DrawText(&t);
 
-		char buf[30] {};
+		uqstl::array<char, 30> buf {};
 		// Total team value of the starting team:
-		fmt::format_to_n(buf, sizeof(buf) - 1, "{}", MeleeSetup_getFleetValue(setup, sideI));
+		fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", MeleeSetup_getFleetValue(setup, sideI));
 		t.baseline.x = ResScale(4);
 		t.baseline.y = ResScale(7);
 		t.align = TextAlign::Left;
-		t.pStr = buf;
+		t.pStr = buf.data();
 		t.CharCount = (uint16_t)~0;
 		SetContextForeGroundColor(PickshipTeamStartValueColor);
 		font_DrawText(&t);

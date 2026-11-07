@@ -263,16 +263,16 @@ static void PrintCoarseScanPC(void)
 {
 	int32_t val {};
 	GfxText t;
-	char buf[200] {};
+	uqstl::array<char, 200> buf {};
 
-	GetPlanetTitle({buf, sizeof(buf)});
+	GetPlanetTitle(buf);
 
 	SetContext(PlanetContext);
 
 	t.align = TextAlign::Center;
 	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 	t.baseline.y = ScanTitleY();
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 
 	SetContextForeGroundColor(uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ?
@@ -305,8 +305,8 @@ static void PrintCoarseScanPC(void)
 	t.baseline.y = ScanBaselineYPc();
 	t.align = TextAlign::Left;
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(0));
-	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Orbit: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(0));
+	PrintScanTitlePC(&t, buf.data(), LeftSideBaselineXPc()); // "Orbit: "
 
 	val = ((pSolarSysState->SysInfo.PlanetInfo.PlanetToSunDist * 100L
 			+ (EarthRadius >> 1))
@@ -315,17 +315,17 @@ static void PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(2));
-	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Atmo: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(2));
+	PrintScanTitlePC(&t, buf.data(), LeftSideBaselineXPc()); // "Atmo: "
 
 	if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity
 		== GasGiantAtmosphere)
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(3)); // "Super Thick"
+		uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(3)); // "Super Thick"
 	}
 	else if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == 0)
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(4)); // "Vacuum"
+		uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(4)); // "Vacuum"
 	}
 	else
 	{
@@ -337,8 +337,8 @@ static void PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(6));
-	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Temp: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(6));
+	PrintScanTitlePC(&t, buf.data(), LeftSideBaselineXPc()); // "Temp: "
 
 	fmt::format_to_sz_n(buf, "{}{} c",
 						pSolarSysState->SysInfo.PlanetInfo.SurfaceTemperature,
@@ -352,12 +352,12 @@ static void PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(7));
-	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Weather: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(7));
+	PrintScanTitlePC(&t, buf.data(), LeftSideBaselineXPc()); // "Weather: "
 
 	if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == 0)
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(8)); // "None"
+		uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(8)); // "None"
 	}
 	else
 	{
@@ -373,12 +373,12 @@ static void PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(10));
-	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Tectonics: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(10));
+	PrintScanTitlePC(&t, buf.data(), LeftSideBaselineXPc()); // "Tectonics: "
 
 	if (Plansize(pSolarSysState->SysInfo.PlanetInfo.PlanDataPtr->Type) == PlanetSize::GasGiant)
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(8)); // "None"
+		uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(8)); // "None"
 	}
 	else
 	{
@@ -395,8 +395,8 @@ static void PrintCoarseScanPC(void)
 
 	t.baseline.y = ScanBaselineYPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(11));
-	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Mass: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(11));
+	PrintScanTitlePC(&t, buf.data(), RightSideBaselineXPc()); // "Mass: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
 	val = ((uint32_t)val * (uint32_t)val * (uint32_t)val / 100L
@@ -411,16 +411,16 @@ static void PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(13));
-	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Radius: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(13));
+	PrintScanTitlePC(&t, buf.data(), RightSideBaselineXPc()); // "Radius: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
 	MakeScanValue(buf, val, OrbitscanText(12)); // " e.s."
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(14));
-	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Gravity: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(14));
+	PrintScanTitlePC(&t, buf.data(), RightSideBaselineXPc()); // "Gravity: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.SurfaceGravity;
 	if (val == 0)
@@ -431,16 +431,16 @@ static void PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(16));
-	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Day: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(16));
+	PrintScanTitlePC(&t, buf.data(), RightSideBaselineXPc()); // "Day: "
 
 	val = GetRotationalPeriod();
 	MakeDayValue(buf, val, OrbitscanText(17)); // " days"
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(18));
-	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Tilt: "
+	uqm::utf8StringCopy(buf.data(), sizeof(buf), OrbitscanText(18));
+	PrintScanTitlePC(&t, buf.data(), RightSideBaselineXPc()); // "Tilt: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.AxialTilt;
 	if (val < 0)
@@ -461,7 +461,7 @@ static void PrintCoarseScan3DO(void)
 	int32_t val {};
 	GfxText t;
 	GfxStamp s;
-	char buf[200] {};
+	uqstl::array<char, 200> buf {};
 	uint16_t frameIndex = 20;
 
 	if (uqm::UQMOptions::read().whichCoarseScan == uqm::CoarseScanStyle::P6014Pictograms)
@@ -471,14 +471,14 @@ static void PrintCoarseScan3DO(void)
 
 	SetContext(PlanetContext);
 
-	GetPlanetTitle({buf, sizeof(buf)});
+	GetPlanetTitle(buf);
 
 	BatchGraphics();
 
 	t.align = TextAlign::Center;
 	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 	t.baseline.y = ScanTitleY();
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(ScanInfoColor);
 	SetContextFont(MicroFont);
@@ -968,7 +968,7 @@ static void drawLandingFuelUsage(uint16_t fuel)
 	 * and fix it when we're done.
 	 */
 	StatMsgMode old_status_message_mode = StatMsgMode::Undefined;
-	char buf[100] {};
+	uqstl::array<char, 100> buf {};
 
 	if (((int32_t)(uqm::gameState().sis().FuelOnBoard) - fuel)
 		<= (int32_t)(get_fuel_to_sol()))
@@ -983,8 +983,8 @@ static void drawLandingFuelUsage(uint16_t fuel)
 		old_status_message_mode = SetStatusMessageMode(StatMsgMode::Warning);
 	}
 
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{}{:1.1}", GameString(GameStringBase::NavigationString + 5), (float)fuel / FuelTankScale);
-	DrawStatusMessage(buf);
+	fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}{:1.1}", GameString(GameStringBase::NavigationString + 5), (float)fuel / FuelTankScale);
+	DrawStatusMessage(buf.data());
 
 	if (old_status_message_mode != StatMsgMode::Undefined)
 	{

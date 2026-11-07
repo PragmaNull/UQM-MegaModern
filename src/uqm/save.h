@@ -47,7 +47,7 @@ struct SaveSummaryData
 	uint8_t NumShips, NumDevices;
 	uqstl::array<uint8_t, MaxBuiltShips> ShipList;
 	uqstl::array<uint8_t, MaxExclusiveDevices> DeviceList;
-	char SaveName[SaveNameSize];
+	uqstl::array<char, SaveNameSize> SaveName;
 	uint8_t res_factor;
 };
 

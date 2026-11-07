@@ -209,8 +209,8 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 	self->value[WidgetTextentryWidth - 1] = 0;
 
 	t.baseline.y = y;
-	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
-	t.pStr = self->value;
+	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value.data());
+	t.pStr = self->value.data();
 
 	if (!any(self->state, TextEntryWidgetState::Editing))
 	{ // normal or selected state
@@ -361,20 +361,20 @@ static bool OnTextEntryFrame(TextEntryState* pTES)
 static int OnTextEntryEvent(WidgetTextEntry* widget)
 { // Going to edit the text
 	TextEntryState tes;
-	char revert_buf[256];
+	uqstl::array<char, 256> revert_buf;
 
 	// position cursor at the end of text
-	widget->cursor_pos = uqm::utf8StringCount(widget->value);
+	widget->cursor_pos = uqm::utf8StringCount(widget->value.data());
 	widget->state = TextEntryWidgetState::Editing;
 	DrawConnectDialog();
 
 	// make a backup copy for revert on cancel
-	uqm::utf8StringCopy(revert_buf, sizeof(revert_buf), widget->value);
+	uqm::utf8StringCopy(revert_buf.data(), sizeof(revert_buf), widget->value.data());
 
 	// text entry setup
 	tes.Initialized = false;
 	tes.NextTime = GetTimeCounter() + MenuFrameRate;
-	tes.BaseStr = widget->value;
+	tes.BaseStr = widget->value.data();
 	tes.MaxSize = widget->maxlen;
 	tes.CursorPos = widget->cursor_pos;
 	tes.CbParam = widget;
@@ -384,7 +384,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 	// SetMenuSounds (0, MenuSoundSelect);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
-		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
+		uqm::utf8StringCopy(widget->value.data(), widget->maxlen, revert_buf.data());
 	}
 	else
 	{
@@ -409,8 +409,8 @@ static int do_connect(Widget* self, WidgetEvent event)
 		/* These assignments are safe exactly because texts[] is file-scope) */
 		auto& netplayOptions {uqm::UQMOptions::getInstance().getNetplayOptions()};
 		auto& peerData {netplayOptions.editPeers()[current_state->which_side]};
-		peerData.address.host = texts[0].value;
-		peerData.address.port = std::stoul(texts[1].value);
+		peerData.address.host = texts[0].value.data();
+		peerData.address.port = std::stoul(texts[1].value.data());
 		peerData.isServer = false;
 		current_state->confirmed = true;
 		netplayOptions.setFrameInputDelay(slider.value);
@@ -427,7 +427,7 @@ static int do_listen(Widget* self, WidgetEvent event)
 		/* These assignments are safe exactly because texts[] is file-scope) */
 		auto& netplayOptions {uqm::UQMOptions::getInstance().getNetplayOptions()};
 		auto& peerData {netplayOptions.editPeers()[current_state->which_side]};
-		peerData.address.port = std::stoul(texts[1].value);
+		peerData.address.port = std::stoul(texts[1].value.data());
 		peerData.isServer = true;
 		netplayOptions.setFrameInputDelay(slider.value);
 		current_state->confirmed = true;
@@ -524,13 +524,13 @@ static void CreateWidgets(void)
 
 	/* We sometimes assign to these internals; cannot strncpy over self! */
 	auto& peerData {netplayOptions.editPeers()[current_state->which_side]};
-	if (texts[0].value != peerData.address.host)
+	if (texts[0].value.data() != peerData.address.host)
 	{
-		memset(texts[0].value, 0, sizeof(texts[0].value));
+		memset(texts[0].value.data(), 0, sizeof(texts[0].value));
 		const uqstl::string_view toCopy {peerData.address.host.c_str(), std::min(peerData.address.host.size(), static_cast<size_t>(texts[0].maxlen))};
 		uqm::strncpy_safe(texts[0].value, toCopy);
 	}
-	fmt::format_to_sz_n(texts[1].value, std::min(sizeof(texts[1].value), static_cast<size_t>(texts[1].maxlen)), "{}", peerData.address.port);
+	fmt::format_to_sz_n(texts[1].value.data(), std::min(sizeof(texts[1].value), static_cast<size_t>(texts[1].maxlen)), "{}", peerData.address.port);
 
 	menu.receiveFocus((Widget*)&menu, WidgetEvent::Down);
 }

@@ -94,7 +94,7 @@ bool RoboInterpolation(const char* start, const char* end)
 const char* InterpolateChunk(uqstl::span<char> buffer, const char* start)
 {
 	const char* end = start;
-	char str_buf[MaxInterpolate] = "";
+	uqstl::array<char, MaxInterpolate> str_buf {};
 	const char* pStr {};
 	uint16_t buffsize = 0;
 	bool done = false;
@@ -130,7 +130,7 @@ const char* InterpolateChunk(uqstl::span<char> buffer, const char* start)
 		}
 
 		uqm::strncpy_safe(str_buf, {start, end});
-		const uqstl::string interpolated {uqm::lua().interpolate(str_buf)};
+		const uqstl::string interpolated {uqm::lua().interpolate(str_buf.data())};
 		buffsize += (uint16_t)interpolated.size();
 		if (buffsize > MaxInterpolate)
 		{
@@ -235,8 +235,8 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 	do
 	{
 		// Get fresh buffers every loop
-		char str_buf[MaxInterpolate] = "";
-		char clip_buf[MaxClipname] = "";
+		uqstl::array<char, MaxInterpolate> str_buf {};
+		uqstl::array<char, MaxClipname> clip_buf {};
 #if 0
 		// Gotta test and make sure we don't need this intensity
 			for (i = 0; i < MaxInterpolate; i++)
@@ -248,7 +248,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 		// chunk, or nullptr if done.  Writes the interpolation to str_buf.
 		pStr = InterpolateChunk(str_buf, pStr);
 #ifdef DEBUG_STARSEED
-		fmt::print(stderr, "Chunk\n<<{}>>\n", str_buf);
+		fmt::print(stderr, "Chunk\n<<{}>>\n", str_buf.data());
 #endif
 		if (RoboTrack[0] == RobotPhrase::NullPhrase)
 		{
@@ -258,7 +258,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 				fmt::print(stderr, "Regular splicetrack.\n");
 #endif
 				// There's no sub-clips here, return regular clip
-				SpliceTrack(pClip, str_buf, pTimeStamp, cb);
+				SpliceTrack(pClip, str_buf.data(), pTimeStamp, cb);
 			}
 			else
 			{
@@ -267,7 +267,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 #endif
 				// This is a subclip of the main dialog
 				GetSubClip(clip_buf, pClip, clip_number);
-				SpliceTrack(clip_buf, str_buf, pTimeStamp, cb);
+				SpliceTrack(clip_buf.data(), str_buf.data(), pTimeStamp, cb);
 				// Advance to the next timestamp if it exists
 				if (pTimeStamp)
 				{
@@ -290,7 +290,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 			//char *tracks[NumRoboTracks + 1] =
 			//{ [0 ... NumRoboTracks] = nullptr };
 			uqstl::array<uqgsl::czstring, NumRoboTracks + 1> tracks {nullptr}; // NOLINT(misc-const-correctness)
-			char subClips[NumRoboTracks][MaxClipname] {};
+			uqstl::array<uqstl::array<char, MaxClipname>, NumRoboTracks> subClips {};
 			for (i = 0; i < NumRoboTracks && RoboTrack[i] != RobotPhrase::NullPhrase; i++)
 			{
 				if (RoboTrack[i] == RobotPhrase::SubClip)
@@ -301,7 +301,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 					fmt::print(stderr, "Allocating for track {}.\n", i);
 #endif
 					GetSubClip(subClips[i], pClip, clip_number);
-					tracks[i] = subClips[i];
+					tracks[i] = subClips[i].data();
 #ifdef DEBUG_STARSEED
 					fmt::print(stderr, "RoboTrack[{}] = <<{}>>.\n", i, tracks[i]);
 #endif
@@ -321,9 +321,9 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 				}
 			}
 #ifdef DEBUG_STARSEED
-			fmt::print(stderr, "Splice Multitrack string <<{}>>.\n", str_buf);
+			fmt::print(stderr, "Splice Multitrack string <<{}>>.\n", str_buf.data());
 #endif
-			SpliceMultiTrack(tracks.data(), str_buf);
+			SpliceMultiTrack(tracks.data(), str_buf.data());
 			for (i = 0; i < NumRoboTracks && RoboTrack[i] != RobotPhrase::NullPhrase; i++)
 			{
 				tracks[i] = nullptr;
@@ -358,7 +358,7 @@ void NPCPhrase_splice(int index)
 
 void NPCNumber(int number, const char* fmt)
 {
-	char buf[32] {};
+	uqstl::array<char, 32> buf {};
 
 	if (!fmt)
 	{
@@ -373,7 +373,7 @@ void NPCNumber(int number, const char* fmt)
 
 	// just splice in the subtitle text
 	fmt::format_to_sz_n(buf, fmt::runtime(fmt), number);
-	SpliceTrack(nullptr, buf, nullptr, nullptr);
+	SpliceTrack(nullptr, buf.data(), nullptr, nullptr);
 }
 
 static constexpr auto MaxNumberTracks {20};
@@ -384,7 +384,7 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 	int queued = 0;
 	int toplevel = 0;
 	uqstl::array<uqgsl::czstring, MaxNumberTracks> TrackNames;
-	char numbuf[60] {};
+	uqstl::array<char, 60> numbuf {};
 	const SpeechDigit* dig = nullptr;
 
 	if (!speech)
@@ -399,7 +399,7 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 		{
 			fmt = "{}";
 		}
-		fmt::format_to_n(numbuf, sizeof(numbuf) - 1, fmt::runtime(fmt), number);
+		fmt::format_to_n(numbuf.data(), sizeof(numbuf) - 1, fmt::runtime(fmt), number);
 		ptrack = TrackNames.data();
 	}
 
@@ -468,7 +468,7 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 		}
 		*ptrack++ = nullptr; // term
 
-		SpliceMultiTrack(TrackNames.data(), numbuf);
+		SpliceMultiTrack(TrackNames.data(), numbuf.data());
 	}
 
 	return queued;

@@ -1130,8 +1130,8 @@ static constexpr auto TokenSize {64};
 
 struct parse_state
 {
-	char line[LineSize] {};
-	char token[TokenSize] {};
+	uqstl::array<char, LineSize> line {};
+	uqstl::array<char, TokenSize> token {};
 	int index {};
 	int error {};
 	int linenum {};
@@ -1177,7 +1177,7 @@ static void expected_error(parse_state* state, const char* expected)
 
 static void consume(parse_state* state, const char* expected)
 {
-	if (strcasecmp(expected, state->token))
+	if (strcasecmp(expected, state->token.data()))
 	{
 		expected_error(state, expected);
 	}
@@ -1186,12 +1186,12 @@ static void consume(parse_state* state, const char* expected)
 
 static int consume_keyname(parse_state* state)
 {
-	const int keysym = VControl_name2code(state->token);
+	const int keysym = VControl_name2code(state->token.data());
 	if (!keysym)
 	{
 		uqm::log::warn("VControl: Illegal key name '{}' on config "
 					   "file line {}",
-					   state->token, state->linenum);
+					   state->token.data(), state->linenum);
 		state->error = 1;
 	}
 	next_token(state);
@@ -1201,7 +1201,7 @@ static int consume_keyname(parse_state* state)
 static int consume_num(parse_state* state)
 {
 	char* end {};
-	const int result = strtol(state->token, &end, 10);
+	const int result = strtol(state->token.data(), &end, 10);
 	if (*end != '\0')
 	{
 		uqm::log::warn(
@@ -1216,11 +1216,11 @@ static int consume_num(parse_state* state)
 static int consume_polarity(parse_state* state)
 {
 	int result = 0;
-	if (!strcasecmp(state->token, "positive"))
+	if (!strcasecmp(state->token.data(), "positive"))
 	{
 		result = 1;
 	}
-	else if (!strcasecmp(state->token, "negative"))
+	else if (!strcasecmp(state->token.data(), "negative"))
 	{
 		result = -1;
 	}
@@ -1235,19 +1235,19 @@ static int consume_polarity(parse_state* state)
 static Uint8 consume_dir(parse_state* state)
 {
 	Uint8 result = 0;
-	if (!strcasecmp(state->token, "left"))
+	if (!strcasecmp(state->token.data(), "left"))
 	{
 		result = SDL_HAT_LEFT;
 	}
-	else if (!strcasecmp(state->token, "right"))
+	else if (!strcasecmp(state->token.data(), "right"))
 	{
 		result = SDL_HAT_RIGHT;
 	}
-	else if (!strcasecmp(state->token, "up"))
+	else if (!strcasecmp(state->token.data(), "up"))
 	{
 		result = SDL_HAT_UP;
 	}
-	else if (!strcasecmp(state->token, "down"))
+	else if (!strcasecmp(state->token.data(), "down"))
 	{
 		result = SDL_HAT_DOWN;
 	}
@@ -1265,7 +1265,7 @@ static void parse_joybinding(parse_state* state, VControlGesture* gesture)
 	const int sticknum {consume_num(state)};
 	if (!state->error)
 	{
-		if (!strcasecmp(state->token, "axis"))
+		if (!strcasecmp(state->token.data(), "axis"))
 		{
 			consume(state, "axis");
 			const int axisnum {consume_num(state)};
@@ -1281,7 +1281,7 @@ static void parse_joybinding(parse_state* state, VControlGesture* gesture)
 				}
 			}
 		}
-		else if (!strcasecmp(state->token, "button"))
+		else if (!strcasecmp(state->token.data(), "button"))
 		{
 			consume(state, "button");
 			const int buttonnum {consume_num(state)};
@@ -1292,7 +1292,7 @@ static void parse_joybinding(parse_state* state, VControlGesture* gesture)
 				gesture->gesture.button.index = buttonnum;
 			}
 		}
-		else if (!strcasecmp(state->token, "hat"))
+		else if (!strcasecmp(state->token.data(), "hat"))
 		{
 			consume(state, "hat");
 			const int hatnum {consume_num(state)};
@@ -1318,7 +1318,7 @@ static void parse_joybinding(parse_state* state, VControlGesture* gesture)
 static void parse_gesture(parse_state* state, VControlGesture* gesture)
 {
 	gesture->type = VControlGestureType::None; /* Default to error */
-	if (!strcasecmp(state->token, "key"))
+	if (!strcasecmp(state->token.data(), "key"))
 	{
 		/* Parse key binding */
 		consume(state, "key");
@@ -1329,7 +1329,7 @@ static void parse_gesture(parse_state* state, VControlGesture* gesture)
 			gesture->gesture.key = keysym;
 		}
 	}
-	else if (!strcasecmp(state->token, "joystick"))
+	else if (!strcasecmp(state->token.data(), "joystick"))
 	{
 		parse_joybinding(state, gesture);
 	}

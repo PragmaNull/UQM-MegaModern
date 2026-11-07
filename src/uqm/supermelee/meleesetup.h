@@ -47,7 +47,7 @@ namespace uqm
 struct MeleeTeam
 {
 	uqstl::array<MeleeShip, MeleeFleetSize> ships;
-	char name[MaxTeamChars + 1 + 24];
+	uqstl::array<char, MaxTeamChars + 1 + 24> name;
 	/* The +1 is for the terminating \0; the +24 is in case some
 			 * default name in starcon.txt is unknowingly mangled. */
 	// XXX: SvdB: Why would it be mangled? Why don't we just reject

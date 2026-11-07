@@ -185,7 +185,7 @@ void BuildBattle(uint16_t which_player)
 
 						if (selector == PlanetType::SaMatra)
 						{
-							uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+							uqm::utf8StringCopy(uqm::gameState().sis().PlanetName.data(),
 												sizeof(uqm::gameState().sis().PlanetName),
 												GameString(GameStringBase::PlanetNumber + 32));
 							DrawSISTitle(
@@ -374,19 +374,19 @@ uint16_t InitEncounter(void)
 	}
 	else
 	{
-		char buf[256];
+		uqstl::array<char, 256> buf;
 
 		t.pStr = GameString(GameStringBase::EncounterString + 2);
 		// "ENCOUNTER AT"
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 		t.baseline.y += ResScale(12);
-		GetClusterName(CurStarDescPtr(), buf);
-		t.pStr = buf;
+		GetClusterName(CurStarDescPtr(), buf.data());
+		t.pStr = buf.data();
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 		t.baseline.y += ResScale(12);
-		t.pStr = uqm::gameState().sis().PlanetName;
+		t.pStr = uqm::gameState().sis().PlanetName.data();
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 	}
@@ -629,7 +629,7 @@ uint16_t UninitEncounter(void)
 		const char* str1 = nullptr;
 		const char* str2 = nullptr;
 		StatMsgMode prevMsgMode = StatMsgMode::Undefined;
-		char buf[80] {};
+		uqstl::array<char, 80> buf {};
 		const ShipFragment* FragPtr {};
 		const auto& fade_ship_cycle {ScavengeScreenColorTable};
 		constexpr auto NumShipFades {std::size(fade_ship_cycle)};
@@ -690,7 +690,7 @@ uint16_t UninitEncounter(void)
 					}
 					else
 					{
-						DrawSISTitle(uqm::gameState().sis().PlanetName);
+						DrawSISTitle(uqm::gameState().sis().PlanetName.data());
 					}
 
 					SetContext(SpaceContext);
@@ -735,13 +735,13 @@ uint16_t UninitEncounter(void)
 
 								SetContextFont(isPC(uqm::UQMOptions::read().whichFonts) ? TinyFont : TinyFontBold);
 
-								uqm::utf8StringCopy(buf, sizeof buf,
+								uqm::utf8StringCopy(buf.data(), sizeof buf,
 													uqm::toUpperUtf8(FragPtr->race_strings->text(0)).c_str());
 
 								t.baseline.x = scavenge_r.corner.x + ResScale(100);
 								t.baseline.y = scavenge_r.corner.y + ResScale(68);
 								t.align = TextAlign::Center;
-								t.pStr = buf;
+								t.pStr = buf.data();
 								t.CharCount = (uint16_t)~0;
 								font_DrawText(&t);
 								t.baseline.y += ResScale(6);
@@ -790,13 +790,13 @@ uint16_t UninitEncounter(void)
 							}
 
 							RecycleAmount += j;
-							fmt::format_to_n(buf, sizeof(buf) - 1, "{}", RecycleAmount);
+							fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", RecycleAmount);
 							t.baseline.x =
 								r.corner.x + r.extent.width
 								- ResScale(1);
 							t.baseline.y = r.corner.y + ResScale(14);
 							t.align = TextAlign::Right;
-							t.pStr = buf;
+							t.pStr = buf.data();
 							t.CharCount = (uint16_t)~0;
 							SetContextForeGroundColor(
 								BuildColor(
@@ -910,12 +910,12 @@ uint16_t UninitEncounter(void)
 					// The whole stat stripe
 					ClearRectBack(&r);
 
-					fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}", RecycleAmount,
+					fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{} {}", RecycleAmount,
 									 GameString(GameStringBase::StatusString + 1)); // "RU"
 					t.baseline.x = r.corner.x + (r.extent.width >> 1);
 					t.baseline.y = r.corner.y + ResScale(14);
 					t.align = TextAlign::Center;
-					t.pStr = buf;
+					t.pStr = buf.data();
 					t.CharCount = (uint16_t)~0;
 					SetContextForeGroundColor(
 						BuildColor(MakeRgb15(0x00, 0x00, 0x18), 0x50));

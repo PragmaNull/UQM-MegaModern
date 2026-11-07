@@ -1037,19 +1037,19 @@ static void dumpSystemCallback(const StarDesc* star, const SolarSystemState* sys
 
 void dumpSystem(FILE* out, const StarDesc* star, const SolarSystemState* system)
 {
-	char name[256];
-	char buf[40];
+	uqstl::array<char, 256> name;
+	uqstl::array<char, 40> buf;
 
-	GetClusterName(star, name);
+	GetClusterName(star, name.data());
 	fmt::format_to_sz_n(buf, "{} {}",
 						bodyColorString(StarColor(star->Type)),
 						starTypeString(StarType(star->Type)));
 
 	fmt::print(out, "{:>22}  ({:3}.{:1}, {:3}.{:1}) {:>19}  {}\n",
-			   name,
+			   name.data(),
 			   star->star_pt.x / 10, star->star_pt.x % 10,
 			   star->star_pt.y / 10, star->star_pt.y % 10,
-			   buf,
+			   buf.data(),
 			   starPresenceString(star->Index));
 
 	(void)system; /* satisfy compiler */
@@ -1237,7 +1237,7 @@ static void dumpPlanetCallback(const SystemPlanet* planet, void* arg)
 void dumpPlanet(FILE* out, const SystemPlanet* planet)
 {
 	(*pSolarSysState->genFuncs->generateName)(pSolarSysState, planet);
-	fmt::print(out, "- {:>37}  {}\n", uqm::gameState().sis().PlanetName,
+	fmt::print(out, "- {:>37}  {}\n", uqm::gameState().sis().PlanetName.data(),
 			   planetTypeString(planet->data_index & ~*PlanetType::PlanetShielded));
 	dumpWorld(out, planet);
 }
@@ -1329,7 +1329,7 @@ static void dumpWorld(FILE* out, const SystemPlanet* world)
 void printWorld(const SystemPlanet* world)
 {
 	PlanetData* info;
-	char buf[200] {};
+	uqstl::array<char, 200> buf {};
 	GfxPoint universe = CurStarDescPtr()->star_pt;
 
 	if (world->data_index == PlanetType::HierarchyStarbase
@@ -1351,19 +1351,19 @@ void printWorld(const SystemPlanet* world)
 			   universe.x / 10, universe.x % 10,
 			   universe.y / 10, universe.y % 10);
 
-	GetClusterName(CurStarDescPtr(), buf);
+	GetClusterName(CurStarDescPtr(), buf.data());
 
-	fmt::print(fp, "Star:       {}\n", buf);
+	fmt::print(fp, "Star:       {}\n", buf.data());
 
-	GetPlanetTitle({buf, sizeof(buf)});
+	GetPlanetTitle(buf);
 
-	if (strcmp(buf, uqm::gameState().sis().PlanetName) != 0)
+	if (strcmp(buf.data(), uqm::gameState().sis().PlanetName.data()) != 0)
 	{
-		fmt::print(fp, "Planet:     {}\n", uqm::gameState().sis().PlanetName);
+		fmt::print(fp, "Planet:     {}\n", uqm::gameState().sis().PlanetName.data());
 	}
 
 	info = &pSolarSysState->SysInfo.PlanetInfo;
-	fmt::print(fp, "World:      {}\n\n", buf);
+	fmt::print(fp, "World:      {}\n\n", buf.data());
 	fmt::print(fp, "DistToSun:  {}\n", info->PlanetToSunDist);
 	fmt::print(fp, "Atmosphere: {}\n", info->AtmoDensity);
 	fmt::print(fp, "Temp:       {}\n", info->SurfaceTemperature);
@@ -1545,12 +1545,12 @@ static void tallySystemPreCallback(const StarDesc* star, const SolarSystemState*
 static void tallySystemPostCallback(const StarDesc* star, const SolarSystemState* system,
 									void* arg)
 {
-	char name[256];
+	uqstl::array<char, 256> name;
 	TallyResourcesArg* tallyResourcesArg = (TallyResourcesArg*)arg;
 	FILE* out = tallyResourcesArg->out;
 
-	GetClusterName(star, name);
-	fmt::print(out, "{}\t{}\t{}\n", name, tallyResourcesArg->mineralCount,
+	GetClusterName(star, name.data());
+	fmt::print(out, "{}\t{}\t{}\n", name.data(), tallyResourcesArg->mineralCount,
 			   tallyResourcesArg->bioCount);
 
 	(void)star;	  /* satisfy compiler */
@@ -1665,7 +1665,7 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 
 const char* planetTypeString(int typeIndex)
 {
-	static char typeStr[40];
+	static uqstl::array<char, 40> typeStr;
 
 	if (typeIndex >= PlanetType::FirstGasGiant)
 	{
@@ -1680,7 +1680,7 @@ const char* planetTypeString(int typeIndex)
 							GameString(GameStringBase::ScanString + 4 + typeIndex),
 							GameString(GameStringBase::ScanString + 4 + 50));
 	}
-	return typeStr;
+	return typeStr.data();
 }
 
 // size is what you get from Plansize (planetFrame.Type)
@@ -1721,7 +1721,7 @@ const char* worldGenAlgoString(uint8_t algo)
 // not reentrant
 const char* tectonicsString(uint8_t tectonics)
 {
-	static char buf[sizeof "-127"];
+	static uqstl::array<char, sizeof "-127"> buf;
 	switch (tectonics)
 	{
 		case NoTectonics:
@@ -1736,7 +1736,7 @@ const char* tectonicsString(uint8_t tectonics)
 			return "super";
 		default:
 			fmt::format_to_sz_n(buf, "{}", tectonics);
-			return buf;
+			return buf.data();
 	}
 }
 

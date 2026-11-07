@@ -46,7 +46,7 @@ uqstl::optional<GameView> s_view {};
 uqstl::optional<uqstl::array<uint32_t, c_gameFlagCount>> s_previousFlags {};
 bool s_hasResult {};
 double s_lastRequest {-c_refreshSeconds};
-char s_flagFilter[64] {};
+uqstl::array<char, 64> s_flagFilter {};
 int s_daysToAdvance {1};
 
 [[nodiscard]] GameView takeView()
@@ -186,7 +186,7 @@ void drawFlagRow(size_t index)
 void drawFlags()
 {
 	ImGui::SetNextItemWidth(-FLT_MIN);
-	ImGui::InputTextWithHint("##filter", "Filter, for example SHOFIXTI", s_flagFilter, sizeof(s_flagFilter));
+	ImGui::InputTextWithHint("##filter", "Filter, for example SHOFIXTI", s_flagFilter.data(), sizeof(s_flagFilter));
 	textDisabledWrapped("Values that changed in the last snapshot are yellow. A value is limited to its bits.");
 
 	constexpr ImGuiTableFlags flags {ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY};
@@ -296,7 +296,7 @@ void drawSisValue(const char* label, T value, ImGuiDataType type, void (*set)(Fl
 void drawShip()
 {
 	const GameView& view {*s_view};
-	ImGui::Text("Ship: %s, captain %s", view.sis.ShipName, view.sis.CommanderName);
+	ImGui::Text("Ship: %s, captain %s", view.sis.ShipName.data(), view.sis.CommanderName.data());
 	ImGui::Text("Activity: %s", activityText(view.activity).c_str());
 
 	ImGui::SeparatorText("Resources");

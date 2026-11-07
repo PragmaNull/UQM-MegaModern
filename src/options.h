@@ -66,7 +66,7 @@ extern uqstl::array<uqm::CheatAction, 28> optDeviceArray;
 extern uqstl::array<uqm::CheatAction, NumUpgrades> optUpgradeArray;
 
 
-extern char baseContentPath[PATH_MAX];
+extern uqstl::array<char, PATH_MAX> baseContentPath;
 
 extern uqgsl::czstring contentDirPath;
 extern uqgsl::czstring addonDirPath;
@@ -92,7 +92,7 @@ namespace uqm
  * hold as much as one of them allows by default. */
 struct InputTemplate
 {
-	char name[30];
+	uqstl::array<char, 30> name;
 
 	/* This should eventually also hold things like Joystick Port
 	 * and whether or not joysticks are enabled at all, and

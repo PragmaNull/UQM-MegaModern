@@ -324,7 +324,7 @@ static void DrawEnterOrbitText(GfxRect rect)
 	GfxText text;
 	FrameRef OldFontEffect {};
 	int16_t leading {};
-	char buf[256];
+	uqstl::array<char, 256> buf;
 
 	FontRef OldFont {SetContextFont(MicroFont)};
 	OldFontEffect = SetContextFontEffect(
@@ -339,7 +339,7 @@ static void DrawEnterOrbitText(GfxRect rect)
 
 	const int16_t og_baseline_x {text.baseline.x};
 
-	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+	uqm::utf8StringCopy((char*)buf.data(), sizeof(buf),
 						GameString(GameStringBase::NavigationString + 8));
 
 	text.align = TextAlign::Center;
@@ -447,7 +447,7 @@ static void DrawOrbitalDisplay(DrawOrbitalMode Mode)
 		SetTransitionSource(nullptr);
 		DrawSISFrame();
 		DrawSISMessage(nullptr);
-		DrawSISTitle(uqm::gameState().sis().PlanetName);
+		DrawSISTitle(uqm::gameState().sis().PlanetName.data());
 		DrawStarBackGround();
 		DrawPlanetSurfaceBorder();
 	}

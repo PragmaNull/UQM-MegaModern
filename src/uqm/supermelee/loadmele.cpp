@@ -171,14 +171,14 @@ static void DrawFileString(const MeleeTeam* team, const GfxPoint* origin,
 	// Print the value of the fleet
 	{
 		GfxText Text;
-		char buf[60] {};
+		uqstl::array<char, 60> buf {};
 
-		fmt::format_to_n(buf, sizeof(buf) - 1, "{}", MeleeTeam_getValue(team));
+		fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", MeleeTeam_getValue(team));
 		Text.baseline = *origin;
 		Text.baseline.x += NumMeleeColumns() * (LoadMeleeBoxWidth() + LoadMeleeBoxSpace())
 						 - ResScale(1);
 		Text.align = TextAlign::Right;
-		Text.pStr = buf;
+		Text.pStr = buf.data();
 		Text.CharCount = (uint16_t)~0;
 		font_DrawText(&Text);
 	}
@@ -471,7 +471,7 @@ void LoadTeamList(MeleeState* pMS)
 bool DoSaveTeam(MeleeState* pMS)
 {
 	GfxStamp MsgStamp;
-	char file[NAME_MAX];
+	uqstl::array<char, NAME_MAX> file;
 	bool saveOk = false;
 	bool opened {false};
 
@@ -482,7 +482,7 @@ bool DoSaveTeam(MeleeState* pMS)
 	ConfirmSaveLoad(&MsgStamp);
 	// Show the "Saving . . ." message.
 
-	if (uqm::io::Result<uqm::io::File> stream {uqm::meleeDir().open(file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)})
+	if (uqm::io::Result<uqm::io::File> stream {uqm::meleeDir().open(file.data(), uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)})
 	{
 		opened = true;
 		saveOk = MeleeTeam_serialize(&pMS->meleeSetup->teams[pMS->side], *stream) == 0 && stream->flush();
@@ -490,7 +490,7 @@ bool DoSaveTeam(MeleeState* pMS)
 
 		if (!saveOk)
 		{
-			(void)uqm::meleeDir().remove(file);
+			(void)uqm::meleeDir().remove(file.data());
 		}
 	}
 
@@ -510,7 +510,7 @@ bool DoSaveTeam(MeleeState* pMS)
 	// Update the team list; a previously existing team may have been
 	// deleted when save failed.
 	LoadTeamList(pMS);
-	SelectTeamByFileName(pMS, file);
+	SelectTeamByFileName(pMS, file.data());
 
 	return opened;
 }

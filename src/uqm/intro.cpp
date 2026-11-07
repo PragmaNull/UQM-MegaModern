@@ -73,7 +73,7 @@ struct PresentationInputState
 	GfxRect tfade_r;
 	uqstl::array<GfxText, uqm::c_slideshowMaxFadeInLines> TextLines;
 	uint16_t LinesCount;
-	char Buffer[512];
+	uqstl::array<char, 512> Buffer;
 	int MovieFrame;
 	int MovieEndFrame;
 	TimePeriod InterframeDelay;
@@ -425,12 +425,12 @@ static bool ShowPresentationFile(const char* name)
 
 struct IntroShip
 {
-	SpeciesId sID;	   // The ship SPECIES_ID, a second index
-	char ditty[256];   // The ditty string (file name)
-	char race[256];	   // The race's name string e.g. EARTHLING
-	char ship[256];	   // The ship's name string e.g. CRUISER
-	uint16_t spinline; // The line on which race/ship strings occur
-	uint16_t width;	   // The SD pixel width of the race name
+	SpeciesId sID;				   // The ship SPECIES_ID, a second index
+	uqstl::array<char, 256> ditty; // The ditty string (file name)
+	uqstl::array<char, 256> race;  // The race's name string e.g. EARTHLING
+	uqstl::array<char, 256> ship;  // The ship's name string e.g. CRUISER
+	uint16_t spinline;			   // The line on which race/ship strings occur
+	uint16_t width;				   // The SD pixel width of the race name
 };
 
 const static uqstl::array<IntroShip, 25> ship_map {
@@ -479,7 +479,7 @@ static void SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 
 	for (shipID = 0; shipID < NumShips; shipID++)
 	{
-		if (!strcasecmp(str.data(), ship_map[shipID].ditty))
+		if (!strcasecmp(str.data(), ship_map[shipID].ditty.data()))
 		{
 			break;
 		}
@@ -502,7 +502,7 @@ static void SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 	}
 
 	linespun = false;
-	fmt::format_to_sz_n(buf, "ship.{}.ditty", ship_map[raceID].ditty);
+	fmt::format_to_sz_n(buf, "ship.{}.ditty", ship_map[raceID].ditty.data());
 	return;
 
 SeedDittyPassThru:
@@ -568,8 +568,8 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 	}
 
 	linespun = true;
-	uqm::utf8StringCopy(buf, size, ship_map[raceID].race);
-	buf += strlen(ship_map[raceID].race) * sizeof(char);
+	uqm::utf8StringCopy(buf, size, ship_map[raceID].race.data());
+	buf += strlen(ship_map[raceID].race.data()) * sizeof(char);
 
 	switch (ship_map[shipID].sID)
 	{
@@ -659,7 +659,7 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 			break;
 	}
 
-	uqm::utf8StringCopy(buf, size, ship_map[shipID].ship);
+	uqm::utf8StringCopy(buf, size, ship_map[shipID].ship.data());
 	return;
 
 SeedTextSpinSkipLine:
@@ -793,7 +793,7 @@ static bool DoPresentation(void* pIS)
 						DestroyMusic(pPIS->musicRef);
 					}
 
-					pPIS->musicRef = LoadMusicInstance(pPIS->Buffer);
+					pPIS->musicRef = LoadMusicInstance(pPIS->Buffer.data());
 					PlayMusic(pPIS->musicRef, false, 1);
 					break;
 				}
@@ -910,12 +910,12 @@ static bool DoPresentation(void* pIS)
 
 					if (uqm::currentSeed().ships)
 					{
-						SeedTextSpin(pPIS->Buffer, sizeof(pPIS->Buffer),
+						SeedTextSpin(pPIS->Buffer.data(), sizeof(pPIS->Buffer),
 									 cmd.text.c_str(), &x, &y);
 					}
 					else
 					{
-						uqm::utf8StringCopy(pPIS->Buffer, sizeof(pPIS->Buffer),
+						uqm::utf8StringCopy(pPIS->Buffer.data(), sizeof(pPIS->Buffer),
 											cmd.text.c_str());
 					}
 					x <<= resolutionFactor;
@@ -931,7 +931,7 @@ static bool DoPresentation(void* pIS)
 
 					SetContextForeGroundColor(pPIS->TextColor);
 					SetContextBackGroundColor(pPIS->TextBackColor);
-					if (uqm::currentSeed().ships && !strncmp(pPIS->Buffer, "SPATHI", 6))
+					if (uqm::currentSeed().ships && !strncmp(pPIS->Buffer.data(), "SPATHI", 6))
 					{ // Manually space the SPATHI text
 						DoSpinText("SP", x,
 								   y + ResScale(7),
@@ -953,7 +953,7 @@ static bool DoPresentation(void* pIS)
 					}
 					else
 					{
-						DoSpinText(pPIS->Buffer, x, y + ResScale(7),
+						DoSpinText(pPIS->Buffer.data(), x, y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
 					}
 
@@ -985,16 +985,16 @@ static bool DoPresentation(void* pIS)
 
 					if (cmd.filled > 9 || (cmd.filled + cmd.empty) > 9)
 					{
-						char buf[sizeof(pPIS->Buffer) + 12];
+						uqstl::array<char, sizeof(pPIS->Buffer) + 12> buf;
 						GfxText t;
 
 						uqm::log::warn("SPINSTAT: Stats exceed max "
 									   "values '{}'",
 									   cmd.text);
-						fmt::format_to_sz_n(buf, "{} Exceed max !", pPIS->Buffer);
+						fmt::format_to_sz_n(buf, "{} Exceed max !", pPIS->Buffer.data());
 
 						t.align = TextAlign::Left;
-						t.pStr = buf;
+						t.pStr = buf.data();
 						t.CharCount = (uint16_t)~0;
 						t.baseline = MAKE_POINT(x, y);
 						DrawTextEffect(&t,
@@ -1003,7 +1003,7 @@ static bool DoPresentation(void* pIS)
 					}
 					else
 					{
-						DoSpinStat(pPIS->Buffer,
+						DoSpinStat(pPIS->Buffer.data(),
 								   x, y, cmd.filled, cmd.empty,
 								   pPIS->TextColor, pPIS->TextBackColor, &pPIS->Skip);
 

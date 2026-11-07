@@ -69,8 +69,8 @@ const char* StringBank_AddString(stringbank* bank, const char* str)
 		const unsigned int remaining = StrbankChunkSize - x->len;
 		if (len < remaining)
 		{
-			char* result = x->data + x->len;
-			uqm::strncpy_safe({result, uqstl::end(x->data)}, str);
+			char* result = x->data.data() + x->len;
+			uqm::strncpy_safe({result, x->data.data() + x->data.size()}, str);
 			x->len += len;
 			return result;
 		}
@@ -80,7 +80,7 @@ const char* StringBank_AddString(stringbank* bank, const char* str)
 	x = add_chunk(bank);
 	uqm::strncpy_safe(x->data, str);
 	x->len += len;
-	return x->data;
+	return x->data.data();
 }
 
 const char* StringBank_AddOrFindString(stringbank* bank, const char* str)
@@ -96,9 +96,9 @@ const char* StringBank_AddOrFindString(stringbank* bank, const char* str)
 		int i = 0;
 		while (i < x->len)
 		{
-			if (!strcmp(x->data + i, str))
+			if (!strcmp(x->data.data() + i, str))
 			{
-				return x->data + i;
+				return x->data.data() + i;
 			}
 			while (x->data[i])
 			{
@@ -112,7 +112,7 @@ const char* StringBank_AddOrFindString(stringbank* bank, const char* str)
 	return StringBank_AddString(bank, str);
 }
 
-static char buffer[StrbankChunkSize];
+static uqstl::array<char, StrbankChunkSize> buffer;
 
 const char* StringBank_AddSubstring(stringbank* bank, const char* str, unsigned int n)
 {
@@ -126,7 +126,7 @@ const char* StringBank_AddSubstring(stringbank* bank, const char* str, unsigned 
 		return nullptr;
 	}
 	uqm::strncpy_safe(buffer, {str, n});
-	return StringBank_AddString(bank, buffer);
+	return StringBank_AddString(bank, buffer.data());
 }
 
 const char* StringBank_AddOrFindSubstring(stringbank* bank, const char* str, unsigned int n)
@@ -141,7 +141,7 @@ const char* StringBank_AddOrFindSubstring(stringbank* bank, const char* str, uns
 		return nullptr;
 	}
 	uqm::strncpy_safe(buffer, {str, n});
-	return StringBank_AddOrFindString(bank, buffer);
+	return StringBank_AddOrFindString(bank, buffer.data());
 }
 
 int SplitString(const char* s, char splitchar, int n, const char** result, stringbank* bank)

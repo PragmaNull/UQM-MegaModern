@@ -318,11 +318,11 @@ static int GetTimeStamps(const char* TimeStamps, int32_t* time_stamps)
 
 	while (*TimeStamps && (pos = strcspn(TimeStamps, ";,\r\n")))
 	{
-		char valStr[32];
+		uqstl::array<char, 32> valStr;
 
-		memcpy(valStr, TimeStamps, pos);
+		memcpy(valStr.data(), TimeStamps, pos);
 		valStr[pos] = '\0';
-		const uint32_t val {strtoul(valStr, nullptr, 10)};
+		const uint32_t val {strtoul(valStr.data(), nullptr, 10)};
 		if (val)
 		{
 			*time_stamps = val;
@@ -455,7 +455,7 @@ void SpliceMultiTrack(const char* const TrackNames[], const char* TrackText)
 // XXX: This code and the entire trackplayer are begging to be overhauled
 void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeStamp, CallbackFunction cb)
 {
-	static char last_track_name[128] = "";
+	static uqstl::array<char, 128> last_track_name {};
 	static unsigned long dec_offset = 0;
 	constexpr auto MaxPages {50};
 	uqstl::array<uqstl::string, MaxPages> pages;
@@ -510,7 +510,7 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 			else
 			{ // probably no timestamps were provided, so need more work
 				tfb::SoundDecoder* decoder = SoundDecoder_Load(uqm::contentDir(),
-															   last_track_name, 4096, dec_offset, time_stamps[page]);
+															   last_track_name.data(), 4096, dec_offset, time_stamps[page]);
 				if (!decoder)
 				{
 					uqm::log::warn("SpliceTrack(): couldn't load {}", TrackName);
@@ -534,7 +534,7 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 	{ // Adding a new track
 		int num_timestamps = 0;
 
-		uqm::utf8StringCopy(last_track_name, sizeof(last_track_name), TrackName);
+		uqm::utf8StringCopy(last_track_name.data(), sizeof(last_track_name), TrackName);
 
 		num_pages = SplitSubPages(TrackText, pages.data(), time_stamps.data(), MaxPages);
 		if (num_pages == 0)

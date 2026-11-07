@@ -232,16 +232,16 @@ char* CheckMusicResName(char* fileName)
 
 void* _GetMusicData(const ResourceFile& resource)
 {
-	char filename[256] {};
+	uqstl::array<char, 256> filename {};
 
 	uqm::strncpy_safe(filename, {resource.path.data(), static_cast<uint32_t>(resource.path.size())});
-	CheckMusicResName(filename);
+	CheckMusicResName(filename.data());
 
-	uqm::log::debug("_GetMusicData(): loading {}", filename);
-	tfb::SoundDecoder* decoder {SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0)};
+	uqm::log::debug("_GetMusicData(): loading {}", filename.data());
+	tfb::SoundDecoder* decoder {SoundDecoder_Load(uqm::contentDir(), filename.data(), 4096, 0, 0)};
 	if (!decoder)
 	{
-		uqm::log::warn("_GetMusicData(): couldn't load {}", filename);
+		uqm::log::warn("_GetMusicData(): couldn't load {}", filename.data());
 		return nullptr;
 	}
 

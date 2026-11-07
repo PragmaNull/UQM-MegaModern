@@ -437,12 +437,12 @@ FrameRef LoadNebulaeFrame(GfxPoint location)
 		neb_seed.y = location.y;
 	}
 
-	char path[PATH_MAX] {};
+	uqstl::array<char, PATH_MAX> path {};
 
 	const uqm::StringTablePtr nebulaRes {uqm::loadStringTable(NebulaResourcesRes)};
 	const auto nebulaCount {static_cast<uint16_t>(nebulaRes->size())};
 	const auto nebulaIndex {static_cast<uint16_t>(neb_seed.x % nebulaCount)};
-	fmt::format_to_n(path, sizeof(path) - 1, "{}", nebulaRes->text(nebulaIndex % nebulaCount));
+	fmt::format_to_n(path.data(), sizeof(path) - 1, "{}", nebulaRes->text(nebulaIndex % nebulaCount));
 
 	if ((neb_seed.y % (nebulaCount + 6)) > nebulaCount
 		&& !classicPackPresent && !inHyperSpace())
@@ -450,7 +450,7 @@ FrameRef LoadNebulaeFrame(GfxPoint location)
 		return nullptr;
 	}
 
-	return CaptureDrawable(LoadGraphicFile(path));
+	return CaptureDrawable(LoadGraphicFile(path.data()));
 }
 
 static constexpr auto StarColorIndex {0xFF};
@@ -2048,7 +2048,7 @@ static void DrawInnerSystem(void)
 	{
 		DrawInnerPlanets(pSolarSysState->pOrbitalDesc);
 	}
-	DrawSISTitle(uqm::gameState().sis().PlanetName);
+	DrawSISTitle(uqm::gameState().sis().PlanetName.data());
 }
 
 static void DrawOuterSystem(void)
@@ -2178,8 +2178,8 @@ static void EnterPlanetOrbit(void)
 			&& !(pSolarSysState->pOrbitalDesc->data_index
 				 & *PlanetType::WorldTypeSpecial))
 		{
-			fmt::format_to_sz_n(uqm::gameState().sis().PlanetName
-									+ strlen(uqm::gameState().sis().PlanetName),
+			fmt::format_to_sz_n(uqm::gameState().sis().PlanetName.data()
+									+ strlen(uqm::gameState().sis().PlanetName.data()),
 								4, "-{}{}",
 								moonLetter(pSolarSysState, pSolarSysState->pOrbitalDesc),
 								'\0');
@@ -3018,7 +3018,7 @@ void GetPlanetOrMoonName(char* buf, uint16_t bufsize)
 	}
 
 	// Either not named or we already have a name
-	uqm::utf8StringCopy(buf, bufsize, uqm::gameState().sis().PlanetName);
+	uqm::utf8StringCopy(buf, bufsize, uqm::gameState().sis().PlanetName.data());
 
 	if (!playerInSolarSystem() || !playerInInnerSystem()
 		|| worldIsPlanet(pSolarSysState, pSolarSysState->pOrbitalDesc)

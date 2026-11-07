@@ -306,19 +306,19 @@ void DrawBattleCrewAmount(ShipInfoDesc* ShipInfoPtr, int16_t y_offs)
 {
 	GfxRect r;
 	GfxText t;
-	char buf[40] {};
+	uqstl::array<char, 40> buf {};
 
 	t.baseline.x = BattleCrewX() + ResScale(MenuBool(2, 4));
 	t.baseline.y = BattleCrewY() + y_offs;
 	t.align = MenuBool(TextAlign::Left, TextAlign::Center);
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 	r.corner.x = t.baseline.x - ResScale(MenuBool(2, 9));
 	r.corner.y = t.baseline.y - ResScale(5);
 	r.extent.width = ResScale(6 * MaxCrewDigits + 6);
 	r.extent.height = ResScale(5);
 
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", ShipInfoPtr->crew_level);
+	fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", ShipInfoPtr->crew_level);
 	SetContextFont(StarConFont);
 
 	SetContextForeGroundColor(MenuForegroundColor);
@@ -451,7 +451,7 @@ void DrawCaptainsWindow(Starship* StarShipPtr)
 		t.baseline.x = StatusWidth() >> 1;
 		t.baseline.y = y + ResScale(6);
 		t.align = TextAlign::Center;
-		t.pStr = uqm::gameState().sis().CommanderName;
+		t.pStr = uqm::gameState().sis().CommanderName.data();
 		t.CharCount = (uint16_t)~0;
 		SetContextForeGroundColor(
 			BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02));

@@ -131,22 +131,22 @@ TEST(Utf8Test, SkipChars)
 
 TEST(Utf8Test, CopyDoesNotSplitCharacters)
 {
-	char buffer[4] {};
-	EXPECT_EQ(utf8StringCopy(buffer, sizeof(buffer), "ab\xc3\xa4"), buffer);
-	EXPECT_STREQ(buffer, "ab");
+	uqstl::array<char, 4> buffer {};
+	EXPECT_EQ(utf8StringCopy(buffer.data(), sizeof(buffer), "ab\xc3\xa4"), buffer.data());
+	EXPECT_STREQ(buffer.data(), "ab");
 
-	EXPECT_EQ(utf8StringCopy(buffer, sizeof(buffer), "abc"), buffer);
-	EXPECT_STREQ(buffer, "abc");
+	EXPECT_EQ(utf8StringCopy(buffer.data(), sizeof(buffer), "abc"), buffer.data());
+	EXPECT_STREQ(buffer.data(), "abc");
 
-	EXPECT_EQ(utf8StringCopy(buffer, 0, "abc"), nullptr);
+	EXPECT_EQ(utf8StringCopy(buffer.data(), 0, "abc"), nullptr);
 }
 
 TEST(Utf8Test, GetStringFromChar_Encodes)
 {
-	char out[4] {};
+	uqstl::array<char, 4> out {};
 	EXPECT_EQ(getStringFromChar(out, 0x20ac), 3);
-	EXPECT_EQ(uqstl::string_view(out, 3), "\xe2\x82\xac");
-	EXPECT_EQ(getStringFromChar(uqstl::span {out, 1}, 0x20ac), -3);
+	EXPECT_EQ(uqstl::string_view(out.data(), 3), "\xe2\x82\xac");
+	EXPECT_EQ(getStringFromChar(uqstl::span {out.data(), 1}, 0x20ac), -3);
 	EXPECT_EQ(getStringFromChar(out, 0x110000), 0);
 }
 

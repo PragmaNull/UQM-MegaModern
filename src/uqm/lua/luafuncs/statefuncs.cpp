@@ -482,7 +482,7 @@ static int luaUqm_state_sis_addResUnits(lua_State* luaState)
 
 static int luaUqm_state_sis_getCaptainName(lua_State* luaState)
 {
-	lua_pushstring(luaState, uqm::gameState().sis().CommanderName);
+	lua_pushstring(luaState, uqm::gameState().sis().CommanderName.data());
 	return 1;
 }
 
@@ -512,7 +512,7 @@ static int luaUqm_state_sis_getLanders(lua_State* luaState)
 
 static int luaUqm_state_sis_getShipName(lua_State* luaState)
 {
-	lua_pushstring(luaState, uqm::gameState().sis().ShipName);
+	lua_pushstring(luaState, uqm::gameState().sis().ShipName.data());
 	return 1;
 }
 

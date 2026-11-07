@@ -152,7 +152,7 @@ const MeleeShip* MeleeTeam_getFleet(const MeleeTeam* team)
 
 const char* MeleeTeam_getTeamName(const MeleeTeam* team)
 {
-	return team->name;
+	return team->name.data();
 }
 
 void MeleeTeam_setName(MeleeTeam* team, const char* name)

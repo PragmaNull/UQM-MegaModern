@@ -210,7 +210,7 @@ extern uqstl::atomic<bool> ExitRequested;
 struct joy_char_t
 {
 	unsigned char len;
-	char enc[7];
+	uqstl::array<char, 7> enc;
 };
 
 struct TextEntryState

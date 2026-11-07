@@ -190,7 +190,7 @@ static void flashSupportShipCrew(void)
 static bool DeltaSupportCrew(RosterState* rosterState, int16_t crew_delta)
 {
 	bool ret = false;
-	char buf[40] {};
+	uqstl::array<char, 40> buf {};
 	FleetInfoHandle hTemplate {};
 	ShipFragmentHandle hShipFrag {};
 
@@ -218,17 +218,17 @@ static bool DeltaSupportCrew(RosterState* rosterState, int16_t crew_delta)
 	{
 		if (StarShipPtr->crew_level >= TemplatePtr->crew_level)
 		{
-			fmt::format_to_n(buf, sizeof(buf) - 1, "{}", StarShipPtr->crew_level);
+			fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", StarShipPtr->crew_level);
 		}
 		else
 		{
-			fmt::format_to_n(buf, sizeof(buf) - 1, "{}/{}",
+			fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}/{}",
 							 StarShipPtr->crew_level,
 							 TemplatePtr->crew_level);
 		}
 
 		PreUpdateFlashRect();
-		DrawStatusMessage(buf);
+		DrawStatusMessage(buf.data());
 		PostUpdateFlashRect();
 		DeltaSISGauges(-crew_delta, 0, 0);
 		if (crew_delta)

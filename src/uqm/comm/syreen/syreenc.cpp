@@ -313,7 +313,7 @@ static void FriendlyExit(ResponseRef R)
 
 		DrawSISFrame();
 		DrawSISMessage(nullptr);
-		DrawSISTitle(uqm::gameState().sis().PlanetName);
+		DrawSISTitle(uqm::gameState().sis().PlanetName.data());
 		SetCommDarkMode(false);
 		RedrawSISComWindow();
 

@@ -364,7 +364,7 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 	GfxRect r;
 	GfxStamp s;
 	GfxText t;
-	char buf[64];
+	uqstl::array<char, 64> buf;
 	int16_t leading {};
 
 	s.frame = pMS->CurFrame;
@@ -406,7 +406,7 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 	fmt::format_to_sz_n(buf, "v{}.{}.{} {}",
 						UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
 						chooseIfHd<const char*>(UqmExtraVersion, UqmExtraVersionHd));
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.baseline.x = CanvasWidth - ResScale(2);
 	t.baseline.y = CanvasHeight - ResScale(2);
 	t.align = TextAlign::Right;

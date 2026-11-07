@@ -288,21 +288,21 @@ static void dukv_DecodeFrameV3(uint8_t* src_p, uint32_t* dst_p, uint32_t wb, uin
 
 static bool dukv_OpenStream(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
 {
-	char filename[280] {};
+	uqstl::array<char, 280> filename {};
 	fmt::format_to_sz_n(filename, "{}.duk", dukv->basename);
 
-	dukv->stream = res_NewResFile(dir, filename);
+	dukv->stream = res_NewResFile(dir, filename.data());
 	return dukv->stream != nullptr;
 }
 
 static bool dukv_ReadFrames(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
 {
-	char filename[280] {};
+	uqstl::array<char, 280> filename {};
 	uqstl::optional<uqm::io::File> fp {};
 
 	fmt::format_to_sz_n(filename, "{}.frm", dukv->basename);
 
-	if (!(fp = res_OpenResFile(dir, filename, uqm::io::OpenMode::Read)))
+	if (!(fp = res_OpenResFile(dir, filename.data(), uqm::io::OpenMode::Read)))
 	{
 		return false;
 	}
@@ -329,11 +329,11 @@ static bool dukv_ReadFrames(tfb::DuckVideoDecoder* dukv, const uqm::io::Director
 static bool dukv_ReadVectors(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir, uint8_t* vectors)
 {
 	uqstl::optional<uqm::io::File> fp {};
-	char filename[280] {};
+	uqstl::array<char, 280> filename {};
 
 	fmt::format_to_sz_n(filename, "{}.tbl", dukv->basename);
 
-	if (!(fp = res_OpenResFile(dir, filename, uqm::io::OpenMode::Read)))
+	if (!(fp = res_OpenResFile(dir, filename.data(), uqm::io::OpenMode::Read)))
 	{
 		return false;
 	}
@@ -347,12 +347,12 @@ static bool dukv_ReadVectors(tfb::DuckVideoDecoder* dukv, const uqm::io::Directo
 static bool dukv_ReadHeader(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir, int32_t* pl, int32_t* pc)
 {
 	uqstl::optional<uqm::io::File> fp {};
-	char filename[280] {};
+	uqstl::array<char, 280> filename {};
 	tfb::DuckVideoHeader hdr;
 
 	fmt::format_to_sz_n(filename, "{}.hdr", dukv->basename);
 
-	if (!(fp = res_OpenResFile(dir, filename, uqm::io::OpenMode::Read)))
+	if (!(fp = res_OpenResFile(dir, filename.data(), uqm::io::OpenMode::Read)))
 	{
 		return false;
 	}

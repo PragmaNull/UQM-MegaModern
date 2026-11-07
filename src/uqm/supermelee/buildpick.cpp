@@ -177,19 +177,19 @@ static constexpr auto RaceShipOffset {3};
 
 void DrawTooltip(ShipInfoDesc* SIPtr)
 {
-	char buf[PATH_MAX] {};
+	uqstl::array<char, PATH_MAX> buf {};
 	GfxText Text;
 	Color oldColor;
 	GfxRect r;
 
 	GetToolTipFrameRect(&r);
 
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}",
+	fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{} {}",
 					 SIPtr->race_strings->text(RaceNameOffset),
 					 SIPtr->race_strings->text(RaceShipOffset));
 
-	Text.pStr = buf;
-	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
+	Text.pStr = buf.data();
+	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf.data());
 	Text.align = TextAlign::Center;
 	Text.baseline.y = r.corner.y + ResScale(8) + ResScale(1);
 	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + ResScale(1);
@@ -208,13 +208,13 @@ void DrawTooltip(ShipInfoDesc* SIPtr)
 
 	SetContextForeGroundColor(TooltipColorDescFront);
 
-	uqm::utf8StringCopy(buf, sizeof buf,
+	uqm::utf8StringCopy(buf.data(), sizeof buf,
 						SIPtr->race_strings->text(SIPtr->race_strings->size() - 1));
 	Text.baseline.y += ResScale(2);
 
 	{
 		uqstl::vector<uqstl::string> tokens;
-		uqm::tokenize(uqstl::string_view {(const char*)buf}, tokens, '\n', false);
+		uqm::tokenize(uqstl::string_view {(const char*)buf.data()}, tokens, '\n', false);
 		for (const auto& tok : tokens)
 		{
 			Text.pStr = (const char*)tok.c_str();

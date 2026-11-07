@@ -71,7 +71,7 @@ static constexpr auto CommAnimRate {c_gameSecond / 40};
 static GfxContextRef AnimContext;
 
 ConversationData CommData;
-char shared_phrase_buf[2048];
+uqstl::array<char, 2048> shared_phrase_buf;
 FontRef ComputerFont;
 
 static bool TalkingFinished;
@@ -104,7 +104,7 @@ struct CommEncounterState
 	uint8_t top_response;
 	uqstl::array<ResponseEntry, MaxResponses> response_list;
 
-	char phrase_buf[1024];
+	uqstl::array<char, 1024> phrase_buf;
 };
 
 // Required to set custom baseline per one sentence
@@ -1381,11 +1381,11 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 				if (CommData.AlienConv == Conversation::Orz)
 				{ // MB: nasty hack: remove '$'s from conversation for
 					// Orz
-					char my_copy[128] {};
+					uqstl::array<char, 128> my_copy {};
 
 					uqm::strncpy_safe(my_copy, t.pStr);
-					remove_char_from_string(my_copy, '$');
-					t.pStr = my_copy;
+					remove_char_from_string(my_copy.data(), '$');
+					t.pStr = my_copy.data();
 
 					font_DrawText(&t);
 				}
@@ -1409,11 +1409,11 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 			// this subtitle fit completely
 			if (CommData.AlienConv == Conversation::Orz)
 			{ // MB: nasty hack: remove '$'s from conversation for Orz
-				char my_copy[128] {};
+				uqstl::array<char, 128> my_copy {};
 
 				uqm::strncpy_safe(my_copy, t.pStr);
-				remove_char_from_string(my_copy, '$');
-				t.pStr = my_copy;
+				remove_char_from_string(my_copy.data(), '$');
+				t.pStr = my_copy.data();
 				font_DrawText(&t);
 			}
 			else
@@ -1426,7 +1426,7 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 		if (row >= MaxSummRows() && (pSS->NextSub || pSS->LeftOver))
 		{ // draw *MORE*
 			GfxText mt;
-			char buffer[128];
+			uqstl::array<char, 128> buffer;
 
 			mt.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 			mt.baseline.y = t.baseline.y;
@@ -1437,10 +1437,10 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 
 			if (CommData.AlienConv == Conversation::Orz)
 			{ // MB: nasty hack: remove '$'s from conversation for Orz
-				remove_char_from_string(buffer, '$');
+				remove_char_from_string(buffer.data(), '$');
 			}
 
-			mt.pStr = buffer;
+			mt.pStr = buffer.data();
 			SetContextForeGroundColor(CommMoreTextColor);
 			font_DrawText(&mt);
 		}
@@ -1470,7 +1470,7 @@ static void SelectResponse(CommEncounterState* pES)
 {
 	const GfxText* response_text =
 		&pES->response_list[pES->cur_response].response_text;
-	uqm::utf8StringCopy(pES->phrase_buf, sizeof pES->phrase_buf,
+	uqm::utf8StringCopy(pES->phrase_buf.data(), sizeof pES->phrase_buf,
 						response_text->pStr);
 
 	if (!uqm::UQMOptions::read().useSpeech && uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC)
@@ -1485,7 +1485,7 @@ static void SelectResponse(CommEncounterState* pES)
 	}
 	else
 	{
-		FeedbackPlayerPhrase(pES->phrase_buf);
+		FeedbackPlayerPhrase(pES->phrase_buf.data());
 	}
 
 	StopTrack();
@@ -1510,7 +1510,7 @@ static void SelectConversationSummary(CommEncounterState* pES)
 
 	if (pES)
 	{
-		FeedbackPlayerPhrase(pES->phrase_buf);
+		FeedbackPlayerPhrase(pES->phrase_buf.data());
 	}
 
 	SummaryState.Initialized = false;
@@ -1528,7 +1528,7 @@ static void SelectReplay(CommEncounterState* pES)
 	FadeMusic(BackgroundVol(), c_gameSecond);
 	if (pES)
 	{
-		FeedbackPlayerPhrase(pES->phrase_buf);
+		FeedbackPlayerPhrase(pES->phrase_buf.data());
 	}
 
 	TalkSegue(0);
@@ -1934,7 +1934,7 @@ static void HailAlien(void)
 						&& uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS)
 						&& (Log.x == ArilouHomeX && Log.y == ArilouHomeY))
 					{
-						DrawSISMessage(uqm::gameState().sis().PlanetName);
+						DrawSISMessage(uqm::gameState().sis().PlanetName.data());
 					}
 				}
 				else if (uqm::flagship().ipPlanet == 0)
@@ -1943,7 +1943,7 @@ static void HailAlien(void)
 				}
 				else
 				{
-					DrawSISTitle(uqm::gameState().sis().PlanetName);
+					DrawSISTitle(uqm::gameState().sis().PlanetName.data());
 				}
 			}
 		}
@@ -2043,12 +2043,12 @@ uint16_t InitCommunication(Conversation which_comm)
 							&& pSolarSysState->pOrbitalDesc->data_index != PlanetType::DestroyedStarbase
 							&& pSolarSysState->pOrbitalDesc->data_index != PlanetType::PrecursorStarbase))
 					{
-						fmt::format_to_sz_n((uqm::gameState().sis().PlanetName) + strlen(uqm::gameState().sis().PlanetName),
+						fmt::format_to_sz_n(uqm::gameState().sis().PlanetName.data() + strlen(uqm::gameState().sis().PlanetName.data()),
 											4, "-%c%c", 'A' + moonIndex(pSolarSysState, pSolarSysState->pOrbitalDesc), '\0');
 					}
 				}
 
-				DrawSISTitle(uqm::gameState().sis().PlanetName);
+				DrawSISTitle(uqm::gameState().sis().PlanetName.data());
 			}
 		}
 	}

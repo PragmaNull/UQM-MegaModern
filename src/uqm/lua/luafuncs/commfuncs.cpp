@@ -420,11 +420,11 @@ static int luaUqm_comm_getPoint(lua_State* luaState)
 		lua_pushstring(luaState, prime_text);
 		return 1;
 	}
-	char dialog[256] {};
+	uqstl::array<char, 256> dialog {};
 	fmt::format_to_sz_n(dialog, "{:05.1} : {:05.1}",
 						(float)plot_map[plot_id].star_pt.x / 10,
 						(float)plot_map[plot_id].star_pt.y / 10);
-	lua_pushstring(luaState, dialog);
+	lua_pushstring(luaState, dialog.data());
 	RoboTrack[0] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.x / 1000;
 	RoboTrack[1] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.x / 100 % 10;
 	RoboTrack[2] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.x / 10 % 10;
@@ -483,10 +483,10 @@ static int luaUqm_comm_getStarName(lua_State* luaState)
 		lua_pushstring(luaState, prime_text);
 		return 1;
 	}
-	char dialog[256];
-	GetClusterName(plot_map[plot_id].star, dialog);
-	CheckCase(prime_text, dialog);
-	lua_pushstring(luaState, dialog);
+	uqstl::array<char, 256> dialog;
+	GetClusterName(plot_map[plot_id].star, dialog.data());
+	CheckCase(prime_text, dialog.data());
+	lua_pushstring(luaState, dialog.data());
 	if (plot_map[plot_id].star->Prefix > 0)
 	{
 		RoboTrack[0] = RobotPhrase::Prefix0 + plot_map[plot_id].star->Prefix;
@@ -523,12 +523,12 @@ static int luaUqm_comm_getConstellation(lua_State* luaState)
 		lua_pushstring(luaState, prime_text);
 		return 1;
 	}
-	char dialog[256];
+	uqstl::array<char, 256> dialog;
 	const StarDesc* SDPtr = FindNearestConstellation(star_array.data(), plot_map[plot_id].star_pt);
 	fmt::format_to_sz_n(dialog, "{}",
 						GameString(SDPtr->Postfix));
-	CheckCase(prime_text, dialog);
-	lua_pushstring(luaState, dialog);
+	CheckCase(prime_text, dialog.data());
+	lua_pushstring(luaState, dialog.data());
 	RoboTrack[0] = RobotPhrase::Postfix0 + SDPtr->Postfix;
 	return 1;
 }

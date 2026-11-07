@@ -101,7 +101,7 @@ void compare(yyjson_val* loaded, yyjson_val* saved, const uqstl::string& path, u
 		currentActivity() = makeWord(ActivityKind::InInterplanetary, 0);
 	}
 
-	const auto saved {SaveGameJson(&summary, summary.SaveName)};
+	const auto saved {SaveGameJson(&summary, summary.SaveName.data())};
 	if (!saved)
 	{
 		log::error("{}: the game did not save.", path);

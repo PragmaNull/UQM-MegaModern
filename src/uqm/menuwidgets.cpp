@@ -57,7 +57,7 @@ void showText(WidgetTextEntry& widget, const SettingBase& setting)
 {
 	const uqstl::string text {setting.valueText()};
 	const size_t length {uqstl::min(text.size(), static_cast<size_t>(widget.maxlen))};
-	uqstl::copy_n(text.begin(), length, widget.value);
+	uqstl::copy_n(text.begin(), length, widget.value.data());
 	widget.value[length] = '\0';
 }
 
@@ -487,7 +487,7 @@ void MenuWidgets::onTextChanged(WidgetTextEntry* self)
 		return;
 	}
 	BoundText& text {*static_cast<BoundText*>(found->second)};
-	text.owner->applyChange(*text.setting, self->value);
+	text.owner->applyChange(*text.setting, self->value.data());
 	showText(*self, *text.setting);
 }
 

@@ -305,29 +305,29 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 		DrawShipNameString(SIPtr->race_strings->text(1), (uint16_t)~0, y);
 
 		{
-			char buf[30] {};
+			uqstl::array<char, 30> buf {};
 			GfxText Text;
 
 			FontRef OldFont {SetContextFont(MenuBool(TinyFontBold, TinyFont))};
 
 			if (!StarShipPtr)
 			{ // In Melee menu
-				fmt::format_to_n(buf, sizeof(buf) - 1, "{}", SIPtr->ship_cost);
-				Text.pStr = buf;
+				fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", SIPtr->ship_cost);
+				Text.pStr = buf.data();
 				Text.CharCount = (uint16_t)~0;
 			}
 			else
 			{
-				uqm::utf8StringCopy(buf, sizeof(buf),
+				uqm::utf8StringCopy(buf.data(), sizeof(buf),
 									SIPtr->race_strings->text(StarShipPtr->captains_name_index));
 
 				if (is3DO(uqm::UQMOptions::read().whichMenu))
 				{
-					replaceChar(buf, UnicharSpace, UnicharTab);
+					replaceChar(buf.data(), UnicharSpace, UnicharTab);
 				}
 
-				Text.pStr = buf;
-				Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
+				Text.pStr = buf.data();
+				Text.CharCount = (uint16_t)uqm::utf8StringCount(buf.data());
 			}
 			Text.align = TextAlign::Center;
 
@@ -344,7 +344,7 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 	else if (StarShipPtr->playerNr == RpgPlayerNum)
 	{ // This is SIS
 		DrawCrewFuelString(y, 0);
-		DrawShipNameString(uqm::gameState().sis().ShipName, (uint16_t)~0, y);
+		DrawShipNameString(uqm::gameState().sis().ShipName.data(), (uint16_t)~0, y);
 	}
 
 	{

@@ -727,12 +727,12 @@ void formatFuelValue(uint32_t coarseFuel, uqstl::span<char> buf)
 
 char* WholeFuelValue(void)
 {
-	static char buf[8] {};
+	static uqstl::array<char, 8> buf {};
 	const uint32_t CoarseFuel = uqm::gameState().sis().FuelOnBoard;
 
-	formatFuelValue(CoarseFuel, {buf, sizeof(buf)});
+	formatFuelValue(CoarseFuel, buf);
 
-	return buf;
+	return buf.data();
 }
 
 } // namespace uqm

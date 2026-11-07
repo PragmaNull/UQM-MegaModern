@@ -30,7 +30,7 @@
 namespace uqm
 {
 extern ConversationData CommData;
-extern char shared_phrase_buf[2048];
+extern uqstl::array<char, 2048> shared_phrase_buf;
 
 // The number of a phrase, from a phrase enum value or from a number.
 constexpr int phraseNumber(ArithmeticEnum auto phrase) { return *phrase; }
@@ -64,7 +64,12 @@ extern void construct_response(uqstl::span<char> buf, int R /* promoted from
 
 // A phrase enum value as an argument of construct_response().
 constexpr auto responseArg(ArithmeticEnum auto phrase) { return *phrase; }
-constexpr auto responseArg(auto arg) { return arg; }
+template <typename T>
+	requires(uqstl::is_pointer_v<T> || uqstl::is_null_pointer_v<T> || uqstl::is_integral_v<T>)
+constexpr auto responseArg(T arg)
+{
+	return arg;
+}
 
 template <ArithmeticEnum E, typename... Args>
 void construct_response(uqstl::span<char> buf, E R, Args... args)

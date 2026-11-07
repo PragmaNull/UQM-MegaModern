@@ -397,7 +397,7 @@ static void PrepareSummary(SaveSummaryData* SummPtr, const char* name)
 			break;
 		case ActivityKind::InInterplanetary:
 			// Get a better planet name for summary
-			GetPlanetOrMoonName(SummPtr->SS.PlanetName,
+			GetPlanetOrMoonName(SummPtr->SS.PlanetName.data(),
 								sizeof(SummPtr->SS.PlanetName));
 			if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0)
 			{
@@ -409,7 +409,7 @@ static void PrepareSummary(SaveSummaryData* SummPtr, const char* name)
 			}
 			break;
 		case ActivityKind::InLastBattle:
-			uqm::utf8StringCopy(SummPtr->SS.PlanetName,
+			uqm::utf8StringCopy(SummPtr->SS.PlanetName.data(),
 								sizeof(SummPtr->SS.PlanetName),
 								GameString(GameStringBase::PlanetNumber + 32)); // Sa-Matra
 			break;

@@ -97,7 +97,7 @@ const uqm::io::Matcher& packageMatcher()
 uqgsl::czstring contentDirPath;
 uqgsl::czstring addonDirPath;
 
-char baseContentPath[PATH_MAX];
+uqstl::array<char, PATH_MAX> baseContentPath;
 
 // addon availability
 uqstl::vector<uint32_t> g_addonList {};
@@ -154,7 +154,7 @@ static void mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, 
 // PATH_MAX will be ignored, except for a warning given to stderr.
 const static char* findFileInDirs(const char* locs[], int numLocs, const char* file)
 {
-	char path[PATH_MAX];
+	uqstl::array<char, PATH_MAX> path;
 
 	const size_t fileLen {strlen(file)};
 	for (int locI {0}; locI < numLocs; locI++)
@@ -173,7 +173,7 @@ const static char* findFileInDirs(const char* locs[], int numLocs, const char* f
 		}
 
 		fmt::format_to_sz_n(path, "{}{}{}", loc, needSlash ? "/" : "", file);
-		if (uqm::fileExists(path))
+		if (uqm::fileExists(path.data()))
 		{
 			return loc;
 		}
@@ -247,8 +247,8 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 	}
 	uqm::strncpy_safe(baseContentPath, *expandedBase);
 
-	uqm::log::debug("Using '{}' as base content dir.", baseContentPath);
-	mountContentDir(baseContentPath);
+	uqm::log::debug("Using '{}' as base content dir.", baseContentPath.data());
+	mountContentDir(baseContentPath.data());
 
 	if (!isEmpty(contentDirName) && isEmpty(contentDirPath))
 	{

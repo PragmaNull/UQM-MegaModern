@@ -259,7 +259,7 @@ ChangeSelection:
 				StarShipPtr = LockStarShip(&race_q[0], hBattleShip);
 				if (StarShipPtr->captains_name_index == 0)
 				{
-					t.pStr = uqm::gameState().sis().CommanderName;
+					t.pStr = uqm::gameState().sis().CommanderName.data();
 					t.CharCount = (uint16_t)~0;
 					crew_level = uqm::gameState().sis().CrewEnlisted;
 					max_crew = GetCrewPodCapacity();
@@ -302,18 +302,18 @@ ChangeSelection:
 
 			if (crew_level)
 			{
-				char buf[80] {};
+				uqstl::array<char, 80> buf {};
 
 				t.baseline.x = r.corner.x + (r.extent.width >> 1);
-				t.pStr = buf;
+				t.pStr = buf.data();
 				t.CharCount = (uint16_t)~0;
 				if (crew_level >= max_crew)
 				{
-					fmt::format_to_n(buf, sizeof(buf) - 1, "{}", crew_level);
+					fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", crew_level);
 				}
 				else
 				{
-					fmt::format_to_n(buf, sizeof(buf) - 1, "{}/{}", crew_level, max_crew);
+					fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}/{}", crew_level, max_crew);
 				}
 
 				// Code to make use of the PC version's font gradient
@@ -535,7 +535,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 	t.baseline.x = pick_r.corner.x + (pick_r.extent.width >> 1);
 	t.baseline.y = pick_r.corner.y + pick_r.extent.height - ResScale(5);
 	t.align = TextAlign::Center;
-	t.pStr = uqm::gameState().sis().ShipName;
+	t.pStr = uqm::gameState().sis().ShipName.data();
 	t.CharCount = (uint16_t)~0;
 
 	// Code to make use of the PC version's font gradient

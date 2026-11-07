@@ -47,7 +47,7 @@ static int ReadOneChar(joy_char_t* ch, const char* str)
 	const char* next = uqm::skipUTF8Chars(str, 1);
 	const int len = next - str;
 	ch->len = len;
-	memcpy(ch->enc, str, len);
+	memcpy(ch->enc.data(), str, len);
 	ch->enc[len] = '\0'; // string term
 
 	return len;
@@ -83,7 +83,7 @@ static int JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
 {
 	int i {};
 
-	for (i = 0; i < setsize && strcmp(set[i].enc, ch->enc) != 0; ++i)
+	for (i = 0; i < setsize && strcmp(set[i].enc.data(), ch->enc.data()) != 0; ++i)
 		;
 
 	return (i < setsize) ? i : -1;
@@ -258,7 +258,7 @@ bool DoTextEntry(TextEntryState* pTES)
 	}
 	while (ch)
 	{
-		char chbuf[8];
+		uqstl::array<char, 8> chbuf;
 
 		pTES->JoystickMode = false;
 
@@ -268,7 +268,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			if (pStr + len - pTES->BaseStr + chsize < pTES->MaxSize)
 			{ // insert character, when fits
 				memmove(pStr + chsize, pStr, len + 1);
-				memcpy(pStr, chbuf, chsize);
+				memcpy(pStr, chbuf.data(), chsize);
 				pStr += chsize;
 				++pTES->CursorPos;
 				changed = true;
@@ -434,7 +434,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			}
 		}
 
-		if (strcmp(newch.enc, ch.enc) != 0)
+		if (strcmp(newch.enc.data(), ch.enc.data()) != 0)
 		{ // new char is different, put it in
 			if (len)
 			{ // change current -- this is messy with utf8
@@ -447,7 +447,7 @@ bool DoTextEntry(TextEntryState* pTES)
 						memmove(pStr + newch.len, pStr + ch.len, l + 1);
 					}
 
-					memcpy(pStr, newch.enc, newch.len);
+					memcpy(pStr, newch.enc.data(), newch.len);
 					len = l + newch.len;
 					changed = true;
 				}
@@ -456,7 +456,7 @@ bool DoTextEntry(TextEntryState* pTES)
 			{ // append
 				if (pStr + len - pTES->BaseStr + newch.len < pTES->MaxSize)
 				{
-					memcpy(pStr, newch.enc, newch.len);
+					memcpy(pStr, newch.enc.data(), newch.len);
 					pStr[newch.len] = '\0';
 					len += newch.len;
 					changed = true;

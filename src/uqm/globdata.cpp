@@ -401,10 +401,10 @@ bool InitGameStructures(void)
 
 	uqm::gameState().sis().NumLanders = ifEasyDifficulty(2, 1);
 
-	uqm::utf8StringCopy(uqm::gameState().sis().ShipName,
+	uqm::utf8StringCopy(uqm::gameState().sis().ShipName.data(),
 						sizeof(uqm::gameState().sis().ShipName),
 						GameString(GameStringBase::NamingString + 6)); // UNNAMED
-	uqm::utf8StringCopy(uqm::gameState().sis().CommanderName,
+	uqm::utf8StringCopy(uqm::gameState().sis().CommanderName.data(),
 						sizeof(uqm::gameState().sis().CommanderName),
 						GameString(GameStringBase::NamingString + 6)); // UNNAMED
 

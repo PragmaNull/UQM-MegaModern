@@ -184,7 +184,7 @@ void DrawSISTitle(const char* pStr)
 
 void DrawHyperCoords(GfxPoint universe)
 {
-	char buf[100] {};
+	uqstl::array<char, 100> buf {};
 	const char* SpaceOrNull = (isPC(uqm::UQMOptions::read().whichFonts) ? StrSpace : "");
 
 	fmt::format_to_sz_n(buf, "{:03}.{:01}{}:{}{:03}.{:01}",
@@ -192,25 +192,25 @@ void DrawHyperCoords(GfxPoint universe)
 						SpaceOrNull, SpaceOrNull,
 						universe.y / 10, universe.y % 10);
 
-	DrawSISTitle(buf);
+	DrawSISTitle(buf.data());
 }
 
 void DrawSaveInfo(FlagshipData SisState)
 {
-	char buf[100];
-	char TempDiff[11];
-	char TempExt[12] = "";
-	char TempNom[10] = "";
-	char TempVer[SisNameSize] = "";
+	uqstl::array<char, 100> buf;
+	uqstl::array<char, 11> TempDiff;
+	uqstl::array<char, 12> TempExt {};
+	uqstl::array<char, 10> TempNom {};
+	uqstl::array<char, SisNameSize> TempVer {};
 
 	if (SisState.SaveVersion > 0)
 	{
-		uqm::utf8StringCopy(TempVer, sizeof(TempVer),
+		uqm::utf8StringCopy(TempVer.data(), sizeof(TempVer),
 							GameString(GameStringBase::SavegameString + 4
 									   + SisState.SaveVersion));
 	}
 
-	DrawSISMessage(TempVer);
+	DrawSISMessage(TempVer.data());
 	char emptyTitle[] {""};
 	DrawSISTitle(emptyTitle);
 
@@ -227,21 +227,21 @@ void DrawSaveInfo(FlagshipData SisState)
 
 		if (SisState.Extended)
 		{
-			uqm::utf8StringCopy(TempExt, sizeof(TempExt),
+			uqm::utf8StringCopy(TempExt.data(), sizeof(TempExt),
 								GameString(GameStringBase::MainmenuString + 59));
 		}
 
-		uqm::utf8StringCopy(TempDiff, sizeof(TempDiff),
+		uqm::utf8StringCopy(TempDiff.data(), sizeof(TempDiff),
 							GameString(GameStringBase::MainmenuString + 56
 									   + static_cast<int>(SisState.Difficulty)));
 
 		fmt::format_to_sz_n(buf, "{} {}{}{}",
 							GameString(GameStringBase::MainmenuString + 55), // Difficulty:
-							TempDiff, TempExt, TempNom);
-		DrawSISMessage(buf);
+							TempDiff.data(), TempExt.data(), TempNom.data());
+		DrawSISMessage(buf.data());
 
 		fmt::format_to_sz_n(buf, "{}", SisState.Seed);
-		DrawSISTitle(buf);
+		DrawSISTitle(buf.data());
 	}
 }
 
@@ -255,7 +255,7 @@ void DrawSISMessage(const char* pStr)
 bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 					  SisMessageFlags flags)
 {
-	char buf[256];
+	uqstl::array<char, 256> buf;
 	GfxText t;
 	GfxRect r;
 
@@ -281,8 +281,8 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 				break;
 			case ActivityKind::InLastBattle:
 			case ActivityKind::InInterplanetary:
-				GetClusterName(CurStarDescPtr(), buf);
-				pStr = buf;
+				GetClusterName(CurStarDescPtr(), buf.data());
+				pStr = buf.data();
 				break;
 			case ActivityKind::InHyperspace:
 				if (inHyperSpace())
@@ -304,7 +304,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 							&& Log.y == ArilouHomeY))
 					{
 						uqm::utf8StringCopy(
-							uqm::gameState().sis().PlanetName,
+							uqm::gameState().sis().PlanetName.data(),
 							sizeof uqm::gameState().sis().PlanetName,
 							GameString(GameStringBase::StarString + 148));
 						// "Falayalaralfali"
@@ -333,12 +333,12 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 
 		if (CurPos < 0 && ExPos < 0)
 		{
-			char buf[100];
+			uqstl::array<char, 100> buf;
 
-			uqm::utf8StringCopy(buf, sizeof(buf), pStr);
-			replaceChar(buf, UnicharSpace, UnicharTab);
+			uqm::utf8StringCopy(buf.data(), sizeof(buf), pStr);
+			replaceChar(buf.data(), UnicharSpace, UnicharTab);
 
-			t.pStr = buf;
+			t.pStr = buf.data();
 			t.CharCount = (uint16_t)~0;
 		}
 	}
@@ -533,7 +533,7 @@ void DrawStatusMessage(const char* pStr)
 	GfxRect r;
 	GfxRect ctxRect;
 	GfxText t;
-	char buf[128];
+	uqstl::array<char, 128> buf;
 
 	GfxContextRef OldContext {SetContext(StatusContext)};
 	GetContextClipRect(&ctxRect);
@@ -587,12 +587,12 @@ void DrawStatusMessage(const char* pStr)
 		}
 		else
 		{ // Just a date
-			DateToString(buf, sizeof buf,
+			DateToString(buf.data(), sizeof buf,
 						 uqm::gameState().clock().month(),
 						 uqm::gameState().clock().day(),
 						 uqm::gameState().clock().year());
 		}
-		pStr = buf;
+		pStr = buf.data();
 	}
 
 	t.baseline.x = (StatusMessageWidth() >> 1);
@@ -622,14 +622,14 @@ void DrawStatusMessage(const char* pStr)
 	}
 	else
 	{
-		char buf[100];
+		uqstl::array<char, 100> buf;
 
 		SetContextFont(TinyFontBold);
 
-		uqm::utf8StringCopy(buf, sizeof(buf), pStr);
-		replaceChar(buf, UnicharSpace, UnicharTab);
+		uqm::utf8StringCopy(buf.data(), sizeof(buf), pStr);
+		replaceChar(buf.data(), UnicharSpace, UnicharTab);
 
-		t.pStr = buf;
+		t.pStr = buf.data();
 		t.CharCount = (uint16_t)~0;
 	}
 
@@ -682,7 +682,7 @@ void DrawCaptainsName(bool NewGame)
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = r.corner.y + ResScale(6);
 	t.align = TextAlign::Center;
-	t.pStr = uqm::gameState().sis().CommanderName;
+	t.pStr = uqm::gameState().sis().CommanderName.data();
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(CaptainNameTextColor);
 	font_DrawText(&t);
@@ -700,7 +700,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 	FontRef OldFont {};
 	Color OldColor;
 	GfxContextRef OldContext {};
-	char buf[250];
+	uqstl::array<char, 250> buf;
 
 	FrameRef OldFontEffect {SetContextFontEffect(nullptr)};
 	OldColor = SetContextForeGroundColor(FlagshipNameBackgroundColor);
@@ -715,7 +715,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 		r.extent.width = ShipNameWidth();
 		r.extent.height = ShipNameHeight();
 
-		t.pStr = uqm::gameState().sis().ShipName;
+		t.pStr = uqm::gameState().sis().ShipName.data();
 
 		DrawFilledRectangle(&r);
 	}
@@ -729,10 +729,10 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 		r.extent.width = SisScreenWidth();
 		r.extent.height = ShipNameHeight();
 
-		t.pStr = buf;
+		t.pStr = buf.data();
 		fmt::format_to_sz_n(buf, "{} {}",
-							GameString(GameStringBase::NamingString + 1), uqm::gameState().sis().ShipName);
-		uqm::utf8StringCopy(buf, sizeof buf, uqm::toUpperUtf8(buf).c_str());
+							GameString(GameStringBase::NamingString + 1), uqm::gameState().sis().ShipName.data());
+		uqm::utf8StringCopy(buf.data(), sizeof buf, uqm::toUpperUtf8(buf.data()).c_str());
 
 		if (IsHd())
 		{
@@ -788,7 +788,7 @@ void DrawFlagshipStats(void)
 	Color OldColor;
 	FrameRef OldFontEffect {};
 	GfxContextRef OldContext {};
-	char buf[128];
+	uqstl::array<char, 128> buf;
 	int16_t leading {};
 	uint8_t i {};
 	uint8_t energy_regeneration {};
@@ -900,7 +900,7 @@ void DrawFlagshipStats(void)
 	t.baseline.x += ResScale(3);
 	t.baseline.y = base_y;
 	t.align = TextAlign::Left;
-	t.pStr = buf;
+	t.pStr = buf.data();
 
 	fmt::format_to_sz_n(buf, "{}",
 						describeWeapon(uqm::gameState().sis().ModuleSlots[15]));
@@ -938,7 +938,7 @@ void DrawFlagshipStats(void)
 
 	t.baseline.x = r.extent.width - ResScale(2);
 	t.baseline.y = base_y;
-	t.pStr = buf;
+	t.pStr = buf.data();
 
 	fmt::format_to_sz_n(buf, "{:4}", max_thrust * 4);
 	font_DrawText(&t);
@@ -1323,7 +1323,7 @@ static void DeltaSISGauges_crewDelta(int16_t crew_delta)
 
 	{
 		GfxText t;
-		char buf[60];
+		uqstl::array<char, 60> buf;
 		GfxRect r;
 
 		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().CrewEnlisted);
@@ -1333,7 +1333,7 @@ static void DeltaSISGauges_crewDelta(int16_t crew_delta)
 		t.baseline.x = (StatusWidth() >> 1);
 		t.baseline.y = r.corner.y + r.extent.height;
 		t.align = TextAlign::Center;
-		t.pStr = buf;
+		t.pStr = buf.data();
 		t.CharCount = (uint16_t)~0;
 
 		SetContextForeGroundColor(BlackColor);
@@ -1384,9 +1384,9 @@ static void DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 		// buf from [60] to [7]: The max fuel anyone can ever get is 1610 (1610.00 in whole value)
 		// I.E. only 4 (7) characters, we don't need that much extra padding.
 		// PragmaNull: make it 8. Why waste 1 byte in padding? Nothing else will use it..
-		char buf[8];
+		uqstl::array<char, 8> buf;
 		GfxRect r {};
-		formatFuelValue(NewCoarseFuel, {buf, sizeof(buf)});
+		formatFuelValue(NewCoarseFuel, buf);
 
 		GetGaugeRect(&r, false);
 
@@ -1402,7 +1402,7 @@ static void DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 		t.baseline.x = (StatusWidth() >> 1);
 		t.baseline.y = r.corner.y + r.extent.height;
 		t.align = TextAlign::Center;
-		t.pStr = buf;
+		t.pStr = buf.data();
 		t.CharCount = (uint16_t)~0;
 
 		SetContextForeGroundColor(BlackColor);
@@ -1885,8 +1885,8 @@ static constexpr auto MaxCluster {45}; // "Epsilon Camelopardalis" x 2 + null te
 
 static void AutoPilotTextLogic(void)
 {
-	char buf[PATH_MAX];
-	char star_cluster[MaxCluster];
+	uqstl::array<char, PATH_MAX> buf;
+	uqstl::array<char, MaxCluster> star_cluster;
 	GfxPoint Falayalaralfali;
 	GfxPoint destination;
 	GfxPoint current_position;
@@ -1935,7 +1935,7 @@ static void AutoPilotTextLogic(void)
 							destination.y / 10, destination.y % 10,			  // Y Coordinates
 							target_distance);
 
-		DrawSISMessageEx(buf, -1, -1, SisMessageFlags::MyColor);
+		DrawSISMessageEx(buf.data(), -1, -1, SisMessageFlags::MyColor);
 		return;
 	}
 
@@ -1947,20 +1947,20 @@ static void AutoPilotTextLogic(void)
 							GameString(GameStringBase::NavigationString)	  // "HyperSpace"
 		);
 
-		DrawSISMessageEx(buf, -1, -1, SisMessageFlags::MyColor);
+		DrawSISMessageEx(buf.data(), -1, -1, SisMessageFlags::MyColor);
 		return;
 	}
 
-	GetClusterName(StarPointer, star_cluster);
+	GetClusterName(StarPointer, star_cluster.data());
 
 	// AUTO-PILOT to [StarCluster] - [TargetDistance]
 	fmt::format_to_sz_n(buf, "{} {} {} - {:.1}",
 						GameString(GameStringBase::NavigationString + 3), // "AUTO-PILOT"
 						GameString(GameStringBase::NavigationString + 6), // "to"
-						star_cluster,
+						star_cluster.data(),
 						target_distance);
 
-	temp.pStr = buf;
+	temp.pStr = buf.data();
 	r = font_GetTextRect(&temp);
 
 	if (r.extent.width > SisMessageWidth())
@@ -1969,11 +1969,11 @@ static void AutoPilotTextLogic(void)
 		// -> to [StarCluster] - [TargetDistance]
 		fmt::format_to_sz_n(buf, "{} {} - {:.1}",
 							GameString(GameStringBase::NavigationString + 7), // "->"
-							star_cluster,
+							star_cluster.data(),
 							target_distance);
 	}
 
-	temp.pStr = buf;
+	temp.pStr = buf.data();
 	r = font_GetTextRect(&temp);
 
 	if (r.extent.width > SisMessageWidth())
@@ -1984,7 +1984,7 @@ static void AutoPilotTextLogic(void)
 							target_distance);
 	}
 
-	DrawSISMessageEx(buf, -1, -1, SisMessageFlags::MyColor);
+	DrawSISMessageEx(buf.data(), -1, -1, SisMessageFlags::MyColor);
 }
 
 static constexpr auto BlinkRate {c_gameSecond * 3 / 40}; // 9 @ 120 ticks/second

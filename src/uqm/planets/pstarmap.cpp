@@ -987,7 +987,7 @@ bool isHomeworld(uint8_t Index)
 
 const char* markerBuf(const int star_index, const char* marker_state)
 {
-	static char buf[255];
+	static uqstl::array<char, 255> buf;
 
 	// marker_state is the middle part of the Game States
 	// "SYS_VISITED_##" or "SYS_PLYR_MARKER_##" which is used to
@@ -996,7 +996,7 @@ const char* markerBuf(const int star_index, const char* marker_state)
 	fmt::format_to_sz_n(buf, "SYS_{}_{:02}", marker_state,
 						star_index / 32);
 
-	return buf;
+	return buf.data();
 }
 
 bool isStarMarked(const int star_index, const char* marker_state)
@@ -1544,7 +1544,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 				for (k = 0; k < 32; k++)
 				{
 					GfxText t;
-					char pStr[7];
+					uqstl::array<char, 7> pStr;
 					pStr[0] = (i / 16 ? '1' : '0');
 					pStr[1] = (i % 16 > 9 ? i % 16 - 10 + 'A' : i % 16 + '0');
 					pStr[2] = (j / 16 ? '1' : '0');
@@ -1607,7 +1607,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 				continue;
 			}
 			GfxText t;
-			char pStr[2];
+			uqstl::array<char, 2> pStr;
 			pStr[0] = 'A' + i;
 			pStr[1] = 0;
 			SetContextFont(TinyFontBold);
@@ -1616,7 +1616,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 			t.baseline.x = UniverseToDispx(portal_map[i].star_pt.x);
 			t.baseline.y = UniverseToDispy(portal_map[i].star_pt.y) + 3;
 			t.align = TextAlign::Center;
-			t.pStr = pStr;
+			t.pStr = pStr.data();
 			t.CharCount = 2;
 			font_DrawText(&t);
 		}
@@ -1926,18 +1926,18 @@ int starIndex(GfxPoint starPt)
 
 static void UpdateCursorInfo(std::span<char> prevbuf)
 {
-	char buf[CursorInfoBufsize] {};
+	uqstl::array<char, CursorInfoBufsize> buf {};
 	GfxPoint pt;
 	StarDesc* SDPtr {};
 	StarDesc* BestSDPtr {};
 
 	if (which_starmap == StarmapView::NormalStarmap)
 	{ // "(Star Search: F6 | Toggle Maps: F7)"
-		uqm::utf8StringCopy(buf, sizeof(buf), GameString(GameStringBase::FeedbackString + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())));
+		uqm::utf8StringCopy(buf.data(), sizeof(buf), GameString(GameStringBase::FeedbackString + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())));
 	}
 	else
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf),
+		uqm::utf8StringCopy(buf.data(), sizeof(buf),
 							GameString(GameStringBase::FeedbackString + 3 + *which_starmap));
 	}
 
@@ -1969,13 +1969,13 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			&& !(uqm::gameState().flag(uqm::GameFlag::KNOW_QS_PORTAL) & (1 << whichPortal)))
 		{
 			// "UNKNOWN" string
-			uqm::utf8StringCopy(buf, sizeof(buf),
+			uqm::utf8StringCopy(buf.data(), sizeof(buf),
 								GameString(GameStringBase::StarString + 132));
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) < 2 || whichPortal == NumHyperVortices)
 		{
 			// Hyperspace side, or Arilou homeworld name once known
-			GetClusterName(BestSDPtr, buf);
+			GetClusterName(BestSDPtr, buf.data());
 		}
 		else
 		{
@@ -1985,11 +1985,11 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			// This means quasi star array must have rigidly ordered Postfix.
 			// portal_map[whichPortal].star_pt - coords of the exit
 			//                  nearest_star - StarDesc* of nearest constell.
-			char starnameBuf[CursorInfoBufsize] = "";
-			uqm::utf8StringCopy(starnameBuf, sizeof(starnameBuf), GameString(portal_map[whichPortal].nearest_star->Postfix));
+			uqstl::array<char, CursorInfoBufsize> starnameBuf {};
+			uqm::utf8StringCopy(starnameBuf.data(), sizeof(starnameBuf), GameString(portal_map[whichPortal].nearest_star->Postfix));
 			// Abbreviate names longer than 11 at the 10th (or less)
 			// non-vowel character.
-			if (strlen(starnameBuf) > 11)
+			if (strlen(starnameBuf.data()) > 11)
 			{
 				uint16_t i {};
 				for (i = 9; i > 5; i--)
@@ -2002,7 +2002,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 				starnameBuf[i + 1] = '.';
 				starnameBuf[i + 2] = '\0';
 			}
-			snprintf(buf, sizeof(buf),
+			snprintf(buf.data(), sizeof(buf),
 					 "[%c] To %05.1f : %05.1f (Near %.12s)",
 					 'A' + whichPortal,
 					 (float)portal_map[whichPortal].star_pt.x / 10,
@@ -2053,15 +2053,15 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			&& UniverseToDispy(ari_pt.y) == pt.y)
 		{
 			cursorLoc = ari_pt;
-			uqm::utf8StringCopy(buf, sizeof(buf),
+			uqm::utf8StringCopy(buf.data(), sizeof(buf),
 								GameString(GameStringBase::StarString + 132));
 		}
 	}
 
 	DrawHyperCoords(cursorLoc);
-	if (strncmp(buf, prevbuf.data(), sizeof(buf)) != 0)
+	if (strncmp(buf.data(), prevbuf.data(), sizeof(buf)) != 0)
 	{
-		uqm::strncpy_safe(prevbuf, buf);
+		uqm::strncpy_safe(prevbuf, buf.data());
 
 		// Cursor is on top of a star. Display its name.
 		if (BestSDPtr)
@@ -2070,16 +2070,16 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 				&& isStarMarked(starIndex(BestSDPtr->star_pt),
 								"VISITED"))
 			{
-				char visBuf[CursorInfoBufsize] = "";
+				uqstl::array<char, CursorInfoBufsize> visBuf {};
 
-				uqm::utf8StringCopy(visBuf, sizeof(visBuf), buf);
+				uqm::utf8StringCopy(visBuf.data(), sizeof(visBuf), buf.data());
 				// This is how you get rid of compiler warnings over string
 				// length:  %.30s where "30" is a limit.  Enjoy. ~JSD~
 				//snprintf(buf, sizeof buf, "%c %.251s %c", '(', visBuf, ')');
-				fmt::format_to_sz_n(buf, "( {:251} )", visBuf);
+				fmt::format_to_sz_n(buf, "( {:251} )", visBuf.data());
 			}
 
-			DrawSISMessage(buf);
+			DrawSISMessage(buf.data());
 		}
 		// Cursor is elsewhere.
 		else
@@ -2102,7 +2102,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 							MakeRgb15(0x0E, 0xA7, 0xD9), 0x00));
 				}
 
-				DrawSISMessageEx(buf, -1, -1, SisMessageFlags::MyColor);
+				DrawSISMessageEx(buf.data(), -1, -1, SisMessageFlags::MyColor);
 				SetContext(OldContext);
 			}
 			else
@@ -2110,7 +2110,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 				// unusable.
 				const char* sz {GameString(GameStringBase::NavigationString + 1)};
 				uqm::strncpy_safe(buf, sz);
-				DrawSISMessage(buf);
+				DrawSISMessage(buf.data());
 			}
 		}
 	}
@@ -2123,15 +2123,15 @@ static unsigned int FuelRequired(void)
 
 static void UpdateFuelRequirement(void)
 {
-	char buf[80] {};
+	uqstl::array<char, 80> buf {};
 	const uint16_t fuel_required = FuelRequired();
 
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}.{}",
+	fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{} {}.{}",
 					 GameString(GameStringBase::NavigationString + 4),
 					 fuel_required / FuelTankScale,
 					 (fuel_required % FuelTankScale) / 10);
 
-	DrawStatusMessage(buf);
+	DrawStatusMessage(buf.data());
 }
 
 static constexpr auto StarSearchBufsize {256};
@@ -2140,15 +2140,15 @@ struct StarSearchState
 {
 	// TODO: pMS field is probably not needed anymore
 	MenuState* pMS;
-	char Text[StarSearchBufsize];
-	char LastText[StarSearchBufsize];
+	uqstl::array<char, StarSearchBufsize> Text;
+	uqstl::array<char, StarSearchBufsize> LastText;
 	TimeCount LastChangeTime;
 	int FirstIndex;
 	int CurIndex;
 	int LastIndex;
 	bool SingleClust;
 	bool SingleMatch;
-	char Buffer[StarSearchBufsize];
+	uqstl::array<char, StarSearchBufsize> Buffer;
 	const char* Prefix;
 	const char* Cluster;
 	int PrefixLen;
@@ -2177,7 +2177,7 @@ static void SortStarsOnName(StarSearchState* pSS)
 
 static void SplitStarName(StarSearchState* pSS)
 {
-	char* buf = pSS->Buffer;
+	char* buf = pSS->Buffer.data();
 	char* next {};
 	char* sep = nullptr;
 
@@ -2215,7 +2215,7 @@ static void SplitStarName(StarSearchState* pSS)
 	{ // reached the end -- cluster only
 		pSS->Cluster = pSS->Prefix;
 		pSS->ClusterLen = uqm::utf8StringCount(pSS->Cluster);
-		pSS->ClusterPos = uqm::utf8StringCount(uqstl::string_view {pSS->Buffer, static_cast<size_t>(pSS->Cluster - pSS->Buffer)});
+		pSS->ClusterPos = uqm::utf8StringCount(uqstl::string_view {pSS->Buffer.data(), static_cast<size_t>(pSS->Cluster - pSS->Buffer.data())});
 		pSS->Prefix = 0;
 		return;
 	}
@@ -2223,7 +2223,7 @@ static void SplitStarName(StarSearchState* pSS)
 	// consider the rest cluster name (whatever there is)
 	pSS->Cluster = buf;
 	pSS->ClusterLen = uqm::utf8StringCount(pSS->Cluster);
-	pSS->ClusterPos = uqm::utf8StringCount(uqstl::string_view {pSS->Buffer, static_cast<size_t>(pSS->Cluster - pSS->Buffer)});
+	pSS->ClusterPos = uqm::utf8StringCount(uqstl::string_view {pSS->Buffer.data(), static_cast<size_t>(pSS->Cluster - pSS->Buffer.data())});
 	*sep = '\0'; // split
 	pSS->PrefixLen = uqm::utf8StringCount(pSS->Prefix);
 }
@@ -2250,7 +2250,7 @@ static int FindNextStarIndex(StarSearchState* pSS, int from, bool WithinClust)
 	for (i = from; i < NumSolarSystems; ++i)
 	{
 		const StarDesc* SDPtr = &star_array[pSS->SortedStars[i]];
-		char FullName[StarSearchBufsize];
+		uqstl::array<char, StarSearchBufsize> FullName;
 		const char* ClusterName = GameString(SDPtr->Postfix);
 		const char* sptr {};
 		const char* dptr {};
@@ -2310,14 +2310,14 @@ static int FindNextStarIndex(StarSearchState* pSS, int from, bool WithinClust)
 		}
 
 		// check prefix
-		GetClusterName(SDPtr, FullName);
-		dlen = uqm::utf8StringCount(FullName);
+		GetClusterName(SDPtr, FullName.data());
+		dlen = uqm::utf8StringCount(FullName.data());
 		if (pSS->PrefixLen > dlen)
 		{
 			continue;
 		}
 
-		for (c = 0, sptr = pSS->Prefix, dptr = FullName;
+		for (c = 0, sptr = pSS->Prefix, dptr = FullName.data();
 			 c < pSS->PrefixLen; ++c)
 		{
 			const uqm::UniChar sc = uqm::getCharFromString(&sptr);
@@ -2341,7 +2341,7 @@ static int FindNextStarIndex(StarSearchState* pSS, int from, bool WithinClust)
 static void DrawMatchedStarName(TextEntryState* pTES)
 {
 	StarSearchState* pSS = (StarSearchState*)pTES->CbParam;
-	char buf[StarSearchBufsize] {};
+	uqstl::array<char, StarSearchBufsize> buf {};
 	int16_t ExPos = 0;
 	int16_t CurPos = -1;
 	const StarDesc* SDPtr = &star_array[pSS->SortedStars[pSS->CurIndex]];
@@ -2349,19 +2349,19 @@ static void DrawMatchedStarName(TextEntryState* pTES)
 
 	if (pSS->SingleClust || pSS->SingleMatch)
 	{ // draw full star name
-		GetClusterName(SDPtr, buf);
+		GetClusterName(SDPtr, buf.data());
 		ExPos = -1;
 		flags = SisMessageFlags::SetFlashRect;
 	}
 	else
 	{ // draw substring match
-		char* pstr = buf;
+		char* pstr = buf.data();
 
-		uqm::strncpy_safe(buf, pSS->Text);
+		uqm::strncpy_safe(buf, pSS->Text.data());
 		ExPos = pSS->ClusterPos;
 		pstr = uqm::skipUTF8Chars(pstr, pSS->ClusterPos);
 
-		uqm::strncpy_safe({pstr, sizeof(buf) - uqstl::distance(buf, pstr)}, pSS->Text);
+		uqm::strncpy_safe({pstr, sizeof(buf) - uqstl::distance(buf.data(), pstr)}, pSS->Text.data());
 		ExPos += pSS->ClusterLen;
 		CurPos = pTES->CursorPos;
 
@@ -2372,7 +2372,7 @@ static void DrawMatchedStarName(TextEntryState* pTES)
 		}
 	}
 
-	DrawSISMessageEx(buf, CurPos, ExPos, flags);
+	DrawSISMessageEx(buf.data(), CurPos, ExPos, flags);
 	DrawHyperCoords(cursorLoc);
 }
 
@@ -2389,7 +2389,7 @@ static void MatchNextStar(StarSearchState* pSS, bool Reset)
 		pSS->LastIndex = -1;
 		pSS->SingleClust = false;
 		pSS->SingleMatch = false;
-		uqm::strncpy_safe(pSS->Buffer, pSS->Text);
+		uqm::strncpy_safe(pSS->Buffer, pSS->Text.data());
 		SplitStarName(pSS);
 	}
 
@@ -2428,10 +2428,10 @@ static bool OnStarNameChange(TextEntryState* pTES)
 	SisMessageFlags flags {};
 	bool ret = true;
 
-	if (strncmp(pSS->Text, pSS->LastText, sizeof(pSS->Text)) != 0)
+	if (strncmp(pSS->Text.data(), pSS->LastText.data(), sizeof(pSS->Text)) != 0)
 	{ // string changed
 		pSS->LastChangeTime = GetTimeCounter();
-		uqm::strncpy_safe(pSS->LastText, pSS->Text);
+		uqm::strncpy_safe(pSS->LastText, pSS->Text.data());
 
 		// reset the search
 		MatchNextStar(pSS, true);
@@ -2452,7 +2452,7 @@ static bool OnStarNameChange(TextEntryState* pTES)
 			flags |= SisMessageFlags::BlockCursor;
 		}
 
-		ret = DrawSISMessageEx(pSS->Text, pTES->CursorPos, -1, flags);
+		ret = DrawSISMessageEx(pSS->Text.data(), pTES->CursorPos, -1, flags);
 	}
 	else
 	{
@@ -2552,7 +2552,7 @@ static bool DoStarSearch(MenuState* pMS)
 
 	// text entry setup
 	tes.Initialized = false;
-	tes.BaseStr = pss->Text;
+	tes.BaseStr = pss->Text.data();
 	tes.MaxSize = sizeof(pss->Text);
 	tes.CursorPos = 0;
 	tes.CbParam = pss;
@@ -2587,7 +2587,7 @@ static bool DoStarSearch(MenuState* pMS)
 		success = true;
 	}
 
-	DrawSISMessageEx(pss->Text, -1, -1, SisMessageFlags::ClearFlashRect);
+	DrawSISMessageEx(pss->Text.data(), -1, -1, SisMessageFlags::ClearFlashRect);
 
 	TextEntry3DO = false;
 
@@ -2685,7 +2685,7 @@ static constexpr auto StepAccelDelay {c_gameSecond / 120};
 
 static bool DoMoveCursor(MenuState* pMS)
 {
-	static char last_buf[CursorInfoBufsize];
+	static uqstl::array<char, CursorInfoBufsize> last_buf;
 	const TimeCount TimeIn {GetTimeCounter()};
 	static uint16_t moveRepeats;
 	bool isMove = false;

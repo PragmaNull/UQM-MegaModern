@@ -57,10 +57,10 @@ struct PlanetsideDesc
 	uqstl::array<uint16_t, *MineralCategory::NumElementCategories> ElementAmounts;
 
 	uint16_t NumFrames;
-	char AmountBuf[40];
+	uqstl::array<char, 40> AmountBuf;
 	uqstl::array<GfxText, 3> MineralText;
 
-	uqstl::array<Color, (((NumTextFrames >> 1)))> ColorCycle;
+	uqstl::array<Color, ((((((NumTextFrames >> 1))))))> ColorCycle;
 
 	uint8_t TectonicsChance;
 	uint8_t WeatherChance;

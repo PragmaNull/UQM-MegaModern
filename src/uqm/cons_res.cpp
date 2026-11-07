@@ -50,7 +50,7 @@ static uqstl::array<uqgsl::czstring, 3> planet_sizes {
 	"large", "medium", "small"};
 
 uqstl::array<FrameRef, NumViews> planet;
-static char buffer[80] {};
+static uqstl::array<char, 80> buffer {};
 
 void load_gravity_well(uint8_t selector)
 {
@@ -85,7 +85,7 @@ void load_gravity_well(uint8_t selector)
 		for (i = 0; i < NumViews; ++i)
 		{
 			fmt::format_to_sz_n(buffer, "planet.{}.{}", ptype, planet_sizes[i]);
-			planet[i] = CaptureDrawable(LoadGraphic(buffer));
+			planet[i] = CaptureDrawable(LoadGraphic(buffer.data()));
 		}
 	}
 }
@@ -103,19 +103,19 @@ void free_gravity_well(void)
 FrameRef load_life_form(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "graphics.life.{}", selector);
-	return CaptureDrawable(LoadGraphic(buffer));
+	return CaptureDrawable(LoadGraphic(buffer.data()));
 }
 
 MusicRef load_orbit_theme(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "music.orbit{}", selector + 1);
-	return LoadMusicInstance(buffer);
+	return LoadMusicInstance(buffer.data());
 }
 
 MusicRef loadMainMenuMusic(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "music.mainmenu{}", selector + 1);
-	return LoadMusicInstance(buffer);
+	return LoadMusicInstance(buffer.data());
 }
 
 int num_orbit_themes(void)

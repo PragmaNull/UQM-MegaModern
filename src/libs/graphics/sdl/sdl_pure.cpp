@@ -283,7 +283,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 							unsigned int windowType)
 {
 	int i {};
-	char caption[50] {};
+	uqstl::array<char, 50> caption {};
 	GraphicsDriver = driver;
 	(void)togglefullscreen; /* satisfy compiler (unused parameter) */
 	(void)windowType;		/* satisfy compiler (unused parameter) */
@@ -294,7 +294,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 
 	if (window == nullptr)
 	{
-		window = SDL_CreateWindow(caption, width, height, 0);
+		window = SDL_CreateWindow(caption.data(), width, height, 0);
 		if (!window)
 		{
 			return -1;
@@ -395,7 +395,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		{
 			SDL_SetWindowSize(window, width, height);
 		}
-		SDL_SetWindowTitle(window, caption);
+		SDL_SetWindowTitle(window, caption.data());
 	}
 
 	for (i = 0; i < ScreenBuffer::Count; i++)

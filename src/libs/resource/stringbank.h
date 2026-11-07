@@ -20,6 +20,8 @@
 #ifndef UQM_LIBS_RESOURCE_STRINGBANK_H
 #define UQM_LIBS_RESOURCE_STRINGBANK_H
 
+#include "core/stl/array.h"
+
 #ifdef SB_DEBUG
 #include <stdio.h>
 #endif
@@ -28,7 +30,7 @@ inline constexpr auto StrbankChunkSize {1024 - sizeof(void*) - sizeof(int)};
 
 struct stringbank
 {
-	char data[StrbankChunkSize];
+	uqstl::array<char, StrbankChunkSize> data;
 	int len;
 	struct stringbank* next;
 };

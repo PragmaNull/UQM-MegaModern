@@ -68,7 +68,7 @@ NetConnection* NetConnection_open(int player, const uqm::NetplayPeerOptions* opt
 
 #if defined(NETPLAY_DEBUG) && defined(NETPLAY_DEBUG_FILE)
 	{
-		char dumpFileName[PATH_MAX];
+		uqstl::array<char, PATH_MAX> dumpFileName;
 		time_t now;
 		struct tm* nowTm;
 		size_t strftimeResult;

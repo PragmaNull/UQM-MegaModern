@@ -78,8 +78,8 @@ static constexpr auto AltExitManifest {0x81};
 
 static auto PcMenuHeight() { return (ResScale(8)); }
 
-static char pm_crew_str[128];
-static char pm_fuel_str[128];
+static uqstl::array<char, 128> pm_crew_str;
+static uqstl::array<char, 128> pm_fuel_str;
 
 /* Actually display the menu text */
 static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilite, GfxRect* r)
@@ -88,7 +88,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 	uint16_t j {};
 	static uint16_t rd = 0;
 	GfxText t;
-	char buf[256];
+	uqstl::array<char, 256> buf;
 	GfxRect rt;
 
 	pos = beg_index + NewState;
@@ -127,7 +127,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 	t.align = TextAlign::Left;
 	t.baseline.x = r->corner.x + ResScale(2);
 	t.baseline.y = r->corner.y + PcMenuHeight() - ResScale(1);
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 	r->corner.x += ResScale(1);
 	r->extent.width -= ResScale(2);
@@ -138,9 +138,9 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 				(i - (MenuString::ChangeCaptain - MenuString::ReadVerySlow)) :
 				i;
 
-		uqm::utf8StringCopy(buf, sizeof buf,
-							(i == MenuString::Fuel) ? pm_fuel_str :
-							(i == MenuString::Crew) ? pm_crew_str :
+		uqm::utf8StringCopy(buf.data(), sizeof buf,
+							(i == MenuString::Fuel) ? pm_fuel_str.data() :
+							(i == MenuString::Crew) ? pm_crew_str.data() :
 													  GameString(GameStringBase::MainmenuString + j));
 		if (hilite && pos == i)
 		{
@@ -846,7 +846,7 @@ void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)
 		Draw3DOMenuText(&r, *beg_index + NewState);
 
 		GfxText t;
-		char buf[20];
+		uqstl::array<char, 20> buf;
 
 		switch (beg_index + NewState)
 		{
@@ -855,7 +855,7 @@ void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)
 				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
 				t.align = TextAlign::Right;
 				t.CharCount = (uint16_t)~0;
-				t.pStr = buf;
+				t.pStr = buf.data();
 				fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().CrewCost);
 				if (isPC(uqm::UQMOptions::read().whichFonts))
 				{
@@ -873,7 +873,7 @@ void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)
 				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
 				t.align = TextAlign::Right;
 				t.CharCount = (uint16_t)~0;
-				t.pStr = buf;
+				t.pStr = buf.data();
 				fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().FuelCost);
 				if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::Console3DO && !uqm::UQMOptions::read().wholeFuel)
 				{
@@ -899,7 +899,7 @@ void DrawMineralHelpers(void)
 {
 	GfxStamp s;
 	GfxText t;
-	char buf[40];
+	uqstl::array<char, 40> buf;
 	GfxRect r;
 	int16_t leading {};
 
@@ -945,7 +945,7 @@ void DrawMineralHelpers(void)
 	t.baseline.x = ElementCol1();
 	t.baseline.y = ElementOrgY() + ResScale(3);
 	t.align = TextAlign::Right;
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 
 	r.extent = GetFrameBounds(s.frame);
@@ -1035,13 +1035,13 @@ void DrawMineralHelpers(void)
 
 	t.baseline.y += leading;
 	fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().CrewEnlisted);
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
 	fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().NumLanders);
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
@@ -1070,7 +1070,7 @@ void DrawMineralHelpers(void)
 		fmt::format_to_sz_n(buf, "---");
 	}
 
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 

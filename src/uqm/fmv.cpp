@@ -73,10 +73,10 @@ void DoShipSpin(uint16_t index, MusicRef hMusic)
 	}
 
 	// TODO: It would be nice to have better resource names for these.
-	char vnbuf[24] {}; // From 32 to 24
-	fmt::format_to_n(vnbuf, sizeof(vnbuf) - 1, "slides.spins. {:02}", (unsigned)index);
+	uqstl::array<char, 24> vnbuf {}; // From 32 to 24
+	fmt::format_to_n(vnbuf.data(), sizeof(vnbuf) - 1, "slides.spins. {:02}", (unsigned)index);
 
-	ShowPresentation(vnbuf);
+	ShowPresentation(vnbuf.data());
 
 	if (is3DO(uqm::UQMOptions::read().whichIntro))
 	{

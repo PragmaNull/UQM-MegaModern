@@ -227,14 +227,14 @@ static void populate_editkeys(int templat)
 {
 	int j {};
 
-	uqm::strncpy_safe(layoutName.value, {uqm::input_templates[templat].name, static_cast<uint32_t>(layoutName.maxlen)});
+	uqm::strncpy_safe(layoutName.value, {uqm::input_templates[templat].name.data(), static_cast<uint32_t>(layoutName.maxlen)});
 
 	for (int i {0}; i < BattleKey::NumKeys; i++)
 	{
 		for (j = 0; j < 2; j++)
 		{
 			InterrogateInputState(templat, i, j,
-								  controlentries[i].controlname[j],
+								  controlentries[i].controlname[j].data(),
 								  WidgetControlentryWidth);
 		}
 	}
@@ -242,7 +242,7 @@ static void populate_editkeys(int templat)
 
 static void rename_template(WidgetTextEntry* self)
 {
-	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value);
+	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value.data());
 }
 
 static constexpr auto MenuFrameRate {c_gameSecond / 20};
@@ -363,20 +363,20 @@ static bool OnTextEntryFrame(TextEntryState* pTES)
 static int OnTextEntryEvent(WidgetTextEntry* widget)
 { // Going to edit the text
 	TextEntryState tes;
-	char revert_buf[256];
+	uqstl::array<char, 256> revert_buf;
 
 	// position cursor at the end of text
-	widget->cursor_pos = uqm::utf8StringCount(widget->value);
+	widget->cursor_pos = uqm::utf8StringCount(widget->value.data());
 	widget->state = TextEntryWidgetState::Editing;
 	redraw_menu();
 
 	// make a backup copy for revert on cancel
-	uqm::utf8StringCopy(revert_buf, sizeof(revert_buf), widget->value);
+	uqm::utf8StringCopy(revert_buf.data(), sizeof(revert_buf), widget->value.data());
 
 	// text entry setup
 	tes.Initialized = false;
 	tes.NextTime = GetTimeCounter() + MenuFrameRate;
-	tes.BaseStr = widget->value;
+	tes.BaseStr = widget->value.data();
 	tes.MaxSize = widget->maxlen;
 	tes.CursorPos = widget->cursor_pos;
 	tes.CbParam = widget;
@@ -386,7 +386,7 @@ static int OnTextEntryEvent(WidgetTextEntry* widget)
 	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::Select);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
-		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
+		uqm::utf8StringCopy(widget->value.data(), widget->maxlen, revert_buf.data());
 	}
 	else
 	{
@@ -533,7 +533,7 @@ static void populate_gamma(void)
 static void gamma_DrawValue(WidgetSlider* self, int x, int y)
 {
 	GfxText t;
-	char buf[16] {};
+	uqstl::array<char, 16> buf {};
 	float gamma = sliderToGamma(self->value);
 	fmt::format_to_sz_n(buf, "{:.4}", gamma);
 
@@ -541,7 +541,7 @@ static void gamma_DrawValue(WidgetSlider* self, int x, int y)
 	t.baseline.y = y;
 	t.align = TextAlign::Left;
 	t.CharCount = ~0;
-	t.pStr = buf;
+	t.pStr = buf.data();
 
 	font_DrawText(&t);
 }
@@ -707,7 +707,7 @@ static void init_widgets(void)
 	hooks.optionLabel = [](uqstl::string_view list, size_t index) -> const char* {
 		if (list == "controlTemplates" && index < uqstl::size(uqm::input_templates))
 		{
-			return uqm::input_templates[index].name;
+			return uqm::input_templates[index].name.data();
 		}
 		return nullptr;
 	};
@@ -832,13 +832,13 @@ static void dump_setup_menu(void)
 			case WidgetType::TextEntry:
 				{
 					const auto& entry {*reinterpret_cast<const WidgetTextEntry*>(child)};
-					uqm::log::info("{} {}: \"{}\"", marker, entry.category, entry.value);
+					uqm::log::info("{} {}: \"{}\"", marker, entry.category, entry.value.data());
 					break;
 				}
 			case WidgetType::ControlEntry:
 				{
 					const auto& entry {*reinterpret_cast<const WidgetControlEntry*>(child)};
-					uqm::log::info("{} {}: {} | {}", marker, entry.category, entry.controlname[0], entry.controlname[1]);
+					uqm::log::info("{} {}: {} | {}", marker, entry.category, entry.controlname[0].data(), entry.controlname[1].data());
 					break;
 				}
 			default:
@@ -890,12 +890,12 @@ static void apply_settings(void)
 		uqm::UQMOptions::edit().optDifficulty = uqm::Difficulty::Normal;
 	}
 
-	res_PutString("keys.1.name", uqm::input_templates[0].name);
-	res_PutString("keys.2.name", uqm::input_templates[1].name);
-	res_PutString("keys.3.name", uqm::input_templates[2].name);
-	res_PutString("keys.4.name", uqm::input_templates[3].name);
-	res_PutString("keys.5.name", uqm::input_templates[4].name);
-	res_PutString("keys.6.name", uqm::input_templates[5].name);
+	res_PutString("keys.1.name", uqm::input_templates[0].name.data());
+	res_PutString("keys.2.name", uqm::input_templates[1].name.data());
+	res_PutString("keys.3.name", uqm::input_templates[2].name.data());
+	res_PutString("keys.4.name", uqm::input_templates[3].name.data());
+	res_PutString("keys.5.name", uqm::input_templates[4].name.data());
+	res_PutString("keys.6.name", uqm::input_templates[5].name.data());
 
 	uqm::saveUserSettings(uqmOptions);
 	SaveKeyConfiguration(uqm::configDir());

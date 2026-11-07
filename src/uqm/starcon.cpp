@@ -246,7 +246,7 @@ int Starcon2Main(void* threadArg)
 						   "mm-{}.{}.{}-content.uqm.  UQM was expecting",
 						   UqmMajorVersion, UqmMinorVersion, UqmPatchVersion);
 		uqm::log::critical("it in the {}/packages directory.",
-						   baseContentPath);
+						   baseContentPath.data());
 		uqm::log::critical("Either your installation did not install the "
 						   "content pack at all, or it\ninstalled it in a different "
 						   "directory.\n\nFix your installation and rerun UQM.\n\n  "

@@ -820,7 +820,7 @@ static bool pickupNode(PlanetsideDesc* pPSD, uint16_t NumRetrieved,
 	}
 
 	pPSD->NumFrames = NumTextFrames;
-	const auto fmtResult = fmt::format_to_n(pPSD->AmountBuf, sizeof(pPSD->AmountBuf) - 1, "{}", NumRetrieved);
+	const auto fmtResult = fmt::format_to_n(pPSD->AmountBuf.data(), sizeof(pPSD->AmountBuf) - 1, "{}", NumRetrieved);
 	*fmtResult.out = '\0';
 	const char* pStr {GameString(EType + Offset)};
 
@@ -2772,7 +2772,7 @@ void PlanetSide(GfxPoint planetLoc)
 	PSD.ElementLevel = 0;
 
 	PSD.MineralText[0].align = TextAlign::Center;
-	PSD.MineralText[0].pStr = PSD.AmountBuf;
+	PSD.MineralText[0].pStr = PSD.AmountBuf.data();
 	PSD.MineralText[1] = PSD.MineralText[0];
 	PSD.MineralText[2] = PSD.MineralText[1];
 

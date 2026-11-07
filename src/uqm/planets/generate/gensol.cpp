@@ -273,7 +273,7 @@ static bool GenerateSol_generateName(const SolarSystemState* solarSys,
 {
 	const uint16_t planetNr = planetIndex(solarSys, world);
 
-	uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+	uqm::utf8StringCopy(uqm::gameState().sis().PlanetName.data(),
 						sizeof(uqm::gameState().sis().PlanetName),
 						GameString(GameStringBase::PlanetNumber + planetNr));
 	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(solarSys->PlanetDesc[planetNr].data_index));

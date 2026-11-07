@@ -123,7 +123,7 @@ static constexpr auto MaxVisModules {5};
 
 struct ShipStatsEntry
 {
-	char ShipName[30];
+	uqstl::array<char, 30> ShipName;
 	uint16_t ShipCost;
 	uint8_t CrewLevel, MaxCrew;
 };
@@ -162,7 +162,7 @@ static void DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 {
 	GfxRect r;
 	GfxText t;
-	char buf[10];
+	uqstl::array<char, 10> buf;
 
 	if (stowed_q)
 	{
@@ -187,7 +187,7 @@ static void DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 	SetContextForeGroundColor(selected ? ModuleSelectedColor :
 										 (stowed_q ? CaptainNameTextColor : ModuleNameColor));
 	t.baseline.y = r.corner.y + TextBaseline();
-	t.pStr = ShipState.ShipStats[index].ShipName;
+	t.pStr = ShipState.ShipStats[index].ShipName.data();
 	t.CharCount = (stowed_q ? (uint16_t)~0 : uqm::utf8StringPos(t.pStr, ' '));
 	font_DrawText(&t);
 	if (!stowed_q)
@@ -209,7 +209,7 @@ static void DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 		t.baseline.y -= ResScale(3);
 	}
 	fmt::format_to_sz_n(buf, "{}", ShipState.ShipStats[index].ShipCost);
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 	if (stowed_q)
@@ -219,7 +219,7 @@ static void DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 		fmt::format_to_sz_n(buf, "{}/{}",
 							ShipState.ShipStats[index].CrewLevel,
 							ShipState.ShipStats[index].MaxCrew);
-		t.pStr = buf;
+		t.pStr = buf.data();
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 	}
@@ -433,7 +433,7 @@ static void showRemainingCrew(void)
 {
 	GfxRect r;
 	GfxText t;
-	char buf[30] {};
+	uqstl::array<char, 30> buf {};
 	int16_t remaining_crew {};
 
 	if (!isDifficulty(uqm::Difficulty::Hard))
@@ -464,9 +464,9 @@ static void showRemainingCrew(void)
 	t.baseline.y = r.corner.y + r.extent.height - ResScale(1);
 	t.align = TextAlign::Left;
 	t.CharCount = (uint16_t)~0;
-	t.pStr = buf;
+	t.pStr = buf.data();
 	uqm::utf8StringCopy(
-		buf, sizeof(buf), GameString(GameStringBase::StarbaseString + 6));
+		buf.data(), sizeof(buf), GameString(GameStringBase::StarbaseString + 6));
 	// Remaining Crew:
 
 	font_DrawText(&t);
@@ -479,18 +479,18 @@ static void showRemainingCrew(void)
 
 	if (CheckAlliance(RaceId::Shofixti) == RaceAllegiance::Good)
 	{
-		const auto fmtResult = fmt::format_to_n(buf, sizeof(buf) - 1, "{}", StrInfinitySign);
+		const auto fmtResult = fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", StrInfinitySign);
 		*fmtResult.out = '\0';
 	}
 	else if (remaining_crew == 0)
 	{
 		uqm::utf8StringCopy(
-			buf, sizeof(buf), GameString(GameStringBase::StarbaseString + 7));
+			buf.data(), sizeof(buf), GameString(GameStringBase::StarbaseString + 7));
 		// Cdr. Hayes
 	}
 	else
 	{
-		const auto fmtResult = fmt::format_to_n(buf, sizeof(buf) - 1, "{}", remaining_crew);
+		const auto fmtResult = fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", remaining_crew);
 		*fmtResult.out = '\0';
 	}
 
@@ -622,9 +622,9 @@ static void showRemainingPoints(int delta)
 	SetContextFont(TinyFont);
 	t.align = TextAlign::Right;
 	t.CharCount = (uint16_t)~0;
-	char buf[30] {};
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", FP);
-	t.pStr = buf;
+	uqstl::array<char, 30> buf {};
+	fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", FP);
+	t.pStr = buf.data();
 
 	r.corner.x = ResScale(((optWindowType != uqm::WindowStyle::Console3DO) ?
 							   DosSisScreenWidth :
@@ -648,7 +648,7 @@ static void showRemainingPoints(int delta)
 	r = font_GetTextRect(&t);
 	t.baseline.x -= r.extent.width;
 	uqm::utf8StringCopy(
-		buf, sizeof(buf), GameString(GameStringBase::StarbaseString + 8));
+		buf.data(), sizeof(buf), GameString(GameStringBase::StarbaseString + 8));
 	// Fleet Points:
 
 	SetContextForeGroundColor(BlueprintColor);
@@ -768,8 +768,8 @@ static FleetInfoHandle GetAvailableRaceFromIndex(uint8_t Index)
 
 static void DrawShipyardShipText(GfxRect* r, int Index)
 {
-	char race_name[64];
-	char ship_name[64];
+	uqstl::array<char, 64> race_name;
+	uqstl::array<char, 64> ship_name;
 	Color OldColor;
 	int16_t leading {};
 	GfxRect block;
@@ -979,12 +979,12 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 					 - DosNumScl(2) - SafeY();
 		t.align = TextAlign::Right;
 		t.CharCount = (uint16_t)~0;
-		char buf[30] {};
-		t.pStr = buf;
+		uqstl::array<char, 30> buf {};
+		t.pStr = buf.data();
 		if (!stowed_q)
 		{
 			// Print the ship cost
-			fmt::format_to_n(buf, sizeof(buf) - 1, "{}", shipCost);
+			fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", shipCost);
 
 			if (shipCost <= (uqm::gameState().sis().ResUnits))
 			{
@@ -998,7 +998,7 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 		else
 		{
 			// Print the ship's crew
-			fmt::format_to_n(buf, sizeof(buf) - 1, "{}/{}", shipCrew, maxCrew);
+			fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}/{}", shipCrew, maxCrew);
 
 			if (shipCrew == maxCrew)
 			{
@@ -1022,7 +1022,7 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 		{
 			t.baseline.y = RadarY() + ResScale(7)
 						 + DosNumScl(2) - SafeY();
-			const auto fmtResult = fmt::format_to_n(buf, sizeof(buf) - 1, "{}", shipPoints);
+			const auto fmtResult = fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", shipPoints);
 			*fmtResult.out = '\0';
 
 			if (shipPoints < RemainingFp() / 2)
@@ -1044,7 +1044,7 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 			t.baseline.x -= r.extent.width;
 
 			uqm::utf8StringCopy(
-				buf, sizeof(buf),
+				buf.data(), sizeof(buf),
 				GameString(GameStringBase::StarbaseString + 9)); // FP:
 			SetContextForeGroundColor(BrightBlueColor);
 			font_DrawText(&t);
@@ -1094,30 +1094,30 @@ static void ShowShipCrew(ShipFragment* StarShipPtr, const GfxRect* pRect)
 
 	const char* captain {StarShipPtr->race_strings->text(StarShipPtr->captains_name_index)};
 
-	char buf[80] {};
+	uqstl::array<char, 80> buf {};
 	if (StarShipPtr->crew_level == maxCrewLevel)
 	{
-		fmt::format_to_n(buf, sizeof(buf) - 1, "{}", StarShipPtr->crew_level);
+		fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", StarShipPtr->crew_level);
 	}
 	else if (StarShipPtr->crew_level > maxCrewLevel)
 	{
-		fmt::format_to_n(buf, sizeof(buf) - 1, "[{}/{}]", StarShipPtr->crew_level - maxCrewLevel, maxCrewLevel);
+		fmt::format_to_n(buf.data(), sizeof(buf) - 1, "[{}/{}]", StarShipPtr->crew_level - maxCrewLevel, maxCrewLevel);
 	}
 	else if (StarShipPtr->crew_level == 0)
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf),
+		uqm::utf8StringCopy(buf.data(), sizeof(buf),
 							GameString(GameStringBase::StarbaseString + 5));
 	}
 	else
 	{
-		fmt::format_to_n(buf, sizeof(buf) - 1, "{}/{}", StarShipPtr->crew_level, maxCrewLevel);
+		fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}/{}", StarShipPtr->crew_level, maxCrewLevel);
 	}
 
 	r = *pRect;
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y + r.extent.height - ResScale(1);
 	t.align = TextAlign::Center;
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 	if (r.corner.y)
 	{

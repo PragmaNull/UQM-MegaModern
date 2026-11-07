@@ -98,7 +98,7 @@ static uqstl::array<uqgsl::czstring, 9> flight_res_names {
 
 static void register_menu_controls(int index)
 {
-	char buf[40] {};
+	uqstl::array<char, 40> buf {};
 
 	int i {1};
 	while (true)
@@ -107,11 +107,11 @@ static void register_menu_controls(int index)
 
 		fmt::format_to_sz_n(buf, "menu.{}.{}", menu_res_names[index], i);
 
-		if (!res_IsString(buf))
+		if (!res_IsString(buf.data()))
 		{
 			break;
 		}
-		VControl_ParseGesture(&g, res_GetString(buf));
+		VControl_ParseGesture(&g, res_GetString(buf.data()));
 		VControl_AddGestureBinding(&g, &menu_vec[index]);
 		i++;
 	}
@@ -142,12 +142,12 @@ static bool loadKeyConfiguration()
 		return false;
 	}
 
-	char key[40] {};
+	uqstl::array<char, 40> key {};
 	for (size_t templ = 0; templ < templates->size() && templ < static_cast<size_t>(num_templ); ++templ)
 	{
 		const uqm::KeyTemplate& keyTemplate {(*templates)[templ]};
 		fmt::format_to_sz_n(key, "keys.{}.name", templ + 1);
-		res_PutString(key, keyTemplate.name.c_str());
+		res_PutString(key.data(), keyTemplate.name.c_str());
 
 		for (size_t control = 0; control < keyTemplate.bindings.size(); ++control)
 		{
@@ -155,7 +155,7 @@ static bool loadKeyConfiguration()
 			for (size_t alternate = 0; alternate < gestures.size() && alternate < MaxFlightAlternates; ++alternate)
 			{
 				fmt::format_to_sz_n(key, "keys.{}.{}.{}", templ + 1, flight_res_names[control], alternate + 1);
-				res_PutString(key, gestures[alternate].c_str());
+				res_PutString(key.data(), gestures[alternate].c_str());
 			}
 		}
 	}
@@ -167,16 +167,16 @@ static void register_flight_controls(void)
 {
 	int j {};
 	int k {};
-	char buf[40] {};
+	uqstl::array<char, 40> buf {};
 
 
 	for (int i {0}; i < num_templ; i++)
 	{
 		/* Copy in name */
 		fmt::format_to_sz_n(buf, "keys.{}.name", i + 1);
-		if (res_IsString(buf))
+		if (res_IsString(buf.data()))
 		{
-			uqm::strncpy_safe(uqm::input_templates[i].name, res_GetString(buf));
+			uqm::strncpy_safe(uqm::input_templates[i].name, res_GetString(buf.data()));
 		}
 		else
 		{
@@ -189,12 +189,12 @@ static void register_flight_controls(void)
 				VControlGesture* g = ControlPtr(i, j, k);
 				fmt::format_to_sz_n(buf, "keys.{}.{}.{}", i + 1,
 									flight_res_names[j], k + 1);
-				if (!res_IsString(buf))
+				if (!res_IsString(buf.data()))
 				{
 					g->type = VControlGestureType::None;
 					continue;
 				}
-				VControl_ParseGesture(g, res_GetString(buf));
+				VControl_ParseGesture(g, res_GetString(buf.data()));
 				VControl_AddGestureBinding(g,
 										   (flight_vec + i * num_flight + j));
 			}
@@ -270,7 +270,7 @@ static void initJoystick(void)
 
 	SDL_SetGamepadEventsEnabled(true);
 
-	const size_t base_len {strlen(baseContentPath)};
+	const size_t base_len {strlen(baseContentPath.data())};
 	if (base_len > 0)
 	{
 		const char last_char = baseContentPath[base_len - 1];
@@ -282,7 +282,7 @@ static void initJoystick(void)
 	}
 
 	static constexpr const char* DbFilenameFormat {"{}{}gamecontrollerdb.txt"};
-	const uqstl::string mapping_db {fmt::format(DbFilenameFormat, baseContentPath, slash)};
+	const uqstl::string mapping_db {fmt::format(DbFilenameFormat, baseContentPath.data(), slash)};
 
 	if (SDL_AddGamepadMappingsFromFile(mapping_db.c_str()) == -1)
 	{
@@ -525,15 +525,15 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 		"Share", "PS", "Options", "L3", "R3", "L1", "R1",
 		"DUp", "DDown", "DLeft", "DRight", "TouchPad"};
 
-	const char xbx_axes[SDL_GAMEPAD_AXIS_COUNT][16] =
-		{
-			"LStick H", "LStick V", "RStick H", "RStick V",
-			"LTrigger", "RTrigger"};
+	const uqstl::array<uqgsl::czstring, SDL_GAMEPAD_AXIS_COUNT> xbx_axes {
+		{"LStick H", "LStick V", "RStick H", "RStick V",
+		 "LTrigger", "RTrigger"}
+	};
 
-	const char ds4_axes[SDL_GAMEPAD_AXIS_COUNT][16] =
-		{
-			"LStick H", "LStick V", "RStick H", "RStick V",
-			"L2", "R2"};
+	const uqstl::array<uqgsl::czstring, SDL_GAMEPAD_AXIS_COUNT> ds4_axes {
+		{"LStick H", "LStick V", "RStick H", "RStick V",
+		 "L2", "R2"}
+	};
 
 	if (templat >= num_templ || control >= num_flight
 		|| index >= MaxFlightAlternates)
@@ -607,7 +607,7 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 void RemoveInputState(int templat, int control, int index)
 {
 	VControlGesture* g = ControlPtr(templat, control, index);
-	char keybuf[40] {};
+	uqstl::array<char, 40> keybuf {};
 
 	if (templat >= num_templ || control >= num_flight
 		|| index >= MaxFlightAlternates)
@@ -622,7 +622,7 @@ void RemoveInputState(int templat, int control, int index)
 
 	fmt::format_to_sz_n(keybuf, "keys.{}.{}.{}", templat + 1,
 						flight_res_names[control], index + 1);
-	res_Remove(keybuf);
+	res_Remove(keybuf.data());
 
 	return;
 }
@@ -630,8 +630,8 @@ void RemoveInputState(int templat, int control, int index)
 void RebindInputState(int templat, int control, int index)
 {
 	VControlGesture g;
-	char keybuf[40] {};
-	char valbuf[40] {};
+	uqstl::array<char, 40> keybuf {};
+	uqstl::array<char, 40> valbuf {};
 
 	if (templat >= num_templ || control >= num_flight
 		|| index >= MaxFlightAlternates)
@@ -656,21 +656,21 @@ void RebindInputState(int templat, int control, int index)
 	*ControlPtr(templat, control, index) = g;
 	fmt::format_to_sz_n(keybuf, "keys.{}.{}.{}", templat + 1,
 						flight_res_names[control], index + 1);
-	VControl_DumpGesture({valbuf, sizeof(valbuf)}, &g);
-	res_PutString(keybuf, valbuf);
+	VControl_DumpGesture(valbuf, &g);
+	res_PutString(keybuf.data(), valbuf.data());
 }
 
 void SaveKeyConfiguration(const uqm::io::Directory& path)
 {
 	uqstl::vector<uqm::KeyTemplate> templates(static_cast<size_t>(num_templ));
-	char key[40] {};
+	uqstl::array<char, 40> key {};
 	for (size_t templ = 0; templ < templates.size(); ++templ)
 	{
 		uqm::KeyTemplate& keyTemplate {templates[templ]};
 		fmt::format_to_sz_n(key, "keys.{}.name", templ + 1);
-		if (res_IsString(key))
+		if (res_IsString(key.data()))
 		{
-			keyTemplate.name = res_GetString(key);
+			keyTemplate.name = res_GetString(key.data());
 		}
 
 		keyTemplate.bindings.resize(static_cast<size_t>(num_flight));
@@ -679,9 +679,9 @@ void SaveKeyConfiguration(const uqm::io::Directory& path)
 			for (size_t alternate = 0; alternate < MaxFlightAlternates; ++alternate)
 			{
 				fmt::format_to_sz_n(key, "keys.{}.{}.{}", templ + 1, flight_res_names[control], alternate + 1);
-				if (res_IsString(key))
+				if (res_IsString(key.data()))
 				{
-					keyTemplate.bindings[control].emplace_back(res_GetString(key));
+					keyTemplate.bindings[control].emplace_back(res_GetString(key.data()));
 				}
 			}
 		}

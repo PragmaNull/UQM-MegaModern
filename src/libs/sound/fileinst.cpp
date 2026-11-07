@@ -26,9 +26,9 @@
 
 MusicRef LoadMusicFile(const char* pStr)
 {
-	char filename[256] {};
+	uqstl::array<char, 256> filename {};
 	uqm::strncpy_safe(filename, pStr);
-	CheckMusicResName(filename);
+	CheckMusicResName(filename.data());
 
-	return static_cast<MusicRef>(res_LoadResFile(uqm::contentDir(), filename, _GetMusicData));
+	return static_cast<MusicRef>(res_LoadResFile(uqm::contentDir(), filename.data(), _GetMusicData));
 }

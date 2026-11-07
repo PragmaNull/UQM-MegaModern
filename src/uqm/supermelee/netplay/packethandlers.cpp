@@ -294,17 +294,17 @@ NetResult PacketHandler_TeamName(NetConnection* conn, const Packet_TeamName* pac
 	// The -1 is for not counting the terminating '\0'.
 
 	{
-		char buf[MaxTeamChars + 1];
+		uqstl::array<char, MaxTeamChars + 1> buf;
 
 		if (nameLen > MaxTeamChars)
 		{
 			nameLen = MaxTeamChars;
 		}
-		memcpy(buf, teamName(packet), nameLen);
+		memcpy(buf.data(), teamName(packet), nameLen);
 		buf[nameLen] = '\0';
 
 		Melee_RemoteChange_teamName(battleStateData->meleeState, conn,
-									side, buf);
+									side, buf.data());
 	}
 
 	// Padding data may follow; it is ignored.

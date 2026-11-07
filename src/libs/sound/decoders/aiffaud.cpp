@@ -86,12 +86,12 @@ static constexpr auto AiffCommSize {2 + 4 + 2 + 10};
 
 struct aiff_ExtCommonChunk
 {
-	uint16_t channels;	   /* number of channels */
-	uint32_t sampleFrames; /* number of sample frames */
-	uint16_t sampleSize;   /* number of bits per sample */
-	int32_t sampleRate;	   /* number of frames per second */
-	aiff_ID extTypeID;	   /* compression type ID */
-	char extName[32];	   /* compression type name */
+	uint16_t channels;				/* number of channels */
+	uint32_t sampleFrames;			/* number of sample frames */
+	uint16_t sampleSize;			/* number of bits per sample */
+	int32_t sampleRate;				/* number of frames per second */
+	aiff_ID extTypeID;				/* compression type ID */
+	uqstl::array<char, 32> extName; /* compression type name */
 };
 
 static constexpr auto AiffExtCommSize {AiffCommSize + 4};

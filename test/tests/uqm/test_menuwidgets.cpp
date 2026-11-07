@@ -278,7 +278,7 @@ TEST_F(MenuWidgetsTest, TextShowsAndSetsTheSetting)
 	auto& widget {*reinterpret_cast<WidgetTextEntry*>(list[0])};
 	EXPECT_STREQ(widget.category, "Seed");
 	EXPECT_STREQ(widget.tooltip[0], "Type a seed.");
-	EXPECT_STREQ(widget.value, "12345");
+	EXPECT_STREQ(widget.value.data(), "12345");
 
 	uqm::strncpy_safe(widget.value, "777");
 	widget.onChange(&widget);
@@ -288,7 +288,7 @@ TEST_F(MenuWidgetsTest, TextShowsAndSetsTheSetting)
 	uqm::strncpy_safe(widget.value, "abc");
 	widget.onChange(&widget);
 	EXPECT_EQ(*options.customSeed, 777);
-	EXPECT_STREQ(widget.value, "777");
+	EXPECT_STREQ(widget.value.data(), "777");
 }
 
 TEST_F(MenuWidgetsTest, ChoiceUsesSuppliedLabels)

@@ -694,15 +694,15 @@ void Widget_DrawSlider(Widget* _self, int x, int y)
 void Widget_Slider_DrawValue(WidgetSlider* self, int x, int y)
 { // Number from 0 to 100 near slider
 	GfxText t;
-	char buffer[16] {};
+	uqstl::array<char, 16> buffer {};
 
-	fmt::format_to_n(buffer, sizeof(buffer) - 1, "{}", self->value);
+	fmt::format_to_n(buffer.data(), sizeof(buffer) - 1, "{}", self->value);
 
 	t.baseline.x = x + uqm::ResScale(14);
 	t.baseline.y = y;
 	t.align = TextAlign::Left;
 	t.CharCount = ~0;
-	t.pStr = buffer;
+	t.pStr = buffer.data();
 
 	font_DrawText(&t);
 }
@@ -710,15 +710,15 @@ void Widget_Slider_DrawValue(WidgetSlider* self, int x, int y)
 void Widget_Slider_DrawPercentageValue(WidgetSlider* self, int x, int y)
 { // Number from 0% to 100% near slider
 	GfxText t;
-	char buffer[16] {};
+	uqstl::array<char, 16> buffer {};
 
-	fmt::format_to_n(buffer, sizeof(buffer) - 1, "{}%", self->value);
+	fmt::format_to_n(buffer.data(), sizeof(buffer) - 1, "{}%", self->value);
 
 	t.baseline.x = x + uqm::ResScale(14);
 	t.baseline.y = y;
 	t.align = TextAlign::Left;
 	t.CharCount = ~0;
-	t.pStr = buffer;
+	t.pStr = buffer.data();
 
 	font_DrawText(&t);
 }
@@ -769,8 +769,8 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 	self->value[WidgetTextentryWidth - uqm::ResScale(1)] = 0;
 
 	t.baseline.y = y;
-	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
-	t.pStr = self->value;
+	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value.data());
+	t.pStr = self->value.data();
 
 	if (!any(self->state, TextEntryWidgetState::Editing))
 	{ // normal or selected state
@@ -928,7 +928,7 @@ void Widget_DrawControlEntry(Widget* _self, int x, int y)
 	{
 		t.baseline.x = home_x + ((i % 3) * (CanvasWidth / 3));
 		t.baseline.y = home_y + uqm::ResScale(8 * (i / 3));
-		t.pStr = self->controlname[i];
+		t.pStr = self->controlname[i].data();
 		if (!t.pStr[0])
 		{
 			t.pStr = "---";

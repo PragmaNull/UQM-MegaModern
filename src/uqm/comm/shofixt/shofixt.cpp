@@ -438,7 +438,7 @@ static void Hostile(ResponseRef R)
 					"",
 					ShofixtiPhrase::Look1,
 					(char*)nullptr);
-				DoResponsePhrase(*ShofixtiPhrase::Look0, ExitConversation, shared_phrase_buf);
+				DoResponsePhrase(*ShofixtiPhrase::Look0, ExitConversation, shared_phrase_buf.data());
 				break;
 			}
 		case 2:
@@ -456,8 +456,8 @@ static void Friendly(ResponseRef R)
 		ShofixtiPhrase pStr;
 		char* c_buf;
 	} Resp[3];
-	static char buf0[80];
-	static char buf1[80];
+	static uqstl::array<char, 80> buf0;
+	static uqstl::array<char, 80> buf1;
 
 	uint8_t LastStack {0};
 	memset(Resp, 0, sizeof(Resp));
@@ -516,7 +516,7 @@ static void Friendly(ResponseRef R)
 			ShofixtiPhrase::Report1,
 			(char*)nullptr);
 		Resp[0].pStr = ShofixtiPhrase::Report0;
-		Resp[0].c_buf = buf0;
+		Resp[0].c_buf = buf0.data();
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK1))
@@ -531,7 +531,7 @@ static void Friendly(ResponseRef R)
 				ShofixtiPhrase::WhyHere1,
 				(char*)nullptr);
 			Resp[1].pStr = ShofixtiPhrase::WhyHere0;
-			Resp[1].c_buf = buf1;
+			Resp[1].c_buf = buf1.data();
 			break;
 		case 1:
 			Resp[1].pStr = ShofixtiPhrase::WhatHappened;
@@ -575,7 +575,7 @@ static void Friendly(ResponseRef R)
 		"",
 		ShofixtiPhrase::Bye1,
 		(char*)nullptr);
-	DoResponsePhrase(*ShofixtiPhrase::Bye0, ExitConversation, shared_phrase_buf);
+	DoResponsePhrase(*ShofixtiPhrase::Bye0, ExitConversation, shared_phrase_buf.data());
 }
 
 static void Intro(void)

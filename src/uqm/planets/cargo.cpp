@@ -53,7 +53,7 @@ void ShowRemainingCapacity(void)
 {
 	GfxRect r;
 	GfxText t;
-	char buf[40];
+	uqstl::array<char, 40> buf;
 
 	GfxContextRef OldContext {SetContext(StatusContext)};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
@@ -73,7 +73,7 @@ void ShowRemainingCapacity(void)
 	t.baseline.x = ElementCol2() + ResScale(1);
 	t.baseline.y = r.corner.y + TextBaseline();
 	t.align = TextAlign::Right;
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.CharCount = (uint16_t)~0;
 
 	r.extent.width = t.baseline.x - r.corner.x + ResScale(1);
@@ -95,7 +95,7 @@ static void DrawElementAmount(uint16_t Element, bool selected)
 {
 	GfxRect r;
 	GfxText t;
-	char buf[40];
+	uqstl::array<char, 40> buf;
 
 	r.corner.x = ElementSelOrgX();
 	r.extent.width = ElementSelWidth();
@@ -117,7 +117,7 @@ static void DrawElementAmount(uint16_t Element, bool selected)
 	DrawFilledRectangle(&r);
 
 	t.align = TextAlign::Right;
-	t.pStr = buf;
+	t.pStr = buf.data();
 	t.baseline.y = r.corner.y + TextBaseline();
 
 	if (Element == MineralCategory::NumElementCategories)
@@ -307,7 +307,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	GfxStamp s;
 	GfxText t;
 	GfxRect r;
-	char buf[40];
+	uqstl::array<char, 40> buf;
 
 	GfxContextRef OldContext {SetContext(StatusContext)};
 
@@ -355,7 +355,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	r.corner.y = s.origin.y - s.frame->hotSpot.y + s.frame->Bounds.height
 			   + ResScale(3);
 	DrawFilledRectangle(&r);
-	t.pStr = buf;
+	t.pStr = buf.data();
 	fmt::format_to_sz_n(buf, "{}", planet);
 	t.CharCount = (uint16_t)~0;
 	t.baseline.x = (StatusWidth() >> 1);

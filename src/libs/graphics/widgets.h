@@ -183,7 +183,7 @@ struct WidgetTextEntry
 	// can be nullptr, in which case SELECT is ignored
 	void (*onChange)(struct WidgetTextEntry* self);
 	const char* category;
-	char value[WidgetTextentryWidth];
+	uqstl::array<char, WidgetTextentryWidth> value;
 	int maxlen;
 	TextEntryWidgetState state;
 	int cursor_pos;
@@ -204,7 +204,7 @@ struct WidgetControlEntry
 	const char* category;
 	int controlindex;
 	int highlighted;
-	char controlname[2][WidgetControlentryWidth];
+	uqstl::array<uqstl::array<char, WidgetControlentryWidth>, 2> controlname;
 };
 
 void DrawShadowedBox(GfxRect* r, Color bg, Color dark, Color medium);
