@@ -515,7 +515,7 @@ void VisitStarBase(void)
 {
 	MenuState menuState;
 	GFXCONTEXT OldContext {};
-	StatMsgMode prevMsgMode = SMM_UNDEFINED;
+	StatMsgMode prevMsgMode = StatMsgMode::Undefined;
 
 	// XXX: This should probably be moved out to Starcon2Main()
 	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
@@ -532,7 +532,7 @@ void VisitStarBase(void)
 		ShipFragment* FragPtr {};
 
 		// Unallied Starbase conversation
-		SetCommIntroMode(CIM_CROSSFADE_SCREEN, TimePeriod {});
+		SetCommIntroMode(CommIntroMode::CrossfadeScreen, TimePeriod {});
 		InitCommunication(COMMANDER_CONVERSATION);
 		if (!uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER)
 			|| (uqm::currentActivity() & CHECK_ABORT))
@@ -559,7 +559,7 @@ void VisitStarBase(void)
 		}
 
 		// After Ilwrath battle, about-to-ally Starbase conversation
-		SetCommIntroMode(CIM_CROSSFADE_SCREEN, TimePeriod {});
+		SetCommIntroMode(CommIntroMode::CrossfadeScreen, TimePeriod {});
 		InitCommunication(COMMANDER_CONVERSATION);
 		if (uqm::currentActivity() & CHECK_ABORT)
 		{
@@ -570,7 +570,7 @@ void VisitStarBase(void)
 		uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
 	}
 
-	prevMsgMode = SetStatusMessageMode(SMM_RES_UNITS);
+	prevMsgMode = SetStatusMessageMode(StatMsgMode::ResUnits);
 
 	if (uqm::gameState().flag(uqm::GameFlag::MOONBASE_ON_SHIP)
 		|| uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
@@ -583,7 +583,7 @@ void VisitStarBase(void)
 			return; // You are now dead! Thank you! (killed by Kohr-Ah)
 		}
 
-		SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 2);
+		SetCommIntroMode(CommIntroMode::FadeInScreen, c_gameSecond * 2);
 		InitCommunication(COMMANDER_CONVERSATION);
 		if (uqm::currentActivity() & CHECK_ABORT)
 		{

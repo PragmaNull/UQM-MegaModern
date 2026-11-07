@@ -68,12 +68,12 @@ static auto TextSpacingY() { return ResScale(7); }
 static auto MaxVisDevices() { return ((ResScale(129) - DeviceOrgY()) / DeviceSpacingY()); }
 
 
-typedef enum
+enum class DeviceStatus
 {
-	DEVICE_FAILURE = 0,
-	DEVICE_SUCCESS,
-	DEVICE_SUCCESS_NO_SOUND,
-} DeviceStatus;
+	Failure = 0,
+	Success,
+	SuccessNoSound,
+};
 
 struct DevicesMenuState
 {
@@ -333,7 +333,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(0));
 				uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(0));
 				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(0));
-				return DEVICE_SUCCESS;
+				return DeviceStatus::Success;
 			}
 			break;
 		case WIMBLIS_TRIDENT_DEVICE:
@@ -368,7 +368,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 					CloneShipFragment(CHMMR_SHIP,
 									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
-				return DEVICE_SUCCESS_NO_SOUND;
+				return DeviceStatus::SuccessNoSound;
 			}
 			break;
 		case UTWIG_BOMB_DEVICE:
@@ -376,7 +376,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 			uqm::currentActivity() &= ~IN_BATTLE;
 			uqm::gameState().sis().CrewEnlisted = (uint16_t)~0;
 			DeathBySuicide = true;
-			return DEVICE_SUCCESS;
+			return DeviceStatus::Success;
 		case ULTRON_0_DEVICE:
 			break;
 		case ULTRON_1_DEVICE:
@@ -422,7 +422,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 					SaveSolarSysLocation();
 				}
 			}
-			return DEVICE_SUCCESS;
+			return DeviceStatus::Success;
 		case AQUA_HELIX_DEVICE:
 			val = uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION);
 			if (val)
@@ -431,7 +431,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				uqm::gameState().setFlag(uqm::GameFlag::AQUA_HELIX_ON_SHIP, static_cast<uint32_t>(0));
 				uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(0));
 				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(0));
-				return DEVICE_SUCCESS;
+				return DeviceStatus::Success;
 			}
 			break;
 		case CLEAR_SPINDLE_DEVICE:
@@ -442,14 +442,14 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(0));
 				uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(0));
 				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(0));
-				return DEVICE_SUCCESS;
+				return DeviceStatus::Success;
 			}
 			break;
 		case UMGAH_HYPERWAVE_DEVICE:
 		case BURVIX_HYPERWAVE_DEVICE:
 			if (UseCaster())
 			{
-				return DEVICE_SUCCESS;
+				return DeviceStatus::Success;
 			}
 			break;
 		case TAALO_PROTECTOR_DEVICE:
@@ -490,7 +490,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 					}
 
 					uqm::gameState().setFlag(uqm::GameFlag::PORTAL_COUNTER, static_cast<uint32_t>(1));
-					return DEVICE_SUCCESS;
+					return DeviceStatus::Success;
 				}
 			}
 			break;
@@ -500,22 +500,22 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 			break;
 	}
 
-	return DEVICE_FAILURE;
+	return DeviceStatus::Failure;
 }
 
 bool InvokeSpawner(void)
 {
 	const DeviceStatus status = InvokeDevice(PORTAL_SPAWNER_DEVICE);
-	if (status == DEVICE_FAILURE)
+	if (status == DeviceStatus::Failure)
 	{
 		PlayMenuSound(MENU_SOUND_FAILURE);
 	}
-	else if (status == DEVICE_SUCCESS)
+	else if (status == DeviceStatus::Success)
 	{
 		PlayMenuSound(MENU_SOUND_INVOKED);
 	}
 
-	return (status == DEVICE_FAILURE);
+	return (status == DeviceStatus::Failure);
 }
 
 static bool DoManipulateDevices(MenuState* pMS)
@@ -549,16 +549,16 @@ static bool DoManipulateDevices(MenuState* pMS)
 		DeviceStatus status;
 
 		status = InvokeDevice(devState->list[pMS->CurState]);
-		if (status == DEVICE_FAILURE)
+		if (status == DeviceStatus::Failure)
 		{
 			PlayMenuSound(MENU_SOUND_FAILURE);
 		}
-		else if (status == DEVICE_SUCCESS)
+		else if (status == DeviceStatus::Success)
 		{
 			PlayMenuSound(MENU_SOUND_INVOKED);
 		}
 
-		return (status == DEVICE_FAILURE);
+		return (status == DeviceStatus::Failure);
 	}
 	else
 	{

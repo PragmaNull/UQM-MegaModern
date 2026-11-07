@@ -856,7 +856,7 @@ ConversationData* init_commander_comm()
 									   - (SafeNeg(2) * 2);
 	commander_desc.AlienTextBaseline.y = ResScale(20);
 
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	ConversationData* retval {&commander_desc};
 
 	return (retval);

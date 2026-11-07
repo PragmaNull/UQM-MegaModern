@@ -245,7 +245,7 @@ static ConversationData yehat_desc =
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 
 	if (PlayerSaid(R, bye_homeworld))
 	{
@@ -271,7 +271,7 @@ static void ExitConversation(RESPONSE_REF R)
 		{
 			NPCPhrase(GO_IN_PEACE);
 
-			setSegue(Segue_peace);
+			setSegue(Segue::Peace);
 		}
 	}
 	else if (PlayerSaid(R, not_here)
@@ -292,7 +292,7 @@ static void ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(WE_REVOLT);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_CIVIL_WAR, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_HOME_VISITS, static_cast<uint32_t>(0));
@@ -312,7 +312,7 @@ static void ExitConversation(RESPONSE_REF R)
 			uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 		}
 
-		AddEvent(RELATIVE_EVENT, 0, 0, 0, YEHAT_REBEL_EVENT);
+		AddEvent(EventType::Relative, 0, 0, 0, YEHAT_REBEL_EVENT);
 	}
 }
 
@@ -520,7 +520,7 @@ static void YehatSpace(RESPONSE_REF R)
 	{
 		NPCPhrase(WE_CANNOT_2);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_ALLY_SPACE, static_cast<uint32_t>(2));
 
 		return;
@@ -632,7 +632,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -740,11 +740,11 @@ ConversationData* init_yehat_comm(void)
 
 	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	ConversationData* retval {&yehat_desc};
 

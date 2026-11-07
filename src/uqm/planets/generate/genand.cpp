@@ -195,7 +195,7 @@ static bool GenerateAndrosynth_pickupEnergy(SolarSystemState* solarSys,
 		GenerateDefault_landerReportCycle(solarSys);
 
 		// "Kill" the Androsynth once you learn they are gone
-		if (CheckAlliance(ANDROSYNTH_SHIP) != DEAD_GUY)
+		if (CheckAlliance(ANDROSYNTH_SHIP) != RaceAllegiance::Dead)
 		{
 			KillRace(ANDROSYNTH_SHIP);
 		}

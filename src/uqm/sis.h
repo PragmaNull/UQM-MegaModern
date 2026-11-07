@@ -223,17 +223,17 @@ extern void DateToString(char* buf, size_t bufLen,
 // Returned GfxRect is relative to the StatusContext
 extern void GetStatusMessageRect(GfxRect* r);
 extern void DrawStatusMessage(const char* pStr);
-typedef enum
+enum class StatMsgMode
 {
-	SMM_UNDEFINED = 0,
-	SMM_DATE,
-	SMM_RES_UNITS,
-	SMM_CREDITS,
-	SMM_WARNING,
-	SMM_ALERT,
+	Undefined = 0,
+	Date,
+	ResUnits,
+	Credits,
+	Warning,
+	Alert,
 
-	SMM_DEFAULT = SMM_DATE,
-} StatMsgMode;
+	Default = Date,
+};
 // Sets the new mode and return the previous
 extern StatMsgMode SetStatusMessageMode(StatMsgMode);
 

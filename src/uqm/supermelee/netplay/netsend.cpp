@@ -65,7 +65,7 @@ NetResult sendPacket(NetConnection* conn, Packet* packet)
 
 #ifdef NETPLAY_STATISTICS
 	NetConnection_getStatistics(conn)->packetsSent++;
-	NetConnection_getStatistics(conn)->packetTypeSent[packetType(packet)]++;
+	NetConnection_getStatistics(conn)->packetTypeSent[+packetType(packet)]++;
 #endif
 
 	return {};

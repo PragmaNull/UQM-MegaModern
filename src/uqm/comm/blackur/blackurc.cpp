@@ -176,7 +176,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 
 	if (PlayerSaid(R, bye))
 	{
@@ -497,7 +497,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -505,7 +505,7 @@ static void Intro(void)
 	{
 		NPCPhrase(GAME_OVER_DUDE);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -524,7 +524,7 @@ static void Intro(void)
 		NPCPhrase(HELLO_SAMATRA);
 
 		uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else
 	{
@@ -603,11 +603,11 @@ ConversationData* init_blackurq_comm(void)
 	if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL)
 		&& uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	ConversationData* retval {&blackurq_desc};
 

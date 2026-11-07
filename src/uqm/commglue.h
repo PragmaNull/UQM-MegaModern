@@ -19,6 +19,8 @@
 #ifndef UQM_COMMGLUE_H_
 #define UQM_COMMGLUE_H_
 
+
+#include "core/types/enum.h"
 #include "globdata.h"
 #include "resinst.h"
 #include "libs/sound/trackplayer.h"
@@ -55,19 +57,21 @@ extern void construct_response(uqstl::span<char> buf, int R /* promoted from
 							   ,
 							   ...);
 
-typedef enum
+enum class Segue
 {
-	Segue_peace,
+	Peace,
 	// When initiating a conversation, open comms directly.
 	// When terminating a conversation, depart in peace.
-	Segue_hostile,
+	Hostile,
 	// When initiating a conversation, offer the choice to attack.
 	// When terminating a conversation, go into battle.
-	Segue_victory,
+	Victory,
 	// (when terminating a conversation) instant victory
-	Segue_defeat,
+	Defeat,
 	// (when terminating a conversation) game over
-} Segue;
+};
+template <>
+inline constexpr bool IsArithmeticEnum<Segue> = true;
 
 void setSegue(Segue segue);
 Segue getSegue(void);

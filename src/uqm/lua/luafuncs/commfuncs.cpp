@@ -87,10 +87,10 @@ const static luaL_Reg commFuncs[] = {
 };
 
 constexpr uqstl::array SegueEnum {
-	uqm::UQMLua::EnumValue {"peace",	 Segue_peace	},
-	uqm::UQMLua::EnumValue {"hostile", Segue_hostile},
-	uqm::UQMLua::EnumValue {"victory", Segue_victory},
-	uqm::UQMLua::EnumValue {"defeat",  Segue_defeat },
+	uqm::UQMLua::EnumValue {"peace",	 +Segue::Peace  },
+	uqm::UQMLua::EnumValue {"hostile", +Segue::Hostile},
+	uqm::UQMLua::EnumValue {"victory", +Segue::Victory},
+	uqm::UQMLua::EnumValue {"defeat",  +Segue::Defeat },
 };
 
 int luaUqm_comm_open(lua_State* luaState)
@@ -337,7 +337,7 @@ static int luaUqm_comm_getPhrase(lua_State* luaState)
 
 static int luaUqm_comm_getSegue(lua_State* luaState)
 {
-	const int result = getSegue();
+	const int result {+getSegue()};
 	lua_pushinteger(luaState, result);
 	return 1;
 }
@@ -348,10 +348,10 @@ static int luaUqm_comm_setSegue(lua_State* luaState)
 	lua_Integer what = luaL_checkinteger(luaState, 1);
 	switch ((Segue)what)
 	{
-		case Segue_peace:
-		case Segue_hostile:
-		case Segue_victory:
-		case Segue_defeat:
+		case Segue::Peace:
+		case Segue::Hostile:
+		case Segue::Victory:
+		case Segue::Defeat:
 			break;
 		default:
 			uqm::log::error("[script] Warning: setSegue(): Invalid "

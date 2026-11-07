@@ -434,13 +434,13 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 					   >= chooseIfHd(LongRangeWeapon, LongRangeWeaponHd) * 3 / 4
 				&& (EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & SeekingWeapon)))
 		{
-			lpEvalDesc->MoveState = PURSUE;
+			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 	}
 
 	if (StarShipPtr->special_counter == 1
 		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
-		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == ENTICE
+		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == MovementState::Entice
 		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 8)
 	{
 		lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];

@@ -125,7 +125,7 @@ static ConversationData supox_desc =
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	if (PlayerSaid(R, bye_neutral))
 	{
@@ -597,7 +597,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -616,9 +616,9 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(NumVisits));
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
-	else if (CheckAlliance(SUPOX_SHIP) == GOOD_GUY)
+	else if (CheckAlliance(SUPOX_SHIP) == RaceAllegiance::Good)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
@@ -764,11 +764,11 @@ ConversationData* init_supox_comm(void)
 	if (!uqm::gameState().flag(uqm::GameFlag::SUPOX_HOSTILE)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&supox_desc};
 

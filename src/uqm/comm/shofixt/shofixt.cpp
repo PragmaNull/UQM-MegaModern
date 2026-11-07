@@ -210,19 +210,19 @@ static void GetShofixtiName(void)
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 
 	if (PlayerSaid(R, bye0))
 	{
 		NPCPhrase(GOODBYE);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (PlayerSaid(R, go_ahead))
 	{
 		NPCPhrase(ON_SECOND_THOUGHT);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (PlayerSaid(R, need_you_for_duty))
 	{
@@ -230,7 +230,7 @@ static void ExitConversation(RESPONSE_REF R)
 
 		SetHomeworldKnown(SHOFIXTI_HOME);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (PlayerSaid(R, females)
 			 || PlayerSaid(R, nubiles)
@@ -240,9 +240,9 @@ static void ExitConversation(RESPONSE_REF R)
 
 		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_RECRUITED, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::MAIDENS_ON_SHIP, static_cast<uint32_t>(0));
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 
-		AddEvent(RELATIVE_EVENT, 2, 0, 0, SHOFIXTI_RETURN_EVENT);
+		AddEvent(EventType::Relative, 2, 0, 0, SHOFIXTI_RETURN_EVENT);
 	}
 	else if (PlayerSaid(R, dont_attack))
 	{
@@ -583,7 +583,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -686,7 +686,7 @@ ConversationData* init_shofixti_comm(void)
 	shofixti_desc.AlienTextBaseline.y = 0;
 	shofixti_desc.AlienTextWidth = SisTextWidth();
 
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	ConversationData* retval {&shofixti_desc};
 

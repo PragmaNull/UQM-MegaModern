@@ -72,17 +72,17 @@ static void Netplay_connectionReset(NetConnection* conn, NetplayResetReason reas
 {
 	switch (NetConnection_getState(conn))
 	{
-		case NetState_unconnected:
-		case NetState_connecting:
-		case NetState_init:
-		case NetState_inSetup:
+		case NetState::Unconnected:
+		case NetState::Connecting:
+		case NetState::Init:
+		case NetState::InSetup:
 			break;
-		case NetState_preBattle:
-		case NetState_interBattle:
-		case NetState_selectShip:
-		case NetState_inBattle:
-		case NetState_endingBattle:
-		case NetState_endingBattle2:
+		case NetState::PreBattle:
+		case NetState::InterBattle:
+		case NetState::SelectShip:
+		case NetState::InBattle:
+		case NetState::EndingBattle:
+		case NetState::EndingBattle2:
 			resetFeedback(conn, reason, byRemote);
 			break;
 	}

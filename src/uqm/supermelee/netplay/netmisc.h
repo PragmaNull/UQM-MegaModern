@@ -54,12 +54,12 @@ void NetMelee_reenterState_inSetup(NetConnection* conn);
 // pre-game setup menu.
 static inline bool handshakeMeaningful(NetState state)
 {
-	return state == NetState_inSetup;
+	return state == NetState::InSetup;
 }
 
 static inline bool readyFlagsMeaningful(NetState state)
 {
-	return state == NetState_init || state == NetState_preBattle || state == NetState_selectShip || state == NetState_interBattle || state == NetState_inBattle || state == NetState_endingBattle || state == NetState_endingBattle2;
+	return state == NetState::Init || state == NetState::PreBattle || state == NetState::SelectShip || state == NetState::InterBattle || state == NetState::InBattle || state == NetState::EndingBattle || state == NetState::EndingBattle2;
 }
 
 

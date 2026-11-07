@@ -298,7 +298,7 @@ static bool GenerateThraddash_pickupEnergy(SolarSystemState* solarSys,
 		uqm::gameState().setFlag(uqm::GameFlag::AQUA_HELIX, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::AQUA_HELIX_ON_SHIP, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::HELIX_UNPROTECTED, static_cast<uint32_t>(1));
-		if (IsExtended() && ThraddPtr->allied_state == GOOD_GUY
+		if (IsExtended() && ThraddPtr->allied_state == RaceAllegiance::Good
 			&& uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
 			SetRaceAllied(THRADDASH_SHIP, false);

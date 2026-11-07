@@ -159,7 +159,7 @@ static void arilou_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state |= ThrustFlag;
 
-	ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = ENTICE;
+	ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = MovementState::Entice;
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
 	if (StarShipPtr->special_counter == 0)

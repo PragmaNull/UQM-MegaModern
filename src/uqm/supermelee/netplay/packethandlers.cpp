@@ -52,7 +52,7 @@ static bool testNetState(bool condition, PacketType type)
 	{
 		uqm::log::error("Packet of type '{}' received from wrong "
 						"state.\n",
-						packetTypeData[type].name);
+						packetTypeData[+type].name);
 	}
 	return condition;
 }
@@ -101,15 +101,15 @@ NetResult PacketHandler_Init(NetConnection* conn, const Packet_Init* packet)
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(conn->state == NetState_init && !conn->stateFlags.ready.remoteReady, PACKET_INIT))
+	if (!testNetState(conn->state == NetState::Init && !conn->stateFlags.ready.remoteReady, PacketType::Init))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (packet->protoVersion.major != NetplayProtocolVersionMajor || packet->protoVersion.minor != NetplayProtocolVersionMinor)
 	{
-		sendAbort(conn, AbortReason_versionMismatch);
-		abortFeedback(conn, AbortReason_versionMismatch);
+		sendAbort(conn, NetplayAbortReason::VersionMismatch);
+		abortFeedback(conn, NetplayAbortReason::VersionMismatch);
 		uqm::log::error("Protocol version {}.{} not supported.\n",
 						packet->protoVersion.major, packet->protoVersion.minor);
 		return uqm::failure(uqstl::errc::function_not_supported);
@@ -120,8 +120,8 @@ NetResult PacketHandler_Init(NetConnection* conn, const Packet_Init* packet)
 					   NetplayMinUqmVersionMinor, NetplayMinUqmVersionPatch)
 		< 0)
 	{
-		sendAbort(conn, AbortReason_versionMismatch);
-		abortFeedback(conn, AbortReason_versionMismatch);
+		sendAbort(conn, NetplayAbortReason::VersionMismatch);
+		abortFeedback(conn, NetplayAbortReason::VersionMismatch);
 		uqm::log::error("Remote side is running a version of UQM that "
 						"is too old ({}.{}.{}; {}.{}.{} is required).\n",
 						packet->uqmVersion.major, packet->uqmVersion.minor,
@@ -137,7 +137,7 @@ NetResult PacketHandler_Init(NetConnection* conn, const Packet_Init* packet)
 
 NetResult PacketHandler_Ping(NetConnection* conn, const Packet_Ping* packet)
 {
-	if (!testNetState(conn->state > NetState_init, PACKET_PING))
+	if (!testNetState(conn->state > NetState::Init, PacketType::Ping))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -148,7 +148,7 @@ NetResult PacketHandler_Ping(NetConnection* conn, const Packet_Ping* packet)
 
 NetResult PacketHandler_Ack(NetConnection* conn, const Packet_Ack* packet)
 {
-	if (!testNetState(conn->state > NetState_init, PACKET_ACK))
+	if (!testNetState(conn->state > NetState::Init, PacketType::Ack))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -162,7 +162,7 @@ NetResult PacketHandler_Ack(NetConnection* conn, const Packet_Ack* packet)
 // a local player number.
 static inline int localSide(NetConnection* conn, NetplaySide side)
 {
-	if (side == NetplaySide_local)
+	if (side == NetplaySide::Local)
 	{
 		// "local" relative to the remote party.
 		return conn->player;
@@ -182,7 +182,7 @@ NetResult PacketHandler_Ready(NetConnection* conn, const Packet_Ready* packet)
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(readyFlagsMeaningful(conn->state) && !conn->stateFlags.ready.remoteReady, PACKET_READY))
+	if (!testNetState(readyFlagsMeaningful(conn->state) && !conn->stateFlags.ready.remoteReady, PacketType::Ready))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -208,7 +208,7 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(conn->state == NetState_inSetup, PACKET_FLEET))
+	if (!testNetState(conn->state == NetState::InSetup, PacketType::Fleet))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -275,7 +275,7 @@ NetResult PacketHandler_TeamName(NetConnection* conn, const Packet_TeamName* pac
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(conn->state == NetState_inSetup, PACKET_FLEET))
+	if (!testNetState(conn->state == NetState::InSetup, PacketType::Fleet))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -317,8 +317,8 @@ static void handshakeComplete(NetConnection* conn)
 	assert(!conn->stateFlags.handshake.remoteOk);
 	assert(!conn->stateFlags.handshake.canceling);
 
-	assert(conn->state == NetState_inSetup);
-	NetConnection_setState(conn, NetState_preBattle);
+	assert(conn->state == NetState::InSetup);
+	NetConnection_setState(conn, NetState::PreBattle);
 }
 
 NetResult PacketHandler_Handshake0(NetConnection* conn,
@@ -335,7 +335,7 @@ NetResult PacketHandler_Handshake0(NetConnection* conn,
 
 	if (!testNetState(handshakeMeaningful(conn->state)
 						  && !conn->stateFlags.handshake.remoteOk,
-					  PACKET_HANDSHAKE0))
+					  PacketType::Handshake0))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -364,7 +364,7 @@ NetResult PacketHandler_Handshake1(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(handshakeMeaningful(conn->state) && (conn->stateFlags.handshake.localOk || conn->stateFlags.handshake.canceling), PACKET_HANDSHAKE1))
+	if (!testNetState(handshakeMeaningful(conn->state) && (conn->stateFlags.handshake.localOk || conn->stateFlags.handshake.canceling), PacketType::Handshake1))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -411,7 +411,7 @@ NetResult PacketHandler_HandshakeCancel(NetConnection* conn,
 
 	if (!testNetState(handshakeMeaningful(conn->state)
 						  && conn->stateFlags.handshake.remoteOk,
-					  PACKET_HANDSHAKECANCEL))
+					  PacketType::HandshakeCancel))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -439,7 +439,7 @@ NetResult PacketHandler_HandshakeCancelAck(NetConnection* conn,
 
 	if (!testNetState(handshakeMeaningful(conn->state)
 						  && conn->stateFlags.handshake.canceling,
-					  PACKET_HANDSHAKECANCELACK))
+					  PacketType::HandshakeCancelAck))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -475,7 +475,7 @@ NetResult PacketHandler_SeedRandom(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(conn->state == NetState_preBattle && !conn->stateFlags.discriminant, PACKET_SEEDRANDOM))
+	if (!testNetState(conn->state == NetState::PreBattle && !conn->stateFlags.discriminant, PacketType::SeedRandom))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -503,7 +503,7 @@ NetResult PacketHandler_InputDelay(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(conn->state == NetState_preBattle, PACKET_INPUTDELAY))
+	if (!testNetState(conn->state == NetState::PreBattle, PacketType::InputDelay))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -536,7 +536,7 @@ NetResult PacketHandler_SelectShip(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(conn->state == NetState_selectShip, PACKET_SELECTSHIP))
+	if (!testNetState(conn->state == NetState::SelectShip, PacketType::SelectShip))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -564,7 +564,7 @@ NetResult PacketHandler_BattleInput(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(conn->state == NetState_inBattle || conn->state == NetState_endingBattle || conn->state == NetState_endingBattle2, PACKET_BATTLEINPUT))
+	if (!testNetState(conn->state == NetState::InBattle || conn->state == NetState::EndingBattle || conn->state == NetState::EndingBattle2, PacketType::BattleInput))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -593,8 +593,8 @@ NetResult PacketHandler_FrameCount(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(conn->state == NetState_endingBattle,
-					  PACKET_FRAMECOUNT))
+	if (!testNetState(conn->state == NetState::EndingBattle,
+					  PacketType::FrameCount))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -633,7 +633,7 @@ NetResult PacketHandler_Checksum(NetConnection* conn, const Packet_Checksum* pac
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (!testNetState(NetState_battleActive(conn->state), PACKET_CHECKSUM))
+	if (!testNetState(NetState_battleActive(conn->state), PacketType::Checksum))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}
@@ -713,7 +713,7 @@ NetResult PacketHandler_Reset(NetConnection* conn, const Packet_Reset* packet)
 {
 	NetplayResetReason reason;
 
-	if (!testNetState(!conn->stateFlags.reset.remoteReset, PACKET_RESET))
+	if (!testNetState(!conn->stateFlags.reset.remoteReset, PacketType::Reset))
 	{
 		return uqm::failure(uqstl::errc::bad_message);
 	}

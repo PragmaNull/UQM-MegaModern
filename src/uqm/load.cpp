@@ -269,7 +269,7 @@ void LoadRaceQueue(SaveReader& reader, yyjson_val* root, Queue* pQueue)
 		reader.get(item, "allied_state", FleetPtr->allied_state);
 		if (FleetPtr->allied_state > 2)
 		{
-			FleetPtr->allied_state = BAD_GUY;
+			FleetPtr->allied_state = +RaceAllegiance::Bad;
 		}
 		reader.get(item, "days_left", FleetPtr->days_left);
 		reader.get(item, "growth_fract", FleetPtr->growth_fract);
@@ -400,7 +400,7 @@ void LoadEvents(SaveReader& reader, yyjson_val* root)
 
 		if (uqm::UQMOptions::read().deCleansing && DeCleanse)
 		{
-			AddEvent(ABSOLUTE_EVENT, 2, 17, StartYear + YearsToKohrahVictory(),
+			AddEvent(EventType::Absolute, 2, 17, StartYear + YearsToKohrahVictory(),
 					 KOHR_AH_VICTORIOUS_EVENT);
 		}
 	}

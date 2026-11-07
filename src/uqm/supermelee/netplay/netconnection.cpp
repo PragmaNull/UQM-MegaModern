@@ -116,7 +116,7 @@ NetConnection* NetConnection_open(int player, const uqm::NetplayPeerOptions* opt
 #endif
 
 	conn->player = player;
-	conn->state = NetState_unconnected;
+	conn->state = NetState::Unconnected;
 	conn->options = options;
 	conn->extra = extra;
 	PacketQueue_init(&conn->queue);
@@ -152,7 +152,7 @@ NetConnection* NetConnection_open(int player, const uqm::NetplayPeerOptions* opt
 	{
 		conn->statistics.packetsReceived = 0;
 		conn->statistics.packetsSent = 0;
-		for (size_t i {0}; i < PACKET_NUM; i++)
+		for (size_t i {0}; i < PacketType::Count; i++)
 		{
 			conn->statistics.packetTypeReceived[i] = 0;
 			conn->statistics.packetTypeSent[i] = 0;
@@ -223,7 +223,7 @@ static void NetConnection_doClose(NetConnection* conn)
 	// of what is the current state, and the stateData:
 	Netplay_doCloseCallback(conn);
 
-	NetConnection_setState(conn, NetState_unconnected);
+	NetConnection_setState(conn, NetState::Unconnected);
 }
 
 // Close and release a NetConnection.
@@ -315,7 +315,7 @@ void NetConnection_setState(NetConnection* conn, NetState state)
 	{
 		uqm::log::warn("NETPLAY: [{}]     Connection state set to {} "
 					   "while already in that state.\n",
-					   conn->player, netStateData[state].name);
+					   conn->player, netStateData[+state].name);
 	}
 #endif
 	conn->state = state;

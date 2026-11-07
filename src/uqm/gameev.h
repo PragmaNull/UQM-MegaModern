@@ -17,6 +17,8 @@
 #ifndef UQM_GAMEEV_H_
 #define UQM_GAMEEV_H_
 
+
+#include "core/types/enum.h"
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 
@@ -49,11 +51,13 @@ enum
 	NUM_EVENTS
 };
 
-typedef enum
+enum class ArilouGateState
 {
-	CLOSING = 0,
-	OPENING
-} ARILOU_GATE_STATE;
+	Closing = 0,
+	Opening
+};
+template <>
+inline constexpr bool IsArithmeticEnum<ArilouGateState> = true;
 
 extern int eventIdStrToNum(const char* eventIdStr);
 const extern char* eventIdNumToStr(int eventNum);

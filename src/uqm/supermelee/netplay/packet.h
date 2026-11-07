@@ -19,53 +19,61 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_PACKET_H_
 #define UQM_SUPERMELEE_NETPLAY_PACKET_H_
 
+
+#include "core/types/enum.h"
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 typedef struct Packet Packet;
 
-typedef enum PacketType
+enum class PacketType
 {
-	PACKET_INIT,
-	PACKET_PING,
-	PACKET_ACK,
-	PACKET_READY,
-	PACKET_FLEET,
-	PACKET_TEAMNAME,
-	PACKET_HANDSHAKE0,
-	PACKET_HANDSHAKE1,
-	PACKET_HANDSHAKECANCEL,
-	PACKET_HANDSHAKECANCELACK,
-	PACKET_SEEDRANDOM,
-	PACKET_INPUTDELAY,
-	PACKET_SELECTSHIP,
-	PACKET_BATTLEINPUT,
-	PACKET_FRAMECOUNT,
-	PACKET_CHECKSUM,
-	PACKET_ABORT,
-	PACKET_RESET,
+	Init,
+	Ping,
+	Ack,
+	Ready,
+	Fleet,
+	TeamName,
+	Handshake0,
+	Handshake1,
+	HandshakeCancel,
+	HandshakeCancelAck,
+	SeedRandom,
+	InputDelay,
+	SelectShip,
+	BattleInput,
+	FrameCount,
+	Checksum,
+	Abort,
+	Reset,
 
-	PACKET_NUM, /* Number of packet types */
-} PacketType;
+	Count, /* Number of packet types */
+};
+template <>
+inline constexpr bool IsArithmeticEnum<PacketType> = true;
 
 // Sent before aborting the connection.
-typedef enum NetplayAbortReason
+enum class NetplayAbortReason
 {
-	AbortReason_unspecified,
-	AbortReason_versionMismatch,
-	AbortReason_invalidHash,
-	AbortReason_protocolError,
+	Unspecified,
+	VersionMismatch,
+	InvalidHash,
+	ProtocolError,
 	// Network is in an inconsistent state.
-} NetplayAbortReason;
+};
+template <>
+inline constexpr bool IsArithmeticEnum<NetplayAbortReason> = true;
 
 // Sent before resetting the connection. A game in progress is terminated.
-typedef enum NetplayResetReason
+enum class NetplayResetReason
 {
-	ResetReason_unspecified,
-	ResetReason_syncLoss,
-	ResetReason_manualReset,
-} NetplayResetReason;
+	Unspecified,
+	SyncLoss,
+	ManualReset,
+};
+template <>
+inline constexpr bool IsArithmeticEnum<NetplayResetReason> = true;
 
 #if 0 //defined(__cplusplus)
 }
@@ -136,7 +144,7 @@ static inline PacketType packetType(const Packet* packet)
 
 static inline bool validPacketType(PacketType type)
 {
-	return type < PACKET_NUM;
+	return type < PacketType::Count;
 }
 
 struct Packet_Init
@@ -192,11 +200,13 @@ struct Packet_InputDelay
 // This enum is used to indicate that a packet containing it relates to
 // either the local or the remote player, from the perspective of the
 // sender of the message;
-typedef enum
+enum class NetplaySide
 {
-	NetplaySide_local,
-	NetplaySide_remote
-} NetplaySide;
+	Local,
+	Remote
+};
+template <>
+inline constexpr bool IsArithmeticEnum<NetplaySide> = true;
 
 struct FleetEntry
 {

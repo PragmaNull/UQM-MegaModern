@@ -178,26 +178,26 @@ void Victory(void)
 	FadeScreen(ScreenFadeType::FadeAllToBlack, TimePeriod {});
 }
 
-void GameOver(uint8_t DeathType)
+void GameOver(EndgameScenario DeathType)
 {
-	if (DeathType != SUICIDE)
+	if (DeathType != EndgameScenario::Suicide)
 	{
 		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 	}
 
 	switch (DeathType)
 	{
-		case DEATH_MARCH:
+		case EndgameScenario::DeathMarch:
 			ShowPresentation(DeathmarchpresStrtabRes);
 			break;
-		case SUICIDE:
+		case EndgameScenario::Suicide:
 			SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToWhite, c_gameSecond / 2));
 			ShowPresentation(SuicidepresStrtabRes);
 			break;
-		case SURRENDERED:
+		case EndgameScenario::Surrendered:
 			ShowPresentation(SurrenderedpresStrtabRes);
 			break;
-		case DIED_IN_BATTLE:
+		case EndgameScenario::DiedInBattle:
 		default:
 			ShowPresentation(DefeatedpresStrtabRes);
 			break;

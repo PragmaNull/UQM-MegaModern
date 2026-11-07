@@ -17,6 +17,8 @@
 #ifndef UQM_FLASH_H_
 #define UQM_FLASH_H_
 
+
+#include "core/types/enum.h"
 /*
  * This code can draw three kinds of flashing areas.
  * - a rectangular highlight area. The brightness of the area oscilates.
@@ -96,26 +98,28 @@
 extern "C" {
 #endif
 
-typedef enum
+enum class FlashState
 {
-	FlashState_fadeIn = 0,
+	FadeIn = 0,
 	// Someway between on and off, going towards on.
-	FlashState_on = 1,
+	On = 1,
 	// The overlay image is visible at 100% opacity.
-	FlashState_fadeOut = 2,
+	FadeOut = 2,
 	// Someway between on and off, going towards off.
-	FlashState_off = 3,
+	Off = 3,
 	// The overlay image is not visible.
-} FlashState;
+};
+template <>
+inline constexpr bool IsArithmeticEnum<FlashState> = true;
 
 typedef struct FlashContext FlashContext;
 
 #ifdef FLASH_INTERNAL
-enum FlashType
+enum class FlashType
 {
-	FlashType_highlight,
-	FlashType_transition,
-	FlashType_overlay,
+	Highlight,
+	Transition,
+	Overlay,
 };
 
 struct FlashContext

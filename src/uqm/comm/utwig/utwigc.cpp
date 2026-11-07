@@ -246,7 +246,7 @@ static ConversationData utwig_desc =
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	if (PlayerSaid(R, bye_neutral))
 	{
@@ -272,7 +272,7 @@ static void ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(GUARDS_FIGHT);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, got_ultron)
 			 || PlayerSaid(R, hey_wait_got_ultron))
@@ -308,7 +308,7 @@ static void ExitConversation(RESPONSE_REF R)
 						{
 							NPCPhrase(TRICKED_US_1);
 
-							setSegue(Segue_hostile);
+							setSegue(Segue::Hostile);
 						}
 						break;
 					case 1:
@@ -320,7 +320,7 @@ static void ExitConversation(RESPONSE_REF R)
 						{
 							NPCPhrase(TRICKED_US_2);
 
-							setSegue(Segue_hostile);
+							setSegue(Segue::Hostile);
 						}
 						break;
 				}
@@ -337,7 +337,7 @@ static void ExitConversation(RESPONSE_REF R)
 				{
 					NPCPhrase(OK_ATTACK_KOHRAH);
 
-					AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_UTWIG_SUPOX_MISSION);
+					AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_UTWIG_SUPOX_MISSION);
 				}
 
 				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HAVE_ULTRON, static_cast<uint32_t>(1));
@@ -594,7 +594,7 @@ static void NeutralUtwig(RESPONSE_REF R)
 	{
 		NPCPhrase(MOCK_OUR_PAIN);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(4));
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOSTILE, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(0));
@@ -730,7 +730,7 @@ static void BombWorld(RESPONSE_REF R)
 	{
 		NPCPhrase(GUARDS_FIGHT);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOSTILE, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOME_VISITS, static_cast<uint32_t>(0));
@@ -833,7 +833,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -888,14 +888,14 @@ static void Intro(void)
 		if (!uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION)
 			|| (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6)))
 		{
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 		}
 		else
 		{
 			Response(hey_wait_got_ultron, ExitConversation);
 		}
 	}
-	else if (CheckAlliance(UTWIG_SHIP) == GOOD_GUY)
+	else if (CheckAlliance(UTWIG_SHIP) == RaceAllegiance::Good)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
@@ -1069,11 +1069,11 @@ ConversationData* init_utwig_comm(void)
 	if (uqm::gameState().flag(uqm::GameFlag::UTWIG_HAVE_ULTRON)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&utwig_desc};
 

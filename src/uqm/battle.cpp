@@ -330,7 +330,7 @@ static bool DoBattle(BattleState* bs)
 				if (!verifyChecksums(battleFrameCount - delay))
 				{
 					uqm::currentActivity() |= CHECK_ABORT;
-					resetConnections(ResetReason_syncLoss);
+					resetConnections(NetplayResetReason::SyncLoss);
 				}
 			}
 		}
@@ -486,7 +486,7 @@ bool Battle(BattleFrameCallback* callback)
 #ifdef NETPLAY
 		initBattleStateDataConnections();
 		{
-			const bool allOk = negotiateReadyConnections(true, NetState_inBattle);
+			const bool allOk = negotiateReadyConnections(true, NetState::InBattle);
 			if (!allOk)
 			{
 				uqm::currentActivity() |= CHECK_ABORT;
@@ -513,7 +513,7 @@ AbortBattle:
 				// Do not return to the main menu when a game is aborted,
 				// (just to the supermelee menu).
 #ifdef NETPLAY
-				waitResetConnections(NetState_inSetup);
+				waitResetConnections(NetState::InSetup);
 				// A connection may already be in inSetup (set from
 				// GetMeleeStarship). This is not a problem, although
 				// it will generate a warning in debug mode.

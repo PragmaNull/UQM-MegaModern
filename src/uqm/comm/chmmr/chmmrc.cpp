@@ -183,7 +183,7 @@ static constexpr auto EarthIndex {2}; /* earth is 3rd planet --> 3 - 1 = 2 */
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	if (PlayerSaid(R, bye))
 	{
@@ -350,7 +350,7 @@ static void NotReady(RESPONSE_REF R)
 		DisablePhrase(where_distraction);
 	}
 
-	if (CheckAlliance(CHMMR_SHIP) != GOOD_GUY)
+	if (CheckAlliance(CHMMR_SHIP) != RaceAllegiance::Good)
 	{
 		Response(tech_help, NotReady);
 	}
@@ -412,7 +412,7 @@ static void ImproveBomb(RESPONSE_REF R)
 	{
 		Response(bummer_about_my_ship, ImproveBomb);
 	}
-	if (CheckAlliance(CHMMR_SHIP) != GOOD_GUY)
+	if (CheckAlliance(CHMMR_SHIP) != RaceAllegiance::Good)
 	{
 		Response(other_assistance, ImproveBomb);
 	}
@@ -712,7 +712,7 @@ static void Intro(void)
 		}
 		else
 		{
-			SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 2);
+			SetCommIntroMode(CommIntroMode::FadeInScreen, c_gameSecond * 2);
 			NPCPhrase(WE_ARE_FREE);
 
 			if (NumVisits)
@@ -790,7 +790,7 @@ ConversationData* init_chmmr_comm(void)
 	chmmr_desc.AlienTextBaseline.y = 0;
 	chmmr_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	ConversationData* retval {&chmmr_desc};
 
 	return (retval);

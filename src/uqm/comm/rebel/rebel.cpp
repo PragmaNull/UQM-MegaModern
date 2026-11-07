@@ -424,7 +424,7 @@ static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{
 		NPCPhrase(YEHAT_CAVALRY);
@@ -491,7 +491,7 @@ ConversationData* init_rebel_yehat_comm(void)
 	// use alternate "Rebels" track if available
 	altResFlags |= UseAltSong;
 
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	ConversationData* retval {&yehat_desc};
 
 	return (retval);

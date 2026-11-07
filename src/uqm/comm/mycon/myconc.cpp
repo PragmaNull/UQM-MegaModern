@@ -273,7 +273,7 @@ static void DoRamble(RESPONSE_REF R)
 
 static void CombatIsInevitable(RESPONSE_REF R)
 {
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 
 	if (PlayerSaid(R, bye_space))
 	{
@@ -291,7 +291,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(GOODBYE_SUN_DEVICE);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
@@ -382,9 +382,9 @@ static void TrickMycon(RESPONSE_REF R)
 	{
 		NPCPhrase(WE_GO_TO_IMPLANT);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH, static_cast<uint32_t>(1));
-		AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_MYCON_MISSION);
+		AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_MYCON_MISSION);
 	}
 	else
 	{
@@ -575,13 +575,13 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::MYCON_VISITS, static_cast<uint32_t>(NumVisits));
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_KNOW_AMBUSH))
 	{
 		NPCPhrase(DIE_LIAR);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
@@ -701,11 +701,11 @@ ConversationData* init_mycon_comm(void)
 
 	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	ConversationData* retval {&mycon_desc};
 

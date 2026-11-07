@@ -74,12 +74,12 @@ inline constexpr auto NumExplosionFrames {12};
 
 inline constexpr auto GameSoundPriority {2};
 
-typedef enum
+enum class ViewState
 {
-	VIEW_STABLE,
-	VIEW_SCROLL,
-	VIEW_CHANGE
-} VIEW_STATE;
+	Stable,
+	Scroll,
+	Change
+};
 
 typedef uint16_t ELEMENT_FLAGS;
 
@@ -236,7 +236,7 @@ extern uint16_t PlotIntercept(Element* ElementPtr0,
 
 extern void InitGalaxy(void);
 extern void SetStarPoint(GfxPoint pt, uint16_t i);
-extern void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy);
+extern void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy);
 
 extern bool CalculateGravity(Element* ElementPtr);
 

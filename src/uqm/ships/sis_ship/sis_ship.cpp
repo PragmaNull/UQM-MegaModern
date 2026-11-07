@@ -714,7 +714,7 @@ static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 		}
 		else if (Maneuverability(&StarShipPtr->RaceDescPtr->cyborg_control)
 					 < ResolutionCompensated(MediumShip)
-				 && lpEvalDesc->MoveState == ENTICE
+				 && lpEvalDesc->MoveState == MovementState::Entice
 				 && (!(lpEvalDesc->ObjectPtr->state_flags & CrewObject)
 					 || lpEvalDesc->which_turn <= 8)
 				 && (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
@@ -722,7 +722,7 @@ static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 						 && lpEvalDesc->which_turn == 2
 						 && ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn > 16)))
 		{
-			lpEvalDesc->MoveState = PURSUE;
+			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 	}
 

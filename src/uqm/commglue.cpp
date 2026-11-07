@@ -518,17 +518,17 @@ void setSegue(Segue segue)
 {
 	switch (segue)
 	{
-		case Segue_peace:
+		case Segue::Peace:
 			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 			break;
-		case Segue_hostile:
+		case Segue::Hostile:
 			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 			break;
-		case Segue_victory:
+		case Segue::Victory:
 			instantVictory = true;
 			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 			break;
-		case Segue_defeat:
+		case Segue::Defeat:
 			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 			uqm::gameState().sis().CrewEnlisted = (uint16_t)~0;
 			uqm::currentActivity() |= CHECK_RESTART;
@@ -542,22 +542,22 @@ Segue getSegue(void)
 	{
 		if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0 && (uqm::currentActivity() & CHECK_RESTART))
 		{
-			return Segue_defeat;
+			return Segue::Defeat;
 		}
 		else
 		{
-			return Segue_peace;
+			return Segue::Peace;
 		}
 	}
 	else /* GET_GAME_STATE(BATTLE_SEGUE) == 1) */
 	{
 		if (instantVictory)
 		{
-			return Segue_victory;
+			return Segue::Victory;
 		}
 		else
 		{
-			return Segue_hostile;
+			return Segue::Hostile;
 		}
 	}
 }

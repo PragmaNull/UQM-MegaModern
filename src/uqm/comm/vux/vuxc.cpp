@@ -323,7 +323,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 
 	if (PlayerSaid(R, ok_take_beast))
 	{
@@ -338,7 +338,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_BEAST_ON_SHIP, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::ZEX_IS_DEAD, static_cast<uint32_t>(1));
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (PlayerSaid(R, try_any_way))
 	{
@@ -408,7 +408,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(GOODBYE_ZEX);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
@@ -502,13 +502,13 @@ static void Menagerie(RESPONSE_REF R)
 	{
 		NPCPhrase(FIGHT_AGAIN);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, regardless))
 	{
 		NPCPhrase(THEN_FIGHT);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 		uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(2));
 		uqm::gameState().setFlag(uqm::GameFlag::ZEX_VISITS, static_cast<uint32_t>(0));
 	}
@@ -833,7 +833,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -933,11 +933,11 @@ ConversationData* init_vux_comm(void)
 	if ((uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&vux_desc};
 

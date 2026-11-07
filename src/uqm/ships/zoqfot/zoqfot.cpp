@@ -325,7 +325,7 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 
 			GiveTongueJob = true;
 
-			lpEnemyEvalDesc->MoveState = PURSUE;
+			lpEnemyEvalDesc->MoveState = MovementState::Pursue;
 			delta_x = lpEnemyEvalDesc->ObjectPtr->next.location.x
 					- ShipPtr->next.location.x;
 			delta_y = lpEnemyEvalDesc->ObjectPtr->next.location.y
@@ -353,7 +353,7 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 				if (ObjectsOfConcern->ObjectPtr
 					&& (ConcernCounter == ENEMY_SHIP_INDEX
 						|| (ConcernCounter == ENEMY_WEAPON_INDEX
-							&& ObjectsOfConcern->MoveState != AVOID
+							&& ObjectsOfConcern->MoveState != MovementState::Avoid
 #ifdef NEVER
 							&& !(StarShipPtr->control & STANDARD_RATING)
 #endif /* NEVER */

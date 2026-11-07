@@ -164,12 +164,12 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 	int16_t ShieldStatus {-1};
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
-	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
+	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 	{
 		ShieldStatus = 0;
 		if (!(lpEvalDesc->ObjectPtr->state_flags & (FiniteLife | CrewObject)))
 		{
-			lpEvalDesc->MoveState = PURSUE;
+			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 		else if (lpEvalDesc->ObjectPtr->mass_points
 				 || (lpEvalDesc->ObjectPtr->state_flags & CrewObject))
@@ -191,7 +191,7 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 				}
 				else
 				{
-					lpEvalDesc->MoveState = PURSUE;
+					lpEvalDesc->MoveState = MovementState::Pursue;
 				}
 			}
 			ShieldStatus = 1;
@@ -233,7 +233,7 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
 			  & ImmediateWeapon))
 		{
-			lpEvalDesc->MoveState = PURSUE;
+			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 	}
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);

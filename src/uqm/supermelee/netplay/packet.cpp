@@ -35,7 +35,7 @@
 		/* .handler = */ (PacketHandler)PacketHandler_##name, \
 		/* .name = */ #name,                                  \
 	}
-PacketTypeData packetTypeData[PACKET_NUM] = {
+PacketTypeData packetTypeData[+PacketType::Count] = {
 	DEFINE_PACKETDATA(Init),
 	DEFINE_PACKETDATA(Ping),
 	DEFINE_PACKETDATA(Ack),
@@ -68,7 +68,7 @@ static Packet* Packet_create(PacketType type, size_t extraSize)
 	// Alignment requirement.
 	assert(extraSize % 4 == 0);
 
-	len = packetTypeData[type].len + extraSize;
+	len = packetTypeData[+type].len + extraSize;
 	Packet* result {(Packet*)Packet_alloc(len)};
 	result->header.len = uqm::convertBigEndian<uint16_t>((uint16_t)len);
 	result->header.type = uqm::convertBigEndian<uint16_t>((uint16_t)type);
@@ -82,7 +82,7 @@ void Packet_delete(Packet* packet)
 
 Packet_Init* Packet_Init_create(void)
 {
-	Packet_Init* packet = (Packet_Init*)Packet_create(PACKET_INIT, 0);
+	Packet_Init* packet = (Packet_Init*)Packet_create(PacketType::Init, 0);
 
 	packet->protoVersion.major = NetplayProtocolVersionMajor;
 	packet->protoVersion.minor = NetplayProtocolVersionMinor;
@@ -96,7 +96,7 @@ Packet_Init* Packet_Init_create(void)
 
 Packet_Ping* Packet_Ping_create(uint32_t id)
 {
-	Packet_Ping* packet = (Packet_Ping*)Packet_create(PACKET_PING, 0);
+	Packet_Ping* packet = (Packet_Ping*)Packet_create(PacketType::Ping, 0);
 
 	packet->id = uqm::convertBigEndian<uint32_t>(id);
 	return packet;
@@ -104,7 +104,7 @@ Packet_Ping* Packet_Ping_create(uint32_t id)
 
 Packet_Ack* Packet_Ack_create(uint32_t id)
 {
-	Packet_Ack* packet = (Packet_Ack*)Packet_create(PACKET_ACK, 0);
+	Packet_Ack* packet = (Packet_Ack*)Packet_create(PacketType::Ack, 0);
 
 	packet->id = uqm::convertBigEndian<uint32_t>(id);
 	return packet;
@@ -112,7 +112,7 @@ Packet_Ack* Packet_Ack_create(uint32_t id)
 
 Packet_Ready* Packet_Ready_create(void)
 {
-	Packet_Ready* packet = (Packet_Ready*)Packet_create(PACKET_READY, 0);
+	Packet_Ready* packet = (Packet_Ready*)Packet_create(PacketType::Ready, 0);
 
 	return packet;
 }
@@ -124,7 +124,7 @@ Packet_Fleet* Packet_Fleet_create(NetplaySide side, size_t numShips)
 {
 	const size_t fleetSize {numShips * sizeof(FleetEntry)};
 	const size_t extraSize {(fleetSize + 3) & ~0x03};
-	Packet_Fleet* packet {(Packet_Fleet*)Packet_create(PACKET_FLEET, extraSize)};
+	Packet_Fleet* packet {(Packet_Fleet*)Packet_create(PacketType::Fleet, extraSize)};
 	packet->side = (uint8_t)side;
 	packet->padding = 0;
 	packet->numShips = uqm::convertBigEndian<uint16_t>((uint16_t)numShips);
@@ -141,7 +141,7 @@ Packet_TeamName* Packet_TeamName_create(NetplaySide side, const char* name, size
 {
 	const size_t extraSize {((size + 1) + 3) & ~0x03};
 	// The +1 is for the '\0'.
-	Packet_TeamName* packet {(Packet_TeamName*)Packet_create(PACKET_TEAMNAME, extraSize)};
+	Packet_TeamName* packet {(Packet_TeamName*)Packet_create(PacketType::TeamName, extraSize)};
 	packet->side = (uint8_t)side;
 	packet->padding = 0;
 	memcpy(teamName(packet), name, size);
@@ -156,14 +156,14 @@ Packet_TeamName* Packet_TeamName_create(NetplaySide side, const char* name, size
 Packet_Handshake0* Packet_Handshake0_create(void)
 {
 	Packet_Handshake0* packet =
-		(Packet_Handshake0*)Packet_create(PACKET_HANDSHAKE0, 0);
+		(Packet_Handshake0*)Packet_create(PacketType::Handshake0, 0);
 	return packet;
 }
 
 Packet_Handshake1* Packet_Handshake1_create(void)
 {
 	Packet_Handshake1* packet =
-		(Packet_Handshake1*)Packet_create(PACKET_HANDSHAKE1, 0);
+		(Packet_Handshake1*)Packet_create(PacketType::Handshake1, 0);
 	return packet;
 }
 
@@ -171,7 +171,7 @@ Packet_HandshakeCancel* Packet_HandshakeCancel_create(void)
 {
 	Packet_HandshakeCancel* packet =
 		(Packet_HandshakeCancel*)Packet_create(
-			PACKET_HANDSHAKECANCEL, 0);
+			PacketType::HandshakeCancel, 0);
 	return packet;
 }
 
@@ -179,14 +179,14 @@ Packet_HandshakeCancelAck* Packet_HandshakeCancelAck_create(void)
 {
 	Packet_HandshakeCancelAck* packet =
 		(Packet_HandshakeCancelAck*)Packet_create(
-			PACKET_HANDSHAKECANCELACK, 0);
+			PacketType::HandshakeCancelAck, 0);
 	return packet;
 }
 
 Packet_SeedRandom* Packet_SeedRandom_create(uint32_t seed)
 {
 	Packet_SeedRandom* packet =
-		(Packet_SeedRandom*)Packet_create(PACKET_SEEDRANDOM, 0);
+		(Packet_SeedRandom*)Packet_create(PacketType::SeedRandom, 0);
 
 	packet->seed = uqm::convertBigEndian<uint32_t>(seed);
 	return packet;
@@ -195,7 +195,7 @@ Packet_SeedRandom* Packet_SeedRandom_create(uint32_t seed)
 Packet_InputDelay* Packet_InputDelay_create(uint32_t delay)
 {
 	Packet_InputDelay* packet =
-		(Packet_InputDelay*)Packet_create(PACKET_INPUTDELAY, 0);
+		(Packet_InputDelay*)Packet_create(PacketType::InputDelay, 0);
 
 	packet->delay = uqm::convertBigEndian<uint32_t>(delay);
 	return packet;
@@ -204,7 +204,7 @@ Packet_InputDelay* Packet_InputDelay_create(uint32_t delay)
 Packet_SelectShip* Packet_SelectShip_create(uint16_t ship)
 {
 	Packet_SelectShip* packet =
-		(Packet_SelectShip*)Packet_create(PACKET_SELECTSHIP, 0);
+		(Packet_SelectShip*)Packet_create(PacketType::SelectShip, 0);
 	packet->ship = uqm::convertBigEndian<uint16_t>(ship);
 	packet->padding = 0;
 	return packet;
@@ -213,7 +213,7 @@ Packet_SelectShip* Packet_SelectShip_create(uint16_t ship)
 Packet_BattleInput* Packet_BattleInput_create(uint8_t state)
 {
 	Packet_BattleInput* packet =
-		(Packet_BattleInput*)Packet_create(PACKET_BATTLEINPUT, 0);
+		(Packet_BattleInput*)Packet_create(PacketType::BattleInput, 0);
 	packet->state = (uint8_t)state;
 	packet->padding0 = 0;
 	packet->padding1 = 0;
@@ -223,7 +223,7 @@ Packet_BattleInput* Packet_BattleInput_create(uint8_t state)
 Packet_FrameCount* Packet_FrameCount_create(uint32_t frameCount)
 {
 	Packet_FrameCount* packet =
-		(Packet_FrameCount*)Packet_create(PACKET_FRAMECOUNT, 0);
+		(Packet_FrameCount*)Packet_create(PacketType::FrameCount, 0);
 	packet->frameCount = uqm::convertBigEndian<uint32_t>(frameCount);
 	return packet;
 }
@@ -231,7 +231,7 @@ Packet_FrameCount* Packet_FrameCount_create(uint32_t frameCount)
 Packet_Checksum* Packet_Checksum_create(uint32_t frameNr, uint32_t checksum)
 {
 	Packet_Checksum* packet =
-		(Packet_Checksum*)Packet_create(PACKET_CHECKSUM, 0);
+		(Packet_Checksum*)Packet_create(PacketType::Checksum, 0);
 	packet->frameNr = uqm::convertBigEndian<uint32_t>(frameNr);
 	packet->checksum = uqm::convertBigEndian<uint32_t>(checksum);
 	return packet;
@@ -239,14 +239,14 @@ Packet_Checksum* Packet_Checksum_create(uint32_t frameNr, uint32_t checksum)
 
 Packet_Abort* Packet_Abort_create(uint16_t reason)
 {
-	Packet_Abort* packet = (Packet_Abort*)Packet_create(PACKET_ABORT, 0);
+	Packet_Abort* packet = (Packet_Abort*)Packet_create(PacketType::Abort, 0);
 	packet->reason = uqm::convertBigEndian<uint16_t>(reason);
 	return packet;
 }
 
 Packet_Reset* Packet_Reset_create(uint16_t reason)
 {
-	Packet_Reset* packet = (Packet_Reset*)Packet_create(PACKET_RESET, 0);
+	Packet_Reset* packet = (Packet_Reset*)Packet_create(PacketType::Reset, 0);
 	packet->reason = uqm::convertBigEndian<uint16_t>(reason);
 	return packet;
 }

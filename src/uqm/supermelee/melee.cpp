@@ -1216,11 +1216,11 @@ static void UpdateMeleeStatusMessage(ssize_t player)
 
 	switch (NetConnection_getState(conn))
 	{
-		case NetState_unconnected:
+		case NetState::Unconnected:
 			DrawMeleeStatusMessage(GameString(NETMELEE_STRING_BASE + 0));
 			// "Unconnected. Press LEFT to connect."
 			break;
-		case NetState_connecting:
+		case NetState::Connecting:
 			if (NetConnection_getPeerOptions(conn)->isServer)
 			{
 				DrawMeleeStatusMessage(
@@ -1236,8 +1236,8 @@ static void UpdateMeleeStatusMessage(ssize_t player)
 			// "Attempting outgoing connection...\n"
 			// "Press RIGHT to cancel."
 			break;
-		case NetState_init:
-		case NetState_inSetup:
+		case NetState::Init:
+		case NetState::InSetup:
 			DrawMeleeStatusMessage(GameString(NETMELEE_STRING_BASE + 3));
 			// "Connected. Press RIGHT to disconnect."
 			break;
@@ -1858,7 +1858,7 @@ static ssize_t numPlayersReady(void)
 				return -1;
 			}
 
-			if (NetConnection_getState(conn) > NetState_inSetup)
+			if (NetConnection_getState(conn) > NetState::InSetup)
 			{
 				numDone++;
 			}
@@ -1974,7 +1974,7 @@ static bool DoConfirmSettings(MeleeState* pMS)
 		// The other side will report 'Done' and will wait for the other
 		// side to report 'Done', but before the reception of 'Done'
 		// it will have received the seed.
-		const bool allOk = negotiateReadyConnections(true, NetState_interBattle);
+		const bool allOk = negotiateReadyConnections(true, NetState::InterBattle);
 		if (!allOk)
 		{
 			return false;
@@ -2166,7 +2166,7 @@ static void StartMeleeButtonPressed(MeleeState* pMS)
 				// "Connection for top player not "
 				// "established."
 			}
-			else if (NetConnection_getState(conn) != NetState_inSetup)
+			else if (NetConnection_getState(conn) != NetState::InSetup)
 			{
 				// This side may be in the setup, but the network connection
 				// is not in a state that setup information can be sent.
@@ -2298,7 +2298,7 @@ static bool DoConnectingDialog(MeleeState* pMS)
 	if (conn != nullptr)
 	{
 		const NetState status = NetConnection_getState(conn);
-		if ((status == NetState_init) || (status == NetState_inSetup))
+		if ((status == NetState::Init) || (status == NetState::InSetup))
 		{
 			/* Connection complete! */
 			PlayerControl[which_side] = PlayerControlFlags::Network | PlayerControlFlags::DifficultyStandard;
@@ -2784,17 +2784,17 @@ const static char* abortReasonString(NetplayAbortReason reason)
 {
 	switch (reason)
 	{
-		case AbortReason_unspecified:
+		case NetplayAbortReason::Unspecified:
 			return GameString(NETMELEE_STRING_BASE + 25);
 			// "Disconnect for an unspecified reason.'
-		case AbortReason_versionMismatch:
+		case NetplayAbortReason::VersionMismatch:
 			return GameString(NETMELEE_STRING_BASE + 26);
 			// "Connection aborted due to version mismatch."
-		case AbortReason_invalidHash:
+		case NetplayAbortReason::InvalidHash:
 			return GameString(NETMELEE_STRING_BASE + 27);
 			// "Connection aborted because the remote side sent a "
 			// "fake signature."
-		case AbortReason_protocolError:
+		case NetplayAbortReason::ProtocolError:
 			return GameString(NETMELEE_STRING_BASE + 28);
 			// "Connection aborted due to an internal protocol "
 			// "error."
@@ -2817,13 +2817,13 @@ const static char* resetReasonString(NetplayResetReason reason)
 {
 	switch (reason)
 	{
-		case ResetReason_unspecified:
+		case NetplayResetReason::Unspecified:
 			return GameString(NETMELEE_STRING_BASE + 29);
 			// "Game aborted for an unspecified reason."
-		case ResetReason_syncLoss:
+		case NetplayResetReason::SyncLoss:
 			return GameString(NETMELEE_STRING_BASE + 30);
 			// "Game aborted due to loss of synchronisation."
-		case ResetReason_manualReset:
+		case NetplayResetReason::ManualReset:
 			return GameString(NETMELEE_STRING_BASE + 31);
 			// "Game aborted by the remote player."
 	}
@@ -2842,7 +2842,7 @@ void resetFeedback(NetConnection* conn, NetplayResetReason reason,
 	// waiting for the reset packet while this side is waiting
 	// for an acknowledgement of the feedback message.
 
-	if (reason == ResetReason_manualReset && !byRemote)
+	if (reason == NetplayResetReason::ManualReset && !byRemote)
 	{
 		// No message needed, the player initiated the reset.
 		return;

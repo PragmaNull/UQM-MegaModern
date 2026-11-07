@@ -19,6 +19,7 @@
 #ifndef UQM_STATE_H_
 #define UQM_STATE_H_
 
+#include "core/types/enum.h"
 #include "port.h"
 #include "core/misc/bittricks.h"
 #include "core/stl/array.h"
@@ -80,12 +81,14 @@ inline constexpr auto DefgrpinfoFile {2};
 //"defgrp.dat"
 inline constexpr auto DefBufsize {(10 * 1024)};
 
-typedef enum
+enum class InfoType
 {
-	STARINFO,
-	RANDGRPINFO,
-	DEFGRPINFO
-} INFO_TYPE;
+	StarInfo,
+	RandomGroupInfo,
+	DefinedGroupInfo
+};
+template <>
+inline constexpr bool IsArithmeticEnum<InfoType> = true;
 
 GameStateFile* OpenStateFile(int stateFile, const char* mode);
 void CloseStateFile(GameStateFile* fp);

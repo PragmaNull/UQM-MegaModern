@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
@@ -129,26 +130,28 @@ static ConversationData zoqfot_desc =
 		nullptr,
 };
 
-enum
+enum class ZoqFotPikAlien
 {
-	ZOQ_ALIEN,
-	FOT_ALIEN,
-	PIK_ALIEN
+	Zoq,
+	Fot,
+	Pik
 };
+template <>
+inline constexpr bool IsArithmeticEnum<ZoqFotPikAlien> = true;
 
 static int LastAlien;
 
 // Queued and executes synchronously on the Starcon2Main thread
 static void SelectAlienZOQ(CallbackArg arg)
 {
-	if (LastAlien != ZOQ_ALIEN)
+	if (LastAlien != ZoqFotPikAlien::Zoq)
 	{
 		// Transition to neutral state first if Pik was talking
-		if (LastAlien != FOT_ALIEN)
+		if (LastAlien != ZoqFotPikAlien::Fot)
 		{
 			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
 		}
-		LastAlien = ZOQ_ALIEN;
+		LastAlien = +ZoqFotPikAlien::Zoq;
 		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
 		CommData.AlienTransitionDesc.StartIndex = FotToZoq;
 		CommData.AlienTalkDesc.StartIndex = ZoqTalkIndex;
@@ -167,14 +170,14 @@ static void SelectAlienZOQ(CallbackArg arg)
 // Queued and executes synchronously on the Starcon2Main thread
 static void SelectAlienPIK(CallbackArg arg)
 {
-	if (LastAlien != PIK_ALIEN)
+	if (LastAlien != ZoqFotPikAlien::Pik)
 	{
 		// Transition to neutral state first if Zoq was talking
-		if (LastAlien != FOT_ALIEN)
+		if (LastAlien != ZoqFotPikAlien::Fot)
 		{
 			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
 		}
-		LastAlien = PIK_ALIEN;
+		LastAlien = +ZoqFotPikAlien::Pik;
 		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
 		CommData.AlienTransitionDesc.StartIndex = FotToPik;
 		CommData.AlienTalkDesc.StartIndex = PikTalkIndex;
@@ -192,14 +195,14 @@ static void SelectAlienPIK(CallbackArg arg)
 
 static void ZFPTalkSegue(uint16_t wait_track)
 {
-	LastAlien = FOT_ALIEN;
+	LastAlien = +ZoqFotPikAlien::Fot;
 	SelectAlienZOQ(0);
 	AlienTalkSegue(wait_track);
 }
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	if (PlayerSaid(R, bye_homeworld))
 	{
@@ -245,7 +248,7 @@ static void ExitConversation(RESPONSE_REF R)
 		NPCPhrase_cb(WE_ALLY5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 		SetRaceAllied(ZOQFOTPIK_SHIP, true);
-		AddEvent(RELATIVE_EVENT, 3, 0, 0, ZOQFOT_DISTRESS_EVENT);
+		AddEvent(EventType::Relative, 3, 0, 0, ZOQFOT_DISTRESS_EVENT);
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, all_very_interesting))
@@ -258,7 +261,7 @@ static void ExitConversation(RESPONSE_REF R)
 
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOSTILE, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, never))
 	{
@@ -268,7 +271,7 @@ static void ExitConversation(RESPONSE_REF R)
 
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOSTILE, static_cast<uint32_t>(1));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 }
 
@@ -755,7 +758,7 @@ static void ZoqFotHome(RESPONSE_REF R)
 		ZFPTalkSegue((uint16_t)~0);
 
 		SetRaceAllied(ZOQFOTPIK_SHIP, true);
-		AddEvent(RELATIVE_EVENT, 3, 0, 0, ZOQFOT_DISTRESS_EVENT);
+		AddEvent(EventType::Relative, 3, 0, 0, ZOQFOT_DISTRESS_EVENT);
 	}
 	else if (PlayerSaid(R, enough_info))
 	{
@@ -771,7 +774,7 @@ static void ZoqFotHome(RESPONSE_REF R)
 	{
 		Response(any_war_news, ZoqFotHome);
 	}
-	if (CheckAlliance(ZOQFOTPIK_SHIP) != GOOD_GUY)
+	if (CheckAlliance(ZOQFOTPIK_SHIP) != RaceAllegiance::Good)
 	{
 		Response(i_want_alliance, ZoqFotHome);
 	}
@@ -805,7 +808,7 @@ static void Intro(void)
 		NPCPhrase_cb(OUT_TAKES12, &SelectAlienZOQ);
 		NPCPhrase_cb(OUT_TAKES13, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -842,7 +845,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (!uqm::gameState().flag(uqm::GameFlag::MET_ZOQFOT))
 	{
@@ -900,7 +903,7 @@ static void Intro(void)
 		else
 		{
 			NumVisits = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_HOME_VISITS);
-			if (CheckAlliance(ZOQFOTPIK_SHIP) != GOOD_GUY)
+			if (CheckAlliance(ZOQFOTPIK_SHIP) != RaceAllegiance::Good)
 			{
 				switch (NumVisits++)
 				{
@@ -985,14 +988,14 @@ ConversationData* init_zoqfot_comm(void)
 
 	zoqfot_desc.AlienTextWidth = (SisTextWidth() >> 1) - TextXOffs();
 
-	if (CheckAlliance(ZOQFOTPIK_SHIP) == GOOD_GUY
+	if (CheckAlliance(ZOQFOTPIK_SHIP) == RaceAllegiance::Good
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 
 	ConversationData* retval {&zoqfot_desc};

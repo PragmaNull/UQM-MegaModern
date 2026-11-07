@@ -38,7 +38,7 @@ void Netplay_NotifyAll_setTeamName(MeleeState* pMS, size_t playerNr)
 			continue;
 		}
 
-		if (NetConnection_getState(conn) != NetState_inSetup)
+		if (NetConnection_getState(conn) != NetState::InSetup)
 		{
 			continue;
 		}
@@ -67,7 +67,7 @@ void Netplay_NotifyAll_setFleet(MeleeState* pMS, size_t playerNr)
 			continue;
 		}
 
-		if (NetConnection_getState(conn) != NetState_inSetup)
+		if (NetConnection_getState(conn) != NetState::InSetup)
 		{
 			continue;
 		}
@@ -97,7 +97,7 @@ void Netplay_NotifyAll_setShip(MeleeState* pMS, size_t playerNr, size_t index)
 			continue;
 		}
 
-		if (NetConnection_getState(conn) != NetState_inSetup)
+		if (NetConnection_getState(conn) != NetState::InSetup)
 		{
 			continue;
 		}

@@ -307,14 +307,14 @@ void DrawPlanetSurfaceBorder(void)
 	SetContext(oldContext);
 }
 
-typedef enum
+enum class DrawOrbitalMode
 {
-	DRAW_ORBITAL_FULL,
-	DRAW_ORBITAL_WAIT,
-	DRAW_ORBITAL_UPDATE,
-	DRAW_ORBITAL_FROM_STARMAP,
+	Full,
+	Wait,
+	Update,
+	FromStarmap,
 
-} DRAW_ORBITAL_MODE;
+};
 
 static void DrawEnterOrbitText(GfxRect rect)
 {
@@ -430,7 +430,7 @@ void DrawOrbitMapGraphic(void)
 #endif
 }
 
-static void DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
+static void DrawOrbitalDisplay(DrawOrbitalMode Mode)
 {
 	GfxRect r;
 
@@ -439,7 +439,7 @@ static void DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 
 	BatchGraphics();
 
-	if (Mode != DRAW_ORBITAL_UPDATE)
+	if (Mode != DrawOrbitalMode::Update)
 	{
 		SetTransitionSource(nullptr);
 		DrawSISFrame();
@@ -449,7 +449,7 @@ static void DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 		DrawPlanetSurfaceBorder();
 	}
 
-	if (Mode == DRAW_ORBITAL_WAIT)
+	if (Mode == DrawOrbitalMode::Wait)
 	{
 		DrawOrbitMapGraphic();
 
@@ -458,12 +458,12 @@ static void DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 			InitPCLander(true);
 		}
 	}
-	else if (Mode == DRAW_ORBITAL_FULL)
+	else if (Mode == DrawOrbitalMode::Full)
 	{
 		DrawDefaultPlanetSphere();
 		DrawMenuStateStrings(PM_SCAN, SCAN);
 	}
-	else if (Mode == DRAW_ORBITAL_FROM_STARMAP)
+	else if (Mode == DrawOrbitalMode::FromStarmap)
 	{
 		DrawDefaultPlanetSphere();
 		DrawMenuStateStrings(PM_SCAN, STARMAP);
@@ -473,7 +473,7 @@ static void DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 		DrawMenuStateStrings(PM_SCAN, SCAN);
 	}
 
-	if (Mode != DRAW_ORBITAL_WAIT)
+	if (Mode != DrawOrbitalMode::Wait)
 	{
 		SetContext(GetScanContext(nullptr));
 		DrawPlanet(0, BlackColor);
@@ -483,7 +483,7 @@ static void DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 		}
 	}
 
-	if (Mode != DRAW_ORBITAL_UPDATE)
+	if (Mode != DrawOrbitalMode::Update)
 	{
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
 	}
@@ -529,7 +529,7 @@ void LoadPlanet(FRAME SurfDefFrame)
 		{
 			GetPlanetTopography(pPlanetDesc, SurfDefFrame);
 		}
-		DrawOrbitalDisplay(DRAW_ORBITAL_WAIT);
+		DrawOrbitalDisplay(DrawOrbitalMode::Wait);
 	}
 
 	GeneratePlanetSurface(pPlanetDesc, SurfDefFrame, 0, 0);
@@ -553,11 +553,11 @@ void LoadPlanet(FRAME SurfDefFrame)
 		{
 			ZoomInPlanetSphere();
 		}
-		DrawOrbitalDisplay(DRAW_ORBITAL_UPDATE);
+		DrawOrbitalDisplay(DrawOrbitalMode::Update);
 	}
 	else
 	{
-		DrawOrbitalDisplay(DRAW_ORBITAL_FULL);
+		DrawOrbitalDisplay(DrawOrbitalMode::Full);
 	}
 }
 
@@ -697,8 +697,8 @@ static bool DoPlanetOrbit(MenuState* pMS)
 				SetInputCallback(oldCallback);
 
 				if (!AutoPilotSet)
-				{												   // Redraw the orbital display
-					DrawOrbitalDisplay(DRAW_ORBITAL_FROM_STARMAP); //WAS FULL
+				{													  // Redraw the orbital display
+					DrawOrbitalDisplay(DrawOrbitalMode::FromStarmap); //WAS FULL
 					break;
 				}
 				FALLTHROUGH; // Fall through !!!

@@ -244,23 +244,23 @@ static void mycon_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	Starship* StarShipPtr {};
 
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
-	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
+	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 	{
 		if ((lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
 			&& !(lpEvalDesc->ObjectPtr->state_flags & CrewObject))
 		{
-			lpEvalDesc->MoveState = AVOID;
+			lpEvalDesc->MoveState = MovementState::Avoid;
 		}
 		else
 		{
-			lpEvalDesc->MoveState = PURSUE;
+			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 	}
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	if (ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == PURSUE)
+	if (ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == MovementState::Pursue)
 	{
 		StarShipPtr->ship_input_state &= ~ThrustFlag; /* don't pursue seekers */
 	}

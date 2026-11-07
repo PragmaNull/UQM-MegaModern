@@ -279,20 +279,20 @@ static void vux_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 	Starship* StarShipPtr {};
 
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
-	lpEvalDesc->MoveState = PURSUE;
+	lpEvalDesc->MoveState = MovementState::Pursue;
 	if (ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr != 0
-		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == ENTICE)
+		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == MovementState::Entice)
 	{
 		if ((ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->state_flags
 			 & FiniteLife)
 			&& !(ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->state_flags
 				 & CrewObject))
 		{
-			ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState = AVOID;
+			ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState = MovementState::Avoid;
 		}
 		else
 		{
-			ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState = PURSUE;
+			ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState = MovementState::Pursue;
 		}
 	}
 

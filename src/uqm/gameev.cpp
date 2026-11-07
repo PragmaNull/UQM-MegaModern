@@ -139,12 +139,12 @@ const char* eventIdNumToStr(int eventNum)
 
 void AddInitialGameEvents(void)
 {
-	AddEvent(RELATIVE_EVENT, 0, 1, 0, HYPERSPACE_ENCOUNTER_EVENT);
-	AddEvent(ABSOLUTE_EVENT, 3, 17, StartYear, ARILOU_ENTRANCE_EVENT);
-	AddEvent(RELATIVE_EVENT, 0, 0,
+	AddEvent(EventType::Relative, 0, 1, 0, HYPERSPACE_ENCOUNTER_EVENT);
+	AddEvent(EventType::Absolute, 3, 17, StartYear, ARILOU_ENTRANCE_EVENT);
+	AddEvent(EventType::Relative, 0, 0,
 			 YearsToKohrahVictory() + difficultyCase(2, 0, -1),
 			 KOHR_AH_VICTORIOUS_EVENT);
-	AddEvent(RELATIVE_EVENT, 0, 0, 0, SLYLANDRO_RAMP_UP);
+	AddEvent(EventType::Relative, 0, 0, 0, SLYLANDRO_RAMP_UP);
 }
 
 void EventHandler(uint8_t selector)
@@ -178,8 +178,8 @@ void SetRaceDest(uint8_t which_race, int16_t x, int16_t y, uint8_t days_left,
 
 static int arilou_entrance_event(int arg)
 {
-	uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE, static_cast<uint32_t>(OPENING));
-	AddEvent(RELATIVE_EVENT, 0, 3, 0, ARILOU_EXIT_EVENT);
+	uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE, static_cast<uint32_t>(ArilouGateState::Opening));
+	AddEvent(EventType::Relative, 0, 3, 0, ARILOU_EXIT_EVENT);
 	(void)arg;
 	return 0;
 }
@@ -195,8 +195,8 @@ static int arilou_exit_event(int arg)
 	}
 	++month_index;
 
-	uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE, static_cast<uint32_t>(CLOSING));
-	AddEvent(ABSOLUTE_EVENT,
+	uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE, static_cast<uint32_t>(ArilouGateState::Closing));
+	AddEvent(EventType::Absolute,
 			 month_index, 17, year_index, ARILOU_ENTRANCE_EVENT);
 
 	(void)arg;
@@ -235,7 +235,7 @@ static void check_race_growth(void)
 			if (delta_strength <= 0)
 			{
 				delta_strength = 0;
-				FleetPtr->allied_state = DEAD_GUY;
+				FleetPtr->allied_state = +RaceAllegiance::Dead;
 			}
 			else if (delta_strength > MaxFleetStrength)
 			{
@@ -270,7 +270,7 @@ static int hyperspace_encounter_event(int arg)
 		check_hyperspace_encounter();
 	}
 
-	AddEvent(RELATIVE_EVENT, 0, 1, 0, HYPERSPACE_ENCOUNTER_EVENT);
+	AddEvent(EventType::Relative, 0, 1, 0, HYPERSPACE_ENCOUNTER_EVENT);
 
 	(void)arg;
 	return 0;
@@ -282,7 +282,7 @@ static int kohr_ah_victorious_event(int arg)
 	{
 		// The Utwig/Supox mission delayed the genocide.
 		// Try again in one year.
-		AddEvent(RELATIVE_EVENT, 0, 0, 1, KOHR_AH_GENOCIDE_EVENT);
+		AddEvent(EventType::Relative, 0, 0, 1, KOHR_AH_GENOCIDE_EVENT);
 		return 0;
 	}
 
@@ -316,7 +316,7 @@ static int advance_pkunk_mission(int arg)
 					 && uqm::gameState().flag(uqm::GameFlag::PKUNK_ON_THE_MOVE))
 			{
 				uqm::gameState().setFlag(uqm::GameFlag::PKUNK_ON_THE_MOVE, static_cast<uint32_t>(0));
-				AddEvent(RELATIVE_EVENT, 3, 0, 0, ADVANCE_PKUNK_MISSION);
+				AddEvent(EventType::Relative, 3, 0, 0, ADVANCE_PKUNK_MISSION);
 				UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hPkunk);
 				return 0;
 			}
@@ -325,7 +325,7 @@ static int advance_pkunk_mission(int arg)
 		if (PkunkPtr->actual_strength == 0)
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK, static_cast<uint32_t>(1));
-			PkunkPtr->allied_state = DEAD_GUY;
+			PkunkPtr->allied_state = +RaceAllegiance::Dead;
 			StartSphereTracking(YEHAT_SHIP);
 		}
 		else
@@ -400,7 +400,7 @@ static int advance_thradd_mission(int arg)
 
 	if (MissionState == 4 && uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 	{ /* returned home - notify the Ilwrath */
-		AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_ILWRATH_MISSION);
+		AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_ILWRATH_MISSION);
 	}
 
 	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd);
@@ -415,12 +415,12 @@ static int zoqfot_distress_event(int arg)
 		&& CurStarDescPtr()
 		&& CurStarDescPtr()->Index == ZOQFOT_DEFINED)
 	{
-		AddEvent(RELATIVE_EVENT, 0, 7, 0, ZOQFOT_DISTRESS_EVENT);
+		AddEvent(EventType::Relative, 0, 7, 0, ZOQFOT_DISTRESS_EVENT);
 	}
 	else
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_DISTRESS, static_cast<uint32_t>(1));
-		AddEvent(RELATIVE_EVENT, 6, 0, 0, ZOQFOT_DEATH_EVENT);
+		AddEvent(EventType::Relative, 6, 0, 0, ZOQFOT_DEATH_EVENT);
 	}
 
 	(void)arg;
@@ -433,7 +433,7 @@ static int zoqfot_death_event(int arg)
 		&& CurStarDescPtr()
 		&& CurStarDescPtr()->Index == ZOQFOT_DEFINED)
 	{
-		AddEvent(RELATIVE_EVENT, 0, 7, 0, ZOQFOT_DEATH_EVENT);
+		AddEvent(EventType::Relative, 0, 7, 0, ZOQFOT_DEATH_EVENT);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS))
 	{
@@ -443,7 +443,7 @@ static int zoqfot_death_event(int arg)
 									   ZOQFOTPIK_SHIP);
 		FleetInfo* ZoqFotPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hZoqFot)};
 		ZoqFotPtr->actual_strength = 0;
-		ZoqFotPtr->allied_state = DEAD_GUY;
+		ZoqFotPtr->allied_state = +RaceAllegiance::Dead;
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hZoqFot);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_DISTRESS, static_cast<uint32_t>(2));
@@ -471,7 +471,7 @@ static int shofixti_return_event(int arg)
 		StartSphereTracking(SHOFIXTI_SHIP);
 		ShofixtiPtr->growth = 1;
 		ShofixtiPtr->growth_fract = 0;
-		AddEvent(RELATIVE_EVENT, 3, 0, 0, SHOFIXTI_RETURN_EVENT);
+		AddEvent(EventType::Relative, 3, 0, 0, SHOFIXTI_RETURN_EVENT);
 	}
 	SetRaceAllied(SHOFIXTI_SHIP, true);
 	uqm::gameState().game().CrewCost -= ifHardDifficulty(1, 2);
@@ -499,7 +499,7 @@ static int advance_utwig_supox_mission(int arg)
 	{
 		if (MissionState == 1)
 		{
-			AddEvent(RELATIVE_EVENT, 0, (160 >> 1), 0,
+			AddEvent(EventType::Relative, 0, (160 >> 1), 0,
 					 ADVANCE_UTWIG_SUPOX_MISSION);
 
 			int16_t strength_loss {(int16_t)(UtwigPtr->actual_strength >> 1)};
@@ -531,7 +531,7 @@ static int advance_utwig_supox_mission(int arg)
 		}
 		else if (MissionState == 2)
 		{
-			AddEvent(RELATIVE_EVENT, 0, (160 >> 1), 0,
+			AddEvent(EventType::Relative, 0, (160 >> 1), 0,
 					 ADVANCE_UTWIG_SUPOX_MISSION);
 			++MissionState;
 		}
@@ -598,7 +598,7 @@ static int kohr_ah_genocide_event(int arg)
 		&& CurStarDescPtr()
 		&& CurStarDescPtr()->Index == SAMATRA_DEFINED)
 	{
-		AddEvent(RELATIVE_EVENT, 0, 7, 0, KOHR_AH_GENOCIDE_EVENT);
+		AddEvent(EventType::Relative, 0, 7, 0, KOHR_AH_GENOCIDE_EVENT);
 		return 0;
 	}
 
@@ -627,7 +627,7 @@ static int kohr_ah_genocide_event(int arg)
 			if (dx == 0 && dy == 0)
 			{
 				// Arrived at the victim's home world. Cleanse it.
-				FleetPtr->allied_state = DEAD_GUY;
+				FleetPtr->allied_state = +RaceAllegiance::Dead;
 				FleetPtr->actual_strength = 0;
 			}
 			else if (FleetPtr->actual_strength)
@@ -707,7 +707,7 @@ static int spathi_shield_event(int arg)
 		&& CurStarDescPtr()
 		&& CurStarDescPtr()->Index == SPATHI_DEFINED)
 	{
-		AddEvent(RELATIVE_EVENT, 0, 7, 0, SPATHI_SHIELD_EVENT);
+		AddEvent(EventType::Relative, 0, 7, 0, SPATHI_SHIELD_EVENT);
 	}
 	else
 	{
@@ -750,11 +750,11 @@ static int advance_ilwrath_mission(int arg)
 	if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 	{
 		IlwrathPtr->actual_strength = 0;
-		IlwrathPtr->allied_state = DEAD_GUY;
-		if ((IsExtended() && ThraddPtr->allied_state != GOOD_GUY) || !IsExtended())
+		IlwrathPtr->allied_state = +RaceAllegiance::Dead;
+		if ((IsExtended() && ThraddPtr->allied_state != RaceAllegiance::Good) || !IsExtended())
 		{
 			ThraddPtr->actual_strength = 0;
-			ThraddPtr->allied_state = DEAD_GUY;
+			ThraddPtr->allied_state = +RaceAllegiance::Dead;
 		}
 	}
 	else if (IlwrathPtr->actual_strength)
@@ -781,7 +781,7 @@ static int advance_ilwrath_mission(int arg)
 							(conflict.y + thradd_home.y) / 2,
 							MaddLength - 1, ADVANCE_ILWRATH_MISSION);
 
-				if (IsExtended() && ThraddPtr->allied_state == GOOD_GUY)
+				if (IsExtended() && ThraddPtr->allied_state == RaceAllegiance::Good)
 				{
 					strength_loss = (int16_t)(ThraddPtr->actual_strength * 0.25); // Smarterer math
 				}
@@ -794,10 +794,10 @@ static int advance_ilwrath_mission(int arg)
 				ThraddPtr->growth_fract =
 					(uint8_t)(((strength_loss % MaddLength) << 8) / MaddLength);
 
-				if ((IsExtended() && ThraddPtr->allied_state != GOOD_GUY) || !IsExtended())
+				if ((IsExtended() && ThraddPtr->allied_state != RaceAllegiance::Good) || !IsExtended())
 				{
 					uqm::gameState().setFlag(uqm::GameFlag::THRADD_VISITS, static_cast<uint32_t>(0));
-					if (ThraddPtr->allied_state == GOOD_GUY)
+					if (ThraddPtr->allied_state == RaceAllegiance::Good)
 					{
 						SetRaceAllied(THRADDASH_SHIP, false);
 					}
@@ -821,7 +821,7 @@ static int advance_ilwrath_mission(int arg)
 		}
 	}
 
-	if (IsExtended() && ThraddPtr->allied_state == GOOD_GUY && !IlwrathPtr->actual_strength)
+	if (IsExtended() && ThraddPtr->allied_state == RaceAllegiance::Good && !IlwrathPtr->actual_strength)
 	{
 		ThraddPtr->growth = 0;
 		ThraddPtr->growth_fract = 0;
@@ -884,7 +884,7 @@ static int advance_mycon_mission(int arg)
 		{
 			// Endure losses at Organon.
 
-			AddEvent(RELATIVE_EVENT, 0, 14, 0, ADVANCE_MYCON_MISSION);
+			AddEvent(EventType::Relative, 0, 14, 0, ADVANCE_MYCON_MISSION);
 			const int16_t strength_loss {(int16_t)(MyconPtr->actual_strength >> 1)};
 			MyconPtr->growth = (uint8_t)(-strength_loss / 14);
 			MyconPtr->growth_fract = (uint8_t)(((strength_loss % 14) << 8) / 14);
@@ -949,7 +949,7 @@ static int slylandro_ramp_up(int arg)
 		if (++ramp_factor <= 4)
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_MULTIPLIER, static_cast<uint32_t>(ramp_factor));
-			AddEvent(RELATIVE_EVENT, 0, 182, 0, SLYLANDRO_RAMP_UP);
+			AddEvent(EventType::Relative, 0, 182, 0, SLYLANDRO_RAMP_UP);
 		}
 	}
 
@@ -964,7 +964,7 @@ static int slylandro_ramp_down(int arg)
 	ramp_factor = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER);
 	if (--ramp_factor)
 	{
-		AddEvent(RELATIVE_EVENT, 0, 23, 0, SLYLANDRO_RAMP_DOWN);
+		AddEvent(EventType::Relative, 0, 23, 0, SLYLANDRO_RAMP_DOWN);
 	}
 	uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_MULTIPLIER, static_cast<uint32_t>(ramp_factor));
 

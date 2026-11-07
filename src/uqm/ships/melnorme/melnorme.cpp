@@ -680,7 +680,7 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 																   + WeaponEnergyCost
 			&& !(StarShipPtr->old_status_flags & WeaponFlag))
 		{
-			lpEvalDesc->MoveState = ENTICE;
+			lpEvalDesc->MoveState = MovementState::Entice;
 		}
 		else
 		{
@@ -690,7 +690,7 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 			if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
 				  & ImmediateWeapon))
 			{
-				lpEvalDesc->MoveState = PURSUE;
+				lpEvalDesc->MoveState = MovementState::Pursue;
 			}
 		}
 	}

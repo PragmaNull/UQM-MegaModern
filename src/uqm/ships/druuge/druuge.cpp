@@ -207,7 +207,7 @@ static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed)
 	{
-		lpEvalDesc->MoveState = ENTICE;
+		lpEvalDesc->MoveState = MovementState::Entice;
 	}
 	else if (lpEvalDesc->ObjectPtr
 			 && lpEvalDesc->which_turn <= ResDescale(WorldToTurn(ResScale(MissileRange) * 3 / 4)))
@@ -217,7 +217,7 @@ static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 		EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags &=
 			~(FiresFore | FiresRight | FiresAft | FiresLeft);
 
-		lpEvalDesc->MoveState = PURSUE;
+		lpEvalDesc->MoveState = MovementState::Pursue;
 		if (ShipPtr->thrust_wait == 0)
 		{
 			++ShipPtr->thrust_wait;

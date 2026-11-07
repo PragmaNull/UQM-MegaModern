@@ -1,6 +1,8 @@
 #pragma once
 #include "core/stl/concepts.h"
+#include <compare>
 #include <cstdint>
+#include <utility>
 #include "core/stl/stl.h"
 
 #ifdef WITH_MAGIC_ENUM
@@ -29,6 +31,12 @@ template <ArithmeticEnum E>
 [[nodiscard]] constexpr auto operator+(E e) noexcept
 {
 	return static_cast<std::underlying_type_t<E>>(e);
+}
+
+template <ArithmeticEnum E>
+[[nodiscard]] constexpr auto operator-(E e) noexcept
+{
+	return -static_cast<std::underlying_type_t<E>>(e);
 }
 
 template <ArithmeticEnum E, std::integral I>
@@ -86,13 +94,21 @@ constexpr E operator--(E& e, int) noexcept
 template <ArithmeticEnum E, std::integral I>
 [[nodiscard]] constexpr bool operator==(E e, I n) noexcept
 {
-	return +e == n;
+	return uqstl::cmp_equal(+e, n);
 }
 
 template <ArithmeticEnum E, std::integral I>
-[[nodiscard]] constexpr auto operator<=>(E e, I n) noexcept
+[[nodiscard]] constexpr uqstl::strong_ordering operator<=>(E e, I n) noexcept
 {
-	return +e <=> n;
+	if (uqstl::cmp_less(+e, n))
+	{
+		return uqstl::strong_ordering::less;
+	}
+	if (uqstl::cmp_greater(+e, n))
+	{
+		return uqstl::strong_ordering::greater;
+	}
+	return uqstl::strong_ordering::equal;
 }
 
 template <BitFlagEnum E>

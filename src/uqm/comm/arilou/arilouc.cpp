@@ -234,7 +234,7 @@ static ConversationData arilou_desc =
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	if (PlayerSaid(R, bye_angry_space))
 	{
@@ -339,7 +339,7 @@ static void ArilouHome(RESPONSE_REF R)
 		NPCPhrase(WELL_GO_CHECK);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_CHECKED_UMGAH, static_cast<uint32_t>(1));
-		AddEvent(RELATIVE_EVENT, 0, 10, 0, ARILOU_UMGAH_CHECK);
+		AddEvent(EventType::Relative, 0, 10, 0, ARILOU_UMGAH_CHECK);
 		DisablePhrase(umgah_acting_weird);
 	}
 	else if (PlayerSaid(R, what_do_now))
@@ -717,7 +717,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 	else if (!uqm::gameState().flag(uqm::GameFlag::MET_ARILOU))
@@ -764,7 +764,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_VISITS, static_cast<uint32_t>(NumVisits));
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (Manner == 1)
 	{
@@ -873,7 +873,7 @@ static void post_arilou_enc(void)
 {
 	uint8_t Manner {};
 
-	if (getSegue() == Segue_hostile
+	if (getSegue() == Segue::Hostile
 		&& (Manner = uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER)) != 2)
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_MANNER, static_cast<uint32_t>(1));
@@ -914,11 +914,11 @@ ConversationData* init_arilou_comm(void)
 		|| uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&arilou_desc};
 

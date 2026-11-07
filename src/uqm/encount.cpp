@@ -61,7 +61,7 @@ static bool DoSelectAction(MenuState* pMS)
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
-		pMS->CurState = ATTACK + 1;
+		pMS->CurState = +EncounterAction::Attack + 1;
 		return (false);
 	}
 	if (!pMS->Initialized)
@@ -73,15 +73,15 @@ static bool DoSelectAction(MenuState* pMS)
 	{
 		switch (pMS->CurState)
 		{
-			case HAIL:
-			case ATTACK:
+			case +EncounterAction::Hail:
+			case +EncounterAction::Attack:
 				DrawMenuStateStrings(PM_CONVERSE, pMS->CurState);
 				if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 				{
-					pMS->CurState = HAIL;
+					pMS->CurState = +EncounterAction::Hail;
 				}
 				return (false);
-			case ATTACK + 1:
+			case +EncounterAction::Attack + 1:
 				// Clearing FlashRect is not necessary
 				if (!GameOptions())
 				{
@@ -470,7 +470,7 @@ uint16_t InitEncounter(void)
 		menuState.InputFunc = DoSelectAction;
 		menuState.Initialized = false;
 
-		DrawMenuStateStrings(PM_CONVERSE, menuState.CurState = HAIL);
+		DrawMenuStateStrings(PM_CONVERSE, menuState.CurState = +EncounterAction::Hail);
 		SetFlashRect(SfrMenu3do(), false);
 
 		DoInput(&menuState, true);
@@ -625,7 +625,7 @@ uint16_t UninitEncounter(void)
 		GfxStamp ship_s;
 		const char* str1 = nullptr;
 		const char* str2 = nullptr;
-		StatMsgMode prevMsgMode = SMM_UNDEFINED;
+		StatMsgMode prevMsgMode = StatMsgMode::Undefined;
 		char buf[80] {};
 		const ShipFragment* FragPtr {};
 		const auto& fade_ship_cycle {ScavengeScreenColorTable};
@@ -652,7 +652,7 @@ uint16_t UninitEncounter(void)
 
 		if (VictoryState > 0) // Set RU only when we get them
 		{
-			prevMsgMode = SetStatusMessageMode(SMM_RES_UNITS);
+			prevMsgMode = SetStatusMessageMode(StatMsgMode::ResUnits);
 		}
 
 		ship_s.origin.x = 0;
@@ -883,7 +883,7 @@ uint16_t UninitEncounter(void)
 				UnlockShipFrag(pQueue, hStarShip);
 			}
 		}
-		if (prevMsgMode) // Set Status back only when we get RU
+		if (prevMsgMode != StatMsgMode::Undefined) // Set Status back only when we get RU
 		{
 			SetStatusMessageMode(prevMsgMode);
 		}
@@ -987,7 +987,7 @@ uint16_t UninitEncounter(void)
 					if (actualStrength <= 0)
 					{
 						EncounterPtr->actual_strength = 0;
-						EncounterPtr->allied_state = DEAD_GUY;
+						EncounterPtr->allied_state = +RaceAllegiance::Dead;
 					}
 					else
 					{

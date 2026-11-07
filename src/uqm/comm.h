@@ -136,15 +136,15 @@ bool getLineWithinWidth(GfxText* pText, const char** startNext,
 
 extern GfxRect CommWndRect; /* comm window rect */
 
-typedef enum
+enum class CommIntroMode
 {
-	CIM_CROSSFADE_SPACE,
-	CIM_CROSSFADE_WINDOW,
-	CIM_CROSSFADE_SCREEN,
-	CIM_FADE_IN_SCREEN,
+	CrossfadeSpace,
+	CrossfadeWindow,
+	CrossfadeScreen,
+	FadeInScreen,
 
-	CIM_DEFAULT = CIM_CROSSFADE_SPACE,
-} CommIntroMode;
+	Default = CrossfadeSpace,
+};
 extern void SetCommIntroMode(CommIntroMode, TimePeriod howLong);
 
 extern void EnableTalkingAnim(bool enable);

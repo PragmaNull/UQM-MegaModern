@@ -244,13 +244,13 @@ static ConversationData umgah_desc =
 
 static void CombatIsInevitable(RESPONSE_REF R)
 {
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 
 	if (PlayerSaid(R, bye_zombie))
 	{
 		NPCPhrase(GOODBYE_ZOMBIE);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (PlayerSaid(R, bye_pre_zombie))
 	{
@@ -287,7 +287,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(GOODBYE_UNKNOWN);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (PlayerSaid(R, bye_post_zombie))
 	{
@@ -404,14 +404,14 @@ static void Zombies(RESPONSE_REF R)
 		{
 			NPCPhrase(NOT_GIVE_UP);
 
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 			return;
 		}
 		else if (PlayerSaid(R, arilou_told_us))
 		{
 			NPCPhrase(THEN_DIE);
 
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 			uqm::gameState().setFlag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES, static_cast<uint32_t>(1));
 			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(0));
 			return;
@@ -624,7 +624,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(NumVisits));
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES))
 	{
@@ -648,7 +648,7 @@ static void Intro(void)
 					break;
 			}
 
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES))
 		{
@@ -669,7 +669,7 @@ static void Intro(void)
 					break;
 			}
 
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 		}
 		else
 		{
@@ -767,7 +767,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(NumVisits));
 
-			setSegue(Segue_peace);
+			setSegue(Segue::Peace);
 		}
 	}
 }
@@ -803,11 +803,11 @@ ConversationData* init_umgah_comm(void)
 	if ((uqm::gameState().flag(uqm::GameFlag::TALKING_PET) && !uqm::gameState().flag(uqm::GameFlag::UMGAH_HOSTILE))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&umgah_desc};
 

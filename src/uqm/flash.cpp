@@ -87,7 +87,7 @@ static FlashContext* Flash_create(GFXCONTEXT gfxContext)
 
 	context->frameTime = TimePeriod {};
 
-	context->state = FlashState_off;
+	context->state = FlashState::Off;
 	context->lastStateTime = TimeCount {};
 	context->lastFrameTime = TimeCount {};
 
@@ -127,7 +127,7 @@ FlashContext* Flash_createHighlight(GFXCONTEXT gfxContext, const GfxRect* rect)
 	{
 		context->rect = *rect;
 	}
-	context->type = FlashType_highlight;
+	context->type = FlashType::Highlight;
 
 	return context;
 }
@@ -137,7 +137,7 @@ FlashContext* Flash_createTransition(GFXCONTEXT gfxContext, const GfxPoint* orig
 {
 	FlashContext* context = Flash_create(gfxContext);
 
-	context->type = FlashType_transition;
+	context->type = FlashType::Transition;
 
 	context->u.transition.first = first;
 	context->u.transition.final = final;
@@ -151,7 +151,7 @@ FlashContext* Flash_createOverlay(GFXCONTEXT gfxContext, const GfxPoint* origin,
 {
 	FlashContext* context = Flash_create(gfxContext);
 
-	context->type = FlashType_overlay;
+	context->type = FlashType::Overlay;
 
 	if (origin == nullptr || overlay == nullptr)
 	{
@@ -250,16 +250,16 @@ static void Flash_fixState(FlashContext* context)
 	{
 		switch (context->state)
 		{
-			case FlashState_fadeIn:
+			case FlashState::FadeIn:
 				stateTime = context->fadeInTime;
 				break;
-			case FlashState_on:
+			case FlashState::On:
 				stateTime = context->onTime;
 				break;
-			case FlashState_fadeOut:
+			case FlashState::FadeOut:
 				stateTime = context->fadeOutTime;
 				break;
-			case FlashState_off:
+			case FlashState::Off:
 				stateTime = context->offTime;
 				break;
 		}
@@ -267,13 +267,13 @@ static void Flash_fixState(FlashContext* context)
 		{
 			break;
 		}
-		context->state = (FlashState)((context->state + 1) & 0x3);
+		context->state = static_cast<FlashState>((+context->state + 1) & 0x3);
 	}
 }
 
 static void Flash_nextState(FlashContext* context)
 {
-	context->state = (FlashState)((context->state + 1) & 0x3);
+	context->state = static_cast<FlashState>((+context->state + 1) & 0x3);
 	Flash_fixState(context);
 }
 
@@ -290,7 +290,7 @@ void Flash_process(FlashContext* context)
 
 	switch (context->state)
 	{
-		case FlashState_fadeIn:
+		case FlashState::FadeIn:
 			if (now >= context->lastStateTime + context->fadeInTime)
 			{
 				Flash_nextState(context);
@@ -298,7 +298,7 @@ void Flash_process(FlashContext* context)
 			}
 			context->lastFrameTime = now;
 			break;
-		case FlashState_on:
+		case FlashState::On:
 			if (now < context->lastStateTime + context->onTime)
 			{
 				return;
@@ -306,7 +306,7 @@ void Flash_process(FlashContext* context)
 			Flash_nextState(context);
 			context->lastStateTime = now;
 			break;
-		case FlashState_fadeOut:
+		case FlashState::FadeOut:
 			if (now >= context->lastStateTime + context->fadeOutTime)
 			{
 				Flash_nextState(context);
@@ -314,7 +314,7 @@ void Flash_process(FlashContext* context)
 			}
 			context->lastFrameTime = now;
 			break;
-		case FlashState_off:
+		case FlashState::Off:
 			if (now < context->lastStateTime + context->offTime)
 			{
 				return;
@@ -398,7 +398,7 @@ TimeCount Flash_nextTime(FlashContext* context)
 		return TimeCount::max();
 	}
 
-	if (context->state == FlashState_fadeIn || context->state == FlashState_fadeOut)
+	if (context->state == FlashState::FadeIn || context->state == FlashState::FadeOut)
 	{
 		// When we're fading in or out, we need updates during
 		// the fade.
@@ -408,7 +408,7 @@ TimeCount Flash_nextTime(FlashContext* context)
 	{
 		// When the flash area is completely on or off, we don't
 		// need an update until we're ready to change state again.
-		if (context->state == FlashState_on)
+		if (context->state == FlashState::On)
 		{
 			return context->lastStateTime + context->onTime;
 		}
@@ -422,13 +422,13 @@ TimeCount Flash_nextTime(FlashContext* context)
 static void Flash_clearCache(FlashContext* context)
 {
 #ifdef BEGIN_AND_END_FRAME_EXCEPTIONS
-	if (context->type == FlashType_transition || context->type == FlashType_overlay)
+	if (context->type == FlashType::Transition || context->type == FlashType::Overlay)
 	{
 		// First frame is not allocated by the flash code, so
 		// we shouldn't free it.
 		context->cache[0] = (FRAME)0;
 	}
-	if (context->type == FlashType_transition)
+	if (context->type == FlashType::Transition)
 	{
 		// Final frame is not allocated by the flash code, so
 		// we shouldn't free it.
@@ -448,7 +448,7 @@ static void Flash_clearCache(FlashContext* context)
 
 void Flash_setRect(FlashContext* context, const GfxRect* rect)
 {
-	assert(context->type == FlashType_highlight);
+	assert(context->type == FlashType::Highlight);
 
 	if (context->started)
 	{
@@ -469,7 +469,7 @@ void Flash_setRect(FlashContext* context, const GfxRect* rect)
 void Flash_getRect(FlashContext* context, GfxRect* rect)
 {
 	//assert (!context->type == FlashType_highlight); <-- original expression. hmmm
-	assert(context->type != FlashType_highlight);
+	assert(context->type != FlashType::Highlight);
 
 	*rect = context->rect;
 }
@@ -479,7 +479,7 @@ void Flash_getRect(FlashContext* context, GfxRect* rect)
 // from the flash process.
 void Flash_setOverlay(FlashContext* context, const GfxPoint* origin, FRAME overlay, bool cleanup)
 {
-	assert(context->type == FlashType_overlay);
+	assert(context->type == FlashType::Overlay);
 
 	if (context->started && !cleanup)
 	{
@@ -608,7 +608,7 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 
 	switch (context->type)
 	{
-		case FlashType_highlight:
+		case FlashType::Highlight:
 			{
 				// Clear the destination just in case
 				SetContextBackGroundColor(BuildColorRgba(0, 0, 0, 0));
@@ -620,7 +620,7 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 				DrawStamp(&s);
 				break;
 			}
-		case FlashType_transition:
+		case FlashType::Transition:
 			{
 				FRAME first {};
 				FRAME final {};
@@ -647,7 +647,7 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 				DrawStamp(&s);
 				break;
 			}
-		case FlashType_overlay:
+		case FlashType::Overlay:
 			{
 				GfxPoint oldOrigin;
 
@@ -679,17 +679,17 @@ static inline void Flash_prepareCacheFrame(FlashContext* context, uint16_t index
 	}
 
 #ifdef BEGIN_AND_END_FRAME_EXCEPTIONS
-	if (index == 0 && context->type == FlashType_overlay)
+	if (index == 0 && context->type == FlashType::Overlay)
 	{
 		context->cache[index] = context->original;
 	}
-	else if (index == 0 && context->type == FlashType_transition)
+	else if (index == 0 && context->type == FlashType::Transition)
 	{
 		context->cache[index] = context->u.transition.first != (FRAME)0 ?
 									context->u.transition.first :
 									context->original;
 	}
-	else if (index == context->cacheSize - 1 && context->type == FlashType_transition)
+	else if (index == context->cacheSize - 1 && context->type == FlashType::Transition)
 	{
 		context->cache[index] = context->u.transition.final != (FRAME)0 ?
 									context->u.transition.final :
@@ -768,7 +768,7 @@ static inline void Flash_drawUncachedFrame(FlashContext* context, int numer, int
 	// 'lastFrameIndex' is 0 for the first image, 1 for the final
 	// image, and 2 otherwise.
 
-	if (numer == 0 && context->type == FlashType_overlay)
+	if (numer == 0 && context->type == FlashType::Overlay)
 	{
 		if (context->lastFrameIndex != 0)
 		{
@@ -779,7 +779,7 @@ static inline void Flash_drawUncachedFrame(FlashContext* context, int numer, int
 		context->lastFrameIndex = 0;
 		return;
 	}
-	else if (numer == 0 && context->type == FlashType_transition)
+	else if (numer == 0 && context->type == FlashType::Transition)
 	{
 		if (context->lastFrameIndex == 0)
 		{
@@ -790,7 +790,7 @@ static inline void Flash_drawUncachedFrame(FlashContext* context, int numer, int
 		context->lastFrameIndex = 0;
 		return;
 	}
-	else if (numer == denom && context->type == FlashType_transition)
+	else if (numer == denom && context->type == FlashType::Transition)
 	{
 		if (context->lastFrameIndex == 1)
 		{
@@ -835,12 +835,12 @@ static void Flash_drawCurrentFrame(FlashContext* context)
 	/*if (uqm::currentActivity() & CHECK_ABORT)
 		pcRectBool = false;*/
 
-	if (context->state == FlashState_off)
+	if (context->state == FlashState::Off)
 	{
 		numer = 0;
 		denom = 1;
 	}
-	else if (context->state == FlashState_on)
+	else if (context->state == FlashState::On)
 	{
 		numer = 1;
 		denom = 1;
@@ -849,7 +849,7 @@ static void Flash_drawCurrentFrame(FlashContext* context)
 	{
 		const TimeCount now = GetTimeCounter();
 
-		if (context->state == FlashState_fadeIn)
+		if (context->state == FlashState::FadeIn)
 		{
 			denom = static_cast<int>(context->fadeInTime.count());
 		}
@@ -865,7 +865,7 @@ static void Flash_drawCurrentFrame(FlashContext* context)
 			numer = denom;
 		}
 
-		if (context->state == FlashState_fadeOut)
+		if (context->state == FlashState::FadeOut)
 		{
 			numer = static_cast<int>(context->fadeOutTime.count()) - numer;
 		}

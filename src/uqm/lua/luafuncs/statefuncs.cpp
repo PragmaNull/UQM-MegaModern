@@ -295,7 +295,7 @@ static int luaUqm_state_race_isAlive(lua_State* luaState)
 		return 1;
 	}
 
-	const bool result {(CheckAlliance((RACE_ID)raceId) != DEAD_GUY)};
+	const bool result {(CheckAlliance((RACE_ID)raceId) != RaceAllegiance::Dead)};
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -310,7 +310,7 @@ static int luaUqm_state_race_isAllied(lua_State* luaState)
 		return 1;
 	}
 
-	const bool result {(CheckAlliance((RACE_ID)raceId) == GOOD_GUY)};
+	const bool result {(CheckAlliance((RACE_ID)raceId) == RaceAllegiance::Good)};
 	lua_pushboolean(luaState, result);
 	return 1;
 }

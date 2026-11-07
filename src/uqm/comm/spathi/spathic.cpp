@@ -177,7 +177,7 @@ static ConversationData spathi_desc =
 static void ExitConversation(RESPONSE_REF Response)
 {
 	const uint8_t SpaCrew = ifEasyDifficulty(MaxCrewSize, 1);
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	if (PlayerSaid(Response, bye_ally_space))
 	{
@@ -207,13 +207,13 @@ static void ExitConversation(RESPONSE_REF Response)
 	{
 		NPCPhrase(YIPES);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(Response, we_fight_again_space))
 	{
 		NPCPhrase(OK_FIGHT_AGAIN_SPACE);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(Response, die_slugboy)
 			 || PlayerSaid(Response, we_fight_1)
@@ -228,7 +228,7 @@ static void ExitConversation(RESPONSE_REF Response)
 		}
 		NPCPhrase(OK_WE_FIGHT_AT_PLUTO);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(Response, join_us))
 	{
@@ -863,7 +863,7 @@ static void Intro(void)
 	else if (Manner == 2)
 	{
 		NPCPhrase(HATE_YOU_FOREVER_SPACE);
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (Manner == 1)
 	{
@@ -887,7 +887,7 @@ static void Intro(void)
 		Response(we_fight_again_space, ExitConversation);
 		Response(bye_angry_space, ExitConversation);
 	}
-	else if (CheckAlliance(SPATHI_SHIP) == GOOD_GUY)
+	else if (CheckAlliance(SPATHI_SHIP) == RaceAllegiance::Good)
 	{
 		SpathiAllies((RESPONSE_REF)0);
 	}
@@ -915,7 +915,7 @@ static void post_spathi_enc(void)
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(2));
 	}
-	else if (getSegue() == Segue_hostile
+	else if (getSegue() == Segue::Hostile
 			 && (Manner = uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER)) != 2)
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(1));
@@ -953,11 +953,11 @@ ConversationData* init_spathi_comm(void)
 		|| uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&spathi_desc};
 

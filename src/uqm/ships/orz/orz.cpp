@@ -274,7 +274,7 @@ static void orz_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 		Starship* EnemyStarShipPtr {};
 
 		if (ShipPtr->turn_wait == 0
-			&& lpEvalDesc->MoveState == ENTICE
+			&& lpEvalDesc->MoveState == MovementState::Entice
 			&& lpEvalDesc->which_turn < 24
 			&& (StarShipPtr->cur_status_flags
 				& (ShipAtMaxSpeed | ShipBeyondMaxSpeed))

@@ -122,7 +122,7 @@ static constexpr auto BadReason2 {(1 << 3)};
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	if (PlayerSaid(R, friendly_bye_space))
 	{
@@ -158,7 +158,7 @@ static void ExitConversation(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_INFO, static_cast<uint32_t>(0));
 
-		AddEvent(RELATIVE_EVENT, 6, 0, 0, ADVANCE_PKUNK_MISSION);
+		AddEvent(EventType::Relative, 6, 0, 0, ADVANCE_PKUNK_MISSION);
 
 		if (EscortFeasibilityStudy(PKUNK_SHIP) == 0)
 		{
@@ -197,13 +197,13 @@ static void ExitConversation(RESPONSE_REF R)
 
 			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(2));
 		}
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, die_idiot_fools))
 	{
 		NPCPhrase(VERY_WELL);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, suit_yourself))
 	{
@@ -218,13 +218,13 @@ static void ExitConversation(RESPONSE_REF R)
 		{
 			NPCPhrase(WE_GO_HOME_1);
 			ReasonMask |= GoodReason1;
-			AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_PKUNK_MISSION);
+			AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_PKUNK_MISSION);
 		}
 		else if (PlayerSaid(R, good_reason_2))
 		{
 			NPCPhrase(WE_GO_HOME_2);
 			ReasonMask |= GoodReason2;
-			AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_PKUNK_MISSION);
+			AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_PKUNK_MISSION);
 		}
 		else if (PlayerSaid(R, bad_reason_1))
 		{
@@ -898,7 +898,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -925,7 +925,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(NumVisits));
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (Manner == 1)
 	{
@@ -1156,7 +1156,7 @@ static void post_pkunk_enc(void)
 {
 	uint8_t Manner {};
 
-	if (getSegue() == Segue_hostile
+	if (getSegue() == Segue::Hostile
 		&& (Manner = uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER)) != 2)
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(1));
@@ -1186,12 +1186,12 @@ ConversationData* init_pkunk_comm(void)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		// Enter communications immediately.
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
 		// Ask the player whether to attack or talk.
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&pkunk_desc};
 

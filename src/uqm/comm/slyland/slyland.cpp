@@ -351,7 +351,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	else if (PlayerSaid(R, destruct_code))
 	{
 		NPCPhrase(DESTRUCT_SEQUENCE);
-		setSegue(Segue_victory);
+		setSegue(Segue::Victory);
 	}
 	else
 	{
@@ -482,7 +482,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 		NPCPhrase(HOSTILE);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PROBE_EXHIBITED_BUG, static_cast<uint32_t>(1));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 }
 
@@ -501,7 +501,7 @@ static void Intro(void)
 		NPCPhrase(HOSTILE);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PROBE_EXHIBITED_BUG, static_cast<uint32_t>(1));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else
 	{
@@ -563,7 +563,7 @@ ConversationData* init_slyland_comm(void)
 	slylandro_desc.AlienTextBaseline.y = 0;
 	slylandro_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 	ConversationData* retval {&slylandro_desc};
 
 	return (retval);

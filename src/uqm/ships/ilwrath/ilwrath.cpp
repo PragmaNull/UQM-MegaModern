@@ -154,7 +154,7 @@ static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCo
 	Starship* StarShipPtr {};
 
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
-	lpEvalDesc->MoveState = PURSUE;
+	lpEvalDesc->MoveState = MovementState::Pursue;
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 10)
 	{
 		/* don't want to dodge when you could be flaming */

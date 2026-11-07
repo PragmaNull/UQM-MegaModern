@@ -45,7 +45,7 @@
 
 #include <stdio.h>
 
-static StatMsgMode curMsgMode = SMM_DEFAULT;
+static StatMsgMode curMsgMode = StatMsgMode::Default;
 
 const static char* describeWeapon(uint8_t moduleType);
 
@@ -552,7 +552,7 @@ void DrawStatusMessage(const char* pStr)
 
 	if (!pStr)
 	{
-		if (curMsgMode == SMM_CREDITS)
+		if (curMsgMode == StatMsgMode::Credits)
 		{
 			if (uqm::UQMOptions::read().infiniteCredits)
 			{
@@ -567,7 +567,7 @@ void DrawStatusMessage(const char* pStr)
 				fmt::format_to_sz_n(buf, "{} {}", uqm::makeWord(uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0), uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1)), GameString(STATUS_STRING_BASE + 0)); // "Cr"
 			}
 		}
-		else if (curMsgMode == SMM_RES_UNITS)
+		else if (curMsgMode == StatMsgMode::ResUnits)
 		{
 			if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) >= 2 || uqm::UQMOptions::read().infiniteRU)
 			{
@@ -602,11 +602,11 @@ void DrawStatusMessage(const char* pStr)
 	{
 		Color statusColor = StatusMessageTextColor;
 
-		if (curMsgMode == SMM_WARNING)
+		if (curMsgMode == StatMsgMode::Warning)
 		{
 			statusColor = StatusMessageWarningTextColor;
 		}
-		if (curMsgMode == SMM_ALERT)
+		if (curMsgMode == StatMsgMode::Alert)
 		{
 			statusColor = StatusMessageAlertTextColor;
 		}
@@ -1434,7 +1434,7 @@ static void DeltaSISGauges_resunitDelta(int16_t resunit_delta)
 			uqm::gameState().sis().ResUnits += resunit_delta;
 		}
 
-		assert(curMsgMode == SMM_RES_UNITS);
+		assert(curMsgMode == StatMsgMode::ResUnits);
 	}
 	else
 	{

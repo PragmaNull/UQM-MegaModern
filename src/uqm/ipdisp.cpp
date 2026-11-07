@@ -232,7 +232,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 	const uint8_t flagship_loc {getFlagshipLocation()};
 
 	if ((uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
-		 && CheckAlliance((RACE_ID)GroupPtr->race_id) == DEAD_GUY)
+		 && CheckAlliance((RACE_ID)GroupPtr->race_id) == RaceAllegiance::Dead)
 		|| (GTFO == 1 && GroupPtr->race_id == ILWRATH_SHIP))
 	{
 		GTFO = 0;
@@ -287,7 +287,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 		{
 			int16_t detect_dist = 1200;
 
-			if (IsExtended() && CheckAlliance((RACE_ID)GroupPtr->race_id) == GOOD_GUY)
+			if (IsExtended() && CheckAlliance((RACE_ID)GroupPtr->race_id) == RaceAllegiance::Good)
 			{
 				detect_dist = 0;
 			}
@@ -749,7 +749,7 @@ static void ip_group_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	OtherPtr = ElementPtr1->pParent;
 
 	if (!(uqm::flagship().autopilot.target().x == ~0 && uqm::flagship().autopilot.target().y == ~0)
-		&& (CheckAlliance((RACE_ID)GroupPtr->race_id) == GOOD_GUY))
+		&& (CheckAlliance((RACE_ID)GroupPtr->race_id) == RaceAllegiance::Good))
 	{
 		return; // Ignore collisions when allied during Auto-Pilot
 	}
@@ -1109,7 +1109,7 @@ void DoMissions(void)
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		if (GroupPtr->in_system
-			&& CheckAlliance((RACE_ID)GroupPtr->race_id) != DEAD_GUY)
+			&& CheckAlliance((RACE_ID)GroupPtr->race_id) != RaceAllegiance::Dead)
 		{
 			spawn_ip_group(GroupPtr);
 		}

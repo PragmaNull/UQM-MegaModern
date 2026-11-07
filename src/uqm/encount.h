@@ -19,6 +19,8 @@
 #ifndef UQM_ENCOUNT_H_
 #define UQM_ENCOUNT_H_
 
+
+#include "core/types/enum.h"
 struct BriefShipInfo;
 struct Encounter;
 
@@ -94,11 +96,13 @@ constexpr auto FreeEncounter(const auto& h) { return FreeLink(&uqm::gameState().
 
 constexpr auto GetSuccEncounter(const auto& l) { return _GetSuccLink(l); }
 
-enum
+enum class EncounterAction
 {
-	HAIL = 0,
-	ATTACK
+	Hail = 0,
+	Attack
 };
+template <>
+inline constexpr bool IsArithmeticEnum<EncounterAction> = true;
 
 extern void EncounterBattle(void);
 extern void BuildBattle(uint16_t which_player);

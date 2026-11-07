@@ -281,7 +281,7 @@ static AnimFilterSet talkpet_filters =
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(0));
 
 	if (PlayerSaid(R, compel_urquan))
@@ -602,7 +602,7 @@ static void CompelPlayer(RESPONSE_REF R)
 		{
 			NPCPhrase(CANT_COMPEL);
 
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 		}
 
 		return;
@@ -762,14 +762,14 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(0));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 		if (!(uqm::globalFlags() & CyborgEnabled))
 		{
 			NPCPhrase(HUMAN_PEP_TALK);
@@ -796,13 +796,13 @@ static void Intro(void)
 				NPCPhrase(SOUP_UP_BOMB);
 			}
 
-			setSegue(Segue_peace);
+			setSegue(Segue::Peace);
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::URQUAN_MESSED_UP))
 		{
 			NPCPhrase(HELLO_AFTER_COMPEL_URQUAN);
 
-			setSegue(Segue_peace);
+			setSegue(Segue::Peace);
 		}
 		else
 		{
@@ -889,13 +889,13 @@ static void Intro(void)
 		else if (!uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP))
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HYPNOTIZED, static_cast<uint32_t>(1));
-			setSegue(Segue_peace);
+			setSegue(Segue::Peace);
 		}
 		else
 		{
 			NPCPhrase(CANT_COMPEL);
 
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 		}
 	}
 	else
@@ -948,11 +948,11 @@ ConversationData* init_talkpet_comm(void)
 
 	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 
 	ConversationData* retval {&talkpet_desc};

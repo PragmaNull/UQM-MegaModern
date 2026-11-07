@@ -31,8 +31,8 @@ static void NetConnection_go(NetConnection* conn)
 		return;
 	}
 
-	assert(conn->state == NetState_unconnected);
-	NetConnection_setState(conn, NetState_connecting);
+	assert(conn->state == NetState::Unconnected);
+	NetConnection_setState(conn, NetState::Connecting);
 
 	const bool ipv4Only {NETPLAY == NetplayIpv4};
 	if (conn->options->isServer)
@@ -85,7 +85,7 @@ static void NetConnection_connected(NetConnection* conn, uqm::net::Connection co
 
 	conn->stateFlags.discriminant = discriminant;
 	conn->stateFlags.connected = true;
-	NetConnection_setState(conn, NetState_init);
+	NetConnection_setState(conn, NetState::Init);
 
 	(*conn->connectCallback)(conn);
 }
@@ -96,11 +96,11 @@ static void NetConnection_connectError(NetConnection* conn, std::error_code conn
 	conn->stateFlags.disconnected = true;
 	conn->listener.reset();
 	conn->connector.reset();
-	NetConnection_setState(conn, NetState_unconnected);
+	NetConnection_setState(conn, NetState::Unconnected);
 
 	if (conn->errorCallback != nullptr)
 	{
-		const NetConnectionError error {.state = NetState_connecting, .err = connectError.value()};
+		const NetConnectionError error {.state = NetState::Connecting, .err = connectError.value()};
 		(*conn->errorCallback)(conn, &error);
 	}
 	NetConnection_close(conn);

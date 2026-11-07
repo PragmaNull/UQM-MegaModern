@@ -19,6 +19,8 @@
 #ifndef UQM_RACES_H_
 #define UQM_RACES_H_
 
+
+#include "core/types/enum.h"
 #include <cstdint>
 #include "core/misc/bittricks.h"
 #include "units.h"
@@ -131,12 +133,12 @@ struct CaptainGraphics
 	uint8_t special_offset;
 };
 
-enum MOVEMENT_STATE
+enum class MovementState
 {
-	PURSUE = 0,
-	AVOID,
-	ENTICE,
-	NO_MOVEMENT
+	Pursue = 0,
+	Avoid,
+	Entice,
+	NoMovement
 };
 
 struct ObjectEvaluation
@@ -144,7 +146,7 @@ struct ObjectEvaluation
 	Element* ObjectPtr;
 	uint16_t facing;
 	uint16_t which_turn;
-	MOVEMENT_STATE MoveState;
+	MovementState MoveState;
 };
 
 typedef void(IntelligenceFunc)(Element* ShipPtr,
@@ -390,12 +392,14 @@ struct FleetInfo
 };
 
 // Values for FleetInfo.allied_state
-enum
+enum class RaceAllegiance
 {
-	DEAD_GUY = 0, // Race is extinct
-	GOOD_GUY,	  // Race is allied with the player
-	BAD_GUY,	  // Race is not allied with the player
+	Dead = 0, // Race is extinct
+	Good,	  // Race is allied with the player
+	Bad,	  // Race is not allied with the player
 };
+template <>
+inline constexpr bool IsArithmeticEnum<RaceAllegiance> = true;
 
 static inline FleetInfo* LockFleetInfo(const Queue* pq, HFLEETINFO h)
 {

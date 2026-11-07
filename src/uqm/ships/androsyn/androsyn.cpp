@@ -282,12 +282,12 @@ static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsO
 	if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 	{
 		ObjectsOfConcern[CREW_OBJECT_INDEX].ObjectPtr = 0;
-		if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
+		if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 		{
 			if ((lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
 				&& !(lpEvalDesc->ObjectPtr->state_flags & CrewObject))
 			{
-				lpEvalDesc->MoveState = AVOID;
+				lpEvalDesc->MoveState = MovementState::Avoid;
 			}
 			else
 			{
@@ -313,7 +313,7 @@ static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsO
 						|| (lpEvalDesc->ObjectPtr->crew_level > (BlazerDamage * 3)
 							&& Maneuverability(&pEnemyStarShip->RaceDescPtr->cyborg_control) > ResolutionCompensated(SlowShip)))))
 			{
-				lpEvalDesc->MoveState = ENTICE;
+				lpEvalDesc->MoveState = MovementState::Entice;
 			}
 		}
 
@@ -345,7 +345,7 @@ static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsO
 			{
 				StarShipPtr->ship_input_state |= WeaponFlag;
 			}
-			else if (lpEvalDesc->MoveState != PURSUE
+			else if (lpEvalDesc->MoveState != MovementState::Pursue
 					 && lpEvalDesc->which_turn <= 12)
 			{
 				int32_t ship_delta_x {};

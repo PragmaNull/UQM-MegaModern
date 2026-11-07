@@ -171,7 +171,7 @@ static ConversationData urquan_desc =
 
 static void CombatIsInevitable(RESPONSE_REF R)
 {
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 
 	if (PlayerSaid(R, you_must_surrender))
 	{
@@ -211,7 +211,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(GOOD_CHOICE);
 
-		setSegue(Segue_defeat);
+		setSegue(Segue::Defeat);
 	}
 	else if (PlayerSaid(R, like_to_leave))
 	{
@@ -221,7 +221,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(GOODBYE_WARS_OVER);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (PlayerSaid(R, bye_sub_hypno))
 	{
@@ -238,7 +238,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(BAD_NEWS);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, falling_asleep)
@@ -246,7 +246,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(SOUNDS_FAMILIAR);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
 }
@@ -494,7 +494,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -508,7 +508,7 @@ static void Intro(void)
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED))
 	{
-		SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 5);
+		SetCommIntroMode(CommIntroMode::FadeInScreen, c_gameSecond * 5);
 		UrquanHypno((RESPONSE_REF)0);
 	}
 	else
@@ -529,7 +529,7 @@ static void Intro(void)
 		{
 			NPCPhrase(CAUGHT_YA);
 
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 			return;
 		}
 
@@ -541,7 +541,7 @@ static void Intro(void)
 			NPCPhrase(HELLO_SAMATRA);
 
 			uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 		}
 		else
 		{
@@ -580,7 +580,7 @@ static void Intro(void)
 						break;
 					case 1:
 						NPCPhrase(SUBSEQUENT_FLEE_HUMAN);
-						setSegue(Segue_peace);
+						setSegue(Segue::Peace);
 						--NumVisits;
 						break;
 				}
@@ -634,11 +634,11 @@ ConversationData* init_urquan_comm(void)
 			&& uqm::gameState().game().BattleGroupRef
 			&& uqm::gameState().game().BattleGroupRef == GrpOffs))
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&urquan_desc};
 

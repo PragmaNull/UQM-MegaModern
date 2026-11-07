@@ -152,11 +152,11 @@ static void thraddash_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 		if (lpEvalDesc->which_turn > 8
 			|| (long)dx * dx + (long)dy * dy <= (long)StationarySpeed() * StationarySpeed())
 		{
-			lpEvalDesc->MoveState = PURSUE;
+			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 		else
 		{
-			lpEvalDesc->MoveState = ENTICE;
+			lpEvalDesc->MoveState = MovementState::Entice;
 		}
 	}
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
@@ -166,7 +166,7 @@ static void thraddash_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
 		if (ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
-			&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == ENTICE)
+			&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == MovementState::Entice)
 		{
 			if ((StarShipPtr->ship_input_state & ThrustFlag)
 				|| (ShipPtr->turn_wait == 0
@@ -183,7 +183,7 @@ static void thraddash_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 		}
 		else if (lpEvalDesc->ObjectPtr)
 		{
-			if (lpEvalDesc->MoveState == PURSUE)
+			if (lpEvalDesc->MoveState == MovementState::Pursue)
 			{
 				if (StarShipPtr->RaceDescPtr->ship_info.energy_level >= WeaponEnergyCost
 																			+ SpecialEnergyCost
@@ -196,7 +196,7 @@ static void thraddash_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 					StarShipPtr->ship_input_state |= SpecialFlag;
 				}
 			}
-			else if (lpEvalDesc->MoveState == ENTICE)
+			else if (lpEvalDesc->MoveState == MovementState::Entice)
 			{
 				int32_t delta_x {};
 				int32_t delta_y {};

@@ -123,15 +123,15 @@ void SetGameClockRate(uint16_t seconds_per_day)
 	gameClock().setDayInTicks(new_day_in_ticks);
 }
 
-bool ValidateEvent(EVENT_TYPE type, uint16_t* pmonth_index, uint16_t* pday_index,
+bool ValidateEvent(EventType type, uint16_t* pmonth_index, uint16_t* pday_index,
 				   uint16_t* pyear_index)
 {
 	return gameClock().resolveDate(type, *pmonth_index, *pday_index, *pyear_index);
 }
 
-HEVENT AddEvent(EVENT_TYPE type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index)
+HEVENT AddEvent(EventType type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index)
 {
-	if (type == RELATIVE_EVENT
+	if (type == EventType::Relative
 		&& month_index == 0
 		&& day_index == 0
 		&& year_index == 0)

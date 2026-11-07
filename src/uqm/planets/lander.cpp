@@ -862,7 +862,7 @@ static void ExplodeCritter(Element* ElementPtr)
 
 		ExplosionElementPtr->mass_points = DeathExplosion;
 		ExplosionElementPtr->state_flags = FiniteLife;
-		ExplosionElementPtr->playerNr = PS_NON_PLAYER;
+		ExplosionElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
 		ExplosionElementPtr->next.location = ElementPtr->next.location;
 		ExplosionElementPtr->preprocess_func = object_animation;
 		ExplosionElementPtr->turn_wait = uqm::makeByte(2, 2);
@@ -1038,7 +1038,7 @@ static void CheckObjectCollision(uint16_t index)
 			}
 
 			if (&DisplayArray[ElementPtr->PrimIndex] != pPrim
-				|| ElementPtr->playerNr != PS_NON_PLAYER)
+				|| ElementPtr->playerNr != PlanetsidePlayer::NonPlayer)
 			{
 				UnlockElement(hElement);
 				continue;
@@ -1239,7 +1239,7 @@ static void AddLightning(void)
 
 		LockElement(hLightningElement, &LightningElementPtr);
 
-		LightningElementPtr->playerNr = PS_NON_PLAYER;
+		LightningElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
 		LightningElementPtr->state_flags = FiniteLife;
 		LightningElementPtr->preprocess_func = lightning_process;
 		if (uqm::random().next() % 100 >= 25)
@@ -1303,7 +1303,7 @@ static HELEMENT AddGroundDisaster(uint16_t which_disaster)
 
 		Primitive* pPrim {&DisplayArray[GroundDisasterElementPtr->PrimIndex]};
 		GroundDisasterElementPtr->mass_points = which_disaster;
-		GroundDisasterElementPtr->playerNr = PS_NON_PLAYER;
+		GroundDisasterElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
 		GroundDisasterElementPtr->state_flags = FiniteLife;
 		GroundDisasterElementPtr->preprocess_func = object_animation;
 
@@ -1424,7 +1424,7 @@ static void BuildObjectList(void)
 			ElementPtr->next.location.x += dx;
 			ElementPtr->next.location.y += dy;
 			/* if not lander's shot */
-			if (ElementPtr->playerNr != PS_HUMAN_PLAYER)
+			if (ElementPtr->playerNr != PlanetsidePlayer::Human)
 			{
 				if (ElementPtr->next.location.y < 0)
 				{
@@ -1946,7 +1946,7 @@ static void LanderFire(int16_t facing)
 
 	LockElement(hWeaponElement, &WeaponElementPtr);
 
-	WeaponElementPtr->playerNr = PS_HUMAN_PLAYER;
+	WeaponElementPtr->playerNr = +PlanetsidePlayer::Human;
 	WeaponElementPtr->mass_points = 1;
 	WeaponElementPtr->life_span = 12;
 	WeaponElementPtr->state_flags = FiniteLife;
@@ -2011,7 +2011,7 @@ static void put_node(Element* ElementPtr)
 
 	NodeElementPtr->scan_node =
 		uqm::makeWord(MINERAL_SCAN, ElementPtr->cycle + 1);
-	NodeElementPtr->playerNr = PS_NON_PLAYER;
+	NodeElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
 	NodeElementPtr->current.location = info.loc_pt;
 
 	SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], PrimitiveType::Stamp);
@@ -2077,7 +2077,7 @@ static void spawn_node(Element* ElementPtr)
 				   - half_dist))
 		   << 1;
 
-		NodeElementPtr->playerNr = PS_NON_PLAYER;
+		NodeElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
 		NodeElementPtr->mass_points = 1;
 		NodeElementPtr->life_span = 1;
 		NodeElementPtr->state_flags = FiniteLife | Nonsolid;
@@ -2131,7 +2131,7 @@ static void LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amo
 
 	LockElement(hNodeElement, &NodeElementPtr);
 
-	NodeElementPtr->playerNr = PS_NON_PLAYER;
+	NodeElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
 	NodeElementPtr->mass_points = 1;
 	NodeElementPtr->life_span = dist;
 	NodeElementPtr->state_flags = FiniteLife | Nonsolid | Appearing;
@@ -2208,7 +2208,7 @@ static bool LanderExplosion(void)
 
 	LockElement(hExplosionElement, &ExplosionElementPtr);
 
-	ExplosionElementPtr->playerNr = PS_HUMAN_PLAYER;
+	ExplosionElementPtr->playerNr = +PlanetsidePlayer::Human;
 	ExplosionElementPtr->mass_points = DeathExplosion;
 	ExplosionElementPtr->state_flags = FiniteLife;
 	ExplosionElementPtr->next.location = curLanderLoc;

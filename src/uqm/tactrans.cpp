@@ -111,7 +111,7 @@ void ResetWinnerStarShip(void)
 #ifdef NETPLAY
 static void readyToEnd2Callback(NetConnection* conn, void* arg)
 {
-	NetConnection_setState(conn, NetState_endingBattle2);
+	NetConnection_setState(conn, NetState::EndingBattle2);
 	(void)arg;
 }
 
@@ -128,7 +128,7 @@ static void readyToEndCallback(NetConnection* conn, void* arg)
 	fmt::print(stderr, "Both sides are ready to end the battle; starting "
 					   "end-of-battle synchronisation.\n");
 #endif
-	NetConnection_setState(conn, NetState_endingBattle);
+	NetConnection_setState(conn, NetState::EndingBattle);
 	if (battleFrameCount + 1 > battleStateData->endFrameCount)
 	{
 		battleStateData->endFrameCount = battleFrameCount + 1;
@@ -172,14 +172,14 @@ static bool readyForBattleEndPlayer(NetConnection* conn)
 {
 	const BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 
-	if (NetConnection_getState(conn) == NetState_interBattle || NetConnection_getState(conn) == NetState_inSetup)
+	if (NetConnection_getState(conn) == NetState::InterBattle || NetConnection_getState(conn) == NetState::InSetup)
 	{
 		// This connection is already ready. The entire synchronisation
 		// protocol has already been done for this connection.
 		return true;
 	}
 
-	if (NetConnection_getState(conn) == NetState_inBattle)
+	if (NetConnection_getState(conn) == NetState::InBattle)
 	{
 		if (Netplay_isLocalReady(conn))
 		{
@@ -192,13 +192,13 @@ static bool readyForBattleEndPlayer(NetConnection* conn)
 		Netplay_localReady(conn, readyToEndCallback, nullptr, true);
 		// This may set the state to endingBattle.
 
-		if (NetConnection_getState(conn) == NetState_inBattle)
+		if (NetConnection_getState(conn) == NetState::InBattle)
 		{
 			return false;
 		}
 	}
 
-	assert(NetConnection_getState(conn) == NetState_endingBattle || NetConnection_getState(conn) == NetState_endingBattle2);
+	assert(NetConnection_getState(conn) == NetState::EndingBattle || NetConnection_getState(conn) == NetState::EndingBattle2);
 
 	// Keep the simulation going as long as the target frame count
 	// hasn't been reached yet. Note that if the connection state is
@@ -209,14 +209,14 @@ static bool readyForBattleEndPlayer(NetConnection* conn)
 		return false;
 	}
 
-	if (NetConnection_getState(conn) == NetState_endingBattle)
+	if (NetConnection_getState(conn) == NetState::EndingBattle)
 	{
 		// We have reached the target frame count, but we don't know
 		// the remote target frame count yet. So we wait until it has
 		// come in.
 		waitReady(conn);
 		// TODO: check whether all connections are still connected.
-		assert(NetConnection_getState(conn) == NetState_endingBattle2);
+		assert(NetConnection_getState(conn) == NetState::EndingBattle2);
 
 		// Continue the simulation if the battleFrameCount has gone up.
 		if (battleFrameCount < battleStateData->endFrameCount)
@@ -226,7 +226,7 @@ static bool readyForBattleEndPlayer(NetConnection* conn)
 	}
 
 	// We are ready and wait for the other party to become ready too.
-	negotiateReady(conn, true, NetState_interBattle);
+	negotiateReady(conn, true, NetState::InterBattle);
 
 	return true;
 }
@@ -479,7 +479,7 @@ void new_ship(Element* DeadShipPtr)
 		initBattleStateDataConnections();
 		{
 			const bool allOk =
-				negotiateReadyConnections(true, NetState_interBattle);
+				negotiateReadyConnections(true, NetState::InterBattle);
 			// We are already in NetState_interBattle, but all
 			// sides just need to pass this checkpoint before
 			// going on.
@@ -505,7 +505,7 @@ void new_ship(Element* DeadShipPtr)
 #ifdef NETPLAY
 			{
 				const bool allOk =
-					negotiateReadyConnections(true, NetState_inBattle);
+					negotiateReadyConnections(true, NetState::InBattle);
 				if (!allOk)
 				{
 					// Some network connection has been reset.

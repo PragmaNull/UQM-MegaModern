@@ -290,10 +290,10 @@ static void slylandro_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 	{
 		ConcernCounter = FIRST_EMPTY_INDEX + 1;
 	}
-	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == PURSUE
+	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Pursue
 		&& lpEvalDesc->which_turn <= 6)
 	{
-		lpEvalDesc->MoveState = ENTICE;
+		lpEvalDesc->MoveState = MovementState::Entice;
 	}
 
 	++ShipPtr->thrust_wait;

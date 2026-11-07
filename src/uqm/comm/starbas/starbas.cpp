@@ -994,7 +994,7 @@ static void AnalyzeCondition(void)
 		const uint16_t FleetStrength {CalculateEscortsWorth()};
 		for (i = 0; i < NUM_AVAILABLE_RACES; ++i)
 		{
-			if (i != HUMAN_SHIP && CheckAlliance((RACE_ID)i) == GOOD_GUY)
+			if (i != HUMAN_SHIP && CheckAlliance((RACE_ID)i) == RaceAllegiance::Good)
 			{
 				++num_aliens;
 			}
@@ -1720,31 +1720,31 @@ static void CheckBulletins(bool Repeat)
 			switch (b0)
 			{
 				case 0:
-					if (CheckAlliance(SPATHI_SHIP) == GOOD_GUY)
+					if (CheckAlliance(SPATHI_SHIP) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_1;
 					}
 					break;
 				case 1:
-					if (CheckAlliance(ZOQFOTPIK_SHIP) == GOOD_GUY)
+					if (CheckAlliance(ZOQFOTPIK_SHIP) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_2;
 					}
 					break;
 				case 2:
-					if (CheckAlliance(SUPOX_SHIP) == GOOD_GUY)
+					if (CheckAlliance(SUPOX_SHIP) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_3;
 					}
 					break;
 				case 3:
-					if (CheckAlliance(UTWIG_SHIP) == GOOD_GUY)
+					if (CheckAlliance(UTWIG_SHIP) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_4;
 					}
 					break;
 				case 4:
-					if (CheckAlliance(ORZ_SHIP) == GOOD_GUY)
+					if (CheckAlliance(ORZ_SHIP) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_5;
 					}
@@ -1818,13 +1818,13 @@ static void CheckBulletins(bool Repeat)
 					}
 					break;
 				case 12:
-					if (CheckAlliance(CHMMR_SHIP) == GOOD_GUY)
+					if (CheckAlliance(CHMMR_SHIP) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_13;
 					}
 					break;
 				case 13:
-					if (CheckAlliance(SHOFIXTI_SHIP) == GOOD_GUY)
+					if (CheckAlliance(SHOFIXTI_SHIP) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_14;
 					}
@@ -2192,7 +2192,7 @@ ConversationData* init_starbase_comm()
 	}
 
 	CurBulletinMask = 0;
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	ConversationData* retval {&commander_desc};
 
 	return (retval);

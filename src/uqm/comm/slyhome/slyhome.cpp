@@ -231,7 +231,7 @@ static AnimFilterSet slyhome_filters =
 static void ExitConversation(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_HOME_VISITS))
 	{
@@ -834,7 +834,7 @@ static void HomeWorld(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP, static_cast<uint32_t>(1));
 		i = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER) + 1;
 		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_MULTIPLIER, static_cast<uint32_t>(i));
-		AddEvent(RELATIVE_EVENT, 0, 0, 0, SLYLANDRO_RAMP_DOWN);
+		AddEvent(EventType::Relative, 0, 0, 0, SLYLANDRO_RAMP_DOWN);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK1))
@@ -1000,7 +1000,7 @@ ConversationData* init_slylandro_comm(void)
 	slylandro_desc.AlienTextBaseline.y = 0;
 	slylandro_desc.AlienTextWidth = SisTextWidth();
 
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	ConversationData* retval {&slylandro_desc};
 
 	return (retval);

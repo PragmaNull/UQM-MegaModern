@@ -234,7 +234,7 @@ static AnimFilterSet orz_filters =
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	if (PlayerSaid(R, bye_ally))
 	{
@@ -263,7 +263,7 @@ static void ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(HOSTILITY_IS_BAD_2);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, may_we_land))
 	{
@@ -293,7 +293,7 @@ static void ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(NO_DEMAND);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, about_andro_3)
 			 || PlayerSaid(R, must_know_about_androsyn))
@@ -318,7 +318,7 @@ static void ExitConversation(RESPONSE_REF R)
 
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(2));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 		if (PlayerSaid(R, about_andro_3))
 		{
 			SetRaceAllied(ORZ_SHIP, false);
@@ -340,14 +340,14 @@ static void ExitConversation(RESPONSE_REF R)
 				break;
 			case 2:
 				NPCPhrase(INSULTED_3);
-				setSegue(Segue_hostile);
+				setSegue(Segue::Hostile);
 				break;
 			case 7:
 				--NumVisits;
 				FALLTHROUGH;
 			default:
 				NPCPhrase(INSULTED_4);
-				setSegue(Segue_hostile);
+				setSegue(Segue::Hostile);
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(NumVisits));
@@ -415,7 +415,7 @@ static void TaaloWorld(RESPONSE_REF R)
 
 	if (PhraseEnabled(may_we_land))
 	{
-		if (Manner == 3 && CheckAlliance(ORZ_SHIP) == GOOD_GUY)
+		if (Manner == 3 && CheckAlliance(ORZ_SHIP) == RaceAllegiance::Good)
 		{
 			Response(may_we_land, ExitConversation);
 		}
@@ -762,7 +762,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -799,7 +799,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
@@ -834,7 +834,7 @@ static void Intro(void)
 
 		TaaloWorld((RESPONSE_REF)0);
 	}
-	else if (Manner == 3 && CheckAlliance(ORZ_SHIP) == GOOD_GUY)
+	else if (Manner == 3 && CheckAlliance(ORZ_SHIP) == RaceAllegiance::Good)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
@@ -983,7 +983,7 @@ static void post_orz_enc(void)
 {
 	uint8_t Manner {};
 
-	if (getSegue() == Segue_hostile
+	if (getSegue() == Segue::Hostile
 		&& (Manner = uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER)) != 2)
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(1));
@@ -1013,11 +1013,11 @@ ConversationData* init_orz_comm(void)
 	if (uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&orz_desc};
 

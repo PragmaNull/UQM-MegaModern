@@ -82,7 +82,7 @@ void queuePacket(NetConnection* conn, Packet* packet)
 	// XXX: perhaps check that this queue isn't getting too large?
 
 #ifdef NETPLAY_DEBUG
-	if (packetType(packet) != PACKET_BATTLEINPUT && packetType(packet) != PACKET_CHECKSUM)
+	if (packetType(packet) != PacketType::BattleInput && packetType(packet) != PacketType::Checksum)
 	{
 		// Reporting BattleInput or Checksum would get so spammy that it
 		// would slow down the battle.

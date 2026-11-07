@@ -596,7 +596,7 @@ static void OutTakes(void)
 
 	for (i = 0; (i < NumOuttakes) && !(uqm::currentActivity() & CHECK_ABORT); i++)
 	{
-		SetCommIntroMode(CIM_CROSSFADE_WINDOW, TimePeriod {});
+		SetCommIntroMode(CommIntroMode::CrossfadeWindow, TimePeriod {});
 		InitCommunication(outtake_list[i]);
 	}
 

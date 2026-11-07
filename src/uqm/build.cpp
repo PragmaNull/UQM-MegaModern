@@ -430,13 +430,13 @@ bool SetRaceAllied(RACE_ID race, bool flag)
 
 	FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 
-	if (FleetPtr->allied_state == DEAD_GUY)
+	if (FleetPtr->allied_state == RaceAllegiance::Dead)
 	{
 		/* Strange request, silently ignore it */
 	}
 	else
 	{
-		FleetPtr->allied_state = (flag ? GOOD_GUY : BAD_GUY);
+		FleetPtr->allied_state = +(flag ? RaceAllegiance::Good : RaceAllegiance::Bad);
 	}
 
 	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
@@ -464,7 +464,7 @@ uint16_t StartSphereTracking(RACE_ID race)
 	if (FleetPtr->actual_strength == 0)
 	{
 		// Race has no Sphere of Influence.
-		if (FleetPtr->allied_state == DEAD_GUY)
+		if (FleetPtr->allied_state == RaceAllegiance::Dead)
 		{
 			// Race is extinct.
 			UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
@@ -523,7 +523,7 @@ bool KillRace(RACE_ID race)
 
 	FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 
-	FleetPtr->allied_state = DEAD_GUY;
+	FleetPtr->allied_state = +RaceAllegiance::Dead;
 	FleetPtr->actual_strength = 0;
 
 	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
@@ -609,7 +609,7 @@ uint16_t CheckAlliance(RACE_ID race)
 
 bool RaceDead(RACE_ID race)
 {
-	return CheckAlliance(race) == DEAD_GUY;
+	return CheckAlliance(race) == RaceAllegiance::Dead;
 }
 
 /*

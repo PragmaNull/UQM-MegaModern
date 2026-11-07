@@ -375,18 +375,18 @@ static void ship_movement(Element* ShipPtr, ObjectEvaluation* EvalDescPtr)
 
 	switch (EvalDescPtr->MoveState)
 	{
-		case PURSUE:
+		case MovementState::Pursue:
 			Pursue(ShipPtr, EvalDescPtr);
 			break;
-		case AVOID:
+		case MovementState::Avoid:
 #ifdef NOTYET
 			Avoid(ShipPtr, EvalDescPtr);
 			break;
 #endif /* NOTYET */
-		case ENTICE:
+		case MovementState::Entice:
 			Entice(ShipPtr, EvalDescPtr);
 			break;
-		case NO_MOVEMENT:
+		case MovementState::NoMovement:
 			break;
 	}
 }
@@ -526,7 +526,7 @@ void ship_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 		{
 			if (!ShipMoved
 				&& (ConcernCounter != ENEMY_WEAPON_INDEX
-					|| ObjectsOfConcern->MoveState == PURSUE
+					|| ObjectsOfConcern->MoveState == MovementState::Pursue
 					|| (ObjectsOfConcern->ObjectPtr->state_flags & CrewObject)
 					|| Maneuverability(
 						   &StarShipPtr->RaceDescPtr->cyborg_control)
@@ -538,7 +538,7 @@ void ship_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 			if (!ShipFired
 				&& (ConcernCounter == ENEMY_SHIP_INDEX
 					|| (ConcernCounter == ENEMY_WEAPON_INDEX
-						&& ObjectsOfConcern->MoveState != AVOID
+						&& ObjectsOfConcern->MoveState != MovementState::Avoid
 #ifdef NEVER
 						&& !(StarShipPtr->control & STANDARD_RATING)
 #endif /* NEVER */
@@ -865,7 +865,7 @@ void Entice(Element* ShipPtr, ObjectEvaluation* EvalDescPtr)
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	RaceDesc* RDPtr {StarShipPtr->RaceDescPtr};
-	if (EvalDescPtr->MoveState == AVOID)
+	if (EvalDescPtr->MoveState == MovementState::Avoid)
 	{
 		desired_turn_angle =
 			NormalizeAngle(desired_turn_angle - EvalDescPtr->facing);
@@ -1195,7 +1195,7 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 		 ConcernCounter <= FIRST_EMPTY_INDEX; ++ConcernCounter)
 	{
 		ObjectsOfConcern[ConcernCounter].ObjectPtr = 0;
-		ObjectsOfConcern[ConcernCounter].MoveState = NO_MOVEMENT;
+		ObjectsOfConcern[ConcernCounter].MoveState = MovementState::NoMovement;
 		ObjectsOfConcern[ConcernCounter].which_turn = (uint16_t)~0;
 	}
 	--ConcernCounter;
@@ -1219,7 +1219,7 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 	{
 		ObjectEvaluation ed;
 
-		ed.MoveState = NO_MOVEMENT;
+		ed.MoveState = MovementState::NoMovement;
 
 		LockElement(hElement, &ed.ObjectPtr);
 		hNextElement = GetSuccElement(ed.ObjectPtr);
@@ -1272,11 +1272,11 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 						ed.facing = ARCTAN(-dx, -dy);
 						if (UltraManeuverable)
 						{
-							ed.MoveState = AVOID;
+							ed.MoveState = MovementState::Avoid;
 						}
 						else // Try a gravity whip
 						{
-							ed.MoveState = ENTICE;
+							ed.MoveState = MovementState::Entice;
 						}
 
 						ObjectsOfConcern[GRAVITY_MASS_INDEX] = ed;
@@ -1336,17 +1336,17 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 								RDPtr->characteristics.max_thrust < EnemyRDPtr->characteristics.max_thrust
 #endif /* !OLD */
 								&& GetWeaponRange(&RDPtr->cyborg_control) < GetWeaponRange(&EnemyRDPtr->cyborg_control)))))
-					ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = PURSUE;
+					ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = MovementState::Pursue;
 				else
 				{
-					ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = ENTICE;
+					ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = MovementState::Entice;
 				}
 
 				if ((EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & ImmediateWeapon)
 					&& ship_weapons(ed.ObjectPtr, &Ship, 0))
 				{
 					ed.which_turn = 1;
-					ed.MoveState = AVOID;
+					ed.MoveState = MovementState::Avoid;
 					ed.facing = ObjectsOfConcern[ENEMY_SHIP_INDEX].facing;
 
 					ObjectsOfConcern[ENEMY_WEAPON_INDEX] = ed;
@@ -1361,7 +1361,7 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 
 					if (ed.which_turn < ObjectsOfConcern[FIRST_EMPTY_INDEX].which_turn)
 					{
-						ed.MoveState = PURSUE;
+						ed.MoveState = MovementState::Pursue;
 						ed.facing = GetVelocityTravelAngle(
 							&ed.ObjectPtr->velocity);
 
@@ -1396,7 +1396,7 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 						ed.which_turn = ResDescale(WorldToTurn(
 							square_root((long)dx * dx + (long)dy * dy)));
 
-						ed.MoveState = ENTICE;
+						ed.MoveState = MovementState::Entice;
 
 						if (ed.which_turn == 0)
 						{
@@ -1420,13 +1420,13 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 						PlotIntercept(ed.ObjectPtr,
 									  &Ship, ed.ObjectPtr->life_span,
 									  DisplayToWorld(ResScale(40)));
-					ed.MoveState = AVOID;
+					ed.MoveState = MovementState::Avoid;
 				}
 
 				if (ed.which_turn > 0
 					&& (ed.which_turn < ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn
 						|| (ed.which_turn == ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn
-							&& ed.MoveState == AVOID)))
+							&& ed.MoveState == MovementState::Avoid)))
 				{
 					ed.facing = GetVelocityTravelAngle(
 						&ed.ObjectPtr->velocity);
@@ -1453,7 +1453,7 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 						|| (ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn > 8
 							&& StarShipPtr->hShip == ed.ObjectPtr->hTarget)))
 				{
-					ed.MoveState = PURSUE;
+					ed.MoveState = MovementState::Pursue;
 					ed.facing = 0;
 					ObjectsOfConcern[CREW_OBJECT_INDEX] = ed;
 				}

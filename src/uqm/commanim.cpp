@@ -85,13 +85,13 @@ static void SetupAmbientSequences(AnimSequence* pSeq, uint16_t Num)
 		pSeq->ADPtr = ADPtr;
 		if (ADPtr->AnimFlags & ColorxformAnim)
 		{
-			pSeq->AnimType = COLOR_ANIM;
+			pSeq->AnimType = AnimType::Color;
 		}
 		else
 		{
-			pSeq->AnimType = PICTURE_ANIM;
+			pSeq->AnimType = AnimType::Picture;
 		}
-		pSeq->Direction = UP_DIR;
+		pSeq->Direction = AnimDir::Up;
 		pSeq->FramesLeft = ADPtr->NumFrames;
 		// Default: first frame is neutral
 		if (ADPtr->AnimFlags & RandomAnim)
@@ -120,7 +120,7 @@ static void SetupTalkSequence(AnimSequence* pSeq, AnimationDesc* ADPtr)
 	// Initially disabled, and until needed
 	ADPtr->AnimFlags |= AnimDisabled;
 	pSeq->ADPtr = ADPtr;
-	pSeq->AnimType = PICTURE_ANIM;
+	pSeq->AnimType = AnimType::Picture;
 }
 
 static inline bool animAtNeutralIndex(AnimSequence* pSeq)
@@ -151,7 +151,7 @@ static void ProcessColormapAnims(AnimSequence* pSeq, uint16_t Num)
 		const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 		if ((ADPtr->AnimFlags & AnimDisabled)
-			|| pSeq->AnimType != COLOR_ANIM
+			|| pSeq->AnimType != AnimType::Color
 			|| !pSeq->Change)
 		{
 			continue;
@@ -202,7 +202,7 @@ static bool AdvanceAmbientSequence(AnimSequence* pSeq)
 		{ // YoyoAnim never draws the first frame
 			// ("first" depends on direction)
 			--pSeq->FramesLeft;
-			pSeq->Direction = (ANIM_DIR)-pSeq->Direction;
+			pSeq->Direction = (AnimDir)-pSeq->Direction;
 		}
 		else if (ADPtr->AnimFlags & CircularAnim)
 		{ // Rewind the CircularAnim
@@ -218,7 +218,7 @@ static bool AdvanceAmbientSequence(AnimSequence* pSeq)
 	}
 	else
 	{
-		pSeq->NextIndex += pSeq->Direction;
+		pSeq->NextIndex += +pSeq->Direction;
 	}
 
 	return active;
@@ -229,7 +229,7 @@ static void ResetSequence(AnimSequence* pSeq)
 	// Reset the animation and cause a redraw of the neutral frame,
 	// assuming it is not AnimDisabled
 	// NOTE: This does not handle CircularAnim properly
-	pSeq->Direction = NO_DIR;
+	pSeq->Direction = AnimDir::None;
 	pSeq->CurIndex = 0;
 	pSeq->Change = true;
 }
@@ -241,9 +241,9 @@ static void AdvanceTalkingSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 	// when it is safe to do so.
 	AnimationDesc* ADPtr = pSeq->ADPtr;
 
-	if (pSeq->Direction == NO_DIR)
+	if (pSeq->Direction == AnimDir::None)
 	{ // just starting now
-		pSeq->Direction = UP_DIR;
+		pSeq->Direction = AnimDir::Up;
 		// It's now safe to pick up new Talk descriptor if changed
 		// (e.g. Zoq and Pik taking turns to talk)
 		if (CommData.AlienTalkDesc.StartIndex != ADPtr->StartIndex)
@@ -294,7 +294,7 @@ static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 	// when it is safe to do so.
 	AnimationDesc* ADPtr = pSeq->ADPtr;
 
-	if (pSeq->Direction == NO_DIR)
+	if (pSeq->Direction == AnimDir::None)
 	{					 // just starting now
 		pSeq->Alarm = 0; // now!
 		ADPtr->AnimFlags &= ~AnimDisabled;
@@ -309,7 +309,7 @@ static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 	// Time to start or advance the animation
 	pSeq->Change = true;
 
-	if (pSeq->Direction == NO_DIR)
+	if (pSeq->Direction == AnimDir::None)
 	{ // just starting now
 		pSeq->FramesLeft = ADPtr->NumFrames;
 		// Both INTRO and DONE may be set at the same time,
@@ -318,12 +318,12 @@ static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 		// a neutral state before switching over.
 		if (CommData.AlienTransitionDesc.AnimFlags & TalkDone)
 		{
-			pSeq->Direction = DOWN_DIR;
+			pSeq->Direction = AnimDir::Down;
 			pSeq->CurIndex = ADPtr->NumFrames - 1;
 		}
 		else if (CommData.AlienTransitionDesc.AnimFlags & TalkIntro)
 		{
-			pSeq->Direction = UP_DIR;
+			pSeq->Direction = AnimDir::Up;
 			// It's now safe to pick up new Transition descriptor if changed
 			// (e.g. Zoq and Pik taking turns to talk)
 			if (CommData.AlienTransitionDesc.StartIndex
@@ -339,11 +339,11 @@ static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 	--pSeq->FramesLeft;
 	if (pSeq->FramesLeft == 0)
 	{ // animation is done
-		if (pSeq->Direction == UP_DIR)
+		if (pSeq->Direction == AnimDir::Up)
 		{ // done with TalkIntro transition
 			CommData.AlienTransitionDesc.AnimFlags &= ~TalkIntro;
 		}
-		else if (pSeq->Direction == DOWN_DIR)
+		else if (pSeq->Direction == AnimDir::Down)
 		{ // done with TalkDone transition
 			CommData.AlienTransitionDesc.AnimFlags &= ~TalkDone;
 
@@ -351,12 +351,12 @@ static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 			ADPtr->AnimFlags |= AnimDisabled;
 			done = true;
 		}
-		pSeq->Direction = NO_DIR;
+		pSeq->Direction = AnimDir::None;
 	}
 	else
 	{ // next frame
 		pSeq->Alarm = randomFrameRate(pSeq);
-		pSeq->CurIndex += pSeq->Direction;
+		pSeq->CurIndex += +pSeq->Direction;
 	}
 
 	return done;
@@ -430,11 +430,11 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 				continue;
 			}
 
-			if (pSeq->Direction == NO_DIR)
+			if (pSeq->Direction == AnimDir::None)
 			{ // animation is paused
 				if (!conflictsWithTalkingAnim(pSeq))
 				{ // start it up
-					pSeq->Direction = UP_DIR;
+					pSeq->Direction = AnimDir::Up;
 				}
 			}
 			else if (pSeq->Alarm > ElapsedTicks)
@@ -465,7 +465,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 				}
 			}
 
-			if (pSeq->AnimType == PICTURE_ANIM && pSeq->Direction != NO_DIR
+			if (pSeq->AnimType == AnimType::Picture && pSeq->Direction != AnimDir::None
 				&& conflictsWithTalkingAnim(pSeq))
 			{
 				// We want to talk, but this is a running picture animation
@@ -473,7 +473,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 				// See if it is safe to stop it now.
 				if (animAtNeutralIndex(pSeq))
 				{ // pause the animation
-					pSeq->Direction = NO_DIR;
+					pSeq->Direction = AnimDir::None;
 					NextActiveMask &= ~ActiveBit;
 					// Talk animation is drawn last, so it's not a conflict
 					// for this frame. The talk animation will be drawn
@@ -509,7 +509,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 				&& !signaledFreezeTalkingAnim())
 			{ // Transitioning in or out of talking
 				if ((CommData.AlienTransitionDesc.AnimFlags & TalkDone)
-					&& Transit->Direction == NO_DIR)
+					&& Transit->Direction == AnimDir::None)
 				{ // This is needed when switching talking anims
 					ResetSequence(Talk);
 				}
@@ -533,7 +533,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 		}
 		else
 		{ // Not talking -- disable talking anim if it is done
-			if (Talk->Direction == NO_DIR)
+			if (Talk->Direction == AnimDir::None)
 			{
 				TalkDesc.AnimFlags |= AnimDisabled;
 			}
@@ -688,7 +688,7 @@ bool DrawAlienFrame(AnimSequence* Sequences, uint16_t Num, bool fullRedraw)
 			const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 			if ((ADPtr->AnimFlags & AnimDisabled)
-				|| pSeq->AnimType != PICTURE_ANIM)
+				|| pSeq->AnimType != AnimType::Picture)
 			{
 				continue;
 			}

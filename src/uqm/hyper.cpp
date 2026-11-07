@@ -681,12 +681,12 @@ static void cleanup_hyperspace(void)
 	}
 }
 
-typedef enum
+enum class TransitionType
 {
-	RANDOM_ENCOUNTER_TRANSITION,
-	INTERPLANETARY_TRANSITION,
-	ARILOU_SPACE_TRANSITION
-} TRANSITION_TYPE;
+	RandomEncounter,
+	Interplanetary,
+	ArilouSpace
+};
 
 static void InterplanetaryTransition(Element* ElementPtr)
 {
@@ -849,17 +849,17 @@ static void unhyper_transition(Element* ElementPtr)
 		cleanup_hyperspace();
 
 		uqm::currentActivity() &= ~IN_BATTLE;
-		switch ((TRANSITION_TYPE)ElementPtr->turn_wait)
+		switch ((TransitionType)ElementPtr->turn_wait)
 		{
-			case RANDOM_ENCOUNTER_TRANSITION:
+			case TransitionType::RandomEncounter:
 				SaveSisHyperState();
 				SetBattlePlanet();
 				uqm::currentActivity() |= START_ENCOUNTER;
 				break;
-			case INTERPLANETARY_TRANSITION:
+			case TransitionType::Interplanetary:
 				InterplanetaryTransition(ElementPtr);
 				break;
-			case ARILOU_SPACE_TRANSITION:
+			case TransitionType::ArilouSpace:
 				ArilouSpaceTransition();
 				break;
 		}
@@ -874,7 +874,7 @@ static void unhyper_transition(Element* ElementPtr)
 }
 
 static void init_transition(Element* ElementPtr0, Element* ElementPtr1,
-							TRANSITION_TYPE which_transition)
+							TransitionType which_transition)
 {
 	int16_t dx {};
 	int16_t dy {};
@@ -1068,7 +1068,7 @@ static void hyper_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			ElementPtr0->state_flags |= Collision;
 
 			init_transition(ElementPtr0, ElementPtr1,
-							INTERPLANETARY_TRANSITION);
+							TransitionType::Interplanetary);
 		}
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
@@ -1120,7 +1120,7 @@ static void arilou_space_collision(Element* ElementPtr0,
 		else
 		{
 			init_transition(ElementPtr0, ElementPtr1,
-							ARILOU_SPACE_TRANSITION);
+							TransitionType::ArilouSpace);
 		}
 	}
 
@@ -1329,7 +1329,7 @@ static void encounter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	}
 
 	init_transition(ElementPtr0, ElementPtr1,
-					RANDOM_ENCOUNTER_TRANSITION);
+					TransitionType::RandomEncounter);
 
 	for (hEncounter = GetHeadEncounter();
 		 hEncounter != 0; hEncounter = hNextEncounter)

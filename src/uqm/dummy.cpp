@@ -21,6 +21,7 @@
  * much.
  */
 
+#include "core/types/enum.h"
 #include "dummy.h"
 
 #include "coderes.h"
@@ -39,38 +40,40 @@ struct CodeResData
 	RaceDesc data;
 };
 
-typedef enum
+enum class ShipCodeRes
 {
-	ANDROSYN_CODE_RES,
-	ARILOU_CODE_RES,
-	BLACKURQ_CODE_RES,
-	CHENJESU_CODE_RES,
-	CHMMR_CODE_RES,
-	DRUUGE_CODE_RES,
-	HUMAN_CODE_RES,
-	ILWRATH_CODE_RES,
-	MELNORME_CODE_RES,
-	MMRNMHRM_CODE_RES,
-	MYCON_CODE_RES,
-	ORZ_CODE_RES,
-	PKUNK_CODE_RES,
-	SHOFIXTI_CODE_RES,
-	SLYLANDR_CODE_RES,
-	SPATHI_CODE_RES,
-	SUPOX_CODE_RES,
-	SYREEN_CODE_RES,
-	THRADD_CODE_RES,
-	UMGAH_CODE_RES,
-	URQUAN_CODE_RES,
-	UTWIG_CODE_RES,
-	VUX_CODE_RES,
-	YEHAT_CODE_RES,
-	ZOQFOT_CODE_RES,
+	Androsyn,
+	Arilou,
+	Blackurq,
+	Chenjesu,
+	Chmmr,
+	Druuge,
+	Human,
+	Ilwrath,
+	Melnorme,
+	Mmrnmhrm,
+	Mycon,
+	Orz,
+	Pkunk,
+	Shofixti,
+	Slylandr,
+	Spathi,
+	Supox,
+	Syreen,
+	Thradd,
+	Umgah,
+	Urquan,
+	Utwig,
+	Vux,
+	Yehat,
+	Zoqfot,
 
-	SAMATRA_CODE_RES,
-	SIS_CODE_RES,
-	PROBE_CODE_RES
-} ShipCodeRes;
+	Samatra,
+	Sis,
+	Probe
+};
+template <>
+inline constexpr bool IsArithmeticEnum<ShipCodeRes> = true;
 
 typedef RaceDesc* (*RaceDescInitFunc)(void);
 
@@ -78,61 +81,61 @@ static RaceDescInitFunc CodeResToInitFunc(ShipCodeRes res)
 {
 	switch (res)
 	{
-		case ANDROSYN_CODE_RES:
+		case ShipCodeRes::Androsyn:
 			return &init_androsynth;
-		case ARILOU_CODE_RES:
+		case ShipCodeRes::Arilou:
 			return &init_arilou;
-		case BLACKURQ_CODE_RES:
+		case ShipCodeRes::Blackurq:
 			return &init_black_urquan;
-		case CHENJESU_CODE_RES:
+		case ShipCodeRes::Chenjesu:
 			return &init_chenjesu;
-		case CHMMR_CODE_RES:
+		case ShipCodeRes::Chmmr:
 			return &init_chmmr;
-		case DRUUGE_CODE_RES:
+		case ShipCodeRes::Druuge:
 			return &init_druuge;
-		case HUMAN_CODE_RES:
+		case ShipCodeRes::Human:
 			return &init_human;
-		case ILWRATH_CODE_RES:
+		case ShipCodeRes::Ilwrath:
 			return &init_ilwrath;
-		case MELNORME_CODE_RES:
+		case ShipCodeRes::Melnorme:
 			return &init_melnorme;
-		case MMRNMHRM_CODE_RES:
+		case ShipCodeRes::Mmrnmhrm:
 			return &init_mmrnmhrm;
-		case MYCON_CODE_RES:
+		case ShipCodeRes::Mycon:
 			return &init_mycon;
-		case ORZ_CODE_RES:
+		case ShipCodeRes::Orz:
 			return &init_orz;
-		case PKUNK_CODE_RES:
+		case ShipCodeRes::Pkunk:
 			return &init_pkunk;
-		case SHOFIXTI_CODE_RES:
+		case ShipCodeRes::Shofixti:
 			return &init_shofixti;
-		case SLYLANDR_CODE_RES:
+		case ShipCodeRes::Slylandr:
 			return &init_slylandro;
-		case SPATHI_CODE_RES:
+		case ShipCodeRes::Spathi:
 			return &init_spathi;
-		case SUPOX_CODE_RES:
+		case ShipCodeRes::Supox:
 			return &init_supox;
-		case SYREEN_CODE_RES:
+		case ShipCodeRes::Syreen:
 			return &init_syreen;
-		case THRADD_CODE_RES:
+		case ShipCodeRes::Thradd:
 			return &init_thraddash;
-		case UMGAH_CODE_RES:
+		case ShipCodeRes::Umgah:
 			return &init_umgah;
-		case URQUAN_CODE_RES:
+		case ShipCodeRes::Urquan:
 			return &init_urquan;
-		case UTWIG_CODE_RES:
+		case ShipCodeRes::Utwig:
 			return &init_utwig;
-		case VUX_CODE_RES:
+		case ShipCodeRes::Vux:
 			return &init_vux;
-		case YEHAT_CODE_RES:
+		case ShipCodeRes::Yehat:
 			return &init_yehat;
-		case ZOQFOT_CODE_RES:
+		case ShipCodeRes::Zoqfot:
 			return &init_zoqfotpik;
-		case SAMATRA_CODE_RES:
+		case ShipCodeRes::Samatra:
 			return &init_samatra;
-		case SIS_CODE_RES:
+		case ShipCodeRes::Sis:
 			return &init_sis;
-		case PROBE_CODE_RES:
+		case ShipCodeRes::Probe:
 			return &init_probe;
 		default:
 			{

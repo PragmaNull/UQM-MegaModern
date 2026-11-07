@@ -19,6 +19,7 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_NETSTATE_H_
 #define UQM_SUPERMELEE_NETPLAY_NETSTATE_H_
 
+#include "core/types/enum.h"
 #include "port.h"
 
 #if 0 //defined(__cplusplus)
@@ -28,19 +29,21 @@ extern "C" {
 typedef struct NetConnectionStateData NetConnectionStateData;
 
 // State of a NetConnection.
-typedef enum
+enum class NetState
 {
-	NetState_unconnected,	/* No connection initiated */
-	NetState_connecting,	/* Connection being setup */
-	NetState_init,			/* Initialising the connection */
-	NetState_inSetup,		/* In the network game setup */
-	NetState_preBattle,		/* Pre-battle initialisations */
-	NetState_interBattle,	/* Negotiations between battles. */
-	NetState_selectShip,	/* Selecting a ship in battle */
-	NetState_inBattle,		/* Battle has started */
-	NetState_endingBattle,	/* Both sides are prepared to end */
-	NetState_endingBattle2, /* Waiting for the final synchronisation */
-} NetState;
+	Unconnected,   /* No connection initiated */
+	Connecting,	   /* Connection being setup */
+	Init,		   /* Initialising the connection */
+	InSetup,	   /* In the network game setup */
+	PreBattle,	   /* Pre-battle initialisations */
+	InterBattle,   /* Negotiations between battles. */
+	SelectShip,	   /* Selecting a ship in battle */
+	InBattle,	   /* Battle has started */
+	EndingBattle,  /* Both sides are prepared to end */
+	EndingBattle2, /* Waiting for the final synchronisation */
+};
+template <>
+inline constexpr bool IsArithmeticEnum<NetState> = true;
 
 #if 0 //defined(__cplusplus)
 }
@@ -71,7 +74,7 @@ void NetConnectionStateData_release(NetConnectionStateData* stateData);
 
 static inline bool NetState_battleActive(NetState state)
 {
-	return state == NetState_inBattle || state == NetState_endingBattle || state == NetState_endingBattle2;
+	return state == NetState::InBattle || state == NetState::EndingBattle || state == NetState::EndingBattle2;
 }
 
 

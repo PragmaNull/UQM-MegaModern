@@ -679,7 +679,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 		year_index = GH.year_index;
 		if (offset == GroupsRandom
 			&& (GH.star_index != (uint16_t)(CurStarDescPtr() - star_array)
-				|| !ValidateEvent(ABSOLUTE_EVENT, &month_index, &day_index,
+				|| !ValidateEvent(EventType::Absolute, &month_index, &day_index,
 								  &year_index)))
 		{
 #ifdef DEBUG_GROUPS
@@ -794,7 +794,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 		{
 			InitGroupInfo(false); /* Wipe out random battle groups */
 		}
-		else if (ValidateEvent(ABSOLUTE_EVENT, /* still fresh */
+		else if (ValidateEvent(EventType::Absolute, /* still fresh */
 							   &month_index, &day_index, &year_index))
 		{
 			CloseStateFile(fp);
@@ -1005,7 +1005,7 @@ uint32_t PutGroupInfo(uint32_t offset, uint8_t which_group)
 		month_index = 0;
 		day_index = 7;
 		year_index = 0;
-		ValidateEvent(RELATIVE_EVENT, &month_index, &day_index, &year_index);
+		ValidateEvent(EventType::Relative, &month_index, &day_index, &year_index);
 		GH.day_index = (uint8_t)day_index;
 		GH.month_index = (uint8_t)month_index;
 		GH.year_index = year_index;

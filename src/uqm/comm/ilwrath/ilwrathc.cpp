@@ -127,7 +127,7 @@ static ConversationData ilwrath_desc =
 static void CombatIsInevitable(RESPONSE_REF R)
 {
 	const bool isGTFO = PlayerSaid(R, gtfo);
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 
 	if (PlayerSaid(R, you_are_weak))
 	{
@@ -167,7 +167,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 
 		GTFO = isGTFO;
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	if (PlayerSaid(R, whats_up))
 	{
@@ -518,7 +518,7 @@ static void GodsSpeak(RESPONSE_REF R)
 		NPCPhrase(OK_KILL_THRADDASH);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_DECEIVED, static_cast<uint32_t>(1));
-		AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_ILWRATH_MISSION);
+		AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_ILWRATH_MISSION);
 	}
 	else if (PlayerSaid(R, worship_us))
 	{
@@ -702,7 +702,7 @@ static void Intro(void)
 				NPCPhrase(JUST_GRUNTS);
 			}
 
-			setSegue(Segue_peace);
+			setSegue(Segue::Peace);
 		}
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 4))
@@ -713,7 +713,7 @@ static void Intro(void)
 	}
 	else
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 
 		if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
@@ -758,11 +758,11 @@ ConversationData* init_ilwrath_comm(void)
 			& ((1 << 4) | (1 << 5)))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&ilwrath_desc};
 

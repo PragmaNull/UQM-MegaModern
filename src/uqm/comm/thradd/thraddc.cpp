@@ -264,7 +264,7 @@ static void LikeYouPhrase(uint8_t which_phrase)
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_hostile);
+	setSegue(Segue::Hostile);
 
 	if (PlayerSaid(R, bye_hostile_2))
 	{
@@ -290,8 +290,8 @@ static void ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(GOOD_IDEA);
 
-		setSegue(Segue_peace);
-		AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_THRADD_MISSION);
+		setSegue(Segue::Peace);
+		AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_THRADD_MISSION);
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(5));
 	}
 	else if (PlayerSaid(R, bye_hostile_helix))
@@ -320,14 +320,14 @@ static void ExitConversation(RESPONSE_REF R)
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(NumVisits));
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (PlayerSaid(R, may_i_land))
 	{
 		NPCPhrase(SURE_LAND);
 
 		uqm::gameState().setFlag(uqm::GameFlag::HELIX_UNPROTECTED, static_cast<uint32_t>(1));
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else if (PlayerSaid(R, demand_to_land))
 	{
@@ -365,7 +365,7 @@ static void ExitConversation(RESPONSE_REF R)
 		}
 		NPCPhrase(WORK_TO_DO);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 }
 
@@ -771,11 +771,11 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
-	if (uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX) && !(IsExtended() && ThraddPtr->allied_state == GOOD_GUY))
+	if (uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX) && !(IsExtended() && ThraddPtr->allied_state == RaceAllegiance::Good))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::HELIX_VISITS);
 		switch (NumVisits++)
@@ -790,7 +790,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::HELIX_VISITS, static_cast<uint32_t>(NumVisits));
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 	{
@@ -861,7 +861,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::THRADD_VISITS, static_cast<uint32_t>(NumVisits));
 
-			setSegue(Segue_peace);
+			setSegue(Segue::Peace);
 		}
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::THRADD_MANNER))
@@ -1068,11 +1068,11 @@ ConversationData* init_thradd_comm(void)
 	if (uqm::gameState().flag(uqm::GameFlag::THRADD_MANNER)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&thradd_desc};
 

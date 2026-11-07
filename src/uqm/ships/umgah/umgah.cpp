@@ -192,7 +192,7 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
-	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
+	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
 	{
 		if (lpEvalDesc->which_turn > 3
 			|| (StarShipPtr->old_status_flags & SpecialFlag))
@@ -202,11 +202,11 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		else if ((lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
 				 && !(lpEvalDesc->ObjectPtr->state_flags & CrewObject))
 		{
-			lpEvalDesc->MoveState = AVOID;
+			lpEvalDesc->MoveState = MovementState::Avoid;
 		}
 		else
 		{
-			lpEvalDesc->MoveState = PURSUE;
+			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 	}
 

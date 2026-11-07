@@ -677,7 +677,7 @@ void MeleeGameOver(void)
 
 
 #ifdef NETPLAY
-	negotiateReadyConnections(true, NetState_inSetup);
+	negotiateReadyConnections(true, NetState::InSetup);
 #endif
 
 	TimeOut = GetTimeCounter() + (c_gameSecond * 4);
@@ -799,7 +799,7 @@ static bool GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 		// be initialised before negotiateReadyConnections is completed, to
 		// ensure that they are initialised when the SelectShip packet
 		// arrives.
-		const bool allOk = negotiateReadyConnections(true, NetState_selectShip);
+		const bool allOk = negotiateReadyConnections(true, NetState::SelectShip);
 		if (!allOk)
 		{
 			// Some network connection has been reset.
@@ -839,14 +839,14 @@ static bool GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 #ifdef NETPLAY
 	if (ok)
 	{
-		if (!negotiateReadyConnections(true, NetState_interBattle))
+		if (!negotiateReadyConnections(true, NetState::InterBattle))
 		{
 			ok = false;
 		}
 	}
 	else
 	{
-		setStateConnections(NetState_interBattle);
+		setStateConnections(NetState::InterBattle);
 	}
 #endif
 

@@ -968,26 +968,26 @@ static void drawLandingFuelUsage(uint16_t fuel)
 	/* We need this so we can save the StatusMessageMode
 	 * and fix it when we're done.
 	 */
-	StatMsgMode old_status_message_mode = SMM_UNDEFINED;
+	StatMsgMode old_status_message_mode = StatMsgMode::Undefined;
 	char buf[100] {};
 
 	if (((int32_t)(uqm::gameState().sis().FuelOnBoard) - fuel)
 		<= (int32_t)(get_fuel_to_sol()))
 	{ // We will not have enough fuel to get to Sol if we dispatch the
 		// lander
-		old_status_message_mode = SetStatusMessageMode(SMM_ALERT);
+		old_status_message_mode = SetStatusMessageMode(StatMsgMode::Alert);
 	}
 	else if (((int32_t)(uqm::gameState().sis().FuelOnBoard) - fuel)
 			 <= (int32_t)(get_fuel_to_sol() + (5 * FuelTankScale)))
 	{ // We will have enough fuel to get to Sol if we dispatch the lander
 		// but will have less than 5 to spare
-		old_status_message_mode = SetStatusMessageMode(SMM_WARNING);
+		old_status_message_mode = SetStatusMessageMode(StatMsgMode::Warning);
 	}
 
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{}{:1.1}", GameString(NAVIGATION_STRING_BASE + 5), (float)fuel / FuelTankScale);
 	DrawStatusMessage(buf);
 
-	if (old_status_message_mode != SMM_UNDEFINED)
+	if (old_status_message_mode != StatMsgMode::Undefined)
 	{
 		SetStatusMessageMode(old_status_message_mode);
 	}
@@ -1774,7 +1774,7 @@ void GeneratePlanetSide(void)
 									scan, &info);
 
 			NodeElementPtr->scan_node = uqm::makeWord(scan, num_nodes + 1);
-			NodeElementPtr->playerNr = PS_NON_PLAYER;
+			NodeElementPtr->playerNr = +PlanetsidePlayer::NonPlayer;
 			NodeElementPtr->current.location.x = info.loc_pt.x;
 			NodeElementPtr->current.location.y = info.loc_pt.y;
 

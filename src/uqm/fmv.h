@@ -25,18 +25,18 @@
 extern "C" {
 #endif
 
-typedef enum
+enum class EndgameScenario
 {
-	DEATH_MARCH,
-	DIED_IN_BATTLE,
-	SUICIDE,
-	SURRENDERED
-} ENDGAME_SCENARIOS;
+	DeathMarch,
+	DiedInBattle,
+	Suicide,
+	Surrendered
+};
 
 extern void SplashScreen(void (*DoProcessing)(TimeCount TimeOut));
 extern void Introduction(void);
 extern void Victory(void);
-extern void GameOver(uint8_t DeathType);
+extern void GameOver(EndgameScenario DeathType);
 extern void DoShipSpin(uint16_t index, MUSIC_REF hMusic);
 extern void Logo(void);
 extern void Drumall(void);

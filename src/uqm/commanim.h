@@ -17,6 +17,7 @@
 #ifndef UQM_COMMANIM_H_
 #define UQM_COMMANIM_H_
 
+#include "core/types/enum.h"
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 
@@ -124,31 +125,33 @@ inline constexpr auto MaxAnimations {30}; // JMS: Was 20
 
 #ifdef COMM_INTERNAL
 
-typedef enum
+enum class AnimDir
 {
-	DOWN_DIR = -1, // Animation indices are decreasing
-	NO_DIR = 0,
-	UP_DIR = 1, // Animation indices are increasing
-} ANIM_DIR;
+	Down = -1, // Animation indices are decreasing
+	None = 0,
+	Up = 1, // Animation indices are increasing
+};
+template <>
+inline constexpr bool IsArithmeticEnum<AnimDir> = true;
 
-typedef enum
+enum class AnimType
 {
-	PICTURE_ANIM,
+	Picture,
 	// Parts of a picture are replaced
-	COLOR_ANIM
+	Color
 	// Colormap tricks on a picture
-} ANIM_TYPE;
+};
 
 // Describes an active animation.
 struct AnimSequence
 {
 	AnimationDesc* ADPtr;
 	uint32_t Alarm;
-	ANIM_DIR Direction;
+	AnimDir Direction;
 	uint16_t CurIndex;
 	uint16_t NextIndex;
 	uint16_t FramesLeft;
-	ANIM_TYPE AnimType;
+	AnimType AnimType;
 	bool Change;
 };
 #endif

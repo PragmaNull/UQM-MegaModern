@@ -89,13 +89,13 @@ enum
 };
 
 // Editing mode for DoModifyShips()
-typedef enum
+enum class DmsMode
 {
-	DMS_Mode_navigate,	// Navigating the ship slots.
-	DMS_Mode_addEscort, // Selecting a ship to add to an empty slot.
-	DMS_Mode_editCrew,	// Hiring or dismissing crew.
-	DMS_Mode_exit,		// Leaving DoModifyShips() mode.
-} DMS_Mode;
+	Navigate,  // Navigating the ship slots.
+	AddEscort, // Selecting a ship to add to an empty slot.
+	EditCrew,  // Hiring or dismissing crew.
+	Exit,	   // Leaving DoModifyShips() mode.
+};
 
 static bool DoShipSpins;
 
@@ -368,7 +368,7 @@ static void InventoryShips(ShipyardShipsState* ship_state)
 		const FleetInfo* FleetPtr =
 			LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 
-		if (FleetPtr->allied_state == GOOD_GUY || FleetPtr->can_build)
+		if (FleetPtr->allied_state == RaceAllegiance::Good || FleetPtr->can_build)
 		{
 			GetShipStats(&ship_state->ShipStats[ShipsOnBoard],
 						 FleetPtr->SpeciesID);
@@ -476,7 +476,7 @@ static void showRemainingCrew(void)
 								(remaining_crew < 250 ? LowCrewColor :
 														HalfCrewColor));
 
-	if (CheckAlliance(SHOFIXTI_SHIP) == GOOD_GUY)
+	if (CheckAlliance(SHOFIXTI_SHIP) == RaceAllegiance::Good)
 	{
 		const auto fmtResult = fmt::format_to_n(buf, sizeof(buf) - 1, "{}", StrInfinitySign);
 		*fmtResult.out = '\0';
@@ -537,7 +537,7 @@ static int16_t CalculateAllyPoints()
 			continue;
 		}
 
-		if (FleetPtr->allied_state == GOOD_GUY)
+		if (FleetPtr->allied_state == RaceAllegiance::Good)
 		{
 			MaxPoints += ShipPoints(hFleet) * difficultyCase(3, 2, 1);
 		}
@@ -728,7 +728,7 @@ static uint16_t GetAvailableRaceCount(void)
 		 hStarShip; hStarShip = hNextShip)
 	{
 		const FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
-		if (FleetPtr->allied_state == GOOD_GUY
+		if (FleetPtr->allied_state == RaceAllegiance::Good
 			|| FleetPtr->can_build)
 		{
 			++Index;
@@ -750,7 +750,7 @@ static HFLEETINFO GetAvailableRaceFromIndex(uint8_t Index)
 		 hStarShip; hStarShip = hNextShip)
 	{
 		const FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
-		if ((FleetPtr->allied_state == GOOD_GUY
+		if ((FleetPtr->allied_state == RaceAllegiance::Good
 			 || FleetPtr->can_build)
 			&& Index-- == 0)
 		{
@@ -1379,7 +1379,7 @@ static void CrewTransaction(int16_t crew_delta)
 				DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
 			}
 		}
-		if (CheckAlliance(SHOFIXTI_SHIP) != GOOD_GUY)
+		if (CheckAlliance(SHOFIXTI_SHIP) != RaceAllegiance::Good)
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::CREW_PURCHASED0, static_cast<uint32_t>(uqm::lowByte(crew_bought)));
 			uqm::gameState().setFlag(uqm::GameFlag::CREW_PURCHASED1, static_cast<uint32_t>(uqm::highByte(crew_bought)));
@@ -1470,19 +1470,19 @@ static void DMS_FlashActiveShip(MenuState* pMS)
 // XXX: right now, this only switches the sound and flash rectangle.
 // Perhaps we should move more of the code to modify other aspects
 // here too.
-static void DMS_SetMode(MenuState* pMS, DMS_Mode mode)
+static void DMS_SetMode(MenuState* pMS, DmsMode mode)
 {
 	switch (mode)
 	{
-		case DMS_Mode_navigate:
+		case DmsMode::Navigate:
 			SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 			DMS_FlashActiveShip(pMS);
 			break;
-		case DMS_Mode_addEscort:
+		case DmsMode::AddEscort:
 			SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 			SetFlashRect(DosBool(SfrMenu3do(), SfrMenuNon()), false);
 			break;
-		case DMS_Mode_editCrew:
+		case DmsMode::EditCrew:
 			SetMenuSounds(MenuSoundArrows,
 						  MenuSoundPage | MenuSoundAction);
 			if (uqm::highNibble(pMS->CurState))
@@ -1496,7 +1496,7 @@ static void DMS_SetMode(MenuState* pMS, DMS_Mode mode)
 				DMS_FlashEscortShipCrewCount(pMS->CurState);
 			}
 			break;
-		case DMS_Mode_exit:
+		case DmsMode::Exit:
 			SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 			SetFlashRect(SfrMenu3do(), false);
 			break;
@@ -1597,7 +1597,7 @@ static int16_t DMS_HireFlagShipCrew(void)
 	}
 
 	if (isDifficulty(uqm::Difficulty::Hard) && crew_bought >= 2000
-		&& CheckAlliance(SHOFIXTI_SHIP) != GOOD_GUY)
+		&& CheckAlliance(SHOFIXTI_SHIP) != RaceAllegiance::Good)
 	{
 		// Ran out of StarBase crew
 		return 0;
@@ -1700,7 +1700,7 @@ static int16_t DMS_HireEscortShipCrew(ShipFragment* StarShipPtr)
 	}
 
 	if (isDifficulty(uqm::Difficulty::Hard) && crew_bought >= 2000
-		&& CheckAlliance(SHOFIXTI_SHIP) != GOOD_GUY)
+		&& CheckAlliance(SHOFIXTI_SHIP) != RaceAllegiance::Good)
 	{
 		// Ran out of StarBase crew
 		return 0;
@@ -1926,7 +1926,7 @@ static void DMS_TryAddEscortShip(MenuState* pMS)
 		// twice to reset menu selection
 
 		DeltaSISGauges(UndefinedDelta, UndefinedDelta, -(int)shipCost);
-		DMS_SetMode(pMS, DMS_Mode_editCrew);
+		DMS_SetMode(pMS, DmsMode::EditCrew);
 
 		showRemainingPoints(0);
 	}
@@ -1977,7 +1977,7 @@ static void DMS_TryUnstowEscortShip(MenuState* pMS)
 			InventoryShips(&ShipState);
 		}
 
-		DMS_SetMode(pMS, DMS_Mode_editCrew);
+		DMS_SetMode(pMS, DmsMode::EditCrew);
 
 		showRemainingPoints(0);
 		stowCount = GetStowedShipCount();
@@ -2009,7 +2009,7 @@ static void DMS_AddEscortShip(MenuState* pMS, bool special, bool select,
 		//if (DMS_SpinShip (pMS, GetEscortByStarShipIndex (pMS->delta_item)))
 		if (DMS_SpinShip(pMS, nullptr))
 		{
-			DMS_SetMode(pMS, DMS_Mode_addEscort);
+			DMS_SetMode(pMS, DmsMode::AddEscort);
 		}
 		return;
 	}
@@ -2023,7 +2023,7 @@ static void DMS_AddEscortShip(MenuState* pMS, bool special, bool select,
 		DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
 		DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
 		// twice to reset menu selection
-		DMS_SetMode(pMS, DMS_Mode_navigate);
+		DMS_SetMode(pMS, DmsMode::Navigate);
 
 		if (DosMenu())
 		{
@@ -2123,7 +2123,7 @@ static void DMS_ScrapEscortShip(MenuState* pMS, HSHIPFRAG hStarShip)
 	showRemainingPoints(0);
 
 	SetContext(SpaceContext);
-	DMS_SetMode(pMS, DMS_Mode_navigate);
+	DMS_SetMode(pMS, DmsMode::Navigate);
 }
 
 // Helper function for DoModifyShips(), called when the player presses
@@ -2158,7 +2158,7 @@ static void DMS_StowEscortShip(MenuState* pMS, HSHIPFRAG hStarShip)
 	stowCount = GetStowedShipCount();
 
 	SetContext(SpaceContext);
-	DMS_SetMode(pMS, DMS_Mode_navigate);
+	DMS_SetMode(pMS, DmsMode::Navigate);
 }
 
 // Helper function for DoModifyShips(), called when the player presses
@@ -2255,7 +2255,7 @@ static void DMS_EditCrewMode(MenuState* pMS, HSHIPFRAG hStarShip,
 		}
 
 		pMS->delta_item &= ~ModifyCrewFlag;
-		DMS_SetMode(pMS, DMS_Mode_navigate);
+		DMS_SetMode(pMS, DmsMode::Navigate);
 	}
 	else if (dy)
 	{
@@ -2314,7 +2314,7 @@ static void DMS_NavigateShipSlots(MenuState* pMS, bool special, bool select,
 	{
 		if (DMS_SpinShip(pMS, hStarShip))
 		{
-			DMS_SetMode(pMS, DMS_Mode_navigate);
+			DMS_SetMode(pMS, DmsMode::Navigate);
 		}
 	}
 	else if (select)
@@ -2333,14 +2333,14 @@ static void DMS_NavigateShipSlots(MenuState* pMS, bool special, bool select,
 			}
 			pMS->delta_item = ModifyCrewFlag | (stowed_q ? currentStowShip : 0);
 			DrawRaceStrings(uqm::lowByte(pMS->delta_item));
-			DMS_SetMode(pMS, DMS_Mode_addEscort);
+			DMS_SetMode(pMS, DmsMode::AddEscort);
 		}
 		else
 		{
 			// Select button was pressed over an escort ship or
 			// the flagship. Entering crew editing mode
 			pMS->delta_item |= ModifyCrewFlag;
-			DMS_SetMode(pMS, DMS_Mode_editCrew);
+			DMS_SetMode(pMS, DmsMode::EditCrew);
 		}
 	}
 	else if (cancel)
@@ -2349,7 +2349,7 @@ static void DMS_NavigateShipSlots(MenuState* pMS, bool special, bool select,
 		pMS->InputFunc = DoShipyard;
 		pMS->CurState = SHIPYARD_CREW;
 		DrawMenuStateStrings(PM_CREW, pMS->CurState);
-		DMS_SetMode(pMS, DMS_Mode_exit);
+		DMS_SetMode(pMS, DmsMode::Exit);
 	}
 }
 
@@ -2375,7 +2375,7 @@ static bool DoModifyShips(MenuState* pMS)
 		pMS->CurState = uqm::makeByte(0, 0xF);
 		pMS->delta_item = 0;
 		SetContext(SpaceContext);
-		DMS_SetMode(pMS, DMS_Mode_navigate);
+		DMS_SetMode(pMS, DmsMode::Navigate);
 		stowCount = GetStowedShipCount();
 		availableCount = GetAvailableRaceCount();
 	}

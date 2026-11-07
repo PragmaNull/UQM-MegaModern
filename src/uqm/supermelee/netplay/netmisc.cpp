@@ -108,7 +108,7 @@ static void NetMelee_enterState_inSetup(NetConnection* conn, void* arg)
 {
 	struct MeleeState* meleeState {};
 
-	NetConnection_setState(conn, NetState_inSetup);
+	NetConnection_setState(conn, NetState::InSetup);
 
 	const BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 	meleeState = battleStateData->meleeState;

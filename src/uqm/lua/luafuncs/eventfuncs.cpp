@@ -78,7 +78,7 @@ static bool isEventRegistered(lua_State* luaState, int argn)
 // don't rely on this).
 // TODO: make this function return an identifier for the event, so that it
 // can be removed.
-static int addEvent(lua_State* luaState, EVENT_TYPE type)
+static int addEvent(lua_State* luaState, EventType type)
 {
 	const auto year = luaL_checkinteger(luaState, 1);
 	const auto month = luaL_checkinteger(luaState, 2);
@@ -89,7 +89,7 @@ static int addEvent(lua_State* luaState, EVENT_TYPE type)
 	{
 		uqm::log::warn("[script] event.{}(): Event '{}' is "
 					   "not registered.",
-					   (type == RELATIVE_EVENT) ? "addRelative" : "addAbsolute",
+					   (type == EventType::Relative) ? "addRelative" : "addAbsolute",
 					   lua_tostring(luaState, 1));
 		lua_pushinteger(luaState, -1);
 		return 1;
@@ -101,7 +101,7 @@ static int addEvent(lua_State* luaState, EVENT_TYPE type)
 		uqm::log::warn("[script] event.{}(): Event '{}' is "
 					   "not known. It must currently be one of the hard-coded "
 					   "strings.",
-					   (type == RELATIVE_EVENT) ? "addRelative" : "addAbsolute",
+					   (type == EventType::Relative) ? "addRelative" : "addAbsolute",
 					   lua_tostring(luaState, 1));
 		lua_pushinteger(luaState, -1);
 		return 1;
@@ -122,7 +122,7 @@ static int addEvent(lua_State* luaState, EVENT_TYPE type)
 // can be removed.
 static int luaUqm_event_addAbsolute(lua_State* luaState)
 {
-	return addEvent(luaState, ABSOLUTE_EVENT);
+	return addEvent(luaState, EventType::Absolute);
 }
 
 // [1] -> int years
@@ -134,7 +134,7 @@ static int luaUqm_event_addAbsolute(lua_State* luaState)
 // can be removed.
 static int luaUqm_event_addRelative(lua_State* luaState)
 {
-	return addEvent(luaState, RELATIVE_EVENT);
+	return addEvent(luaState, EventType::Relative);
 }
 
 // [1] -> string eventIdStr

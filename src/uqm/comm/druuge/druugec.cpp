@@ -208,7 +208,7 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, bye))
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
@@ -261,7 +261,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 	else /* if (R == then_we_take_bomb) */
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 
 		NPCPhrase(FIGHT_FOR_BOMB);
 	}
@@ -820,7 +820,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -857,7 +857,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
@@ -957,7 +957,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_VISITS, static_cast<uint32_t>(NumVisits));
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else
 	{
@@ -991,7 +991,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_SALVAGE, static_cast<uint32_t>(NumVisits));
 
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 			AttemptedSalvage = true;
 		}
 		else
@@ -1023,7 +1023,7 @@ static uint16_t uninit_druuge(void)
 
 static void post_druuge_enc(void)
 {
-	if (getSegue() == Segue_hostile
+	if (getSegue() == Segue::Hostile
 		&& !AttemptedSalvage
 		&& !uqm::gameState().flag(uqm::GameFlag::DRUUGE_MANNER))
 	{
@@ -1054,11 +1054,11 @@ ConversationData* init_druuge_comm(void)
 		 && (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	ConversationData* retval {&druuge_desc};
 

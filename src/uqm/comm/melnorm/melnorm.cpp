@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/types/enum.h"
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
@@ -238,43 +239,45 @@ static ConversationData melnorme_desc =
 // migrated to its own file.
 
 // Identifiers for the various technologies
-typedef enum
+enum class TechId
 {
-	TECH_MODULE_BLASTER,
-	TECH_LANDER_SPEED,
-	TECH_MODULE_ANTIMISSILE,
-	TECH_LANDER_SHIELD_BIO,
-	TECH_LANDER_CARGO,
-	TECH_MODULE_BIGFUELTANK,
-	TECH_LANDER_RAPIDFIRE,
-	TECH_LANDER_SHIELD_QUAKE,
-	TECH_MODULE_TRACKING,
-	TECH_LANDER_SHIELD_LIGHTNING,
-	TECH_LANDER_SHIELD_HEAT,
-	TECH_MODULE_CANNON,
-	TECH_MODULE_FURNACE,
-} TechId_t;
+	ModuleBlaster,
+	LanderSpeed,
+	ModuleAntimissile,
+	LanderShieldBio,
+	LanderCargo,
+	ModuleBigfueltank,
+	LanderRapidfire,
+	LanderShieldQuake,
+	ModuleTracking,
+	LanderShieldLightning,
+	LanderShieldHeat,
+	ModuleCannon,
+	ModuleFurnace,
+};
+template <>
+inline constexpr bool IsArithmeticEnum<TechId> = true;
 
 // Group the technologies into three subtypes
-typedef enum
+enum class TechType
 {
-	TECH_TYPE_MODULE,		 // Flagship modules
-							 //  subtype = moduleId, info = cost
-							 //   Cost will be scaled by ModuleCostScale.
-	TECH_TYPE_LANDER_SHIELD, // Lander shield enhancements
-							 //  subtype = disaster type, info = unused
-	TECH_TYPE_STATE			 // Other game state changes
-							 //  subtype = stateId, info = state value
-} TechType_t;
+	Module,		  // Flagship modules
+				  //  subtype = moduleId, info = cost
+				  //   Cost will be scaled by ModuleCostScale.
+	LanderShield, // Lander shield enhancements
+				  //  subtype = disaster type, info = unused
+	State		  // Other game state changes
+				  //  subtype = stateId, info = state value
+};
 
 
 // Define the information specifying a particular technology
 struct TechData
 {
-	TechId_t id;	 // ID of the technology
-	TechType_t type; // Type of the technology
-	int subtype;	 // Subtype of the technology
-	int info;		 // Supplemental information
+	TechId id;	   // ID of the technology
+	TechType type; // Type of the technology
+	int subtype;   // Subtype of the technology
+	int info;	   // Supplemental information
 };
 
 
@@ -284,24 +287,24 @@ struct TechData
 const static TechData tech_data_table[] =
 	{
 		// Tech ID                      Tech Type,               Supplemental info
-		{TECH_MODULE_BLASTER,		  TECH_TYPE_MODULE,		BLASTER_WEAPON,											4000},
-		{TECH_LANDER_SPEED,			TECH_TYPE_STATE,		 static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SPEED), 1	  },
-		{TECH_MODULE_ANTIMISSILE,	  TECH_TYPE_MODULE,		ANTIMISSILE_DEFENSE,									 4000},
-		{TECH_LANDER_SHIELD_BIO,		 TECH_TYPE_LANDER_SHIELD, BIOLOGICAL_DISASTER,									   -1	 },
-		{TECH_LANDER_CARGO,			TECH_TYPE_STATE,		 static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_CARGO), 1	  },
-		{TECH_MODULE_BIGFUELTANK,	  TECH_TYPE_MODULE,		HIGHEFF_FUELSYS,										 1000},
-		{TECH_LANDER_RAPIDFIRE,		TECH_TYPE_STATE,		 static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SHOT),	1	 },
-		{TECH_LANDER_SHIELD_QUAKE,	   TECH_TYPE_LANDER_SHIELD, EARTHQUAKE_DISASTER,									 -1  },
-		{TECH_MODULE_TRACKING,		   TECH_TYPE_MODULE,		 TRACKING_SYSTEM,										  5000},
-		{TECH_LANDER_SHIELD_LIGHTNING, TECH_TYPE_LANDER_SHIELD, LIGHTNING_DISASTER,										-1  },
-		{TECH_LANDER_SHIELD_HEAT,	  TECH_TYPE_LANDER_SHIELD, LAVASPOT_DISASTER,									  -1	},
-		{TECH_MODULE_CANNON,			 TECH_TYPE_MODULE,		   CANNON_WEAPON,										  6000},
-		{TECH_MODULE_FURNACE,		  TECH_TYPE_MODULE,		SHIVA_FURNACE,										   4000},
+		{TechId::ModuleBlaster,			TechType::Module,		  BLASTER_WEAPON,										  4000},
+		{TechId::LanderSpeed,			  TechType::State,		   static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SPEED), 1	},
+		{TechId::ModuleAntimissile,		TechType::Module,		  ANTIMISSILE_DEFENSE,									   4000},
+		{TechId::LanderShieldBio,		  TechType::LanderShield, BIOLOGICAL_DISASTER,									   -1	 },
+		{TechId::LanderCargo,			  TechType::State,		   static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_CARGO), 1	},
+		{TechId::ModuleBigfueltank,		TechType::Module,		  HIGHEFF_FUELSYS,										   1000},
+		{TechId::LanderRapidfire,		  TechType::State,		   static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SHOT),  1   },
+		{TechId::LanderShieldQuake,		TechType::LanderShield, EARTHQUAKE_DISASTER,									 -1  },
+		{TechId::ModuleTracking,		 TechType::Module,	   TRACKING_SYSTEM,										5000},
+		{TechId::LanderShieldLightning, TechType::LanderShield, LIGHTNING_DISASTER,										-1  },
+		{TechId::LanderShieldHeat,	   TechType::LanderShield, LAVASPOT_DISASTER,									  -1	},
+		{TechId::ModuleCannon,		   TechType::Module,		 CANNON_WEAPON,											6000},
+		{TechId::ModuleFurnace,			TechType::Module,		  SHIVA_FURNACE,											 4000},
 };
 const size_t NUM_TECHNOLOGIES = std::size(tech_data_table);
 
 // Lookup function to get the data for a particular tech
-const static TechData* GetTechData(TechId_t techId)
+const static TechData* GetTechData(TechId techId)
 {
 	size_t i = 0;
 	for (i = 0; i < NUM_TECHNOLOGIES; ++i)
@@ -326,7 +329,7 @@ static void GrantStateTech(int stateId, uint8_t value)
 	uqm::gameState().setFlag(static_cast<uqm::GameFlag>(stateId), value);
 }
 
-static bool HasTech(TechId_t techId)
+static bool HasTech(TechId techId)
 {
 	const TechData* techData = GetTechData(techId);
 	if (!techData)
@@ -336,17 +339,17 @@ static bool HasTech(TechId_t techId)
 
 	switch (techData->type)
 	{
-		case TECH_TYPE_MODULE:
+		case TechType::Module:
 			return uqm::gameState().game().ModuleCost[techData->subtype] != 0;
-		case TECH_TYPE_LANDER_SHIELD:
+		case TechType::LanderShield:
 			return (uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS) & (1 << techData->subtype)) != 0;
-		case TECH_TYPE_STATE:
+		case TechType::State:
 			return HasStateTech(techData->subtype);
 	}
 	return false;
 }
 
-static void GrantTech(TechId_t techId)
+static void GrantTech(TechId techId)
 {
 	const TechData* techData = GetTechData(techId);
 	if (!techData)
@@ -356,16 +359,16 @@ static void GrantTech(TechId_t techId)
 
 	switch (techData->type)
 	{
-		case TECH_TYPE_MODULE:
+		case TechType::Module:
 			uqm::gameState().game().ModuleCost[techData->subtype] = techData->info / ModuleCostScale;
 			return;
-		case TECH_TYPE_LANDER_SHIELD:
+		case TechType::LanderShield:
 			{
 				const uint16_t state = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS) | (1 << techData->subtype);
 				uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>(state));
 				return;
 			}
-		case TECH_TYPE_STATE:
+		case TechType::State:
 			GrantStateTech(techData->subtype, techData->info);
 			return;
 	}
@@ -378,7 +381,7 @@ static int countTech(void)
 
 	for (i = 0; i <= NUM_TECHNOLOGIES; ++i)
 	{
-		numTech += HasTech((TechId_t)i);
+		numTech += HasTech((TechId)i);
 	}
 
 	return numTech;
@@ -472,10 +475,10 @@ static int GetLineSafe(const int array[], size_t linenum)
 // Data structure to hold the Melnorme's info on a technology
 struct TechSaleData
 {
-	TechId_t techId; // ID of technology
-	int price;		 // Melnorme's price to sell
-	int sale_line;	 // Sales pitch line ID
-	int sold_line;	 // Post-sale line ID
+	TechId techId; // ID of technology
+	int price;	   // Melnorme's price to sell
+	int sale_line; // Sales pitch line ID
+	int sold_line; // Post-sale line ID
 };
 
 // Right now, all techs have the same price.
@@ -484,19 +487,19 @@ static constexpr auto Techprice {(75 * BioCreditValueDefault)};
 
 TechSaleData tech_sale_catalog[] =
 	{
-		{TECH_MODULE_BLASTER,		  Techprice, NEW_TECH_1,	 OK_BUY_NEW_TECH_1 },
-		{TECH_LANDER_SPEED,			Techprice, NEW_TECH_2,  OK_BUY_NEW_TECH_2 },
-		{TECH_MODULE_ANTIMISSILE,	  Techprice, NEW_TECH_3,	 OK_BUY_NEW_TECH_3 },
-		{TECH_LANDER_SHIELD_BIO,		 Techprice, NEW_TECH_4,	OK_BUY_NEW_TECH_4 },
-		{TECH_LANDER_CARGO,			Techprice, NEW_TECH_5,  OK_BUY_NEW_TECH_5 },
-		{TECH_MODULE_BIGFUELTANK,	  Techprice, NEW_TECH_6,	 OK_BUY_NEW_TECH_6 },
-		{TECH_LANDER_RAPIDFIRE,		Techprice, NEW_TECH_7,  OK_BUY_NEW_TECH_7 },
-		{TECH_LANDER_SHIELD_QUAKE,	   Techprice, NEW_TECH_8,  OK_BUY_NEW_TECH_8 },
-		{TECH_MODULE_TRACKING,		   Techprice, NEW_TECH_9,  OK_BUY_NEW_TECH_9 },
-		{TECH_LANDER_SHIELD_LIGHTNING, Techprice, NEW_TECH_10, OK_BUY_NEW_TECH_10},
-		{TECH_LANDER_SHIELD_HEAT,	  Techprice, NEW_TECH_11, OK_BUY_NEW_TECH_11},
-		{TECH_MODULE_CANNON,			 Techprice, NEW_TECH_12, OK_BUY_NEW_TECH_12},
-		{TECH_MODULE_FURNACE,		  Techprice, NEW_TECH_13, OK_BUY_NEW_TECH_13},
+		{TechId::ModuleBlaster,			Techprice, NEW_TECH_1,  OK_BUY_NEW_TECH_1 },
+		{TechId::LanderSpeed,			  Techprice, NEW_TECH_2,	 OK_BUY_NEW_TECH_2 },
+		{TechId::ModuleAntimissile,		Techprice, NEW_TECH_3,  OK_BUY_NEW_TECH_3 },
+		{TechId::LanderShieldBio,		  Techprice, NEW_TECH_4,	 OK_BUY_NEW_TECH_4 },
+		{TechId::LanderCargo,			  Techprice, NEW_TECH_5,	 OK_BUY_NEW_TECH_5 },
+		{TechId::ModuleBigfueltank,		Techprice, NEW_TECH_6,  OK_BUY_NEW_TECH_6 },
+		{TechId::LanderRapidfire,		  Techprice, NEW_TECH_7,	 OK_BUY_NEW_TECH_7 },
+		{TechId::LanderShieldQuake,		Techprice, NEW_TECH_8,  OK_BUY_NEW_TECH_8 },
+		{TechId::ModuleTracking,		 Techprice, NEW_TECH_9,	OK_BUY_NEW_TECH_9 },
+		{TechId::LanderShieldLightning, Techprice, NEW_TECH_10, OK_BUY_NEW_TECH_10},
+		{TechId::LanderShieldHeat,	   Techprice, NEW_TECH_11, OK_BUY_NEW_TECH_11},
+		{TechId::ModuleCannon,		   Techprice, NEW_TECH_12, OK_BUY_NEW_TECH_12},
+		{TechId::ModuleFurnace,			Techprice, NEW_TECH_13, OK_BUY_NEW_TECH_13},
 };
 const size_t NUM_TECH_ITEMS = std::size(tech_sale_catalog);
 
@@ -512,39 +515,39 @@ static TechSaleData* GetNextTechForSale(void)
 		switch (CurStarDescPtr()->Index)
 		{
 			case MELNORME0_DEFINED:
-				i = TECH_MODULE_CANNON;
+				i = +TechId::ModuleCannon;
 				j = i + 1;
 				break;
 			case MELNORME1_DEFINED:
-				i = TECH_MODULE_BLASTER;
+				i = +TechId::ModuleBlaster;
 				j = i + 1;
 				break;
 			case MELNORME2_DEFINED:
-				i = TECH_LANDER_SHIELD_BIO;
+				i = +TechId::LanderShieldBio;
 				j = i + 2; // TECH_LANDER_CARGO
 				break;
 			case MELNORME3_DEFINED:
-				i = TECH_LANDER_RAPIDFIRE;
+				i = +TechId::LanderRapidfire;
 				j = i + 2; // TECH_LANDER_SHIELD_QUAKE
 				break;
 			case MELNORME4_DEFINED:
-				i = TECH_MODULE_BIGFUELTANK;
+				i = +TechId::ModuleBigfueltank;
 				j = i + 1;
 				break;
 			case MELNORME5_DEFINED:
-				i = TECH_LANDER_SPEED;
+				i = +TechId::LanderSpeed;
 				j = i + 2; // TECH_MODULE_ANTIMISSILE
 				break;
 			case MELNORME6_DEFINED:
-				i = TECH_MODULE_TRACKING;
+				i = +TechId::ModuleTracking;
 				j = i + 1;
 				break;
 			case MELNORME7_DEFINED:
-				i = TECH_LANDER_SHIELD_LIGHTNING;
+				i = +TechId::LanderShieldLightning;
 				j = i + 2; // TECH_LANDER_SHIELD_HEAT
 				break;
 			case MELNORME8_DEFINED:
-				i = TECH_MODULE_FURNACE;
+				i = +TechId::ModuleFurnace;
 				j = i + 1;
 				break;
 			default:
@@ -904,14 +907,14 @@ static void ExitConversation(RESPONSE_REF R)
 		NPCPhrase(YOU_GIVE_US_NO_CHOICE);
 
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(1));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, so_we_can_attack))
 	{
 		NPCPhrase(DECEITFUL_HUMAN);
 
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(2));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, bye_melnorme_slightly_angry))
 	{
@@ -937,7 +940,7 @@ static void ExitConversation(RESPONSE_REF R)
 		NPCPhrase(OK_FIGHT_SOME_MORE);
 
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(3));
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, bye_melnorme_pissed_off))
 	{
@@ -947,7 +950,7 @@ static void ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(WE_FIGHT_AGAIN);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, you_hate_us_so_we_go_away))
 	{
@@ -2121,7 +2124,7 @@ static void DoMelnormeHate(RESPONSE_REF R)
 
 static void Intro(void)
 {
-	prevMsgMode = SetStatusMessageMode(SMM_CREDITS);
+	prevMsgMode = SetStatusMessageMode(StatMsgMode::Credits);
 
 	if (IsHd())
 	{
@@ -2170,7 +2173,7 @@ static uint16_t uninit_melnorme(void)
 
 static void post_melnorme_enc(void)
 {
-	if (prevMsgMode != SMM_UNDEFINED)
+	if (prevMsgMode != StatMsgMode::Undefined)
 	{
 		SetStatusMessageMode(prevMsgMode);
 	}
@@ -2195,9 +2198,9 @@ ConversationData* init_melnorme_comm(void)
 	local_stack0 = 0;
 	local_stack1 = 0;
 
-	prevMsgMode = SMM_UNDEFINED;
+	prevMsgMode = StatMsgMode::Undefined;
 
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	AskedToBuy = false;
 	ConversationData* retval {&melnorme_desc};
 

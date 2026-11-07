@@ -73,7 +73,7 @@ char shared_phrase_buf[2048];
 FONT ComputerFont;
 
 static bool TalkingFinished;
-static CommIntroMode curIntroMode = CIM_DEFAULT;
+static CommIntroMode curIntroMode = CommIntroMode::Default;
 static TimePeriod fadeTime;
 
 // Dark mode
@@ -1184,12 +1184,12 @@ static bool TalkSegue(uint16_t wait_track)
 
 static void CommIntroTransition(void)
 {
-	if (curIntroMode == CIM_CROSSFADE_SCREEN)
+	if (curIntroMode == CommIntroMode::CrossfadeScreen)
 	{
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
 		UnbatchGraphics();
 	}
-	else if (curIntroMode == CIM_CROSSFADE_SPACE)
+	else if (curIntroMode == CommIntroMode::CrossfadeSpace)
 	{
 		GfxRect r;
 		r.corner.x = SisOrgX();
@@ -1199,12 +1199,12 @@ static void CommIntroTransition(void)
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
 		UnbatchGraphics();
 	}
-	else if (curIntroMode == CIM_CROSSFADE_WINDOW)
+	else if (curIntroMode == CommIntroMode::CrossfadeWindow)
 	{
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, &CommWndRect);
 		UnbatchGraphics();
 	}
-	else if (curIntroMode == CIM_FADE_IN_SCREEN)
+	else if (curIntroMode == CommIntroMode::FadeInScreen)
 	{
 		UnbatchGraphics();
 		FadeScreen(ScreenFadeType::FadeAllToColor, fadeTime);
@@ -1218,7 +1218,7 @@ static void CommIntroTransition(void)
 
 	// Reset the mode for next time. Everything that needs a
 	// different one will let us know.
-	curIntroMode = CIM_DEFAULT;
+	curIntroMode = CommIntroMode::Default;
 }
 
 void AlienTalkSegue(uint16_t wait_track)
@@ -2098,9 +2098,9 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 	if (uqm::gameState().flag(uqm::GameFlag::BATTLE_SEGUE) == 0)
 	{
 		// Not offered the chance to attack.
-		status = HAIL;
+		status = +EncounterAction::Hail;
 	}
-	else if ((status = InitEncounter()) == HAIL && LocDataPtr)
+	else if ((status = InitEncounter()) == EncounterAction::Hail && LocDataPtr)
 	{
 		// The player chose to talk.
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
@@ -2108,11 +2108,11 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 	else
 	{
 		// The player chose to attack.
-		status = ATTACK;
+		status = +EncounterAction::Attack;
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 	}
 
-	if (status == HAIL)
+	if (status == EncounterAction::Hail)
 	{
 		HailAlien();
 	}

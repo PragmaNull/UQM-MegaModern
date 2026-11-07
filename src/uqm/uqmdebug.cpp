@@ -782,7 +782,7 @@ void activateAllShips(void)
 		if (FleetPtr->icons != nullptr)
 		// Skip the Ur-Quan probe.
 		{
-			FleetPtr->allied_state = GOOD_GUY;
+			FleetPtr->allied_state = +RaceAllegiance::Good;
 		}
 
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);

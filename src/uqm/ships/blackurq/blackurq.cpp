@@ -372,11 +372,11 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr
-		&& lpEvalDesc->MoveState == ENTICE
+		&& lpEvalDesc->MoveState == MovementState::Entice
 		&& (lpEvalDesc->ObjectPtr->state_flags & CrewObject)
 		&& lpEvalDesc->which_turn <= 8)
 	{
-		lpEvalDesc->MoveState = PURSUE;
+		lpEvalDesc->MoveState = MovementState::Pursue;
 	}
 
 	ship_intelligence(ShipPtr,

@@ -125,7 +125,7 @@ void closeDisconnectedConnections(void)
 struct MeleeState*
 NetMelee_getMeleeState(NetConnection* conn)
 {
-	if (NetConnection_getState(conn) > NetState_connecting)
+	if (NetConnection_getState(conn) > NetState::Connecting)
 	{
 		const BattleStateData* battleStateData =
 			(BattleStateData*)NetConnection_getStateData(conn);
@@ -140,7 +140,7 @@ NetMelee_getMeleeState(NetConnection* conn)
 struct BattleState*
 NetMelee_getBattleState(NetConnection* conn)
 {
-	if (NetConnection_getState(conn) > NetState_connecting)
+	if (NetConnection_getState(conn) > NetState::Connecting)
 	{
 		const BattleStateData* battleStateData =
 			(BattleStateData*)NetConnection_getStateData(conn);
@@ -746,7 +746,7 @@ bool waitReset(NetConnection* conn, NetState nextState)
 
 	if (!Netplay_isLocalReset(conn))
 	{
-		Netplay_localReset(conn, ResetReason_manualReset);
+		Netplay_localReset(conn, NetplayResetReason::ManualReset);
 		static_cast<void>(flushPacketQueue(conn));
 	}
 

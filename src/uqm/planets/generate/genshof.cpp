@@ -216,7 +216,7 @@ static bool GenerateShofixti_generatePlanets(SolarSystemState* solarSys)
 		}
 	}
 
-	if (getNomadMode() != uqm::NomadMode::Off && CheckAlliance(SHOFIXTI_SHIP) == GOOD_GUY)
+	if (getNomadMode() != uqm::NomadMode::Off && CheckAlliance(SHOFIXTI_SHIP) == RaceAllegiance::Good)
 	{
 		solarSys->PlanetDesc[pSunDesc->PlanetByte].NumPlanets = 1;
 	}
@@ -265,7 +265,7 @@ static bool GenerateShofixti_generateOrbital(SolarSystemState* solarSys,
 {
 	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
-		if (CheckAlliance(SHOFIXTI_SHIP) == GOOD_GUY)
+		if (CheckAlliance(SHOFIXTI_SHIP) == RaceAllegiance::Good)
 		{
 			const bool MaxShips = (CountEscortShips(SHOFIXTI_SHIP) < ifHardDifficulty(1, 2) ? true : false);
 			const bool RoomInFleet = EscortFeasibilityStudy(SHOFIXTI_SHIP);

@@ -42,11 +42,11 @@ struct GameEvent
 	uint8_t func_index;
 };
 
-typedef enum
+enum class EventType
 {
-	ABSOLUTE_EVENT = 0,
-	RELATIVE_EVENT
-} EVENT_TYPE;
+	Absolute = 0,
+	Relative
+};
 
 HEVENT AllocEvent();
 void PutEvent(HEVENT h);
@@ -70,9 +70,9 @@ extern bool UninitGameClock(void);
 extern float daysElapsed(void);
 
 extern void SetGameClockRate(uint16_t seconds_per_day);
-extern bool ValidateEvent(EVENT_TYPE type, uint16_t* pmonth_index,
+extern bool ValidateEvent(EventType type, uint16_t* pmonth_index,
 						  uint16_t* pday_index, uint16_t* pyear_index);
-extern HEVENT AddEvent(EVENT_TYPE type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index);
+extern HEVENT AddEvent(EventType type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index);
 extern void EventHandler(uint8_t selector);
 extern void GameClockTick(void);
 extern void MoveGameClockDays(uint16_t days);

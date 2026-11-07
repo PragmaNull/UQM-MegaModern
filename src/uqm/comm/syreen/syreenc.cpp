@@ -253,7 +253,7 @@ static AnimFilterSet syreen_filters =
 
 static void FriendlyExit(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 
 	if (PlayerSaid(R, bye))
 	{
@@ -735,7 +735,7 @@ static void NormalSyreen(RESPONSE_REF R)
 	{
 		NPCPhrase(HORRIBLE_TRUTH);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_KNOW_ABOUT_MYCON, static_cast<uint32_t>(1));
 
@@ -941,7 +941,7 @@ static void Intro(void)
 	{
 		NPCPhrase(OUT_TAKES);
 
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 		return;
 	}
 
@@ -1079,7 +1079,7 @@ ConversationData* init_syreen_comm(void)
 	syreen_desc.AlienTextBaseline.y = 0;
 	syreen_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	ConversationData* retval {&syreen_desc};
 
 	return (retval);

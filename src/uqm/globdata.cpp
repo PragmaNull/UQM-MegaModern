@@ -221,7 +221,7 @@ void LoadFleetInfo(void)
 			}
 		}
 
-		FleetPtr->allied_state = BAD_GUY;
+		FleetPtr->allied_state = +RaceAllegiance::Bad;
 		FleetPtr->known_strength = 0;
 		FleetPtr->loc = FleetPtr->known_loc;
 		FleetPtr->growth = 0;

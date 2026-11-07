@@ -141,9 +141,9 @@ void GameClock::restartDay() noexcept
 	m_tickCount = m_dayInTicks;
 }
 
-bool GameClock::resolveDate(EVENT_TYPE type, uint16_t& month, uint16_t& day, uint16_t& year) const
+bool GameClock::resolveDate(EventType type, uint16_t& month, uint16_t& day, uint16_t& year) const
 {
-	if (type == RELATIVE_EVENT)
+	if (type == EventType::Relative)
 	{
 		month += m_month - 1;
 		year += m_year + (month / 12);

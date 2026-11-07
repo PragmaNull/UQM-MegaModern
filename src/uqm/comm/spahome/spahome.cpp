@@ -241,24 +241,24 @@ static AnimFilterSet spahome_filters =
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	setSegue(Segue_peace);
+	setSegue(Segue::Peace);
 	if (PlayerSaid(R, we_attack_again))
 	{
 		NPCPhrase(WE_FIGHT_AGAIN);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, surrender_or_die))
 	{
 		NPCPhrase(DEFEND_OURSELVES);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(NO_PASSWORD);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, gort_merenga)
 			 || PlayerSaid(R, guph_florp)
@@ -267,13 +267,13 @@ static void ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(WRONG_PASSWORD);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, screw_password))
 	{
 		NPCPhrase(NO_PASSWORD);
 
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (PlayerSaid(R, bye_no_ally_offer))
 	{
@@ -317,7 +317,7 @@ static void ExitConversation(RESPONSE_REF R)
 		NPCPhrase(DEPART_FOR_EARTH);
 
 		SetRaceAllied(SPATHI_SHIP, true);
-		AddEvent(RELATIVE_EVENT, 6, 0, 0, SPATHI_SHIELD_EVENT);
+		AddEvent(EventType::Relative, 6, 0, 0, SPATHI_SHIELD_EVENT);
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
 	}
@@ -1018,7 +1018,7 @@ static void Intro(void)
 	if (Manner == 2)
 	{
 		NPCPhrase(HATE_YOU_FOREVER);
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 	else if (Manner == 1
 			 && uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_PASSWORD)
@@ -1027,7 +1027,7 @@ static void Intro(void)
 	{
 		SpathiAngry((RESPONSE_REF)0);
 	}
-	else if (CheckAlliance(SPATHI_SHIP) == GOOD_GUY)
+	else if (CheckAlliance(SPATHI_SHIP) == RaceAllegiance::Good)
 	{
 		CommData.AlienColorMapIndex = 1;
 
@@ -1052,7 +1052,7 @@ static void Intro(void)
 			NPCPhrase(YOU_LIED_2);
 
 			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(2));
-			setSegue(Segue_hostile);
+			setSegue(Segue::Hostile);
 		}
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_QUEST))
@@ -1085,7 +1085,7 @@ static void post_spahome_enc(void)
 {
 	uint8_t Manner {};
 
-	if (getSegue() == Segue_hostile
+	if (getSegue() == Segue::Hostile
 		&& (Manner = uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER)) != 2)
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(1));
@@ -1116,11 +1116,11 @@ ConversationData* init_spahome_comm()
 
 	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER) == 3)
 	{
-		setSegue(Segue_peace);
+		setSegue(Segue::Peace);
 	}
 	else
 	{
-		setSegue(Segue_hostile);
+		setSegue(Segue::Hostile);
 	}
 
 	ConversationData* retval {&spahome_desc};

@@ -71,7 +71,7 @@ static void checkArilouGate(void)
 	uint8_t counter {};
 
 	counter = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_COUNTER);
-	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE) == OPENING)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE) == ArilouGateState::Opening)
 	{ // The portal is opening or fully open
 		if (counter < 9)
 		{
@@ -321,7 +321,7 @@ int Starcon2Main(void* threadArg)
 				continue;
 			}
 
-			SetStatusMessageMode(SMM_DEFAULT);
+			SetStatusMessageMode(StatMsgMode::Default);
 
 			if (!((uqm::currentActivity() | NextActivity) & CHECK_LOAD))
 			{
@@ -394,7 +394,7 @@ int Starcon2Main(void* threadArg)
 					InitCommunication(BLACKURQ_CONVERSATION);
 					if (uqm::UQMOptions::read().gameOver)
 					{
-						GameOver(DEATH_MARCH);
+						GameOver(EndgameScenario::DeathMarch);
 					}
 				}
 				else if (uqm::currentActivity() & CHECK_RESTART)

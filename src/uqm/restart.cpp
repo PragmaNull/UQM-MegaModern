@@ -515,7 +515,7 @@ static bool DoRestart(MenuState* pMS)
 		Flash_setSpeed(pMS->flashContext, (6 * c_gameSecond) / 14, TimePeriod {},
 					   (6 * c_gameSecond) / 14, TimePeriod {});
 		Flash_setFrameTime(pMS->flashContext, c_gameSecond / 16);
-		Flash_setState(pMS->flashContext, FlashState_fadeIn,
+		Flash_setState(pMS->flashContext, FlashState::FadeIn,
 					   (3 * c_gameSecond) / 16);
 		Flash_setPulseBox(pMS->flashContext, false);
 
@@ -558,7 +558,7 @@ static bool DoRestart(MenuState* pMS)
 				if (uqm::UQMOptions::read().optDiffChooser == uqm::Difficulty::ChooseYourOwn)
 				{
 					Flash_pause(pMS->flashContext);
-					Flash_setState(pMS->flashContext, FlashState_fadeIn,
+					Flash_setState(pMS->flashContext, FlashState::FadeIn,
 								   (3 * c_gameSecond) / 16);
 					if (!DoDiffChooser(pMS))
 					{
@@ -573,7 +573,7 @@ static bool DoRestart(MenuState* pMS)
 				}
 
 				Flash_pause(pMS->flashContext);
-				Flash_setState(pMS->flashContext, FlashState_fadeIn,
+				Flash_setState(pMS->flashContext, FlashState::FadeIn,
 							   (3 * c_gameSecond) / 16);
 				if (const uqstl::optional<uqm::GameSeed> seed {NewGameMenu()})
 				{
@@ -608,7 +608,7 @@ static bool DoRestart(MenuState* pMS)
 				break;
 			case SETUP_GAME:
 				Flash_pause(pMS->flashContext);
-				Flash_setState(pMS->flashContext, FlashState_fadeIn,
+				Flash_setState(pMS->flashContext, FlashState::FadeIn,
 							   (3 * c_gameSecond) / 16);
 
 				SetupMenu();
@@ -739,7 +739,7 @@ void ShowGameEnding(void)
 
 		if (uqm::UQMOptions::read().gameOver)
 		{
-			GameOver(SUICIDE);
+			GameOver(EndgameScenario::Suicide);
 		}
 
 		DeathBySuicide = false;
@@ -757,7 +757,7 @@ void ShowGameEnding(void)
 			{
 				if (uqm::UQMOptions::read().gameOver)
 				{
-					GameOver(DIED_IN_BATTLE);
+					GameOver(EndgameScenario::DiedInBattle);
 				}
 				DeathByMelee = false;
 			}
@@ -765,7 +765,7 @@ void ShowGameEnding(void)
 			{
 				if (uqm::UQMOptions::read().gameOver)
 				{
-					GameOver(SURRENDERED);
+					GameOver(EndgameScenario::Surrendered);
 				}
 				DeathBySurrender = false;
 			}

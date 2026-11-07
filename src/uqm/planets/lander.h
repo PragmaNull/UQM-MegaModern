@@ -19,6 +19,8 @@
 #ifndef UQM_PLANETS_LANDER_H_
 #define UQM_PLANETS_LANDER_H_
 
+
+#include "core/types/enum.h"
 #include "elemdata.h"
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
@@ -86,11 +88,13 @@ extern bool KillLanderCrewSeq(uint16_t numKilled, TimePeriod period);
 extern unsigned GetThermalHazardRating(int temp);
 
 // Element.playerNr constants
-enum
+enum class PlanetsidePlayer
 {
-	PS_HUMAN_PLAYER,
-	PS_NON_PLAYER,
+	Human,
+	NonPlayer,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<PlanetsidePlayer> = true;
 
 #if 0 //defined(__cplusplus)
 }

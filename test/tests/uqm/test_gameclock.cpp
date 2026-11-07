@@ -84,7 +84,7 @@ TEST_F(GameClockTest, ResolveDateMakesRelativeDatesAbsolute)
 	uint16_t month {0};
 	uint16_t day {14};
 	uint16_t year {0};
-	EXPECT_TRUE(m_clock.resolveDate(RELATIVE_EVENT, month, day, year));
+	EXPECT_TRUE(m_clock.resolveDate(EventType::Relative, month, day, year));
 	EXPECT_EQ(day, 3);
 	EXPECT_EQ(month, 3);
 	EXPECT_EQ(year, StartYear);
@@ -95,9 +95,9 @@ TEST_F(GameClockTest, ResolveDateRefusesPastDates)
 	uint16_t month {2};
 	uint16_t day {16};
 	uint16_t year {StartYear};
-	EXPECT_FALSE(m_clock.resolveDate(ABSOLUTE_EVENT, month, day, year));
+	EXPECT_FALSE(m_clock.resolveDate(EventType::Absolute, month, day, year));
 	day = 17;
-	EXPECT_TRUE(m_clock.resolveDate(ABSOLUTE_EVENT, month, day, year));
+	EXPECT_TRUE(m_clock.resolveDate(EventType::Absolute, month, day, year));
 }
 
 TEST_F(GameClockTest, DueEventsComeInDateOrder)

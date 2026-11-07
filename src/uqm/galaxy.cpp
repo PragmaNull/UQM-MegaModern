@@ -353,7 +353,7 @@ static bool CmpMovePoints(const GfxPoint* pt1, const LargePoint* pt2, int32_t dx
 	}
 }
 
-void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
+void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 {
 	Primitive* pprim {};
 	const static uint16_t star_counts[] =
@@ -364,7 +364,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 	const static uint16_t star_frame_ofs[] = {32 + 26, 26, 0};
 	const bool meleeScaleModeIsStep {uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step};
 
-	if (view_state != VIEW_STABLE)
+	if (view_state != ViewState::Stable)
 	{
 		uint16_t i = 0;
 		uint16_t iss {};
@@ -374,7 +374,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 
 		uint16_t reduction {zoom_out};
 
-		if (view_state == VIEW_CHANGE)
+		if (view_state == ViewState::Change)
 		{
 			if (inHQSpace())
 			{
@@ -548,7 +548,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 
 		ppt = log_star_array;
 		for (iss = 0, pprim = DisplayArray, wrap_around = LogSpaceWidth();
-			 iss < 3 && (view_state == VIEW_CHANGE || CmpMovePoints(&pprim->Object.Point, ppt, dx, dy, reduction));
+			 iss < 3 && (view_state == ViewState::Change || CmpMovePoints(&pprim->Object.Point, ppt, dx, dy, reduction));
 			 ++iss, wrap_around <<= 1, dx <<= 1, dy <<= 1)
 		{
 			for (i = star_counts[iss]; i > 0; --i, ++pprim, ++ppt)

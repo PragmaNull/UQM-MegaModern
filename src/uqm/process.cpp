@@ -321,10 +321,10 @@ static uint16_t CalcReduction(int32_t dx, int32_t dy)
 
 static constexpr auto ZoomJump {((1 << ZoomShift) >> 3)};
 
-static VIEW_STATE CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
-						   int32_t* pdx, int32_t* pdy, uint16_t ships_alive)
+static ViewState CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
+						  int32_t* pdx, int32_t* pdy, uint16_t ships_alive)
 {
-	VIEW_STATE view_state;
+	ViewState view_state;
 
 #ifdef KDEBUG
 	uqm::log::debug("CalcView:");
@@ -367,7 +367,7 @@ static VIEW_STATE CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
 
 	if (zoom_out == next_reduction)
 	{
-		view_state = dx == 0 && dy == 0 && !inHQSpace() ? VIEW_STABLE : VIEW_SCROLL;
+		view_state = dx == 0 && dy == 0 && !inHQSpace() ? ViewState::Stable : ViewState::Scroll;
 	}
 	else
 	{
@@ -396,7 +396,7 @@ static VIEW_STATE CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
 			SpaceOrg.y = DisplayAlign((int)(LogSpaceHeight() >> 1) - (LogSpaceHeight() * next_reduction / (MaxZoomOut << 2)));
 		}
 		zoom_out = next_reduction;
-		view_state = VIEW_CHANGE;
+		view_state = ViewState::Change;
 	}
 
 	if (uqm::lowByte(uqm::currentActivity()) <= IN_HYPERSPACE)
@@ -693,7 +693,7 @@ static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, Element* ElementPt
 	return (ElementPtr->state_flags & Collision);
 }
 
-static VIEW_STATE PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
+static ViewState PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 {
 	int16_t min_reduction {};
 	int16_t max_reduction {};
@@ -887,7 +887,7 @@ static inline int16_t CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reductio
 	}
 }
 
-static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
+static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scroll_y)
 {
 	LargePoint delta;
 	int16_t reduction {};
@@ -979,7 +979,7 @@ static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t sc
 		else
 		{
 			const GRAPHICS_PRIM ObjType {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
-			if (view_state != VIEW_STABLE
+			if (view_state != ViewState::Stable
 				|| (state_flags & (Appearing | Changing)))
 			{
 				GfxPoint next;
@@ -1009,7 +1009,7 @@ static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t sc
 
 					if (ObjType == PrimitiveType::Stamp || ObjType == PrimitiveType::StampFill)
 					{
-						if (view_state == VIEW_CHANGE
+						if (view_state == ViewState::Change
 							|| (state_flags & (Appearing | Changing)))
 						{
 							uint16_t index {};
@@ -1107,7 +1107,7 @@ void RedrawQueue(bool clear)
 {
 	int32_t scroll_x {};
 	int32_t scroll_y {};
-	VIEW_STATE view_state;
+	ViewState view_state;
 
 	SetContext(StatusContext);
 
