@@ -136,8 +136,7 @@ enum class ZoqFotPikAlien
 	Fot,
 	Pik
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ZoqFotPikAlien> = true;
+consteval bool isArithmeticEnum(ZoqFotPikAlien) { return true; }
 
 static int LastAlien;
 

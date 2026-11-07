@@ -132,8 +132,7 @@ enum class AnimDir
 	None = 0,
 	Up = 1, // Animation indices are increasing
 };
-template <>
-inline constexpr bool IsArithmeticEnum<AnimDir> = true;
+consteval bool isArithmeticEnum(AnimDir) { return true; }
 
 enum class AnimType
 {

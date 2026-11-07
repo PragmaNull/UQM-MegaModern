@@ -117,7 +117,6 @@ enum class ShofixtiPhrase
 	NothingNew,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ShofixtiPhrase> = true;
+consteval bool isArithmeticEnum(ShofixtiPhrase) { return true; }
 
 #endif // UQM_COMM_SHOFIXT_STRINGS_H

@@ -294,7 +294,6 @@ enum class StarbasePhrase
 	For,
 	Resunits,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<StarbasePhrase> = true;
+consteval bool isArithmeticEnum(StarbasePhrase) { return true; }
 
 #endif // UQM_COMM_STARBAS_STRINGS_H

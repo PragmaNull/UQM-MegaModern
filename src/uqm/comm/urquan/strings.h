@@ -101,7 +101,6 @@ enum class UrquanPhrase
 	GeneralInfo4,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<UrquanPhrase> = true;
+consteval bool isArithmeticEnum(UrquanPhrase) { return true; }
 
 #endif // UQM_COMM_URQUAN_STRINGS_H

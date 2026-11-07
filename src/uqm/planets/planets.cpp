@@ -54,8 +54,7 @@ enum class PlanetMenuItem
 	GameMenu,
 	Navigation,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<PlanetMenuItem> = true;
+consteval bool isArithmeticEnum(PlanetMenuItem) { return true; }
 
 GFXCONTEXT PlanetContext;
 // Context for rotating planet view and lander surface view

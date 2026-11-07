@@ -46,8 +46,7 @@ enum class SunIntensity
 	Blue,
 	White
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SunIntensity> = true;
+consteval bool isArithmeticEnum(SunIntensity) { return true; }
 
 static uint16_t CalcFromBase(uint16_t base, uint16_t variance)
 {

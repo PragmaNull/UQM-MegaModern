@@ -43,8 +43,7 @@ enum class NetState
 	EndingBattle,  /* Both sides are prepared to end */
 	EndingBattle2, /* Waiting for the final synchronisation */
 };
-template <>
-inline constexpr bool IsArithmeticEnum<NetState> = true;
+consteval bool isArithmeticEnum(NetState) { return true; }
 
 #if 0 //defined(__cplusplus)
 }

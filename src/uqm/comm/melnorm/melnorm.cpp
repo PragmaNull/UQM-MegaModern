@@ -255,8 +255,7 @@ enum class TechId
 	ModuleCannon,
 	ModuleFurnace,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<TechId> = true;
+consteval bool isArithmeticEnum(TechId) { return true; }
 
 // Group the technologies into three subtypes
 enum class TechType

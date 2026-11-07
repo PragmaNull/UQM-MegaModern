@@ -121,7 +121,6 @@ enum class CommanderPhrase
 	TakeCareOfBaseAgain,
 	GoodbyeCommander,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<CommanderPhrase> = true;
+consteval bool isArithmeticEnum(CommanderPhrase) { return true; }
 
 #endif // UQM_COMM_COMANDR_STRINGS_H

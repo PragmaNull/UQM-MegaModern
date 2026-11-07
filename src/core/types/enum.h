@@ -15,19 +15,15 @@
 template <typename E>
 concept EnumType = std::is_enum_v<E>;
 
-// Specialize as true for an enum whose values are also used as numbers (indexes, offsets, counts).
+// An enum whose values are also used as numbers (indexes, offsets, counts).
+// Declare 'consteval bool isArithmeticEnum(E) { return true; }' in the namespace of the enum.
 template <typename E>
-inline constexpr bool IsArithmeticEnum = false;
+concept ArithmeticEnum = EnumType<E> && requires { requires isArithmeticEnum(E {}); };
 
+// An enum whose values are bit flags.
+// Declare 'consteval bool isFlagEnum(E) { return true; }' in the namespace of the enum.
 template <typename E>
-concept ArithmeticEnum = EnumType<E> && IsArithmeticEnum<E>;
-
-// Specialize as true for an enum whose values are bit flags.
-template <typename E>
-inline constexpr bool IsFlagEnum = false;
-
-template <typename E>
-concept BitFlagEnum = EnumType<E> && IsFlagEnum<E>;
+concept BitFlagEnum = EnumType<E> && requires { requires isFlagEnum(E {}); };
 
 // The value of an arithmetic or flag enum as an integer, for example as an array index: array[*Race::Arilou].
 template <EnumType E>

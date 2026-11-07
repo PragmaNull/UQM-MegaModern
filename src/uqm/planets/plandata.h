@@ -38,8 +38,7 @@ enum class PlanetSize : uint8_t
 
 	Count
 };
-template <>
-inline constexpr bool IsArithmeticEnum<PlanetSize> = true;
+consteval bool isArithmeticEnum(PlanetSize) { return true; }
 
 enum class StellarSize : uint8_t
 {
@@ -49,8 +48,7 @@ enum class StellarSize : uint8_t
 
 	Count
 };
-template <>
-inline constexpr bool IsArithmeticEnum<StellarSize> = true;
+consteval bool isArithmeticEnum(StellarSize) { return true; }
 
 enum class StarBodyColor : uint8_t
 {
@@ -69,8 +67,7 @@ enum class StarBodyColor : uint8_t
 	Violet,
 	NumPlanetColors
 };
-template <>
-inline constexpr bool IsArithmeticEnum<StarBodyColor> = true;
+consteval bool isArithmeticEnum(StarBodyColor) { return true; }
 
 enum class SystemOwner
 {
@@ -80,8 +77,7 @@ enum class SystemOwner
 
 	Player = (1 << 2)
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SystemOwner> = true;
+consteval bool isArithmeticEnum(SystemOwner) { return true; }
 
 inline constexpr auto StarOwnerShift {0};
 inline constexpr auto StarTypeShift {3};  /* STAR_OWNER_SHIFT + 3 */
@@ -198,8 +194,7 @@ enum class PlanetType
 	DestroyedStarbase = 125 | WorldTypeSpecial,
 	PrecursorStarbase = 124 | WorldTypeSpecial,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<PlanetType> = true;
+consteval bool isArithmeticEnum(PlanetType) { return true; }
 
 inline constexpr auto NumberOfSmallRockyWorlds {PlanetType::LastSmallRocky - PlanetType::FirstSmallRocky + 1};
 inline constexpr auto NumberOfLargeRockyWorlds {PlanetType::LastLargeRocky - PlanetType::FirstLargeRocky + 1};
@@ -314,8 +309,7 @@ enum class DensityClass
 	High,
 	Super
 };
-template <>
-inline constexpr bool IsArithmeticEnum<DensityClass> = true;
+consteval bool isArithmeticEnum(DensityClass) { return true; }
 
 extern uint16_t CalcGravity(const PlanetData*);
 

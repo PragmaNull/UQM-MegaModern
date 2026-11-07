@@ -108,8 +108,7 @@ enum class GameMenuItem
 	Settings,
 	Exit,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<GameMenuItem> = true;
+consteval bool isArithmeticEnum(GameMenuItem) { return true; }
 
 enum class SettingsMenuItem
 {
@@ -130,8 +129,7 @@ enum class SettingsMenuItem
 	ChangeShip,
 	ExitSettingsMenu,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SettingsMenuItem> = true;
+consteval bool isArithmeticEnum(SettingsMenuItem) { return true; }
 
 // Shows the seed of the game in the message field at the top of the screen.
 static void DrawSeedMessage(void)

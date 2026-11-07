@@ -140,7 +140,6 @@ enum class SlylandroHomePhrase
 	MegaSelfDestruct,
 	WhyYesThereIs,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SlylandroHomePhrase> = true;
+consteval bool isArithmeticEnum(SlylandroHomePhrase) { return true; }
 
 #endif // UQM_COMM_SLYHOME_STRINGS_H

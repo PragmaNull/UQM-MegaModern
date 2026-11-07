@@ -110,8 +110,7 @@ enum class FlashState
 	Off = 3,
 	// The overlay image is not visible.
 };
-template <>
-inline constexpr bool IsArithmeticEnum<FlashState> = true;
+consteval bool isArithmeticEnum(FlashState) { return true; }
 
 typedef struct FlashContext FlashContext;
 

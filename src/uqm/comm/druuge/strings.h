@@ -131,7 +131,6 @@ enum class DruugePhrase
 	FineDeal,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<DruugePhrase> = true;
+consteval bool isArithmeticEnum(DruugePhrase) { return true; }
 
 #endif // UQM_COMM_DRUUGE_STRINGS_H

@@ -72,8 +72,7 @@ enum class ShipCodeRes
 	Sis,
 	Probe
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ShipCodeRes> = true;
+consteval bool isArithmeticEnum(ShipCodeRes) { return true; }
 
 typedef RaceDesc* (*RaceDescInitFunc)(void);
 

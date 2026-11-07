@@ -138,7 +138,6 @@ enum class TalkingPetPhrase
 	HelloAfterCompelUrquan,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<TalkingPetPhrase> = true;
+consteval bool isArithmeticEnum(TalkingPetPhrase) { return true; }
 
 #endif // UQM_COMM_TALKPET_STRINGS_H

@@ -34,8 +34,7 @@ enum class StarbaseMenuItem
 	Shipyard,
 	DepartBase
 };
-template <>
-inline constexpr bool IsArithmeticEnum<StarbaseMenuItem> = true;
+consteval bool isArithmeticEnum(StarbaseMenuItem) { return true; }
 typedef uint8_t STARBASE_STATE;
 
 extern void InstallBombAtEarth(void);

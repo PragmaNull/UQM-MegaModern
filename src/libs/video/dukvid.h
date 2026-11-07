@@ -34,7 +34,6 @@ enum class DukVidError
 	Eof = -5,
 	Other = -1000,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<DukVidError> = true;
+consteval bool isArithmeticEnum(DukVidError) { return true; }
 
 #endif // UQM_LIBS_VIDEO_DUKVID_H

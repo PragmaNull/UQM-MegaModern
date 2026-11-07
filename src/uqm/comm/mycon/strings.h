@@ -135,7 +135,6 @@ enum class MyconPhrase
 	WeGoToImplant,
 	WontFallForTrick,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MyconPhrase> = true;
+consteval bool isArithmeticEnum(MyconPhrase) { return true; }
 
 #endif // UQM_COMM_MYCON_STRINGS_H

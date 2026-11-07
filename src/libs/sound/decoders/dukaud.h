@@ -34,7 +34,6 @@ enum class DukAudError
 	BadArg = -3,
 	Other = -1000,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<DukAudError> = true;
+consteval bool isArithmeticEnum(DukAudError) { return true; }
 
 #endif // UQM_LIBS_SOUND_DECODERS_DUKAUD_H

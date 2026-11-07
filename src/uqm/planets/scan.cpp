@@ -70,8 +70,7 @@ enum class ScanMenuItem
 	AutoScan,
 	DispatchShuttle,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ScanMenuItem> = true;
+consteval bool isArithmeticEnum(ScanMenuItem) { return true; }
 
 
 void RepairBackRect(GfxRect* pRect)

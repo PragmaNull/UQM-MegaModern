@@ -59,8 +59,7 @@ enum class AudioFileType
 	Aif,
 	Count
 };
-template <>
-inline constexpr bool IsArithmeticEnum<AudioFileType> = true;
+consteval bool isArithmeticEnum(AudioFileType) { return true; }
 
 // forward-declare
 namespace tfb
@@ -135,8 +134,7 @@ enum class SoundDecoderStatus
 	Error,
 	Eof,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SoundDecoderStatus> = true;
+consteval bool isArithmeticEnum(SoundDecoderStatus) { return true; }
 
 namespace tfb
 {

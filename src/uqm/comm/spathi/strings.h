@@ -160,7 +160,6 @@ enum class SpathiPhrase
 	OkWeFightAtPluto,
 	JoinUsNomad,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SpathiPhrase> = true;
+consteval bool isArithmeticEnum(SpathiPhrase) { return true; }
 
 #endif // UQM_COMM_SPATHI_STRINGS_H

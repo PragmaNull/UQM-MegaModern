@@ -64,8 +64,7 @@ enum class MainMenuItem
 	QuitGame,
 	Count
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MainMenuItem> = true;
+consteval bool isArithmeticEnum(MainMenuItem) { return true; }
 
 enum class DifficultyMenuItem
 {
@@ -73,8 +72,7 @@ enum class DifficultyMenuItem
 	Original,
 	Hard
 };
-template <>
-inline constexpr bool IsArithmeticEnum<DifficultyMenuItem> = true;
+consteval bool isArithmeticEnum(DifficultyMenuItem) { return true; }
 
 static auto ChooserX() { return (CanvasWidth >> 1); }
 static auto ChooserY() { return ((CanvasHeight >> 1) - ResScale(12)); }

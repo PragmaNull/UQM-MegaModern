@@ -103,8 +103,7 @@ enum class VideoDecoderStatus
 	Error,
 	Eof,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<VideoDecoderStatus> = true;
+consteval bool isArithmeticEnum(VideoDecoderStatus) { return true; }
 
 namespace tfb
 {

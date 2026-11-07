@@ -51,16 +51,14 @@ enum class GameEventId : uint8_t
 
 	NumEvents
 };
-template <>
-inline constexpr bool IsArithmeticEnum<GameEventId> = true;
+consteval bool isArithmeticEnum(GameEventId) { return true; }
 
 enum class ArilouGateState
 {
 	Closing = 0,
 	Opening
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ArilouGateState> = true;
+consteval bool isArithmeticEnum(ArilouGateState) { return true; }
 
 extern int eventIdStrToNum(const char* eventIdStr);
 const extern char* eventIdNumToStr(int eventNum);

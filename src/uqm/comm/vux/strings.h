@@ -128,7 +128,6 @@ enum class VuxPhrase
 	GoodbyeAndDieHostileSpace4,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<VuxPhrase> = true;
+consteval bool isArithmeticEnum(VuxPhrase) { return true; }
 
 #endif // UQM_COMM_VUX_STRINGS_H

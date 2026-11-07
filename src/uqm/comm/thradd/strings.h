@@ -178,7 +178,6 @@ enum class ThraddashPhrase
 	GoAwayFightingIlwrath2,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ThraddashPhrase> = true;
+consteval bool isArithmeticEnum(ThraddashPhrase) { return true; }
 
 #endif // UQM_COMM_THRADD_STRINGS_H

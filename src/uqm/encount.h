@@ -102,8 +102,7 @@ enum class EncounterAction
 	Hail = 0,
 	Attack
 };
-template <>
-inline constexpr bool IsArithmeticEnum<EncounterAction> = true;
+consteval bool isArithmeticEnum(EncounterAction) { return true; }
 
 extern void EncounterBattle(void);
 extern void BuildBattle(uint16_t which_player);

@@ -112,7 +112,6 @@ enum class SlylandroPhrase
 	EnumerateEighty,
 	EnumerateNinety,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SlylandroPhrase> = true;
+consteval bool isArithmeticEnum(SlylandroPhrase) { return true; }
 
 #endif // UQM_COMM_SLYLAND_STRINGS_H

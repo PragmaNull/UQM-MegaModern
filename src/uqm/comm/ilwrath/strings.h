@@ -135,7 +135,6 @@ enum class IlwrathPhrase
 	ButEvilIsDefined,
 	Gtfo,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<IlwrathPhrase> = true;
+consteval bool isArithmeticEnum(IlwrathPhrase) { return true; }
 
 #endif // UQM_COMM_ILWRATH_STRINGS_H

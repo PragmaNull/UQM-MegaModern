@@ -88,8 +88,7 @@ enum class InfoType
 	RandomGroupInfo,
 	DefinedGroupInfo
 };
-template <>
-inline constexpr bool IsArithmeticEnum<InfoType> = true;
+consteval bool isArithmeticEnum(InfoType) { return true; }
 
 GameStateFile* OpenStateFile(int stateFile, const char* mode);
 void CloseStateFile(GameStateFile* fp);

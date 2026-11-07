@@ -94,7 +94,6 @@ enum class YehatPhrase
 	Name4,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<YehatPhrase> = true;
+consteval bool isArithmeticEnum(YehatPhrase) { return true; }
 
 #endif // UQM_COMM_YEHAT_STRINGS_H

@@ -41,8 +41,7 @@ enum class MineralCategory
 
 	NumElementCategories
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MineralCategory> = true;
+consteval bool isArithmeticEnum(MineralCategory) { return true; }
 
 
 /*------------------------------ Global Data ------------------------------ */
@@ -187,8 +186,7 @@ enum class ChemicalElement
 
 	NumberOfElements
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ChemicalElement> = true;
+consteval bool isArithmeticEnum(ChemicalElement) { return true; }
 
 
 inline constexpr auto Few {1};
@@ -201,8 +199,7 @@ enum class DepositSize
 	Medium,
 	Heavy
 };
-template <>
-inline constexpr bool IsArithmeticEnum<DepositSize> = true;
+consteval bool isArithmeticEnum(DepositSize) { return true; }
 inline constexpr auto Nothing {(uint8_t)(~0)};
 
 constexpr auto MineralDeposit(const auto& qn, const auto& ql) { return uqm::makeByte(qn, ql); }

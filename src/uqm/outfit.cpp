@@ -52,8 +52,7 @@ enum class OutfitMenuItem
 	Exit,
 	DoFuel
 };
-template <>
-inline constexpr bool IsArithmeticEnum<OutfitMenuItem> = true;
+consteval bool isArithmeticEnum(OutfitMenuItem) { return true; }
 
 GfxPoint lander_pos[MaxLanders];
 FONT ModuleFont;

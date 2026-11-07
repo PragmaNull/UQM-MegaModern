@@ -123,8 +123,7 @@ enum class Conversation
 
 	NumConversations,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<Conversation> = true;
+consteval bool isArithmeticEnum(Conversation) { return true; }
 
 struct AlienAltResources
 {
@@ -210,8 +209,7 @@ enum class Device
 
 	NumDevices
 };
-template <>
-inline constexpr bool IsArithmeticEnum<Device> = true;
+consteval bool isArithmeticEnum(Device) { return true; }
 
 inline auto YearsToKohrahVictory() { return (uqm::UQMOptions::read().deCleansing ? 100 : 4); }
 
@@ -242,8 +240,7 @@ enum class ActivityKind : uint8_t
 	InPlanetOrbit,
 	InStarbase,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ActivityKind> = true;
+consteval bool isArithmeticEnum(ActivityKind) { return true; }
 
 // The high byte of an ACTIVITY value.
 enum class ActivityFlag : uint16_t
@@ -257,8 +254,7 @@ enum class ActivityFlag : uint16_t
 	CheckRestart = uqm::makeWord(0, (1 << 5)),
 	CheckAbort = uqm::makeWord(0, (1 << 6)),
 };
-template <>
-inline constexpr bool IsFlagEnum<ActivityFlag> = true;
+consteval bool isFlagEnum(ActivityFlag) { return true; }
 typedef uint16_t ACTIVITY; // TODO PramgaNull: use ActivityFlag
 
 #include "uqm/session/GameState.h"
@@ -299,8 +295,7 @@ enum class DefinedGroup
 	Samatra,
 	NumDefgrps
 };
-template <>
-inline constexpr bool IsArithmeticEnum<DefinedGroup> = true;
+consteval bool isArithmeticEnum(DefinedGroup) { return true; }
 
 //#define STATE_DEBUG
 

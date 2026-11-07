@@ -95,8 +95,7 @@ enum class ModuleType : uint8_t
 	EmptyModuleSlot,
 	EmptyLanderSlot,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ModuleType> = true;
+consteval bool isArithmeticEnum(ModuleType) { return true; }
 
 inline constexpr auto EmptySlot {ModuleType::NumModules};
 inline constexpr auto NumBombModules {10};
@@ -295,8 +294,7 @@ enum class BorderFrameIndex
 	LanderDos,
 	SisComm,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<BorderFrameIndex> = true;
+consteval bool isArithmeticEnum(BorderFrameIndex) { return true; }
 
 enum class BevelLevel
 {
@@ -308,8 +306,7 @@ enum class BevelLevel
 	ThickOuterBevel = ThinOuterBevel + 8,
 	ThickOutInvBevel = ThickOuterBevel + 8,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<BevelLevel> = true;
+consteval bool isArithmeticEnum(BevelLevel) { return true; }
 
 
 #endif // UQM_SIS_H

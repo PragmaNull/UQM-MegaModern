@@ -102,7 +102,6 @@ enum class KohrAhPhrase
 	GameOverDude,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<KohrAhPhrase> = true;
+consteval bool isArithmeticEnum(KohrAhPhrase) { return true; }
 
 #endif // UQM_COMM_BLACKUR_STRINGS_H

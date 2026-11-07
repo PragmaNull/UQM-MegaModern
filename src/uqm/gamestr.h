@@ -88,8 +88,7 @@ enum class GameStringBase
 
 	GamestrCount = LabelString + LabelStringCount
 };
-template <>
-inline constexpr bool IsArithmeticEnum<GameStringBase> = true;
+consteval bool isArithmeticEnum(GameStringBase) { return true; }
 
 
 inline constexpr auto DosStarbaseStringBase {GameStringBase::StarbaseString + 12};

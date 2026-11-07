@@ -112,7 +112,6 @@ enum class UmgahPhrase
 	GoodbyeZombie,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<UmgahPhrase> = true;
+consteval bool isArithmeticEnum(UmgahPhrase) { return true; }
 
 #endif // UQM_COMM_UMGAH_STRINGS_H

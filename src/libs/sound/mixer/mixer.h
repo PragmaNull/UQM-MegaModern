@@ -50,8 +50,7 @@ enum class MixerError
 
 	DriverFailure = 0xA101U
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MixerError> = true;
+consteval bool isArithmeticEnum(MixerError) { return true; }
 
 /**
  * Source properties (see OpenAL)
@@ -68,8 +67,7 @@ enum class MixerSourceProp
 	BuffersProcessed = 0x1016
 
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MixerSourceProp> = true;
+consteval bool isArithmeticEnum(MixerSourceProp) { return true; }
 
 /**
  * Source state information
@@ -82,8 +80,7 @@ enum class MixerSourceState
 	Paused,
 
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MixerSourceState> = true;
+consteval bool isArithmeticEnum(MixerSourceState) { return true; }
 
 /** 
  * Sound buffer properties
@@ -97,8 +94,7 @@ enum class MixerBufferProp
 	Data = 0x2005
 
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MixerBufferProp> = true;
+consteval bool isArithmeticEnum(MixerBufferProp) { return true; }
 
 /**
  * Buffer states: semi-private
@@ -135,8 +131,7 @@ enum class MixerFormat
 	Stereo16 = MixFormatMake(2, 2)
 
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MixerFormat> = true;
+consteval bool isArithmeticEnum(MixerFormat) { return true; }
 
 enum class MixerQuality
 {
@@ -147,16 +142,14 @@ enum class MixerQuality
 	Count
 
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MixerQuality> = true;
+consteval bool isArithmeticEnum(MixerQuality) { return true; }
 
 enum class MixerFlags
 {
 	None = 0,
 	FakeData = 1
 };
-template <>
-inline constexpr bool IsFlagEnum<MixerFlags> = true;
+consteval bool isFlagEnum(MixerFlags) { return true; }
 
 /*************************************************
  *  Interface Types

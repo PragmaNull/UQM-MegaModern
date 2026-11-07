@@ -171,7 +171,6 @@ enum class SpathiHomePhrase
 	LikeSomeInfo,
 	WhatAbout
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SpathiHomePhrase> = true;
+consteval bool isArithmeticEnum(SpathiHomePhrase) { return true; }
 
 #endif // UQM_COMM_SPAHOME_STRINGS_H

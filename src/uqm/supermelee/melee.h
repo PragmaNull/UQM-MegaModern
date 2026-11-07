@@ -74,8 +74,7 @@ enum class MeleeMenuItem
 	EditMelee, // Editing a fleet or the team name
 	BuildPick  // Selecting a ship to add to a fleet
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MeleeMenuItem> = true;
+consteval bool isArithmeticEnum(MeleeMenuItem) { return true; }
 using MELEE_OPTIONS = MeleeMenuItem;
 
 #if 0 //defined(__cplusplus)
@@ -241,8 +240,7 @@ enum class MeleeFrameIndex
 	UpDownPs,
 	SpecialPs,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MeleeFrameIndex> = true;
+consteval bool isArithmeticEnum(MeleeFrameIndex) { return true; }
 
 #if 0 //defined(__cplusplus)
 }

@@ -77,16 +77,14 @@ enum class GroupTask
 	Flee,
 	OnStation,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<GroupTask> = true;
+consteval bool isArithmeticEnum(GroupTask) { return true; }
 
 enum class GroupTaskFlag : uint8_t
 {
 	IgnoreFlagship = 1 << 2,
 	ReformGroup = 1 << 3
 };
-template <>
-inline constexpr bool IsFlagEnum<GroupTaskFlag> = true;
+consteval bool isFlagEnum(GroupTaskFlag) { return true; }
 inline constexpr auto MaxRevolutions {5};
 
 inline constexpr auto StationRadius {1600};

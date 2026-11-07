@@ -140,7 +140,6 @@ enum class UtwigPhrase
 	NoUltronAtBomb,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<UtwigPhrase> = true;
+consteval bool isArithmeticEnum(UtwigPhrase) { return true; }
 
 #endif // UQM_COMM_UTWIG_STRINGS_H

@@ -89,8 +89,7 @@ enum class HardModeEncounter
 	NoHelpFromPkunk, // no help before final battle if pkunk are absorbed before the revolt
 	ReadyToBargain	 // druuge sell rosy sphere on second deal
 };
-template <>
-inline constexpr bool IsArithmeticEnum<HardModeEncounter> = true;
+consteval bool isArithmeticEnum(HardModeEncounter) { return true; }
 
 #if 0 //defined(__cplusplus)
 }

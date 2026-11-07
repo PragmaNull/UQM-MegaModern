@@ -46,8 +46,7 @@ enum class BattleKey
 	Thrust,
 	NumKeys
 };
-template <>
-inline constexpr bool IsArithmeticEnum<BattleKey> = true;
+consteval bool isArithmeticEnum(BattleKey) { return true; }
 enum class MenuKey
 {
 	Pause,
@@ -81,8 +80,7 @@ enum class MenuKey
 	MenuAny, /* abstract char key */
 	NumMenuKeys
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MenuKey> = true;
+consteval bool isArithmeticEnum(MenuKey) { return true; }
 
 enum class ControlTemplate
 {

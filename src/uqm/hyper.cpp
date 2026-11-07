@@ -68,8 +68,7 @@ enum class HyperMenuItem
 	GameMenu,
 	Navigation,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<HyperMenuItem> = true;
+consteval bool isArithmeticEnum(HyperMenuItem) { return true; }
 
 static inline int16_t RaceHyperSpeed(RaceId Index)
 {

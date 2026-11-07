@@ -51,8 +51,7 @@ enum class PacketType
 
 	Count, /* Number of packet types */
 };
-template <>
-inline constexpr bool IsArithmeticEnum<PacketType> = true;
+consteval bool isArithmeticEnum(PacketType) { return true; }
 
 // Sent before aborting the connection.
 enum class NetplayAbortReason
@@ -63,8 +62,7 @@ enum class NetplayAbortReason
 	ProtocolError,
 	// Network is in an inconsistent state.
 };
-template <>
-inline constexpr bool IsArithmeticEnum<NetplayAbortReason> = true;
+consteval bool isArithmeticEnum(NetplayAbortReason) { return true; }
 
 // Sent before resetting the connection. A game in progress is terminated.
 enum class NetplayResetReason
@@ -73,8 +71,7 @@ enum class NetplayResetReason
 	SyncLoss,
 	ManualReset,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<NetplayResetReason> = true;
+consteval bool isArithmeticEnum(NetplayResetReason) { return true; }
 
 #if 0 //defined(__cplusplus)
 }
@@ -206,8 +203,7 @@ enum class NetplaySide
 	Local,
 	Remote
 };
-template <>
-inline constexpr bool IsArithmeticEnum<NetplaySide> = true;
+consteval bool isArithmeticEnum(NetplaySide) { return true; }
 
 struct FleetEntry
 {

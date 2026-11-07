@@ -65,8 +65,7 @@ enum class StarmapView
 	RainbowMap,
 	Count
 };
-template <>
-inline constexpr bool IsArithmeticEnum<StarmapView> = true;
+consteval bool isArithmeticEnum(StarmapView) { return true; }
 
 struct Nameplate
 {

@@ -37,8 +37,7 @@ enum class PlanetChance
 	Common = 127,
 	Always = 255
 };
-template <>
-inline constexpr bool IsArithmeticEnum<PlanetChance> = true;
+consteval bool isArithmeticEnum(PlanetChance) { return true; }
 
 static uint8_t BlueDistribution(uint8_t which_world)
 {

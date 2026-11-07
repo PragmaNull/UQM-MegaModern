@@ -42,8 +42,7 @@ enum class MeleeShip
 	None = (uint8_t)~0
 	// Empty fleet position.
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MeleeShip> = true;
+consteval bool isArithmeticEnum(MeleeShip) { return true; }
 inline constexpr auto NumMeleeShips {MeleeShip::Zoqfotpik + 1};
 inline MeleeShip operator+=(MeleeShip lhs, int rhs) { return static_cast<MeleeShip>(static_cast<int>(lhs) + rhs); }
 inline MeleeShip operator-=(MeleeShip lhs, int rhs) { return static_cast<MeleeShip>(static_cast<int>(lhs) - rhs); }

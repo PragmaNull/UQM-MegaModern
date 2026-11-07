@@ -119,7 +119,6 @@ enum class SupoxPhrase
 	Name4,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SupoxPhrase> = true;
+consteval bool isArithmeticEnum(SupoxPhrase) { return true; }
 
 #endif // UQM_COMM_SUPOX_STRINGS_H

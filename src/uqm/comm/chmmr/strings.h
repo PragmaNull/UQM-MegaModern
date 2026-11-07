@@ -104,7 +104,6 @@ enum class ChmmrPhrase
 	PerhapsNotInstall,
 	Yes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ChmmrPhrase> = true;
+consteval bool isArithmeticEnum(ChmmrPhrase) { return true; }
 
 #endif // UQM_COMM_CHMMR_STRINGS_H

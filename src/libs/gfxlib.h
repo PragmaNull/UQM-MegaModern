@@ -432,8 +432,7 @@ enum class TextVAlign
 	Middle,
 	Bottom
 };
-template <>
-inline constexpr bool IsFlagEnum<TextVAlign> = true;
+consteval bool isFlagEnum(TextVAlign) { return true; }
 
 struct GfxText
 {

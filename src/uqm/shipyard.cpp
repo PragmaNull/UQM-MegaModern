@@ -88,8 +88,7 @@ enum class ShipyardMenuItem
 	SaveLoad,
 	Exit
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ShipyardMenuItem> = true;
+consteval bool isArithmeticEnum(ShipyardMenuItem) { return true; }
 
 // Editing mode for DoModifyShips()
 enum class DmsMode

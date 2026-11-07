@@ -360,7 +360,6 @@ enum class ZoqFotPikPhrase
 	OutTakes12,
 	OutTakes13,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ZoqFotPikPhrase> = true;
+consteval bool isArithmeticEnum(ZoqFotPikPhrase) { return true; }
 
 #endif // UQM_COMM_ZOQFOT_STRINGS_H

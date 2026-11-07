@@ -140,7 +140,6 @@ enum class OrzPhrase
 	HostileHello2,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<OrzPhrase> = true;
+consteval bool isArithmeticEnum(OrzPhrase) { return true; }
 
 #endif // UQM_COMM_ORZ_STRINGS_H

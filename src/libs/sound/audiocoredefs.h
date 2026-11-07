@@ -63,8 +63,7 @@ enum class AudioEnum
 	FormatStereo8,
 	Count
 };
-template <>
-inline constexpr bool IsArithmeticEnum<AudioEnum> = true;
+consteval bool isArithmeticEnum(AudioEnum) { return true; }
 
 using audio_SourceProp = AudioEnum;
 using audio_BufferProp = AudioEnum;

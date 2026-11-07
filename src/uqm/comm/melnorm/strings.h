@@ -307,7 +307,6 @@ enum class MelnormePhrase
 	EnumerateHundred,
 	EnumerateThousand
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MelnormePhrase> = true;
+consteval bool isArithmeticEnum(MelnormePhrase) { return true; }
 
 #endif // UQM_COMM_MELNORM_STRINGS_H

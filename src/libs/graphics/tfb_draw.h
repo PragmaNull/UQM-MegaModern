@@ -40,8 +40,7 @@ enum class ScreenBuffer
 
 	Count
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ScreenBuffer> = true;
+consteval bool isArithmeticEnum(ScreenBuffer) { return true; }
 
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/cmap.h"

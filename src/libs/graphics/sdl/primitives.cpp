@@ -672,8 +672,7 @@ enum class ClipCode
 	Right = 0x4,
 	Left = 0x8
 };
-template <>
-inline constexpr bool IsFlagEnum<ClipCode> = true;
+consteval bool isFlagEnum(ClipCode) { return true; }
 
 static ClipCode compute_code(float x, float y, float xmin, float ymin, float xmax, float ymax)
 {

@@ -123,7 +123,6 @@ enum class ArilouPhrase
 	GoodbyeAngrySpace,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ArilouPhrase> = true;
+consteval bool isArithmeticEnum(ArilouPhrase) { return true; }
 
 #endif // UQM_COMM_ARILOU_STRINGS_H

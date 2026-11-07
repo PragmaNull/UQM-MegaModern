@@ -42,8 +42,7 @@ enum class ScanType
 
 	Count,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<ScanType> = true;
+consteval bool isArithmeticEnum(ScanType) { return true; }
 
 inline constexpr auto Sc2MapWidth {210};
 inline constexpr auto Sc2MapHeight {67};
@@ -79,8 +78,7 @@ enum class LanderEvent
 	LanderReturns,
 	LanderDestroyed
 };
-template <>
-inline constexpr bool IsArithmeticEnum<LanderEvent> = true;
+consteval bool isArithmeticEnum(LanderEvent) { return true; }
 
 inline auto MaxScrounged() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50); }
 inline auto MaxHoldBars() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50); }

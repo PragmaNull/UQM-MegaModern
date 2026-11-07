@@ -100,8 +100,7 @@ enum class SolarSysMenuItem
 	GameMenu,
 	Navigation,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SolarSysMenuItem> = true;
+consteval bool isArithmeticEnum(SolarSysMenuItem) { return true; }
 
 SolarSystemState* pSolarSysState;
 FRAME SISIPFrame;

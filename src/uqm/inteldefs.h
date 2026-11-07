@@ -29,8 +29,7 @@ enum class IntelObjectIndex
 	GravityMass,
 	FirstEmpty
 };
-template <>
-inline constexpr bool IsArithmeticEnum<IntelObjectIndex> = true;
+consteval bool isArithmeticEnum(IntelObjectIndex) { return true; }
 
 
 enum class PlayerControlFlags : uint8_t

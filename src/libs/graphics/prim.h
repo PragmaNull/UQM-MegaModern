@@ -33,8 +33,7 @@ enum class PrimitiveType : uint8_t
 
 	Count
 };
-template <>
-inline constexpr bool IsArithmeticEnum<PrimitiveType> = true;
+consteval bool isArithmeticEnum(PrimitiveType) { return true; }
 using GRAPHICS_PRIM = PrimitiveType;
 
 union PRIM_DESC

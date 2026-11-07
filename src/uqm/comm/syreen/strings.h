@@ -153,7 +153,6 @@ enum class SyreenPhrase
 	SexGoodbye,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SyreenPhrase> = true;
+consteval bool isArithmeticEnum(SyreenPhrase) { return true; }
 
 #endif // UQM_COMM_SYREEN_STRINGS_H

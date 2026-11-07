@@ -87,8 +87,7 @@ enum class Segue
 	Defeat,
 	// (when terminating a conversation) game over
 };
-template <>
-inline constexpr bool IsArithmeticEnum<Segue> = true;
+consteval bool isArithmeticEnum(Segue) { return true; }
 
 void setSegue(Segue segue);
 Segue getSegue(void);
@@ -336,8 +335,7 @@ enum class RobotPhrase : uint16_t
 	// A sub-clip with a name from the primary clip.
 	SubClip = 0xFFFF,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<RobotPhrase> = true;
+consteval bool isArithmeticEnum(RobotPhrase) { return true; }
 
 #if 0 //defined(__cplusplus)
 }

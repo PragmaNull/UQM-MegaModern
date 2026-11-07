@@ -60,7 +60,6 @@ enum class YehatRebelPhrase
 	PkunkAbsorbedRebel,
 	HatePkunkRebel,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<YehatRebelPhrase> = true;
+consteval bool isArithmeticEnum(YehatRebelPhrase) { return true; }
 
 #endif // UQM_COMM_REBEL_STRINGS_H

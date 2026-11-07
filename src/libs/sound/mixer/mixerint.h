@@ -41,8 +41,7 @@ enum class MixerConvFlags
 	SizeDown = 8
 
 };
-template <>
-inline constexpr bool IsFlagEnum<MixerConvFlags> = true;
+consteval bool isFlagEnum(MixerConvFlags) { return true; }
 
 MixerConvFlags operator|=(MixerConvFlags lhs, MixerConvFlags rhs)
 {

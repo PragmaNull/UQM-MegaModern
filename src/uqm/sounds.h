@@ -41,8 +41,7 @@ enum class SoundEffect
 	TargetDamagedFor45Pt,
 	TargetDamagedFor6PlusPt
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SoundEffect> = true;
+consteval bool isArithmeticEnum(SoundEffect) { return true; }
 
 enum class MenuSoundEffect
 {
@@ -53,8 +52,7 @@ enum class MenuSoundEffect
 	BubbleWarp,
 	Text,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MenuSoundEffect> = true;
+consteval bool isArithmeticEnum(MenuSoundEffect) { return true; }
 
 extern SOUND_REF MenuSounds;
 extern SOUND_REF GameSounds;

@@ -211,7 +211,6 @@ enum class PkunkPhrase
 	FortuneIs8,
 	OutTakes,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<PkunkPhrase> = true;
+consteval bool isArithmeticEnum(PkunkPhrase) { return true; }
 
 #endif // UQM_COMM_PKUNK_STRINGS_H

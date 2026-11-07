@@ -97,8 +97,7 @@ enum class PlotId : uint8_t
 	Success = NumPlots,
 	Home = NumPlots + 1
 };
-template <>
-inline constexpr bool IsArithmeticEnum<PlotId> = true;
+consteval bool isArithmeticEnum(PlotId) { return true; }
 
 inline constexpr auto UmgahDefined {PlotId::TalkingPet};
 

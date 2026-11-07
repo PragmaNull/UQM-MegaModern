@@ -42,8 +42,7 @@ enum class VControlGestureType
 	JoyHat,
 	Count
 };
-template <>
-inline constexpr bool IsArithmeticEnum<VControlGestureType> = true;
+consteval bool isArithmeticEnum(VControlGestureType) { return true; }
 
 struct VControlGesture
 {

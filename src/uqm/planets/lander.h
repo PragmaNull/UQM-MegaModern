@@ -94,8 +94,7 @@ enum class PlanetsidePlayer
 	Human,
 	NonPlayer,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<PlanetsidePlayer> = true;
+consteval bool isArithmeticEnum(PlanetsidePlayer) { return true; }
 
 #if 0 //defined(__cplusplus)
 }

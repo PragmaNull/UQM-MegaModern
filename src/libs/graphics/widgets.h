@@ -35,8 +35,7 @@ enum class WidgetEvent
 	Delete,
 	NumWidgetEvents
 };
-template <>
-inline constexpr bool IsArithmeticEnum<WidgetEvent> = true;
+consteval bool isArithmeticEnum(WidgetEvent) { return true; }
 
 enum class WidgetType
 {
@@ -153,8 +152,7 @@ enum class TextEntryWidgetState
 	BlockCursor,
 
 };
-template <>
-inline constexpr bool IsFlagEnum<TextEntryWidgetState> = true;
+consteval bool isFlagEnum(TextEntryWidgetState) { return true; }
 
 inline TextEntryWidgetState operator~(TextEntryWidgetState rhs)
 {

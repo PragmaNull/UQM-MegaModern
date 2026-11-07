@@ -128,8 +128,7 @@ enum class MenuString
 	AltDispatch,
 	AltExitScan,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<MenuString> = true;
+consteval bool isArithmeticEnum(MenuString) { return true; }
 
 enum class GameMenuString
 {
@@ -149,8 +148,7 @@ enum class GameMenuString
 	ChangeCap,
 	ChangeSis,
 };
-template <>
-inline constexpr bool IsArithmeticEnum<GameMenuString> = true;
+consteval bool isArithmeticEnum(GameMenuString) { return true; }
 
 extern bool DoMenuChooser(MenuState* pMS, MenuString BaseState);
 extern void DrawMenuStateStrings(MenuString beg_index, int16_t NewState);

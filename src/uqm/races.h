@@ -110,8 +110,7 @@ enum class SpeciesId
 	UrQuanProbe,
 	NumSpecies
 };
-template <>
-inline constexpr bool IsArithmeticEnum<SpeciesId> = true;
+consteval bool isArithmeticEnum(SpeciesId) { return true; }
 // TODO figure out why we need this.
 inline SpeciesId postIncSpeciesId_HACK(SpeciesId& id)
 {
@@ -401,8 +400,7 @@ enum class RaceAllegiance
 	Good,	  // Race is allied with the player
 	Bad,	  // Race is not allied with the player
 };
-template <>
-inline constexpr bool IsArithmeticEnum<RaceAllegiance> = true;
+consteval bool isArithmeticEnum(RaceAllegiance) { return true; }
 
 static inline FleetInfo* LockFleetInfo(const Queue* pq, HFLEETINFO h)
 {
@@ -448,8 +446,7 @@ enum class RaceId
 
 	NumAvailableRaces
 };
-template <>
-inline constexpr bool IsArithmeticEnum<RaceId> = true;
+consteval bool isArithmeticEnum(RaceId) { return true; }
 
 inline constexpr Color RaceColors[] {
 	BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53), /* ARILOU_SHIP */
@@ -670,8 +667,7 @@ enum class HomeId
 	Androsynth,
 	NumAvailableHomes
 };
-template <>
-inline constexpr bool IsArithmeticEnum<HomeId> = true;
+consteval bool isArithmeticEnum(HomeId) { return true; }
 
 static inline HomeId SpeciesToHomeID(SpeciesId species_id)
 {
