@@ -1071,14 +1071,11 @@ static bool DrawTeamString(MeleeState* pMS, uint16_t side, uint16_t HiLiteState,
 // This function is generic. It should probably be moved to elsewhere.
 static void multiLineDrawText(GfxText* textIn, GfxRect* clipRect)
 {
-	GfxRect oldRect;
-
 	int16_t leading {};
 	GfxText text;
 	int16_t lineWidth {};
 
-	GetContextClipRect(&oldRect);
-
+	const ClipRectScope clipRectScope {};
 	SetContextClipRect(clipRect);
 	GetContextFontLeading(&leading);
 
@@ -1088,7 +1085,7 @@ static void multiLineDrawText(GfxText* textIn, GfxRect* clipRect)
 
 	if (clipRect->extent.width <= text.baseline.x)
 	{
-		goto out;
+		return;
 	}
 
 	lineWidth = clipRect->extent.width - text.baseline.x;
@@ -1106,9 +1103,6 @@ static void multiLineDrawText(GfxText* textIn, GfxRect* clipRect)
 
 		text.pStr = nextLine;
 	}
-
-out:
-	SetContextClipRect(&oldRect);
 }
 
 // Use an empty string to clear the status area.

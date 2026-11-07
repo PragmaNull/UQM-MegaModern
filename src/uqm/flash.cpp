@@ -651,7 +651,6 @@ static void Flash_makeFrame(FlashContext* context, FrameRef dest, int numer, int
 			}
 		case FlashType::Overlay:
 			{
-				GfxPoint oldOrigin;
 
 				// Draw the original at full strength
 				SetContextDrawMode(DrawReplaceMode);
@@ -662,9 +661,10 @@ static void Flash_makeFrame(FlashContext* context, FrameRef dest, int numer, int
 												  DrawFactor1 * blendedNumer / blendedDenom));
 				s.frame = context->u.overlay.frame;
 				// Offset the draw origin to hit the right area
-				oldOrigin = SetContextOrigin(GetFrameHot(s.frame));
-				DrawStamp(&s);
-				SetContextOrigin(oldOrigin);
+				{
+					const OriginScope originScope {GetFrameHot(s.frame)};
+					DrawStamp(&s);
+				}
 				break;
 			}
 	}

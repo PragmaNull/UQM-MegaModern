@@ -903,7 +903,7 @@ void DrawMineralHelpers(void)
 		return;
 	}
 
-	GfxContextRef OldContext {SetContext(StatusContext)};
+	const ContextScope contextScope {StatusContext};
 
 	{
 		const BatchScope batch {};
@@ -1070,8 +1070,6 @@ void DrawMineralHelpers(void)
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 	}
-
-	SetContext(OldContext);
 }
 
 void DrawBorder(BorderFrameIndex Visible)

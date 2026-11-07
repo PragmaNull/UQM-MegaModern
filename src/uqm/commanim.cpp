@@ -639,7 +639,7 @@ bool DrawAlienFrame(uqstl::span<AnimSequence> Sequences, bool fullRedraw)
 	GfxStamp s;
 	bool Change = false;
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	s.origin.x = -SafeX();
 	s.origin.y = 0;
@@ -717,8 +717,6 @@ bool DrawAlienFrame(uqstl::span<AnimSequence> Sequences, bool fullRedraw)
 		for (i = 0; i < FilterData.NumFilters; i++)
 		{
 			DrawMode mode;
-			DrawMode oldMode;
-			Color oldColor;
 			Color FGColor;
 			int16_t factor {};
 			const AnimFilter* FTPtr = &FilterData.FilterArray[i];
@@ -753,39 +751,33 @@ bool DrawAlienFrame(uqstl::span<AnimSequence> Sequences, bool fullRedraw)
 				// with set index
 				factor = getAlphaChannel(FTPtr->OpacityIndex);
 
-				// Image is transparent anyway
-				if (factor == 0x00 && FTPtr->Kind == DrawKind::Alpha)
+				// Skip the image when it is transparent
+				if (factor != 0x00 || FTPtr->Kind != DrawKind::Alpha)
 				{
-					goto postprocess;
+					mode = MAKE_DRAW_MODE((DrawKind)FTPtr->Kind, factor);
+					const DrawModeScope drawModeScope {mode};
+					const ForegroundColorScope colorScope {FGColor};
+
+					if (FTPtr->FrameIndex == -1)
+					{ // Don't have frame - draw rect on top of everything
+						GfxRect r;
+
+						GetContextClipRect(&r);
+						r.corner.x = r.corner.y = 0;
+
+						DrawFilledRectangle(&r);
+					}
+					else
+					{ // Draw filled stamp
+						s.frame = SetAbsFrameIndex(CommData.AlienFrame,
+												   FTPtr->FrameIndex);
+
+						DrawFilledStamp(&s);
+					}
 				}
-
-				mode = MAKE_DRAW_MODE((DrawKind)FTPtr->Kind, factor);
-				oldMode = SetContextDrawMode(mode);
-				oldColor = SetContextForeGroundColor(FGColor);
-
-				if (FTPtr->FrameIndex == -1)
-				{ // Don't have frame - draw rect on top of everything
-					GfxRect r;
-
-					GetContextClipRect(&r);
-					r.corner.x = r.corner.y = 0;
-
-					DrawFilledRectangle(&r);
-				}
-				else
-				{ // Draw filled stamp
-					s.frame = SetAbsFrameIndex(CommData.AlienFrame,
-											   FTPtr->FrameIndex);
-
-					DrawFilledStamp(&s);
-				}
-
-				SetContextDrawMode(oldMode);
-				SetContextForeGroundColor(oldColor);
 			}
 
 			// postprocess stuff
-postprocess:
 			if (testFlag(FTPtr->Flags, FilterFlags::TurnOffOft) && factor == 0x00)
 			{
 				filterEnabled = false;
@@ -808,8 +800,6 @@ postprocess:
 			}
 		}
 	}
-
-	UnbatchGraphics();
 
 	return Change;
 }

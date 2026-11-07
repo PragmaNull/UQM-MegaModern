@@ -1045,9 +1045,8 @@ static constexpr auto NumFlashColors {8};
 static void DrawScannedStuff(uint16_t y, uint16_t scan)
 {
 	ElementHandle hNextElement {};
-	Color OldColor;
 
-	OldColor = SetContextForeGroundColor(BlackColor);
+	const ForegroundColorScope colorScope {BlackColor};
 
 	for (ElementHandle hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
@@ -1120,8 +1119,6 @@ static void DrawScannedStuff(uint16_t y, uint16_t scan)
 
 		UnlockElement(hElement);
 	}
-
-	SetContextForeGroundColor(OldColor);
 }
 
 static void DrawPCScannedStuff(uint16_t scan)

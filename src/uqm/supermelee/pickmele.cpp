@@ -528,7 +528,7 @@ void BuildPickMeleeFrame(void)
 // XXX TODO: split off creating the queue into a separate function.
 void FillPickMeleeFrame(MeleeSetup* setup)
 {
-	GfxContextRef OldContext {SetContext(OffScreenContext)};
+	const ContextScope contextScope {OffScreenContext};
 
 	for (uint16_t i {0}; i < NumSides; ++i)
 	{
@@ -634,8 +634,6 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 			}
 		}
 	}
-
-	SetContext(OldContext);
 }
 
 void DestroyPickMeleeFrame(void)
