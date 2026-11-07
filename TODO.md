@@ -19,10 +19,9 @@
     - `HangarColorMap` in `MENU_STATE`, which is cleared with `memset`.
     - `sphereMap` in `PLANET_ORBIT`, which is in the `PLANET_DESC` arrays.
   - Global and static sound banks and color maps (`MenuSounds`, `GameSounds`, `LanderSounds`, `hypercmaps`, `SunCMap` and others). They can become RAII only after `exit()` no longer runs while the game thread runs (see "Exit code 127"). If they become RAII before that, their destructors can run during `exit()`, after the audio system has shut down.
-- **RAII guards for paired calls:** the guard types exist (`BatchScope`, `ContextValueScope` and `ClipRectScope` in `gfxlib.h`, `SurfaceLock` and the owners in `sdl/sdl_ptr.h`). These pairs still need them, because code follows the restore, the clip rect variable has other uses, or a `break`, `continue` or lambda is in the range:
-  - About 110 saves of drawing context values (`SetContext`, `SetContextFont`, colors, clip rects and others).
-  - About 44 `BatchGraphics()` and `UnbatchGraphics()` pairs.
-  - 11 `SDL_LockSurface` and `SDL_UnlockSurface` pairs, most in `canvas.cpp`.
+- **RAII guards for paired calls:** the guard types exist (`BatchScope`, `ContextValueScope` and `ClipRectScope` in `gfxlib.h`, `SurfaceLock` and the owners in `sdl/sdl_ptr.h`). These pairs still use the calls:
+  - `comm.cpp` (`HailAlien` font), `plangen.cpp` (`GeneratePlanetSurface` context, which is destroyed after the restore), and `sis.cpp` (`DrawFlagshipName`, which restores the font effect and color into another context).
+  - `BatchGraphics()` pairs in `gameopt.cpp`, `pstarmap.cpp` and `shipstat.cpp`, whose range has another guard that must live longer. About 12 batches end in another function, for example in `tactrans.cpp`.
   - Long-lived SDL handles in structs and globals: the screen surfaces and `ScreenTextures` in `sdl_pure.cpp`, the gamepads in `vcontrol.cpp` and the audio streams in `audiodrv_sdl.cpp`.
 
 Keep these, because they are large and in use: `graphics`, `sound`, `video`, `input`, `io`, `resource`, `strings`, `luauqm`, `network` (`NETPLAY` is on), `callback` (netplay and `uqm/sis.cpp` use the alarms and async calls), and `math`. Do not change the RNG: seeded games must give the same results.
