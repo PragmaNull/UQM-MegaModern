@@ -2007,7 +2007,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 					 'A' + whichPortal,
 					 (float)portal_map[whichPortal].star_pt.x / 10,
 					 (float)portal_map[whichPortal].star_pt.y / 10,
-					 starnameBuf);
+					 starnameBuf.data());
 		}
 	}
 	else
