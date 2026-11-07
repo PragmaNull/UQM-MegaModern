@@ -8,6 +8,12 @@ The list contains only bugs that are in MegaMod at the fork commit `18e1f3d1`. I
 
 ## Memory leaks
 
+### The Super Melee title font leaks on each redraw
+
+- **MegaMod:** `DrawSuperMeleeTitle` in `src/uqm/supermelee/melee.c`.
+- **Problem:** the function loads the title font with `LoadFont`, which detaches the resource, and never destroys it. Each redraw of the Super Melee screen leaks one font.
+- **Fix here:** `b30e0ef6`.
+
 ### The difficulty menu leaks its screen copy when it is aborted
 
 - **MegaMod:** `DoDiffChooser` in `src/uqm/restart.c`.
