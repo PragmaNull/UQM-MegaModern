@@ -56,7 +56,7 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 		return ((IntersectCode)0);
 	}
 
-	IntersectCode intersect_code {IntersectNoclip};
+	IntersectCode intersect_code {IntersectCode::Noclip};
 	x0 = y0 = 0;
 	abs_delta_x = (pLine->second.x - pLine->first.x) << 1;
 	abs_delta_y = (pLine->second.y - pLine->first.y) << 1;
@@ -67,12 +67,12 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 		if (pLine->first.x < xmin)
 		{
 			pLine->first.x = xmin;
-			intersect_code |= IntersectLeft;
+			intersect_code |= IntersectCode::Left;
 		}
 		if (pLine->second.x > xmax)
 		{
 			pLine->second.x = xmax;
-			intersect_code |= IntersectRight;
+			intersect_code |= IntersectCode::Right;
 		}
 	}
 	else if (abs_delta_x == 0)
@@ -90,12 +90,12 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 		if (pLine->first.y < ymin)
 		{
 			pLine->first.y = ymin;
-			intersect_code |= IntersectTop;
+			intersect_code |= IntersectCode::Top;
 		}
 		if (pLine->second.y > ymax)
 		{
 			pLine->second.y = ymax;
-			intersect_code |= IntersectBottom;
+			intersect_code |= IntersectCode::Bottom;
 		}
 	}
 	else
@@ -138,7 +138,7 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 				{
 					return ((IntersectCode)0);
 				}
-				intersect_code |= IntersectLeft;
+				intersect_code |= IntersectCode::Left;
 			}
 			if (x1 > xmax)
 			{
@@ -146,7 +146,7 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 				{
 					return ((IntersectCode)0);
 				}
-				intersect_code |= IntersectRight;
+				intersect_code |= IntersectCode::Right;
 			}
 			if (y0 < ymin)
 			{
@@ -154,8 +154,8 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 				{
 					return ((IntersectCode)0);
 				}
-				intersect_code |= IntersectTop;
-				intersect_code &= ~IntersectLeft;
+				intersect_code |= IntersectCode::Top;
+				intersect_code &= ~IntersectCode::Left;
 			}
 			if (y1 > ymax)
 			{
@@ -163,8 +163,8 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 				{
 					return ((IntersectCode)0);
 				}
-				intersect_code |= IntersectBottom;
-				intersect_code &= ~IntersectRight;
+				intersect_code |= IntersectCode::Bottom;
+				intersect_code &= ~IntersectCode::Right;
 			}
 		}
 		else
@@ -178,7 +178,7 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 				{
 					return ((IntersectCode)0);
 				}
-				intersect_code |= IntersectTop;
+				intersect_code |= IntersectCode::Top;
 			}
 			if (y1 > ymax)
 			{
@@ -186,7 +186,7 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 				{
 					return ((IntersectCode)0);
 				}
-				intersect_code |= IntersectBottom;
+				intersect_code |= IntersectCode::Bottom;
 			}
 			if (x0 < xmin)
 			{
@@ -194,8 +194,8 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 				{
 					return ((IntersectCode)0);
 				}
-				intersect_code |= IntersectLeft;
-				intersect_code &= ~IntersectTop;
+				intersect_code |= IntersectCode::Left;
+				intersect_code &= ~IntersectCode::Top;
 			}
 			if (x1 > xmax)
 			{
@@ -203,8 +203,8 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 				{
 					return ((IntersectCode)0);
 				}
-				intersect_code |= IntersectRight;
-				intersect_code &= ~IntersectBottom;
+				intersect_code |= IntersectCode::Right;
+				intersect_code &= ~IntersectCode::Bottom;
 			}
 		}
 
@@ -222,16 +222,15 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 			pLine->second.y = pLine->first.y - y1;
 			pLine->first.y -= y0;
 
-			y_code = (IntersectCode)(intersect_code
-									 & (IntersectTop | IntersectBottom));
-			if (y_code && y_code != (IntersectTop | IntersectBottom))
+			y_code = intersect_code & (IntersectCode::Top | IntersectCode::Bottom);
+			if (y_code != IntersectCode::None && y_code != (IntersectCode::Top | IntersectCode::Bottom))
 			{
-				intersect_code ^= (IntersectTop | IntersectBottom);
+				intersect_code ^= (IntersectCode::Top | IntersectCode::Bottom);
 			}
 		}
 	}
 
-	if (!(intersect_code & IntersectAllSides))
+	if (!(testFlag(intersect_code, IntersectCode::AllSides)))
 	{
 		if (abs_delta_x > abs_delta_y)
 		{
@@ -244,7 +243,7 @@ IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 	}
 	else
 	{
-		intersect_code &= ~IntersectNoclip;
+		intersect_code &= ~IntersectCode::Noclip;
 		if (abs_delta_x > abs_delta_y)
 		{
 			pLine->error_term = (int16_t)((x0 * (long)abs_delta_y) - (y0 * (long)abs_delta_x)) - (abs_delta_x >> 1);

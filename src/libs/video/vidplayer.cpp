@@ -237,7 +237,7 @@ bool TFB_PlayVideo(VideoRef vid, uint32_t x, uint32_t y)
 
 	// calculate the frame-source and screen-destination rects
 	GetContextClipRect(&scrn_r);
-	if (!BoxIntersect(&scrn_r, &vid_r, &scrn_r))
+	if (BoxIntersect(&scrn_r, &vid_r, &scrn_r) == IntersectCode::None)
 	{
 		return false; // drawing outside visible
 	}
@@ -249,7 +249,7 @@ bool TFB_PlayVideo(VideoRef vid, uint32_t x, uint32_t y)
 	{
 		sr.corner.x = -sr.corner.x;
 		sr.corner.y = -sr.corner.y;
-		if (!BoxIntersect(&clip_r, &sr, &sr))
+		if (BoxIntersect(&clip_r, &sr, &sr) == IntersectCode::None)
 		{
 			return false; // drawing outside visible
 		}
@@ -257,7 +257,7 @@ bool TFB_PlayVideo(VideoRef vid, uint32_t x, uint32_t y)
 
 	dr.corner.x += scrn_r.corner.x;
 	dr.corner.y += scrn_r.corner.y;
-	if (!BoxIntersect(&scrn_r, &dr, &vid->dst_rect))
+	if (BoxIntersect(&scrn_r, &dr, &vid->dst_rect) == IntersectCode::None)
 	{
 		return false; // drawing outside visible
 	}

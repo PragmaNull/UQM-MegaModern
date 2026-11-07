@@ -68,10 +68,10 @@ static ConversationData zoqfot_desc =
 								/* AlienAmbientArray (ambient animations) */
 			{
 				/* Eye blink */
-				1,		 /* StartIndex */
-				4,		 /* NumFrames */
-				YoyoAnim /* AnimFlags */
-					| WaitTalking,
+				1,					 /* StartIndex */
+				4,					 /* NumFrames */
+				AnimationFlags::Yoyo /* AnimFlags */
+					| AnimationFlags::WaitTalking,
 				GameTicksPerSecond / 24,
 				0, /* FrameRate */
 				0,
@@ -80,9 +80,9 @@ static ConversationData zoqfot_desc =
 			},
 								{
 				/* Blow smoke */
-				5,			  /* StartIndex */
-				5,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				5,						  /* StartIndex */
+				5,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond * 7 / 120,
 				0, /* FrameRate */
 				GameTicksPerSecond * 2,
@@ -91,9 +91,9 @@ static ConversationData zoqfot_desc =
 			},
 								{
 				/* Gulp */
-				10,			  /* StartIndex */
-				8,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				10,						  /* StartIndex */
+				8,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -103,9 +103,9 @@ static ConversationData zoqfot_desc =
 								},
 		{
 								/* AlienTransitionDesc - Move Eye */
-			FotToZoq, /* StartIndex */
-			3,		  /* NumFrames */
-			0,		  /* AnimFlags */
+			FotToZoq,			  /* StartIndex */
+			3,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 30,
 								0, /* FrameRate */
 			0,
@@ -114,9 +114,9 @@ static ConversationData zoqfot_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			ZoqTalkIndex,  /* StartIndex */
-			ZoqTalkFrames, /* NumFrames */
-			0,			   /* AnimFlags */
+			ZoqTalkIndex,		  /* StartIndex */
+			ZoqTalkFrames,		  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,
@@ -150,14 +150,14 @@ static void SelectAlienZOQ(CallbackArg arg)
 		// Transition to neutral state first if Pik was talking
 		if (LastAlien != ZoqFotPikAlien::Fot)
 		{
-			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
+			CommData.AlienTransitionDesc.AnimFlags |= AnimationFlags::TalkDone;
 		}
 		LastAlien = *ZoqFotPikAlien::Zoq;
-		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
+		CommData.AlienTransitionDesc.AnimFlags |= AnimationFlags::TalkIntro;
 		CommData.AlienTransitionDesc.StartIndex = FotToZoq;
 		CommData.AlienTalkDesc.StartIndex = ZoqTalkIndex;
 		CommData.AlienTalkDesc.NumFrames = ZoqTalkFrames;
-		CommData.AlienAmbientArray[1].AnimFlags &= ~WaitTalking;
+		CommData.AlienAmbientArray[1].AnimFlags &= ~AnimationFlags::WaitTalking;
 
 		CommData.AlienTextBaseline.x = (int16_t)ZoqBaseX();
 		CommData.AlienTextBaseline.y = ZoqBaseY();
@@ -176,14 +176,14 @@ static void SelectAlienPIK(CallbackArg arg)
 		// Transition to neutral state first if Zoq was talking
 		if (LastAlien != ZoqFotPikAlien::Fot)
 		{
-			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
+			CommData.AlienTransitionDesc.AnimFlags |= AnimationFlags::TalkDone;
 		}
 		LastAlien = *ZoqFotPikAlien::Pik;
-		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
+		CommData.AlienTransitionDesc.AnimFlags |= AnimationFlags::TalkIntro;
 		CommData.AlienTransitionDesc.StartIndex = FotToPik;
 		CommData.AlienTalkDesc.StartIndex = PikTalkIndex;
 		CommData.AlienTalkDesc.NumFrames = PikTalkFrames;
-		CommData.AlienAmbientArray[1].AnimFlags |= WaitTalking;
+		CommData.AlienAmbientArray[1].AnimFlags |= AnimationFlags::WaitTalking;
 
 		CommData.AlienTextBaseline.x = (int16_t)PikBaseX();
 		CommData.AlienTextBaseline.y = PikBaseY();

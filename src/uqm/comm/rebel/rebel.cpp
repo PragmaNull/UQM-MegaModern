@@ -56,8 +56,8 @@ static ConversationData yehat_desc =
 				/* right hand-wing tapping keyboard; front guy */
 				4, /* StartIndex */
 				3, /* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 10, /* FrameRate */
 				GameTicksPerSecond,
@@ -68,8 +68,8 @@ static ConversationData yehat_desc =
 				/* left hand-wing tapping keyboard; front guy */
 				7, /* StartIndex */
 				3, /* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 10, /* FrameRate */
 				GameTicksPerSecond,
@@ -77,9 +77,9 @@ static ConversationData yehat_desc =
 				(1 << 6) | (1 << 7),
 			},
 								{
-				10,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				10,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -87,9 +87,9 @@ static ConversationData yehat_desc =
 				(1 << 4) | (1 << 14),
 			},
 								{
-				13,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				13,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -97,9 +97,9 @@ static ConversationData yehat_desc =
 				(1 << 5),
 			},
 								{
-				16,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				16,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -107,9 +107,9 @@ static ConversationData yehat_desc =
 				(1 << 2) | (1 << 14),
 			},
 								{
-				21,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				21,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -120,8 +120,8 @@ static ConversationData yehat_desc =
 				/* right arm-wing rising; front guy */
 				26, /* StartIndex */
 				2,	/* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -132,8 +132,8 @@ static ConversationData yehat_desc =
 				/* left arm-wing rising; front guy */
 				28, /* StartIndex */
 				2,	/* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -141,9 +141,9 @@ static ConversationData yehat_desc =
 				(1 << 0) | (1 << 1),
 			},
 								{
-				30,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				30,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -151,9 +151,9 @@ static ConversationData yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				33,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				33,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -161,9 +161,9 @@ static ConversationData yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				36,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				36,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -171,9 +171,9 @@ static ConversationData yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				39,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				39,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -181,9 +181,9 @@ static ConversationData yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				42,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				42,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -191,9 +191,9 @@ static ConversationData yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				45,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				45,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -203,8 +203,8 @@ static ConversationData yehat_desc =
 								{
 				48, /* StartIndex */
 				4,	/* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -214,9 +214,9 @@ static ConversationData yehat_desc =
 								},
 		{
 								/* AlienTransitionDesc - empty */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -225,9 +225,9 @@ static ConversationData yehat_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1, /* StartIndex */
-			3, /* NumFrames */
-			0, /* AnimFlags */
+			1,					  /* StartIndex */
+			3,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,

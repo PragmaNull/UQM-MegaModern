@@ -53,9 +53,9 @@ static ConversationData spathi_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				1,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				1,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				0,
@@ -63,9 +63,9 @@ static ConversationData spathi_desc =
 				(1 << 1),			/* BlockMask */
 			},
 								{
-				7,			  /* StartIndex */
-				9,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				7,						  /* StartIndex */
+				9,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -73,9 +73,9 @@ static ConversationData spathi_desc =
 				(1 << 0), /* BlockMask */
 			},
 								{
-				16,			  /* StartIndex */
-				4,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				16,						  /* StartIndex */
+				4,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -84,14 +84,14 @@ static ConversationData spathi_desc =
 			},
 								{20,											   /* StartIndex */
 			 4,												   /* NumFrames */
-			 YoyoAnim,										   /* AnimFlags */
+			 AnimationFlags::Yoyo,							   /* AnimFlags */
 			 GameTicksPerSecond / 15, GameTicksPerSecond / 15, /* FrameRate */
 			 GameTicksPerSecond / 15, GameTicksPerSecond / 15, /* FrameRate */
 			 (1 << 5)},
 								{
-				24,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				24,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -101,9 +101,9 @@ static ConversationData spathi_desc =
 
 
 								{
-				34,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				34,					  /* StartIndex */
+				4,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -111,9 +111,9 @@ static ConversationData spathi_desc =
 				(1 << 3),				/* BlockMask */
 			},
 								{
-				38,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				38,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -121,9 +121,9 @@ static ConversationData spathi_desc =
 				0,						/* BlockMask */
 			},
 								{
-				41,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				41,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -133,9 +133,9 @@ static ConversationData spathi_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -145,9 +145,9 @@ static ConversationData spathi_desc =
 #ifdef NEVER
 		{
 								/* AlienTalkDesc */
-			29, /* StartIndex */
-			5,	/* NumFrames */
-			0,	/* AnimFlags */
+			29,					  /* StartIndex */
+			5,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,
@@ -157,9 +157,9 @@ static ConversationData spathi_desc =
 #else
 		{
 			/* AlienTalkDesc - empty */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 			0, /* FrameRate */
 			0,

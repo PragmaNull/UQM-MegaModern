@@ -146,7 +146,7 @@ static ConversationData slylandro_desc =
 			{
 				1,							/* StartIndex */
 				9,							/* NumFrames */
-				CircularAnim,				/* AnimFlags */
+				AnimationFlags::Circular,	/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 3)					/* BlockMask */
@@ -154,7 +154,7 @@ static ConversationData slylandro_desc =
 								{
 				10,							/* StartIndex */
 				8,							/* NumFrames */
-				CircularAnim,				/* AnimFlags */
+				AnimationFlags::Circular,	/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 4)					/* BlockMask */
@@ -162,7 +162,7 @@ static ConversationData slylandro_desc =
 								{
 				18,							/* StartIndex */
 				8,							/* NumFrames */
-				CircularAnim,				/* AnimFlags */
+				AnimationFlags::Circular,	/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 5)					/* BlockMask */
@@ -170,7 +170,7 @@ static ConversationData slylandro_desc =
 								{
 				26,							/* StartIndex */
 				8,							/* NumFrames */
-				CircularAnim,				/* AnimFlags */
+				AnimationFlags::Circular,	/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 0)					/* BlockMask */
@@ -178,7 +178,7 @@ static ConversationData slylandro_desc =
 								{
 				34,							/* StartIndex */
 				8,							/* NumFrames */
-				CircularAnim,				/* AnimFlags */
+				AnimationFlags::Circular,	/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 1)					/* BlockMask */
@@ -186,7 +186,7 @@ static ConversationData slylandro_desc =
 								{
 				42,							/* StartIndex */
 				9,							/* NumFrames */
-				CircularAnim,				/* AnimFlags */
+				AnimationFlags::Circular,	/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 2)					/* BlockMask */
@@ -194,9 +194,9 @@ static ConversationData slylandro_desc =
 								},
 		{
 								/* AlienTransitionDesc - empty */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -205,9 +205,9 @@ static ConversationData slylandro_desc =
 		},
 		{
 								/* AlienTalkDesc - empty */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,

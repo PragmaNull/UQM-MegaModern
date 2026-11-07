@@ -69,9 +69,9 @@ static ConversationData commander_desc =
 								/* AlienAmbientArray (ambient animations) */
 			{
 				/* Blink */
-				1,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				1,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -80,9 +80,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Running light */
-				10,			  /* StartIndex */
-				30,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				10,						  /* StartIndex */
+				30,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 2,
@@ -91,9 +91,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Arc welder 0 */
-				40,			  /* StartIndex */
-				7,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				40,						  /* StartIndex */
+				7,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -102,9 +102,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Arc welder 1 */
-				47,			  /* StartIndex */
-				8,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				47,						  /* StartIndex */
+				8,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -113,9 +113,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Arc welder 2 */
-				55,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				55,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -124,9 +124,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Arc welder 3 */
-				61,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				61,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -135,9 +135,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Arc welder 4 */
-				67,			  /* StartIndex */
-				7,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				67,						  /* StartIndex */
+				7,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -146,9 +146,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Arc welder 5 */
-				74,			  /* StartIndex */
-				11,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				74,						  /* StartIndex */
+				11,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -157,9 +157,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Arc welder 6 */
-				85,			  /* StartIndex */
-				10,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				85,						  /* StartIndex */
+				10,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -168,9 +168,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Flagship picture */
-				95, /* StartIndex */
-				1,	/* NumFrames */
-				0,	/* AnimFlags */
+				95,					  /* StartIndex */
+				1,					  /* NumFrames */
+				AnimationFlags::None, /* AnimFlags */
 				0,
 				0, /* FrameRate */
 				0,
@@ -180,9 +180,9 @@ static ConversationData commander_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -191,9 +191,9 @@ static ConversationData commander_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			4, /* StartIndex */
-			6, /* NumFrames */
-			0, /* AnimFlags */
+			4,					  /* StartIndex */
+			6,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 10,
 								GameTicksPerSecond / 15, /* FrameRate */
 			GameTicksPerSecond * 7 / 60,

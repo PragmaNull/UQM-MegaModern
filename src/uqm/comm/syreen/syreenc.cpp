@@ -54,9 +54,9 @@ static ConversationData syreen_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				5,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				5,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -64,9 +64,9 @@ static ConversationData syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				7,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				7,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -74,9 +74,9 @@ static ConversationData syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				9,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				9,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -84,9 +84,9 @@ static ConversationData syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				11,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				11,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -94,9 +94,9 @@ static ConversationData syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				13,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				13,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -104,9 +104,9 @@ static ConversationData syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				15,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				15,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -114,9 +114,9 @@ static ConversationData syreen_desc =
 				(1 << 12),				/* BlockMask */
 			},
 								{
-				17,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				17,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -124,9 +124,9 @@ static ConversationData syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				19,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				19,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -134,9 +134,9 @@ static ConversationData syreen_desc =
 				(1 << 13),
 			},
 								{
-				21,			/* StartIndex */
-				6,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				21,						/* StartIndex */
+				6,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -144,9 +144,9 @@ static ConversationData syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				27,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				27,					  /* StartIndex */
+				4,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -154,9 +154,9 @@ static ConversationData syreen_desc =
 				(1 << 14),				/* BlockMask */
 			},
 								{
-				31,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				31,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -164,9 +164,9 @@ static ConversationData syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				37,			/* StartIndex */
-				4,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				37,						/* StartIndex */
+				4,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -174,9 +174,9 @@ static ConversationData syreen_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				41,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				41,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -186,8 +186,8 @@ static ConversationData syreen_desc =
 								{
 				44, /* StartIndex */
 				4,	/* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 6,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -197,8 +197,8 @@ static ConversationData syreen_desc =
 								{
 				48, /* StartIndex */
 				3,	/* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -208,9 +208,9 @@ static ConversationData syreen_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -219,9 +219,9 @@ static ConversationData syreen_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1, /* StartIndex */
-			4, /* NumFrames */
-			0, /* AnimFlags */
+			1,					  /* StartIndex */
+			4,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,
@@ -247,8 +247,8 @@ static AnimFilterSet syreen_filters =
 				1,	/* Opacity index */
 				-1, /* Frame index */
 				DrawKind::Alpha,
-				/* DrawKind*/	//maybe try multiply?
-				SwitchOffAnims, /* Flags */
+				/* DrawKind*/				 //maybe try multiply?
+				FilterFlags::SwitchOffAnims, /* Flags */
 			},
 								  }
 };
@@ -437,8 +437,8 @@ static void Foreplay(ResponseRef R)
 			{
 				CommData.AlienFrame = SetAbsFrameIndex
 					(CommData.AlienFrame, 63);
-				CommData.AlienTalkDesc.AnimFlags |= PauseTalking;
-				RunOneTimeSequence(16, 0);
+				CommData.AlienTalkDesc.AnimFlags |= AnimationFlags::PauseTalking;
+				RunOneTimeSequence(16, AnimationFlags::None);
 		}*/
 		// For future ideas maybe
 

@@ -197,7 +197,7 @@ bool setShipSelected(PickMeleeState* gms, uint16_t playerI, uint16_t choice,
 static bool SelectShip_processInput(PickMeleeState* gms, uint16_t playerI,
 									BattleInputState inputState)
 {
-	if (inputState & BattleWeapon)
+	if (testFlag(inputState, BattleInputState::Weapon))
 	{
 		if (gms->player[playerI].col == NumPickmeleeColumns && gms->player[playerI].row == 0)
 		{
@@ -228,28 +228,28 @@ static bool SelectShip_processInput(PickMeleeState* gms, uint16_t playerI,
 
 		uint16_t new_row {gms->player[playerI].row};
 		uint16_t new_col {gms->player[playerI].col};
-		if (inputState & BattleLeft)
+		if (testFlag(inputState, BattleInputState::Left))
 		{
 			if (new_col-- == 0)
 			{
 				new_col = NumPickmeleeColumns;
 			}
 		}
-		else if (inputState & BattleRight)
+		else if (testFlag(inputState, BattleInputState::Right))
 		{
 			if (new_col++ == NumPickmeleeColumns)
 			{
 				new_col = 0;
 			}
 		}
-		if (inputState & BattleThrust)
+		if (testFlag(inputState, BattleInputState::Thrust))
 		{
 			if (new_row-- == 0)
 			{
 				new_row = NumPickmeleeRows - 1;
 			}
 		}
-		else if (inputState & BattleDown)
+		else if (testFlag(inputState, BattleInputState::Down))
 		{
 			if (++new_row == NumPickmeleeRows)
 			{
@@ -288,7 +288,7 @@ bool selectShipComputer(ComputerInputContext* context, PickMeleeState* gms)
 		return true;
 	}
 
-	return SelectShip_processInput(gms, context->playerNr, BattleWeapon);
+	return SelectShip_processInput(gms, context->playerNr, BattleInputState::Weapon);
 	// Simulate selection of the random choice button.
 }
 

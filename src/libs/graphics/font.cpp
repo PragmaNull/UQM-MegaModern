@@ -510,7 +510,7 @@ void _text_blt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin)
 			r.corner.y = origin.y - fontChar->hotSpot.y;
 			r.extent.width = fontChar->disp.width;
 			r.extent.height = fontChar->disp.height;
-			if (BoxIntersect(&r, pClipRect, &r))
+			if (BoxIntersect(&r, pClipRect, &r) != IntersectCode::None)
 			{
 				TFB_Prim_FontChar(origin, fontChar, backing, mode,
 								  ctxOrigin);
@@ -616,7 +616,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, Fr
 			r.corner.y = origin.y - fontChar->hotSpot.y;
 			r.extent.width = fontChar->disp.width;
 			r.extent.height = fontChar->disp.height;
-			if (BoxIntersect(&r, pClipRect, &r))
+			if (BoxIntersect(&r, pClipRect, &r) != IntersectCode::None)
 			{
 				if (!*skip)
 				{
@@ -927,7 +927,7 @@ uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, 
 			r.corner.y = origin.y - fontChar->hotSpot.y;
 			r.extent.width = fontChar->disp.width;
 			r.extent.height = fontChar->disp.height;
-			if (BoxIntersect(&r, pClipRect, &r))
+			if (BoxIntersect(&r, pClipRect, &r) != IntersectCode::None)
 			{
 				TFB_Prim_FontChar(origin, fontChar, backing, mode,
 								  ctxOrigin);

@@ -145,15 +145,19 @@ struct ControllerInputState
 	}
 };
 
-using BattleInputState = uint8_t; // TODO PragmaNull : replace with falg enum.
-inline constexpr auto BattleLeft {(BattleInputState)(1 << 0)};
-inline constexpr auto BattleRight {(BattleInputState)(1 << 1)};
-inline constexpr auto BattleThrust {(BattleInputState)(1 << 2)};
-inline constexpr auto BattleWeapon {(BattleInputState)(1 << 3)};
-inline constexpr auto BattleSpecial {(BattleInputState)(1 << 4)};
-inline constexpr auto BattleEscape {(BattleInputState)(1 << 5)};
-inline constexpr auto BattleDown {(BattleInputState)(1 << 6)};
-inline constexpr auto BattleThrustAlt {(BattleInputState)(1 << 7)};
+enum class BattleInputState : uint8_t
+{
+	None = 0,
+	Left = 1 << 0,
+	Right = 1 << 1,
+	Thrust = 1 << 2,
+	Weapon = 1 << 3,
+	Special = 1 << 4,
+	Escape = 1 << 5,
+	Down = 1 << 6,
+	ThrustAlt = 1 << 7,
+};
+ENUM_BITWISE_OPS(BattleInputState)
 
 BattleInputState CurrentInputToBattleInput(uint16_t player);
 BattleInputState PulsedInputToBattleInput(uint16_t player);

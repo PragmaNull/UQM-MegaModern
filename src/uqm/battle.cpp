@@ -200,32 +200,32 @@ static void ProcessInput(void)
 				StarShipPtr->ship_input_state = 0;
 				if (StarShipPtr->RaceDescPtr->ship_info.crew_level)
 				{
-					if (InputState & BattleLeft)
+					if (testFlag(InputState, BattleInputState::Left))
 					{
 						StarShipPtr->ship_input_state |= LeftFlag;
 					}
-					else if (InputState & BattleRight)
+					else if (testFlag(InputState, BattleInputState::Right))
 					{
 						StarShipPtr->ship_input_state |= RightFlag;
 					}
-					if (InputState & BattleThrust)
+					if (testFlag(InputState, BattleInputState::Thrust))
 					{
 						StarShipPtr->ship_input_state |= ThrustFlag;
 					}
-					if (InputState & BattleThrustAlt)
+					if (testFlag(InputState, BattleInputState::ThrustAlt))
 					{
 						StarShipPtr->ship_input_state |= ThrustFlag;
 					}
-					if (InputState & BattleWeapon)
+					if (testFlag(InputState, BattleInputState::Weapon))
 					{
 						StarShipPtr->ship_input_state |= WeaponFlag;
 					}
-					if (InputState & BattleSpecial)
+					if (testFlag(InputState, BattleInputState::Special))
 					{
 						StarShipPtr->ship_input_state |= SpecialFlag;
 					}
 
-					if (CanRunAway && cur_player == 0 && ((InputState & BattleEscape) || WarpFromMenu))
+					if (CanRunAway && cur_player == 0 && ((testFlag(InputState, BattleInputState::Escape)) || WarpFromMenu))
 					{
 						WarpFromMenu = false;
 						DoRunAway(StarShipPtr);

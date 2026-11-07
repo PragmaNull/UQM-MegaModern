@@ -60,8 +60,8 @@ static ConversationData talkpet_desc =
 			{
 				7, /* StartIndex */
 				3, /* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -71,8 +71,8 @@ static ConversationData talkpet_desc =
 								{
 				10, /* StartIndex */
 				3,	/* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -80,9 +80,9 @@ static ConversationData talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				13,			/* StartIndex */
-				3,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				13,						/* StartIndex */
+				3,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -90,9 +90,9 @@ static ConversationData talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				16,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				16,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -103,16 +103,16 @@ static ConversationData talkpet_desc =
 				/* Blink right eye */
 				18,											/* StartIndex */
 				3,											/* NumFrames */
-				YoyoAnim,									/* AnimFlags */
+				AnimationFlags::Yoyo,						/* AnimFlags */
 				GameTicksPerSecond / 20, 0,					/* FrameRate */
 				GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 13)									/* BlockMask */
 			},
 								{
 				/* Blink left eye */
-				21,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				21,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -120,9 +120,9 @@ static ConversationData talkpet_desc =
 				(1 << 12) | (1 << 14),	/* BlockMask */
 			},
 								{
-				24,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				24,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -130,9 +130,9 @@ static ConversationData talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				26,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				26,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -140,9 +140,9 @@ static ConversationData talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				28,			/* StartIndex */
-				4,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				28,						/* StartIndex */
+				4,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -150,9 +150,9 @@ static ConversationData talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				32,			/* StartIndex */
-				3,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				32,						/* StartIndex */
+				3,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -160,9 +160,9 @@ static ConversationData talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				35,			/* StartIndex */
-				5,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				35,						/* StartIndex */
+				5,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -170,9 +170,9 @@ static ConversationData talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				40,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				40,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -182,8 +182,8 @@ static ConversationData talkpet_desc =
 								{
 				42, /* StartIndex */
 				6,	/* NumFrames */
-				CircularAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Circular
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -192,9 +192,9 @@ static ConversationData talkpet_desc =
 			},
 								{
 				/* Right eyebrow */
-				48,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				48,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -203,9 +203,9 @@ static ConversationData talkpet_desc =
 			},
 								{
 				/* Left eyebrow */
-				50,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				50,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -213,9 +213,9 @@ static ConversationData talkpet_desc =
 				(1 << 5),				/* BlockMask */
 			},
 								{
-				52,						  /* StartIndex */
-				2,						  /* NumFrames */
-				RandomAnim | WaitTalking, /* AnimFlags */
+				52,													  /* StartIndex */
+				2,													  /* NumFrames */
+				AnimationFlags::Random | AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -226,8 +226,8 @@ static ConversationData talkpet_desc =
 				/* Mind control strobe (on-demand) */
 				1,				/* StartIndex */
 				NumStrobes * 2, /* NumFrames */
-				CircularAnim | ColorxformAnim | OneShotAnim
-					| AnimDisabled, /* AnimFlags */
+				AnimationFlags::Circular | AnimationFlags::ColorXform | AnimationFlags::OneShot
+					| AnimationFlags::Disabled, /* AnimFlags */
 				GameTicksPerSecond / (StrobeRate * 2),
 				0, /* FrameRate */
 				0,
@@ -237,9 +237,9 @@ static ConversationData talkpet_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -248,9 +248,9 @@ static ConversationData talkpet_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1, /* StartIndex */
-			6, /* NumFrames */
-			0, /* AnimFlags */
+			1,					  /* StartIndex */
+			6,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,
@@ -276,7 +276,7 @@ static AnimFilterSet talkpet_filters =
 				1,				   /* Opacity index */
 				-1,				   /* Frame index */
 				DrawKind::Overlay, /* DrawKind*/
-				0,				   /* Flags */
+				FilterFlags::None, /* Flags */
 			},
 								  }
 };
@@ -358,7 +358,7 @@ static void PetDevice(ResponseRef R);
 static void MindControlStrobe(void)
 {
 	// Enable the one-shot strobe animation
-	CommData.AlienAmbientArray[16].AnimFlags &= ~AnimDisabled;
+	CommData.AlienAmbientArray[16].AnimFlags &= ~AnimationFlags::Disabled;
 
 	if (IsHd())
 	{

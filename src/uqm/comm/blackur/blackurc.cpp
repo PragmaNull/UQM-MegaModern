@@ -50,9 +50,9 @@ static ConversationData blackurq_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				7,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				7,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -60,9 +60,9 @@ static ConversationData blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				13,			  /* StartIndex */
-				7,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				13,						  /* StartIndex */
+				7,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -71,9 +71,9 @@ static ConversationData blackurq_desc =
 			},
 								{
 				// New eye animation
-				42,			  /* StartIndex */
-				7,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				42,						  /* StartIndex */
+				7,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -81,9 +81,9 @@ static ConversationData blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				20,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				20,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -91,9 +91,9 @@ static ConversationData blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				23,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				23,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -101,9 +101,9 @@ static ConversationData blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				26,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				26,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -111,9 +111,9 @@ static ConversationData blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				29,			/* StartIndex */
-				4,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				29,						/* StartIndex */
+				4,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -122,9 +122,9 @@ static ConversationData blackurq_desc =
 			},
 								{
 				// "Left" extremity
-				33,							/* StartIndex */
-				5,							/* NumFrames */
-				CircularAnim | WaitTalking, /* AnimFlags */
+				33,														/* StartIndex */
+				5,														/* NumFrames */
+				AnimationFlags::Circular | AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -133,9 +133,9 @@ static ConversationData blackurq_desc =
 			},
 								{
 				// "Right" extremeity
-				38,			  /* StartIndex */
-				4,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				38,						  /* StartIndex */
+				4,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -145,9 +145,9 @@ static ConversationData blackurq_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			1, /* StartIndex */
-			2, /* NumFrames */
-			0, /* AnimFlags */
+			1,					  /* StartIndex */
+			2,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 30,
 								0, /* FrameRate */
 			0,
@@ -156,9 +156,9 @@ static ConversationData blackurq_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			2, /* StartIndex */
-			5, /* NumFrames */
-			0, /* AnimFlags */
+			2,					  /* StartIndex */
+			5,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,

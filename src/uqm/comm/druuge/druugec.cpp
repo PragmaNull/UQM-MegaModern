@@ -59,9 +59,9 @@ static ConversationData druuge_desc =
 
 			{
 				// Biggest flame
-				5,			  /* StartIndex */
-				4,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				5,						  /* StartIndex */
+				4,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -70,9 +70,9 @@ static ConversationData druuge_desc =
 			},
 								{
 				// Flame on the right
-				9,			  /* StartIndex */
-				4,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				9,						  /* StartIndex */
+				4,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -81,9 +81,9 @@ static ConversationData druuge_desc =
 			},
 								{
 				// Smallest flame (behind the biggest flame)
-				13,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				13,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -92,9 +92,9 @@ static ConversationData druuge_desc =
 			},
 								{
 				// Flashing eyes
-				19,			  /* StartIndex */
-				3,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				19,						  /* StartIndex */
+				3,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -102,9 +102,9 @@ static ConversationData druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			/* StartIndex */
-				3,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				22,						/* StartIndex */
+				3,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -112,9 +112,9 @@ static ConversationData druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				25,			/* StartIndex */
-				3,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				25,						/* StartIndex */
+				3,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -122,9 +122,9 @@ static ConversationData druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				28,			/* StartIndex */
-				3,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				28,						/* StartIndex */
+				3,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -132,9 +132,9 @@ static ConversationData druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				31,			  /* StartIndex */
-				2,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				31,						  /* StartIndex */
+				2,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -142,9 +142,9 @@ static ConversationData druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				33,							/* StartIndex */
-				7,							/* NumFrames */
-				CircularAnim | WaitTalking, /* AnimFlags */
+				33,														/* StartIndex */
+				7,														/* NumFrames */
+				AnimationFlags::Circular | AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond * 7,
@@ -152,9 +152,9 @@ static ConversationData druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				40,			  /* StartIndex */
-				4,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				40,						  /* StartIndex */
+				4,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond * 3 / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 10,
@@ -162,9 +162,9 @@ static ConversationData druuge_desc =
 				0, /* BlockMask */
 			},
 								{
-				44,			  /* StartIndex */
-				4,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				44,						  /* StartIndex */
+				4,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 5,
 				0, /* FrameRate */
 				GameTicksPerSecond / 5,
@@ -174,9 +174,9 @@ static ConversationData druuge_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -185,9 +185,9 @@ static ConversationData druuge_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1, /* StartIndex */
-			4, /* NumFrames */
-			0, /* AnimFlags */
+			1,					  /* StartIndex */
+			4,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								GameTicksPerSecond / 15, /* FrameRate */
 			GameTicksPerSecond / 12,

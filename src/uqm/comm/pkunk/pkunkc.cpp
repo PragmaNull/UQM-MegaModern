@@ -55,8 +55,8 @@ static ConversationData pkunk_desc =
 			{
 				3, /* StartIndex */
 				4, /* NumFrames */
-				CircularAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Circular
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -66,8 +66,8 @@ static ConversationData pkunk_desc =
 								{
 				7, /* StartIndex */
 				4, /* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -77,8 +77,8 @@ static ConversationData pkunk_desc =
 								{
 				11, /* StartIndex */
 				3,	/* NumFrames */
-				YoyoAnim
-					| WaitTalking, /* AnimFlags */
+				AnimationFlags::Yoyo
+					| AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -88,9 +88,9 @@ static ConversationData pkunk_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -99,9 +99,9 @@ static ConversationData pkunk_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1, /* StartIndex */
-			2, /* NumFrames */
-			0, /* AnimFlags */
+			1,					  /* StartIndex */
+			2,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								GameTicksPerSecond / 6, /* FrameRate */
 			GameTicksPerSecond / 12,

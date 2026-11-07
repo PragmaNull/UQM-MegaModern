@@ -54,9 +54,9 @@ static ConversationData spahome_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				1,			  /* StartIndex */
-				3,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				1,						  /* StartIndex */
+				3,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -64,9 +64,9 @@ static ConversationData spahome_desc =
 				0,						/* BlockMask */
 			},
 								{
-				4,			  /* StartIndex */
-				5,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				4,						  /* StartIndex */
+				5,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -74,9 +74,9 @@ static ConversationData spahome_desc =
 				0,						/* BlockMask */
 			},
 								{
-				9,			  /* StartIndex */
-				4,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				9,						  /* StartIndex */
+				4,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -86,15 +86,15 @@ static ConversationData spahome_desc =
 								{
 				13,							/* StartIndex */
 				6,							/* NumFrames */
-				CircularAnim,				/* AnimFlags */
+				AnimationFlags::Circular,	/* AnimFlags */
 				GameTicksPerSecond / 20, 0, /* FrameRate */
 				GameTicksPerSecond / 20, 0, /* RestartRate */
 				(1 << 4) | (1 << 5)			/* BlockMask */
 			},
 								{
-				19,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				19,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -102,9 +102,9 @@ static ConversationData spahome_desc =
 				(1 << 3) | (1 << 5),	/* BlockMask */
 			},
 								{
-				22,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				22,					  /* StartIndex */
+				4,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -113,9 +113,9 @@ static ConversationData spahome_desc =
 					| (1 << 10), /* BlockMask */
 			},
 								{
-				26,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				26,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -123,9 +123,9 @@ static ConversationData spahome_desc =
 				(1 << 10),				/* BlockMask */
 			},
 								{
-				29,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				29,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -133,9 +133,9 @@ static ConversationData spahome_desc =
 				0,						/* BlockMask */
 			},
 								{
-				32,			  /* StartIndex */
-				7,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				32,						  /* StartIndex */
+				7,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -143,9 +143,9 @@ static ConversationData spahome_desc =
 				(1 << 9) | (1 << 10), /* BlockMask */
 			},
 								{
-				39,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				39,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -153,9 +153,9 @@ static ConversationData spahome_desc =
 				(1 << 8) | (1 << 10),	/* BlockMask */
 			},
 								{
-				42,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				42,					  /* StartIndex */
+				4,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -165,9 +165,9 @@ static ConversationData spahome_desc =
 					| (1 << 11) | (1 << 5), /* BlockMask */
 			},
 								{
-				46,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				46,					  /* StartIndex */
+				4,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -175,9 +175,9 @@ static ConversationData spahome_desc =
 				(1 << 2) | (1 << 10),	 /* BlockMask */
 			},
 								{
-				50,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				50,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -185,9 +185,9 @@ static ConversationData spahome_desc =
 				(1 << 13), /* BlockMask */
 			},
 								{
-				56,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				56,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -197,9 +197,9 @@ static ConversationData spahome_desc =
 								},
 		{
 								/* AlienTransitionDesc - empty */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -208,9 +208,9 @@ static ConversationData spahome_desc =
 		},
 		{
 								/* AlienTalkDesc - empty */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -232,11 +232,11 @@ static AnimFilterSet spahome_filters =
 		{
 								  /* Filter array */
 			{
-				0,							/* Color index */
-				1,							/* Opacity index */
-				-1,							/* Frame index */
-				DrawKind::Alpha,			/* DrawKind*/
-				SwitchOnAnims | TurnOffOft, /* Flags */
+				0,													  /* Color index */
+				1,													  /* Opacity index */
+				-1,													  /* Frame index */
+				DrawKind::Alpha,									  /* DrawKind*/
+				FilterFlags::SwitchOnAnims | FilterFlags::TurnOffOft, /* Flags */
 			},
 								  }
 };

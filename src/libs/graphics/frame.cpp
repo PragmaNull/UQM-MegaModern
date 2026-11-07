@@ -74,8 +74,9 @@ bool GetContextValidRect(GfxRect* pValidRect, GfxPoint* origin)
 	{
 		// If the cliprect is completely outside of the valid frame
 		// bounds we have nothing to draw
-		if (!BoxIntersect(&_pCurContext->ClipRect,
-						  pValidRect, pValidRect))
+		if (BoxIntersect(&_pCurContext->ClipRect,
+						 pValidRect, pValidRect)
+			== IntersectCode::None)
 		{
 			return (false);
 		}

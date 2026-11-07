@@ -152,9 +152,9 @@ static ConversationData melnorme_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				6,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				6,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond * 4,
@@ -162,9 +162,9 @@ static ConversationData melnorme_desc =
 				(1 << 1),				/* BlockMask */
 			},
 								{
-				11,		  /* StartIndex */
-				9,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				11,					  /* StartIndex */
+				9,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond * 4,
@@ -172,9 +172,9 @@ static ConversationData melnorme_desc =
 				(1 << 0),				/* BlockMask */
 			},
 								{
-				20,		  /* StartIndex */
-				2,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				20,					  /* StartIndex */
+				2,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -182,9 +182,9 @@ static ConversationData melnorme_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,		  /* StartIndex */
-				2,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				22,					  /* StartIndex */
+				2,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -193,9 +193,9 @@ static ConversationData melnorme_desc =
 			},
 								{
 				/* Flagship picture */
-				24,							 /* StartIndex */
-				1,							 /* NumFrames */
-				CircularAnim | AnimDisabled, /* AnimFlags */
+				24,													 /* StartIndex */
+				1,													 /* NumFrames */
+				AnimationFlags::Circular | AnimationFlags::Disabled, /* AnimFlags */
 				0,
 				0, /* FrameRate */
 				0,
@@ -205,9 +205,9 @@ static ConversationData melnorme_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -216,9 +216,9 @@ static ConversationData melnorme_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1, /* StartIndex */
-			5, /* NumFrames */
-			0, /* AnimFlags */
+			1,					  /* StartIndex */
+			5,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,
@@ -2135,9 +2135,9 @@ static void Intro(void)
 
 	if (IsHd())
 	{
-		CommData.AlienAmbientArray[2].AnimFlags |= TriggerFullRedraw;
-		CommData.AlienAmbientArray[3].AnimFlags |= TriggerFullRedraw;
-		CommData.AlienAmbientArray[4].AnimFlags &= ~CircularAnim;
+		CommData.AlienAmbientArray[2].AnimFlags |= AnimationFlags::TriggerFullRedraw;
+		CommData.AlienAmbientArray[3].AnimFlags |= AnimationFlags::TriggerFullRedraw;
+		CommData.AlienAmbientArray[4].AnimFlags &= ~AnimationFlags::Circular;
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::MET_MELNORME) == 0)

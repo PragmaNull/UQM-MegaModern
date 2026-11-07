@@ -260,7 +260,7 @@ static TimeValue frame_intersect(IntersectInfo* pControl0, GfxRect* pr0,
 						 * each other.
 						 */
 CheckFirstIntersection:
-			if (BoxIntersect(&IB0.Box, &IB1.Box, &r_intersect)
+			if (BoxIntersect(&IB0.Box, &IB1.Box, &r_intersect) != IntersectCode::None
 				&& images_intersect(&IB0, &IB1, &r_intersect))
 			{
 				return (t0);

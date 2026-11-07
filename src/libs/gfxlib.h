@@ -466,14 +466,18 @@ struct IntersectInfo
 	GfxStamp IntersectStamp;
 };
 
-using IntersectCode = uint8_t;
 
-inline constexpr auto IntersectLeft {(IntersectCode)(1 << 0)};
-inline constexpr auto IntersectTop {(IntersectCode)(1 << 1)};
-inline constexpr auto IntersectRight {(IntersectCode)(1 << 2)};
-inline constexpr auto IntersectBottom {(IntersectCode)(1 << 3)};
-inline constexpr auto IntersectNoclip {(IntersectCode)(1 << 7)};
-inline constexpr auto IntersectAllSides {(IntersectCode)(IntersectLeft | IntersectTop | IntersectRight | IntersectBottom)};
+enum class IntersectCode : uint8_t
+{
+	None = 0,
+	Left = 1 << 0,
+	Top = 1 << 1,
+	Right = 1 << 2,
+	Bottom = 1 << 3,
+	Noclip = 1 << 7,
+	AllSides = Left | Top | Right | Bottom,
+};
+ENUM_BITWISE_OPS(IntersectCode)
 
 using HotSpot = GfxPoint;
 

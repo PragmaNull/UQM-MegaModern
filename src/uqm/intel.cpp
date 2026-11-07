@@ -36,7 +36,7 @@ BattleInputState computer_intelligence(ComputerInputContext* context, Starship* 
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 	{
-		return 0;
+		return BattleInputState::None;
 	}
 
 	if (StarShipPtr)
@@ -46,7 +46,7 @@ BattleInputState computer_intelligence(ComputerInputContext* context, Starship* 
 		if (testFlag(StarShipPtr->control, PlayerControlFlags::Cyborg) && uqm::UQMOptions::read().passiveEnemy
 			&& (isMelee || StarShipPtr->playerNr != RpgPlayerNum))
 		{
-			InputState = 0;
+			InputState = BattleInputState::None;
 		}
 		else if (testFlag(StarShipPtr->control, PlayerControlFlags::Cyborg))
 		{
@@ -55,9 +55,7 @@ BattleInputState computer_intelligence(ComputerInputContext* context, Starship* 
 			// Allow a player to warp-escape in cyborg mode
 			if (StarShipPtr->playerNr == RpgPlayerNum)
 			{
-				InputState |= CurrentInputToBattleInput(
-								  context->playerNr)
-							& BattleEscape;
+				InputState |= CurrentInputToBattleInput(context->playerNr) & BattleInputState::Escape;
 			}
 		}
 		else
@@ -67,7 +65,7 @@ BattleInputState computer_intelligence(ComputerInputContext* context, Starship* 
 	}
 	else if (!testFlag(PlayerControl[context->playerNr], PlayerControlFlags::Psytron))
 	{
-		InputState = 0;
+		InputState = BattleInputState::None;
 	}
 	else
 	{
@@ -76,14 +74,14 @@ BattleInputState computer_intelligence(ComputerInputContext* context, Starship* 
 			case ActivityKind::SuperMelee:
 				{
 					SleepThread(c_gameSecond / 2);
-					InputState = BattleWeapon; /* pick a random ship */
+					InputState = BattleInputState::Weapon; /* pick a random ship */
 					break;
 				}
 			default:
 				// Should not happen. Satisfying compiler.
 				uqm::log::warn("Warning: Unexpected state in "
 							   "computer_intelligence().");
-				InputState = 0;
+				InputState = BattleInputState::None;
 				break;
 		}
 	}

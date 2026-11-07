@@ -57,44 +57,44 @@ static ConversationData arilou_desc =
 			{
 				4,											/* StartIndex */
 				9,											/* NumFrames */
-				CircularAnim,								/* AnimFlags */
+				AnimationFlags::Circular,					/* AnimFlags */
 				GameTicksPerSecond / 30, 0,					/* FrameRate */
 				GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 1) | (1L << 16)},
 								{13,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 0) | (1L << 16)},
 								{22,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1L << 16)},
 								{31,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 4)},
 								{40,										 /* StartIndex */
 			 10,										 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 3)},
 								{50,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 7)},
 								{
-				59,			  /* StartIndex */
-				8,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				59,						  /* StartIndex */
+				8,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -103,26 +103,26 @@ static ConversationData arilou_desc =
 			},
 								{67,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 5)},
 								{76,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 9)},
 								{85,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 8)},
 								{
-				94,			  /* StartIndex */
-				9,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				94,						  /* StartIndex */
+				9,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -131,14 +131,14 @@ static ConversationData arilou_desc =
 			},
 								{103,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 13)},
 								{
-				112,		  /* StartIndex */
-				9,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				112,					  /* StartIndex */
+				9,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -147,33 +147,33 @@ static ConversationData arilou_desc =
 			},
 								{121,										 /* StartIndex */
 			 8,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 11)},
 								{129,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1L << 15)},
 								{138,										 /* StartIndex */
 			 8,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 14)},
 								{146,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CircularAnim,								 /* AnimFlags */
+			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 0) | (1 << 1) | (1 << 2)},
 								{
 				/* Hands moving (right up) */
-				155,						/* StartIndex */
-				2,							/* NumFrames */
-				CircularAnim | WaitTalking, /* AnimFlags */
+				155,													/* StartIndex */
+				2,														/* NumFrames */
+				AnimationFlags::Circular | AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -182,9 +182,9 @@ static ConversationData arilou_desc =
 			},
 								{
 				/* Hands moving (left up) */
-				157,						/* StartIndex */
-				2,							/* NumFrames */
-				CircularAnim | WaitTalking, /* AnimFlags */
+				157,													/* StartIndex */
+				2,														/* NumFrames */
+				AnimationFlags::Circular | AnimationFlags::WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -193,9 +193,9 @@ static ConversationData arilou_desc =
 			},
 								{
 				/* Stars flashing next to the head */
-				159,		  /* StartIndex */
-				4,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				159,					  /* StartIndex */
+				4,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -205,9 +205,9 @@ static ConversationData arilou_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -216,9 +216,9 @@ static ConversationData arilou_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1, /* StartIndex */
-			3, /* NumFrames */
-			0, /* AnimFlags */
+			1,					  /* StartIndex */
+			3,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,

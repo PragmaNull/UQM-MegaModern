@@ -85,7 +85,7 @@ static void SetupAmbientSequences(AnimSequence* pSeq, uint16_t Num)
 		memset(pSeq, 0, sizeof(*pSeq));
 
 		pSeq->ADPtr = ADPtr;
-		if (ADPtr->AnimFlags & ColorxformAnim)
+		if (testFlag(ADPtr->AnimFlags, AnimationFlags::ColorXform))
 		{
 			pSeq->AnimType = AnimType::Color;
 		}
@@ -96,16 +96,16 @@ static void SetupAmbientSequences(AnimSequence* pSeq, uint16_t Num)
 		pSeq->Direction = AnimDir::Up;
 		pSeq->FramesLeft = ADPtr->NumFrames;
 		// Default: first frame is neutral
-		if (ADPtr->AnimFlags & RandomAnim)
+		if (testFlag(ADPtr->AnimFlags, AnimationFlags::Random))
 		{ // Set a random frame/colormap
 			pSeq->NextIndex = uqm::random().next() % ADPtr->NumFrames;
 		}
-		else if (ADPtr->AnimFlags & YoyoAnim)
+		else if (testFlag(ADPtr->AnimFlags, AnimationFlags::Yoyo))
 		{ // Skip the first frame/colormap (it's neutral)
 			pSeq->NextIndex = 1;
 			--pSeq->FramesLeft;
 		}
-		else if (ADPtr->AnimFlags & CircularAnim)
+		else if (testFlag(ADPtr->AnimFlags, AnimationFlags::Circular))
 		{ // Exception that makes everything more painful:
 			// *Last* frame is neutral
 			pSeq->CurIndex = ADPtr->NumFrames - 1;
@@ -120,7 +120,7 @@ static void SetupTalkSequence(AnimSequence* pSeq, AnimationDesc* ADPtr)
 {
 	memset(pSeq, 0, sizeof(*pSeq));
 	// Initially disabled, and until needed
-	ADPtr->AnimFlags |= AnimDisabled;
+	ADPtr->AnimFlags |= AnimationFlags::Disabled;
 	pSeq->ADPtr = ADPtr;
 	pSeq->AnimType = AnimType::Picture;
 }
@@ -129,7 +129,7 @@ static inline bool animAtNeutralIndex(AnimSequence* pSeq)
 {
 	const AnimationDesc* ADPtr = pSeq->ADPtr;
 
-	if (ADPtr->AnimFlags & CircularAnim)
+	if (testFlag(ADPtr->AnimFlags, AnimationFlags::Circular))
 	{ // CircularAnim's neutral frame is the last
 		return pSeq->NextIndex == 0;
 	}
@@ -143,7 +143,7 @@ static inline bool conflictsWithTalkingAnim(AnimSequence* pSeq)
 {
 	const AnimationDesc* ADPtr = pSeq->ADPtr;
 
-	return ADPtr->AnimFlags & CommData.AlienTalkDesc.AnimFlags & WaitTalking;
+	return testFlag(ADPtr->AnimFlags, AnimationFlags::WaitTalking) && testFlag(CommData.AlienTalkDesc.AnimFlags, AnimationFlags::WaitTalking);
 }
 
 static void ProcessColormapAnims(AnimSequence* pSeq, uint16_t Num)
@@ -152,7 +152,7 @@ static void ProcessColormapAnims(AnimSequence* pSeq, uint16_t Num)
 	{
 		const AnimationDesc* ADPtr = pSeq->ADPtr;
 
-		if ((ADPtr->AnimFlags & AnimDisabled)
+		if ((testFlag(ADPtr->AnimFlags, AnimationFlags::Disabled))
 			|| pSeq->AnimType != AnimType::Color
 			|| !pSeq->Change)
 		{
@@ -174,7 +174,7 @@ static bool AdvanceAmbientSequence(AnimSequence* pSeq)
 	// YoyoAnim does not actually end until it comes back
 	// in reverse direction, even if FramesLeft gets to 0 here
 	if (pSeq->FramesLeft
-		|| ((ADPtr->AnimFlags & YoyoAnim) && pSeq->NextIndex != 0))
+		|| ((testFlag(ADPtr->AnimFlags, AnimationFlags::Yoyo)) && pSeq->NextIndex != 0))
 	{
 		active = true;
 		pSeq->Alarm = randomFrameRate(pSeq) + 1;
@@ -185,7 +185,7 @@ static bool AdvanceAmbientSequence(AnimSequence* pSeq)
 		pSeq->Alarm = randomRestartRate(pSeq) + 1;
 
 		// RandomAnim must end on a neutral frame
-		if (ADPtr->AnimFlags & RandomAnim)
+		if (testFlag(ADPtr->AnimFlags, AnimationFlags::Random))
 		{
 			pSeq->NextIndex = 0;
 		}
@@ -200,13 +200,13 @@ static bool AdvanceAmbientSequence(AnimSequence* pSeq)
 		// Set it up for the next round
 		pSeq->FramesLeft = ADPtr->NumFrames;
 
-		if (ADPtr->AnimFlags & YoyoAnim)
+		if (testFlag(ADPtr->AnimFlags, AnimationFlags::Yoyo))
 		{ // YoyoAnim never draws the first frame
 			// ("first" depends on direction)
 			--pSeq->FramesLeft;
 			pSeq->Direction = (AnimDir)-pSeq->Direction;
 		}
-		else if (ADPtr->AnimFlags & CircularAnim)
+		else if (testFlag(ADPtr->AnimFlags, AnimationFlags::Circular))
 		{ // Rewind the CircularAnim
 			// NextIndex will be brought to 0 just below
 			pSeq->NextIndex = -1;
@@ -214,7 +214,7 @@ static bool AdvanceAmbientSequence(AnimSequence* pSeq)
 		// RandomAnim is setup just below
 	}
 
-	if (ADPtr->AnimFlags & RandomAnim)
+	if (testFlag(ADPtr->AnimFlags, AnimationFlags::Random))
 	{
 		pSeq->NextIndex = randomFrameIndex(pSeq, 0);
 	}
@@ -255,7 +255,7 @@ static void AdvanceTalkingSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 
 		assert(pSeq->CurIndex == 0);
 		pSeq->Alarm = 0; // now!
-		ADPtr->AnimFlags &= ~AnimDisabled;
+		ADPtr->AnimFlags &= ~AnimationFlags::Disabled;
 	}
 
 	if (pSeq->CurIndex == 0 && signaledFreezeTalkingAnim())
@@ -299,7 +299,7 @@ static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 	if (pSeq->Direction == AnimDir::None)
 	{					 // just starting now
 		pSeq->Alarm = 0; // now!
-		ADPtr->AnimFlags &= ~AnimDisabled;
+		ADPtr->AnimFlags &= ~AnimationFlags::Disabled;
 	}
 
 	if (pSeq->Alarm > ElapsedTicks)
@@ -318,12 +318,12 @@ static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 		// when e.g. Zoq and Pik are taking turns to talk
 		// Process the DONE transition first to go into
 		// a neutral state before switching over.
-		if (CommData.AlienTransitionDesc.AnimFlags & TalkDone)
+		if (testFlag(CommData.AlienTransitionDesc.AnimFlags, AnimationFlags::TalkDone))
 		{
 			pSeq->Direction = AnimDir::Down;
 			pSeq->CurIndex = ADPtr->NumFrames - 1;
 		}
-		else if (CommData.AlienTransitionDesc.AnimFlags & TalkIntro)
+		else if (testFlag(CommData.AlienTransitionDesc.AnimFlags, AnimationFlags::TalkIntro))
 		{
 			pSeq->Direction = AnimDir::Up;
 			// It's now safe to pick up new Transition descriptor if changed
@@ -343,14 +343,14 @@ static bool AdvanceTransitSequence(AnimSequence* pSeq, uint32_t ElapsedTicks)
 	{ // animation is done
 		if (pSeq->Direction == AnimDir::Up)
 		{ // done with TalkIntro transition
-			CommData.AlienTransitionDesc.AnimFlags &= ~TalkIntro;
+			CommData.AlienTransitionDesc.AnimFlags &= ~AnimationFlags::TalkIntro;
 		}
 		else if (pSeq->Direction == AnimDir::Down)
 		{ // done with TalkDone transition
-			CommData.AlienTransitionDesc.AnimFlags &= ~TalkDone;
+			CommData.AlienTransitionDesc.AnimFlags &= ~AnimationFlags::TalkDone;
 
 			// Done with all transition frames
-			ADPtr->AnimFlags |= AnimDisabled;
+			ADPtr->AnimFlags |= AnimationFlags::Disabled;
 			done = true;
 		}
 		pSeq->Direction = AnimDir::None;
@@ -427,7 +427,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 			const AnimationDesc* ADPtr = pSeq->ADPtr;
 			const uint32_t ActiveBit = 1L << i;
 
-			if (ADPtr->AnimFlags & AnimDisabled)
+			if (testFlag(ADPtr->AnimFlags, AnimationFlags::Disabled))
 			{
 				continue;
 			}
@@ -487,7 +487,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 				}
 			}
 
-			if (pSeq->Change && ADPtr->AnimFlags & TriggerFullRedraw)
+			if (pSeq->Change && testFlag(ADPtr->AnimFlags, AnimationFlags::TriggerFullRedraw))
 			{
 				FullRedraw = true;
 			}
@@ -503,14 +503,13 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 			if (signaledStopTalkingAnim() && haveTransitionAnim())
 			{ // Run the transition. We will clear everything
 				// when it is done
-				CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
+				CommData.AlienTransitionDesc.AnimFlags |= AnimationFlags::TalkDone;
 			}
 
-			if (CommData.AlienTransitionDesc.AnimFlags
-					& (TalkIntro | TalkDone)
+			if (testFlag(CommData.AlienTransitionDesc.AnimFlags, (AnimationFlags::TalkIntro | AnimationFlags::TalkDone))
 				&& !signaledFreezeTalkingAnim())
 			{ // Transitioning in or out of talking
-				if ((CommData.AlienTransitionDesc.AnimFlags & TalkDone)
+				if ((testFlag(CommData.AlienTransitionDesc.AnimFlags, AnimationFlags::TalkDone))
 					&& Transit->Direction == AnimDir::None)
 				{ // This is needed when switching talking anims
 					ResetSequence(Talk);
@@ -537,7 +536,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 		{ // Not talking -- disable talking anim if it is done
 			if (Talk->Direction == AnimDir::None)
 			{
-				TalkDesc.AnimFlags |= AnimDisabled;
+				TalkDesc.AnimFlags |= AnimationFlags::Disabled;
 			}
 		}
 
@@ -573,28 +572,28 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 			AnimationDesc* ADPtr = pSeq->ADPtr;
 			const uint32_t ActiveBit = 1L << i;
 
-			if (ADPtr->AnimFlags & AnimDisabled)
+			if (testFlag(ADPtr->AnimFlags, AnimationFlags::Disabled))
 			{
 				continue;
 			}
 
 			// We can only disable a one-shot anim here, otherwise the
 			// last frame will not be drawn
-			if ((ADPtr->AnimFlags & OneShotAnim)
+			if ((testFlag(ADPtr->AnimFlags, AnimationFlags::OneShot))
 				&& !(NextActiveMask & ActiveBit))
 			{ // One-shot animation, inactive next frame
-				ADPtr->AnimFlags |= AnimDisabled;
+				ADPtr->AnimFlags |= AnimationFlags::Disabled;
 
-				if (ADPtr->AnimFlags & RestartAllAfter)
+				if (testFlag(ADPtr->AnimFlags, AnimationFlags::RestartAllAfter))
 				{
 					SwitchSequences(true);
 				}
 
-				if (ADPtr->AnimFlags & StopAllAfter)
+				if (testFlag(ADPtr->AnimFlags, AnimationFlags::StopAllAfter))
 				{
 					SwitchSequences(false);
-					CommData.AlienTalkDesc.AnimFlags |= PauseTalking;
-					TalkDesc.AnimFlags |= AnimDisabled;
+					CommData.AlienTalkDesc.AnimFlags |= AnimationFlags::PauseTalking;
+					TalkDesc.AnimFlags |= AnimationFlags::Disabled;
 					CommData.AlienFrame = SetAbsFrameIndex(CommData.AlienFrame, ADPtr->StartIndex);
 				}
 			}
@@ -614,7 +613,7 @@ static void ApplyFilterToStamp(GfxStamp s)
 		Color FGColor;
 		const AnimFilter* FTPtr = &FilterData.FilterArray[i];
 
-		if (FTPtr->Flags & FilterDisabled)
+		if (testFlag(FTPtr->Flags, FilterFlags::Disabled))
 		{
 			continue;
 		}
@@ -666,14 +665,14 @@ bool DrawAlienFrame(AnimSequence* Sequences, uint16_t Num, bool fullRedraw)
 		{
 			AnimationDesc* ADPtr = &CommData.AlienAmbientArray[i];
 
-			if (ADPtr->AnimFlags & AnimMask)
+			if (testFlag(ADPtr->AnimFlags, AnimationFlags::AnimMask))
 			{
 				continue;
 			}
 
-			ADPtr->AnimFlags |= AnimDisabled;
+			ADPtr->AnimFlags |= AnimationFlags::Disabled;
 
-			if (!(ADPtr->AnimFlags & ColorxformAnim))
+			if (!(testFlag(ADPtr->AnimFlags, AnimationFlags::ColorXform)))
 			{ // It's a static frame (e.g. Flagship picture at Starbase)
 				s.frame = SetAbsFrameIndex(CommData.AlienFrame,
 										   ADPtr->StartIndex);
@@ -689,7 +688,7 @@ bool DrawAlienFrame(AnimSequence* Sequences, uint16_t Num, bool fullRedraw)
 			AnimSequence* pSeq = &Sequences[i];
 			const AnimationDesc* ADPtr = pSeq->ADPtr;
 
-			if ((ADPtr->AnimFlags & AnimDisabled)
+			if ((testFlag(ADPtr->AnimFlags, AnimationFlags::Disabled))
 				|| pSeq->AnimType != AnimType::Picture)
 			{
 				continue;
@@ -734,12 +733,12 @@ bool DrawAlienFrame(AnimSequence* Sequences, uint16_t Num, bool fullRedraw)
 			int16_t factor {};
 			const AnimFilter* FTPtr = &FilterData.FilterArray[i];
 
-			if (FTPtr->Flags & FilterDisabled)
+			if (testFlag(FTPtr->Flags, FilterFlags::Disabled))
 			{
 				continue;
 			}
 
-			if (FTPtr->Flags & FramedFilter)
+			if (testFlag(FTPtr->Flags, FilterFlags::Framed))
 			{ // Special case - just draw plain frame
 				factor = getAlphaChannel(FTPtr->ColorIndex);
 
@@ -797,22 +796,22 @@ bool DrawAlienFrame(AnimSequence* Sequences, uint16_t Num, bool fullRedraw)
 
 			// postprocess stuff
 postprocess:
-			if (FTPtr->Flags & TurnOffOft && factor == 0x00)
+			if (testFlag(FTPtr->Flags, FilterFlags::TurnOffOft) && factor == 0x00)
 			{
 				filterEnabled = false;
 			}
 
-			if (FTPtr->Flags & TurnOffOfo && factor == 0xFF)
+			if (testFlag(FTPtr->Flags, FilterFlags::TurnOffOfo) && factor == 0xFF)
 			{
 				filterEnabled = false;
 			}
 
-			if (FTPtr->Flags & SwitchOffAnims && factor == 0xFF)
+			if (testFlag(FTPtr->Flags, FilterFlags::SwitchOffAnims) && factor == 0xFF)
 			{
 				SwitchSequences(false);
 				EnableTalkingAnim(false);
 			}
-			if (FTPtr->Flags & SwitchOnAnims && factor != 0xFF)
+			if (testFlag(FTPtr->Flags, FilterFlags::SwitchOnAnims) && factor != 0xFF)
 			{
 				SwitchSequences(true);
 				EnableTalkingAnim(true);
@@ -841,46 +840,42 @@ void SwitchSequences(bool enableAll)
 	for (uint16_t i {0}; i < CommData.NumAnimations; ++i)
 	{
 		// skip one-shot anim
-		if (CommData.AlienAmbientArray[i].AnimFlags & OneShotAnim)
+		if (testFlag(CommData.AlienAmbientArray[i].AnimFlags, AnimationFlags::OneShot))
 		{
 			continue;
 		}
 
 		if (!enableAll)
 		{
-			if (CommData.AlienAmbientArray[i].AnimFlags & ImmumeToStop)
+			if (testFlag(CommData.AlienAmbientArray[i].AnimFlags, AnimationFlags::ImmuneToStop))
 			{
 				continue;
 			}
 
-			CommData.AlienAmbientArray[i].AnimFlags |= AnimDisabled;
+			CommData.AlienAmbientArray[i].AnimFlags |= AnimationFlags::Disabled;
 		}
 		else
 		{
-			if (CommData.AlienAmbientArray[i].AnimFlags
-				& ImmumeToRestart)
+			if (testFlag(CommData.AlienAmbientArray[i].AnimFlags, AnimationFlags::ImmuneToRestart))
 			{
 				continue;
 			}
 
-			CommData.AlienAmbientArray[i].AnimFlags &= ~AnimDisabled;
+			CommData.AlienAmbientArray[i].AnimFlags &= ~AnimationFlags::Disabled;
 		}
 	}
 }
 
-void RunOneTimeSequence(uint16_t animIndex, uint16_t flags)
+void RunOneTimeSequence(uint16_t animIndex, AnimationFlags flags)
 { // Kruzen: HdResolutionFactor-only
-	if (!(CommData.AlienAmbientArray[animIndex].AnimFlags
-		  & ColorxformAnim)
-		&& CommData.AlienAmbientArray[animIndex].AnimFlags
-			   & OneShotAnim)
+	if (!(testFlag(CommData.AlienAmbientArray[animIndex].AnimFlags, AnimationFlags::ColorXform))
+		&& testFlag(CommData.AlienAmbientArray[animIndex].AnimFlags, AnimationFlags::OneShot))
 	{
-		CommData.AlienAmbientArray[animIndex].AnimFlags &= ~AnimDisabled;
+		CommData.AlienAmbientArray[animIndex].AnimFlags &= ~AnimationFlags::Disabled;
 
 		CommData.AlienAmbientArray[animIndex].AnimFlags |= flags;
 
-		if (!(CommData.AlienAmbientArray[animIndex].AnimFlags
-			  & AlphaMaskAnim))
+		if (!(testFlag(CommData.AlienAmbientArray[animIndex].AnimFlags, AnimationFlags::AlphaMask)))
 		{
 			SwitchSequences(false);
 		}

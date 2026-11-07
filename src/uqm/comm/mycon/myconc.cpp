@@ -56,9 +56,9 @@ static ConversationData mycon_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				12,			  /* StartIndex */
-				10,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				12,						  /* StartIndex */
+				10,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 80,
@@ -79,9 +79,9 @@ static ConversationData mycon_desc =
 			//		(1 << 0), /* BlockMask */
 			//	},
 			{
-				22,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				22,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -89,9 +89,9 @@ static ConversationData mycon_desc =
 				0, /* BlockMask */
 			},
 								{
-				28,			  /* StartIndex */
-				5,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				28,						  /* StartIndex */
+				5,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -99,9 +99,9 @@ static ConversationData mycon_desc =
 				0, /* BlockMask */
 			},
 								{
-				33,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				33,					  /* StartIndex */
+				4,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -111,9 +111,9 @@ static ConversationData mycon_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -122,9 +122,9 @@ static ConversationData mycon_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1,	/* StartIndex */
-			11, /* NumFrames */
-			0,	/* AnimFlags */
+			1,					  /* StartIndex */
+			11,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,

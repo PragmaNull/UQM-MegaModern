@@ -23,7 +23,7 @@ IntersectCode BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* pinter)
 	int16_t x1 {};
 	int16_t delta {};
 
-	IntersectCode intersect_code {IntersectNoclip};
+	IntersectCode intersect_code {IntersectCode::Noclip};
 
 	x1 = pr1->corner.x - pr2->corner.x;
 
@@ -34,9 +34,9 @@ IntersectCode BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* pinter)
 		if (delta != w1)
 		{
 			w1 = delta;
-			intersect_code &= ~IntersectNoclip;
+			intersect_code &= ~IntersectCode::Noclip;
 		}
-		intersect_code |= IntersectRight;
+		intersect_code |= IntersectCode::Right;
 	}
 	if (x1 <= 0)
 	{
@@ -44,9 +44,9 @@ IntersectCode BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* pinter)
 		{
 			w1 += x1;
 			x1 = 0;
-			intersect_code &= ~IntersectNoclip;
+			intersect_code &= ~IntersectCode::Noclip;
 		}
-		intersect_code |= IntersectLeft;
+		intersect_code |= IntersectCode::Left;
 	}
 
 	if (w1 > 0)
@@ -62,9 +62,9 @@ IntersectCode BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* pinter)
 			if (delta != h1)
 			{
 				h1 = delta;
-				intersect_code &= ~IntersectNoclip;
+				intersect_code &= ~IntersectCode::Noclip;
 			}
-			intersect_code |= IntersectBottom;
+			intersect_code |= IntersectCode::Bottom;
 		}
 		if (y1 <= 0)
 		{
@@ -72,9 +72,9 @@ IntersectCode BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* pinter)
 			{
 				h1 += y1;
 				y1 = 0;
-				intersect_code &= ~IntersectNoclip;
+				intersect_code &= ~IntersectCode::Noclip;
 			}
-			intersect_code |= IntersectTop;
+			intersect_code |= IntersectCode::Top;
 		}
 
 		if (h1 > 0)
@@ -111,7 +111,7 @@ void BoxUnion(GfxRect* pr1, GfxRect* pr2, GfxRect* punion)
 
 
 #if NEVER // FIXME - I think this is broken, but keeping it around for reference
-	// FIXME - just in case.
+		  // FIXME - just in case.
 
 #if 1 /* alter based on 0 widths */
 

@@ -220,7 +220,7 @@ static int16_t add_text(int status, GfxText* pTextIn)
 		}
 
 		text_width = CommData.AlienTextWidth;
-		if (CommData.AlienConv == Conversation::Orz && uqm::UQMOptions::read().orzCompFont && CommData.AlienTalkDesc.AnimFlags & PauseTalking)
+		if (CommData.AlienConv == Conversation::Orz && uqm::UQMOptions::read().orzCompFont && testFlag(CommData.AlienTalkDesc.AnimFlags, AnimationFlags::PauseTalking))
 		{
 			SetContextFont(ComputerFont); // Orz intro
 		}
@@ -417,13 +417,13 @@ void CheckTalkingAnim(uint16_t i)
 	{
 		if (i >= startSentence && i <= endSentence)
 		{
-			CommData.AlienTalkDesc.AnimFlags &= ~WaitTalking;
+			CommData.AlienTalkDesc.AnimFlags &= ~AnimationFlags::WaitTalking;
 			EnableTalkingAnim(false);
 			ShutYourMouth();
 		}
 		else
 		{
-			CommData.AlienTalkDesc.AnimFlags |= WaitTalking;
+			CommData.AlienTalkDesc.AnimFlags |= AnimationFlags::WaitTalking;
 			EnableTalkingAnim(true);
 		}
 	}
@@ -2449,11 +2449,11 @@ void EnableTalkingAnim(bool enable)
 {
 	if (enable)
 	{
-		CommData.AlienTalkDesc.AnimFlags &= ~PauseTalking;
+		CommData.AlienTalkDesc.AnimFlags &= ~AnimationFlags::PauseTalking;
 	}
 	else
 	{
-		CommData.AlienTalkDesc.AnimFlags |= PauseTalking;
+		CommData.AlienTalkDesc.AnimFlags |= AnimationFlags::PauseTalking;
 	}
 }
 

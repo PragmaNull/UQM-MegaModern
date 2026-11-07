@@ -1172,7 +1172,7 @@ BattleInputState tactical_intelligence(ComputerInputContext* context, Starship* 
 		|| GetPrimType(&DisplayArray[ShipPtr->PrimIndex]) == NoPrim)
 	{
 		UnlockElement(StarShipPtr->hShip);
-		return (0);
+		return BattleInputState::None;
 	}
 
 	bool ShipMoved {true};
@@ -1475,23 +1475,23 @@ BattleInputState tactical_intelligence(ComputerInputContext* context, Starship* 
 		BattleInputState InputState {0};
 		if (StarShipPtr->ship_input_state & LeftFlag)
 		{
-			InputState |= BattleLeft;
+			InputState |= BattleInputState::Left;
 		}
 		else if (StarShipPtr->ship_input_state & RightFlag)
 		{
-			InputState |= BattleRight;
+			InputState |= BattleInputState::Right;
 		}
 		if (StarShipPtr->ship_input_state & ThrustFlag)
 		{
-			InputState |= BattleThrust;
+			InputState |= BattleInputState::Thrust;
 		}
 		if (StarShipPtr->ship_input_state & WeaponFlag)
 		{
-			InputState |= BattleWeapon;
+			InputState |= BattleInputState::Weapon;
 		}
 		if (StarShipPtr->ship_input_state & SpecialFlag)
 		{
-			InputState |= BattleSpecial;
+			InputState |= BattleInputState::Special;
 		}
 
 		(void)context;

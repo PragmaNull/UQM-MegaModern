@@ -20,11 +20,17 @@
 #ifndef UQM_LIBS_GRAPHICS_CONTEXT_H
 #define UQM_LIBS_GRAPHICS_CONTEXT_H
 
+#include "core/types/enum.h"
+
 #include "tfb_draw.h"
 
-using FbkFlags = uint16_t;
-inline constexpr auto FbkDirty {1 << 0};
-inline constexpr auto FbkImage {1 << 1};
+enum class FbkFlags : uint16_t
+{
+	None = 0,
+	Dirty = 1 << 0,
+	Image = 1 << 1,
+};
+ENUM_BITWISE_OPS(FbkFlags)
 
 struct GraphicsContextDesc
 {
@@ -75,38 +81,43 @@ inline void UnsetContextFBkFlags(FbkFlags f) { _pCurContext->BackingFlags &= ~f;
 inline void SwitchContextFont(FontRef f)
 {
 	_pCurContext->Font = f;
-	SetContextFBkFlags(FbkDirty);
+	SetContextFBkFlags(FbkFlags::Dirty);
 }
 
 inline void SwitchContextFontEffect(FrameRef f)
 {
 	_pCurContext->FontEffect = f;
-	SetContextFBkFlags(FbkDirty);
+	SetContextFBkFlags(FbkFlags::Dirty);
 }
 
-using GraphicsStatusFlags = uint8_t;
+
+enum class GraphicsStatusFlags : uint8_t
+{
+	None = 0,
+	GraphicsActive = 1 << 0,
+	GraphicsVisible = 1 << 1,
+	ContextActive = 1 << 2,
+	DrawableActive = 1 << 3,
+};
+ENUM_BITWISE_OPS(GraphicsStatusFlags)
 
 extern GraphicsStatusFlags _GraphicsStatusFlags;
-inline constexpr auto GraphicsActiveFlag {(GraphicsStatusFlags)(1 << 0)};
-inline constexpr auto GraphicsVisible {(GraphicsStatusFlags)(1 << 1)};
-inline constexpr auto ContextActiveFlag {(GraphicsStatusFlags)(1 << 2)};
-inline constexpr auto DrawableActiveFlag {(GraphicsStatusFlags)(1 << 3)};
-inline void DeactivateGraphics() { _GraphicsStatusFlags &= ~GraphicsActiveFlag; }
-inline void ActivateGraphics() { _GraphicsStatusFlags |= GraphicsActiveFlag; }
-inline bool GraphicsActive() { return (_GraphicsStatusFlags & GraphicsActiveFlag) != 0; }
-inline void DeactivateVisible() { _GraphicsStatusFlags &= ~GraphicsVisible; }
-inline void ActivateVisible() { _GraphicsStatusFlags |= GraphicsVisible; }
-inline void DeactivateContext() { _GraphicsStatusFlags &= ~ContextActiveFlag; }
-inline void ActivateContext() { _GraphicsStatusFlags |= ContextActiveFlag; }
-inline bool ContextActive() { return (_GraphicsStatusFlags & ContextActiveFlag) != 0; }
-inline void DeactivateDrawable() { _GraphicsStatusFlags &= ~DrawableActiveFlag; }
-inline void ActivateDrawable() { _GraphicsStatusFlags |= DrawableActiveFlag; }
-inline bool DrawableActive() { return (_GraphicsStatusFlags & DrawableActiveFlag) != 0; }
+inline void DeactivateGraphics() { _GraphicsStatusFlags &= ~GraphicsStatusFlags::GraphicsActive; }
+inline void ActivateGraphics() { _GraphicsStatusFlags |= GraphicsStatusFlags::GraphicsActive; }
+inline bool GraphicsActive() { return testFlag(_GraphicsStatusFlags, GraphicsStatusFlags::GraphicsActive); }
+inline void DeactivateVisible() { _GraphicsStatusFlags &= ~GraphicsStatusFlags::GraphicsVisible; }
+inline void ActivateVisible() { _GraphicsStatusFlags |= GraphicsStatusFlags::GraphicsVisible; }
+inline void DeactivateContext() { _GraphicsStatusFlags &= ~GraphicsStatusFlags::ContextActive; }
+inline void ActivateContext() { _GraphicsStatusFlags |= GraphicsStatusFlags::ContextActive; }
+inline bool ContextActive() { return testFlag(_GraphicsStatusFlags, GraphicsStatusFlags::ContextActive); }
+inline void DeactivateDrawable() { _GraphicsStatusFlags &= ~GraphicsStatusFlags::DrawableActive; }
+inline void ActivateDrawable() { _GraphicsStatusFlags |= GraphicsStatusFlags::DrawableActive; }
+inline bool DrawableActive() { return testFlag(_GraphicsStatusFlags, GraphicsStatusFlags::DrawableActive); }
 
-inline constexpr auto SystemActive {(GraphicsStatusFlags)(ContextActiveFlag | DrawableActiveFlag)};
+inline constexpr auto SystemActive {(GraphicsStatusFlags)(GraphicsStatusFlags::ContextActive | GraphicsStatusFlags::DrawableActive)};
 
 inline bool GraphicsSystemActive() { return (_GraphicsStatusFlags & SystemActive) == SystemActive; }
-inline GraphicsStatusFlags GraphicsStatus() { return _GraphicsStatusFlags & (GraphicsStatusFlags)(GraphicsActiveFlag | GraphicsVisible); }
+inline GraphicsStatusFlags GraphicsStatus() { return _GraphicsStatusFlags & (GraphicsStatusFlags)(GraphicsStatusFlags::GraphicsActive | GraphicsStatusFlags::GraphicsVisible); }
 
 // pValidRect or origin may be nullptr
 bool GetContextValidRect(GfxRect* pValidRect, GfxPoint* origin);

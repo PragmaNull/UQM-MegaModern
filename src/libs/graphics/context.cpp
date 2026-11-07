@@ -46,10 +46,9 @@ GfxContextRef SetContext(GfxContextRef Context)
 		if (LastContext)
 		{
 			UnsetContextFlags(
-				uqm::makeWord(0, GraphicsActiveFlag | DrawableActiveFlag));
+				uqm::makeWord(0, GraphicsStatusFlags::GraphicsActive | GraphicsStatusFlags::DrawableActive));
 			SetContextFlags(
-				uqm::makeWord(0, _GraphicsStatusFlags
-									 & (GraphicsActiveFlag | DrawableActiveFlag)));
+				uqm::makeWord(0, testFlag(_GraphicsStatusFlags, (GraphicsStatusFlags::GraphicsActive | GraphicsStatusFlags::DrawableActive))));
 
 			DeactivateContext();
 		}
@@ -59,8 +58,8 @@ GfxContextRef SetContext(GfxContextRef Context)
 		{
 			ActivateContext();
 
-			_GraphicsStatusFlags &= ~(GraphicsActiveFlag | DrawableActiveFlag);
-			_GraphicsStatusFlags |= uqm::highByte(_get_context_flags());
+			_GraphicsStatusFlags &= ~(GraphicsStatusFlags::GraphicsActive | GraphicsStatusFlags::DrawableActive);
+			_GraphicsStatusFlags |= static_cast<GraphicsStatusFlags>(uqm::highByte(_get_context_flags()));
 
 			SetPrimColor(&_locPrim, _get_context_fg_color());
 
@@ -164,9 +163,9 @@ Color SetContextForeGroundColor(Color color)
 	{
 		SwitchContextForeGroundColor(color);
 
-		if (!(_get_context_fbk_flags() & FbkImage))
+		if (!(testFlag(_get_context_fbk_flags(), FbkFlags::Image)))
 		{
-			SetContextFBkFlags(FbkDirty);
+			SetContextFBkFlags(FbkFlags::Dirty);
 		}
 	}
 	SetPrimColor(&_locPrim, color);
@@ -314,11 +313,11 @@ FrameRef SetContextFontEffect(FrameRef EffectFrame)
 
 		if (EffectFrame != 0)
 		{
-			SetContextFBkFlags(FbkImage);
+			SetContextFBkFlags(FbkFlags::Image);
 		}
 		else
 		{
-			UnsetContextFBkFlags(FbkImage);
+			UnsetContextFBkFlags(FbkFlags::Image);
 		}
 	}
 
@@ -330,7 +329,7 @@ void FixContextFontEffect(void)
 	int16_t w {};
 	int16_t h {};
 
-	if (!ContextActive() || (_get_context_font_backing() != 0 && !(_get_context_fbk_flags() & FbkDirty)))
+	if (!ContextActive() || (_get_context_font_backing() != 0 && !(testFlag(_get_context_fbk_flags(), FbkFlags::Dirty))))
 	{
 		return;
 	}
@@ -347,7 +346,7 @@ void FixContextFontEffect(void)
 	}
 
 	img = TFB_DrawImage_CreateForScreen(w, h, true);
-	if (_get_context_fbk_flags() & FbkImage)
+	if (testFlag(_get_context_fbk_flags(), FbkFlags::Image))
 	{ // image pattern backing
 		FrameRef EffectFrame = _get_context_fonteff();
 
@@ -367,7 +366,7 @@ void FixContextFontEffect(void)
 	}
 
 	_pCurContext->FontBacking = img;
-	UnsetContextFBkFlags(FbkDirty);
+	UnsetContextFBkFlags(FbkFlags::Dirty);
 }
 
 // 'area' may be nullptr to copy the entire GfxContextRef cliprect
@@ -394,7 +393,7 @@ DrawableRef CopyContextRect(const GfxRect* area)
 	}
 	// TODO: Should this take GfxContextRef origin into account too?
 	// validate the rect
-	if (!BoxIntersect(&r, &fgRect, &r))
+	if (BoxIntersect(&r, &fgRect, &r) == IntersectCode::None)
 	{
 		return nullptr;
 	}

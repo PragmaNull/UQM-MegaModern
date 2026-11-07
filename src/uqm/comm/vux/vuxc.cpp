@@ -51,9 +51,9 @@ static ConversationData vux_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				12,			/* StartIndex */
-				3,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				12,						/* StartIndex */
+				3,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -61,9 +61,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				15,			/* StartIndex */
-				5,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				15,						/* StartIndex */
+				5,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -71,9 +71,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				20,			  /* StartIndex */
-				14,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				20,						  /* StartIndex */
+				14,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -81,9 +81,9 @@ static ConversationData vux_desc =
 				0, /* BlockMask */
 			},
 								{
-				34,			  /* StartIndex */
-				7,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				34,						  /* StartIndex */
+				7,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -91,9 +91,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				41,			/* StartIndex */
-				6,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				41,						/* StartIndex */
+				6,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -101,9 +101,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				47,			  /* StartIndex */
-				11,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				47,						  /* StartIndex */
+				11,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -111,9 +111,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				58,			/* StartIndex */
-				3,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				58,						/* StartIndex */
+				3,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -121,9 +121,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				61,			/* StartIndex */
-				4,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				61,						/* StartIndex */
+				4,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -131,9 +131,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				65,			/* StartIndex */
-				4,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				65,						/* StartIndex */
+				4,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -141,9 +141,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				69,			/* StartIndex */
-				2,			/* NumFrames */
-				RandomAnim, /* AnimFlags */
+				69,						/* StartIndex */
+				2,						/* NumFrames */
+				AnimationFlags::Random, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -151,9 +151,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				71,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				71,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -161,9 +161,9 @@ static ConversationData vux_desc =
 				0,						/* BlockMask */
 			},
 								{
-				74,		  /* StartIndex */
-				6,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				74,					  /* StartIndex */
+				6,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -171,9 +171,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				80,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				80,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -181,9 +181,9 @@ static ConversationData vux_desc =
 				(1 << 14),				 /* BlockMask */
 			},
 								{
-				85,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				85,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -191,9 +191,9 @@ static ConversationData vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				90,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				90,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -201,9 +201,9 @@ static ConversationData vux_desc =
 				(1 << 12),				 /* BlockMask */
 			},
 								{
-				95,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				95,					  /* StartIndex */
+				4,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 5,
@@ -211,9 +211,9 @@ static ConversationData vux_desc =
 				0,						/* BlockMask */
 			},
 								{
-				99,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				99,					  /* StartIndex */
+				4,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 5,
@@ -221,9 +221,9 @@ static ConversationData vux_desc =
 				0,						/* BlockMask */
 			},
 								{
-				103,						 /* StartIndex */
-				16,							 /* NumFrames */
-				CircularAnim | AnimDisabled, /* AnimFlags */
+				103,												 /* StartIndex */
+				16,													 /* NumFrames */
+				AnimationFlags::Circular | AnimationFlags::Disabled, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -233,8 +233,8 @@ static ConversationData vux_desc =
 								{
 				119, /* StartIndex */
 				8,	 /* NumFrames */
-				CircularAnim | OneShotAnim
-					| WaitTalking | AnimDisabled, /* AnimFlags */
+				AnimationFlags::Circular | AnimationFlags::OneShot
+					| AnimationFlags::WaitTalking | AnimationFlags::Disabled, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -244,9 +244,9 @@ static ConversationData vux_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -255,9 +255,9 @@ static ConversationData vux_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1,	/* StartIndex */
-			11, /* NumFrames */
-			0,	/* AnimFlags */
+			1,					  /* StartIndex */
+			11,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,
@@ -279,11 +279,11 @@ static AnimFilterSet vux_filters =
 		{
 								  /* Filter array */
 			{
-				0,				 /* Color index */
-				1,				 /* Opacity index */
-				-1,				 /* Frame index */
-				DrawKind::Alpha, /* DrawKind*/
-				SwitchOffAnims,	 /* Flags */
+				0,							 /* Color index */
+				1,							 /* Opacity index */
+				-1,							 /* Frame index */
+				DrawKind::Alpha,			 /* DrawKind*/
+				FilterFlags::SwitchOffAnims, /* Flags */
 			},
 								  }
 };
@@ -298,7 +298,7 @@ static void ZexBeingEatenAlive(void)
 				SetAbsFrameIndex(CommData.AlienFrame, 126);
 			EnableTalkingAnim(false);
 			SwitchSequences(false);
-			RunOneTimeSequence(18, 0);
+			RunOneTimeSequence(18, AnimationFlags::None);
 		}
 		else
 		{
@@ -828,7 +828,7 @@ static void Intro(void)
 {
 	if (altResFlags & UseAltFrame)
 	{
-		CommData.AlienAmbientArray[17].AnimFlags &= ~AnimDisabled;
+		CommData.AlienAmbientArray[17].AnimFlags &= ~AnimationFlags::Disabled;
 	}
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)

@@ -603,39 +603,39 @@ void GetMenuSounds(MenuSoundFlags* s0, MenuSoundFlags* s1)
 
 static BattleInputState ControlInputToBattleInput(const int* keyState)
 {
-	BattleInputState InputState = 0;
+	BattleInputState InputState {};
 
 	if (keyState[*BattleKey::Up])
 	{
-		InputState |= BattleThrust;
+		InputState |= BattleInputState::Thrust;
 	}
 	if (keyState[*BattleKey::Left])
 	{
-		InputState |= BattleLeft;
+		InputState |= BattleInputState::Left;
 	}
 	if (keyState[*BattleKey::Right])
 	{
-		InputState |= BattleRight;
+		InputState |= BattleInputState::Right;
 	}
 	if (keyState[*BattleKey::Weapon])
 	{
-		InputState |= BattleWeapon;
+		InputState |= BattleInputState::Weapon;
 	}
 	if (keyState[*BattleKey::Special])
 	{
-		InputState |= BattleSpecial;
+		InputState |= BattleInputState::Special;
 	}
 	if (keyState[*BattleKey::Escape])
 	{
-		InputState |= BattleEscape;
+		InputState |= BattleInputState::Escape;
 	}
 	if (keyState[*BattleKey::Down])
 	{
-		InputState |= BattleDown;
+		InputState |= BattleInputState::Down;
 	}
 	if (keyState[*BattleKey::Thrust])
 	{
-		InputState |= BattleThrustAlt;
+		InputState |= BattleInputState::ThrustAlt;
 	}
 
 	return InputState;

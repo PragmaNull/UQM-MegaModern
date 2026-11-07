@@ -60,9 +60,9 @@ static ConversationData commander_desc =
 								/* AlienAmbientArray (ambient animations) */
 			{
 				/* Blink */
-				1,		  /* StartIndex */
-				3,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				1,					  /* StartIndex */
+				3,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -71,9 +71,9 @@ static ConversationData commander_desc =
 			},
 								{
 				/* Running light */
-				10,			  /* StartIndex */
-				30,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				10,						  /* StartIndex */
+				30,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 2,
@@ -84,8 +84,8 @@ static ConversationData commander_desc =
 				/* SD "rave party" */
 				1, /* StartIndex */
 				3, /* NumFrames */
-				RandomAnim | ColorxformAnim
-					| AnimDisabled, /* AnimFlags */
+				AnimationFlags::Random | AnimationFlags::ColorXform
+					| AnimationFlags::Disabled, /* AnimFlags */
 				0,
 				GameTicksPerSecond / 30, /* FrameRate */
 				0,
@@ -96,8 +96,8 @@ static ConversationData commander_desc =
 				/* HdResolutionFactor static distortion */
 				40, /* StartIndex */
 				16, /* NumFrames */
-				RandomAnim | AnimDisabled
-					| ImmumeToRestart, /* AnimFlags */
+				AnimationFlags::Random | AnimationFlags::Disabled
+					| AnimationFlags::ImmuneToRestart, /* AnimFlags */
 				0,
 				GameTicksPerSecond / 5, /* FrameRate */
 				0,
@@ -107,9 +107,9 @@ static ConversationData commander_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -118,9 +118,9 @@ static ConversationData commander_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			4, /* StartIndex */
-			6, /* NumFrames */
-			0, /* AnimFlags */
+			4,					  /* StartIndex */
+			6,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 10,
 								GameTicksPerSecond / 15, /* FrameRate */
 			GameTicksPerSecond * 7 / 60,
@@ -142,18 +142,18 @@ static AnimFilterSet commander_filters =
 		{
 								  /* Filter array */
 			{
-				0,					/* Color index */
-				1,					/* Opacity index */
-				56,					/* Frame index */
-				DrawKind::Multiply, /* DrawKind*/
-				FilterDisabled,		/* Flags */
+				0,					   /* Color index */
+				1,					   /* Opacity index */
+				56,					   /* Frame index */
+				DrawKind::Multiply,	   /* DrawKind*/
+				FilterFlags::Disabled, /* Flags */
 			},
 								  {
-				2,				   /* Color index */
-				3,				   /* Opacity index */
-				56,				   /* Frame index */
-				DrawKind::Overlay, /* DrawKind*/
-				TurnOffOft,		   /* Flags */
+				2,						 /* Color index */
+				3,						 /* Opacity index */
+				56,						 /* Frame index */
+				DrawKind::Overlay,		 /* DrawKind*/
+				FilterFlags::TurnOffOft, /* Flags */
 			},
 								  }
 };
@@ -168,11 +168,11 @@ static void RaveParty(void)
 											   (uqm::random().next() % 15) + 40);
 		SwitchSequences(false);
 		EnableTalkingAnim(false);
-		CommData.AlienAmbientArray[3].AnimFlags &= ~AnimDisabled;
+		CommData.AlienAmbientArray[3].AnimFlags &= ~AnimationFlags::Disabled;
 	}
 	else
 	{
-		CommData.AlienAmbientArray[2].AnimFlags &= ~AnimDisabled;
+		CommData.AlienAmbientArray[2].AnimFlags &= ~AnimationFlags::Disabled;
 
 		if (IsHd())
 		{
@@ -703,27 +703,27 @@ static void GiveRadios(ResponseRef R)
 		NPCPhrase(CommanderPhrase::FuelUp1);
 		AlienTalkSegue(1);
 
-		CommData.AlienAmbientArray[2].AnimFlags |= AnimDisabled;
+		CommData.AlienAmbientArray[2].AnimFlags |= AnimationFlags::Disabled;
 
 		if (IsHd() && IsExtended())
 		{ // Disable noisy static animation in hi-res.
 			CommData.AlienFrame =
 				SetAbsFrameIndex(CommData.AlienFrame, 0);
 
-			CommData.AlienAmbientArray[0].AnimFlags &= ~AnimDisabled;
-			CommData.AlienAmbientArray[1].AnimFlags &= ~AnimDisabled;
-			CommData.AlienAmbientArray[3].AnimFlags |= AnimDisabled;
+			CommData.AlienAmbientArray[0].AnimFlags &= ~AnimationFlags::Disabled;
+			CommData.AlienAmbientArray[1].AnimFlags &= ~AnimationFlags::Disabled;
+			CommData.AlienAmbientArray[3].AnimFlags |= AnimationFlags::Disabled;
 			EnableTalkingAnim(true);
 
 			EngageFilters(&commander_filters);
-			FilterData.FilterArray[0].Flags = TurnOffOft;
-			FilterData.FilterArray[1].Flags |= FilterDisabled;
+			FilterData.FilterArray[0].Flags = FilterFlags::TurnOffOft;
+			FilterData.FilterArray[1].Flags |= FilterFlags::Disabled;
 		}
 
 		if (IsHd() && !IsExtended())
 		{
-			FilterData.FilterArray[0].Flags = TurnOffOft;
-			FilterData.FilterArray[1].Flags = FilterDisabled;
+			FilterData.FilterArray[0].Flags = FilterFlags::TurnOffOft;
+			FilterData.FilterArray[1].Flags = FilterFlags::Disabled;
 		}
 
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),

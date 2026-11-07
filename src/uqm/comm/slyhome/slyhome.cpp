@@ -54,9 +54,9 @@ static ConversationData slylandro_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				0,											/* StartIndex */
-				5,											/* NumFrames */
-				RandomAnim | ColorxformAnim | AnimDisabled, /* AnimFlags */
+				0,																				/* StartIndex */
+				5,																				/* NumFrames */
+				AnimationFlags::Random | AnimationFlags::ColorXform | AnimationFlags::Disabled, /* AnimFlags */
 				GameTicksPerSecond / 8,
 				GameTicksPerSecond * 5 / 8, /* FrameRate */
 				GameTicksPerSecond / 8,
@@ -64,9 +64,9 @@ static ConversationData slylandro_desc =
 				0,							/* BlockMask */
 			},
 								{
-				1,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				1,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -74,9 +74,9 @@ static ConversationData slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				6,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				6,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -84,9 +84,9 @@ static ConversationData slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				11,		  /* StartIndex */
-				5,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				11,					  /* StartIndex */
+				5,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -94,9 +94,9 @@ static ConversationData slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				16,		  /* StartIndex */
-				6,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				16,					  /* StartIndex */
+				6,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -104,9 +104,9 @@ static ConversationData slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			  /* StartIndex */
-				8,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				22,						  /* StartIndex */
+				8,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -114,9 +114,9 @@ static ConversationData slylandro_desc =
 				0, /* BlockMask */
 			},
 								{
-				30,			  /* StartIndex */
-				9,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				30,						  /* StartIndex */
+				9,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -124,9 +124,9 @@ static ConversationData slylandro_desc =
 				(1 << 8) | (1 << 9),	/* BlockMask */
 			},
 								{
-				39,			  /* StartIndex */
-				4,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				39,						  /* StartIndex */
+				4,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -134,9 +134,9 @@ static ConversationData slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				43,			  /* StartIndex */
-				5,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				43,						  /* StartIndex */
+				5,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -144,9 +144,9 @@ static ConversationData slylandro_desc =
 				(1 << 6),				/* BlockMask */
 			},
 								{
-				48,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				48,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -154,9 +154,9 @@ static ConversationData slylandro_desc =
 				(1 << 6),				/* BlockMask */
 			},
 								{
-				54,			  /* StartIndex */
-				6,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				54,						  /* StartIndex */
+				6,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -164,9 +164,9 @@ static ConversationData slylandro_desc =
 				(1 << 12),				/* BlockMask */
 			},
 								{
-				60,			  /* StartIndex */
-				7,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				60,						  /* StartIndex */
+				7,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -174,9 +174,9 @@ static ConversationData slylandro_desc =
 				(1 << 12),				/* BlockMask */
 			},
 								{
-				67,			  /* StartIndex */
-				8,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				67,						  /* StartIndex */
+				8,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -186,9 +186,9 @@ static ConversationData slylandro_desc =
 								},
 		{
 								/* AlienTransitionDesc - empty */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -197,9 +197,9 @@ static ConversationData slylandro_desc =
 		},
 		{
 								/* AlienTalkDesc - empty */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -225,7 +225,7 @@ static AnimFilterSet slyhome_filters =
 				1,				   /* Opacity index */
 				-1,				   /* Frame index */
 				DrawKind::Overlay, /* DrawKind*/
-				0,				   /* Flags */
+				FilterFlags::None, /* Flags */
 			},
 								  }
 };
@@ -940,7 +940,7 @@ static void Intro(void)
 		EngageFilters(&slyhome_filters);
 	}
 
-	CommData.AlienAmbientArray[0].AnimFlags &= ~AnimDisabled;
+	CommData.AlienAmbientArray[0].AnimFlags &= ~AnimationFlags::Disabled;
 
 	if (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_KNOW_BROKEN)
 		&& (NumVisits = uqm::gameState().flag(uqm::GameFlag::RECALL_VISITS)) == 0)

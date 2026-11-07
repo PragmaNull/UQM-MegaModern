@@ -61,9 +61,9 @@ static ConversationData chmmr_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				12,			  /* StartIndex */
-				5,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				12,						  /* StartIndex */
+				5,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -71,9 +71,9 @@ static ConversationData chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				17,			  /* StartIndex */
-				5,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				17,						  /* StartIndex */
+				5,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -81,9 +81,9 @@ static ConversationData chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			  /* StartIndex */
-				5,			  /* NumFrames */
-				CircularAnim, /* AnimFlags */
+				22,						  /* StartIndex */
+				5,						  /* NumFrames */
+				AnimationFlags::Circular, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -91,9 +91,9 @@ static ConversationData chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				27,		  /* StartIndex */
-				20,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				27,					  /* StartIndex */
+				20,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -101,9 +101,9 @@ static ConversationData chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				47,		  /* StartIndex */
-				14,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				47,					  /* StartIndex */
+				14,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -111,9 +111,9 @@ static ConversationData chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				61,		  /* StartIndex */
-				24,		  /* NumFrames */
-				YoyoAnim, /* AnimFlags */
+				61,					  /* StartIndex */
+				24,					  /* NumFrames */
+				AnimationFlags::Yoyo, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -123,9 +123,9 @@ static ConversationData chmmr_desc =
 								},
 		{
 								/* AlienTransitionDesc */
-			0, /* StartIndex */
-			0, /* NumFrames */
-			0, /* AnimFlags */
+			0,					  /* StartIndex */
+			0,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			0,
 								0, /* FrameRate */
 			0,
@@ -134,9 +134,9 @@ static ConversationData chmmr_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			1,	/* StartIndex */
-			11, /* NumFrames */
-			0,	/* AnimFlags */
+			1,					  /* StartIndex */
+			11,					  /* NumFrames */
+			AnimationFlags::None, /* AnimFlags */
 			GameTicksPerSecond / 60,
 								0, /* FrameRate */
 			GameTicksPerSecond / 60,
@@ -162,21 +162,21 @@ static AnimFilterSet chmmr_filters =
 				1,					 /* Opacity index */
 				-1,					 /* Frame index */
 				DrawKind::Grayscale, /* DrawKind*/
-				0,					 /* Flags */
+				FilterFlags::None,	 /* Flags */
 			},
 								  {
 				0,				   /* Color index */
 				3,				   /* Opacity index */
 				-1,				   /* Frame index */
 				DrawKind::Overlay, /* DrawKind*/
-				0,				   /* Flags */
+				FilterFlags::None, /* Flags */
 			},
 								  {
-				0,				 /* Color index */
-				2,				 /* Opacity index */
-				-1,				 /* Frame index */
-				DrawKind::Alpha, /* DrawKind*/
-				0,				 /* Flags */
+				0,				   /* Color index */
+				2,				   /* Opacity index */
+				-1,				   /* Frame index */
+				DrawKind::Alpha,   /* DrawKind*/
+				FilterFlags::None, /* Flags */
 			},
 								  }
 };

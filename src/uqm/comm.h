@@ -59,67 +59,67 @@ static inline bool haveTransitionAnim(void)
 
 static inline bool wantTalkingAnim(void)
 {
-	return !(CommData.AlienTalkDesc.AnimFlags & PauseTalking);
+	return !(testFlag(CommData.AlienTalkDesc.AnimFlags, AnimationFlags::PauseTalking));
 }
 
 static inline void setRunTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags |= WaitTalking;
+	CommData.AlienTalkDesc.AnimFlags |= AnimationFlags::WaitTalking;
 }
 
 static inline void clearRunTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags &= ~WaitTalking;
+	CommData.AlienTalkDesc.AnimFlags &= ~AnimationFlags::WaitTalking;
 }
 
 static inline bool runningTalkingAnim(void)
 {
-	return (CommData.AlienTalkDesc.AnimFlags & WaitTalking);
+	return (testFlag(CommData.AlienTalkDesc.AnimFlags, AnimationFlags::WaitTalking));
 }
 
 static inline void setRunIntroAnim(void)
 {
-	CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
+	CommData.AlienTransitionDesc.AnimFlags |= AnimationFlags::TalkIntro;
 }
 
 static inline bool runningIntroAnim(void)
 {
-	return (CommData.AlienTransitionDesc.AnimFlags & TalkIntro);
+	return (testFlag(CommData.AlienTransitionDesc.AnimFlags, AnimationFlags::TalkIntro));
 }
 
 static inline void setStopTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags |= TalkDone;
+	CommData.AlienTalkDesc.AnimFlags |= AnimationFlags::TalkDone;
 }
 
 static inline void clearStopTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags &= ~TalkDone;
+	CommData.AlienTalkDesc.AnimFlags &= ~AnimationFlags::TalkDone;
 }
 
 static inline void restartStopTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags &= TalkDone;
+	CommData.AlienTalkDesc.AnimFlags &= AnimationFlags::TalkDone;
 }
 
 static inline bool signaledStopTalkingAnim(void)
 {
-	return CommData.AlienTalkDesc.AnimFlags & TalkDone;
+	return testFlag(CommData.AlienTalkDesc.AnimFlags, AnimationFlags::TalkDone);
 }
 
 static inline void freezeTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags |= FreezeTalking;
+	CommData.AlienTalkDesc.AnimFlags |= AnimationFlags::FreezeTalking;
 }
 
 static inline void unFreezeTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags &= ~FreezeTalking;
+	CommData.AlienTalkDesc.AnimFlags &= ~AnimationFlags::FreezeTalking;
 }
 
 static inline bool signaledFreezeTalkingAnim(void)
 {
-	return CommData.AlienTalkDesc.AnimFlags & FreezeTalking;
+	return testFlag(CommData.AlienTalkDesc.AnimFlags, AnimationFlags::FreezeTalking);
 }
 
 } // namespace uqm
