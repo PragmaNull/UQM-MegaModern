@@ -722,7 +722,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 	Color selected;
 	Color editing;
 	FontRef oldfont = 0;
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxText t;
 
 	if (cur_font)
@@ -868,7 +868,6 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 	}
 
 	UnbatchGraphics();
-	SetContextFontEffect(oldFontEffect);
 	if (oldfont)
 	{
 		SetContextFont(oldfont);

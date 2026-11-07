@@ -178,8 +178,8 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 	Color inactive;
 	Color default_color;
 	Color selected;
-	FontRef oldfont = SetContextFont(PlayerFont);
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontScope fontScope {PlayerFont};
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxText t;
 
 	default_color = MenuTextColor;
@@ -316,8 +316,6 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 	}
 
 	UnbatchGraphics();
-	SetContextFontEffect(oldFontEffect);
-	SetContextFont(oldfont);
 	SetContextForeGroundColor(oldtext);
 }
 

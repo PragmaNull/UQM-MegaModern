@@ -247,7 +247,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 	GfxText t;
 	GfxRect r;
 
-	GfxContextRef OldContext {SetContext(OffScreenContext)};
+	const ContextScope contextScope {OffScreenContext};
 	// prepare the context
 	r.corner.x = SisOrgX() + ResScale(1);
 	r.corner.y = SisOrgY() - SisMessageHeight();
@@ -475,7 +475,6 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 	UnbatchGraphics();
 
 	SetContextClipRect(nullptr);
-	SetContext(OldContext);
 
 	return (true);
 }

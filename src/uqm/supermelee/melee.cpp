@@ -970,7 +970,7 @@ static bool DrawTeamString(MeleeState* pMS, uint16_t side, uint16_t HiLiteState,
 	lfText.align = TextAlign::Left;
 	lfText.CharCount = (uint16_t)strlen(lfText.pStr);
 
-	BatchGraphics();
+	const BatchScope batch {};
 	if (!(HiLiteState & DtshsEdit))
 	{ // normal or selected state
 		SetContextForeGroundColor(!(HiLiteState & DtshsSelected) ? DosBool(TeamNameTextColor, TeamNameTextColorDos) : DosBool(TeamNameEditTextColor, TeamNameEditTextColorDos));
@@ -1064,7 +1064,6 @@ static bool DrawTeamString(MeleeState* pMS, uint16_t side, uint16_t HiLiteState,
 										  TeamNameEditTextColorDos));
 		font_DrawText(&lfText);
 	}
-	UnbatchGraphics();
 
 	return true;
 }
