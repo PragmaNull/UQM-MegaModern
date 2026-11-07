@@ -36,9 +36,9 @@ struct LegacyVideoDesc;
 
 struct legacy_video_ref
 {
-	VIDEO_REF vidref;
-	MUSIC_REF audref;
-	MUSIC_REF speechref;
+	VideoRef vidref;
+	MusicRef audref;
+	MusicRef speechref;
 };
 
 #endif // UQM_LIBS_VIDEO_VIDINTRN_H

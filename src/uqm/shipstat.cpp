@@ -83,7 +83,7 @@ static void DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 {
 	GfxText Text;
 
-	FONT OldFont {SetContextFont(StarConFont)};
+	FontRef OldFont {SetContextFont(StarConFont)};
 
 	Text.pStr = pStr;
 	Text.CharCount = CharCount;
@@ -176,7 +176,7 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 		}
 	}
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	if (pClipRect)
 	{
 		GetContextClipRect(&oldClipRect);
@@ -310,7 +310,7 @@ void InitShipStatus(ShipInfoDesc* SIPtr, Starship* StarShipPtr, GfxRect* pClipRe
 			char buf[30] {};
 			GfxText Text;
 
-			FONT OldFont {SetContextFont(MenuBool(TinyFontBold, TinyFont))};
+			FontRef OldFont {SetContextFont(MenuBool(TinyFontBold, TinyFont))};
 
 			if (!StarShipPtr)
 			{ // In Melee menu

@@ -201,7 +201,7 @@ static void ZFPTalkSegue(uint16_t wait_track)
 	AlienTalkSegue(wait_track);
 }
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Peace);
 
@@ -276,7 +276,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void FormAlliance(RESPONSE_REF R)
+static void FormAlliance(ResponseRef R)
 {
 	(void)R; // ignored
 	NPCPhrase_cb(ZoqFotPikPhrase::AllyWithUs0, &SelectAlienZOQ);
@@ -292,7 +292,7 @@ static void FormAlliance(RESPONSE_REF R)
 	Response(ZoqFotPikPhrase::DecideLater, ExitConversation);
 }
 
-static void ZoqFotIntro(RESPONSE_REF R)
+static void ZoqFotIntro(ResponseRef R)
 {
 	if (PlayerSaid(R, ZoqFotPikPhrase::WeAreVindicator))
 	{
@@ -419,7 +419,7 @@ static void ZoqFotIntro(RESPONSE_REF R)
 	}
 }
 
-static void AquaintZoqFot(RESPONSE_REF R)
+static void AquaintZoqFot(ResponseRef R)
 {
 	if (PlayerSaid(R, ZoqFotPikPhrase::WhichFot))
 	{
@@ -466,9 +466,9 @@ static void AquaintZoqFot(RESPONSE_REF R)
 	Response(ZoqFotPikPhrase::ValuableInfo, ExitConversation);
 }
 
-static void ZoqFotHome(RESPONSE_REF R);
+static void ZoqFotHome(ResponseRef R);
 
-static void ZoqFotInfo(RESPONSE_REF R)
+static void ZoqFotInfo(ResponseRef R)
 {
 	if (PlayerSaid(R, ZoqFotPikPhrase::WantSpecificInfo))
 	{
@@ -589,7 +589,7 @@ static constexpr auto UrquanLose {1 << 2};
 static constexpr auto KohrAhKill {1 << 3};
 static constexpr auto KnowAll {UtwigBuyTime | KohrAhWin | UrquanLose | KohrAhKill};
 
-static void ZoqFotHome(RESPONSE_REF R)
+static void ZoqFotHome(ResponseRef R)
 {
 	uint8_t NumVisits {};
 

@@ -32,15 +32,15 @@ namespace tfb
 struct VideoClip
 {
 	VideoDecoder* decoder; // decoder to read from
-	float length;				// total length of clip seconds
+	float length;		   // total length of clip seconds
 	uint32_t w, h;
 
 	// video player data
 	GfxRect dst_rect; // destination screen rect
 	GfxRect src_rect; // source rect
-	MUSIC_REF hAudio;
+	MusicRef hAudio;
 	TimeCount frame_time; // time when next frame should be rendered
-	Image* frame;	  // frame preped and optimized for rendering
+	Image* frame;		  // frame preped and optimized for rendering
 	uint32_t cur_frame;	  // index of frame currently displayed
 	bool playing;
 	bool own_audio;
@@ -55,6 +55,6 @@ struct VideoClip
 };
 } // namespace tfb
 
-extern VIDEO_REF _init_video_file(const char* pStr);
+extern VideoRef _init_video_file(const char* pStr);
 
 #endif // UQM_LIBS_VIDEO_VIDEO_H

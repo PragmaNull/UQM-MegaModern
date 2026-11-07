@@ -19,7 +19,7 @@
 #include "libs/vidlib.h"
 #include "video.h"
 
-VIDEO_REF LoadVideoFile(const char* pStr)
+VideoRef LoadVideoFile(const char* pStr)
 {
 	return _init_video_file(pStr);
 }

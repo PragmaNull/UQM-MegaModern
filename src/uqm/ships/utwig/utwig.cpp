@@ -129,7 +129,7 @@ static RaceDesc utwig_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_lance(Element* ShipPtr, HELEMENT WeaponArray[])
+static uint16_t initialize_lance(Element* ShipPtr, ElementHandle WeaponArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;

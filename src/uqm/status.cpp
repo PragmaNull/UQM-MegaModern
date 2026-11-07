@@ -52,7 +52,7 @@ bool animIsInTransition(CaptainGraphics* CSPtr)
 }
 
 static uint8_t CalculateAnimOffsets(CaptainGraphics* CSPtr,
-									STATUS_FLAGS delta_status_flags, STATUS_FLAGS cur_status_flags)
+									StatusFlags delta_status_flags, StatusFlags cur_status_flags)
 {
 	uint8_t redraw_flag = 0;
 
@@ -203,7 +203,7 @@ static void DrawCaptainWindowAnimation(CaptainGraphics* CSPtr, int16_t y,
 	}
 }
 
-static void DrawCaptainWindowFrame(FRAME fr, int16_t y)
+static void DrawCaptainWindowFrame(FrameRef fr, int16_t y)
 {
 	GfxStamp Stamp;
 
@@ -217,7 +217,7 @@ static void DrawCaptainWindowFrame(FRAME fr, int16_t y)
 
 /*static void
 CaptainsWindow (CaptainGraphics *CSPtr, int16_t y,
-		STATUS_FLAGS delta_status_flags, STATUS_FLAGS cur_status_flags,
+		StatusFlags delta_status_flags, StatusFlags cur_status_flags,
 		uint16_t Pass)
 {// Kruzen: og method. now redundant
 	GfxStamp Stamp;
@@ -336,7 +336,7 @@ void DrawCaptainsWindow(Starship* StarShipPtr)
 	GfxStamp s;
 
 	RaceDesc* RDPtr {StarShipPtr->RaceDescPtr};
-	FRAME Frame {RDPtr->ship_data.captain_control.background};
+	FrameRef Frame {RDPtr->ship_data.captain_control.background};
 	if (Frame)
 	{
 		Frame = SetAbsFrameIndex(Frame, 0);
@@ -569,8 +569,8 @@ void PreProcessStatus(Element* ShipPtr)
 	if (StarShipPtr->captains_name_index
 		|| StarShipPtr->playerNr == RpgPlayerNum)
 	{ // All except Sa-Matra, no captain's window there
-		STATUS_FLAGS old_status_flags {};
-		STATUS_FLAGS cur_status_flags {};
+		StatusFlags old_status_flags {};
+		StatusFlags cur_status_flags {};
 		uint8_t redraw_flags = 0;
 
 		cur_status_flags = StarShipPtr->cur_status_flags;
@@ -600,8 +600,8 @@ void PostProcessStatus(Element* ShipPtr)
 	if (StarShipPtr->captains_name_index
 		|| StarShipPtr->playerNr == RpgPlayerNum)
 	{ // All except Sa-Matra, no captain's window there
-		STATUS_FLAGS cur_status_flags {};
-		STATUS_FLAGS old_status_flags {};
+		StatusFlags cur_status_flags {};
+		StatusFlags old_status_flags {};
 
 
 		cur_status_flags = StarShipPtr->cur_status_flags;

@@ -166,18 +166,18 @@ struct MapPoint3D
 
 struct PlanetOrbit
 {
-	FRAME TopoZoomFrame;
+	FrameRef TopoZoomFrame;
 	// 4x scaled topo image for planet-side
 	int8_t* lpTopoData;
 	// normal topo data; expressed in elevation levels
 	// data is signed for planets other than gas giants
 	// transformed to light variance map for 3d planet
-	FRAME SphereFrame;
+	FrameRef SphereFrame;
 	// rotating 3d planet frames (current and next)
-	FRAME ObjectFrame;
+	FrameRef ObjectFrame;
 	// any extra planetary object (shield, atmo, rings)
 	// automatically drawn if present
-	FRAME TintFrame;
+	FrameRef TintFrame;
 	// tinted topo images for current scan type (dynamic)
 	Color TintColor;
 	// the color of the last used tint
@@ -187,9 +187,9 @@ struct PlanetOrbit
 	// RGBA version of scan colors; for 3d planet
 	Color* ScratchArray;
 	// temp RGBA data for whatever transforms (nuked often)
-	FRAME WorkFrame;
+	FrameRef WorkFrame;
 	// any extra frame workspace (for dynamic objects)
-	FRAME BackFrame;
+	FrameRef BackFrame;
 	// background frame to make shields transparent with nebulae on
 	// BW: extra stuff for animated IP
 	uint32_t** light_diff;
@@ -197,12 +197,12 @@ struct PlanetOrbit
 	// doubly dynamically allocated depending on map size
 
 	// stuff to draw DOS spheres
-	FRAME TopoMask;
+	FrameRef TopoMask;
 	uint8_t* sphereBytes;
-	COLORMAP sphereMap;
+	ColorMapRef sphereMap;
 	ScanType scanType;
 
-	FRAME Shade;
+	FrameRef Shade;
 	Color* ShadeColors;
 };
 
@@ -330,7 +330,7 @@ struct SolarSystemState
 	// Functions to call to fill in various parts of this
 	// structure. See generate.h, doc/devel/generate
 
-	FRAME PlanetSideFrame[3 + MaxLifeVariation];
+	FrameRef PlanetSideFrame[3 + MaxLifeVariation];
 	/* Frames for planet-side elements.
 			 * [0] = bio cannister
 			 * [1] = energy node (world-specific)
@@ -339,12 +339,12 @@ struct SolarSystemState
 			 * [4] = bio 2 (world-specific)
 			 * [5] = bio 3 (world-specific)
 			 */
-	FRAME TopoFrame;
+	FrameRef TopoFrame;
 	PlanetOrbit Orbit;
 	bool InOrbit;
 	// Set to true when player hits a world in an inner system
 	// Homeworld encounters count as 'in orbit'
-	FRAME ScanFrame[*ScanType::Count];
+	FrameRef ScanFrame[*ScanType::Count];
 	// For PC scan, generated from TopoFrame
 };
 
@@ -376,8 +376,8 @@ struct PortalLocation
 };
 
 extern SolarSystemState* pSolarSysState;
-extern MUSIC_REF SpaceMusic;
-extern GFXCONTEXT PlanetContext;
+extern MusicRef SpaceMusic;
+extern GfxContextRef PlanetContext;
 extern bool use3DOSpheres;
 
 // Random context used for all solar system, planets, and surfaces
@@ -408,7 +408,7 @@ GfxPoint displayToLocation(GfxPoint pt, int16_t scaleRadius);
 GfxPoint planetOuterLocation(uint16_t planetI);
 
 extern void DestroyOrbitStruct(PlanetOrbit* Orbit, int16_t height);
-extern void LoadPlanet(FRAME SurfDefFrame);
+extern void LoadPlanet(FrameRef SurfDefFrame);
 extern void DrawPlanet(int dy, Color tintColor);
 extern void DrawPCScanTint(uint16_t cur_scan);
 extern void FreePlanet(void);
@@ -417,7 +417,7 @@ extern void FreeLanderFont(PlanetData* info);
 
 extern void ExploreSolarSys(void);
 extern void DrawStarBackGround(void);
-extern FRAME GetStarBackFround(void);
+extern FrameRef GetStarBackFround(void);
 extern void XFormIPLoc(GfxPoint* pIn, GfxPoint* pOut, bool ToDisplay);
 extern void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled);
 extern void DrawFilledOval(LargeRect* pRect);
@@ -443,24 +443,24 @@ extern void PrepareNextRotationFrameForIP(SystemPlanet* pPlanetDesc,
 extern void DrawPlanetSphere(int x, int y, bool back);
 extern void DrawDefaultPlanetSphere(void);
 extern void RerenderPlanetSphere(void);
-extern void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame,
+extern void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FrameRef MaskFrame,
 								  int offset);
-extern void Render3DOPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame,
+extern void Render3DOPlanetSphere(PlanetOrbit* Orbit, FrameRef MaskFrame,
 								  int offset, uint16_t rotwidth, uint16_t height);
-extern void RenderPlanetSphere(PlanetOrbit* Orbit, FRAME Frame,
+extern void RenderPlanetSphere(PlanetOrbit* Orbit, FrameRef Frame,
 							   int offset, bool shielded, bool doThrob, uint16_t width,
 							   uint16_t height, uint16_t radius);
-extern void SetShieldThrobEffect(FRAME FromFrame, int offset,
-								 FRAME ToFrame);
+extern void SetShieldThrobEffect(FrameRef FromFrame, int offset,
+								 FrameRef ToFrame);
 extern void Draw3DOShield(GfxStamp ShieldFrame);
 
 extern void ZoomInPlanetSphere(void);
 extern void RotatePlanetSphere(bool keepRate, GfxStamp* onTop);
 
 extern void DrawScannedObjects(bool Reversed);
-extern void GetPlanetTopography(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame);
+extern void GetPlanetTopography(SystemPlanet* pPlanetDesc, FrameRef SurfDefFrame);
 extern void GeneratePlanetSurface(SystemPlanet* pPlanetDesc,
-								  FRAME SurfDefFrame, uint16_t width, uint16_t height);
+								  FrameRef SurfDefFrame, uint16_t width, uint16_t height);
 extern void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray,
 							GfxRect* pRect, int16_t depth_delta);
 
@@ -468,7 +468,7 @@ extern void TransformColor(Color* c, uint16_t scan);
 
 extern void DrawPlanetSurfaceBorder(void);
 
-extern FRAME GetStarBackGround(bool Encounter);
+extern FrameRef GetStarBackGround(bool Encounter);
 const extern char* GetNamedPlanetaryBody(void);
 extern void GetPlanetOrMoonName(char* buf, uint16_t bufsize);
 

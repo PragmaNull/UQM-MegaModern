@@ -171,17 +171,17 @@ void UninitGroupInfo(void)
 	DeleteStateFile(RandgrpinfoFile);
 }
 
-HIPGROUP BuildGroup(Queue* pDstQueue, uint8_t race_id)
+IpGroupHandle BuildGroup(Queue* pDstQueue, uint8_t race_id)
 {
 	assert(GetLinkSize(pDstQueue) == sizeof(InterplanetaryGroup));
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race_id)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race_id)};
 	if (!hFleet)
 	{
 		return 0;
 	}
 
-	HLINK hGroup {AllocLink(pDstQueue)};
+	LinkHandle hGroup {AllocLink(pDstQueue)};
 	if (!hGroup)
 	{
 		return 0;
@@ -234,8 +234,8 @@ void BuildGroups(void)
 	uint8_t BestIndex = 0;
 	uint16_t BestPercent = 0;
 	GfxPoint universe;
-	HFLEETINFO hFleet {};
-	HFLEETINFO hNextFleet {};
+	FleetInfoHandle hFleet {};
+	FleetInfoHandle hNextFleet {};
 
 	auto HomeWorld {uqstl::to_array(HomeworldLoc)};
 	auto EncounterPercent {uqstl::to_array(RaceInterplanetaryPercent)};
@@ -391,8 +391,8 @@ static constexpr auto MaxOverlap {10};
 void findRaceSOI(void)
 {
 	const GfxPoint universe = CurStarDescPtr()->star_pt;
-	HFLEETINFO hFleet {};
-	HFLEETINFO hNextFleet {};
+	FleetInfoHandle hFleet {};
+	FleetInfoHandle hNextFleet {};
 	uint8_t Index {};
 	uint8_t i = 0;
 	uint8_t j {};
@@ -504,8 +504,8 @@ static void FlushGroupInfo(BattleGroupHeader* pGH, uint32_t offset, uint8_t whic
 {
 	if (which_group == GroupList)
 	{
-		HIPGROUP hGroup {};
-		HIPGROUP hNextGroup {};
+		IpGroupHandle hGroup {};
+		IpGroupHandle hNextGroup {};
 
 		/* If the group list was never written before, add it */
 		if (pGH->GroupOffset[0] == 0)
@@ -571,14 +571,14 @@ static void FlushGroupInfo(BattleGroupHeader* pGH, uint32_t offset, uint8_t whic
 	if (which_group == GroupList)
 	{
 		/* Write out ip_group_q as group 0 */
-		HIPGROUP hNextGroup {};
+		IpGroupHandle hNextGroup {};
 		uint8_t NumGroups = CountLinks(&uqm::gameState().game().ip_group_q);
 
 		SeekStateFile(fp, pGH->GroupOffset[0], SEEK_SET);
 		swrite_8(fp, LastEncGroup);
 		swrite_8(fp, NumGroups);
 
-		HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
+		IpGroupHandle hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 		for (; NumGroups; --NumGroups, hGroup = hNextGroup)
 		{
 			const InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
@@ -604,11 +604,11 @@ static void FlushGroupInfo(BattleGroupHeader* pGH, uint32_t offset, uint8_t whic
 	else
 	{
 		/* Write out npc_built_ship_q as 'which_group' group */
-		HSHIPFRAG hNextShip {};
+		ShipFragmentHandle hNextShip {};
 		uint8_t NumShips = CountLinks(&uqm::gameState().game().npc_built_ship_q);
 		uint8_t RaceType = 0;
 
-		HSHIPFRAG hStarShip {GetHeadLink(&uqm::gameState().game().npc_built_ship_q)};
+		ShipFragmentHandle hStarShip {GetHeadLink(&uqm::gameState().game().npc_built_ship_q)};
 		if (NumShips > 0)
 		{
 			const ShipFragment* FragPtr {};
@@ -713,7 +713,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 			uint32_t rand_val {};
 			uint8_t RaceType {};
 			uint8_t NumShips {};
-			HIPGROUP hGroup {};
+			IpGroupHandle hGroup {};
 			InterplanetaryGroup* GroupPtr {};
 
 			if (GH.GroupOffset[which_group] == 0)
@@ -858,7 +858,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 
 			sread_8(fp, &RaceType);
 
-			HSHIPFRAG hGroup {BuildGroup(&uqm::gameState().game().ip_group_q, RaceType)};
+			ShipFragmentHandle hGroup {BuildGroup(&uqm::gameState().game().ip_group_q, RaceType)};
 			InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 			ReadIpGroup(fp, GroupPtr);
 			group_id = GroupPtr->group_id;
@@ -930,7 +930,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 		while (NumShips--)
 		{
 			uint8_t RaceType {};
-			HSHIPFRAG hStarShip {};
+			ShipFragmentHandle hStarShip {};
 
 			sread_8(fp, &RaceType);
 

@@ -51,13 +51,13 @@ static StatMsgMode curMsgMode = StatMsgMode::Default;
 
 const static char* describeWeapon(ModuleType moduleType);
 
-FRAME hdFuelFrame;
+FrameRef hdFuelFrame;
 
 void RepairSISBorder(void)
 {
 	GfxRect r;
 
-	GFXCONTEXT OldContext {SetContext(ScreenContext)};
+	GfxContextRef OldContext {SetContext(ScreenContext)};
 
 	BatchGraphics();
 
@@ -93,7 +93,7 @@ void ClearSISRect(uint8_t ClearFlags)
 	//GfxRect r; Unused
 	Color OldColor;
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	OldColor = SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 
@@ -141,7 +141,7 @@ void DrawSISTitle(const char* pStr)
 	t.pStr = pStr;
 	t.CharCount = (uint16_t)~0;
 
-	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
+	GfxContextRef OldContext {SetContext(OffScreenContext)};
 	r.corner.x = SisOrgX() + SisScreenWidth() - SisTitleBoxWidth()
 			   + ResScale(1);
 	r.corner.y = SisOrgY() - SisTitleHeight();
@@ -259,7 +259,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 	GfxText t;
 	GfxRect r;
 
-	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
+	GfxContextRef OldContext {SetContext(OffScreenContext)};
 	// prepare the context
 	r.corner.x = SisOrgX() + ResScale(1);
 	r.corner.y = SisOrgY() - SisMessageHeight();
@@ -535,7 +535,7 @@ void DrawStatusMessage(const char* pStr)
 	GfxText t;
 	char buf[128];
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	GetContextClipRect(&ctxRect);
 	// XXX: Technically, this does not need OffScreenContext. The only
 	// reason it is used is to avoid preserving StatusContext settings.
@@ -653,10 +653,10 @@ void DrawCaptainsName(bool NewGame)
 {
 	GfxRect r;
 	GfxText t;
-	FONT OldFont {};
+	FontRef OldFont {};
 	Color OldColor;
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		OldFont = SetContextFont(TinyFont);
@@ -697,12 +697,12 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 	GfxRect r;
 	GfxRect rHD;
 	GfxText t;
-	FONT OldFont {};
+	FontRef OldFont {};
 	Color OldColor;
-	GFXCONTEXT OldContext {};
+	GfxContextRef OldContext {};
 	char buf[250];
 
-	FRAME OldFontEffect {SetContextFontEffect(nullptr)};
+	FrameRef OldFontEffect {SetContextFontEffect(nullptr)};
 	OldColor = SetContextForeGroundColor(FlagshipNameBackgroundColor);
 
 	if (InStatusArea)
@@ -784,10 +784,10 @@ void DrawFlagshipStats(void)
 {
 	GfxRect r;
 	GfxText t;
-	FONT OldFont {};
+	FontRef OldFont {};
 	Color OldColor;
-	FRAME OldFontEffect {};
-	GFXCONTEXT OldContext {};
+	FrameRef OldFontEffect {};
+	GfxContextRef OldContext {};
 	char buf[128];
 	int16_t leading {};
 	uint8_t i {};
@@ -997,7 +997,7 @@ void DrawLanders(void)
 	GfxRect r;
 	GfxStamp s;
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 
 	s.frame = IncFrameIndex(FlagStatFrame);
 	GetFrameRect(s.frame, &r);
@@ -1030,7 +1030,7 @@ void DrawStorageBays(bool Refresh)
 {
 	GfxRect r;
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 
 	r.extent.width = ResScale(2);
 	r.extent.height = ResScale(4);
@@ -1271,8 +1271,8 @@ static void DrawModules(void)
 
 static void DrawSupportShips(void)
 {
-	HSHIPFRAG hStarShip {};
-	HSHIPFRAG hNextShip {};
+	ShipFragmentHandle hStarShip {};
+	ShipFragmentHandle hNextShip {};
 	const GfxPoint* pship_pos {};
 	const auto& ship_pos {SupportShipPts};
 
@@ -1466,7 +1466,7 @@ void DeltaSISGauges(int16_t crew_delta, int32_t fuel_delta, int resunit_delta)
 		return;
 	}
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 
 	BatchGraphics();
 	if (isUndefinedDelta(crew_delta, fuel_delta, resunit_delta))
@@ -2025,7 +2025,7 @@ void DrawAutoPilotMessage(bool Reset)
 			if (!(uqm::currentActivity() & ActivityFlag::CheckAbort)
 				&& uqm::gameState().sis().CrewEnlisted != (uint16_t)~0)
 			{
-				GFXCONTEXT OldContext {SetContext(OffScreenContext)};
+				GfxContextRef OldContext {SetContext(OffScreenContext)};
 				SetContextForeGroundColor(cycle_tab[cycle_index]);
 
 				AutoPilotTextLogic();
@@ -2228,7 +2228,7 @@ void SetFlashRect(const GfxRect* pRect, bool pcRect)
 		{
 			// The player wants 3DO menus, or the flash is used in both
 			// 3DO and PC mode.
-			GFXCONTEXT OldContext = SetContext(StatusContext);
+			GfxContextRef OldContext = SetContext(StatusContext);
 			GetContextClipRect(&clip_r);
 			pRect = &temp_r;
 			temp_r.corner.x = RadarX() - clip_r.corner.x;

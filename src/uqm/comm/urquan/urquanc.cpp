@@ -171,7 +171,7 @@ static ConversationData urquan_desc =
 		nullptr,
 };
 
-static void CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(ResponseRef R)
 {
 	setSegue(Segue::Hostile);
 
@@ -253,7 +253,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void DescribePet(RESPONSE_REF R)
+static void DescribePet(ResponseRef R)
 {
 	if (PlayerSaid(R, UrquanPhrase::WascallyLittleGuy))
 	{
@@ -274,7 +274,7 @@ static void DescribePet(RESPONSE_REF R)
 	}
 }
 
-static void DescribeCompulsion(RESPONSE_REF R)
+static void DescribeCompulsion(ResponseRef R)
 {
 	if (PlayerSaid(R, UrquanPhrase::AlienMindControl))
 	{
@@ -295,7 +295,7 @@ static void DescribeCompulsion(RESPONSE_REF R)
 	}
 }
 
-static void MentionCompulsion(RESPONSE_REF R)
+static void MentionCompulsion(ResponseRef R)
 {
 	if (PlayerSaid(R, UrquanPhrase::Compulsion))
 	{
@@ -328,7 +328,7 @@ static void MentionCompulsion(RESPONSE_REF R)
 	}
 }
 
-static void UrquanHypno(RESPONSE_REF R)
+static void UrquanHypno(ResponseRef R)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::URQUAN_HYPNO_VISITS) == 0)
 	{
@@ -405,7 +405,7 @@ static void UrquanHypno(RESPONSE_REF R)
 	}
 }
 
-static void NormalUrquan(RESPONSE_REF R)
+static void NormalUrquan(ResponseRef R)
 {
 	if (PlayerSaid(R, UrquanPhrase::ISurrender))
 	{
@@ -448,7 +448,7 @@ static void NormalUrquan(RESPONSE_REF R)
 	}
 }
 
-static void LoserUrquan(RESPONSE_REF R)
+static void LoserUrquan(ResponseRef R)
 {
 	if (PlayerSaid(R, UrquanPhrase::WhyFlee))
 	{
@@ -511,7 +511,7 @@ static void Intro(void)
 	else if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED))
 	{
 		SetCommIntroMode(CommIntroMode::FadeInScreen, c_gameSecond * 5);
-		UrquanHypno((RESPONSE_REF)0);
+		UrquanHypno((ResponseRef)0);
 	}
 	else
 	{
@@ -570,7 +570,7 @@ static void Intro(void)
 						break;
 				}
 
-				NormalUrquan((RESPONSE_REF)0);
+				NormalUrquan((ResponseRef)0);
 			}
 			else
 			{
@@ -578,7 +578,7 @@ static void Intro(void)
 				{
 					case 0:
 						NPCPhrase(UrquanPhrase::InitFleeHuman);
-						LoserUrquan((RESPONSE_REF)0);
+						LoserUrquan((ResponseRef)0);
 						break;
 					case 1:
 						NPCPhrase(UrquanPhrase::SubsequentFleeHuman);

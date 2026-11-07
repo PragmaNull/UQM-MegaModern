@@ -135,11 +135,11 @@ void SaveShipQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, const char* key, Q
 	}
 
 	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, key)};
-	HSHIPFRAG hStarShip {GetHeadLink(pQueue)};
+	ShipFragmentHandle hStarShip {GetHeadLink(pQueue)};
 	while (num_links--)
 	{
 		const ShipFragment* FragPtr {LockShipFrag(pQueue, hStarShip)};
-		const HSHIPFRAG hNextShip {_GetSuccLink(FragPtr)};
+		const ShipFragmentHandle hNextShip {_GetSuccLink(FragPtr)};
 		addShipFragment(doc, yyjson_mut_arr_add_obj(doc, list), *FragPtr);
 		UnlockShipFrag(pQueue, hStarShip);
 		hStarShip = hNextShip;
@@ -155,11 +155,11 @@ void SaveRaceQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, Queue* pQueue)
 	}
 
 	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "raceQueue")};
-	HFLEETINFO hFleet {GetHeadLink(pQueue)};
+	FleetInfoHandle hFleet {GetHeadLink(pQueue)};
 	while (num_links--)
 	{
 		const FleetInfo* FleetPtr {LockFleetInfo(pQueue, hFleet)};
-		const HFLEETINFO hNextFleet {_GetSuccLink(FleetPtr)};
+		const FleetInfoHandle hNextFleet {_GetSuccLink(FleetPtr)};
 
 		yyjson_mut_val* fleet {yyjson_mut_arr_add_obj(doc, list)};
 		addInt(doc, fleet, "Index", GetIndexFromStarShip(pQueue, hFleet));
@@ -191,8 +191,8 @@ void SaveGroupQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, Queue* pQueue)
 	}
 
 	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "ipGroupQueue")};
-	HIPGROUP hNextGroup {};
-	for (HIPGROUP hGroup {GetHeadLink(pQueue)}; hGroup; hGroup = hNextGroup)
+	IpGroupHandle hNextGroup {};
+	for (IpGroupHandle hGroup {GetHeadLink(pQueue)}; hGroup; hGroup = hNextGroup)
 	{
 		const InterplanetaryGroup* GroupPtr {LockIpGroup(pQueue, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
@@ -210,12 +210,12 @@ void SaveEncounters(yyjson_mut_doc* doc, yyjson_mut_val* root)
 	}
 
 	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "encounters")};
-	HENCOUNTER hEncounter {GetHeadLink(&uqm::gameState().game().encounter_q)};
+	EncounterHandle hEncounter {GetHeadLink(&uqm::gameState().game().encounter_q)};
 	while (num_links--)
 	{
 		Encounter* EncounterPtr {};
 		LockEncounter(hEncounter, &EncounterPtr);
-		const HENCOUNTER hNextEncounter {GetSuccEncounter(EncounterPtr)};
+		const EncounterHandle hNextEncounter {GetSuccEncounter(EncounterPtr)};
 
 		yyjson_mut_val* Encounter {yyjson_mut_arr_add_obj(doc, list)};
 		addInt(doc, Encounter, "transition_state", EncounterPtr->transition_state);
@@ -253,12 +253,12 @@ void SaveEvents(yyjson_mut_doc* doc, yyjson_mut_val* root)
 	}
 
 	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "events")};
-	HEVENT hEvent {GetHeadLink(&uqm::gameState().clock().events())};
+	EventHandle hEvent {GetHeadLink(&uqm::gameState().clock().events())};
 	while (num_links--)
 	{
 		GameEvent* EventPtr {};
 		LockEvent(hEvent, &EventPtr);
-		const HEVENT hNextEvent {GetSuccEvent(EventPtr)};
+		const EventHandle hNextEvent {GetSuccEvent(EventPtr)};
 
 		yyjson_mut_val* event {yyjson_mut_arr_add_obj(doc, list)};
 		addInt(doc, event, "day_index", EventPtr->day_index);
@@ -421,8 +421,8 @@ static void PrepareSummary(SaveSummaryData* SummPtr, const char* name)
 	SummPtr->MCreditHi = uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1);
 
 	{
-		HSHIPFRAG hStarShip {};
-		HSHIPFRAG hNextShip {};
+		ShipFragmentHandle hStarShip {};
+		ShipFragmentHandle hNextShip {};
 
 		for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q),
 			SummPtr->NumShips = 0;
@@ -531,7 +531,7 @@ void SaveProblem(void)
 {
 	GfxStamp s;
 
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	SaveProblemMessage(&s);
 	FlushGraphics();
 

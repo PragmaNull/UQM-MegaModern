@@ -97,8 +97,8 @@ static bool GenerateSaMatra_initNpcs(SolarSystemState* solarSys)
 static bool GenerateSaMatra_reinitNpcs(SolarSystemState* solarSys)
 {
 	bool GuardEngaged {};
-	HIPGROUP hGroup {};
-	HIPGROUP hNextGroup {};
+	IpGroupHandle hGroup {};
+	IpGroupHandle hNextGroup {};
 
 	if (CurStarDescPtr()->Index == PlotId::Samatra)
 	{
@@ -432,7 +432,7 @@ static void BuildUrquanGuard(SolarSystemState* solarSys)
 	uint8_t b0 {};
 	uint8_t b1 {};
 	GfxPoint org;
-	HIPGROUP hNextGroup {};
+	IpGroupHandle hNextGroup {};
 
 	uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS);
 
@@ -482,7 +482,7 @@ static void BuildUrquanGuard(SolarSystemState* solarSys)
 	GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp);
 
 	org = planetOuterLocation(solarSys->SunDesc[0].PlanetByte);
-	HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
+	IpGroupHandle hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 	for (b0 = 0, b1 = 0;
 		 b0 < NumUrquanGuards0;
 		 ++b0, b1 += FullCircle / (NumUrquanGuards0 + NumUrquanGuards1))

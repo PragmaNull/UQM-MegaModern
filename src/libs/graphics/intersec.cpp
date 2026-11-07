@@ -30,9 +30,9 @@ static inline bool images_intersect(ImageBox* box1, ImageBox* box2, const GfxRec
 								   box2->FramePtr->image, box2->Box.corner, rect);
 }
 
-static TIME_VALUE frame_intersect(IntersectInfo* pControl0, GfxRect* pr0,
-								  IntersectInfo* pControl1, GfxRect* pr1, TIME_VALUE t0,
-								  TIME_VALUE t1)
+static TimeValue frame_intersect(IntersectInfo* pControl0, GfxRect* pr0,
+								 IntersectInfo* pControl1, GfxRect* pr1, TimeValue t0,
+								 TimeValue t1)
 {
 	int32_t time_error0 {};
 	int32_t time_error1 {};
@@ -281,18 +281,18 @@ CheckFirstIntersection:
 		}
 	} while (t0 <= t1);
 
-	return ((TIME_VALUE)0);
+	return ((TimeValue)0);
 }
 
-TIME_VALUE DrawablesIntersect(IntersectInfo* pControl0,
-							  IntersectInfo* pControl1, TIME_VALUE max_time_val)
+TimeValue DrawablesIntersect(IntersectInfo* pControl0,
+							 IntersectInfo* pControl1, TimeValue max_time_val)
 {
 	GfxRect r0;
 	GfxRect r1;
 
 	if (!ContextActive() || max_time_val == 0)
 	{
-		return ((TIME_VALUE)0);
+		return ((TimeValue)0);
 	}
 	else if (max_time_val > MaxTimeValue)
 	{
@@ -309,21 +309,21 @@ TIME_VALUE DrawablesIntersect(IntersectInfo* pControl0,
 	r1.extent.width = pControl1->EndPoint.x - r1.corner.x;
 	r1.extent.height = pControl1->EndPoint.y - r1.corner.y;
 
-	FRAME FramePtr0 {pControl0->IntersectStamp.frame};
+	FrameRef FramePtr0 {pControl0->IntersectStamp.frame};
 	if (FramePtr0 == 0)
 	{
 		return (0);
 	}
-	r0.corner.x -= FramePtr0->HotSpot.x;
-	r0.corner.y -= FramePtr0->HotSpot.y;
+	r0.corner.x -= FramePtr0->hotSpot.x;
+	r0.corner.y -= FramePtr0->hotSpot.y;
 
-	FRAME FramePtr1 {pControl1->IntersectStamp.frame};
+	FrameRef FramePtr1 {pControl1->IntersectStamp.frame};
 	if (FramePtr1 == 0)
 	{
 		return (0);
 	}
-	r1.corner.x -= FramePtr1->HotSpot.x;
-	r1.corner.y -= FramePtr1->HotSpot.y;
+	r1.corner.x -= FramePtr1->hotSpot.x;
+	r1.corner.y -= FramePtr1->hotSpot.y;
 
 	int32_t dy {r1.corner.y - r0.corner.y};
 	int32_t time_y_0 {dy - GetFrameHeight(FramePtr0) + 1};
@@ -343,7 +343,7 @@ TIME_VALUE DrawablesIntersect(IntersectInfo* pControl0,
 			|| (time_x_0 > 0 && dx >= time_x_0)
 			|| (time_x_1 < 0 && dx <= time_x_1))
 		{
-			TIME_VALUE intersect_time {};
+			TimeValue intersect_time {};
 
 			if (dx == 0 && dy == 0)
 			{
@@ -470,19 +470,19 @@ TIME_VALUE DrawablesIntersect(IntersectInfo* pControl0,
 			if (time_y_0 <= time_y_1
 				&& (intersect_time = frame_intersect(
 						pControl0, &r0, pControl1, &r1,
-						(TIME_VALUE)time_y_0, (TIME_VALUE)time_y_1)))
+						(TimeValue)time_y_0, (TimeValue)time_y_1)))
 			{
 				FramePtr0 = pControl0->IntersectStamp.frame;
-				pControl0->EndPoint.x = r0.corner.x + FramePtr0->HotSpot.x;
-				pControl0->EndPoint.y = r0.corner.y + FramePtr0->HotSpot.y;
+				pControl0->EndPoint.x = r0.corner.x + FramePtr0->hotSpot.x;
+				pControl0->EndPoint.y = r0.corner.y + FramePtr0->hotSpot.y;
 				FramePtr1 = pControl1->IntersectStamp.frame;
-				pControl1->EndPoint.x = r1.corner.x + FramePtr1->HotSpot.x;
-				pControl1->EndPoint.y = r1.corner.y + FramePtr1->HotSpot.y;
+				pControl1->EndPoint.x = r1.corner.x + FramePtr1->hotSpot.x;
+				pControl1->EndPoint.y = r1.corner.y + FramePtr1->hotSpot.y;
 
 				return (intersect_time);
 			}
 		}
 	}
 
-	return ((TIME_VALUE)0);
+	return ((TimeValue)0);
 }

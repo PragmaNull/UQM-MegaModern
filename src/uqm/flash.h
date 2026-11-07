@@ -126,13 +126,13 @@ enum class FlashType
 
 struct FlashContext
 {
-	GFXCONTEXT gfxContext;
+	GfxContextRef gfxContext;
 	// The graphics context used for drawing.
 
 	GfxRect rect;
 	// The rectangle to flash.
 
-	FRAME original;
+	FrameRef original;
 	// The original contents of the flash area.
 
 	FlashType type;
@@ -144,16 +144,16 @@ struct FlashContext
 		} highlight;*/
 		struct
 		{
-			FRAME first;
+			FrameRef first;
 			// The first image from the transition (cross-fade).
-			// (FRAME) 0 means that the original is to be used.
-			FRAME final;
+			// (FrameRef) 0 means that the original is to be used.
+			FrameRef final;
 			// The last image from the transition.
-			// (FRAME) 0 means that the original is to be used.
+			// (FrameRef) 0 means that the original is to be used.
 		} transition;
 		struct
 		{
-			FRAME frame;
+			FrameRef frame;
 		} overlay;
 	} u;
 
@@ -181,7 +181,7 @@ struct FlashContext
 	bool paused;
 	bool isPulsing;
 
-	uqstl::vector<FRAME> cache;
+	uqstl::vector<FrameRef> cache;
 	uint16_t cacheSize;
 
 	uint16_t lastFrameIndex;
@@ -201,11 +201,11 @@ inline constexpr auto FlashDefaultCacheSize {9};
 #endif /* FLASH_INTERNAL */
 
 
-FlashContext* Flash_createHighlight(GFXCONTEXT gfxContext, const GfxRect* rect);
-FlashContext* Flash_createTransition(GFXCONTEXT gfxContext,
-									 const GfxPoint* origin, FRAME first, FRAME final);
-FlashContext* Flash_createOverlay(GFXCONTEXT gfxContext,
-								  const GfxPoint* origin, FRAME overlay);
+FlashContext* Flash_createHighlight(GfxContextRef gfxContext, const GfxRect* rect);
+FlashContext* Flash_createTransition(GfxContextRef gfxContext,
+									 const GfxPoint* origin, FrameRef first, FrameRef final);
+FlashContext* Flash_createOverlay(GfxContextRef gfxContext,
+								  const GfxPoint* origin, FrameRef overlay);
 
 void Flash_setState(FlashContext* context, FlashState state,
 					TimePeriod timeSpentInState);
@@ -225,7 +225,7 @@ TimeCount Flash_nextTime(FlashContext* context);
 void Flash_setRect(FlashContext* context, const GfxRect* rect);
 void Flash_getRect(FlashContext* context, GfxRect* rect);
 void Flash_setOverlay(FlashContext* context, const GfxPoint* origin,
-					  FRAME overlay, bool cleanup);
+					  FrameRef overlay, bool cleanup);
 void Flash_preUpdate(FlashContext* context);
 void Flash_postUpdate(FlashContext* context);
 void Flash_setCacheSize(FlashContext* context, uint16_t size);

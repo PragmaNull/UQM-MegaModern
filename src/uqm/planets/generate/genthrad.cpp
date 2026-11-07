@@ -284,7 +284,7 @@ static bool GenerateThraddash_pickupEnergy(SolarSystemState* solarSys,
 	if (CurStarDescPtr()->Index == PlotId::AquaHelix
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		HFLEETINFO hThradd =
+		FleetInfoHandle hThradd =
 			GetStarShipFromIndex(
 				&uqm::gameState().game().avail_race_q, *RaceId::Thraddash);
 		FleetInfo* ThraddPtr =

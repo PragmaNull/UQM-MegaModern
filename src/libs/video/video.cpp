@@ -23,9 +23,9 @@
 #include "uqm/units.h"
 
 
-static constexpr VIDEO_REF NullVideoRef {nullptr};
-static VIDEO_REF _cur_video = NullVideoRef;
-static MUSIC_REF _cur_speech = 0;
+static constexpr VideoRef NullVideoRef {nullptr};
+static VideoRef _cur_video = NullVideoRef;
+static MusicRef _cur_speech = 0;
 
 bool InitVideoPlayer(bool useCDROM)
 //useCDROM doesn't really apply to us
@@ -64,7 +64,7 @@ void VidStop(void)
 	_cur_video = NullVideoRef;
 }
 
-VIDEO_REF VidPlaying(void)
+VideoRef VidPlaying(void)
 // this should just probably return bool
 {
 	if (!_cur_video)
@@ -109,7 +109,7 @@ bool VidSeek(uint32_t pos)
 	return (bool)TFB_SeekVideo(_cur_video, pos);
 }
 
-VideoType VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
+VideoType VidPlayEx(VideoRef vid, MusicRef AudRef, MusicRef SpeechRef,
 					uint32_t LoopFrame)
 {
 	VideoType ret;
@@ -163,12 +163,12 @@ VideoType VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
 	return ret;
 }
 
-VideoType VidPlay(VIDEO_REF VidRef)
+VideoType VidPlay(VideoRef VidRef)
 {
 	return VidPlayEx(VidRef, 0, 0, VidNoLoop);
 }
 
-VIDEO_REF _init_video_file(const char* pStr)
+VideoRef _init_video_file(const char* pStr)
 {
 	tfb::VideoDecoder* dec {VideoDecoder_Load(uqm::contentDir(), pStr)};
 	if (!dec)
@@ -182,10 +182,10 @@ VIDEO_REF _init_video_file(const char* pStr)
 	vid->w = vid->decoder->w - uqm::IfHd(4);
 	vid->h = vid->decoder->h + uqm::IfHd(7);
 
-	return (VIDEO_REF)vid;
+	return (VideoRef)vid;
 }
 
-bool DestroyVideo(VIDEO_REF vid)
+bool DestroyVideo(VideoRef vid)
 {
 	if (!vid)
 	{

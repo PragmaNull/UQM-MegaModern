@@ -45,12 +45,12 @@ inline bool PhraseEnabled(const auto& p) { return (*CommData.ConversationPhrases
 inline void DisablePhrase(const auto& p) { CommData.ConversationPhrases->set(phraseNumber(p) - 1, uqstl::string_view {"", 1}); }
 
 
-typedef uint16_t RESPONSE_REF;
+using ResponseRef = uint16_t;
 
-typedef void (*RESPONSE_FUNC)(RESPONSE_REF R);
+using ResponseFunc = void (*)(ResponseRef R);
 
-extern void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func, char* ContstructStr);
-inline void Response(const auto& i, RESPONSE_FUNC a) { DoResponsePhrase(static_cast<RESPONSE_REF>(phraseNumber(i)), a, nullptr); }
+extern void DoResponsePhrase(ResponseRef R, ResponseFunc response_func, char* ContstructStr);
+inline void Response(const auto& i, ResponseFunc a) { DoResponsePhrase(static_cast<ResponseRef>(phraseNumber(i)), a, nullptr); }
 
 // The CallbackFunction is queued and executes synchronously
 // on the Starcon2Main thread
@@ -62,7 +62,7 @@ inline void NPCPhrase_splice(ArithmeticEnum auto index) { NPCPhrase_splice(*inde
 extern void NPCNumber(int number, const char* fmt);
 
 extern void construct_response(uqstl::span<char> buf, int R /* promoted from
-		RESPONSE_REF */
+		ResponseRef */
 							   ,
 							   ...);
 
@@ -94,8 +94,8 @@ consteval bool isArithmeticEnum(Segue) { return true; }
 void setSegue(Segue segue);
 Segue getSegue(void);
 
-extern RESPONSE_REF phraseIdStrToNum(const char* phraseId);
-extern const char* phraseIdNumToStr(RESPONSE_REF response);
+extern ResponseRef phraseIdStrToNum(const char* phraseId);
+extern const char* phraseIdNumToStr(ResponseRef response);
 
 extern ConversationData* init_race(Conversation comm_id);
 

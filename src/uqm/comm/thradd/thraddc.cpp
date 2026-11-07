@@ -264,7 +264,7 @@ static void LikeYouPhrase(uint8_t which_phrase)
 	}
 }
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Hostile);
 
@@ -371,7 +371,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void ThraddAllies(RESPONSE_REF R)
+static void ThraddAllies(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -488,7 +488,7 @@ static void ThraddAllies(RESPONSE_REF R)
 	Response(ThraddashPhrase::ByeAlly, ExitConversation);
 }
 
-static void ThraddDemeanor(RESPONSE_REF R)
+static void ThraddDemeanor(ResponseRef R)
 {
 	if (PlayerSaid(R, ThraddashPhrase::YouDecide))
 	{
@@ -516,7 +516,7 @@ static void ThraddDemeanor(RESPONSE_REF R)
 	Response(ThraddashPhrase::JustLikeUs, ExitConversation);
 }
 
-static void ThraddCulture(RESPONSE_REF R)
+static void ThraddCulture(ResponseRef R)
 {
 	if (PlayerSaid(R, ThraddashPhrase::BePolite))
 	{
@@ -549,7 +549,7 @@ static void ThraddCulture(RESPONSE_REF R)
 	Response(ThraddashPhrase::TheSlaveEmpire, ThraddDemeanor);
 }
 
-static void ThraddWorship(RESPONSE_REF R)
+static void ThraddWorship(ResponseRef R)
 {
 	(void)R; // ignored
 	uqm::gameState().setFlag(uqm::GameFlag::THRADD_VISITS, static_cast<uint32_t>(0));
@@ -563,7 +563,7 @@ static void ThraddWorship(RESPONSE_REF R)
 	Response(ThraddashPhrase::JustTheWayWeDo, ThraddCulture);
 }
 
-static void HelixWorld(RESPONSE_REF R)
+static void HelixWorld(ResponseRef R)
 {
 	if (PlayerSaid(R, ThraddashPhrase::WhyYouHereHostile))
 	{
@@ -614,7 +614,7 @@ static void HelixWorld(RESPONSE_REF R)
 	Response(ThraddashPhrase::ByeHostileHelix, ExitConversation);
 }
 
-static void ThraddHostile(RESPONSE_REF R)
+static void ThraddHostile(ResponseRef R)
 {
 	if (PlayerSaid(R, ThraddashPhrase::WhatsUpHostile1))
 	{
@@ -766,7 +766,7 @@ static void ThraddHostile(RESPONSE_REF R)
 static void Intro(void)
 {
 	uint8_t NumVisits {};
-	HFLEETINFO hThradd = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Thraddash);
+	FleetInfoHandle hThradd = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Thraddash);
 	const FleetInfo* ThraddPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd);
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
@@ -810,7 +810,7 @@ static void Intro(void)
 				NPCPhrase_splice(GetCultureName());
 				NPCPhrase(pStr1);
 
-				ThraddAllies((RESPONSE_REF)0);
+				ThraddAllies((ResponseRef)0);
 			}
 			else
 			{
@@ -827,7 +827,7 @@ static void Intro(void)
 				}
 				uqm::gameState().setFlag(uqm::GameFlag::HELIX_VISITS, static_cast<uint32_t>(NumVisits));
 
-				HelixWorld((RESPONSE_REF)0);
+				HelixWorld((ResponseRef)0);
 			}
 		}
 		else
@@ -912,7 +912,7 @@ static void Intro(void)
 		NPCPhrase_splice(GetCultureName());
 		NPCPhrase(pStr1);
 
-		ThraddAllies((RESPONSE_REF)0);
+		ThraddAllies((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
@@ -929,14 +929,14 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::HELIX_VISITS, static_cast<uint32_t>(NumVisits));
 
-		HelixWorld((RESPONSE_REF)0);
+		HelixWorld((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::THRADDASH_BODY_COUNT)
 			 >= (uint8_t)THRADDASH_BODY_THRESHOLD)
 	{
 		NPCPhrase(ThraddashPhrase::AmazingPerformance);
 
-		ThraddWorship((RESPONSE_REF)0);
+		ThraddWorship((ResponseRef)0);
 	}
 	else
 	{
@@ -1037,7 +1037,7 @@ static void Intro(void)
 				uqm::gameState().setFlag(uqm::GameFlag::THRADD_MISSION_VISITS, static_cast<uint32_t>(1));
 			}
 
-			ThraddHostile((RESPONSE_REF)0);
+			ThraddHostile((ResponseRef)0);
 		}
 	}
 }

@@ -275,7 +275,7 @@ static bool UseCaster(void)
 
 	{
 		bool FoundIlwrath {};
-		HIPGROUP hGroup {};
+		IpGroupHandle hGroup {};
 
 		FoundIlwrath = (CurStarDescPtr()->Index == PlotId::Ilwrath)
 					&& StartSphereTracking(RaceId::Ilwrath);

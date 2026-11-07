@@ -181,7 +181,7 @@ static void RaveParty(void)
 	}
 }
 
-static void ByeBye(RESPONSE_REF R)
+static void ByeBye(ResponseRef R)
 {
 	if (PlayerSaid(R, CommanderPhrase::OkIWillGetRadios))
 	{
@@ -282,9 +282,9 @@ static void ByeBye(RESPONSE_REF R)
 	}
 }
 
-static void GiveRadios(RESPONSE_REF R);
+static void GiveRadios(ResponseRef R);
 
-static void NoRadioactives(RESPONSE_REF R)
+static void NoRadioactives(ResponseRef R)
 {
 	if (PlayerSaid(R, CommanderPhrase::YesThisIsSupplyShip))
 	{
@@ -389,7 +389,7 @@ static void NoRadioactives(RESPONSE_REF R)
 	}
 }
 
-static void AskAfterRadios(RESPONSE_REF R)
+static void AskAfterRadios(ResponseRef R)
 {
 	if (PlayerSaid(R, CommanderPhrase::ILostMyLander))
 	{
@@ -458,7 +458,7 @@ static void AskAfterRadios(RESPONSE_REF R)
 	}
 }
 
-static void BaseDestroyed(RESPONSE_REF R)
+static void BaseDestroyed(ResponseRef R)
 {
 	if (PlayerSaid(R, CommanderPhrase::WeFoughtThem))
 	{
@@ -484,7 +484,7 @@ static void BaseDestroyed(RESPONSE_REF R)
 	}
 }
 
-static void TellMoonBase(RESPONSE_REF R)
+static void TellMoonBase(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -574,9 +574,9 @@ static void TellMoonBase(RESPONSE_REF R)
 	}
 }
 
-static void RevealSelf(RESPONSE_REF R);
+static void RevealSelf(ResponseRef R);
 
-static void TellProbe(RESPONSE_REF R)
+static void TellProbe(ResponseRef R)
 {
 	(void)R; // ignored
 	NPCPhrase(CommanderPhrase::ThatWasProbe);
@@ -587,7 +587,7 @@ static void TellProbe(RESPONSE_REF R)
 	Response(CommanderPhrase::WhatProbe, RevealSelf);
 }
 
-static void RevealSelf(RESPONSE_REF R)
+static void RevealSelf(ResponseRef R)
 {
 	uint8_t stack {0};
 	if (PlayerSaid(R, CommanderPhrase::WeAreVindicator))
@@ -693,7 +693,7 @@ static void RevealSelf(RESPONSE_REF R)
 	}
 }
 
-static void GiveRadios(RESPONSE_REF R)
+static void GiveRadios(ResponseRef R)
 {
 	if (PlayerSaid(R, CommanderPhrase::WeWillTransferNow))
 	{

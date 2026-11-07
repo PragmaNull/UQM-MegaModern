@@ -72,12 +72,12 @@ struct LanderInputState
 	// Frame rate control
 };
 
-FRAME LanderFrame[8];
+FrameRef LanderFrame[8];
 uint8_t LanderUpgradesFlag;
-static SOUND_REF LanderSounds;
-MUSIC_REF LanderMusic;
-static GFXCONTEXT PCLanderContext;
-static MUSIC_REF OrbitMusic[NumOrbitThemes];
+static SoundBankRef LanderSounds;
+MusicRef LanderMusic;
+static GfxContextRef PCLanderContext;
+static MusicRef OrbitMusic[NumOrbitThemes];
 
 LifeformDesc CreatureData[] =
 	{
@@ -154,7 +154,7 @@ LifeformDesc CreatureData[] =
 		// Zex's Beauty
 };
 
-extern PRIM_LINKS DisplayLinks;
+extern PrimLinks DisplayLinks;
 
 static constexpr auto DamageCycle {6};
 // XXX: There are actually only 9 explosion images.
@@ -169,7 +169,7 @@ static constexpr auto ExplosionWaitFrames {TimePeriod {ExplosionWait} / PlanetSi
 
 static constexpr auto DeathExplosion {0};
 
-// TODO: redefine these in terms of GFXCONTEXT width/height
+// TODO: redefine these in terms of GfxContextRef width/height
 static auto SurfaceWidth() { return SisScreenWidth(); }
 static auto SurfaceHeight() { return (SisScreenHeight() - MapHeight() - MapBorderHeight()); }
 
@@ -202,15 +202,15 @@ GfxExtent MapSurface;
 
 static constexpr auto OnTheGround {0};
 
-GFXCONTEXT CreatePCLanderContext(void)
+GfxContextRef CreatePCLanderContext(void)
 {
 	GfxRect r;
 
 	// PCLanderContext rect is relative to SpaceContext
-	GFXCONTEXT oldContext {SetContext(SpaceContext)};
+	GfxContextRef oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&r);
 
-	GFXCONTEXT context {CreateContext("PCLanderContext")};
+	GfxContextRef context {CreateContext("PCLanderContext")};
 	SetContext(context);
 	SetContextFGFrame(Screen);
 	r.corner.x += (r.extent.width - MapWidth())
@@ -226,9 +226,9 @@ GFXCONTEXT CreatePCLanderContext(void)
 	return context;
 }
 
-GFXCONTEXT GetPCLanderContext(bool* owner)
+GfxContextRef GetPCLanderContext(bool* owner)
 {
-	// TODO: Make GFXCONTEXT ref-counted
+	// TODO: Make GfxContextRef ref-counted
 	if (PCLanderContext)
 	{
 		if (owner)
@@ -297,7 +297,7 @@ static Color DamageColorCycle(Color c, uint16_t i)
 	return c;
 }
 
-static HELEMENT AddGroundDisaster(uint16_t which_disaster);
+static ElementHandle AddGroundDisaster(uint16_t which_disaster);
 
 void object_animation(Element* ElementPtr)
 {
@@ -384,7 +384,7 @@ void object_animation(Element* ElementPtr)
 				&& frame_index == 5
 				&& uqm::random().next() % 100 < 90)
 			{
-				HELEMENT hLavaElement {};
+				ElementHandle hLavaElement {};
 
 				/* Change lava-spot direction of travel */
 				hLavaElement = AddGroundDisaster(*LanderEvent::LavaspotDisaster);
@@ -574,7 +574,7 @@ static auto NumCrewRows() { return (is3DO(uqm::UQMOptions::read().landerStyle) ?
 static void DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 {
 	GfxStamp s;
-	GFXCONTEXT OldContext {};
+	GfxContextRef OldContext {};
 
 	if (crew_delta > 0)
 	{
@@ -641,7 +641,7 @@ static void FillLanderHold(PlanetsideDesc* pPSD, uint16_t scan, uint16_t NumRetr
 	uint16_t start_count {};
 	uint16_t tmpholdint {};
 	GfxStamp s;
-	GFXCONTEXT OldContext {};
+	GfxContextRef OldContext {};
 
 	PlaySound(GetSound(LanderSounds, LanderEvent::LanderPickup),
 			  NotPositional(), nullptr, GameSoundPriority);
@@ -856,7 +856,7 @@ static void ExplodeCritter(Element* ElementPtr)
 {
 	int16_t temp_which_node {};
 
-	HELEMENT hExplosionElement {AllocElement()};
+	ElementHandle hExplosionElement {AllocElement()};
 	if (hExplosionElement)
 	{
 		Element* ExplosionElementPtr {};
@@ -977,7 +977,7 @@ static void DrawRadarArea(void)
 static void CheckObjectCollision(uint16_t index)
 {
 	IntersectInfo LanderControl;
-	DRAWABLE LanderHandle {};
+	DrawableRef LanderHandle {};
 	Primitive* pPrim {};
 	const Primitive* pLanderPrim {};
 	PlanetsideDesc* pPSD = planetSideDesc;
@@ -1004,8 +1004,8 @@ static void CheckObjectCollision(uint16_t index)
 	for (; index != EndOfList; index = GetPredLink(GetPrimLinks(pPrim)))
 	{
 		IntersectInfo ElementControl;
-		HELEMENT hElement {};
-		HELEMENT hNextElement {};
+		ElementHandle hElement {};
+		ElementHandle hNextElement {};
 
 		pPrim = &DisplayArray[index];
 		ElementControl.IntersectStamp = pPrim->Object.Stamp;
@@ -1237,7 +1237,7 @@ static void lightning_process(Element* ElementPtr)
 
 static void AddLightning(void)
 {
-	HELEMENT hLightningElement {AllocElement()};
+	ElementHandle hLightningElement {AllocElement()};
 	if (hLightningElement)
 	{
 		uint32_t rand_val {};
@@ -1298,9 +1298,9 @@ static void AddLightning(void)
 	}
 }
 
-static HELEMENT AddGroundDisaster(uint16_t which_disaster)
+static ElementHandle AddGroundDisaster(uint16_t which_disaster)
 {
-	HELEMENT hGroundDisasterElement {AllocElement()};
+	ElementHandle hGroundDisasterElement {AllocElement()};
 	if (hGroundDisasterElement)
 	{
 		Element* GroundDisasterElementPtr {};
@@ -1367,8 +1367,8 @@ static HELEMENT AddGroundDisaster(uint16_t which_disaster)
 static void BuildObjectList(void)
 {
 	GfxPoint org;
-	HELEMENT hElement {};
-	HELEMENT hNextElement {};
+	ElementHandle hElement {};
+	ElementHandle hNextElement {};
 	const PlanetsideDesc* pPSD = planetSideDesc;
 
 	DisplayLinks = uqm::makeDword(EndOfList, EndOfList);
@@ -1509,7 +1509,7 @@ static void ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 	GfxStamp lander_s;
 	GfxStamp shadow_s;
 	GfxStamp shield_s;
-	GFXCONTEXT OldContext {};
+	GfxContextRef OldContext {};
 
 	new_pt.y = curLanderLoc.y + dy;
 	if (new_pt.y < 0)
@@ -1698,7 +1698,7 @@ static void animationInterframe(TimeCount* TimeIn, uint16_t periods)
 	}
 }
 
-static void AnimateLaunch(FRAME farray, bool isLanding)
+static void AnimateLaunch(FrameRef farray, bool isLanding)
 {
 	GfxRect r;
 	GfxStamp s;
@@ -1758,7 +1758,7 @@ static void AnimateLanderWarmup(void)
 {
 	int16_t num_crew {};
 	GfxStamp s;
-	//GFXCONTEXT OldContext; unused
+	//GfxContextRef OldContext; unused
 	TimeCount TimeIn = GetTimeCounter();
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
@@ -1944,7 +1944,7 @@ static void LanderFire(int16_t facing)
 	Element* WeaponElementPtr {};
 	uint16_t angle {};
 
-	HELEMENT hWeaponElement {AllocElement()};
+	ElementHandle hWeaponElement {AllocElement()};
 	if (hWeaponElement == nullptr)
 	{
 		return;
@@ -1994,7 +1994,7 @@ static void put_node(Element* ElementPtr)
 	Element* NodeElementPtr {};
 	SurfaceNode info;
 
-	HELEMENT hNodeElement {AllocElement()};
+	ElementHandle hNodeElement {AllocElement()};
 	if (!hNodeElement)
 	{
 		return;
@@ -2071,7 +2071,7 @@ static void spawn_node(Element* ElementPtr)
 		int16_t arc {};
 		const uint16_t half_dist = ElementPtr->life_span >> 1;
 
-		HELEMENT hNodeElement {AllocElement()};
+		ElementHandle hNodeElement {AllocElement()};
 		if (!hNodeElement)
 		{
 			return;
@@ -2112,7 +2112,7 @@ static void LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amo
 	uint16_t deposit_quality_gross {};
 	Element* NodeElementPtr {};
 
-	HELEMENT hNodeElement {AllocElement()};
+	ElementHandle hNodeElement {AllocElement()};
 	if (hNodeElement == nullptr)
 	{
 		return;
@@ -2206,7 +2206,7 @@ static bool LanderExplosion(void)
 {
 	Element* ExplosionElementPtr {};
 
-	HELEMENT hExplosionElement {AllocElement()};
+	ElementHandle hExplosionElement {AllocElement()};
 	if (!hExplosionElement)
 	{
 		return false;
@@ -2425,9 +2425,9 @@ void MaskLanderGraphics(void)
 	if (currFlagState != LanderUpgradesFlag)
 	{
 		uint16_t i {};
-		FRAME mods = CaptureDrawable(LoadGraphic(LanderModsPmapAnimRes));
-		FRAME lander {};
-		FRAME mask {};
+		FrameRef mods = CaptureDrawable(LoadGraphic(LanderModsPmapAnimRes));
+		FrameRef lander {};
+		FrameRef mask {};
 		const DrawMode mode = MAKE_DRAW_MODE(DrawKind::Replace, DrawFactor1);
 
 		// Reload landersprites for remasking
@@ -2529,7 +2529,7 @@ uint8_t SetPlanetMusic(uint8_t planet_type)
 
 static void ReturnToOrbit(void)
 {
-	GFXCONTEXT OldContext {};
+	GfxContextRef OldContext {};
 	GfxRect r;
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
@@ -2886,8 +2886,8 @@ void PlanetSide(GfxPoint planetLoc)
 	planetSideDesc = nullptr;
 
 	{
-		HELEMENT hElement {};
-		HELEMENT hNextElement {};
+		ElementHandle hElement {};
+		ElementHandle hNextElement {};
 
 		for (hElement = GetHeadElement();
 			 hElement; hElement = hNextElement)
@@ -2931,7 +2931,7 @@ static void DrawMinDatText(void)
 	rect.extent.height = ResScale(6);
 	DrawFilledRectangle(&rect);
 
-	FONT OldFont {SetContextFont(TinyFontBold)};
+	FontRef OldFont {SetContextFont(TinyFontBold)};
 	SetContextForeGroundColor(LandStatMinColor);
 	text.align = TextAlign::Left;
 	text.baseline.x = rect.corner.x + ResScale(1);

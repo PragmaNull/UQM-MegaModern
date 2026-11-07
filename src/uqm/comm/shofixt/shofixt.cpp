@@ -210,7 +210,7 @@ static void GetShofixtiName(void)
 	}
 }
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Hostile);
 
@@ -319,7 +319,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void GiveMaidens(RESPONSE_REF R)
+static void GiveMaidens(ResponseRef R)
 {
 	if (PlayerSaid(R, ShofixtiPhrase::ImportantDuty))
 	{
@@ -339,7 +339,7 @@ static void GiveMaidens(RESPONSE_REF R)
 	}
 }
 
-static void ConsoleShofixti(RESPONSE_REF R)
+static void ConsoleShofixti(ResponseRef R)
 {
 	if (PlayerSaid(R, ShofixtiPhrase::DontDoIt))
 	{
@@ -363,7 +363,7 @@ static void ConsoleShofixti(RESPONSE_REF R)
 	Response(ShofixtiPhrase::GoAhead, ExitConversation);
 }
 
-static void ExplainDefeat(RESPONSE_REF R)
+static void ExplainDefeat(ResponseRef R)
 {
 	if (PlayerSaid(R, ShofixtiPhrase::IAmNice))
 	{
@@ -384,7 +384,7 @@ static void ExplainDefeat(RESPONSE_REF R)
 	Response(ShofixtiPhrase::ButtBlasted, ConsoleShofixti);
 }
 
-static void RealizeMistake(RESPONSE_REF R)
+static void RealizeMistake(ResponseRef R)
 {
 	(void)R; // ignored
 	NPCPhrase(ShofixtiPhrase::Dgrunti);
@@ -397,7 +397,7 @@ static void RealizeMistake(RESPONSE_REF R)
 	Response(ShofixtiPhrase::IAmGuy, ExplainDefeat);
 }
 
-static void Hostile(RESPONSE_REF R)
+static void Hostile(ResponseRef R)
 {
 	(void)R; // ignored
 	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK1))
@@ -449,7 +449,7 @@ static void Hostile(RESPONSE_REF R)
 	Response(ShofixtiPhrase::DontWantToFight, ExitConversation);
 }
 
-static void Friendly(RESPONSE_REF R)
+static void Friendly(ResponseRef R)
 {
 	uint8_t i {};
 	struct
@@ -595,7 +595,7 @@ static void Intro(void)
 	{
 		NPCPhrase(ShofixtiPhrase::FriendlyHello);
 
-		Friendly((RESPONSE_REF)0);
+		Friendly((ResponseRef)0);
 	}
 	else
 	{
@@ -654,7 +654,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_VISITS, static_cast<uint32_t>(NumVisits));
 
-		Hostile((RESPONSE_REF)0);
+		Hostile((ResponseRef)0);
 	}
 }
 

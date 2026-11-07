@@ -238,7 +238,7 @@ static void bubble_preprocess(Element* ElementPtr)
 	ElementPtr->turn_wait = uqm::makeByte(turn_wait, thrust_wait);
 }
 
-static uint16_t initialize_bubble(Element* ShipPtr, HELEMENT BubbleArray[])
+static uint16_t initialize_bubble(Element* ShipPtr, ElementHandle BubbleArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -445,7 +445,7 @@ static void androsynth_postprocess(Element* ElementPtr)
 static void androsynth_preprocess(Element* ElementPtr)
 {
 	Starship* StarShipPtr {};
-	STATUS_FLAGS cur_status_flags {};
+	StatusFlags cur_status_flags {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 

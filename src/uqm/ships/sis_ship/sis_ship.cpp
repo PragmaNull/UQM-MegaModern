@@ -427,7 +427,7 @@ static void spawn_point_defense(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (ElementPtr->state_flags & PlayerShip)
 	{
-		HELEMENT hDefense {AllocElement()};
+		ElementHandle hDefense {AllocElement()};
 		if (hDefense)
 		{
 			Element* DefensePtr {};
@@ -446,7 +446,7 @@ static void spawn_point_defense(Element* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hNextObject {};
+		ElementHandle hNextObject {};
 		Element* ShipPtr {};
 		Color LaserColor;
 		const static Color ColorRange[] =
@@ -465,7 +465,7 @@ static void spawn_point_defense(Element* ElementPtr)
 
 		LaserColor = ColorRange[StarShipPtr->RaceDescPtr->characteristics.special_energy_cost];
 		LockElement(StarShipPtr->hShip, &ShipPtr);
-		for (HELEMENT hObject {GetTailElement()}; hObject; hObject = hNextObject)
+		for (ElementHandle hObject {GetTailElement()}; hObject; hObject = hNextObject)
 		{
 			Element* ObjectPtr {};
 
@@ -487,7 +487,7 @@ static void spawn_point_defense(Element* ElementPtr)
 				delta_y = WorldToDisplay(delta_y);
 				if ((uint16_t)delta_x <= LaserRange() && (uint16_t)delta_y <= LaserRange() && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LaserRange() * LaserRange())
 				{
-					HELEMENT hPointDefense {};
+					ElementHandle hPointDefense {};
 					LaserDesc LaserBlock;
 
 					if (!PaidFor)
@@ -575,7 +575,7 @@ static void sis_battle_postprocess(Element* ElementPtr)
 static void blaster_collision(Element* ElementPtr0, GfxPoint* pPt0,
 							  Element* ElementPtr1, GfxPoint* pPt1)
 {
-	HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
+	ElementHandle hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 	if (hBlastElement)
 	{
 		Element* BlastElementPtr {};
@@ -652,7 +652,7 @@ static void blaster_preprocess(Element* ElementPtr)
 	}
 }
 
-static uint16_t initialize_blasters(Element* ShipPtr, HELEMENT BlasterArray[])
+static uint16_t initialize_blasters(Element* ShipPtr, ElementHandle BlasterArray[])
 {
 	Starship* StarShipPtr {};
 

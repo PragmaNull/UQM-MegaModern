@@ -321,7 +321,7 @@ static void ZexBeingEatenAlive(void)
 	}
 }
 
-static void CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -452,7 +452,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void Menagerie(RESPONSE_REF R)
+static void Menagerie(ResponseRef R)
 {
 	uint8_t i {};
 	uint8_t LastStack {};
@@ -689,7 +689,7 @@ static void Menagerie(RESPONSE_REF R)
 	}
 }
 
-static void NormalVux(RESPONSE_REF R)
+static void NormalVux(ResponseRef R)
 {
 	if (PlayerSaid(R, VuxPhrase::WhySoMean))
 	{
@@ -841,7 +841,7 @@ static void Intro(void)
 
 	if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		Menagerie((RESPONSE_REF)0);
+		Menagerie((ResponseRef)0);
 	}
 	else
 	{
@@ -892,7 +892,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::VUX_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
-		NormalVux((RESPONSE_REF)0);
+		NormalVux((ResponseRef)0);
 	}
 }
 

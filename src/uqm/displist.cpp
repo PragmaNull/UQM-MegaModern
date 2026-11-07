@@ -29,7 +29,7 @@ namespace uqm
  * and poses a hard limit on the number of elements in the list.
  */
 
-bool InitQueue(Queue* pq, uint16_t num_elements, OBJ_SIZE size)
+bool InitQueue(Queue* pq, uint16_t num_elements, ObjSize size)
 {
 	SetHeadLink(pq, nullptr);
 	SetTailLink(pq, nullptr);
@@ -81,9 +81,9 @@ void ReinitQueue(Queue* pq)
 	}
 }
 
-HLINK AllocLink(Queue* pq)
+LinkHandle AllocLink(Queue* pq)
 {
-	HLINK hLink {GetFreeList(pq)};
+	LinkHandle hLink {GetFreeList(pq)};
 	if (hLink)
 	{
 		const QueueLink* LinkPtr {LockLink(pq, hLink)};
@@ -98,7 +98,7 @@ HLINK AllocLink(Queue* pq)
 	return (hLink);
 }
 
-void FreeLink(Queue* pq, HLINK hLink)
+void FreeLink(Queue* pq, LinkHandle hLink)
 {
 	QueueLink* LinkPtr {LockLink(pq, hLink)};
 	_SetSuccLink(LinkPtr, GetFreeList(pq));
@@ -107,7 +107,7 @@ void FreeLink(Queue* pq, HLINK hLink)
 	SetFreeList(pq, hLink);
 }
 
-void PutQueue(Queue* pq, HLINK hLink)
+void PutQueue(Queue* pq, LinkHandle hLink)
 {
 	if (GetHeadLink(pq) == 0)
 	{
@@ -115,7 +115,7 @@ void PutQueue(Queue* pq, HLINK hLink)
 	}
 	else
 	{
-		HLINK hTail {GetTailLink(pq)};
+		LinkHandle hTail {GetTailLink(pq)};
 		QueueLink* lpTail {LockLink(pq, hTail)};
 		_SetSuccLink(lpTail, hLink);
 		UnlockLink(pq, hTail);
@@ -129,7 +129,7 @@ void PutQueue(Queue* pq, HLINK hLink)
 	SetTailLink(pq, hLink);
 }
 
-void InsertQueue(Queue* pq, HLINK hLink, HLINK hRefLink)
+void InsertQueue(Queue* pq, LinkHandle hLink, LinkHandle hRefLink)
 {
 	if (hRefLink == 0)
 	{
@@ -149,7 +149,7 @@ void InsertQueue(Queue* pq, HLINK hLink, HLINK hRefLink)
 		}
 		else
 		{
-			HLINK hPredLink {_GetPredLink(LinkPtr)};
+			LinkHandle hPredLink {_GetPredLink(LinkPtr)};
 			QueueLink* PredLinkPtr {LockLink(pq, hPredLink)};
 			_SetSuccLink(PredLinkPtr, hLink);
 			UnlockLink(pq, hPredLink);
@@ -159,7 +159,7 @@ void InsertQueue(Queue* pq, HLINK hLink, HLINK hRefLink)
 	}
 }
 
-void RemoveQueue(Queue* pq, HLINK hLink)
+void RemoveQueue(Queue* pq, LinkHandle hLink)
 {
 	const QueueLink* LinkPtr {LockLink(pq, hLink)};
 	if (GetHeadLink(pq) == hLink)
@@ -168,7 +168,7 @@ void RemoveQueue(Queue* pq, HLINK hLink)
 	}
 	else
 	{
-		HLINK hPredLink {_GetPredLink(LinkPtr)};
+		LinkHandle hPredLink {_GetPredLink(LinkPtr)};
 		QueueLink* PredLinkPtr {LockLink(pq, hPredLink)};
 		_SetSuccLink(PredLinkPtr, _GetSuccLink(LinkPtr));
 		UnlockLink(pq, hPredLink);
@@ -179,9 +179,9 @@ void RemoveQueue(Queue* pq, HLINK hLink)
 	}
 	else
 	{
-		HLINK hSuccLink {_GetSuccLink(LinkPtr)};
+		LinkHandle hSuccLink {_GetSuccLink(LinkPtr)};
 		QueueLink* SuccLinkPtr {LockLink(pq, hSuccLink)};
-		HLINK hPredLink {_GetPredLink(LinkPtr)};
+		LinkHandle hPredLink {_GetPredLink(LinkPtr)};
 		_SetPredLink(SuccLinkPtr, hPredLink);
 		UnlockLink(pq, hSuccLink);
 	}
@@ -190,10 +190,10 @@ void RemoveQueue(Queue* pq, HLINK hLink)
 
 uint16_t CountLinks(Queue* pq)
 {
-	HLINK hNextLink {};
+	LinkHandle hNextLink {};
 
 	uint16_t LinkCount {0};
-	for (HLINK hLink {GetHeadLink(pq)}; hLink; hLink = hNextLink)
+	for (LinkHandle hLink {GetHeadLink(pq)}; hLink; hLink = hNextLink)
 	{
 		++LinkCount;
 
@@ -207,9 +207,9 @@ uint16_t CountLinks(Queue* pq)
 
 void ForAllLinks(Queue* pq, void (*callback)(QueueLink*, void*), void* arg)
 {
-	HLINK hNextLink {};
+	LinkHandle hNextLink {};
 
-	for (HLINK hLink {GetHeadLink(pq)}; hLink; hLink = hNextLink)
+	for (LinkHandle hLink {GetHeadLink(pq)}; hLink; hLink = hNextLink)
 	{
 		QueueLink* LinkPtr {LockLink(pq, hLink)};
 		hNextLink = _GetSuccLink(LinkPtr);

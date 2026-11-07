@@ -124,7 +124,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 
 	DrawPCMenuFrame(r);
 
-	FONT OldFont {SetContextFont(StarConFont)};
+	FontRef OldFont {SetContextFont(StarConFont)};
 	t.align = TextAlign::Left;
 	t.baseline.x = r->corner.x + ResScale(2);
 	t.baseline.y = r->corner.y + PcMenuHeight() - ResScale(1);
@@ -664,7 +664,7 @@ static void Draw3DOMenuText(GfxRect* r, int Index)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(PlayMenuFont)};
+	FontRef OldFont {SetContextFont(PlayMenuFont)};
 	OldColor = SetContextForeGroundColor(PmRectColor);
 
 	GetContextFontLeading(&leading);
@@ -700,7 +700,7 @@ void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)
 	GfxRect r;
 	GfxStamp s;
 	uint8_t hilite = 1;
-	extern FRAME PlayFrame;
+	extern FrameRef PlayFrame;
 
 	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
@@ -733,7 +733,7 @@ void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)
 	}
 
 	PreUpdateFlashRect();
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	GetContextClipRect(&r);
 	s.origin.x = RadarX() - r.corner.x;
 	s.origin.y = RadarY() - r.corner.y;
@@ -909,7 +909,7 @@ void DrawMineralHelpers(void)
 		return;
 	}
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 
 	BatchGraphics();
 
@@ -1084,7 +1084,7 @@ void DrawBorder(BorderFrameIndex Visible)
 {
 	GfxStamp s;
 
-	GFXCONTEXT OldContext {SetContext(ScreenContext)};
+	GfxContextRef OldContext {SetContext(ScreenContext)};
 
 	s.origin.x = 0;
 	s.origin.y = 0;

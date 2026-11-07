@@ -21,20 +21,20 @@
 
 namespace uqm
 {
-SOUND_REF MenuSounds;
-SOUND_REF GameSounds;
+SoundBankRef MenuSounds;
+SoundBankRef GameSounds;
 
 static constexpr auto MaxSounds {8};
 static uint8_t num_sounds = 0;
-static SOUND sound_buf[MaxSounds];
+static SoundRef sound_buf[MaxSounds];
 static Element* sound_posobj[MaxSounds];
 
-void PlaySound(SOUND S, SoundPosition Pos, Element* PositionalObject,
+void PlaySound(SoundRef S, SoundPosition Pos, Element* PositionalObject,
 			   uint8_t Priority)
 {
 	uint8_t chan {};
 	static uint8_t lru_channel[NumFxChannels] = {0, 1, 2, 3};
-	static SOUND channel[NumFxChannels] = {0, 0, 0, 0}; // NOLINT(misc-const-correctness)
+	static SoundRef channel[NumFxChannels] = {0, 0, 0, 0}; // NOLINT(misc-const-correctness)
 
 	if (S == 0)
 	{
@@ -95,7 +95,7 @@ void SuppressSounds(void)
 	num_sounds = MaxSounds;
 }
 
-void ProcessSound(SOUND Sound, Element* PositionalObject)
+void ProcessSound(SoundRef Sound, Element* PositionalObject)
 {
 	if (num_sounds < MaxSounds)
 	{
@@ -115,7 +115,7 @@ SoundPosition CalcSoundPosition(Element* ElementPtr)
 	}
 	else
 	{
-		const GRAPHICS_PRIM objtype {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
+		const PrimitiveType objtype {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
 		if (objtype == PrimitiveType::Line)
 		{
 			pos.x = DisplayArray[ElementPtr->PrimIndex].Object.Line.first.x;
@@ -169,7 +169,7 @@ void FlushSounds(void)
 {
 	if (num_sounds > 0)
 	{
-		const SOUND* pSound {sound_buf};
+		const SoundRef* pSound {sound_buf};
 		Element* const* pSoundPosObj {sound_posobj};
 		do
 		{

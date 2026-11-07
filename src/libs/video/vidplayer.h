@@ -22,11 +22,11 @@
 
 extern bool TFB_InitVideoPlayer(void);
 extern void TFB_UninitVideoPlayer(void);
-extern bool TFB_PlayVideo(VIDEO_REF VidRef, uint32_t x, uint32_t y);
-extern void TFB_StopVideo(VIDEO_REF VidRef);
-extern bool TFB_VideoPlaying(VIDEO_REF VidRef);
-extern bool TFB_ProcessVideoFrame(VIDEO_REF vid);
-extern uint32_t TFB_GetVideoPosition(VIDEO_REF VidRef);
-extern bool TFB_SeekVideo(VIDEO_REF VidRef, uint32_t pos);
+extern bool TFB_PlayVideo(VideoRef VidRef, uint32_t x, uint32_t y);
+extern void TFB_StopVideo(VideoRef VidRef);
+extern bool TFB_VideoPlaying(VideoRef VidRef);
+extern bool TFB_ProcessVideoFrame(VideoRef vid);
+extern uint32_t TFB_GetVideoPosition(VideoRef VidRef);
+extern bool TFB_SeekVideo(VideoRef VidRef, uint32_t pos);
 
 #endif // UQM_LIBS_VIDEO_VIDPLAYER_H

@@ -34,34 +34,34 @@ extern "C" {
 // Each queue has a fixed table of elements. The size of encounter_q sets
 // the maximum number of HyperSpace Encounter globes.
 
-typedef void* QUEUE_HANDLE;
+using QueueHandle = void*;
 
-typedef uint16_t OBJ_SIZE;
-typedef QUEUE_HANDLE HLINK;
+using ObjSize = uint16_t;
+using LinkHandle = QueueHandle;
 
 struct QueueLink
 {
 	// Every queue Element of any queue must have these
 	// two as the first members
-	HLINK pred;
-	HLINK succ;
+	LinkHandle pred;
+	LinkHandle succ;
 };
 
 struct Queue
 {
-	HLINK head;
-	HLINK tail;
+	LinkHandle head;
+	LinkHandle tail;
 	uint8_t* pq_tab;
-	HLINK free_list;
+	LinkHandle free_list;
 	uint16_t object_size;
 	uint8_t num_objects;
 };
 
 
-extern HLINK AllocLink(Queue* pq);
-extern void FreeLink(Queue* pq, HLINK hLink);
+extern LinkHandle AllocLink(Queue* pq);
+extern void FreeLink(Queue* pq, LinkHandle hLink);
 
-static inline QueueLink* LockLink(const Queue* pq, HLINK h)
+static inline QueueLink* LockLink(const Queue* pq, LinkHandle h)
 {
 	if (h) // Apparently, h==0 is OK
 	{	   // Make sure the link is actually in our queue!
@@ -70,7 +70,7 @@ static inline QueueLink* LockLink(const Queue* pq, HLINK h)
 	return (QueueLink*)h;
 }
 
-static inline void UnlockLink(const Queue* pq, HLINK h)
+static inline void UnlockLink(const Queue* pq, LinkHandle h)
 {
 	if (h) // Apparently, h==0 is OK
 	{	   // Make sure the link is actually in our queue!
@@ -87,7 +87,7 @@ inline void FreeQueueTab(Queue* pq)
 	pq->pq_tab = nullptr;
 }
 constexpr auto SizeQueueTab(const auto& pq) { return (uint16_t)((pq)->num_objects); }
-constexpr auto GetLinkAddr(const auto& pq, const auto& i) { return (HLINK)((pq)->pq_tab + ((pq)->object_size * ((i)-1))); }
+constexpr auto GetLinkAddr(const auto& pq, const auto& i) { return (LinkHandle)((pq)->pq_tab + ((pq)->object_size * ((i)-1))); }
 
 constexpr auto SetLinkSize(const auto& pq, const auto& s) { return ((pq)->object_size = (uint16_t)(s)); }
 constexpr auto GetLinkSize(const auto& pq) { return (uint16_t)((pq)->object_size); }
@@ -100,12 +100,12 @@ constexpr auto _SetPredLink(const auto& lpE, const auto& h) { return ((lpE)->pre
 constexpr auto _GetSuccLink(const auto& lpE) { return ((lpE)->succ); }
 constexpr auto _SetSuccLink(const auto& lpE, const auto& h) { return ((lpE)->succ = (h)); }
 
-extern bool InitQueue(Queue* pq, uint16_t num_elements, OBJ_SIZE size);
+extern bool InitQueue(Queue* pq, uint16_t num_elements, ObjSize size);
 extern bool UninitQueue(Queue* pq);
 extern void ReinitQueue(Queue* pq);
-extern void PutQueue(Queue* pq, HLINK hLink);
-extern void InsertQueue(Queue* pq, HLINK hLink, HLINK hRefLink);
-extern void RemoveQueue(Queue* pq, HLINK hLink);
+extern void PutQueue(Queue* pq, LinkHandle hLink);
+extern void InsertQueue(Queue* pq, LinkHandle hLink, LinkHandle hRefLink);
+extern void RemoveQueue(Queue* pq, LinkHandle hLink);
 extern uint16_t CountLinks(Queue* pq);
 void ForAllLinks(Queue* pq, void (*callback)(QueueLink*, void*), void* arg);
 
@@ -128,7 +128,7 @@ public:
 	LinkQueue& operator=(const LinkQueue&) = delete;
 
 	// Makes an empty table for 'capacity' links of 'linkSize' bytes. Releases the old table.
-	bool reset(uint16_t capacity, OBJ_SIZE linkSize)
+	bool reset(uint16_t capacity, ObjSize linkSize)
 	{
 		release();
 		return InitQueue(this, capacity, linkSize);

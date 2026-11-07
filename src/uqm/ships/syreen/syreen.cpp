@@ -128,7 +128,7 @@ static RaceDesc syreen_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_dagger(Element* ShipPtr, HELEMENT DaggerArray[])
+static uint16_t initialize_dagger(Element* ShipPtr, ElementHandle DaggerArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -156,7 +156,7 @@ static void spawn_crew(Element* ElementPtr)
 {
 	if (ElementPtr->state_flags & PlayerShip)
 	{
-		HELEMENT hCrew {AllocElement()};
+		ElementHandle hCrew {AllocElement()};
 		if (hCrew != 0)
 		{
 			Element* CrewPtr {};
@@ -176,8 +176,8 @@ static void spawn_crew(Element* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hElement {};
-		HELEMENT hNextElement {};
+		ElementHandle hElement {};
+		ElementHandle hNextElement {};
 
 		for (hElement = GetHeadElement();
 			 hElement != 0; hElement = hNextElement)

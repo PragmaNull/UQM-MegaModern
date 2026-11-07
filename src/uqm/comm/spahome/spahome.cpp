@@ -241,7 +241,7 @@ static AnimFilterSet spahome_filters =
 								  }
 };
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Peace);
 	if (PlayerSaid(R, SpathiHomePhrase::WeAttackAgain))
@@ -367,9 +367,9 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void SpathiAllies(RESPONSE_REF R);
+static void SpathiAllies(ResponseRef R);
 
-static void SpathiInfo(RESPONSE_REF R)
+static void SpathiInfo(ResponseRef R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, SpathiHomePhrase::LikeSomeInfo))
@@ -440,7 +440,7 @@ static void SpathiInfo(RESPONSE_REF R)
 	}
 }
 
-static void SpathiAllies(RESPONSE_REF R)
+static void SpathiAllies(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -530,7 +530,7 @@ static void SpathiAllies(RESPONSE_REF R)
 	Response(SpathiHomePhrase::ByeAlly, ExitConversation);
 }
 
-static void SpathiQuest(RESPONSE_REF R)
+static void SpathiQuest(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -589,7 +589,7 @@ static void SpathiQuest(RESPONSE_REF R)
 	}
 }
 
-static void LearnQuest(RESPONSE_REF R)
+static void LearnQuest(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -662,7 +662,7 @@ static void LearnQuest(RESPONSE_REF R)
 	}
 }
 
-static void AllianceOffer(RESPONSE_REF R)
+static void AllianceOffer(ResponseRef R)
 {
 	if (PlayerSaid(R, SpathiHomePhrase::Misunderstanding))
 	{
@@ -735,7 +735,7 @@ static void AllianceOffer(RESPONSE_REF R)
 	}
 }
 
-static void SpathiAngry(RESPONSE_REF R)
+static void SpathiAngry(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -754,7 +754,7 @@ static void SpathiAngry(RESPONSE_REF R)
 	Response(SpathiHomePhrase::ByeAngrySpathi, ExitConversation);
 }
 
-static void SpathiParty(RESPONSE_REF R)
+static void SpathiParty(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -857,7 +857,7 @@ static void SpathiParty(RESPONSE_REF R)
 	}
 }
 
-static void SpathiCouncil(RESPONSE_REF R)
+static void SpathiCouncil(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -959,7 +959,7 @@ static void SpathiCouncil(RESPONSE_REF R)
 	Response(SpathiHomePhrase::ByeNoAllyOffer, ExitConversation);
 }
 
-static void SpathiPassword(RESPONSE_REF R)
+static void SpathiPassword(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -1027,19 +1027,19 @@ static void Intro(void)
 			 && (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI)
 				 || uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS) != 7))
 	{
-		SpathiAngry((RESPONSE_REF)0);
+		SpathiAngry((ResponseRef)0);
 	}
 	else if (CheckAlliance(RaceId::Spathi) == RaceAllegiance::Good)
 	{
 		CommData.AlienColorMapIndex = 1;
 
-		SpathiAllies((RESPONSE_REF)0);
+		SpathiAllies((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::SPATHI_PARTY))
 	{
 		CommData.AlienColorMapIndex = 1;
 
-		SpathiParty((RESPONSE_REF)0);
+		SpathiParty((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::SPATHI_QUEST))
 	{
@@ -1047,7 +1047,7 @@ static void Intro(void)
 		{
 			CommData.AlienColorMapIndex = 1;
 
-			SpathiQuest((RESPONSE_REF)0);
+			SpathiQuest((ResponseRef)0);
 		}
 		else
 		{
@@ -1061,7 +1061,7 @@ static void Intro(void)
 	{
 		CommData.AlienColorMapIndex = 1;
 
-		LearnQuest((RESPONSE_REF)0);
+		LearnQuest((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_PASSWORD)
 			 && (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI)
@@ -1069,11 +1069,11 @@ static void Intro(void)
 	{
 		CommData.AlienColorMapIndex = 1;
 
-		SpathiCouncil((RESPONSE_REF)0);
+		SpathiCouncil((ResponseRef)0);
 	}
 	else
 	{
-		SpathiPassword((RESPONSE_REF)0);
+		SpathiPassword((ResponseRef)0);
 	}
 }
 

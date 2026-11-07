@@ -790,7 +790,7 @@ static uint16_t GenerateSol_generateLife(const SolarSystemState* solarSys,
 
 static int init_probe(void)
 {
-	HIPGROUP hGroup {};
+	IpGroupHandle hGroup {};
 
 	if (!uqm::gameState().flag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED)
 		&& GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp)
@@ -820,7 +820,7 @@ static void check_probe(void)
 		return; // nothing to check
 	}
 
-	HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
+	IpGroupHandle hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 	if (!hGroup)
 	{
 		return; // still nothing to check

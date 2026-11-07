@@ -73,10 +73,10 @@ struct PlanetsideDesc
 	LanderNodeData NodeData;
 };
 
-extern MUSIC_REF LanderMusic;
+extern MusicRef LanderMusic;
 
 extern void PlanetSide(GfxPoint planetLoc);
-extern void DoDiscoveryReport(SOUND_REF ReadOutSounds);
+extern void DoDiscoveryReport(SoundBankRef ReadOutSounds);
 extern uint8_t SetPlanetMusic(uint8_t planet_type);
 extern void LoadLanderData(void);
 extern void FreeLanderData(void);

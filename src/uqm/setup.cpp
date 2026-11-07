@@ -47,39 +47,39 @@
 
 namespace uqm
 {
-ACTIVITY LastActivity;
+ActivityWord LastActivity;
 PlayerControlFlags PlayerControl[NumPlayers] {};
 
 // XXX: These declarations should really go to the file they belong to.
-RESOURCE_INDEX hResIndex;
-GFXCONTEXT ScreenContext;
-GFXCONTEXT SpaceContext;
-GFXCONTEXT StatusContext;
-GFXCONTEXT OffScreenContext;
+ResourceIndex hResIndex;
+GfxContextRef ScreenContext;
+GfxContextRef SpaceContext;
+GfxContextRef StatusContext;
+GfxContextRef OffScreenContext;
 int16_t screen_width, screen_height;
-FRAME Screen;
-FONT StarConFont;
-FONT MicroFont;
-FONT TinyFont;
-FONT TinyFontBold;
-FONT TinyFontCond;
-FONT PlyrFont;
-FONT LabelFont;
-FONT SlabFont;
-FONT SquareFont;
-FONT PlayMenuFont;
+FrameRef Screen;
+FontRef StarConFont;
+FontRef MicroFont;
+FontRef TinyFont;
+FontRef TinyFontBold;
+FontRef TinyFontCond;
+FontRef PlyrFont;
+FontRef LabelFont;
+FontRef SlabFont;
+FontRef SquareFont;
+FontRef PlayMenuFont;
 Queue race_q[NumPlayers];
-FRAME ActivityFrame;
-FRAME StatusFrame;
-FRAME SubmenuFrame;
-FRAME FlagStatFrame;
-FRAME MiscDataFrame;
-FRAME visitedStarsFrame;
-FRAME FontGradFrame;
-FRAME BorderFrame;
-FRAME HDBorderFrame;
-FRAME CustBevelFrame;
-FRAME DefBevelFrame;
+FrameRef ActivityFrame;
+FrameRef StatusFrame;
+FrameRef SubmenuFrame;
+FrameRef FlagStatFrame;
+FrameRef MiscDataFrame;
+FrameRef visitedStarsFrame;
+FrameRef FontGradFrame;
+FrameRef BorderFrame;
+FrameRef HDBorderFrame;
+FrameRef CustBevelFrame;
+FrameRef DefBevelFrame;
 uqm::StringTablePtr GameStrings {};
 Queue disp_q;
 
@@ -130,7 +130,7 @@ bool LoadKernel(int argc, char* argv[])
 	SetContextFGFrame(Screen);
 	SetContextOrigin(MAKE_POINT(0, 0));
 
-	hResIndex = (RESOURCE_INDEX)InitResourceSystem();
+	hResIndex = (ResourceIndex)InitResourceSystem();
 	if (hResIndex == 0)
 	{
 		return false;
@@ -255,7 +255,7 @@ bool LoadKernel(int argc, char* argv[])
 	}
 
 	InitPlayerInput();
-	uqm::currentActivity() = (ACTIVITY)~0;
+	uqm::currentActivity() = (ActivityWord)~0;
 
 	return true;
 }
@@ -271,7 +271,7 @@ bool InitContexts(void)
 	}
 	AdvanceLoadProgress();
 
-	GFXCONTEXT oldContext {SetContext(StatusContext)};
+	GfxContextRef oldContext {SetContext(StatusContext)};
 	SetContextFGFrame(Screen);
 	r.corner.x = SpaceWidth() + SafeX();
 	r.corner.y = SafeY();

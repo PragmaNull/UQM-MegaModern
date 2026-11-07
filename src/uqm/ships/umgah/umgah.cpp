@@ -176,7 +176,7 @@ static void cone_preprocess(Element* ElementPtr)
 static void cone_collision(Element* ElementPtr0, GfxPoint* pPt0,
 						   Element* ElementPtr1, GfxPoint* pPt1)
 {
-	HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
+	ElementHandle hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 	if (hBlastElement)
 	{
 		RemoveElement(hBlastElement);
@@ -324,7 +324,7 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	}
 }
 
-static uint16_t initialize_cone(Element* ShipPtr, HELEMENT ConeArray[])
+static uint16_t initialize_cone(Element* ShipPtr, ElementHandle ConeArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -345,7 +345,7 @@ static uint16_t initialize_cone(Element* ShipPtr, HELEMENT ConeArray[])
 	MissileBlock.blast_offs = ConeOffset;
 
 	// This func is called every frame while the player is holding down WeaponFlag
-	// Don't reset the cone FRAME to the first image every time
+	// Don't reset the cone FrameRef to the first image every time
 	const UmgahData* umgahData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 	if (!umgahData || StarShipPtr->ShipFacing != umgahData->prevFacing)
 	{

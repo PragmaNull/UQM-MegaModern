@@ -471,8 +471,8 @@ uint8_t PlanetByteGen(SystemPlanet* pPDesc)
 
 static void check_yehat_rebellion(void)
 {
-	HIPGROUP hGroup {};
-	HIPGROUP hNextGroup {};
+	IpGroupHandle hGroup {};
+	IpGroupHandle hNextGroup {};
 
 	// XXX: Is there a better way to do this? I could not find one.
 	//   When you talk to a Yehat ship (YEHAT_SHIP) and start the rebellion,

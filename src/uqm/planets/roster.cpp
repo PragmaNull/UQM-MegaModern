@@ -53,14 +53,14 @@ struct RosterState
 
 	GfxPoint curShipPt;
 	// Location of the currently selected escort
-	FRAME curShipFrame;
+	FrameRef curShipFrame;
 	// Icon of the currently selected escort
 	bool modifyingCrew;
 	// true when in crew modification "sub-menu". This is simple
 	// enough that it does not require a real sub-menu.
 };
 
-static ShipFragment* LockSupportShip(RosterState*, HSHIPFRAG* phFrag);
+static ShipFragment* LockSupportShip(RosterState*, ShipFragmentHandle* phFrag);
 
 static void drawSupportShip(RosterState* rosterState, bool filled, bool saveFrame)
 {
@@ -101,7 +101,7 @@ static void drawSupportShip(RosterState* rosterState, bool filled, bool saveFram
 
 static void getSupportShipIcon(RosterState* rosterState)
 {
-	HSHIPFRAG hShipFrag {};
+	ShipFragmentHandle hShipFrag {};
 
 	rosterState->curShipFrame = nullptr;
 	const ShipFragment* ShipFragPtr {LockSupportShip(rosterState, &hShipFrag)};
@@ -151,11 +151,11 @@ static void flashSupportShip(RosterState* rosterState, bool saveFrame)
 	}
 }
 
-static ShipFragment* LockSupportShip(RosterState* rosterState, HSHIPFRAG* phFrag)
+static ShipFragment* LockSupportShip(RosterState* rosterState, ShipFragmentHandle* phFrag)
 {
 	const GfxPoint* pship_pos {};
-	HSHIPFRAG hStarShip {};
-	HSHIPFRAG hNextShip {};
+	ShipFragmentHandle hStarShip {};
+	ShipFragmentHandle hNextShip {};
 
 	// Lookup the current escort's location in the unsorted points list
 	// to find the original escort index
@@ -191,8 +191,8 @@ static bool DeltaSupportCrew(RosterState* rosterState, int16_t crew_delta)
 {
 	bool ret = false;
 	char buf[40] {};
-	HFLEETINFO hTemplate {};
-	HSHIPFRAG hShipFrag {};
+	FleetInfoHandle hTemplate {};
+	ShipFragmentHandle hShipFrag {};
 
 	ShipFragment* StarShipPtr {LockSupportShip(rosterState, &hShipFrag)};
 	if (!StarShipPtr)

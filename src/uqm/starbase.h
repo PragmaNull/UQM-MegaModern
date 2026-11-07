@@ -37,7 +37,7 @@ enum class StarbaseMenuItem
 	DepartBase
 };
 consteval bool isArithmeticEnum(StarbaseMenuItem) { return true; }
-typedef uint8_t STARBASE_STATE;
+using StarbaseState = uint8_t;
 
 extern void InstallBombAtEarth(void);
 extern void VisitStarBase(void);
@@ -45,7 +45,7 @@ extern bool DoStarBase(MenuState* pMS);
 extern bool DoOutfit(MenuState* pMS);
 extern bool DoShipyard(MenuState* pMS);
 
-extern void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot, bool DrawBluePrint);
+extern void DrawShipPiece(FrameRef ModuleFrame, uint16_t which_piece, uint16_t which_slot, bool DrawBluePrint);
 
 extern uint16_t WrapText(const char* pStr, uint16_t len, GfxText* tarray, int16_t field_width);
 // XXX: Doesn't really belong in this file.

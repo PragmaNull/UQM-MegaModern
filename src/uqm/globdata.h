@@ -89,7 +89,7 @@ struct NumberSpeechDesc
 };
 const typedef NumberSpeechDesc* NUMBER_SPEECH;
 
-typedef uint32_t LDAS_FLAGS;
+using LdasFlags = uint32_t;
 
 
 // BW: had to move that from commglue.h to here because now ConversationData features it
@@ -170,10 +170,10 @@ struct ConversationData
 
 	NUMBER_SPEECH AlienNumberSpeech;
 
-	FRAME AlienFrame;
-	FONT AlienFont;
-	COLORMAP AlienColorMap;
-	MUSIC_REF AlienSong;
+	FrameRef AlienFrame;
+	FontRef AlienFont;
+	ColorMapRef AlienColorMap;
+	MusicRef AlienSong;
 	uqm::StringTable* ConversationPhrases;
 	uint16_t AlienColorMapIndex;
 };
@@ -244,7 +244,7 @@ enum class ActivityKind : uint8_t
 };
 consteval bool isArithmeticEnum(ActivityKind) { return true; }
 
-// The high byte of an ACTIVITY value.
+// The high byte of an ActivityWord value.
 enum class ActivityFlag : uint16_t
 {
 	CheckPause = uqm::makeWord(0, (1 << 0)),
@@ -257,7 +257,7 @@ enum class ActivityFlag : uint16_t
 	CheckAbort = uqm::makeWord(0, (1 << 6)),
 };
 consteval bool isFlagEnum(ActivityFlag) { return true; }
-typedef uint16_t ACTIVITY; // TODO PramgaNull: use ActivityFlag
+using ActivityWord = uint16_t; // TODO PramgaNull: use ActivityFlag
 
 } // namespace uqm
 
@@ -266,9 +266,9 @@ typedef uint16_t ACTIVITY; // TODO PramgaNull: use ActivityFlag
 namespace uqm
 {
 // What the game program does now, for example the main menu or HyperSpace. It stays between sessions.
-[[nodiscard]] ACTIVITY& currentActivity();
-// The ActivityKind in the low byte of an ACTIVITY value.
-[[nodiscard]] constexpr ActivityKind activityKind(ACTIVITY activity) { return static_cast<ActivityKind>(lowByte(activity)); }
+[[nodiscard]] ActivityWord& currentActivity();
+// The ActivityKind in the low byte of an ActivityWord value.
+[[nodiscard]] constexpr ActivityKind activityKind(ActivityWord activity) { return static_cast<ActivityKind>(lowByte(activity)); }
 // The in-game options, with the bits of the glob_flags values above. They stay between sessions.
 [[nodiscard]] uint8_t& globalFlags();
 
@@ -307,7 +307,7 @@ consteval bool isArithmeticEnum(DefinedGroup) { return true; }
 constexpr auto DSetGameState(const auto& SName, const auto& val) { return setGameStateUint(SName, static_cast<uint32_t>(val)); }
 constexpr auto DGetGameState(const auto& SName) { return getGameStateUint(SName); }
 
-extern GFXCONTEXT RadarContext;
+extern GfxContextRef RadarContext;
 
 extern void FreeSC2Data(void);
 extern bool LoadSC2Data(void);

@@ -33,14 +33,14 @@ inline constexpr auto StartYear {2155};
 inline constexpr auto ClockBaseFramerate {24};
 inline constexpr auto ClockFrameRate {c_gameSecond / ClockBaseFramerate};
 
-typedef HLINK HEVENT;
+using EventHandle = LinkHandle;
 
 enum class GameEventId : uint8_t;
 
 struct GameEvent
 {
 	// QueueLink elements; must be first
-	HEVENT pred, succ;
+	EventHandle pred, succ;
 
 	uint8_t day_index, month_index;
 	uint16_t year_index;
@@ -53,12 +53,12 @@ enum class EventType
 	Relative
 };
 
-HEVENT AllocEvent();
-void PutEvent(HEVENT h);
-void UnlockEvent(HEVENT h);
-void FreeEvent(HEVENT h);
+EventHandle AllocEvent();
+void PutEvent(EventHandle h);
+void UnlockEvent(EventHandle h);
+void FreeEvent(EventHandle h);
 void ForAllEvents(void (*callback)(QueueLink*, void*), void* arg);
-void LockEvent(HEVENT h, GameEvent** ppe);
+void LockEvent(EventHandle h, GameEvent** ppe);
 constexpr auto GetSuccEvent(const auto& l) { return _GetSuccLink(l); }
 
 // Rates are in seconds per game day
@@ -77,7 +77,7 @@ extern float daysElapsed(void);
 extern void SetGameClockRate(uint16_t seconds_per_day);
 extern bool ValidateEvent(EventType type, uint16_t* pmonth_index,
 						  uint16_t* pday_index, uint16_t* pyear_index);
-extern HEVENT AddEvent(EventType type, uint16_t month_index, uint16_t day_index, uint16_t year_index, GameEventId func_index);
+extern EventHandle AddEvent(EventType type, uint16_t month_index, uint16_t day_index, uint16_t year_index, GameEventId func_index);
 extern void EventHandler(GameEventId selector);
 extern void GameClockTick(void);
 extern void MoveGameClockDays(uint16_t days);

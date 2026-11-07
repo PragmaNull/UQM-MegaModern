@@ -45,8 +45,8 @@ namespace uqm
 static constexpr auto OopsAll {0}; // Set a plot ID to stamp it to all empty starsystems
 static void CreateRadar(void);
 
-GFXCONTEXT RadarContext;
-FRAME PlayFrame;
+GfxContextRef RadarContext;
+FrameRef PlayFrame;
 
 
 static void CreateRadar(void)
@@ -56,7 +56,7 @@ static void CreateRadar(void)
 		GfxRect r;
 
 		RadarContext = CreateContext("RadarContext");
-		GFXCONTEXT OldContext {SetContext(RadarContext)};
+		GfxContextRef OldContext {SetContext(RadarContext)};
 		SetContextFGFrame(Screen);
 		r.corner.x = RadarX();
 		r.corner.y = RadarY();
@@ -130,7 +130,7 @@ void LoadFleetInfo(void)
 	SpeciesId ship_ref = (SpeciesId)(SpeciesId::Arilou - 1);
 	for (int i = 0; i < num_ships; ++i)
 	{
-		HFLEETINFO hFleet {};
+		FleetInfoHandle hFleet {};
 		FleetInfo* FleetPtr {};
 
 		if (i < num_ships - 2)
@@ -156,7 +156,7 @@ void LoadFleetInfo(void)
 
 		if (i < num_ships - 1)
 		{
-			HMASTERSHIP hMasterShip {FindMasterShip(ship_ref)};
+			MasterShipHandle hMasterShip {FindMasterShip(ship_ref)};
 			MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 			// Grab a copy of loaded icons and strings (not owned)
 			copyFleetInfo(FleetPtr, &MasterPtr->ShipInfo,
@@ -462,7 +462,7 @@ void UninitGameStructures(void)
 
 	// The only resources avail_race_q owns are the Ur-Quan probe's
 	// so free them now
-	HFLEETINFO hStarShip {GetTailLink(&uqm::gameState().game().avail_race_q)};
+	FleetInfoHandle hStarShip {GetTailLink(&uqm::gameState().game().avail_race_q)};
 	if (hStarShip)
 	{
 		const FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};

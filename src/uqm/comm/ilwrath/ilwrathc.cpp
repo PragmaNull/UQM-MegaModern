@@ -126,7 +126,7 @@ static ConversationData ilwrath_desc =
 		nullptr,
 };
 
-static void CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(ResponseRef R)
 {
 	const bool isGTFO = PlayerSaid(R, IlwrathPhrase::Gtfo);
 	setSegue(Segue::Hostile);
@@ -232,9 +232,9 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void IlwrathHome(RESPONSE_REF R);
+static void IlwrathHome(ResponseRef R);
 
-static void IlwrathGods(RESPONSE_REF R)
+static void IlwrathGods(ResponseRef R)
 {
 	uint8_t GodsLeft {false};
 	if (PlayerSaid(R, IlwrathPhrase::WantInfoOnGods))
@@ -294,7 +294,7 @@ static void IlwrathGods(RESPONSE_REF R)
 	}
 }
 
-static void IlwrathInfo(RESPONSE_REF R)
+static void IlwrathInfo(ResponseRef R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, IlwrathPhrase::WantInfoOnIlwrath))
@@ -370,7 +370,7 @@ static void IlwrathInfo(RESPONSE_REF R)
 	}
 }
 
-static void IlwrathHome(RESPONSE_REF R)
+static void IlwrathHome(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -411,9 +411,9 @@ static void IlwrathHome(RESPONSE_REF R)
 	Response(IlwrathPhrase::ByeHomeworld, CombatIsInevitable);
 }
 
-static void GodsSpeak(RESPONSE_REF R);
+static void GodsSpeak(ResponseRef R);
 
-static void GodsOrder(RESPONSE_REF R)
+static void GodsOrder(ResponseRef R)
 {
 	uint8_t OrdersLeft {false};
 	if (PlayerSaid(R, IlwrathPhrase::OtherDivineOrders))
@@ -473,7 +473,7 @@ static void GodsOrder(RESPONSE_REF R)
 	}
 }
 
-static void GodsSpeak(RESPONSE_REF R)
+static void GodsSpeak(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -562,7 +562,7 @@ static void GodsSpeak(RESPONSE_REF R)
 	Response(IlwrathPhrase::ByeGods, CombatIsInevitable);
 }
 
-static void IlwrathSpace(RESPONSE_REF R)
+static void IlwrathSpace(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -631,7 +631,7 @@ static void Intro(void)
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
-		IlwrathHome((RESPONSE_REF)0);
+		IlwrathHome((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
@@ -711,7 +711,7 @@ static void Intro(void)
 	{
 		// Communicating with the Ilwrath homeworld using a
 		// Hyperwave Broadcaster.
-		GodsSpeak((RESPONSE_REF)0);
+		GodsSpeak((ResponseRef)0);
 	}
 	else
 	{
@@ -727,7 +727,7 @@ static void Intro(void)
 		}
 		else
 		{
-			IlwrathSpace((RESPONSE_REF)0);
+			IlwrathSpace((ResponseRef)0);
 		}
 	}
 }

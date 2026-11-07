@@ -143,7 +143,7 @@ void Netplay_NotifyAll_checksum(BattleFrameCounter frameNr, Checksum checksum)
 }
 #endif /* NETPLAY_CHECKSUM */
 
-void Netplay_NotifyAll_battleInput(BATTLE_INPUT_STATE input)
+void Netplay_NotifyAll_battleInput(BattleInputState input)
 {
 	for (uint16_t player {0}; player < NumPlayers; player++)
 	{

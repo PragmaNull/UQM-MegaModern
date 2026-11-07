@@ -28,7 +28,7 @@ static void CheckFinishedChannels(void);
 
 const static SoundPosition notPositional = {false, 0, 0};
 
-void PlayChannel(uint16_t channel, SOUND snd, SoundPosition pos,
+void PlayChannel(uint16_t channel, SoundRef snd, SoundPosition pos,
 				 void* positional_object, unsigned char priority)
 {
 	tfb::SoundSample* const sample {snd};

@@ -172,7 +172,7 @@ static void spit_preprocess(Element* ElementPtr)
 	}
 }
 
-static uint16_t initialize_spit(Element* ShipPtr, HELEMENT SpitArray[])
+static uint16_t initialize_spit(Element* ShipPtr, ElementHandle SpitArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -254,7 +254,7 @@ static void spawn_tongue(Element* ElementPtr)
 	TongueBlock.life = 1;
 	TongueBlock.preprocess_func = 0;
 	TongueBlock.blast_offs = TongueOffset();
-	HELEMENT Tongue {initialize_missile(&TongueBlock)};
+	ElementHandle Tongue {initialize_missile(&TongueBlock)};
 	if (Tongue)
 	{
 		Element* TonguePtr {};

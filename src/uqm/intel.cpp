@@ -30,9 +30,9 @@
 
 namespace uqm
 {
-BATTLE_INPUT_STATE computer_intelligence(ComputerInputContext* context, Starship* StarShipPtr)
+BattleInputState computer_intelligence(ComputerInputContext* context, Starship* StarShipPtr)
 {
-	BATTLE_INPUT_STATE InputState {};
+	BattleInputState InputState {};
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 	{

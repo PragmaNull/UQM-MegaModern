@@ -55,9 +55,9 @@ struct Image
 	Canvas FilledImg;
 	int colormap_index;
 	int colormap_version;
-	HOT_SPOT NormalHs;
-	HOT_SPOT MipmapHs;
-	HOT_SPOT last_scale_hs;
+	HotSpot NormalHs;
+	HotSpot MipmapHs;
+	HotSpot last_scale_hs;
 	int last_scale;
 	ScaleMode last_scale_type;
 	Color last_fill;
@@ -71,7 +71,7 @@ struct Char
 	GfxExtent extent;
 	GfxExtent disp;
 	// Display extent
-	HOT_SPOT HotSpot;
+	HotSpot hotSpot;
 	uint8_t* data;
 	uint32_t pitch;
 	// Pitch is for storing all chars of a page
@@ -148,15 +148,15 @@ tfb::Canvas TFB_DrawCanvas_New_RotationTarget(tfb::Canvas src, int angle);
 tfb::Canvas TFB_DrawCanvas_ToScreenFormat(tfb::Canvas canvas);
 bool TFB_DrawCanvas_IsPaletted(tfb::Canvas canvas);
 void TFB_DrawCanvas_Rescale_Nearest(tfb::Canvas src, tfb::Canvas dst,
-									int scale, HOT_SPOT* src_hs, GfxExtent* size, HOT_SPOT* dst_hs);
+									int scale, HotSpot* src_hs, GfxExtent* size, HotSpot* dst_hs);
 void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src, tfb::Canvas dst,
-									 int scale, HOT_SPOT* src_hs, GfxExtent* size, HOT_SPOT* dst_hs);
+									 int scale, HotSpot* src_hs, GfxExtent* size, HotSpot* dst_hs);
 void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src, tfb::Canvas mipmap,
-									  tfb::Canvas dst, int scale, HOT_SPOT* src_hs, HOT_SPOT* mm_hs,
-									  GfxExtent* size, HOT_SPOT* dst_hs);
-void TFB_DrawCanvas_GetScaledExtent(tfb::Canvas src_canvas, HOT_SPOT* src_hs,
-									tfb::Canvas src_mipmap, HOT_SPOT* mm_hs,
-									int scale, tfb::ScaleMode type, GfxExtent* size, HOT_SPOT* hs);
+									  tfb::Canvas dst, int scale, HotSpot* src_hs, HotSpot* mm_hs,
+									  GfxExtent* size, HotSpot* dst_hs);
+void TFB_DrawCanvas_GetScaledExtent(tfb::Canvas src_canvas, HotSpot* src_hs,
+									tfb::Canvas src_mipmap, HotSpot* mm_hs,
+									int scale, tfb::ScaleMode type, GfxExtent* size, HotSpot* hs);
 void TFB_DrawCanvas_Rotate(tfb::Canvas src, tfb::Canvas dst, int angle,
 						   GfxExtent size);
 void TFB_DrawCanvas_GetRotatedExtent(tfb::Canvas src, int angle, GfxExtent* size);

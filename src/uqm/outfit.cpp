@@ -57,7 +57,7 @@ enum class OutfitMenuItem
 consteval bool isArithmeticEnum(OutfitMenuItem) { return true; }
 
 GfxPoint lander_pos[MaxLanders];
-FONT ModuleFont;
+FontRef ModuleFont;
 
 static void InitializeDOSLanderPos(void)
 { // Initialize the DOS lander icon positions
@@ -214,7 +214,7 @@ static void DrawModuleDisplay(ModulesMenuState* modState)
 
 static void DrawModules(ModulesMenuState* modState, uint16_t NewItem)
 {
-	GFXCONTEXT OldContext = SetContext(StatusContext);
+	GfxContextRef OldContext = SetContext(StatusContext);
 
 	BatchGraphics();
 
@@ -332,7 +332,7 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 	GfxRect r;
 	GfxStamp s;
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	GetContextClipRect(&r);
 	s.origin.x = RadarX() - r.corner.x;
 	s.origin.y = RadarY() - r.corner.y;
@@ -448,7 +448,7 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 
 static void RedistributeFuel(void)
 {
-	const GFXCONTEXT OldContext = SetContext(SpaceContext);
+	const GfxContextRef OldContext = SetContext(SpaceContext);
 
 	BatchGraphics();
 
@@ -471,7 +471,7 @@ static void DrawEscapePodText(GfxRect rect)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(SquareFont)};
+	FontRef OldFont {SetContextFont(SquareFont)};
 	OldColor = SetContextForeGroundColor(BlackColor);
 
 	block = rect;
@@ -532,7 +532,7 @@ static void DrawNoLandersText(GfxRect rect)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(SquareFont)};
+	FontRef OldFont {SetContextFont(SquareFont)};
 	OldColor = SetContextForeGroundColor(BlackColor);
 
 	block = rect;
@@ -1229,7 +1229,7 @@ static void ChangeFuelQuantity(void)
 
 	{ // Make fuel gauge flash.
 		GfxRect r;
-		GFXCONTEXT oldContext = SetContext(StatusContext);
+		GfxContextRef oldContext = SetContext(StatusContext);
 		GetGaugeRect(&r, false);
 		SetFlashRect(&r, false);
 		SetContext(oldContext);

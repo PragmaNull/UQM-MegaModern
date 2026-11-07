@@ -21,15 +21,15 @@
 #include "core/log/log.h"
 
 
-// Reads a piece of screen into a passed FRAME or a newly created one
-DRAWABLE LoadDisplayPixmap(const GfxRect* area, FRAME frame)
+// Reads a piece of screen into a passed FrameRef or a newly created one
+DrawableRef LoadDisplayPixmap(const GfxRect* area, FrameRef frame)
 {
-	// TODO: This should just return a FRAME instead of DRAWABLE
-	DRAWABLE buffer = GetFrameParentDrawable(frame);
+	// TODO: This should just return a FrameRef instead of DrawableRef
+	DrawableRef buffer = GetFrameParentDrawable(frame);
 	uint16_t index {};
 
 	if (!buffer)
-	{ // asked to create a new DRAWABLE instead
+	{ // asked to create a new DrawableRef instead
 		buffer = CreateDrawable(WantPixmap | MappedToDisplay,
 								area->extent.width, area->extent.height, 1);
 		if (!buffer)

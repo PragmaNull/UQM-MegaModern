@@ -55,7 +55,7 @@ struct SaveSummaryData
 	uint8_t res_factor;
 };
 
-extern ACTIVITY NextActivity;
+extern ActivityWord NextActivity;
 
 // Loads only the summary when summary_desc is not null.
 extern bool LoadGame(uint16_t which_game, SaveSummaryData* summary_desc);

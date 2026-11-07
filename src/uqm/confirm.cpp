@@ -44,8 +44,8 @@ bool WarpFromMenu = false;
 static void DrawConfirmationWindow(bool answer, bool confirm)
 {
 	const Color oldfg = SetContextForeGroundColor(ShadowboxDarkColor);
-	FONT oldfont = SetContextFont(StarConFont);
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = SetContextFont(StarConFont);
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxRect r;
 	GfxText t;
 
@@ -116,7 +116,7 @@ bool DoConfirmExit(void)
 
 		deltaT = GetTimeCounter();
 
-		GFXCONTEXT oldContext {SetContext(ScreenContext)};
+		GfxContextRef oldContext {SetContext(ScreenContext)};
 		GetContextClipRect(&oldRect);
 		SetContextClipRect(nullptr);
 
@@ -241,8 +241,8 @@ void DoPopupWindow(const char* msg)
 	GfxRect oldRect;
 	GfxRect windowRect;
 	PopupState state;
-	MENU_SOUND_FLAGS s0 {};
-	MENU_SOUND_FLAGS s1 {};
+	MenuSoundFlags s0 {};
+	MenuSoundFlags s1 {};
 
 	if (!bank)
 	{
@@ -263,7 +263,7 @@ void DoPopupWindow(const char* msg)
 
 	const bool FlashPaused {PauseFlash()};
 
-	GFXCONTEXT oldContext {SetContext(ScreenContext)};
+	GfxContextRef oldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&oldRect);
 	SetContextClipRect(nullptr);
 

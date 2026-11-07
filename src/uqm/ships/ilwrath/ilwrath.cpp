@@ -192,7 +192,7 @@ static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCo
 	}
 }
 
-static uint16_t initialize_flame(Element* ShipPtr, HELEMENT FlameArray[])
+static uint16_t initialize_flame(Element* ShipPtr, ElementHandle FlameArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -239,7 +239,7 @@ static void ilwrath_preprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	STATUS_FLAGS status_flags {StarShipPtr->cur_status_flags};
+	StatusFlags status_flags {StarShipPtr->cur_status_flags};
 	Primitive* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (GetPrimType(lpPrim) == PrimitiveType::StampFill)
 	{

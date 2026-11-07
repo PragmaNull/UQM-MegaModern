@@ -162,7 +162,7 @@ static void pump_up_preprocess(Element* ElementPtr)
 	}
 }
 
-static uint16_t initialize_pump_up(Element* ShipPtr, HELEMENT PumpUpArray[]);
+static uint16_t initialize_pump_up(Element* ShipPtr, ElementHandle PumpUpArray[]);
 
 static void pump_up_postprocess(Element* ElementPtr)
 {
@@ -172,7 +172,7 @@ static void pump_up_postprocess(Element* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hPumpUp {};
+		ElementHandle hPumpUp {};
 		Element* EPtr {};
 		Element* ShipPtr {};
 		Starship* StarShipPtr {};
@@ -291,7 +291,7 @@ static void pump_up_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 	const uint8_t old_thrust_wait {ElementPtr0->thrust_wait};
 	ElementPtr0->blast_offset = r.extent.width >> 1;
-	HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
+	ElementHandle hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 	ElementPtr0->thrust_wait = old_thrust_wait;
 
 	if (hBlastElement)
@@ -317,7 +317,7 @@ static void pump_up_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	}
 }
 
-static uint16_t initialize_pump_up(Element* ShipPtr, HELEMENT PumpUpArray[])
+static uint16_t initialize_pump_up(Element* ShipPtr, ElementHandle PumpUpArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -435,7 +435,7 @@ static void confuse_preprocess_april(Element* ElementPtr)
 				BattleSong(true);
 			}
 
-			HELEMENT hEffect {AllocElement()};
+			ElementHandle hEffect {AllocElement()};
 			if (hEffect)
 			{
 				LockElement(hEffect, &eptr);
@@ -498,7 +498,7 @@ static void confuse_preprocess(Element* ElementPtr)
 				 & ~(LeftFlag | RightFlag | SpecialFlag))
 				| ElementPtr->turn_wait;
 
-			HELEMENT hEffect {AllocElement()};
+			ElementHandle hEffect {AllocElement()};
 			if (hEffect)
 			{
 				LockElement(hEffect, &eptr);
@@ -528,8 +528,8 @@ static void confusion_collision(Element* ElementPtr0, GfxPoint* pPt0,
 {
 	if (ElementPtr1->state_flags & PlayerShip)
 	{
-		HELEMENT hConfusionElement {};
-		HELEMENT hNextElement {};
+		ElementHandle hConfusionElement {};
+		ElementHandle hNextElement {};
 		Element* ConfusionPtr {};
 		Starship* StarShipPtr {};
 
@@ -600,7 +600,7 @@ static void confusion_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static uint16_t initialize_confusion(Element* ShipPtr, HELEMENT ConfusionArray[])
+static uint16_t initialize_confusion(Element* ShipPtr, ElementHandle ConfusionArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc ConfusionBlock;
@@ -634,7 +634,7 @@ static uint16_t initialize_confusion(Element* ShipPtr, HELEMENT ConfusionArray[]
 	return (1);
 }
 
-static uint16_t initialize_test_pump_up(Element* ShipPtr, HELEMENT PumpUpArray[])
+static uint16_t initialize_test_pump_up(Element* ShipPtr, ElementHandle PumpUpArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -746,7 +746,7 @@ static void melnorme_postprocess(Element* ElementPtr)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
-		HELEMENT Confusion {};
+		ElementHandle Confusion {};
 
 		initialize_confusion(ElementPtr, &Confusion);
 		if (Confusion)

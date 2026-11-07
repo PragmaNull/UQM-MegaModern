@@ -248,7 +248,7 @@ static void SelectFileString(MeleeState* pMS, bool hilite)
 
 	viewI = pMS->load.cur - pMS->load.top;
 
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	SetContextFont(MicroFont);
 	BatchGraphics();
 
@@ -267,7 +267,7 @@ static void DrawFileStrings(MeleeState* pMS)
 	origin.x = FileStringOriginX();
 	origin.y = FileStringOriginY();
 
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	SetContextFont(MicroFont);
 	BatchGraphics();
 
@@ -315,7 +315,7 @@ static void flashSelectedTeam(MeleeState* pMS)
 		NextTime = Now + FlashRate;
 		hilite ^= 1;
 
-		GFXCONTEXT OldContext {SetContext(SpaceContext)};
+		GfxContextRef OldContext {SetContext(SpaceContext)};
 		SelectFileString(pMS, hilite);
 		SetContext(OldContext);
 	}
@@ -479,7 +479,7 @@ bool DoSaveTeam(MeleeState* pMS)
 	fmt::format_to_sz_n(file, "{}.mle",
 						MeleeSetup_getTeamName(pMS->meleeSetup, pMS->side));
 
-	GFXCONTEXT OldContext {SetContext(ScreenContext)};
+	GfxContextRef OldContext {SetContext(ScreenContext)};
 	ConfirmSaveLoad(&MsgStamp);
 	// Show the "Saving . . ." message.
 

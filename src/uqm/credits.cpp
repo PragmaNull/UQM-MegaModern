@@ -54,20 +54,20 @@ static int CreditsRate;
 static bool OutTakesRunning;
 static bool CreditsRunning;
 static uqstl::vector<uqm::CreditsBlock> CreditsBlocks {};
-static FRAME CreditsBack;
+static FrameRef CreditsBack;
 
 // Context used for drawing to the screen
-static GFXCONTEXT DrawContext;
+static GfxContextRef DrawContext;
 // Context used for pre-rendering a credits frame
-static GFXCONTEXT LocalContext;
+static GfxContextRef LocalContext;
 // Pre-rendered frame, possibly with a cutout
-static FRAME CreditsFrame;
+static FrameRef CreditsFrame;
 // Size of the credits "window" (normally screen size)
 static GfxExtent CreditsExtent;
 
 struct CreditTextFrame
 {
-	FRAME frame;
+	FrameRef frame;
 	int strIndex;
 };
 
@@ -90,7 +90,7 @@ struct FontSizeDef
 {
 	int size;
 	RESOURCE res;
-	FONT font;
+	FontRef font;
 };
 
 static FontSizeDef CreditsFont[] =
@@ -102,12 +102,12 @@ static FontSizeDef CreditsFont[] =
 };
 
 
-static FRAME Credits_MakeTransFrame(int w, int h, Color TransColor)
+static FrameRef Credits_MakeTransFrame(int w, int h, Color TransColor)
 {
-	FRAME f {CaptureDrawable(CreateDrawable(WantPixmap, w, h, 1))};
+	FrameRef f {CaptureDrawable(CreateDrawable(WantPixmap, w, h, 1))};
 	SetFrameTransparentColor(f, TransColor);
 
-	FRAME OldFrame {SetContextFGFrame(f)};
+	FrameRef OldFrame {SetContextFGFrame(f)};
 	SetContextBackGroundColor(TransColor);
 	ClearDrawable();
 	SetContextFGFrame(OldFrame);
@@ -115,11 +115,11 @@ static FRAME Credits_MakeTransFrame(int w, int h, Color TransColor)
 	return f;
 }
 
-static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
-									 Color BackColor, Color ForeColor)
+static FrameRef Credits_RenderTextFrame(GfxContextRef TempContext, int* istr, int dir,
+										Color BackColor, Color ForeColor)
 {
-	FRAME f {};
-	FRAME OldFrame {};
+	FrameRef f {};
+	FrameRef OldFrame {};
 	GfxText TextLines[uqm::c_creditsMaxLines];
 	int i {};
 	const FontSizeDef* fdef {};
@@ -193,7 +193,7 @@ static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	t.pStr = " ";
 	t.CharCount = 1;
 
-	GFXCONTEXT OldContext {SetContext(TempContext)};
+	GfxContextRef OldContext {SetContext(TempContext)};
 
 	// get font dimensions
 	SetContextFont(fdef->font);
@@ -256,11 +256,11 @@ static inline int frameIndex(int index)
 	return (index + MaxCreditFrames) % MaxCreditFrames;
 }
 
-static void RenderCreditsScreen(GFXCONTEXT targetContext)
+static void RenderCreditsScreen(GfxContextRef targetContext)
 {
 	GfxStamp s;
 
-	GFXCONTEXT oldContext {SetContext(targetContext)};
+	GfxContextRef oldContext {SetContext(targetContext)};
 	// draw background
 	s.origin.x = 0;
 	s.origin.y = 0;
@@ -297,12 +297,12 @@ static void InitCredits(void)
 	LocalContext = CreateContext("Credits.LocalContext");
 	DrawContext = CreateContext("Credits.DrawContext");
 
-	FRAME targetFrame {GetContextFGFrame()};
+	FrameRef targetFrame {GetContextFGFrame()};
 	GetContextClipRect(&ctxRect);
 	CreditsExtent = ctxRect.extent;
 
 	// prep our local context
-	GFXCONTEXT oldContext {SetContext(LocalContext)};
+	GfxContextRef oldContext {SetContext(LocalContext)};
 	// Local screen copy. We draw everything to this frame, then cut
 	// the Outtakes rect out and draw this frame to the screen.
 	CreditsFrame = Credits_MakeTransFrame(CreditsExtent.width,
@@ -409,7 +409,7 @@ static void processCreditsFrame(void)
 		s.origin.y = 0;
 		s.frame = CreditsFrame;
 
-		GFXCONTEXT OldContext {SetContext(DrawContext)};
+		GfxContextRef OldContext {SetContext(DrawContext)};
 		DrawStamp(&s);
 		SetContext(OldContext);
 		FlushGraphics();
@@ -700,7 +700,7 @@ void Credits(bool WithOuttakes)
 	GfxRect screenRect;
 	GfxStamp s;
 
-	MUSIC_REF hMusic {LoadMusicInstance(CreditsMusicRes)};
+	MusicRef hMusic {LoadMusicInstance(CreditsMusicRes)};
 
 	SetContext(ScreenContext);
 	SetContextClipRect(nullptr);

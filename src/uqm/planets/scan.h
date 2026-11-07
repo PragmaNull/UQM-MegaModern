@@ -65,7 +65,7 @@ extern bool callPickupForScanType(SolarSystemState* solarSys,
 								  SystemPlanet* world, uint16_t node, ScanType scanType);
 
 extern void RedrawSurfaceScan(const GfxPoint* newLoc);
-extern GFXCONTEXT GetScanContext(bool* owner);
+extern GfxContextRef GetScanContext(bool* owner);
 extern void DestroyScanContext(void);
 
 bool isNodeRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t nodeNr);

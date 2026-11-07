@@ -57,7 +57,7 @@ void animation_preprocess(Element* ElementPtr)
 }
 
 
-STATUS_FLAGS inertial_thrust(Element* ElementPtr)
+StatusFlags inertial_thrust(Element* ElementPtr)
 {
 	const auto MaxAllowedSpeed = [&] {
 		return WorldToVelocity(DisplayToWorld(ResScale(18)));
@@ -181,7 +181,7 @@ void DrawHDMeleeBorder(Starship* StarShipPtr)
 
 void ship_preprocess(Element* ElementPtr)
 {
-	STATUS_FLAGS cur_status_flags {};
+	StatusFlags cur_status_flags {};
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -204,7 +204,7 @@ void ship_preprocess(Element* ElementPtr)
 		{ // Sa-Matra
 			GfxStamp s;
 
-			GFXCONTEXT OldContext {SetContext(StatusContext)};
+			GfxContextRef OldContext {SetContext(StatusContext)};
 			s.origin.x = s.origin.y = 0;
 			s.frame = RDPtr->ship_data.captain_control.background;
 			DrawStamp(&s);
@@ -215,7 +215,7 @@ void ship_preprocess(Element* ElementPtr)
 		else if (uqm::activityKind(uqm::currentActivity()) <= ActivityKind::InEncounter)
 		{
 			InitShipStatus(&RDPtr->ship_info, StarShipPtr, nullptr, false);
-			GFXCONTEXT OldContext {SetContext(StatusContext)};
+			GfxContextRef OldContext {SetContext(StatusContext)};
 			DrawCaptainsWindow(StarShipPtr);
 
 			if (IsHd())
@@ -239,7 +239,7 @@ void ship_preprocess(Element* ElementPtr)
 			else
 			{
 				ElementPtr->hTarget = 0;
-				if (!PLRPlaying((MUSIC_REF)~0) && OpponentAlive(StarShipPtr))
+				if (!PLRPlaying((MusicRef)~0) && OpponentAlive(StarShipPtr))
 				{
 					BattleSong(true);
 				}
@@ -309,7 +309,7 @@ void ship_preprocess(Element* ElementPtr)
 	}
 	else if (cur_status_flags & ThrustFlag)
 	{
-		const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
+		const StatusFlags thrust_status {inertial_thrust(ElementPtr)};
 		StarShipPtr->cur_status_flags &=
 			~(ShipAtMaxSpeed
 			  | ShipBeyondMaxSpeed
@@ -352,7 +352,7 @@ void ship_postprocess(Element* ElementPtr)
 			 && DeltaEnergy(ElementPtr,
 							-RDPtr->characteristics.weapon_energy_cost))
 	{
-		HELEMENT Weapon[6];
+		ElementHandle Weapon[6];
 
 		uint16_t num_weapons {(*RDPtr->init_weapon_func)(ElementPtr, Weapon)};
 
@@ -362,10 +362,10 @@ void ship_postprocess(Element* ElementPtr)
 			bool played_sfx = false;
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
-			const HELEMENT* WeaponPtr {&Weapon[0]};
+			const ElementHandle* WeaponPtr {&Weapon[0]};
 			do
 			{
-				HELEMENT w {*WeaponPtr++};
+				ElementHandle w {*WeaponPtr++};
 				if (w)
 				{
 					Element* EPtr {};
@@ -441,7 +441,7 @@ void collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 static bool spawn_ship(Starship* StarShipPtr)
 {
-	HELEMENT hShip {};
+	ElementHandle hShip {};
 
 	RaceDesc* RDPtr {load_ship(StarShipPtr->SpeciesID, true)};
 	if (!RDPtr)
@@ -591,7 +591,7 @@ static bool spawn_ship(Starship* StarShipPtr)
 // Select a new ship and spawn it.
 bool GetNextStarShip(Starship* LastStarShipPtr, uint16_t which_side)
 {
-	HSTARSHIP hBattleShip {GetEncounterStarShip(LastStarShipPtr, which_side)};
+	StarshipHandle hBattleShip {GetEncounterStarShip(LastStarShipPtr, which_side)};
 	if (hBattleShip)
 	{
 		Starship* StarShipPtr {LockStarShip(&race_q[which_side], hBattleShip)};
@@ -628,7 +628,7 @@ bool GetInitialStarShips(void)
 {
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee)
 	{
-		HSTARSHIP ships[NumPlayers];
+		StarshipHandle ships[NumPlayers];
 
 		if (!GetInitialMeleeStarShips(ships))
 		{

@@ -39,11 +39,11 @@ void spawn_planet(void)
 {
 	GfxPoint pt = MAKE_POINT(0, 0);
 
-	HELEMENT hPlanetElement {AllocElement()};
+	ElementHandle hPlanetElement {AllocElement()};
 	if (hPlanetElement)
 	{
 		Element* PlanetElementPtr {};
-		extern FRAME planet[];
+		extern FrameRef planet[];
 
 		LockElement(hPlanetElement, &PlanetElementPtr);
 		PlanetElementPtr->playerNr = NeutralPlayerNum;
@@ -103,11 +103,11 @@ void spawn_planet(void)
 	}
 }
 
-extern FRAME asteroid[];
+extern FrameRef asteroid[];
 
 static void spawn_rubble(Element* AsteroidElementPtr)
 {
-	HELEMENT hRubbleElement {AllocElement()};
+	ElementHandle hRubbleElement {AllocElement()};
 	if (hRubbleElement)
 	{
 		Element* RubbleElementPtr {};
@@ -174,7 +174,7 @@ static void asteroid_preprocess(Element* ElementPtr)
 
 void spawn_asteroid(Element* ElementPtr)
 {
-	HELEMENT hAsteroidElement {};
+	ElementHandle hAsteroidElement {};
 
 	if ((hAsteroidElement = AllocElement()) == 0)
 	{
@@ -287,7 +287,7 @@ static constexpr auto CrewColorLowIntensity {BuildColor(MakeRgb15(0x00, 0x14, 0x
 static constexpr auto CrewColorHighIntensity {BuildColor(MakeRgb15(0x0A, 0x1E, 0x0A), 0x0A)};
 void crew_preprocess(Element* ElementPtr)
 {
-	HELEMENT hTarget {};
+	ElementHandle hTarget {};
 
 	// Switch from dark to light or vice versa:
 	const Color oldColor = GetPrimColor(&DisplayArray[ElementPtr->PrimIndex]);
@@ -384,7 +384,7 @@ void AbandonShip(Element* ShipPtr, Element* TargetPtr,
 	uint16_t direction {};
 	GfxRect r;
 	Starship* StarShipPtr {};
-	HELEMENT hCrew {};
+	ElementHandle hCrew {};
 	IntersectInfo ShipIntersect;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);

@@ -34,7 +34,6 @@ enum class PrimitiveType : uint8_t
 	Count
 };
 consteval bool isArithmeticEnum(PrimitiveType) { return true; }
-using GRAPHICS_PRIM = PrimitiveType;
 
 union PRIM_DESC
 {
@@ -45,12 +44,12 @@ union PRIM_DESC
 	GfxRect Rect;
 };
 
-typedef uint32_t PRIM_LINKS;
+using PrimLinks = uint32_t;
 
 struct Primitive
 {
-	PRIM_LINKS Links {};
-	GRAPHICS_PRIM Type {};
+	PrimLinks Links {};
+	PrimitiveType Type {};
 	Color color {};
 	PRIM_DESC Object {};
 	uint8_t flags {};

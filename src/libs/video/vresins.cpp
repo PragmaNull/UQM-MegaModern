@@ -26,7 +26,7 @@
 
 static bool FreeLegacyVideoData(void* data)
 {
-	delete static_cast<LEGACY_VIDEO>(data);
+	delete static_cast<LegacyVideo>(data);
 	return data != nullptr;
 }
 
@@ -56,7 +56,7 @@ bool InstallVideoResType(void)
 	return true;
 }
 
-LEGACY_VIDEO LoadLegacyVideoInstance(RESOURCE res)
+LegacyVideo LoadLegacyVideoInstance(RESOURCE res)
 {
 	void* data {res_GetResource(res)};
 	if (data)
@@ -64,10 +64,10 @@ LEGACY_VIDEO LoadLegacyVideoInstance(RESOURCE res)
 		res_DetachResource(res);
 	}
 
-	return (LEGACY_VIDEO)data;
+	return (LegacyVideo)data;
 }
 
-bool DestroyLegacyVideo(LEGACY_VIDEO vid)
+bool DestroyLegacyVideo(LegacyVideo vid)
 {
 	return FreeLegacyVideoData(vid);
 }

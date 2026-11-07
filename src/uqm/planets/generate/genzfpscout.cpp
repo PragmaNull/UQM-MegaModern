@@ -75,7 +75,7 @@ static bool GenerateZoqFotPikScout_reinitNpcs(SolarSystemState* solarSys)
 		return true; // nothing to check
 	}
 
-	HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
+	IpGroupHandle hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 	if (!hGroup)
 	{
 		return true; // still nothing to check

@@ -41,7 +41,7 @@ bool Netplay_NotifyAll_inputDelay(size_t delay);
 void Netplay_NotifyAll_checksum(BattleFrameCounter frameNr,
 								Checksum checksum);
 #endif /* NETPLAY_CHECKSUM */
-void Netplay_NotifyAll_battleInput(BATTLE_INPUT_STATE input);
+void Netplay_NotifyAll_battleInput(BattleInputState input);
 
 
 #if 0 //defined(__cplusplus)

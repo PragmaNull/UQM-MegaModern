@@ -98,9 +98,9 @@ void doInstantMove(void)
 // playerNr should be 0 or 1
 Starship* findPlayerShip(int16_t playerNr)
 {
-	HELEMENT hNextElement {};
+	ElementHandle hNextElement {};
 
-	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
+	for (ElementHandle hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
 		Element* ElementPtr {};
 
@@ -152,7 +152,7 @@ void resetEnergyBattle(void)
 
 	delta = StarShipPtr->RaceDescPtr->ship_info.max_energy - StarShipPtr->RaceDescPtr->ship_info.energy_level;
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	DeltaEnergy((Element*)StarShipPtr->hShip, delta);
 	SetContext(OldContext);
 }
@@ -162,7 +162,7 @@ static void scuttleOpponent(void)
 {
 	const Starship* StarShipPtr {};
 	uint16_t delta {};
-	GFXCONTEXT OldContext {};
+	GfxContextRef OldContext {};
 
 	if (!(uqm::currentActivity() & ActivityFlag::InBattle) || inHQSpace())
 	{
@@ -661,7 +661,7 @@ void giveDevices(void)
 
 void clearEscorts(void)
 {
-	HSHIPFRAG hStarShip, hNextShip;
+	ShipFragmentHandle hStarShip, hNextShip;
 
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q);
 		 hStarShip; hStarShip = hNextShip)
@@ -684,10 +684,10 @@ void clearEscorts(void)
 #if 0
 // Not needed anymore, but could be useful in the future.
 
-// Find the HELEMENT belonging to the Flagship.
-static HELEMENT findFlagshipElement (void)
+// Find the ElementHandle belonging to the Flagship.
+static ElementHandle findFlagshipElement (void)
 {
-	HELEMENT hElement, hNextElement;
+	ElementHandle hElement, hNextElement;
 	Element *ElementPtr;
 
 	// Find the ship Element.
@@ -725,7 +725,7 @@ void showSpheres(bool Animated)
 	}
 	else
 	{
-		HFLEETINFO hStarShip, hNextShip;
+		FleetInfoHandle hStarShip, hNextShip;
 
 		for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 			 hStarShip != nullptr; hStarShip = hNextShip)
@@ -747,11 +747,11 @@ void showSpheres(bool Animated)
 
 	if (IsExtended())
 	{
-		HFLEETINFO hSyreen = GetStarShipFromIndex(
+		FleetInfoHandle hSyreen = GetStarShipFromIndex(
 			&uqm::gameState().game().avail_race_q, *RaceId::Syreen);
 		FleetInfo* SyreenPtr = LockFleetInfo(
 			&uqm::gameState().game().avail_race_q, hSyreen);
-		HFLEETINFO hChmmr = GetStarShipFromIndex(
+		FleetInfoHandle hChmmr = GetStarShipFromIndex(
 			&uqm::gameState().game().avail_race_q, *RaceId::Chmmr);
 		FleetInfo* ChmmrPtr = LockFleetInfo(
 			&uqm::gameState().game().avail_race_q, hChmmr);
@@ -773,7 +773,7 @@ void showSpheres(bool Animated)
 
 void activateAllShips(void)
 {
-	HFLEETINFO hStarShip, hNextShip;
+	FleetInfoHandle hStarShip, hNextShip;
 
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 		 hStarShip != nullptr; hStarShip = hNextShip)
@@ -839,7 +839,7 @@ void forAllMoons(StarDesc* star, SolarSystemState* system, SystemPlanet* planet,
 // TODO: LockGameClock may be removed
 void UniverseRecurse(UniverseRecurseArg* universeRecurseArg)
 {
-	ACTIVITY savedActivity;
+	ActivityWord savedActivity;
 
 	if (universeRecurseArg->systemFuncPre == nullptr
 		&& universeRecurseArg->systemFuncPost == nullptr
@@ -1803,7 +1803,7 @@ void resetCrewBattle(void)
 {
 	Starship* StarShipPtr;
 	uint16_t delta;
-	GFXCONTEXT OldContext;
+	GfxContextRef OldContext;
 
 	if (!(uqm::currentActivity() & ActivityFlag::InBattle) || (inHQSpace()))
 	{
@@ -1941,13 +1941,13 @@ static Color hsvaToRgba(double hue, double sat, double val, uint8_t alpha)
 	return BuildColorRgba(0, 0, 0, alpha);
 }
 
-// Returns true iff this context has a visible FRAME.
-static bool isContextVisible(GFXCONTEXT context)
+// Returns true iff this context has a visible FrameRef.
+static bool isContextVisible(GfxContextRef context)
 {
-	FRAME contextFrame;
+	FrameRef contextFrame;
 
 	// Save the original context.
-	GFXCONTEXT oldContext = SetContext(context);
+	GfxContextRef oldContext = SetContext(context);
 
 	// Get the frame of the specified context.
 	contextFrame = GetContextFGFrame();
@@ -1961,7 +1961,7 @@ static bool isContextVisible(GFXCONTEXT context)
 static size_t countVisibleContexts(void)
 {
 	size_t contextCount;
-	GFXCONTEXT context;
+	GfxContextRef context;
 
 	contextCount = 0;
 	for (context = GetFirstContext(); context != nullptr;
@@ -1978,11 +1978,11 @@ static size_t countVisibleContexts(void)
 	return contextCount;
 }
 
-static void drawContext(GFXCONTEXT context, double hue /* no pun intended */)
+static void drawContext(GfxContextRef context, double hue /* no pun intended */)
 {
-	//FRAME drawFrame; unused
-	GFXCONTEXT oldContext;
-	FONT oldFont;
+	//FrameRef drawFrame; unused
+	GfxContextRef oldContext;
+	FontRef oldFont;
 	DrawMode oldMode;
 	Color oldFgCol;
 	Color rectCol;
@@ -2057,10 +2057,10 @@ static void drawContext(GFXCONTEXT context, double hue /* no pun intended */)
 	(void)SetContextFont(oldFont);
 }
 
-static void describeContext(FILE* out, const GFXCONTEXT context)
+static void describeContext(FILE* out, const GfxContextRef context)
 {
 	GfxRect rect;
-	GFXCONTEXT oldContext = SetContext(context);
+	GfxContextRef oldContext = SetContext(context);
 
 	GetContextClipRect(&rect);
 	fmt::print(out, "Context '{}':\n"
@@ -2098,28 +2098,28 @@ waitForKey(struct WaitState* self)
 }
 
 // Maybe move to elsewhere, where it can be reused?
-static FRAME
+static FrameRef
 getScreen(void)
 {
-	GFXCONTEXT oldContext = SetContext(ScreenContext);
-	FRAME savedFrame;
+	GfxContextRef oldContext = SetContext(ScreenContext);
+	FrameRef savedFrame;
 	GfxRect screenRect;
 
 	screenRect.corner.x = 0;
 	screenRect.corner.y = 0;
 	screenRect.extent.width = CanvasWidth;
 	screenRect.extent.height = CanvasHeight;
-	savedFrame = CaptureDrawable(LoadDisplayPixmap(&screenRect, (FRAME)0));
+	savedFrame = CaptureDrawable(LoadDisplayPixmap(&screenRect, (FrameRef)0));
 
 	(void)SetContext(oldContext);
 	return savedFrame;
 }
 
-static void putScreen(FRAME savedFrame)
+static void putScreen(FrameRef savedFrame)
 {
 	GfxStamp stamp;
 
-	GFXCONTEXT oldContext = SetContext(ScreenContext);
+	GfxContextRef oldContext = SetContext(ScreenContext);
 
 	stamp.origin.x = 0;
 	stamp.origin.y = 0;
@@ -2136,15 +2136,15 @@ void debugContexts(void)
 	static uqstl::atomic<bool> inDebugContexts {false};
 	// Prevent this function from being called from within itself.
 
-	GFXCONTEXT orgContext;
-	GFXCONTEXT debugDrawContext;
+	GfxContextRef orgContext;
+	GfxContextRef debugDrawContext;
 	// We're going to use this context to draw in.
-	FRAME debugDrawFrame;
+	FrameRef debugDrawFrame;
 	double hueIncrement;
 	size_t visibleContextI;
-	GFXCONTEXT context;
+	GfxContextRef context;
 	size_t contextCount;
-	FRAME savedScreen;
+	FrameRef savedScreen;
 
 	// Prevent this function from being called from within itself.
 	if (inDebugContexts.exchange(true))

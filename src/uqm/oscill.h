@@ -30,14 +30,14 @@ extern "C" {
 extern bool sliderDisabled;
 extern bool oscillDisabled;
 
-extern void InitOscilloscope(FRAME scopeBg);
+extern void InitOscilloscope(FrameRef scopeBg);
 extern void DrawOscilloscope(void);
 extern void UninitOscilloscope(void);
 extern void FlattenOscilloscope(void);
 
-extern void InitSlider(int x, int y, int width, FRAME sliderFrame,
-					   FRAME buttonFrame);
-extern void SetSliderImage(FRAME f);
+extern void InitSlider(int x, int y, int width, FrameRef sliderFrame,
+					   FrameRef buttonFrame);
+extern void SetSliderImage(FrameRef f);
 void DrawSlider(void);
 
 #if 0 //defined(__cplusplus)

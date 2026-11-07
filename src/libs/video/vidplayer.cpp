@@ -72,7 +72,7 @@ static inline TimePeriod msecToTimeCount(int32_t msec)
 
 // audio-synced video playback frame function
 // the frame rate and timing is dictated by the audio
-static bool processAudioSyncedFrame(VIDEO_REF vid)
+static bool processAudioSyncedFrame(VideoRef vid)
 {
 	constexpr auto MaxFrameLag {8};
 	constexpr auto LagFraction {6};
@@ -141,7 +141,7 @@ static bool processAudioSyncedFrame(VIDEO_REF vid)
 
 	// draw the frame
 	// We have the cliprect precalculated and don't need the rest
-	GFXCONTEXT oldContext {SetContext(nullptr)};
+	GfxContextRef oldContext {SetContext(nullptr)};
 	TFB_DrawScreen_Image(vid->frame,
 						 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, tfb::ScaleMode::None,
 						 nullptr, DrawReplaceMode, ScreenBuffer::Main);
@@ -166,7 +166,7 @@ static bool processAudioSyncedFrame(VIDEO_REF vid)
 
 // audio-independent video playback frame function
 // the frame rate and timing is dictated by the video decoder
-static bool processMuteFrame(VIDEO_REF vid)
+static bool processMuteFrame(VideoRef vid)
 {
 	int ret {};
 	const TimeCount Now = GetTimeCounter();
@@ -190,7 +190,7 @@ static bool processMuteFrame(VIDEO_REF vid)
 		vid->cur_frame = vid->decoder->cur_frame;
 
 		// We have the cliprect precalculated and don't need the rest
-		GFXCONTEXT oldContext {SetContext(nullptr)};
+		GfxContextRef oldContext {SetContext(nullptr)};
 		TFB_DrawScreen_Image(vid->frame,
 							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, tfb::ScaleMode::None,
 							 nullptr, DrawReplaceMode, ScreenBuffer::Main);
@@ -212,7 +212,7 @@ static bool processMuteFrame(VIDEO_REF vid)
 	return vid->playing;
 }
 
-bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
+bool TFB_PlayVideo(VideoRef vid, uint32_t x, uint32_t y)
 {
 	GfxRect scrn_r;
 	GfxRect clip_r = {
@@ -319,7 +319,7 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 	return true;
 }
 
-void TFB_StopVideo(VIDEO_REF vid)
+void TFB_StopVideo(VideoRef vid)
 {
 	if (!vid)
 	{
@@ -345,7 +345,7 @@ void TFB_StopVideo(VIDEO_REF vid)
 	}
 }
 
-bool TFB_VideoPlaying(VIDEO_REF vid)
+bool TFB_VideoPlaying(VideoRef vid)
 {
 	if (!vid)
 	{
@@ -355,7 +355,7 @@ bool TFB_VideoPlaying(VIDEO_REF vid)
 	return vid->playing;
 }
 
-bool TFB_ProcessVideoFrame(VIDEO_REF vid)
+bool TFB_ProcessVideoFrame(VideoRef vid)
 {
 	if (!vid)
 	{
@@ -372,7 +372,7 @@ bool TFB_ProcessVideoFrame(VIDEO_REF vid)
 	}
 }
 
-uint32_t TFB_GetVideoPosition(VIDEO_REF vid)
+uint32_t TFB_GetVideoPosition(VideoRef vid)
 {
 	uint32_t pos {};
 
@@ -389,7 +389,7 @@ uint32_t TFB_GetVideoPosition(VIDEO_REF vid)
 	return pos;
 }
 
-bool TFB_SeekVideo(VIDEO_REF vid, uint32_t pos)
+bool TFB_SeekVideo(VideoRef vid, uint32_t pos)
 {
 	if (!TFB_VideoPlaying(vid))
 	{

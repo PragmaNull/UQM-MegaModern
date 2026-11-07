@@ -47,7 +47,7 @@ void Netplay_Notify_shipSelected(NetConnection* conn, FleetShipIndex index)
 	sendSelectShip(conn, index);
 }
 
-void Netplay_Notify_battleInput(NetConnection* conn, BATTLE_INPUT_STATE input)
+void Netplay_Notify_battleInput(NetConnection* conn, BattleInputState input)
 {
 	assert(NetConnection_getState(conn) == NetState::InBattle || NetConnection_getState(conn) == NetState::EndingBattle || NetConnection_getState(conn) == NetState::EndingBattle2);
 

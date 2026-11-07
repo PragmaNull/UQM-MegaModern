@@ -136,9 +136,9 @@ void SetBattlePlanet(void)
 void BuildBattle(uint16_t which_player)
 {
 	const Queue* pQueue {};
-	HSHIPFRAG hStarShip {};
-	HSHIPFRAG hNextShip {};
-	HSTARSHIP hBuiltShip {};
+	ShipFragmentHandle hStarShip {};
+	ShipFragmentHandle hNextShip {};
+	StarshipHandle hBuiltShip {};
 	Starship* BuiltShipPtr {};
 
 	EncounterRace = -1;
@@ -266,7 +266,7 @@ void BuildBattle(uint16_t which_player)
 bool FleetIsInfinite(uint16_t playerNr)
 {
 	const Queue* pQueue {GetShipFragQueueForPlayer(playerNr)};
-	HSHIPFRAG hShipFrag {GetHeadLink(pQueue)};
+	ShipFragmentHandle hShipFrag {GetHeadLink(pQueue)};
 	if (!hShipFrag)
 	{ // Ship queue is empty in SuperMelee or for RPG player w/o escorts
 		return false;
@@ -281,11 +281,11 @@ bool FleetIsInfinite(uint16_t playerNr)
 
 void UpdateShipFragCrew(Starship* StarShipPtr)
 {
-	HSHIPFRAG hShipFrag {};
-	HSHIPFRAG hNextFrag {};
+	ShipFragmentHandle hShipFrag {};
+	ShipFragmentHandle hNextFrag {};
 	ShipFragment* frag {};
-	HSTARSHIP hStarShip {};
-	HSTARSHIP hNextShip {};
+	StarshipHandle hStarShip {};
+	StarshipHandle hNextShip {};
 	const Starship* ship {};
 
 	const Queue* frag_q {GetShipFragQueueForPlayer(StarShipPtr->playerNr)};
@@ -293,7 +293,7 @@ void UpdateShipFragCrew(Starship* StarShipPtr)
 
 	// Find a ShipFragment that corresponds to the given Starship
 	// The ships and fragments are in the same order in two queues
-	// XXX: It would probably be simpler to keep HSHIPFRAG in Starship struct
+	// XXX: It would probably be simpler to keep ShipFragmentHandle in Starship struct
 	for (hShipFrag = GetHeadLink(frag_q), hStarShip = GetHeadLink(ship_q);
 		 hShipFrag != 0 && hStarShip != 0;
 		 hShipFrag = hNextFrag, hStarShip = hNextShip)
@@ -331,15 +331,15 @@ uint16_t InitEncounter(void)
 	uint16_t i {};
 	GfxStamp s;
 	GfxText t;
-	extern FRAME planet[];
+	extern FrameRef planet[];
 
 
 	SetContext(SpaceContext);
 	SetContextFont(MicroFont);
 
-	MUSIC_REF MR {LoadMusicInstance(RedalertMusicRes)};
+	MusicRef MR {LoadMusicInstance(RedalertMusicRes)};
 	PlayMusic(MR, false, 1);
-	FRAME SegueFrame {GetStarBackGround(true)};
+	FrameRef SegueFrame {GetStarBackGround(true)};
 	WaitForSoundEnd(TfbsoundWaitAll);
 	StopMusic();
 	DestroyMusic(MR);
@@ -399,8 +399,8 @@ uint16_t InitEncounter(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InLastBattle)
 	{
-		HSHIPFRAG hStarShip {};
-		HSHIPFRAG hNextShip {};
+		ShipFragmentHandle hStarShip {};
+		ShipFragmentHandle hNextShip {};
 		const GfxPoint display_pt[] =
 			{
 				{10,	 51 },
@@ -641,7 +641,7 @@ uint16_t UninitEncounter(void)
 						   0 :
 						   1;
 
-		HSHIPFRAG hStarShip {GetHeadLink(&uqm::gameState().game().npc_built_ship_q)};
+		ShipFragmentHandle hStarShip {GetHeadLink(&uqm::gameState().game().npc_built_ship_q)};
 		FragPtr = LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 		EncounterRace = FragPtr->race_id;
 		if (GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, EncounterRace) == 0)
@@ -663,7 +663,7 @@ uint16_t UninitEncounter(void)
 		for (i = 0; i < NumSides; ++i)
 		{
 			Queue* pQueue {};
-			HSHIPFRAG hNextShip {};
+			ShipFragmentHandle hNextShip {};
 
 			if (i == 0)
 			{
@@ -951,7 +951,7 @@ uint16_t UninitEncounter(void)
 		if (uqm::UQMOptions::read().slaughterMode && CheckSphereTracking((RaceId)EncounterRace)
 			&& ships_killed)
 		{
-			HFLEETINFO hEncounter {};
+			FleetInfoHandle hEncounter {};
 			FleetInfo* EncounterPtr {};
 			bool isBanned = false;
 			const uint8_t bannedShip[7] =
@@ -1014,7 +1014,7 @@ void EncounterBattle(void)
 
 	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 
-	const ACTIVITY OldActivity {uqm::currentActivity()};
+	const ActivityWord OldActivity {uqm::currentActivity()};
 	if (uqm::activityKind(OldActivity) == ActivityKind::InLastBattle)
 	{
 		uqm::currentActivity() = uqm::makeWord(ActivityKind::InLastBattle, 0);

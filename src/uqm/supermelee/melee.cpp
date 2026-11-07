@@ -150,10 +150,10 @@ static constexpr auto TeamPickTextColor {BuildColorRgb(0x32, 0x32, 0x9B)};
 
 
 // Loaded from melee/melebkgd.ani
-FRAME MeleeFrame;
+FrameRef MeleeFrame;
 MeleeState* pMeleeState;
-FONT MicroThinFont;
-FONT ButtonFont;
+FontRef MicroThinFont;
+FontRef ButtonFont;
 
 bool DoMelee(MeleeState* pMS);
 static bool DoEdit(MeleeState* pMS);
@@ -240,7 +240,7 @@ static void DrawControlText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(MicroThinFont)};
+	FontRef OldFont {SetContextFont(MicroThinFont)};
 
 	GetFrameRect(stamp.frame, &r);
 
@@ -276,7 +276,7 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 {
 	GfxRect r;
 	GfxText t;
-	FRAME OldFontEffect {};
+	FrameRef OldFontEffect {};
 	int16_t leading {};
 	char buf[256];
 
@@ -285,7 +285,7 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(LabelFont)};
+	FontRef OldFont {SetContextFont(LabelFont)};
 
 	GetFrameRect(stamp.frame, &r);
 
@@ -327,7 +327,7 @@ static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(ButtonFont)};
+	FontRef OldFont {SetContextFont(ButtonFont)};
 	OldColor = SetContextForeGroundColor(
 		HiLite ? ButtonLabelHilite : ButtonLabelColor);
 
@@ -408,7 +408,7 @@ void DrawShipPickerText(GfxStamp stamp)
 		}
 	}
 
-	FONT OldFont {SetContextFont(LabelFont)};
+	FontRef OldFont {SetContextFont(LabelFont)};
 
 	GetFrameRect(stamp.frame, &r);
 
@@ -475,7 +475,7 @@ static void DrawTeamPickerText(GfxStamp stamp)
 		}
 	}
 
-	FONT OldFont {SetContextFont(LabelFont)};
+	FontRef OldFont {SetContextFont(LabelFont)};
 	OldColor = SetContextForeGroundColor(TeamPickTextColor);
 
 	GetFrameRect(stamp.frame, &r);
@@ -800,7 +800,7 @@ void QuickRepair(uint16_t whichFrame, GfxRect* pRect)
 	r.corner.y = pRect->corner.y;
 	r.extent = pRect->extent;
 
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(&r);
 
@@ -824,7 +824,7 @@ void QuickRepair(uint16_t whichFrame, GfxRect* pRect)
 static void DrawSuperMeleeTitle(void)
 {
 	GfxText t;
-	FRAME OldFontEffect {};
+	FrameRef OldFontEffect {};
 	const char* buf = GameString(GameStringBase::MeleeString + 9);
 
 	if (strlen(buf) == 0)
@@ -832,7 +832,7 @@ static void DrawSuperMeleeTitle(void)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(LoadFont(MeleeTitleFontRes))};
+	FontRef OldFont {SetContextFont(LoadFont(MeleeTitleFontRes))};
 	OldFontEffect = SetContextFontEffect(
 		SetAbsFrameIndex(FontGradFrame, 7));
 
@@ -863,7 +863,7 @@ void RepairMeleeFrame(const GfxRect* pRect)
 		r.extent.height += ResScale(1);
 	}
 
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(&r);
 	// Offset the origin so that we draw the correct gfx in the cliprect
@@ -1153,7 +1153,7 @@ static void DrawMeleeStatusMessage(const char* message)
 {
 	GfxRect r;
 
-	GFXCONTEXT oldContext {SetContext(SpaceContext)};
+	GfxContextRef oldContext {SetContext(SpaceContext)};
 
 	r.corner.x = MeleeStatusXOffs();
 	r.corner.y = MeleeStatusYOffs();
@@ -1233,7 +1233,7 @@ static void UpdateMeleeStatusMessage(ssize_t player)
 #endif /* NETPLAY */
 
 // XXX: this function is called when the current selection is blinking off.
-static void Deselect(MELEE_OPTIONS opt)
+static void Deselect(MeleeMenuItem opt)
 {
 	switch (opt)
 	{
@@ -1309,7 +1309,7 @@ static void Deselect(MELEE_OPTIONS opt)
 }
 
 // XXX: this function is called when the current selection is blinking off.
-static void Select(MELEE_OPTIONS opt)
+static void Select(MeleeMenuItem opt)
 {
 	switch (opt)
 	{
@@ -1398,7 +1398,7 @@ void Melee_flashSelection(MeleeState* pMS)
 		NextTime = Now + ((pMS->MeleeOption != MeleeMenuItem::BuildPick || is3DO(uqm::UQMOptions::read().whichMenu)) ? FlashRate : BlinkRate);
 		select = !select;
 
-		GFXCONTEXT OldContext {SetContext(SpaceContext)};
+		GfxContextRef OldContext {SetContext(SpaceContext)};
 		if (select)
 		{
 			Select(pMS->MeleeOption);
@@ -1437,7 +1437,7 @@ void DrawMeleeShipStrings(MeleeState* pMS, MeleeShip NewStarShip)
 	GfxRect r;
 	GfxRect OldRect;
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	GetContextClipRect(&OldRect);
 	r = OldRect;
 	r.corner.x -= NsafeNumScl(3);
@@ -1485,7 +1485,7 @@ void DrawMeleeShipStrings(MeleeState* pMS, MeleeShip NewStarShip)
 	}
 	else
 	{
-		HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, *NewStarShip)};
+		MasterShipHandle hMasterShip {GetStarShipFromIndex(&master_q, *NewStarShip)};
 		MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 
 		InitShipStatus(&MasterPtr->ShipInfo, nullptr, nullptr, true);
@@ -2207,7 +2207,7 @@ static bool DoConnectingDialog(MeleeState* pMS)
 	if (!pMS->Initialized)
 	{
 		GfxRect r;
-		FONT oldfont {};
+		FontRef oldfont {};
 		Color oldcolor;
 		GfxText t;
 
@@ -2372,7 +2372,7 @@ static void nextControlType(uint16_t which_side)
 	DrawControls(which_side, true);
 }
 
-static MELEE_OPTIONS MeleeOptionDown(MELEE_OPTIONS current)
+static MeleeMenuItem MeleeOptionDown(MeleeMenuItem current)
 {
 	if (current == MeleeMenuItem::QuitBot)
 	{
@@ -2381,7 +2381,7 @@ static MELEE_OPTIONS MeleeOptionDown(MELEE_OPTIONS current)
 	return current + 1;
 }
 
-static MELEE_OPTIONS MeleeOptionUp(MELEE_OPTIONS current)
+static MeleeMenuItem MeleeOptionUp(MeleeMenuItem current)
 {
 	if (current == TopEntry)
 	{
@@ -2516,7 +2516,7 @@ bool DoMelee(MeleeState* pMS)
 	}
 	else
 	{
-		MELEE_OPTIONS NewMeleeOption {pMS->MeleeOption};
+		MeleeMenuItem NewMeleeOption {pMS->MeleeOption};
 		if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			pMS->LastInputTime = GetTimeCounter();

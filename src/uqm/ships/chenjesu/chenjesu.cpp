@@ -166,7 +166,7 @@ static void crystal_postprocess(Element* ElementPtr)
 		 MissileBlock.face +=
 		 (AngleToFacing(FullCircle) / NumFragments))
 	{
-		HELEMENT hFragment {initialize_missile(&MissileBlock)};
+		ElementHandle hFragment {initialize_missile(&MissileBlock)};
 		if (hFragment)
 		{
 			Element* FragPtr {};
@@ -220,7 +220,7 @@ static void animate(Element* ElementPtr)
 static void crystal_collision(Element* ElementPtr0, GfxPoint* pPt0,
 							  Element* ElementPtr1, GfxPoint* pPt1)
 {
-	HELEMENT hBlastElement {};
+	ElementHandle hBlastElement {};
 
 	hBlastElement =
 		weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
@@ -358,7 +358,7 @@ static void doggy_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 static void spawn_doggy(Element* ElementPtr)
 {
-	HELEMENT hDoggyElement {};
+	ElementHandle hDoggyElement {};
 
 	if ((hDoggyElement = AllocElement()) != 0)
 	{
@@ -452,13 +452,13 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 
 	if (lpEvalDesc->ObjectPtr)
 	{
-		HELEMENT h {};
-		HELEMENT hNext {};
+		ElementHandle h {};
+		ElementHandle hNext {};
 		Element* CrystalPtr {};
 
 		h = (StarShipPtr->old_status_flags & WeaponFlag) ?
 				GetTailElement() :
-				(HELEMENT)0;
+				(ElementHandle)0;
 		for (; h; h = hNext)
 		{
 			LockElement(h, &CrystalPtr);
@@ -551,7 +551,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 				if (IsHd())
 				{
 					Element Ship;
-					HELEMENT Weapon[6];
+					ElementHandle Weapon[6];
 					Element* EPtr {};
 					Starship* StarShipPtr2 {};
 
@@ -559,9 +559,9 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 					GetElementStarShip(&Ship, &StarShipPtr2);
 					const uint16_t num_weapons {(*StarShipPtr->RaceDescPtr->init_weapon_func)(ShipPtr, Weapon)};
 					(void)num_weapons;
-					HELEMENT* WeaponPtr {&Weapon[0]};
+					ElementHandle* WeaponPtr {&Weapon[0]};
 
-					HELEMENT w {*WeaponPtr};
+					ElementHandle w {*WeaponPtr};
 					if (w)
 					{
 						LockElement(w, &EPtr);
@@ -603,7 +603,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 	}
 }
 
-static uint16_t initialize_crystal(Element* ShipPtr, HELEMENT CrystalArray[])
+static uint16_t initialize_crystal(Element* ShipPtr, ElementHandle CrystalArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;

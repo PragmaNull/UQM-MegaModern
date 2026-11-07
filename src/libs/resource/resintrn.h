@@ -24,11 +24,11 @@
 #include "libs/reslib.h"
 #include "index.h"
 
-ResourceDesc* lookupResourceDesc(RESOURCE_INDEX idx, RESOURCE res);
+ResourceDesc* lookupResourceDesc(ResourceIndex idx, RESOURCE res);
 void loadResourceDesc(ResourceDesc* desc);
 
-void _set_current_index_header(RESOURCE_INDEX newResourceIndex);
-RESOURCE_INDEX _get_current_index_header(void);
+void _set_current_index_header(ResourceIndex newResourceIndex);
+ResourceIndex _get_current_index_header(void);
 
 
 #endif // UQM_LIBS_RESOURCE_RESINTRN_H

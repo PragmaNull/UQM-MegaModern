@@ -58,7 +58,7 @@ const GenerateFunctions generateColonyFunctions = {
 
 static bool GenerateColony_initNpcs(SolarSystemState* solarSys)
 {
-	HIPGROUP hGroup {};
+	IpGroupHandle hGroup {};
 
 	uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::COLONY_GRPOFFS);
 	if (uqm::gameState().game().BattleGroupRef == 0)

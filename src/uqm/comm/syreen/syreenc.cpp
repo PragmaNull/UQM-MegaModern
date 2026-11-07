@@ -253,7 +253,7 @@ static AnimFilterSet syreen_filters =
 								  }
 };
 
-static void FriendlyExit(RESPONSE_REF R)
+static void FriendlyExit(ResponseRef R)
 {
 	setSegue(Segue::Peace);
 
@@ -336,7 +336,7 @@ static void FriendlyExit(RESPONSE_REF R)
 	}
 }
 
-static void Sex(RESPONSE_REF R)
+static void Sex(ResponseRef R)
 {
 	if (PlayerSaid(R, SyreenPhrase::InTheSpirit))
 	{
@@ -403,7 +403,7 @@ static void Sex(RESPONSE_REF R)
 	}
 }
 
-static void Foreplay(RESPONSE_REF R)
+static void Foreplay(ResponseRef R)
 {
 	if (PlayerSaid(R, SyreenPhrase::WhatsMyReward)
 		|| PlayerSaid(R, SyreenPhrase::WhatAboutUs))
@@ -479,7 +479,7 @@ static void Foreplay(RESPONSE_REF R)
 	Response(SyreenPhrase::HandsOff, FriendlyExit);
 }
 
-static void AfterAmbush(RESPONSE_REF R)
+static void AfterAmbush(ResponseRef R)
 {
 	if (PlayerSaid(R, SyreenPhrase::WhatNowAfterAmbush))
 	{
@@ -538,7 +538,7 @@ static void AfterAmbush(RESPONSE_REF R)
 	Response(SyreenPhrase::ByeAfterAmbush, FriendlyExit);
 }
 
-static void AmbushReady(RESPONSE_REF R)
+static void AmbushReady(ResponseRef R)
 {
 	if (PlayerSaid(R, SyreenPhrase::RepeatPlan))
 	{
@@ -554,7 +554,7 @@ static void AmbushReady(RESPONSE_REF R)
 	Response(SyreenPhrase::ByeBeforeAmbush, FriendlyExit);
 }
 
-static void SyreenShuttle(RESPONSE_REF R)
+static void SyreenShuttle(ResponseRef R)
 {
 	if (PlayerSaid(R, SyreenPhrase::WhatsNextStep))
 	{
@@ -633,7 +633,7 @@ static void SyreenShuttle(RESPONSE_REF R)
 	}
 }
 
-static void NormalSyreen(RESPONSE_REF R)
+static void NormalSyreen(ResponseRef R)
 {
 	uint8_t i {};
 	SyreenPhrase pStr[4];
@@ -743,7 +743,7 @@ static void NormalSyreen(RESPONSE_REF R)
 
 		if (!SyreenVoiceFix && usingSpeech)
 		{
-			SyreenShuttle((RESPONSE_REF)0);
+			SyreenShuttle((ResponseRef)0);
 		}
 		return;
 	}
@@ -833,7 +833,7 @@ static void NormalSyreen(RESPONSE_REF R)
 	Response(SyreenPhrase::Bye, FriendlyExit);
 }
 
-static void InitialSyreen(RESPONSE_REF R)
+static void InitialSyreen(ResponseRef R)
 {
 	if (PlayerSaid(R, SyreenPhrase::WeAreViceSquad))
 	{
@@ -882,7 +882,7 @@ static void InitialSyreen(RESPONSE_REF R)
 	}
 }
 
-static void PlanAmbush(RESPONSE_REF R)
+static void PlanAmbush(ResponseRef R)
 {
 	(void)R; // ignored
 	NPCPhrase(SyreenPhrase::OkFoundVault);
@@ -895,7 +895,7 @@ static void PlanAmbush(RESPONSE_REF R)
 	// Syreen is 0, so this is purely decorative.
 	if (IsExtended())
 	{
-		HFLEETINFO hSyreen =
+		FleetInfoHandle hSyreen =
 			GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Syreen);
 		FleetInfo* SyreenPtr =
 			LockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
@@ -917,7 +917,7 @@ static void PlanAmbush(RESPONSE_REF R)
 	Response(SyreenPhrase::ByeAfterVault, FriendlyExit);
 }
 
-static void SyreenVault(RESPONSE_REF R)
+static void SyreenVault(ResponseRef R)
 {
 	if (PlayerSaid(R, SyreenPhrase::VaultHint))
 	{
@@ -968,7 +968,7 @@ static void Intro(void)
 				break;
 		}
 
-		AfterAmbush((RESPONSE_REF)0);
+		AfterAmbush((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_AMBUSH))
 	{
@@ -980,7 +980,7 @@ static void Intro(void)
 				break;
 		}
 
-		AmbushReady((RESPONSE_REF)0);
+		AmbushReady((ResponseRef)0);
 	}
 	else if (!uqm::gameState().flag(uqm::GameFlag::SYREEN_KNOW_ABOUT_MYCON))
 	{
@@ -1003,7 +1003,7 @@ static void Intro(void)
 
 		if (NumVisits > 1)
 		{
-			NormalSyreen((RESPONSE_REF)0);
+			NormalSyreen((ResponseRef)0);
 		}
 		else
 		{
@@ -1024,12 +1024,12 @@ static void Intro(void)
 				break;
 		}
 
-		SyreenShuttle((RESPONSE_REF)0);
+		SyreenShuttle((ResponseRef)0);
 	}
 
 	else if (uqm::gameState().flag(uqm::GameFlag::SHIP_VAULT_UNLOCKED))
 	{
-		PlanAmbush((RESPONSE_REF)0);
+		PlanAmbush((ResponseRef)0);
 		// XXX: PlanAmbush() sets SYREEN_HOME_VISITS=0, but then this value
 		// is immediately reset to NumVisits just below. The intent was to
 		// reset the HELLO stack so that is what we will do here as well.
@@ -1050,7 +1050,7 @@ static void Intro(void)
 				break;
 		}
 
-		SyreenVault((RESPONSE_REF)0);
+		SyreenVault((ResponseRef)0);
 	}
 	uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 }

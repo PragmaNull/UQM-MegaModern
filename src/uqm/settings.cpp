@@ -25,7 +25,7 @@
 
 namespace uqm
 {
-static MUSIC_REF LastMusicRef;
+static MusicRef LastMusicRef;
 static bool LastContinuous;
 static uint8_t LastPriority;
 
@@ -45,9 +45,9 @@ void ToggleMusic(void)
 	}
 }
 
-void PlayMusic(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
+void PlayMusic(MusicRef musicRef, bool Continuous, uint8_t Priority)
 {
-	LastMusicRef = MusicRef;
+	LastMusicRef = musicRef;
 	LastContinuous = Continuous;
 	LastPriority = Priority;
 
@@ -58,7 +58,7 @@ void PlayMusic(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
 #endif /* NEVER */
 		!(uqm::globalFlags() & MusicDisabled))
 	{
-		PLRPlaySong(MusicRef, Continuous, Priority);
+		PLRPlaySong(musicRef, Continuous, Priority);
 	}
 }
 
@@ -83,10 +83,10 @@ void PauseMusic(void)
 	PLRPause(LastMusicRef);
 }
 
-void PlayMusicResume(MUSIC_REF MusicRef, uint8_t Volume)
+void PlayMusicResume(MusicRef musicRef, uint8_t Volume)
 {
 	SetMusicVolume(MuteVolume);
-	PlayMusic(MusicRef, true, 1);
+	PlayMusic(musicRef, true, 1);
 
 	if (OkayToResume())
 	{
@@ -104,7 +104,7 @@ void ToggleSoundEffect(void)
 	uqm::globalFlags() ^= SoundDisabled;
 }
 
-void PlaySoundEffect(SOUND S, uint16_t Channel, SoundPosition Pos,
+void PlaySoundEffect(SoundRef S, uint16_t Channel, SoundPosition Pos,
 					 void* PositionalObject, uint8_t Priority)
 {
 	if (!(uqm::globalFlags() & SoundDisabled))
@@ -115,7 +115,7 @@ void PlaySoundEffect(SOUND S, uint16_t Channel, SoundPosition Pos,
 	}
 }
 
-void PlaySpeechEffect(SOUND S, SoundPosition Pos, void* PositionalObject, uint8_t Priority)
+void PlaySpeechEffect(SoundRef S, SoundPosition Pos, void* PositionalObject, uint8_t Priority)
 {
 	if (!(uqm::globalFlags() & SoundDisabled))
 	{

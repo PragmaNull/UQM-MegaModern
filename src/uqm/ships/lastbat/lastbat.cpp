@@ -154,7 +154,7 @@ static RaceDesc samatra_desc =
 		0, /* CodeRef */
 };
 
-static HELEMENT spawn_comet(Element* ElementPtr);
+static ElementHandle spawn_comet(Element* ElementPtr);
 
 static void comet_preprocess(Element* ElementPtr)
 {
@@ -206,7 +206,7 @@ static void comet_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 		old_hits = ElementPtr0->hit_points;
 		const uint16_t old_life {ElementPtr0->life_span};
-		HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
+		ElementHandle hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 		if (ElementPtr1->state_flags & PlayerShip)
 		{
 			ElementPtr0->hit_points = old_hits;
@@ -230,7 +230,7 @@ static void comet_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	}
 }
 
-static HELEMENT spawn_comet(Element* ElementPtr)
+static ElementHandle spawn_comet(Element* ElementPtr)
 {
 	MissileDesc MissileBlock;
 	Starship* StarShipPtr {};
@@ -250,7 +250,7 @@ static HELEMENT spawn_comet(Element* ElementPtr)
 	MissileBlock.life = CometLife;
 	MissileBlock.preprocess_func = comet_preprocess;
 	MissileBlock.blast_offs = CometOffset;
-	HELEMENT hComet {initialize_missile(&MissileBlock)};
+	ElementHandle hComet {initialize_missile(&MissileBlock)};
 
 	if (hComet)
 	{
@@ -355,7 +355,7 @@ static void gate_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			}
 
 			ElementPtr0->hit_points = GateHits;
-			HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
+			ElementHandle hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 			ElementPtr0->state_flags &= ~(Disappearing | Nonsolid | Collision);
 			ElementPtr0->life_span = NormalLife;
 
@@ -498,7 +498,7 @@ static void sentinel_preprocess(Element* ElementPtr)
 	else
 	{
 		uint16_t facing {};
-		HELEMENT hTarget {};
+		ElementHandle hTarget {};
 
 		if (!(ElementPtr->state_flags & Nonsolid))
 		{
@@ -655,7 +655,7 @@ static void sentinel_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		old_hits = ElementPtr0->hit_points;
 		const uint16_t old_life {ElementPtr0->life_span};
 		ElementPtr0->blast_offset = 0;
-		HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
+		ElementHandle hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 		ElementPtr0->thrust_wait = 0;
 
 		if ((ElementPtr1->state_flags & PlayerShip)
@@ -787,7 +787,7 @@ static void samatra_postprocess(Element* ElementPtr)
 			MissileBlock.life = SentinelLife;
 			MissileBlock.preprocess_func = sentinel_preprocess;
 			MissileBlock.blast_offs = SentinelOffset;
-			HELEMENT hSentinel {initialize_missile(&MissileBlock)};
+			ElementHandle hSentinel {initialize_missile(&MissileBlock)};
 
 			if (hSentinel)
 			{
@@ -851,7 +851,7 @@ static void samatra_preprocess(Element* ElementPtr)
 			 StarShipPtr->RaceDescPtr->characteristics.max_thrust < MaxGenerators;
 			 ++StarShipPtr->RaceDescPtr->characteristics.max_thrust)
 		{
-			HELEMENT hGenerator {AllocElement()};
+			ElementHandle hGenerator {AllocElement()};
 			if (hGenerator)
 			{
 				Element* GeneratorPtr {};
@@ -892,7 +892,7 @@ static void samatra_preprocess(Element* ElementPtr)
 		}
 
 		{
-			HELEMENT hTurret {AllocElement()};
+			ElementHandle hTurret {AllocElement()};
 			if (hTurret)
 			{
 				Element* TurretPtr {};
@@ -923,7 +923,7 @@ static void samatra_preprocess(Element* ElementPtr)
 		}
 
 		{
-			HELEMENT hGate {AllocElement()};
+			ElementHandle hGate {AllocElement()};
 			if (hGate)
 			{
 				Element* GatePtr {};

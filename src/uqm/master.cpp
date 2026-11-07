@@ -37,10 +37,10 @@ void LoadMasterShipList(void (*YieldProcessing)(void))
 	InitQueue(&master_q, num_entries, sizeof(MasterShipInfo));
 	while (num_entries--)
 	{
-		HMASTERSHIP hStarShip {};
-		HMASTERSHIP hNextShip {};
+		MasterShipHandle hStarShip {};
+		MasterShipHandle hNextShip {};
 
-		HMASTERSHIP hBuiltShip {AllocLink(&master_q)};
+		MasterShipHandle hBuiltShip {AllocLink(&master_q)};
 		if (!hBuiltShip)
 		{
 			continue;
@@ -94,8 +94,8 @@ void LoadMasterShipList(void (*YieldProcessing)(void))
 
 void FreeMasterShipList(void)
 {
-	HMASTERSHIP hStarShip {};
-	HMASTERSHIP hNextShip {};
+	MasterShipHandle hStarShip {};
+	MasterShipHandle hNextShip {};
 
 	for (hStarShip = GetHeadLink(&master_q);
 		 hStarShip != 0; hStarShip = hNextShip)
@@ -124,10 +124,10 @@ void ReloadMasterShipList(void (*YieldProcessing)(void))
 	}
 }
 
-HMASTERSHIP FindMasterShip(SpeciesId ship_ref)
+MasterShipHandle FindMasterShip(SpeciesId ship_ref)
 {
-	HMASTERSHIP hStarShip {};
-	HMASTERSHIP hNextShip {};
+	MasterShipHandle hStarShip {};
+	MasterShipHandle hNextShip {};
 
 	for (hStarShip = GetHeadLink(&master_q); hStarShip; hStarShip = hNextShip)
 	{
@@ -149,8 +149,8 @@ HMASTERSHIP FindMasterShip(SpeciesId ship_ref)
 
 int FindMasterShipIndex(SpeciesId ship_ref)
 {
-	HMASTERSHIP hStarShip {};
-	HMASTERSHIP hNextShip {};
+	MasterShipHandle hStarShip {};
+	MasterShipHandle hNextShip {};
 	int index {};
 
 	for (index = 0, hStarShip = GetHeadLink(&master_q); hStarShip;
@@ -174,7 +174,7 @@ int FindMasterShipIndex(SpeciesId ship_ref)
 
 uint16_t GetShipCostFromIndex(unsigned Index)
 {
-	HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, Index)};
+	MasterShipHandle hMasterShip {GetStarShipFromIndex(&master_q, Index)};
 	if (!hMasterShip)
 	{
 		return 0;
@@ -187,31 +187,31 @@ uint16_t GetShipCostFromIndex(unsigned Index)
 	return val;
 }
 
-FRAME GetShipIconsFromIndex(unsigned Index)
+FrameRef GetShipIconsFromIndex(unsigned Index)
 {
-	HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, Index)};
+	MasterShipHandle hMasterShip {GetStarShipFromIndex(&master_q, Index)};
 	if (!hMasterShip)
 	{
 		return 0;
 	}
 
 	const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
-	FRAME val {MasterPtr->ShipInfo.icons};
+	FrameRef val {MasterPtr->ShipInfo.icons};
 	UnlockMasterShip(&master_q, hMasterShip);
 
 	return val;
 }
 
-FRAME GetShipMeleeIconsFromIndex(unsigned Index)
+FrameRef GetShipMeleeIconsFromIndex(unsigned Index)
 {
-	HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, Index)};
+	MasterShipHandle hMasterShip {GetStarShipFromIndex(&master_q, Index)};
 	if (!hMasterShip)
 	{
 		return 0;
 	}
 
 	const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
-	FRAME val {MasterPtr->ShipInfo.melee_icon};
+	FrameRef val {MasterPtr->ShipInfo.melee_icon};
 	UnlockMasterShip(&master_q, hMasterShip);
 
 	return val;

@@ -585,7 +585,7 @@ static TechSaleData* GetNextTechForSale(void)
 
 static StatMsgMode prevMsgMode;
 
-static void DoFirstMeeting(RESPONSE_REF R);
+static void DoFirstMeeting(ResponseRef R);
 
 static uint16_t ShipWorth(void)
 {
@@ -899,7 +899,7 @@ static bool StripShip(uint16_t fuel_required)
 	return (true);
 }
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	if (PlayerSaid(R, MelnormePhrase::NoTradeNow))
 	{
@@ -985,7 +985,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void DoRescue(RESPONSE_REF R)
+static void DoRescue(ResponseRef R)
 {
 	int16_t dx {};
 	int16_t dy {};
@@ -1136,14 +1136,14 @@ static bool AnyInfoLeftToSell(void)
 		|| uqm::gameState().flag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK) < NUM_HISTORY_ITEMS;
 }
 
-static void NatureOfConversation(RESPONSE_REF R);
+static void NatureOfConversation(ResponseRef R);
 
 static uint8_t AskedToBuy;
 
 
 static constexpr auto InfoCost {75};
 
-static void DoBuy(RESPONSE_REF R)
+static void DoBuy(ResponseRef R)
 {
 	int16_t needed_credit {};
 	const uint8_t FuelCost = BioCreditValueDefault / 2;
@@ -1420,7 +1420,7 @@ BuyBuyBuy:
 	}
 }
 
-static void DoSell(RESPONSE_REF R)
+static void DoSell(ResponseRef R)
 {
 	uint8_t num_new_rainbows {};
 	uint16_t rainbow_mask {};
@@ -1633,7 +1633,7 @@ static void DoSell(RESPONSE_REF R)
 }
 
 
-static void NatureOfConversation(RESPONSE_REF R)
+static void NatureOfConversation(ResponseRef R)
 {
 	uint8_t num_new_rainbows {};
 	uint16_t rainbow_mask {};
@@ -1755,7 +1755,7 @@ static void NatureOfConversation(RESPONSE_REF R)
 
 static uint8_t local_stack0, local_stack1;
 
-static void DoBluster(RESPONSE_REF R)
+static void DoBluster(ResponseRef R)
 {
 	if (PlayerSaid(R, MelnormePhrase::TradeIsForTheWeak))
 	{
@@ -1873,7 +1873,7 @@ static void yack2_respond(void)
 	}
 }
 
-static void DoFirstMeeting(RESPONSE_REF R)
+static void DoFirstMeeting(ResponseRef R)
 {
 	uint8_t last_stack = 0;
 	using VoidFunc = void (*)(void);
@@ -1971,7 +1971,7 @@ static void DoFirstMeeting(RESPONSE_REF R)
 	Response(MelnormePhrase::NoTradeNow, ExitConversation);
 }
 
-static void DoMelnormeMiffed(RESPONSE_REF R)
+static void DoMelnormeMiffed(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -2043,7 +2043,7 @@ static void DoMelnormeMiffed(RESPONSE_REF R)
 	Response(MelnormePhrase::ByeMelnormeSlightlyAngry, ExitConversation);
 }
 
-static void DoMelnormePissed(RESPONSE_REF R)
+static void DoMelnormePissed(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -2099,7 +2099,7 @@ static void DoMelnormePissed(RESPONSE_REF R)
 	Response(MelnormePhrase::ByeMelnormePissedOff, ExitConversation);
 }
 
-static void DoMelnormeHate(RESPONSE_REF R)
+static void DoMelnormeHate(ResponseRef R)
 {
 	uint8_t hate_count {};
 

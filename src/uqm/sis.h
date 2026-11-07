@@ -275,7 +275,7 @@ extern void DrawFlagshipName(bool InStatusArea, bool NewGame);
 extern void DrawCaptainsName(bool NewGame);
 
 extern void DrawFuelInFTanks(bool isOutfit);
-extern FRAME hdFuelFrame; // Frame for HdResolutionFactor fuel with smooth gradient
+extern FrameRef hdFuelFrame; // Frame for HdResolutionFactor fuel with smooth gradient
 
 enum class BorderFrameIndex
 {

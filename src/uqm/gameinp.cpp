@@ -76,7 +76,7 @@ static bool OldGestalt, CachedGestalt;
 static TimePeriod _max_accel, _min_accel, _step_accel;
 static bool _gestalt_keys;
 
-static MENU_SOUND_FLAGS sound_0, sound_1;
+static MenuSoundFlags sound_0, sound_1;
 
 ImmediateKeyState ImmediateInputState {};
 
@@ -502,9 +502,9 @@ void FlushInput(void)
 	_clear_menu_state();
 }
 
-static MENU_SOUND_FLAGS MenuKeysToSoundFlags(const ControllerInputState* state)
+static MenuSoundFlags MenuKeysToSoundFlags(const ControllerInputState* state)
 {
-	MENU_SOUND_FLAGS soundFlags {MenuSoundNone};
+	MenuSoundFlags soundFlags {MenuSoundNone};
 	if (state->menu[*MenuKey::MenuUp])
 	{
 		soundFlags |= MenuSoundUp;
@@ -567,11 +567,11 @@ void DoInput(void* pInputState, bool resetInput)
 
 		UpdateInputState();
 
-		const MENU_SOUND_FLAGS soundFlags {MenuKeysToSoundFlags(&PulsedInputState)};
+		const MenuSoundFlags soundFlags {MenuKeysToSoundFlags(&PulsedInputState)};
 
 		if (MenuSounds && (soundFlags & (sound_0 | sound_1)))
 		{
-			const SOUND S {GetSound(MenuSounds, (soundFlags & sound_1) ? MenuSoundEffect::Success : MenuSoundEffect::Move)};
+			const SoundRef S {GetSound(MenuSounds, (soundFlags & sound_1) ? MenuSoundEffect::Success : MenuSoundEffect::Move)};
 
 			PlaySoundEffect(S, 0, NotPositional(), nullptr, 0);
 		}
@@ -589,21 +589,21 @@ void DoInput(void* pInputState, bool resetInput)
 	}
 }
 
-void SetMenuSounds(MENU_SOUND_FLAGS s0, MENU_SOUND_FLAGS s1)
+void SetMenuSounds(MenuSoundFlags s0, MenuSoundFlags s1)
 {
 	sound_0 = s0;
 	sound_1 = s1;
 }
 
-void GetMenuSounds(MENU_SOUND_FLAGS* s0, MENU_SOUND_FLAGS* s1)
+void GetMenuSounds(MenuSoundFlags* s0, MenuSoundFlags* s1)
 {
 	*s0 = sound_0;
 	*s1 = sound_1;
 }
 
-static BATTLE_INPUT_STATE ControlInputToBattleInput(const int* keyState)
+static BattleInputState ControlInputToBattleInput(const int* keyState)
 {
-	BATTLE_INPUT_STATE InputState = 0;
+	BattleInputState InputState = 0;
 
 	if (keyState[*BattleKey::Up])
 	{
@@ -641,13 +641,13 @@ static BATTLE_INPUT_STATE ControlInputToBattleInput(const int* keyState)
 	return InputState;
 }
 
-BATTLE_INPUT_STATE CurrentInputToBattleInput(uint16_t player)
+BattleInputState CurrentInputToBattleInput(uint16_t player)
 {
 	return ControlInputToBattleInput(
 		CurrentInputState.key[static_cast<int>(PlayerControlTemplates[player])]);
 }
 
-BATTLE_INPUT_STATE PulsedInputToBattleInput(uint16_t player)
+BattleInputState PulsedInputToBattleInput(uint16_t player)
 {
 	return ControlInputToBattleInput(
 		PulsedInputState.key[static_cast<int>(PlayerControlTemplates[player])]);
@@ -718,7 +718,7 @@ bool ConfirmExit(void)
 	return result;
 }
 
-void TestSpeechSound(SOUND snd)
+void TestSpeechSound(SoundRef snd)
 {
 	PlaySpeechEffect(snd, NotPositional(), nullptr, 0);
 }

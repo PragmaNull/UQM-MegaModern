@@ -101,7 +101,7 @@ extern uqm::StringTablePtr GameStrings;
 inline auto GameString(size_t i) { return GameStrings->text(i); }
 inline auto GameString(ArithmeticEnum auto i) { return GameStrings->text(static_cast<size_t>(*i)); }
 
-extern void SetCursorRect(GfxRect* r, GFXCONTEXT context);
+extern void SetCursorRect(GfxRect* r, GfxContextRef context);
 extern void FlushCursorRect(void);
 void SetCursorFlashBlock(bool state);
 

@@ -281,7 +281,7 @@ static AnimFilterSet talkpet_filters =
 								  }
 };
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Peace);
 	uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(0));
@@ -327,7 +327,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void MindFuckUrquan(RESPONSE_REF R)
+static void MindFuckUrquan(ResponseRef R)
 {
 	if (PlayerSaid(R, TalkingPetPhrase::WhatNow))
 	{
@@ -353,7 +353,7 @@ static void MindFuckUrquan(RESPONSE_REF R)
 	Response(TalkingPetPhrase::CompelUrquan, ExitConversation);
 }
 
-static void PetDevice(RESPONSE_REF R);
+static void PetDevice(ResponseRef R);
 
 static void MindControlStrobe(void)
 {
@@ -366,22 +366,22 @@ static void MindControlStrobe(void)
 	}
 }
 
-static void MindControl(RESPONSE_REF R)
+static void MindControl(ResponseRef R)
 {
-	RESPONSE_FUNC RespFunc {};
+	ResponseFunc RespFunc {};
 
 	if (PlayerSaid(R, TalkingPetPhrase::WhatAboutPowers))
 	{
 		NPCPhrase(TalkingPetPhrase::NotPowersButFlowers);
 
-		RespFunc = (RESPONSE_FUNC)MindControl;
+		RespFunc = (ResponseFunc)MindControl;
 		R = *TalkingPetPhrase::YesFlowers;
 	}
 	else /* if (R == TalkingPetPhrase::YesFlowers) */
 	{
 		NPCPhrase(TalkingPetPhrase::GoodHuman);
 
-		RespFunc = (RESPONSE_FUNC)ExitConversation;
+		RespFunc = (ResponseFunc)ExitConversation;
 		R = *TalkingPetPhrase::WishToGoNow;
 	}
 
@@ -391,7 +391,7 @@ static void MindControl(RESPONSE_REF R)
 	Response(R, RespFunc);
 }
 
-static void PetInfo(RESPONSE_REF R)
+static void PetInfo(ResponseRef R)
 {
 	if (PlayerSaid(R, TalkingPetPhrase::AboutYourRace))
 	{
@@ -445,7 +445,7 @@ static void PetInfo(RESPONSE_REF R)
 	Response(TalkingPetPhrase::EnoughInfo, PetDevice);
 }
 
-static void PetDevice(RESPONSE_REF R)
+static void PetDevice(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -550,7 +550,7 @@ static void PetDevice(RESPONSE_REF R)
 	Response(TalkingPetPhrase::ByeOnboard, ExitConversation);
 }
 
-static void CompelPlayer(RESPONSE_REF R)
+static void CompelPlayer(ResponseRef R)
 {
 	TalkingPetPhrase pStr[3];
 
@@ -652,9 +652,9 @@ static void CompelPlayer(RESPONSE_REF R)
 	Response(TalkingPetPhrase::ByeAtUmgah, CompelPlayer);
 }
 
-static void PetDeal(RESPONSE_REF R);
+static void PetDeal(ResponseRef R);
 
-static void KillPet(RESPONSE_REF R)
+static void KillPet(ResponseRef R)
 {
 	if (PlayerSaid(R, TalkingPetPhrase::MustKill))
 	{
@@ -669,7 +669,7 @@ static void KillPet(RESPONSE_REF R)
 	Response(TalkingPetPhrase::WantKill3, ExitConversation);
 }
 
-static void PetDeal(RESPONSE_REF R)
+static void PetDeal(ResponseRef R)
 {
 	if (PlayerSaid(R, TalkingPetPhrase::WhatKindOfDeal))
 	{
@@ -810,7 +810,7 @@ static void Intro(void)
 		{
 			NPCPhrase(TalkingPetPhrase::ISenseMySlaves);
 
-			MindFuckUrquan((RESPONSE_REF)0);
+			MindFuckUrquan((ResponseRef)0);
 		}
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
@@ -856,7 +856,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_VISITS, static_cast<uint32_t>(NumVisits));
 
-		PetDevice((RESPONSE_REF)0);
+		PetDevice((ResponseRef)0);
 	}
 	else if (GetHeadLink(&uqm::gameState().game().npc_built_ship_q))
 	{
@@ -886,7 +886,7 @@ static void Intro(void)
 		SetHomeworldKnown(*HomeId::Umgah);
 		if (NumVisits == 1)
 		{
-			CompelPlayer((RESPONSE_REF)0);
+			CompelPlayer((ResponseRef)0);
 		}
 		else if (!uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP))
 		{
@@ -919,7 +919,7 @@ static void Intro(void)
 			}
 		}
 
-		PetDeal((RESPONSE_REF)0);
+		PetDeal((ResponseRef)0);
 	}
 }
 

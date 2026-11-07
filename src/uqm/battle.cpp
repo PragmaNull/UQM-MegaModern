@@ -146,7 +146,7 @@ static void setupBattleInputOrder(void)
 #endif
 }
 
-BATTLE_INPUT_STATE frameInputHuman(HumanInputContext* context, Starship* StarShipPtr)
+BattleInputState frameInputHuman(HumanInputContext* context, Starship* StarShipPtr)
 {
 	(void)StarShipPtr;
 	return CurrentInputToBattleInput(context->playerNr);
@@ -162,14 +162,14 @@ static void ProcessInput(void)
 
 	for (size_t sideI {0}; sideI < NumSides; sideI++)
 	{
-		HSTARSHIP hBattleShip {};
-		HSTARSHIP hNextShip {};
+		StarshipHandle hBattleShip {};
+		StarshipHandle hNextShip {};
 		const size_t cur_player = battleInputOrder[sideI];
 
 		for (hBattleShip = GetHeadLink(&race_q[cur_player]);
 			 hBattleShip != 0; hBattleShip = hNextShip)
 		{
-			BATTLE_INPUT_STATE InputState {};
+			BattleInputState InputState {};
 
 			Starship* StarShipPtr {LockStarShip(&race_q[cur_player], hBattleShip)};
 			hNextShip = _GetSuccLink(StarShipPtr);
@@ -247,7 +247,7 @@ static void ProcessInput(void)
 	}
 }
 
-static MUSIC_REF BattleRef;
+static MusicRef BattleRef;
 uint8_t inHSpace = 0;
 
 void BattleSong(bool DoPlay)

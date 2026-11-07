@@ -149,18 +149,18 @@ struct ControllerInputState
 	}
 };
 
-typedef uint8_t BATTLE_INPUT_STATE; // TODO PragmaNull : replace with falg enum.
-inline constexpr auto BattleLeft {(BATTLE_INPUT_STATE)(1 << 0)};
-inline constexpr auto BattleRight {(BATTLE_INPUT_STATE)(1 << 1)};
-inline constexpr auto BattleThrust {(BATTLE_INPUT_STATE)(1 << 2)};
-inline constexpr auto BattleWeapon {(BATTLE_INPUT_STATE)(1 << 3)};
-inline constexpr auto BattleSpecial {(BATTLE_INPUT_STATE)(1 << 4)};
-inline constexpr auto BattleEscape {(BATTLE_INPUT_STATE)(1 << 5)};
-inline constexpr auto BattleDown {(BATTLE_INPUT_STATE)(1 << 6)};
-inline constexpr auto BattleThrustAlt {(BATTLE_INPUT_STATE)(1 << 7)};
+using BattleInputState = uint8_t; // TODO PragmaNull : replace with falg enum.
+inline constexpr auto BattleLeft {(BattleInputState)(1 << 0)};
+inline constexpr auto BattleRight {(BattleInputState)(1 << 1)};
+inline constexpr auto BattleThrust {(BattleInputState)(1 << 2)};
+inline constexpr auto BattleWeapon {(BattleInputState)(1 << 3)};
+inline constexpr auto BattleSpecial {(BattleInputState)(1 << 4)};
+inline constexpr auto BattleEscape {(BattleInputState)(1 << 5)};
+inline constexpr auto BattleDown {(BattleInputState)(1 << 6)};
+inline constexpr auto BattleThrustAlt {(BattleInputState)(1 << 7)};
 
-BATTLE_INPUT_STATE CurrentInputToBattleInput(uint16_t player);
-BATTLE_INPUT_STATE PulsedInputToBattleInput(uint16_t player);
+BattleInputState CurrentInputToBattleInput(uint16_t player);
+BattleInputState PulsedInputToBattleInput(uint16_t player);
 
 extern ControllerInputState CurrentInputState;
 extern ControllerInputState PulsedInputState;
@@ -194,7 +194,7 @@ bool WaitForActButtonUntil(bool newButton, TimeCount timeOut,
 bool WaitForNoInput(TimePeriod duration, bool resetInput);
 bool WaitForNoInputUntil(TimeCount timeOut, bool resetInput);
 
-extern BATTLE_INPUT_STATE GetDirectionalJoystickInput(int direction, int player);
+extern BattleInputState GetDirectionalJoystickInput(int direction, int player);
 
 void DoPopupWindow(const char* msg);
 
@@ -246,7 +246,7 @@ struct TextEntryState
 
 extern bool DoTextEntry(TextEntryState* pTES);
 
-extern void TestSpeechSound(SOUND snd);
+extern void TestSpeechSound(SoundRef snd);
 
 #if 0 //defined(__cplusplus)
 }

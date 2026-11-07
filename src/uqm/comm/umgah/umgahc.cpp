@@ -244,7 +244,7 @@ static ConversationData umgah_desc =
 		nullptr,
 };
 
-static void CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(ResponseRef R)
 {
 	setSegue(Segue::Hostile);
 
@@ -301,7 +301,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void Zombies(RESPONSE_REF R)
+static void Zombies(ResponseRef R)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::MET_NORMAL_UMGAH))
 	{
@@ -474,7 +474,7 @@ static void Zombies(RESPONSE_REF R)
 	}
 }
 
-static void NormalUmgah(RESPONSE_REF R)
+static void NormalUmgah(ResponseRef R)
 {
 	if (PlayerSaid(R, UmgahPhrase::WhatsUpPreZombie))
 	{
@@ -514,7 +514,7 @@ static void NormalUmgah(RESPONSE_REF R)
 	Response(UmgahPhrase::ByePreZombie, CombatIsInevitable);
 }
 
-static void UmgahReward(RESPONSE_REF R)
+static void UmgahReward(ResponseRef R)
 {
 	if (PlayerSaid(R, UmgahPhrase::WhatBeforeTpet))
 	{
@@ -692,7 +692,7 @@ static void Intro(void)
 					break;
 			}
 
-			Zombies((RESPONSE_REF)0);
+			Zombies((ResponseRef)0);
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(NumVisits));
 	}
@@ -743,7 +743,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
-		NormalUmgah((RESPONSE_REF)0);
+		NormalUmgah((ResponseRef)0);
 	}
 	else
 	{
@@ -752,7 +752,7 @@ static void Intro(void)
 			NPCPhrase(UmgahPhrase::PostZombieHwldHello);
 
 			SetHomeworldKnown(*HomeId::Umgah);
-			UmgahReward((RESPONSE_REF)0);
+			UmgahReward((ResponseRef)0);
 		}
 		else
 		{

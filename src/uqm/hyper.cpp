@@ -54,8 +54,8 @@ static auto Xoffs() { return ((RadarScanWidth() + (UnitScreenWidth() << 2)) >> 1
 static auto Yoffs() { return ((RadarScanHeight() + (UnitScreenHeight() << 2)) >> 1); }
 static auto AnimatedHyperspace() { return (IsHd() && uqm::UQMOptions::read().hyperStars); }
 
-static FRAME hyperstars[3];
-static COLORMAP hypercmaps[2];
+static FrameRef hyperstars[3];
+static ColorMapRef hypercmaps[2];
 static uint8_t fuel_ticks;
 static uint16_t hyper_dx, hyper_dy, hyper_extra;
 
@@ -122,7 +122,7 @@ static inline int16_t RaceHyperSpeed(RaceId Index)
 
 	if (uqm::currentSeed().ships && (seedStamp != uqm::currentSeed().value || speedMap[0] == 0))
 	{
-		HFLEETINFO hFleet {};
+		FleetInfoHandle hFleet {};
 		for (x = 0; x < numRaces; x++)
 		{
 			hFleet = GetSeededFleetFromIndex(x);
@@ -150,9 +150,9 @@ static inline int16_t RaceHyperSpeed(RaceId Index)
 /*static void
 decorate_vortex (Element *ElementPtr)
 {
-	HENCOUNTER hEncounter, hNextEncounter;
-	FRAME f = nullptr;
-	static FRAME vortex_ships[NUM_AVAILABLE_RACES];
+	EncounterHandle hEncounter, hNextEncounter;
+	FrameRef f = nullptr;
+	static FrameRef vortex_ships[NUM_AVAILABLE_RACES];
 
 	// The Element is still spawning, nothing to do yet
 	if (ElementPtr->death_func)
@@ -175,7 +175,7 @@ decorate_vortex (Element *ElementPtr)
 			LockElement (EncounterPtr->hElement, &EncounterElementPtr);
 			if (EncounterElementPtr == ElementPtr)
 			{
-				HFLEETINFO hFleet;
+				FleetInfoHandle hFleet;
 				FleetInfo *FleetPtr;
 
 				if (vortex_ships[EncounterPtr->race_id])
@@ -204,7 +204,7 @@ decorate_vortex (Element *ElementPtr)
 					// a sensible memory management strategy  ;)
 					if (f)
 					{
-						GFXCONTEXT tmp, old;
+						GfxContextRef tmp, old;
 						Color trans;
 						GfxStamp s;
 
@@ -290,8 +290,8 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 
 	if (new_dx != *pdx || new_dy != *pdy)
 	{
-		HELEMENT hElement {};
-		HELEMENT hNextElement {};
+		ElementHandle hElement {};
+		ElementHandle hNextElement {};
 
 		*pdx = new_dx;
 		*pdy = new_dy;
@@ -371,8 +371,8 @@ void check_hyperspace_encounter(void)
 {
 	uint8_t Type {};
 	GfxPoint universe;
-	HFLEETINFO hStarShip {};
-	HFLEETINFO hNextShip {};
+	FleetInfoHandle hStarShip {};
+	FleetInfoHandle hNextShip {};
 	const auto& EncounterPercent {RaceHyperspacePercent};
 
 	universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
@@ -389,7 +389,7 @@ void check_hyperspace_encounter(void)
 		{
 			int16_t dx {};
 			int16_t dy {};
-			HENCOUNTER hEncounter {};
+			EncounterHandle hEncounter {};
 			Encounter* EncounterPtr {};
 
 			uint8_t encounter_flags {0};
@@ -418,7 +418,7 @@ void check_hyperspace_encounter(void)
 			}
 			else /* encounter_radius == infinity */
 			{
-				HENCOUNTER hNextEncounter {};
+				EncounterHandle hNextEncounter {};
 
 				encounter_radius = (MaxXUniverse + 1) << 1;
 				if (Type == RaceId::Slylandro)
@@ -565,7 +565,7 @@ bool LoadHyperspace(void)
 
 	LoadHyperData();
 	{
-		FRAME F {hyperstars[0]};
+		FrameRef F {hyperstars[0]};
 		hyperstars[0] = stars_in_space;
 		stars_in_space = F;
 	}
@@ -626,7 +626,7 @@ void EraseRadar(void)
 bool FreeHyperspace(void)
 {
 	{
-		FRAME F {hyperstars[0]};
+		FrameRef F {hyperstars[0]};
 		hyperstars[0] = stars_in_space;
 		stars_in_space = F;
 	}
@@ -654,8 +654,8 @@ static void ElementToUniverse(Element* ElementPtr, GfxPoint* pPt)
 
 static void cleanup_hyperspace(void)
 {
-	HENCOUNTER hEncounter {};
-	HENCOUNTER hNextEncounter {};
+	EncounterHandle hEncounter {};
+	EncounterHandle hNextEncounter {};
 
 	for (hEncounter = GetHeadEncounter();
 		 hEncounter != 0; hEncounter = hNextEncounter)
@@ -1133,9 +1133,9 @@ static void arilou_space_collision(Element* ElementPtr0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static HELEMENT AllocHyperElement(const GfxPoint* elem_pt)
+static ElementHandle AllocHyperElement(const GfxPoint* elem_pt)
 {
-	HELEMENT hHyperSpaceElement {AllocElement()};
+	ElementHandle hHyperSpaceElement {AllocElement()};
 	if (hHyperSpaceElement)
 	{
 		Element* HyperSpaceElementPtr {};
@@ -1172,7 +1172,7 @@ static HELEMENT AllocHyperElement(const GfxPoint* elem_pt)
 
 static void AddAmbientElement(void)
 {
-	HELEMENT hHyperSpaceElement {AllocElement()};
+	ElementHandle hHyperSpaceElement {AllocElement()};
 	if (hHyperSpaceElement)
 	{
 		int16_t dx {};
@@ -1266,7 +1266,7 @@ static void encounter_transition(Element* ElementPtr)
 	}
 	else
 	{
-		FRAME f {};
+		FrameRef f {};
 
 		if (ElementPtr->hit_points)
 		{
@@ -1294,11 +1294,11 @@ static void encounter_transition(Element* ElementPtr)
 	}
 }
 
-static HELEMENT getSisElement(void)
+static ElementHandle getSisElement(void)
 {
-	HELEMENT hShip {};
+	ElementHandle hShip {};
 
-	HSTARSHIP hSis {GetHeadLink(&race_q[RpgPlayerNum])};
+	StarshipHandle hSis {GetHeadLink(&race_q[RpgPlayerNum])};
 	if (!hSis)
 	{
 		return nullptr;
@@ -1323,8 +1323,8 @@ static HELEMENT getSisElement(void)
 static void encounter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 								Element* ElementPtr1, GfxPoint* pPt1)
 {
-	HENCOUNTER hEncounter {};
-	HENCOUNTER hNextEncounter {};
+	EncounterHandle hEncounter {};
+	EncounterHandle hNextEncounter {};
 
 	if (!(ElementPtr1->state_flags & PlayerShip)
 		|| !(uqm::currentActivity() & ActivityFlag::InBattle))
@@ -1363,7 +1363,7 @@ static void encounter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static HELEMENT AddEncounterElement(Encounter* EncounterPtr, GfxPoint* puniverse)
+static ElementHandle AddEncounterElement(Encounter* EncounterPtr, GfxPoint* puniverse)
 {
 	bool NewEncounter {};
 	GfxPoint enc_pt;
@@ -1422,7 +1422,7 @@ static HELEMENT AddEncounterElement(Encounter* EncounterPtr, GfxPoint* puniverse
 		for (i = 0; i < NumShips; ++i)
 		{
 			BriefShipInfo* BSIPtr = &EncounterPtr->ShipList[i];
-			HFLEETINFO hStarShip =
+			FleetInfoHandle hStarShip =
 				GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, Type);
 			const FleetInfo* FleetPtr =
 				LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
@@ -1467,7 +1467,7 @@ static HELEMENT AddEncounterElement(Encounter* EncounterPtr, GfxPoint* puniverse
 		EncounterPtr->log_y = UniverseToLogy(enc_pt.y);
 	}
 
-	HELEMENT hElement {AllocHyperElement(&enc_pt)};
+	ElementHandle hElement {AllocHyperElement(&enc_pt)};
 	if (hElement)
 	{
 		Element* ElementPtr {};
@@ -1801,8 +1801,8 @@ static bool ProcessEncounter(Encounter* EncounterPtr, GfxPoint* puniverse,
 static void ProcessEncounters(GfxPoint* puniverse, int16_t ox, int16_t oy)
 {
 	GfxStamp stamp;
-	HENCOUNTER hEncounter {};
-	HENCOUNTER hNextEncounter {};
+	EncounterHandle hEncounter {};
+	EncounterHandle hNextEncounter {};
 
 	stamp.frame = SetAbsFrameIndex(stars_in_space, 91);
 	for (hEncounter = GetHeadEncounter();
@@ -1858,10 +1858,10 @@ void SeedUniverse(void)
 	int16_t arilouSpaceCounter {};
 	int16_t arilouSpaceSide {};
 	GfxPoint universe;
-	FRAME star_frame {};
+	FrameRef star_frame {};
 	GfxStamp s;
 	StarDesc* SDPtr {};
-	HELEMENT hHyperSpaceElement {};
+	ElementHandle hHyperSpaceElement {};
 	Element* HyperSpaceElementPtr {};
 	int32_t lx {};
 	int32_t ly {};
@@ -1873,7 +1873,7 @@ void SeedUniverse(void)
 	universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
 	universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
 
-	FRAME blip_frame {SetAbsFrameIndex(stars_in_space, 90)};
+	FrameRef blip_frame {SetAbsFrameIndex(stars_in_space, 90)};
 
 	SetContext(RadarContext);
 	BatchGraphics();
@@ -2298,7 +2298,7 @@ void HyperspaceMenu(void)
 
 	UnbatchGraphics();
 
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	OldColor = SetContextBackGroundColor(BlackColor);
 
 
@@ -2339,7 +2339,7 @@ void SaveSisHyperState(void)
 	Starship* StarShipPtr {};
 
 	// Update 'GLOBAL (ShipFacing)' to the direction the flagship is facing
-	HELEMENT hSisElement {getSisElement()};
+	ElementHandle hSisElement {getSisElement()};
 	if (!hSisElement)
 	{ // Happens when saving a game from Hyperspace Encounter screen
 		return;

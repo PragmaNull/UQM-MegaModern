@@ -36,8 +36,8 @@ void BuildPickMeleeFrame(void);
 void DestroyPickMeleeFrame(void);
 void FillPickMeleeFrame(MeleeSetup* setup);
 void MeleeGameOver(void);
-bool GetInitialMeleeStarShips(HSTARSHIP* result);
-bool GetNextMeleeStarShip(uint16_t which_player, HSTARSHIP* result);
+bool GetInitialMeleeStarShips(StarshipHandle* result);
+bool GetNextMeleeStarShip(uint16_t which_player, StarshipHandle* result);
 
 bool updateMeleeSelection(PickMeleeState* gms, uint16_t player, uint16_t ship);
 
@@ -68,7 +68,7 @@ struct PickMeleeState
 	struct
 	{
 		TimeCount timeIn;
-		HSTARSHIP hBattleShip;
+		StarshipHandle hBattleShip;
 		// Chosen ship.
 		uint16_t choice;
 		// Index of chosen ship, or (uint16_t) ~0 for random choice.

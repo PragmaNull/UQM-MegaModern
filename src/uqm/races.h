@@ -31,7 +31,7 @@
 namespace uqm
 {
 struct Starship;
-typedef HLINK HSTARSHIP;
+using StarshipHandle = LinkHandle;
 
 } // namespace uqm
 
@@ -64,9 +64,9 @@ inline constexpr auto PlayerCaptain {1 << 13};
 /* The protagonist himself is on board. He gets a different color. */
 
 
-typedef uint16_t STATUS_FLAGS;
+using StatusFlags = uint16_t;
 
-/* STATUS_FLAGS - heat of battle specific flags */
+/* StatusFlags - heat of battle specific flags */
 inline constexpr auto LeftFlag {1 << 0};
 inline constexpr auto RightFlag {1 << 1};
 inline constexpr auto ThrustFlag {1 << 2};
@@ -129,11 +129,11 @@ inline SpeciesId postIncSpeciesId_HACK(SpeciesId& id)
 struct CaptainGraphics
 {
 	RESOURCE captain_rsc;
-	FRAME background;
-	FRAME turn;
-	FRAME thrust;
-	FRAME weapon;
-	FRAME special;
+	FrameRef background;
+	FrameRef turn;
+	FrameRef thrust;
+	FrameRef weapon;
+	FrameRef special;
 	uint8_t tl_offset;
 	uint8_t tr_offset;
 	uint8_t thrust_offset;
@@ -197,8 +197,8 @@ struct ShipInfoDesc
 	RESOURCE melee_icon_rsc;
 
 	uqm::StringTable* race_strings;
-	FRAME icons;
-	FRAME melee_icon;
+	FrameRef icons;
+	FrameRef melee_icon;
 };
 
 inline constexpr auto InfiniteRadius {(uint16_t)~0};
@@ -218,11 +218,11 @@ struct ShipResources
 	RESOURCE victory_ditty_rsc;
 	RESOURCE ship_sounds_rsc;
 
-	FRAME ship[NumViews];
-	FRAME weapon[NumViews];
-	FRAME special[NumViews];
-	MUSIC_REF victory_ditty;
-	SOUND_REF ship_sounds;
+	FrameRef ship[NumViews];
+	FrameRef weapon[NumViews];
+	FrameRef special[NumViews];
+	MusicRef victory_ditty;
+	SoundBankRef ship_sounds;
 	// The index in ship_sounds of the sound of the primary weapon.
 	uint16_t weapon_sound_index;
 };
@@ -232,7 +232,7 @@ struct RaceDesc;
 
 typedef void(PREPROCESS_FUNC)(Element* ElementPtr);
 typedef void(POSTPROCESS_FUNC)(Element* ElementPtr);
-typedef uint16_t(INIT_WEAPON_FUNC)(Element* ElementPtr, HELEMENT Weapon[]);
+typedef uint16_t(INIT_WEAPON_FUNC)(Element* ElementPtr, ElementHandle Weapon[]);
 typedef void(UNINIT_FUNC)(RaceDesc* pRaceDesc);
 
 struct RaceDesc
@@ -257,8 +257,8 @@ struct RaceDesc
 struct ShipBase
 {
 	/* QueueLink elements; must be first */
-	HLINK pred;
-	HLINK succ;
+	LinkHandle pred;
+	LinkHandle succ;
 
 	SpeciesId SpeciesID;
 	uint8_t captains_name_index; /* Also used in full-game to detect if a Starship is an escort
@@ -282,7 +282,7 @@ struct Starship : ShipBase
 	uint16_t index;
 	// original queue index
 	uqm::StringTable* race_strings;
-	FRAME icons;
+	FrameRef icons;
 
 	// Battle states
 	uint8_t weapon_counter;	 // In battle: frames left before primary weapon can be used
@@ -290,10 +290,10 @@ struct Starship : ShipBase
 	uint8_t energy_counter;	 // In battle: frames left before energy regeneration
 
 	uint8_t ship_input_state;
-	STATUS_FLAGS cur_status_flags;
-	STATUS_FLAGS old_status_flags;
+	StatusFlags cur_status_flags;
+	StatusFlags old_status_flags;
 
-	HELEMENT hShip;
+	ElementHandle hShip;
 	uint16_t ShipFacing;
 
 	//  0: bottom player; In full-game: the human player (RPG)
@@ -307,7 +307,7 @@ struct Starship : ShipBase
 inline constexpr auto RpgPlayerNum {0};
 inline constexpr auto NpcPlayerNum {1};
 
-static inline Starship* LockStarShip(const Queue* pq, HSTARSHIP h)
+static inline Starship* LockStarShip(const Queue* pq, StarshipHandle h)
 {
 	assert(GetLinkSize(pq) == sizeof(Starship));
 	return (Starship*)LockLink(pq, h);
@@ -316,7 +316,7 @@ static inline Starship* LockStarShip(const Queue* pq, HSTARSHIP h)
 constexpr auto UnlockStarShip(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
 
 
-typedef HLINK HSHIPFRAG;
+using ShipFragmentHandle = LinkHandle;
 
 inline constexpr auto InfiniteFleet {(uint16_t)~0};
 
@@ -335,11 +335,11 @@ struct ShipFragment : ShipBase
 	//   them, but otherwise nothing needs them atm.
 
 	uqm::StringTable* race_strings;
-	FRAME icons;
-	FRAME melee_icon; /* Only used by Shipyard */
+	FrameRef icons;
+	FrameRef melee_icon; /* Only used by Shipyard */
 };
 
-static inline ShipFragment* LockShipFrag(const Queue* pq, HSHIPFRAG h)
+static inline ShipFragment* LockShipFrag(const Queue* pq, ShipFragmentHandle h)
 {
 	assert(GetLinkSize(pq) == sizeof(ShipFragment));
 	return (ShipFragment*)LockLink(pq, h);
@@ -349,13 +349,13 @@ constexpr auto UnlockShipFrag(const auto& pq, const auto& h) { return UnlockLink
 constexpr auto FreeShipFrag(const auto& pq, const auto& h) { return FreeLink(pq, h); }
 
 
-typedef HLINK HFLEETINFO;
+using FleetInfoHandle = LinkHandle;
 
 struct FleetInfo
 {
 	// QueueLink elements; must be first
-	HFLEETINFO pred;
-	HFLEETINFO succ;
+	FleetInfoHandle pred;
+	FleetInfoHandle succ;
 
 	SpeciesId SpeciesID;
 	const char* shipIdStr;
@@ -371,8 +371,8 @@ struct FleetInfo
 
 	uqm::StringTable* race_strings;
 	/* Race specific strings, see doc/devel/racestrings. */
-	FRAME icons;
-	FRAME melee_icon;
+	FrameRef icons;
+	FrameRef melee_icon;
 
 	uint16_t actual_strength;
 	/* Measure for the size of the sphere of influence.
@@ -408,7 +408,7 @@ enum class RaceAllegiance
 };
 consteval bool isArithmeticEnum(RaceAllegiance) { return true; }
 
-static inline FleetInfo* LockFleetInfo(const Queue* pq, HFLEETINFO h)
+static inline FleetInfo* LockFleetInfo(const Queue* pq, FleetInfoHandle h)
 {
 	assert(GetLinkSize(pq) == sizeof(FleetInfo));
 	return (FleetInfo*)LockLink(pq, h);

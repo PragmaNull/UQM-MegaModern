@@ -64,8 +64,8 @@ private:
 
 } // namespace uqm
 
-typedef uqm::SoundBank* SOUND_REF;
-typedef tfb::SoundSample* SOUND;
+using SoundBankRef = uqm::SoundBank*;
+using SoundRef = tfb::SoundSample*;
 
 struct SoundPosition
 {
@@ -74,12 +74,12 @@ struct SoundPosition
 };
 
 // The sound 'index' of 'bank', or nullptr if there is no bank.
-inline SOUND GetSound(SOUND_REF bank, size_t index)
+inline SoundRef GetSound(SoundBankRef bank, size_t index)
 {
 	return bank != nullptr ? bank->sample(index) : nullptr;
 }
 
-inline SOUND GetSound(SOUND_REF bank, ArithmeticEnum auto index)
+inline SoundRef GetSound(SoundBankRef bank, ArithmeticEnum auto index)
 {
 	return GetSound(bank, static_cast<size_t>(*index));
 }
@@ -90,14 +90,14 @@ using SoundBankPtr = uqstl::unique_ptr<SoundBank>;
 // Returns an empty pointer if the resource is not a sound bank.
 [[nodiscard]] SoundBankPtr loadSoundBank(RESOURCE res);
 } // namespace uqm
-typedef tfb::SoundSample** MUSIC_REF;
+using MusicRef = tfb::SoundSample**;
 
 extern bool InitSound(int argc, char* argv[]);
 extern void UninitSound(void);
-extern MUSIC_REF LoadMusicFile(const char* pStr);
+extern MusicRef LoadMusicFile(const char* pStr);
 extern bool InstallAudioResTypes(void);
-extern MUSIC_REF LoadMusicInstance(RESOURCE res);
-extern bool DestroyMusic(MUSIC_REF MusicRef);
+extern MusicRef LoadMusicInstance(RESOURCE res);
+extern bool DestroyMusic(MusicRef musicRef);
 
 inline constexpr auto MaxChannels {8};
 inline constexpr auto MaxVolume {255};
@@ -110,15 +110,15 @@ inline constexpr auto NumFxChannels {4};
 inline constexpr auto LastSfxChannel {MinFxChannel + NumFxChannels - 1};
 inline constexpr auto NumSfxChannels {MinFxChannel + NumFxChannels};
 
-extern void PLRPlaySong(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority);
-extern void PLRStop(MUSIC_REF MusicRef);
-extern bool PLRPlaying(MUSIC_REF MusicRef);
-extern void PLRSeek(MUSIC_REF MusicRef, uint32_t pos);
-extern void PLRPause(MUSIC_REF MusicRef);
-extern void PLRResume(MUSIC_REF MusicRef);
-extern void snd_PlaySpeech(MUSIC_REF SpeechRef);
+extern void PLRPlaySong(MusicRef musicRef, bool Continuous, uint8_t Priority);
+extern void PLRStop(MusicRef musicRef);
+extern bool PLRPlaying(MusicRef musicRef);
+extern void PLRSeek(MusicRef musicRef, uint32_t pos);
+extern void PLRPause(MusicRef musicRef);
+extern void PLRResume(MusicRef musicRef);
+extern void snd_PlaySpeech(MusicRef SpeechRef);
 extern void snd_StopSpeech(void);
-extern void PlayChannel(uint16_t channel, SOUND snd, SoundPosition pos,
+extern void PlayChannel(uint16_t channel, SoundRef snd, SoundPosition pos,
 						void* positional_object, unsigned char priority);
 extern bool ChannelPlaying(uint16_t Channel);
 extern void* GetPositionalObject(uint16_t channel);

@@ -50,7 +50,7 @@
 
 namespace uqm
 {
-extern FRAME SpaceJunkFrame;
+extern FrameRef SpaceJunkFrame;
 
 // define SPIN_ON_SCAN to allow the planet to spin
 // while scaning  is going on
@@ -58,11 +58,11 @@ extern FRAME SpaceJunkFrame;
 
 static constexpr auto FlashIndex {105};
 
-static GFXCONTEXT ScanContext;
+static GfxContextRef ScanContext;
 
 static GfxPoint planetLoc;
 static GfxRect cursorRect;
-static FRAME eraseFrame;
+static FrameRef eraseFrame;
 
 // ScanSystem() menu items
 // The first three are from enum PlanetScanTypes in planets.h
@@ -625,15 +625,15 @@ static void PrintCoarseScan3DO(void)
 static void initPlanetLocationImage(void)
 {
 	// Get the cursor image
-	FRAME cursorFrame {SetAbsFrameIndex(MiscDataFrame, FlashIndex)};
+	FrameRef cursorFrame {SetAbsFrameIndex(MiscDataFrame, FlashIndex)};
 	cursorRect.extent = GetFrameBounds(cursorFrame);
 }
 
 static void savePlanetLocationImage(void)
 {
 	GfxRect r;
-	FRAME cursorFrame = SetAbsFrameIndex(MiscDataFrame, FlashIndex);
-	const HOT_SPOT hs = GetFrameHot(cursorFrame);
+	FrameRef cursorFrame = SetAbsFrameIndex(MiscDataFrame, FlashIndex);
+	const HotSpot hs = GetFrameHot(cursorFrame);
 
 	DestroyDrawable(ReleaseDrawable(eraseFrame));
 
@@ -743,7 +743,7 @@ static void flashPlanetLocation(void)
 
 void RedrawSurfaceScan(const GfxPoint* newLoc)
 {
-	GFXCONTEXT OldContext {SetContext(ScanContext)};
+	GfxContextRef OldContext {SetContext(ScanContext)};
 
 	BatchGraphics();
 	DrawPlanet(0, BlackColor);
@@ -773,7 +773,7 @@ static uint16_t getLandingFuelNeeded(void)
 
 static void spawnFwiffo(void)
 {
-	HSHIPFRAG hStarShip {};
+	ShipFragmentHandle hStarShip {};
 
 	EncounterGroup = 0;
 	PutGroupInfo(GroupsRandom, GroupSaveIp);
@@ -1059,12 +1059,12 @@ static constexpr auto NumFlashColors {8};
 
 static void DrawScannedStuff(uint16_t y, uint16_t scan)
 {
-	HELEMENT hNextElement {};
+	ElementHandle hNextElement {};
 	Color OldColor;
 
 	OldColor = SetContextForeGroundColor(BlackColor);
 
-	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
+	for (ElementHandle hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
 		Element* ElementPtr {};
 		int16_t dy {};
@@ -1141,7 +1141,7 @@ static void DrawScannedStuff(uint16_t y, uint16_t scan)
 
 static void DrawPCScannedStuff(uint16_t scan)
 {
-	HELEMENT hNextElement {};
+	ElementHandle hNextElement {};
 	TimePeriod interval;
 	TimeCount now;
 	Element* ElementPtr {};
@@ -1149,7 +1149,7 @@ static void DrawPCScannedStuff(uint16_t scan)
 
 	interval = c_gameSecond / 10;
 
-	HELEMENT hElement {GetHeadElement()};
+	ElementHandle hElement {GetHeadElement()};
 	now = GetTimeCounter() + interval;
 
 	while (hElement && !AnyButtonPress(true))
@@ -1543,16 +1543,16 @@ static bool DoScan(MenuState* pMS)
 	return true;
 }
 
-static GFXCONTEXT CreateScanContext(bool inSpace)
+static GfxContextRef CreateScanContext(bool inSpace)
 {
 	GfxRect r;
 	int16_t x_offset {};
 
 	// ScanContext rect is relative to SpaceContext
-	GFXCONTEXT oldContext {SetContext(SpaceContext)};
+	GfxContextRef oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&r);
 
-	GFXCONTEXT context {CreateContext("ScanContext")};
+	GfxContextRef context {CreateContext("ScanContext")};
 	SetContext(context);
 	SetContextFGFrame(Screen);
 	x_offset = ResDescale(r.extent.width - ScaledMapWidth());
@@ -1574,9 +1574,9 @@ static GFXCONTEXT CreateScanContext(bool inSpace)
 	return context;
 }
 
-GFXCONTEXT GetScanContext(bool* owner)
+GfxContextRef GetScanContext(bool* owner)
 {
-	// TODO: Make GFXCONTEXT ref-counted
+	// TODO: Make GfxContextRef ref-counted
 	if (ScanContext)
 	{
 		if (owner)
@@ -1752,7 +1752,7 @@ void GeneratePlanetSide(void)
 	for (ScanType scan {ScanType::Biological}; scan >= ScanType::Mineral; --scan)
 	{
 		uint16_t num_nodes {};
-		FRAME f {};
+		FrameRef f {};
 
 		f = SetAbsFrameIndex(MiscDataFrame,
 							 NumScandotTransitions * (scan - ScanType::Energy));
@@ -1771,7 +1771,7 @@ void GeneratePlanetSide(void)
 				continue;
 			}
 
-			HELEMENT hNodeElement {AllocElement()};
+			ElementHandle hNodeElement {AllocElement()};
 			if (!hNodeElement)
 			{
 				continue;

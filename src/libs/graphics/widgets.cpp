@@ -59,11 +59,11 @@ static Color win_medium_clr =
 static Color win_dark_clr =
 	BuildColor(MakeRgb15(0x08, 0x08, 0x10), 0x00);
 
-static FONT cur_font;
+static FontRef cur_font;
 
-static uint16_t offset_t = 0;		// Top widget offset
-static uint16_t offset_b;			// = Onscreen(); // Bottom widget offset
-static FRAME arrow_frame = nullptr; // Frames for additional graphics
+static uint16_t offset_t = 0;		   // Top widget offset
+static uint16_t offset_b;			   // = Onscreen(); // Bottom widget offset
+static FrameRef arrow_frame = nullptr; // Frames for additional graphics
 
 void ResetOffset(void)
 { // To reset offsets while traversing different moves
@@ -100,8 +100,8 @@ void DrawShadowedBox(GfxRect* r, Color bg, Color dark, Color medium)
 void DrawLabelAsWindow(WidgetLabel* label, GfxRect* windowRect)
 {
 	const Color oldfg = SetContextForeGroundColor(WidgetDialogTextColor);
-	FONT oldfont = 0;
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = 0;
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxRect r;
 	GfxText t;
 	int i {};
@@ -177,9 +177,9 @@ void Widget_SetWindowColors(Color bg, Color dark, Color medium)
 	win_medium_clr = medium;
 }
 
-FONT Widget_SetFont(FONT newFont)
+FontRef Widget_SetFont(FontRef newFont)
 {
-	FONT oldFont = cur_font;
+	FontRef oldFont = cur_font;
 	cur_font = newFont;
 	return oldFont;
 }
@@ -189,8 +189,8 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 	// This functions draws the text at the bottom of the screen
 	// which explains what the current option does.
 	GfxRect r;
-	FONT oldfont = 0;
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = 0;
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	const Color oldtext = SetContextForeGroundColor(WidgetTooltipColor);
 	GfxText t;
 	const char* amperBang = "&!";
@@ -247,8 +247,8 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 	GfxRect r;
 	Color title;
 	Color oldtext;
-	FONT oldfont = 0;
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = 0;
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 	int widget_index {};
 	int height {};
@@ -408,8 +408,8 @@ void Widget_DrawChoice(Widget* _self, int x, int y)
 	Color enabled;
 	Color disabled;
 	Color canbe;
-	FONT oldfont = 0;
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = 0;
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 	int i {};
 
@@ -526,8 +526,8 @@ void Widget_DrawButton(Widget* _self, int x, int y)
 	Color oldtext;
 	Color inactive;
 	Color selected;
-	FONT oldfont = 0;
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = 0;
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 
 	if (cur_font)
@@ -565,8 +565,8 @@ void Widget_DrawLabel(Widget* _self, int x, int y)
 { // Special labels
 	const WidgetLabel* self = (WidgetLabel*)_self;
 	const Color oldtext = SetContextForeGroundColor(WidgetLabelColor);
-	FONT oldfont = 0;
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = 0;
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 	GfxRect r;
 	const char* amperScore = "&_";
@@ -635,8 +635,8 @@ void Widget_DrawSlider(Widget* _self, int x, int y)
 	Color oldtext;
 	Color default_color;
 	Color selected;
-	FONT oldfont = 0;
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = 0;
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 	GfxRect r;
 	const int tick = (CanvasWidth - x) / 8;
@@ -731,8 +731,8 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 	Color default_color;
 	Color selected;
 	Color editing;
-	FONT oldfont = 0;
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = 0;
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 
 	if (cur_font)
@@ -892,8 +892,8 @@ void Widget_DrawControlEntry(Widget* _self, int x, int y)
 	Color oldtext;
 	Color default_color;
 	Color selected;
-	FONT oldfont = 0;
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = 0;
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 
 	if (cur_font)

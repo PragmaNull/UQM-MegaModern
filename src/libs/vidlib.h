@@ -40,32 +40,32 @@ namespace tfb
 struct VideoClip;
 } // namespace tfb
 
-typedef struct tfb::VideoClip* VIDEO_REF;
-typedef struct LegacyVideoDesc* LEGACY_VIDEO;
-typedef struct legacy_video_ref* LEGACY_VIDEO_REF;
+using VideoRef = struct tfb::VideoClip*;
+using LegacyVideo = struct LegacyVideoDesc*;
+using LegacyVideoRef = struct legacy_video_ref*;
 
 extern bool InstallVideoResType(void);
 
 extern bool InitVideoPlayer(bool UseCDROM);
 extern void UninitVideoPlayer(void);
 
-extern VIDEO_REF LoadVideoFile(const char* pStr);
-extern bool DestroyVideo(VIDEO_REF VidRef);
-extern VideoType VidPlay(VIDEO_REF VidRef);
-extern VideoType VidPlayEx(VIDEO_REF VidRef, MUSIC_REF AudRef,
-						   MUSIC_REF SpeechRef, uint32_t LoopFrame);
+extern VideoRef LoadVideoFile(const char* pStr);
+extern bool DestroyVideo(VideoRef VidRef);
+extern VideoType VidPlay(VideoRef VidRef);
+extern VideoType VidPlayEx(VideoRef VidRef, MusicRef AudRef,
+						   MusicRef SpeechRef, uint32_t LoopFrame);
 inline constexpr auto VidNoLoop {0U - 1};
 extern void VidStop(void);
-extern VIDEO_REF VidPlaying(void);
+extern VideoRef VidPlaying(void);
 extern bool VidProcessFrame(void);
 extern uint32_t VidGetPosition(void); // position in milliseconds
 extern bool VidSeek(uint32_t pos);	  // position in milliseconds
 
-extern LEGACY_VIDEO LoadLegacyVideoInstance(RESOURCE res);
-extern bool DestroyLegacyVideo(LEGACY_VIDEO vid);
-extern LEGACY_VIDEO_REF PlayLegacyVideo(LEGACY_VIDEO vid);
-extern void StopLegacyVideo(LEGACY_VIDEO_REF ref);
-extern bool PlayingLegacyVideo(LEGACY_VIDEO_REF ref);
+extern LegacyVideo LoadLegacyVideoInstance(RESOURCE res);
+extern bool DestroyLegacyVideo(LegacyVideo vid);
+extern LegacyVideoRef PlayLegacyVideo(LegacyVideo vid);
+extern void StopLegacyVideo(LegacyVideoRef ref);
+extern bool PlayingLegacyVideo(LegacyVideoRef ref);
 
 #if 0 //defined(__cplusplus)
 }

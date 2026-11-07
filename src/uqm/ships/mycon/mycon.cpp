@@ -192,7 +192,7 @@ static void plasma_blast_preprocess(Element* ElementPtr)
 static void plasma_collision(Element* ElementPtr0, GfxPoint* pPt0,
 							 Element* ElementPtr1, GfxPoint* pPt1)
 {
-	HELEMENT hBlastElement {};
+	ElementHandle hBlastElement {};
 
 	const int16_t old_mass {(int16_t)ElementPtr0->mass_points};
 	if ((ElementPtr0->pParent != ElementPtr1->pParent
@@ -317,7 +317,7 @@ static void mycon_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	}
 }
 
-static uint16_t initialize_plasma(Element* ShipPtr, HELEMENT PlasmaArray[])
+static uint16_t initialize_plasma(Element* ShipPtr, ElementHandle PlasmaArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;

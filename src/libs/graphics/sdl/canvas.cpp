@@ -627,8 +627,8 @@ void TFB_DrawCanvas_FontChar(tfb::Char* fontChar, tfb::Image* backing,
 	srcRect.w = fontChar->extent.width;
 	srcRect.h = fontChar->extent.height;
 
-	targetRect.x = x - fontChar->HotSpot.x;
-	targetRect.y = y - fontChar->HotSpot.y;
+	targetRect.x = x - fontChar->hotSpot.x;
+	targetRect.y = y - fontChar->hotSpot.y;
 
 	// transfer the alpha channel to the backing surface
 	SDL_LockSurface(surf);
@@ -1167,9 +1167,9 @@ void TFB_DrawCanvas_SetTransparentColor(tfb::Canvas canvas, Color color,
 	}
 }
 
-void TFB_DrawCanvas_GetScaledExtent(tfb::Canvas src_canvas, HOT_SPOT* src_hs,
-									tfb::Canvas src_mipmap, HOT_SPOT* mm_hs,
-									int scale, tfb::ScaleMode type, GfxExtent* size, HOT_SPOT* hs)
+void TFB_DrawCanvas_GetScaledExtent(tfb::Canvas src_canvas, HotSpot* src_hs,
+									tfb::Canvas src_mipmap, HotSpot* mm_hs,
+									int scale, tfb::ScaleMode type, GfxExtent* size, HotSpot* hs)
 {
 	const SDL_Surface* src = (SDL_Surface*)src_canvas;
 	int32_t x {};
@@ -1251,7 +1251,7 @@ void TFB_DrawCanvas_GetExtent(tfb::Canvas canvas, GfxExtent* size)
 }
 
 void TFB_DrawCanvas_Rescale_Nearest(tfb::Canvas src_canvas, tfb::Canvas dst_canvas,
-									int scale, HOT_SPOT* src_hs, GfxExtent* size, HOT_SPOT* dst_hs)
+									int scale, HotSpot* src_hs, GfxExtent* size, HotSpot* dst_hs)
 {
 	SDL_Surface* src = (SDL_Surface*)src_canvas;
 	SDL_Surface* dst = (SDL_Surface*)dst_canvas;
@@ -1481,8 +1481,8 @@ static inline Uint32 scale_get_pixel(SDL_Surface* src, Uint32 mask, Uint32 key, 
 }
 
 void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mipmap,
-									  tfb::Canvas dst_canvas, int scale, HOT_SPOT* src_hs, HOT_SPOT* mm_hs,
-									  GfxExtent* size, HOT_SPOT* dst_hs)
+									  tfb::Canvas dst_canvas, int scale, HotSpot* src_hs, HotSpot* mm_hs,
+									  GfxExtent* size, HotSpot* dst_hs)
 {
 	SDL_Surface* src = (SDL_Surface*)src_canvas;
 	SDL_Surface* dst = (SDL_Surface*)dst_canvas;
@@ -1815,7 +1815,7 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 }
 
 void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_canvas,
-									 int scale, HOT_SPOT* src_hs, GfxExtent* size, HOT_SPOT* dst_hs)
+									 int scale, HotSpot* src_hs, GfxExtent* size, HotSpot* dst_hs)
 {
 	SDL_Surface* src = (SDL_Surface*)src_canvas;
 	SDL_Surface* dst = (SDL_Surface*)dst_canvas;

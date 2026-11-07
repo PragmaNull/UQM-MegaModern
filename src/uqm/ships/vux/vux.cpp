@@ -241,7 +241,7 @@ static void spawn_limpets(Element* ElementPtr)
 
 	MissileBlock.cx = ElementPtr->next.location.x;
 	MissileBlock.cy = ElementPtr->next.location.y;
-	HELEMENT Limpet {initialize_missile(&MissileBlock)};
+	ElementHandle Limpet {initialize_missile(&MissileBlock)};
 	if (Limpet)
 	{
 		Element* LimpetPtr {};
@@ -255,7 +255,7 @@ static void spawn_limpets(Element* ElementPtr)
 	}
 }
 
-static uint16_t initialize_horrific_laser(Element* ShipPtr, HELEMENT LaserArray[])
+static uint16_t initialize_horrific_laser(Element* ShipPtr, ElementHandle LaserArray[])
 {
 	Starship* StarShipPtr {};
 	LaserDesc LaserBlock;

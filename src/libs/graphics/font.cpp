@@ -59,9 +59,9 @@ int GetFontCharSpace(void)
 	return uqm::StarConFont->CharSpace;
 }
 
-FONT SetContextFont(FONT Font)
+FontRef SetContextFont(FontRef Font)
 {
-	FONT LastFont {_CurFontPtr};
+	FontRef LastFont {_CurFontPtr};
 	_CurFontPtr = Font;
 	if (ContextActive())
 	{
@@ -71,19 +71,19 @@ FONT SetContextFont(FONT Font)
 	return (LastFont);
 }
 
-bool DestroyFont(FONT FontRef)
+bool DestroyFont(FontRef fontRef)
 {
-	if (FontRef == nullptr)
+	if (fontRef == nullptr)
 	{
 		return (false);
 	}
 
-	if (_CurFontPtr && _CurFontPtr == FontRef)
+	if (_CurFontPtr && _CurFontPtr == fontRef)
 	{
-		SetContextFont((FONT) nullptr);
+		SetContextFont((FontRef) nullptr);
 	}
 
-	return (_ReleaseFontData(FontRef));
+	return (_ReleaseFontData(fontRef));
 }
 
 // Returns the GfxRect of any given GfxText
@@ -134,7 +134,7 @@ void font_DrawText(GfxText* lpText)
 	_text_blt(&ClipRect, &text, origin);
 }
 
-void font_DrawText_Fade(GfxText* lpText, FRAME repair, bool* skip)
+void font_DrawText_Fade(GfxText* lpText, FrameRef repair, bool* skip)
 {
 	GfxRect ClipRect;
 	GfxPoint origin;
@@ -189,7 +189,7 @@ void font_DrawTracedText(GfxText* pText, Color text, Color trace)
 }
 
 // Alt stuff to handle 2 fonts at once (for Orz)
-uint8_t font_DrawTextAlt(GfxText* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key)
+uint8_t font_DrawTextAlt(GfxText* lpText, uint8_t swap, FontRef AltFontPtr, uqm::UniChar key)
 {
 	GfxRect ClipRect;
 	GfxPoint origin;
@@ -211,7 +211,7 @@ uint8_t font_DrawTextAlt(GfxText* lpText, uint8_t swap, FONT AltFontPtr, uqm::Un
 	return _text_blt_alt(&ClipRect, &text, origin, swap, AltFontPtr, key);
 }
 
-void font_DrawTracedTextAlt(GfxText* pText, Color text, Color trace, FONT AltFontPtr,
+void font_DrawTracedTextAlt(GfxText* pText, Color text, Color trace, FontRef AltFontPtr,
 							uqm::UniChar key)
 {
 	// Preserve current foreground color for full correctness
@@ -334,7 +334,7 @@ bool TextRect(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta)
 {
 	uint8_t char_delta_array[MaxDeltas];
 
-	FONT FontPtr {_CurFontPtr};
+	FontRef FontPtr {_CurFontPtr};
 	if (FontPtr != 0 && lpText->CharCount != 0)
 	{
 		int16_t top_y {};
@@ -390,7 +390,7 @@ bool TextRect(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta)
 			{
 				int16_t y {};
 
-				y = -charFrame->HotSpot.y;
+				y = -charFrame->hotSpot.y;
 				if (y < top_y)
 				{
 					top_y = y;
@@ -463,7 +463,7 @@ void _text_blt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin)
 	GfxPoint origin;
 	const DrawMode mode = _get_context_draw_mode();
 
-	FONT FontPtr {_CurFontPtr};
+	FontRef FontPtr {_CurFontPtr};
 	if (FontPtr == nullptr)
 	{
 		return;
@@ -506,8 +506,8 @@ void _text_blt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin)
 		{
 			GfxRect r;
 
-			r.corner.x = origin.x - fontChar->HotSpot.x;
-			r.corner.y = origin.y - fontChar->HotSpot.y;
+			r.corner.x = origin.x - fontChar->hotSpot.x;
+			r.corner.y = origin.y - fontChar->hotSpot.y;
 			r.extent.width = fontChar->disp.width;
 			r.extent.height = fontChar->disp.height;
 			if (BoxIntersect(&r, pClipRect, &r))
@@ -532,7 +532,7 @@ void _text_blt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin)
 	}
 }
 
-void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FRAME repair, bool* skip)
+void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FrameRef repair, bool* skip)
 {
 	const char* pStr {};
 	GfxPoint origin;
@@ -542,7 +542,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 	tfb::Image* b_clear {};
 	const DrawMode mode = _get_context_draw_mode();
 
-	FONT FontPtr {_CurFontPtr};
+	FontRef FontPtr {_CurFontPtr};
 	if (FontPtr != nullptr)
 	{
 		GfxRect r;
@@ -612,8 +612,8 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 		{
 			GfxRect r;
 
-			r.corner.x = origin.x - fontChar->HotSpot.x;
-			r.corner.y = origin.y - fontChar->HotSpot.y;
+			r.corner.x = origin.x - fontChar->hotSpot.x;
+			r.corner.y = origin.y - fontChar->hotSpot.y;
 			r.extent.width = fontChar->disp.width;
 			r.extent.height = fontChar->disp.height;
 			if (BoxIntersect(&r, pClipRect, &r))
@@ -684,11 +684,11 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 }
 
 bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap,
-				 uqm::UniChar key, FONT AltFontPtr)
+				 uqm::UniChar key, FontRef AltFontPtr)
 {
 	uint8_t char_delta_array[MaxDeltas];
 
-	FONT FontPtr {_CurFontPtr};
+	FontRef FontPtr {_CurFontPtr};
 	if (FontPtr != 0 && lpText->CharCount != 0)
 	{
 		int16_t top_y {};
@@ -757,7 +757,7 @@ bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap,
 			{
 				int16_t y {};
 
-				y = -charFrame->HotSpot.y;
+				y = -charFrame->hotSpot.y;
 				if (y < top_y)
 				{
 					top_y = y;
@@ -825,7 +825,7 @@ bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap,
 }
 
 uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, uint8_t swap,
-					  FONT AltFontPtr, uqm::UniChar key)
+					  FontRef AltFontPtr, uqm::UniChar key)
 { // Kruzen: To create text using 2 fonts (Orz case)
 	// Safest way to do so without going too deep into
 	// original code
@@ -837,7 +837,7 @@ uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, 
 	const DrawMode mode = _get_context_draw_mode();
 	uint8_t leading_step {};
 
-	FONT FontPtr {_CurFontPtr};
+	FontRef FontPtr {_CurFontPtr};
 	if (FontPtr == nullptr)
 	{
 		return 0;
@@ -923,8 +923,8 @@ uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, 
 		{
 			GfxRect r;
 
-			r.corner.x = origin.x - fontChar->HotSpot.x;
-			r.corner.y = origin.y - fontChar->HotSpot.y;
+			r.corner.x = origin.x - fontChar->hotSpot.x;
+			r.corner.y = origin.y - fontChar->hotSpot.y;
 			r.extent.width = fontChar->disp.width;
 			r.extent.height = fontChar->disp.height;
 			if (BoxIntersect(&r, pClipRect, &r))

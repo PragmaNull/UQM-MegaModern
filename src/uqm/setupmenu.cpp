@@ -60,7 +60,7 @@ struct SetupMenuState
 	TimeCount NextTime;
 };
 
-static SOUND_REF testSounds;
+static SoundBankRef testSounds;
 
 static bool DoSetupMenu(SetupMenuState* pInputState);
 static Widget *current, *next;
@@ -114,7 +114,7 @@ static WidgetButton randomSeedButton {};
 static const uqstl::string c_noLabel {};
 static const uqstl::vector<uqstl::string> c_noTooltip {};
 
-static FRAME setup_frame = nullptr;
+static FrameRef setup_frame = nullptr;
 
 static void populate_gamma(void);
 static int OnTextEntryEvent(WidgetTextEntry* widget);

@@ -25,13 +25,13 @@
 #include "libs/mathlib.h"
 
 
-static MUSIC_REF curMusicRef;
-static MUSIC_REF curSpeechRef;
+static MusicRef curMusicRef;
+static MusicRef curSpeechRef;
 static MusicPosition resumeMusicArray[PATH_MAX];
 
-void PLRPlaySong(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
+void PLRPlaySong(MusicRef musicRef, bool Continuous, uint8_t Priority)
 {
-	tfb::SoundSample* const* pmus = MusicRef;
+	tfb::SoundSample* const* pmus = musicRef;
 
 	if (pmus)
 	{
@@ -40,15 +40,15 @@ void PLRPlaySong(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
 		PlayStream((*pmus), MusicSource, Continuous, true, true);
 		soundSource[MusicSource].stream_mutex.unlock();
 
-		curMusicRef = MusicRef;
+		curMusicRef = musicRef;
 	}
 
 	(void)Priority; /* Satisfy compiler because of unused variable */
 }
 
-void PLRStop(MUSIC_REF MusicRef)
+void PLRStop(MusicRef musicRef)
 {
-	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
+	if (musicRef == curMusicRef || musicRef == (MusicRef)~0)
 	{
 		soundSource[MusicSource].stream_mutex.lock();
 		StopStream(MusicSource);
@@ -58,9 +58,9 @@ void PLRStop(MUSIC_REF MusicRef)
 	}
 }
 
-bool PLRPlaying(MUSIC_REF MusicRef)
+bool PLRPlaying(MusicRef musicRef)
 {
-	if (curMusicRef && (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0))
+	if (curMusicRef && (musicRef == curMusicRef || musicRef == (MusicRef)~0))
 	{
 		soundSource[MusicSource].stream_mutex.lock();
 		const bool playing {PlayingStream(MusicSource)};
@@ -72,9 +72,9 @@ bool PLRPlaying(MUSIC_REF MusicRef)
 	return false;
 }
 
-void PLRSeek(MUSIC_REF MusicRef, uint32_t pos)
+void PLRSeek(MusicRef musicRef, uint32_t pos)
 {
-	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
+	if (musicRef == curMusicRef || musicRef == (MusicRef)~0)
 	{
 		soundSource[MusicSource].stream_mutex.lock();
 		SeekStream(MusicSource, pos);
@@ -82,9 +82,9 @@ void PLRSeek(MUSIC_REF MusicRef, uint32_t pos)
 	}
 }
 
-void PLRPause(MUSIC_REF MusicRef)
+void PLRPause(MusicRef musicRef)
 {
-	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
+	if (musicRef == curMusicRef || musicRef == (MusicRef)~0)
 	{
 		soundSource[MusicSource].stream_mutex.lock();
 		PauseStream(MusicSource);
@@ -92,7 +92,7 @@ void PLRPause(MUSIC_REF MusicRef)
 	}
 }
 
-static uint32_t get_current_music_pos(MUSIC_REF MusicRef)
+static uint32_t get_current_music_pos(MusicRef musicRef)
 {
 	uint32_t pos = 0;
 	float length = 0.0f;
@@ -103,7 +103,7 @@ static uint32_t get_current_music_pos(MUSIC_REF MusicRef)
 		return 0;
 	}
 
-	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
+	if (musicRef == curMusicRef || musicRef == (MusicRef)~0)
 	{
 		soundSource[MusicSource].stream_mutex.lock();
 
@@ -140,9 +140,9 @@ uint32_t PLRGetPos(void)
 	return curMusicRef != 0 ? get_current_music_pos(curMusicRef) : 0;
 }
 
-void PLRResume(MUSIC_REF MusicRef)
+void PLRResume(MusicRef musicRef)
 {
-	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
+	if (musicRef == curMusicRef || musicRef == (MusicRef)~0)
 	{
 		soundSource[MusicSource].stream_mutex.lock();
 		ResumeStream(MusicSource);
@@ -150,7 +150,7 @@ void PLRResume(MUSIC_REF MusicRef)
 	}
 }
 
-static uint32_t get_current_music_filename_hash(MUSIC_REF MusicRef)
+static uint32_t get_current_music_filename_hash(MusicRef musicRef)
 {
 	uint32_t filename_hash {};
 
@@ -159,7 +159,7 @@ static uint32_t get_current_music_filename_hash(MUSIC_REF MusicRef)
 		return 0;
 	}
 
-	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
+	if (musicRef == curMusicRef || musicRef == (MusicRef)~0)
 	{
 		soundSource[MusicSource].stream_mutex.lock();
 		filename_hash = soundSource[MusicSource].sample->decoder->filename_hash;
@@ -178,7 +178,7 @@ uint32_t PLRGetFilenameHash(void)
 	return curMusicRef != 0 ? get_current_music_filename_hash(curMusicRef) : 0;
 }
 
-void snd_PlaySpeech(MUSIC_REF SpeechRef)
+void snd_PlaySpeech(MusicRef SpeechRef)
 {
 	tfb::SoundSample* const* pmus = SpeechRef;
 
@@ -207,9 +207,9 @@ void snd_StopSpeech(void)
 	curSpeechRef = 0;
 }
 
-bool DestroyMusic(MUSIC_REF MusicRef)
+bool DestroyMusic(MusicRef musicRef)
 {
-	return _ReleaseMusicData(MusicRef);
+	return _ReleaseMusicData(musicRef);
 }
 
 void SetMusicVolume(uint16_t Volume)
@@ -244,7 +244,7 @@ void* _GetMusicData(const ResourceFile& resource)
 	}
 
 	tfb::SoundSample* sample {TFB_CreateSoundSample(decoder, 64, nullptr)};
-	MUSIC_REF h {new tfb::SoundSample* {sample}};
+	MusicRef h {new tfb::SoundSample* {sample}};
 
 	uqm::log::info("    decoder: {}, rate {} format {:x}",
 				   SoundDecoder_GetName(sample->decoder),
@@ -289,7 +289,7 @@ void SetMusicPosition(void)
 	MusicPosition temp;
 
 	if (!uqm::UQMOptions::read().musicResume || uqm::currentActivity() & uqm::ActivityFlag::CheckAbort
-		|| !PLRPlaying((MUSIC_REF)~0))
+		|| !PLRPlaying((MusicRef)~0))
 	{
 		return;
 	}

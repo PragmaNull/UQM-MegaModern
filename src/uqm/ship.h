@@ -37,7 +37,7 @@ extern void ship_postprocess(Element* ElementPtr);
 extern void collision(Element* ElementPtr0, GfxPoint* pPt0,
 					  Element* ElementPtr1, GfxPoint* pPt1);
 
-extern STATUS_FLAGS inertial_thrust(Element* ElementPtr);
+extern StatusFlags inertial_thrust(Element* ElementPtr);
 
 #if 0 //defined(__cplusplus)
 }

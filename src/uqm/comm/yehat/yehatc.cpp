@@ -245,7 +245,7 @@ static ConversationData yehat_desc =
 		nullptr,
 };
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Hostile);
 
@@ -318,7 +318,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void Royalists(RESPONSE_REF R)
+static void Royalists(ResponseRef R)
 {
 	if (PlayerSaid(R, YehatPhrase::HowIsRebellion))
 	{
@@ -376,7 +376,7 @@ static void Royalists(RESPONSE_REF R)
 	Response(YehatPhrase::ByeRoyalist, ExitConversation);
 }
 
-static void StartRevolt(RESPONSE_REF R)
+static void StartRevolt(ResponseRef R)
 {
 	if (PlayerSaid(R, YehatPhrase::ShofixtiAlive1))
 	{
@@ -400,7 +400,7 @@ static void StartRevolt(RESPONSE_REF R)
 	Response(YehatPhrase::NotSend, ExitConversation);
 }
 
-static void YehatHome(RESPONSE_REF R)
+static void YehatHome(ResponseRef R)
 {
 
 	SetHomeworldKnown(*HomeId::Yehat);
@@ -475,7 +475,7 @@ static void YehatHome(RESPONSE_REF R)
 	Response(YehatPhrase::ByeHomeworld, ExitConversation);
 }
 
-static void YehatSpace(RESPONSE_REF R)
+static void YehatSpace(ResponseRef R)
 {
 	uint8_t i {};
 	YehatPhrase pStr[3];
@@ -671,7 +671,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::YEHAT_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
-		Royalists((RESPONSE_REF)0);
+		Royalists((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
@@ -688,7 +688,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-		YehatHome((RESPONSE_REF)0);
+		YehatHome((ResponseRef)0);
 	}
 	else
 	{
@@ -711,7 +711,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_VISITS, static_cast<uint32_t>(NumVisits));
 
-		YehatSpace((RESPONSE_REF)0);
+		YehatSpace((ResponseRef)0);
 	}
 }
 

@@ -32,41 +32,41 @@ namespace uqm
 extern "C" {
 #endif
 
-extern RESOURCE_INDEX hResIndex;
+extern ResourceIndex hResIndex;
 
-extern FRAME Screen;
-extern FRAME ActivityFrame;
-extern FRAME StatusFrame;
-extern FRAME SubmenuFrame;
-extern FRAME FlagStatFrame;
-extern FRAME MiscDataFrame;
-extern FRAME visitedStarsFrame;
-extern FRAME FontGradFrame;
-extern FRAME BorderFrame;
-extern FRAME HDBorderFrame;
-extern FRAME CustBevelFrame;
-extern FRAME DefBevelFrame;
+extern FrameRef Screen;
+extern FrameRef ActivityFrame;
+extern FrameRef StatusFrame;
+extern FrameRef SubmenuFrame;
+extern FrameRef FlagStatFrame;
+extern FrameRef MiscDataFrame;
+extern FrameRef visitedStarsFrame;
+extern FrameRef FontGradFrame;
+extern FrameRef BorderFrame;
+extern FrameRef HDBorderFrame;
+extern FrameRef CustBevelFrame;
+extern FrameRef DefBevelFrame;
 
-extern GFXCONTEXT OffScreenContext;
+extern GfxContextRef OffScreenContext;
 // OffScreenContext can often refer to a deleted ForeGroundFrame
 // Always call SetContextFGFrame() before drawing anything to it
 // Neither is the state of its ClipRect guaranteed.
-extern GFXCONTEXT ScreenContext;
-extern GFXCONTEXT SpaceContext;
-extern GFXCONTEXT StatusContext;
+extern GfxContextRef ScreenContext;
+extern GfxContextRef SpaceContext;
+extern GfxContextRef StatusContext;
 
 extern int16_t screen_width, screen_height;
 
-extern FONT StarConFont;
-extern FONT MicroFont;
-extern FONT TinyFont;
-extern FONT TinyFontBold;
-extern FONT TinyFontCond;
-extern FONT PlyrFont;
-extern FONT LabelFont;
-extern FONT SlabFont;
-extern FONT SquareFont;
-extern FONT PlayMenuFont;
+extern FontRef StarConFont;
+extern FontRef MicroFont;
+extern FontRef TinyFont;
+extern FontRef TinyFontBold;
+extern FontRef TinyFontCond;
+extern FontRef PlyrFont;
+extern FontRef LabelFont;
+extern FontRef SlabFont;
+extern FontRef SquareFont;
+extern FontRef PlayMenuFont;
 
 extern Queue race_q[];
 /* Array of lists of ships involved in a battle, one queue per side;
@@ -85,7 +85,7 @@ extern bool SpaceMusicOK;
 extern bool oldPlanetsPresent;
 extern bool classicPackPresent;
 
-extern ACTIVITY LastActivity;
+extern ActivityWord LastActivity;
 
 extern PlayerControlFlags PlayerControl[];
 

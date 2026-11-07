@@ -18,29 +18,29 @@
 
 #include "gfxintrn.h"
 
-GRAPHICS_STATUS _GraphicsStatusFlags;
-GFXCONTEXT _pCurContext;
+GraphicsStatusFlags _GraphicsStatusFlags;
+GfxContextRef _pCurContext;
 
 #ifdef DEBUG
 // We keep track of all contexts
-GFXCONTEXT firstContext;
+GfxContextRef firstContext;
 // The first one in the list.
-GFXCONTEXT* contextEnd = &firstContext;
+GfxContextRef* contextEnd = &firstContext;
 // Where to put the next context.
 #endif
 
 Primitive _locPrim;
 
-FONT _CurFontPtr;
+FontRef _CurFontPtr;
 
 static constexpr auto DefaultForeColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)};
 static constexpr auto DefaultBackColor {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)};
 
 static constexpr auto DefaultDrawMode {MAKE_DRAW_MODE(DrawKind::Default, 255)};
 
-GFXCONTEXT SetContext(GFXCONTEXT Context)
+GfxContextRef SetContext(GfxContextRef Context)
 {
-	GFXCONTEXT LastContext {_pCurContext};
+	GfxContextRef LastContext {_pCurContext};
 	if (Context != LastContext)
 	{
 		if (LastContext)
@@ -73,12 +73,12 @@ GFXCONTEXT SetContext(GFXCONTEXT Context)
 }
 
 #ifdef DEBUG
-GFXCONTEXT CreateContextAux(const char* name)
+GfxContextRef CreateContextAux(const char* name)
 #else  /* if !defined(DEBUG) */
-GFXCONTEXT CreateContextAux(void)
+GfxContextRef CreateContextAux(void)
 #endif /* !defined(DEBUG) */
 {
-	GFXCONTEXT NewContext {new GraphicsContextDesc {}};
+	GfxContextRef NewContext {new GraphicsContextDesc {}};
 	if (NewContext)
 	{
 		/* initialize context */
@@ -101,9 +101,9 @@ GFXCONTEXT CreateContextAux(void)
 // Loop through the list of context to the pointer which points to the
 // specified context. This is either 'firstContext' or the address of
 // the 'next' field of some other context.
-static GFXCONTEXT* FindContextPtr(GFXCONTEXT context)
+static GfxContextRef* FindContextPtr(GfxContextRef context)
 {
-	GFXCONTEXT* ptr;
+	GfxContextRef* ptr;
 
 	for (ptr = &firstContext; *ptr != nullptr; ptr = &(*ptr)->next)
 	{
@@ -116,7 +116,7 @@ static GFXCONTEXT* FindContextPtr(GFXCONTEXT context)
 }
 #endif /* DEBUG */
 
-bool DestroyContext(GFXCONTEXT ContextRef)
+bool DestroyContext(GfxContextRef ContextRef)
 {
 	if (ContextRef == 0)
 	{
@@ -125,13 +125,13 @@ bool DestroyContext(GFXCONTEXT ContextRef)
 
 	if (_pCurContext && _pCurContext == ContextRef)
 	{
-		SetContext((GFXCONTEXT)0);
+		SetContext((GfxContextRef)0);
 	}
 
 #ifdef DEBUG
 	// Unlink the context.
 	{
-		GFXCONTEXT* contextPtr = FindContextPtr(ContextRef);
+		GfxContextRef* contextPtr = FindContextPtr(ContextRef);
 		if (contextEnd == &ContextRef->next)
 		{
 			contextEnd = contextPtr;
@@ -300,14 +300,14 @@ GfxPoint SetContextOrigin(GfxPoint orgOffset)
 	return SetFrameHot(_CurFramePtr, orgOffset);
 }
 
-FRAME SetContextFontEffect(FRAME EffectFrame)
+FrameRef SetContextFontEffect(FrameRef EffectFrame)
 {
 	if (!ContextActive())
 	{
 		return (nullptr);
 	}
 
-	FRAME LastEffect {_get_context_fonteff()};
+	FrameRef LastEffect {_get_context_fonteff()};
 	if (EffectFrame != LastEffect)
 	{
 		SwitchContextFontEffect(EffectFrame);
@@ -349,10 +349,10 @@ void FixContextFontEffect(void)
 	img = TFB_DrawImage_CreateForScreen(w, h, true);
 	if (_get_context_fbk_flags() & FbkImage)
 	{ // image pattern backing
-		FRAME EffectFrame = _get_context_fonteff();
+		FrameRef EffectFrame = _get_context_fonteff();
 
 		TFB_DrawImage_Image(EffectFrame->image,
-							-EffectFrame->HotSpot.x, -EffectFrame->HotSpot.y,
+							-EffectFrame->hotSpot.x, -EffectFrame->hotSpot.y,
 							0, tfb::ScaleMode::None, nullptr, DrawReplaceMode, img);
 	}
 	else
@@ -370,9 +370,9 @@ void FixContextFontEffect(void)
 	UnsetContextFBkFlags(FbkDirty);
 }
 
-// 'area' may be nullptr to copy the entire GFXCONTEXT cliprect
-// 'area' is relative to the GFXCONTEXT cliprect
-DRAWABLE CopyContextRect(const GfxRect* area)
+// 'area' may be nullptr to copy the entire GfxContextRef cliprect
+// 'area' is relative to the GfxContextRef cliprect
+DrawableRef CopyContextRect(const GfxRect* area)
 {
 	GfxRect clipRect;
 	GfxRect fgRect;
@@ -392,7 +392,7 @@ DRAWABLE CopyContextRect(const GfxRect* area)
 		r.corner.y += area->corner.y;
 		r.extent = area->extent;
 	}
-	// TODO: Should this take GFXCONTEXT origin into account too?
+	// TODO: Should this take GfxContextRef origin into account too?
 	// validate the rect
 	if (!BoxIntersect(&r, &fgRect, &r))
 	{
@@ -410,17 +410,17 @@ DRAWABLE CopyContextRect(const GfxRect* area)
 }
 
 #ifdef DEBUG
-const char* GetContextName(GFXCONTEXT context)
+const char* GetContextName(GfxContextRef context)
 {
 	return context->name;
 }
 
-GFXCONTEXT GetFirstContext(void)
+GfxContextRef GetFirstContext(void)
 {
 	return firstContext;
 }
 
-GFXCONTEXT GetNextContext(GFXCONTEXT context)
+GfxContextRef GetNextContext(GfxContextRef context)
 {
 	return context->next;
 }

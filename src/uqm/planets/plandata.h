@@ -298,8 +298,8 @@ struct PlanetData
 
 	uqm::StringTablePtr DiscoveryStrings {};
 	size_t DiscoveryIndex {};
-	FONT LanderFont;
-	FRAME LanderFontEff;
+	FontRef LanderFont;
+	FrameRef LanderFontEff;
 };
 
 enum class DensityClass

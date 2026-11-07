@@ -35,7 +35,7 @@
 #include "../../battlecontrols.h"
 // for NetworkInputContext
 #include "../../controls.h"
-// for BATTLE_INPUT_STATE
+// for BattleInputState
 #include "../../init.h"
 // for NumPlayers
 #include "../../globdata.h"
@@ -328,10 +328,10 @@ void setBattleStateConnections(struct BattleState* bs)
 
 static constexpr auto MaxBlockTime {500};
 
-BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context, Starship* StarShipPtr)
+BattleInputState networkBattleInput(NetworkInputContext* context, Starship* StarShipPtr)
 {
 	BattleInputBuffer* bib = getBattleInputBuffer(context->playerNr);
-	BATTLE_INPUT_STATE result {};
+	BattleInputState result {};
 
 	for (;;)
 	{
@@ -369,12 +369,12 @@ BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context, Starship* St
 			{
 				// Connection aborted.
 				uqm::currentActivity() |= ActivityFlag::CheckAbort;
-				return (BATTLE_INPUT_STATE)0;
+				return (BattleInputState)0;
 			}
 
 			if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 			{
-				return (BATTLE_INPUT_STATE)0;
+				return (BattleInputState)0;
 			}
 
 #if 0
@@ -387,7 +387,7 @@ BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context, Starship* St
 			{
 				// Connection aborted.
 				uqm::currentActivity() |= ActivityFlag::CheckAbort;
-				return (BATTLE_INPUT_STATE)0;
+				return (BattleInputState)0;
 			}
 		}
 	}

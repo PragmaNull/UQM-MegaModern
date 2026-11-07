@@ -30,7 +30,7 @@
 #include "../../battlecontrols.h"
 // for NetworkInputContext
 #include "../../controls.h"
-// for BATTLE_INPUT_STATE
+// for BattleInputState
 #include "../../races.h"
 
 namespace uqm
@@ -68,8 +68,8 @@ bool allConnected(void);
 void initBattleStateDataConnections(void);
 void setBattleStateConnections(struct BattleState* bs);
 
-BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context,
-									  Starship* StarShipPtr);
+BattleInputState networkBattleInput(NetworkInputContext* context,
+									Starship* StarShipPtr);
 
 NetConnection* openPlayerNetworkConnection(uint16_t player, void* extra);
 void closePlayerNetworkConnection(uint16_t player);

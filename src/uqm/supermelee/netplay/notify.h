@@ -24,7 +24,7 @@
 // for NETPLAY_CHECKSUM
 #include "netconnection.h"
 #include "../../controls.h"
-// for BATTLE_INPUT_STATE
+// for BattleInputState
 #ifdef NETPLAY_CHECKSUM
 #include "checksum.h"
 #endif
@@ -42,7 +42,7 @@ extern "C" {
 
 void Netplay_Notify_shipSelected(NetConnection* conn, FleetShipIndex index);
 void Netplay_Notify_battleInput(NetConnection* conn,
-								BATTLE_INPUT_STATE input);
+								BattleInputState input);
 void Netplay_Notify_setTeamName(NetConnection* conn, int player,
 								const char* name, size_t len);
 void Netplay_Notify_setFleet(NetConnection* conn, int player,

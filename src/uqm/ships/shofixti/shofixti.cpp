@@ -134,7 +134,7 @@ static RaceDesc shofixti_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_standard_missile(Element* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missile(Element* ShipPtr, ElementHandle MissileArray[])
 {
 
 	Starship* StarShipPtr {};
@@ -228,7 +228,7 @@ static void destruct_preprocess(Element* ElementPtr)
 		// XXX: Why? Why not keep using the ship's Element?
 		//   Is it because of conflicting state_flags, hit_points or
 		//   mass_points?
-		HELEMENT hDestruct {AllocElement()};
+		ElementHandle hDestruct {AllocElement()};
 		if (hDestruct)
 		{
 			Element* DestructPtr {};
@@ -280,9 +280,9 @@ static void self_destruct_kill_objects(Element* ElementPtr)
 	// This is called during PostProcessQueue(), close to or at the end,
 	// for the temporary destruct Element to apply the effects of glory
 	// explosion. The effects are not seen until the next frame.
-	HELEMENT hNextElement {};
+	ElementHandle hNextElement {};
 
-	for (HELEMENT hElement {GetHeadElement()}; hElement != 0; hElement = hNextElement)
+	for (ElementHandle hElement {GetHeadElement()}; hElement != 0; hElement = hNextElement)
 	{
 		Element* ObjPtr {};
 		uint32_t dist {};
@@ -391,7 +391,7 @@ static void self_destruct(Element* ElementPtr)
 	// It will be the last Element (or one of the last) for which the
 	// death_func() will be called from PostProcessQueue() in this frame.
 	// XXX: Why at the end? Why not just do it now?
-	HELEMENT hDestruct {AllocElement()};
+	ElementHandle hDestruct {AllocElement()};
 	if (hDestruct)
 	{
 		Element* DestructPtr {};

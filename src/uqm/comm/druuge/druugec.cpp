@@ -206,7 +206,7 @@ static ConversationData druuge_desc =
 static uint16_t SlaveryCount = 0;
 static bool AttemptedSalvage = false;
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	if (PlayerSaid(R, DruugePhrase::Bye))
 	{
@@ -269,14 +269,14 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void TradeWorld(RESPONSE_REF R);
+static void TradeWorld(ResponseRef R);
 
 static constexpr auto ArtifactCrewCost {100};
 
 static constexpr auto ShipCrewCost {100};
 static constexpr auto FuelCrewCost {10};
 
-static void Buy(RESPONSE_REF R)
+static void Buy(ResponseRef R)
 {
 	if (PlayerSaid(R, DruugePhrase::WantToBuy)
 		|| PlayerSaid(R, DruugePhrase::ImReadyToBuy))
@@ -396,11 +396,11 @@ static void Buy(RESPONSE_REF R)
 	Response(DruugePhrase::DoneBuying, TradeWorld);
 }
 
-static void Sell(RESPONSE_REF R);
+static void Sell(ResponseRef R);
 
-static RESPONSE_REF LastResponse = 0;
+static ResponseRef LastResponse = 0;
 
-static void Trade(RESPONSE_REF R)
+static void Trade(ResponseRef R)
 {
 	if (!PlayerSaid(R, DruugePhrase::WhatsTheSphereAgain))
 	{
@@ -422,7 +422,7 @@ static void Trade(RESPONSE_REF R)
 	}
 }
 
-static void DoTransaction(RESPONSE_REF R)
+static void DoTransaction(ResponseRef R)
 {
 	if (PlayerSaid(R, DruugePhrase::SellMaidens))
 	{
@@ -591,9 +591,9 @@ static void DoTransaction(RESPONSE_REF R)
 	}
 }
 
-static void Sell(RESPONSE_REF R)
+static void Sell(ResponseRef R)
 {
-	RESPONSE_FUNC RespFunc {};
+	ResponseFunc RespFunc {};
 
 	if (PlayerSaid(R, DruugePhrase::WantToSell))
 	{
@@ -627,16 +627,16 @@ static void Sell(RESPONSE_REF R)
 	{
 		if ((isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << *HardModeEncounter::ReadyToBargain) || !isDifficulty(uqm::Difficulty::Hard))
 		{
-			RespFunc = (RESPONSE_FUNC)Trade;
+			RespFunc = (ResponseFunc)Trade;
 		}
 		else
 		{
-			RespFunc = (RESPONSE_FUNC)Sell;
+			RespFunc = (ResponseFunc)Sell;
 		}
 	}
 	else
 	{
-		RespFunc = (RESPONSE_FUNC)Sell;
+		RespFunc = (ResponseFunc)Sell;
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP))
 	{
@@ -660,7 +660,7 @@ static void Sell(RESPONSE_REF R)
 	Response(DruugePhrase::DoneSelling, TradeWorld);
 }
 
-static void ExplainSlaveTrade(RESPONSE_REF R)
+static void ExplainSlaveTrade(ResponseRef R)
 {
 	if (PlayerSaid(R, DruugePhrase::WantToBuy))
 	{
@@ -692,7 +692,7 @@ static void ExplainSlaveTrade(RESPONSE_REF R)
 	Response(DruugePhrase::ImReadyToBuy, Buy);
 }
 
-static void TradeWorld(RESPONSE_REF R)
+static void TradeWorld(ResponseRef R)
 {
 	if (PlayerSaid(R, DruugePhrase::WhatsUpAtTradeWorld))
 	{
@@ -751,7 +751,7 @@ static void TradeWorld(RESPONSE_REF R)
 	Response(DruugePhrase::Bye, ExitConversation);
 }
 
-static void BombAmbush(RESPONSE_REF R)
+static void BombAmbush(ResponseRef R)
 {
 	if (PlayerSaid(R, DruugePhrase::WhatsUpAtBombPlanet))
 	{
@@ -779,7 +779,7 @@ static void BombAmbush(RESPONSE_REF R)
 	Response(DruugePhrase::Bye, ExitConversation);
 }
 
-static void Space(RESPONSE_REF R)
+static void Space(ResponseRef R)
 {
 	if (PlayerSaid(R, DruugePhrase::WhatsUpInSpace))
 	{
@@ -928,7 +928,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::SCANNED_SPAWNER, static_cast<uint32_t>(1));
 		}
 
-		TradeWorld((RESPONSE_REF)0);
+		TradeWorld((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
@@ -942,7 +942,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(1));
 		}
 
-		BombAmbush((RESPONSE_REF)0);
+		BombAmbush((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::ATTACKED_DRUUGE))
 	{
@@ -1012,7 +1012,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_VISITS, static_cast<uint32_t>(NumVisits));
 
-			Space((RESPONSE_REF)0);
+			Space((ResponseRef)0);
 		}
 	}
 }

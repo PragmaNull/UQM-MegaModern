@@ -105,23 +105,23 @@ enum class SolarSysMenuItem
 consteval bool isArithmeticEnum(SolarSysMenuItem) { return true; }
 
 SolarSystemState* pSolarSysState;
-FRAME SISIPFrame;
-FRAME SunFrame;
-FRAME OrbitalFrame;
-FRAME OrbitalShield;
-FRAME NebulaFrame;
-FRAME SpaceJunkFrame;
-COLORMAP OrbitalCMap;
-COLORMAP SunCMap;
-MUSIC_REF SpaceMusic;
+FrameRef SISIPFrame;
+FrameRef SunFrame;
+FrameRef OrbitalFrame;
+FrameRef OrbitalShield;
+FrameRef NebulaFrame;
+FrameRef SpaceJunkFrame;
+ColorMapRef OrbitalCMap;
+ColorMapRef SunCMap;
+MusicRef SpaceMusic;
 
 int16_t EncounterRace;
 uint8_t EncounterGroup;
 // last encountered group info
 
-static FRAME StarsFrame;
+static FrameRef StarsFrame;
 // prepared star-field graphic
-static FRAME SolarSysFrame;
+static FrameRef SolarSysFrame;
 // saved solar system view graphic
 
 static GfxRect scaleRect;
@@ -409,7 +409,7 @@ static void GenerateMoons(SolarSystemState* system, SystemPlanet* planet)
 	(*system->genFuncs->generateMoons)(system, planet);
 }
 
-FRAME LoadNebulaeFrame(GfxPoint location)
+FrameRef LoadNebulaeFrame(GfxPoint location)
 {
 	GfxPoint neb_seed;
 	const GfxPoint solPoint = plot_map[*PlotId::Sol].star_pt;
@@ -477,10 +477,10 @@ static void ChangeSunColor(void)
 
 	for (uint16_t i {*starSize}; i <= starSize + 2; i++)
 	{
-		FRAME mask = SetAbsFrameIndex(SunFrame, maskOffset + i);
+		FrameRef mask = SetAbsFrameIndex(SunFrame, maskOffset + i);
 		for (j = 0; j < sizeIter; j++)
 		{
-			FRAME star = SetAbsFrameIndex(SunFrame, i * sizeIter + j);
+			FrameRef star = SetAbsFrameIndex(SunFrame, i * sizeIter + j);
 			ApplyMask(mask, star, mode, &c);
 		}
 	}
@@ -980,7 +980,7 @@ static void FreeSolarSys(void)
 	// FreeIPData ();
 }
 
-static FRAME getCollisionFrame(SystemPlanet* planet, uint16_t WaitPlanet)
+static FrameRef getCollisionFrame(SystemPlanet* planet, uint16_t WaitPlanet)
 {
 	if (pSolarSysState->WaitIntersect != (uint16_t)~0
 		&& pSolarSysState->WaitIntersect != WaitPlanet)
@@ -1148,7 +1148,7 @@ static void SetPlanetOldFrame(SystemPlanet* planet, uint16_t index, uint16_t col
 {
 	GfxRect r;
 
-	FRAME oldFrame {SetAbsFrameIndex(OrbitalFrame, index)};
+	FrameRef oldFrame {SetAbsFrameIndex(OrbitalFrame, index)};
 	GetFrameRect(oldFrame, &r);
 
 	r.corner.y = 0; // messed because of sprite hotspot
@@ -2127,7 +2127,7 @@ static void playSpaceMusic(void)
 	// Do not start playing the music if we entered the solarsys only
 	// to load a game (load invoked from Main menu)
 	// XXX: This is quite hacky
-	if (!PLRPlaying((MUSIC_REF)~0) && (LastActivity != ActivityFlag::CheckLoad || NextActivity))
+	if (!PLRPlaying((MusicRef)~0) && (LastActivity != ActivityFlag::CheckLoad || NextActivity))
 	{
 		PlayMusicResume(SpaceMusic, NormalVolume);
 	}
@@ -2608,7 +2608,7 @@ static void DrawSystem(int16_t radius, bool IsInnerSystem)
 													   clipRect.extent.width, clipRect.extent.height, 1));
 	}
 
-	GFXCONTEXT oldContext {SetContext(OffScreenContext)};
+	GfxContextRef oldContext {SetContext(OffScreenContext)};
 	SetContextFGFrame(SolarSysFrame);
 	SetContextClipRect(nullptr);
 
@@ -2668,7 +2668,7 @@ void DrawStarBackGround(void)
 	DrawStamp(&s);
 }
 
-FRAME GetStarBackFround(void)
+FrameRef GetStarBackFround(void)
 {
 	if (StarsFrame)
 	{
@@ -2686,7 +2686,7 @@ static constexpr auto NumBrtPieces {8};
 static constexpr auto NumBrtDrawn {30};
 
 static void DrawBackgroundStars(uint8_t num_pieces, uint8_t num_drawn, uint8_t start_index,
-								uqm::UQMRandom& SysRNG, FRAME junk)
+								uqm::UQMRandom& SysRNG, FrameRef junk)
 {
 	GfxStamp s;
 	uint16_t j {};
@@ -2706,7 +2706,7 @@ static void DrawBackgroundStars(uint8_t num_pieces, uint8_t num_drawn, uint8_t s
 	}
 }
 
-static void DrawNebula(FRAME nebula)
+static void DrawNebula(FrameRef nebula)
 {
 	GfxStamp s;
 	DrawMode oldMode;
@@ -2725,16 +2725,16 @@ static void DrawNebula(FRAME nebula)
 	SetContextDrawMode(oldMode);
 }
 
-static FRAME CreateStarBackGround(uqm::UQMRandom& SysRNG, FRAME nebula, FRAME junk)
+static FrameRef CreateStarBackGround(uqm::UQMRandom& SysRNG, FrameRef nebula, FrameRef junk)
 {
 	uint8_t num_brt_drawn {};
 	uint8_t start_index {};
 	GfxRect clipRect;
-	FRAME frame {};
+	FrameRef frame {};
 	const bool hdScaled = (!uqm::UQMOptions::read().unscaledStarSystem || !IsHd());
 
 	// Use SpaceContext to find out the dimensions of the background
-	GFXCONTEXT oldContext {SetContext(SpaceContext)};
+	GfxContextRef oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&clipRect);
 
 	// Prepare a pre-drawn stars frame for this system
@@ -2763,7 +2763,7 @@ static FRAME CreateStarBackGround(uqm::UQMRandom& SysRNG, FRAME nebula, FRAME ju
 	return frame;
 }
 
-FRAME GetStarBackGround(bool Encounter)
+FrameRef GetStarBackGround(bool Encounter)
 {
 	GfxPoint location;
 
@@ -2785,7 +2785,7 @@ FRAME GetStarBackGround(bool Encounter)
 	// resources so we have to load them again temporary
 
 	uqm::UQMRandom SysRNG {};
-	FRAME junk {CaptureDrawable(LoadGraphic(IpbkgndMaskPmapAnimRes))};
+	FrameRef junk {CaptureDrawable(LoadGraphic(IpbkgndMaskPmapAnimRes))};
 
 	if (CurStarDescPtr())
 	{
@@ -2800,8 +2800,8 @@ FRAME GetStarBackGround(bool Encounter)
 
 	SysRNG.reseed(GetRandomSeedForVar(location));
 
-	FRAME nebula {LoadNebulaeFrame(location)};
-	FRAME result {CreateStarBackGround(SysRNG, nebula, junk)};
+	FrameRef nebula {LoadNebulaeFrame(location)};
+	FrameRef result {CreateStarBackGround(SysRNG, nebula, junk)};
 
 	DestroyDrawable(ReleaseDrawable(junk));
 	junk = 0;

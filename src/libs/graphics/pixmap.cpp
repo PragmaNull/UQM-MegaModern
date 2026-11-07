@@ -19,7 +19,7 @@
 #include "gfxintrn.h"
 #include "core/log/log.h"
 
-DRAWABLE GetFrameParentDrawable(FRAME f)
+DrawableRef GetFrameParentDrawable(FrameRef f)
 {
 	if (f != nullptr)
 	{
@@ -28,7 +28,7 @@ DRAWABLE GetFrameParentDrawable(FRAME f)
 	return nullptr;
 }
 
-FRAME CaptureDrawable(DRAWABLE DrawablePtr)
+FrameRef CaptureDrawable(DrawableRef DrawablePtr)
 {
 	if (DrawablePtr)
 	{
@@ -38,11 +38,11 @@ FRAME CaptureDrawable(DRAWABLE DrawablePtr)
 	return nullptr;
 }
 
-DRAWABLE ReleaseDrawable(FRAME FramePtr)
+DrawableRef ReleaseDrawable(FrameRef FramePtr)
 {
 	if (FramePtr != 0)
 	{
-		DRAWABLE Drawable {GetFrameParentDrawable(FramePtr)};
+		DrawableRef Drawable {GetFrameParentDrawable(FramePtr)};
 
 		return (Drawable);
 	}
@@ -50,7 +50,7 @@ DRAWABLE ReleaseDrawable(FRAME FramePtr)
 	return nullptr;
 }
 
-uint16_t GetFrameCount(FRAME FramePtr)
+uint16_t GetFrameCount(FrameRef FramePtr)
 {
 	if (FramePtr == 0)
 	{
@@ -61,7 +61,7 @@ uint16_t GetFrameCount(FRAME FramePtr)
 	return DrawablePtr->MaxIndex + 1;
 }
 
-uint16_t GetFrameIndex(FRAME FramePtr)
+uint16_t GetFrameIndex(FrameRef FramePtr)
 {
 	if (FramePtr == 0)
 	{
@@ -71,7 +71,7 @@ uint16_t GetFrameIndex(FRAME FramePtr)
 	return FramePtr->Index;
 }
 
-FRAME SetAbsFrameIndex(FRAME FramePtr, uint16_t FrameIndex)
+FrameRef SetAbsFrameIndex(FrameRef FramePtr, uint16_t FrameIndex)
 {
 	if (FramePtr != 0)
 	{
@@ -83,7 +83,7 @@ FRAME SetAbsFrameIndex(FRAME FramePtr, uint16_t FrameIndex)
 	return FramePtr;
 }
 
-FRAME SetRelFrameIndex(FRAME FramePtr, int16_t FrameOffs)
+FrameRef SetRelFrameIndex(FrameRef FramePtr, int16_t FrameOffs)
 {
 	if (FramePtr != 0)
 	{
@@ -104,7 +104,7 @@ FRAME SetRelFrameIndex(FRAME FramePtr, int16_t FrameOffs)
 	return FramePtr;
 }
 
-FRAME SetEquFrameIndex(FRAME DstFramePtr, FRAME SrcFramePtr)
+FrameRef SetEquFrameIndex(FrameRef DstFramePtr, FrameRef SrcFramePtr)
 {
 	if (!DstFramePtr || !SrcFramePtr)
 	{
@@ -128,7 +128,7 @@ FRAME SetEquFrameIndex(FRAME DstFramePtr, FRAME SrcFramePtr)
 	return SetAbsFrameIndex(DstFramePtr, Index);
 }
 
-FRAME IncFrameIndex(FRAME FramePtr)
+FrameRef IncFrameIndex(FrameRef FramePtr)
 {
 	if (FramePtr == 0)
 	{
@@ -146,7 +146,7 @@ FRAME IncFrameIndex(FRAME FramePtr)
 	}
 }
 
-FRAME DecFrameIndex(FRAME FramePtr)
+FrameRef DecFrameIndex(FrameRef FramePtr)
 {
 	if (FramePtr == 0)
 	{
@@ -164,7 +164,7 @@ FRAME DecFrameIndex(FRAME FramePtr)
 	}
 }
 
-bool IsFrameIndexed(FRAME FramePtr)
+bool IsFrameIndexed(FrameRef FramePtr)
 {
 	return TFB_DrawCanvas_IsPaletted(FramePtr->image->NormalImg);
 }

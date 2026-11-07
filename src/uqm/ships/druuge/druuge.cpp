@@ -163,7 +163,7 @@ static void cannon_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	}
 }
 
-static uint16_t initialize_cannon(Element* ShipPtr, HELEMENT CannonArray[])
+static uint16_t initialize_cannon(Element* ShipPtr, ElementHandle CannonArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;

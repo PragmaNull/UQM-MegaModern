@@ -49,12 +49,12 @@ struct FrameDesc;
 struct FontDesc;
 struct DrawableDesc;
 
-typedef GraphicsContextDesc* GFXCONTEXT;
-typedef FrameDesc* FRAME;
-typedef FontDesc* FONT;
-typedef DrawableDesc* DRAWABLE;
+using GfxContextRef = GraphicsContextDesc*;
+using FrameRef = FrameDesc*;
+using FontRef = FontDesc*;
+using DrawableRef = DrawableDesc*;
 
-typedef uint16_t TIME_VALUE;
+using TimeValue = uint16_t;
 
 inline constexpr auto TimeShift {8};
 inline constexpr auto MaxTimeValue {(1 << TimeShift) + 1};
@@ -188,17 +188,17 @@ static inline Color CreateAvgShade(Color first_color, Color second_color)
 }
 
 
-typedef uint8_t CREATE_FLAGS;
+using CreateFlags = uint8_t;
 // WantMask is deprecated (and non-functional). It used to generate a bitmap
-// of changed pixels for a target DRAWABLE, so that DRAW_SUBTRACTIVE could
+// of changed pixels for a target DrawableRef, so that DRAW_SUBTRACTIVE could
 // paint background pixels over them, i.e. a revert draw. The backgrounds
 // are fully erased now instead.
-inline constexpr auto WantMask {(CREATE_FLAGS)(1 << 0)};
-inline constexpr auto WantPixmap {(CREATE_FLAGS)(1 << 1)};
+inline constexpr auto WantMask {(CreateFlags)(1 << 0)};
+inline constexpr auto WantPixmap {(CreateFlags)(1 << 1)};
 // MappedToDisplay is deprecated but still checked by LoadDisplayPixmap().
 // Its former use was to indicate a pre-scaled graphic for the display.
-inline constexpr auto MappedToDisplay {(CREATE_FLAGS)(1 << 2)};
-inline constexpr auto WantAlpha {(CREATE_FLAGS)(1 << 3)};
+inline constexpr auto MappedToDisplay {(CreateFlags)(1 << 2)};
+inline constexpr auto WantAlpha {(CreateFlags)(1 << 3)};
 
 struct GfxExtent
 {
@@ -254,7 +254,7 @@ struct LargePoint
 struct GfxStamp
 {
 	GfxPoint origin;
-	FRAME frame;
+	FrameRef frame;
 };
 
 struct GfxRect
@@ -452,7 +452,7 @@ struct GfxText
 extern "C" {
 #endif
 
-typedef uqm::StringTable* COLORMAP;
+using ColorMapRef = uqm::StringTable*;
 // COLORMAPPTR is really a pointer to colortable entry structure
 // which is documented in doc/devel/strtab, .ct files section
 const typedef void* COLORMAPPTR;
@@ -460,31 +460,31 @@ const typedef void* COLORMAPPTR;
 #include "graphics/prim.h"
 
 
-typedef uint8_t BATCH_FLAGS;
+using BatchFlags = uint8_t;
 // This flag is currently unused but it might make sense to restore it
-inline constexpr auto BatchBuildPage {(BATCH_FLAGS)(1 << 0)};
+inline constexpr auto BatchBuildPage {(BatchFlags)(1 << 0)};
 
 struct IntersectInfo
 {
-	TIME_VALUE last_time_val;
+	TimeValue last_time_val;
 	GfxPoint EndPoint;
 	GfxStamp IntersectStamp;
 };
 
-typedef uint8_t INTERSECT_CODE;
+using IntersectCode = uint8_t;
 
-inline constexpr auto IntersectLeft {(INTERSECT_CODE)(1 << 0)};
-inline constexpr auto IntersectTop {(INTERSECT_CODE)(1 << 1)};
-inline constexpr auto IntersectRight {(INTERSECT_CODE)(1 << 2)};
-inline constexpr auto IntersectBottom {(INTERSECT_CODE)(1 << 3)};
-inline constexpr auto IntersectNoclip {(INTERSECT_CODE)(1 << 7)};
-inline constexpr auto IntersectAllSides {(INTERSECT_CODE)(IntersectLeft | IntersectTop | IntersectRight | IntersectBottom)};
+inline constexpr auto IntersectLeft {(IntersectCode)(1 << 0)};
+inline constexpr auto IntersectTop {(IntersectCode)(1 << 1)};
+inline constexpr auto IntersectRight {(IntersectCode)(1 << 2)};
+inline constexpr auto IntersectBottom {(IntersectCode)(1 << 3)};
+inline constexpr auto IntersectNoclip {(IntersectCode)(1 << 7)};
+inline constexpr auto IntersectAllSides {(IntersectCode)(IntersectLeft | IntersectTop | IntersectRight | IntersectBottom)};
 
-typedef GfxPoint HOT_SPOT;
+using HotSpot = GfxPoint;
 
-extern HOT_SPOT MAKE_HOT_SPOT(int16_t, int16_t);
+extern HotSpot MAKE_HOT_SPOT(int16_t, int16_t);
 
-extern INTERSECT_CODE BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* printer);
+extern IntersectCode BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* printer);
 extern void BoxUnion(GfxRect* pr1, GfxRect* pr2, GfxRect* punion);
 
 enum class ScreenFadeType
@@ -500,7 +500,7 @@ enum class ScreenFadeType
 enum class DrawKind : uint8_t
 {
 	Replace = 0,
-	// Pixels in the target FRAME are replaced entirely.
+	// Pixels in the target FrameRef are replaced entirely.
 	// Non-stamp primitives with Color.a < 255 to RGB targets are
 	// equivalent to Alpha with (DrawMode.factor = Color.a),
 	// except the Text primitives.
@@ -509,27 +509,27 @@ enum class DrawKind : uint8_t
 	// RGBA sources (WantAlpha): per-pixel alpha blending performed
 	// RGBA targets (WantAlpha): replace directly supported
 	Additive,
-	// Pixel channels of the source FRAME or Color channels of
+	// Pixel channels of the source FrameRef or Color channels of
 	// a primitive are modulated by (DrawMode.factor / 255) and added
-	// to the pixel channels of the target FRAME.
+	// to the pixel channels of the target FrameRef.
 	// DrawMode.factor range: -32767..32767 (negative values make
 	//    draw subtractive); 255 = 1:1 ratio
 	// Text: not yet supported
 	// RGBA sources (WantAlpha): alpha channel ignored
 	// RGBA targets (WantAlpha): not yet supported
 	Alpha,
-	// Pixel channels of the source FRAME or Color channels of
+	// Pixel channels of the source FrameRef or Color channels of
 	// a primitive are modulated by (DrawMode.factor / 255) and added
-	// to the pixel channels of the target FRAME, modulated by
+	// to the pixel channels of the target FrameRef, modulated by
 	// (1 - DrawMode.factor / 255)
 	// DrawMode.factor range: 0..255; 255 = fully opaque
 	// Text: supported
 	// RGBA sources (WantAlpha): alpha channel ignored
 	// RGBA targets (WantAlpha): not yet supported
 	Multiply,
-	// Pixel channels of the source FRAME or Color channels of
+	// Pixel channels of the source FrameRef or Color channels of
 	// a primitive are modulated by (channel / 255) and multiplied
-	// by pixel channels of the target FRAME, modulated by
+	// by pixel channels of the target FrameRef, modulated by
 	// (channel / 255)
 	// DrawMode.factor range: not yet supported
 	// Text: supported
@@ -575,13 +575,13 @@ enum class ShadowAngle
 	NorthWest,
 };
 
-extern GFXCONTEXT SetContext(GFXCONTEXT Context);
+extern GfxContextRef SetContext(GfxContextRef Context);
 extern Color SetContextForeGroundColor(Color Color);
 extern Color GetContextForeGroundColor(void);
 extern Color SetContextBackGroundColor(Color Color);
 extern Color GetContextBackGroundColor(void);
-extern FRAME SetContextFGFrame(FRAME Frame);
-extern FRAME GetContextFGFrame(void);
+extern FrameRef SetContextFGFrame(FrameRef Frame);
+extern FrameRef GetContextFGFrame(void);
 // Context cliprect defines the drawing bounds. Additionally, all
 // drawing positions (x,y) are relative to the cliprect corner.
 extern bool SetContextClipRect(GfxRect* pRect);
@@ -592,122 +592,122 @@ extern bool GetContextClipRect(GfxRect* pRect);
 extern GfxPoint SetContextOrigin(GfxPoint orgOffset);
 extern DrawMode SetContextDrawMode(DrawMode);
 extern DrawMode GetContextDrawMode(void);
-// 'area' may be nullptr to copy the entire GFXCONTEXT cliprect
-// 'area' is relative to the GFXCONTEXT cliprect
-extern DRAWABLE CopyContextRect(const GfxRect* area);
+// 'area' may be nullptr to copy the entire GfxContextRef cliprect
+// 'area' is relative to the GfxContextRef cliprect
+extern DrawableRef CopyContextRect(const GfxRect* area);
 
-extern TIME_VALUE DrawablesIntersect(IntersectInfo* pControl0,
-									 IntersectInfo* pControl1, TIME_VALUE max_time_val);
+extern TimeValue DrawablesIntersect(IntersectInfo* pControl0,
+									IntersectInfo* pControl1, TimeValue max_time_val);
 extern void DrawStamp(GfxStamp* pStamp);
 extern void DrawFilledStamp(GfxStamp* pStamp);
 extern void DrawPoint(GfxPoint* pPoint);
 extern void DrawRectangle(GfxRect* pRect, bool scaled);
 extern void DrawFilledRectangle(GfxRect* pRect);
 extern void DrawLine(GfxLine* pLine, uint8_t thickness);
-extern void ApplyMask(FRAME layer, FRAME base, DrawMode mode, Color* fill);
+extern void ApplyMask(FrameRef layer, FrameRef base, DrawMode mode, Color* fill);
 extern void InstaPoint(int x, int y);
 extern void InstaRect(int x, int y, int w, int h, bool scaled);
 extern void InstaFilledRect(int x, int y, int w, int h);
 extern void InstaLine(int x1, int y1, int x2, int y2);
 extern GfxRect font_GetTextRect(GfxText* pText);
 extern void font_DrawText(GfxText* pText);
-extern void font_DrawText_Fade(GfxText* lpText, FRAME repair, bool* skip);
+extern void font_DrawText_Fade(GfxText* lpText, FrameRef repair, bool* skip);
 extern void font_DrawTracedText(GfxText* pText, Color text, Color trace);
-extern uint8_t font_DrawTextAlt(GfxText* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key);
-extern void font_DrawTracedTextAlt(GfxText* pText, Color text, Color trace, FONT AltFontPtr,
+extern uint8_t font_DrawTextAlt(GfxText* lpText, uint8_t swap, FontRef AltFontPtr, uqm::UniChar key);
+extern void font_DrawTracedTextAlt(GfxText* pText, Color text, Color trace, FontRef AltFontPtr,
 								   uqm::UniChar key);
 extern void font_DrawShadowedText(GfxText* pText, ShadowAngle direction,
 								  Color text_color, Color shadow_color);
-extern void DrawBatch(Primitive* pBasePrim, PRIM_LINKS PrimLinks,
-					  BATCH_FLAGS BatchFlags);
+extern void DrawBatch(Primitive* pBasePrim, PrimLinks primLinks,
+					  BatchFlags batchFlags);
 extern void BatchGraphics(void);
 extern void UnbatchGraphics(void);
 extern void FlushGraphics(void);
 extern void ClearDrawable(void);
 extern void ClearScreen(void);
 #ifdef DEBUG
-extern GFXCONTEXT CreateContextAux(const char* name);
+extern GfxContextRef CreateContextAux(const char* name);
 constexpr auto CreateContext(auto name) { return CreateContextAux((name)); }
 #else  /* if !defined(DEBUG) */
-extern GFXCONTEXT CreateContextAux(void);
+extern GfxContextRef CreateContextAux(void);
 constexpr auto CreateContext(auto name) { return CreateContextAux(); }
 #endif /* !defined(DEBUG) */
-extern bool DestroyContext(GFXCONTEXT ContextRef);
-extern DRAWABLE CreateDisplay(CREATE_FLAGS CreateFlags, int16_t* pwidth,
-							  int16_t* pheight);
-extern DRAWABLE CreateDrawable(CREATE_FLAGS CreateFlags, int16_t width,
-							   int16_t height, uint16_t num_frames);
-extern bool DestroyDrawable(DRAWABLE Drawable);
-extern bool GetFrameRect(FRAME Frame, GfxRect* pRect);
+extern bool DestroyContext(GfxContextRef ContextRef);
+extern DrawableRef CreateDisplay(CreateFlags createFlags, int16_t* pwidth,
+								 int16_t* pheight);
+extern DrawableRef CreateDrawable(CreateFlags createFlags, int16_t width,
+								  int16_t height, uint16_t num_frames);
+extern bool DestroyDrawable(DrawableRef Drawable);
+extern bool GetFrameRect(FrameRef Frame, GfxRect* pRect);
 #ifdef DEBUG
-const extern char* GetContextName(GFXCONTEXT context);
-extern GFXCONTEXT GetFirstContext(void);
-extern GFXCONTEXT GetNextContext(GFXCONTEXT context);
+const extern char* GetContextName(GfxContextRef context);
+extern GfxContextRef GetFirstContext(void);
+extern GfxContextRef GetNextContext(GfxContextRef context);
 extern size_t GetContextCount(void);
 #endif /* DEBUG */
 
-extern HOT_SPOT SetFrameHot(FRAME Frame, HOT_SPOT HotSpot);
-extern HOT_SPOT GetFrameHot(FRAME Frame);
+extern HotSpot SetFrameHot(FrameRef Frame, HotSpot hotSpot);
+extern HotSpot GetFrameHot(FrameRef Frame);
 extern bool InstallGraphicResTypes(void);
-extern DRAWABLE LoadGraphicFile(const char* pStr);
-extern FONT LoadFontFile(const char* pStr);
+extern DrawableRef LoadGraphicFile(const char* pStr);
+extern FontRef LoadFontFile(const char* pStr);
 extern void* LoadGraphicInstance(RESOURCE res);
-extern DRAWABLE LoadDisplayPixmap(const GfxRect* area, FRAME frame);
-extern FRAME SetContextFontEffect(FRAME EffectFrame);
-extern FONT SetContextFont(FONT Font);
-extern bool DestroyFont(FONT FontRef);
+extern DrawableRef LoadDisplayPixmap(const GfxRect* area, FrameRef frame);
+extern FrameRef SetContextFontEffect(FrameRef EffectFrame);
+extern FontRef SetContextFont(FontRef Font);
+extern bool DestroyFont(FontRef fontRef);
 // The returned pRect is relative to the context drawing origin
 extern bool TextRect(GfxText* pText, GfxRect* pRect, uint8_t* pdelta);
-extern bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap, uqm::UniChar key, FONT AltFontPtr);
+extern bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap, uqm::UniChar key, FontRef AltFontPtr);
 extern bool GetContextFontLeading(int16_t* pheight);
 extern bool GetContextFontDispHeight(int16_t* pheight);
 extern bool GetContextFontDispWidth(int16_t* pwidth);
-extern uint16_t GetFrameCount(FRAME Frame);
-extern uint16_t GetFrameIndex(FRAME Frame);
-extern FRAME SetAbsFrameIndex(FRAME Frame, uint16_t FrameIndex);
-inline FRAME SetAbsFrameIndex(FRAME Frame, ArithmeticEnum auto FrameIndex)
+extern uint16_t GetFrameCount(FrameRef Frame);
+extern uint16_t GetFrameIndex(FrameRef Frame);
+extern FrameRef SetAbsFrameIndex(FrameRef Frame, uint16_t FrameIndex);
+inline FrameRef SetAbsFrameIndex(FrameRef Frame, ArithmeticEnum auto FrameIndex)
 {
 	return SetAbsFrameIndex(Frame, static_cast<uint16_t>(*FrameIndex));
 }
-extern FRAME SetRelFrameIndex(FRAME Frame, int16_t FrameOffs);
-extern FRAME SetEquFrameIndex(FRAME DstFrame, FRAME SrcFrame);
-extern FRAME IncFrameIndex(FRAME Frame);
-extern FRAME DecFrameIndex(FRAME Frame);
-extern DRAWABLE CopyFrameRect(FRAME Frame, const GfxRect* area);
-extern DRAWABLE CloneFrame(FRAME Frame);
-extern DRAWABLE RotateFrame(FRAME Frame, int angle_deg);
-extern DRAWABLE RescaleFrame(FRAME frame, int width, int height);
-extern DRAWABLE RescalePercentage(FRAME frame, float percentage);
+extern FrameRef SetRelFrameIndex(FrameRef Frame, int16_t FrameOffs);
+extern FrameRef SetEquFrameIndex(FrameRef DstFrame, FrameRef SrcFrame);
+extern FrameRef IncFrameIndex(FrameRef Frame);
+extern FrameRef DecFrameIndex(FrameRef Frame);
+extern DrawableRef CopyFrameRect(FrameRef Frame, const GfxRect* area);
+extern DrawableRef CloneFrame(FrameRef Frame);
+extern DrawableRef RotateFrame(FrameRef Frame, int angle_deg);
+extern DrawableRef RescaleFrame(FrameRef frame, int width, int height);
+extern DrawableRef RescalePercentage(FrameRef frame, float percentage);
 // This pair works for both paletted and trucolor frames
-extern bool ReadFramePixelColors(FRAME frame, Color* pixels,
+extern bool ReadFramePixelColors(FrameRef frame, Color* pixels,
 								 int width, int height);
-extern bool WriteFramePixelColors(FRAME frame, const Color* pixels,
+extern bool WriteFramePixelColors(FrameRef frame, const Color* pixels,
 								  int width, int height);
 // This pair only works for paletted frames
-extern bool ReadFramePixelIndexes(FRAME frame, uint8_t* pixels,
+extern bool ReadFramePixelIndexes(FrameRef frame, uint8_t* pixels,
 								  int width, int height, bool paletted);
-extern bool WriteFramePixelIndexes(FRAME frame, const uint8_t* pixels,
+extern bool WriteFramePixelIndexes(FrameRef frame, const uint8_t* pixels,
 								   int width, int height);
-extern void SetFrameTransparentColor(FRAME, Color);
-extern bool IsFrameIndexed(FRAME Frame);
+extern void SetFrameTransparentColor(FrameRef, Color);
+extern bool IsFrameIndexed(FrameRef Frame);
 
 // If the frame is an active ScreenDrawable, this call must be
 // preceeded by FlushGraphics() for draw commands to have taken effect
-extern Color GetFramePixel(FRAME, GfxPoint pixelPt);
+extern Color GetFramePixel(FrameRef, GfxPoint pixelPt);
 
-extern FRAME CaptureDrawable(DRAWABLE Drawable);
-extern DRAWABLE ReleaseDrawable(FRAME Frame);
+extern FrameRef CaptureDrawable(DrawableRef Drawable);
+extern DrawableRef ReleaseDrawable(FrameRef Frame);
 
-extern DRAWABLE GetFrameParentDrawable(FRAME Frame);
+extern DrawableRef GetFrameParentDrawable(FrameRef Frame);
 
 extern bool SetColorMap(COLORMAPPTR ColorMapPtr);
 extern TimeCount XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval);
 extern TimeCount FadeScreen(ScreenFadeType fadeType, TimePeriod TimeInterval);
 extern void FlushColorXForms(void);
-extern uint8_t GetColorMapTableIndex(COLORMAP map, size_t index);
+extern uint8_t GetColorMapTableIndex(ColorMapRef map, size_t index);
 
 // The color map 'index' of 'map'. The index wraps at the number of color maps.
-extern COLORMAPPTR GetColorMapAddress(COLORMAP map, size_t index);
+extern COLORMAPPTR GetColorMapAddress(ColorMapRef map, size_t index);
 
 void SetSystemRect(const GfxRect* pRect);
 void ClearSystemRect(void);

@@ -82,7 +82,7 @@ static auto ChooserY() { return ((CanvasHeight >> 1) - ResScale(12)); }
 
 // Kruzen: Having this ref separated gains more control
 // We can load and free it whenever we want and not rely on menu volume
-MUSIC_REF menuMusic;
+MusicRef menuMusic;
 
 void InitMenuMusic(void)
 {
@@ -168,7 +168,7 @@ static void DrawDiffChooser(MenuState* pMS, int answer, bool confirm)
 
 	DrawToolTips(pMS, answer);
 
-	FONT oldFont {SetContextFont(MicroFont)};
+	FontRef oldFont {SetContextFont(MicroFont)};
 
 	t.align = TextAlign::Center;
 	t.baseline.x = s.origin.x;
@@ -205,7 +205,7 @@ static bool DoDiffChooser(MenuState* pMS)
 	InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 	LastInputTime = GetTimeCounter();
 
-	GFXCONTEXT oldContext {SetContext(ScreenContext)};
+	GfxContextRef oldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&oldRect);
 	s = SaveContextFrame(nullptr);
 
@@ -277,7 +277,7 @@ static bool DoDiffChooser(MenuState* pMS)
 		}
 		else if (GetTimeCounter() - LastInputTime > InactTimeOut)
 		{ // timed out
-			uqm::currentActivity() = (ACTIVITY)~0;
+			uqm::currentActivity() = (ActivityWord)~0;
 			done = true;
 			response = false;
 		}
@@ -314,12 +314,12 @@ static bool DoDiffChooser(MenuState* pMS)
 static auto MainTextX() { return (CanvasWidth >> 1); }
 static auto MainTextY() { return (ResScale(42) - DosNumScl(20)); }
 
-FRAME TextCache[5];
+FrameRef TextCache[5];
 
 static void InitPulseText(void)
 {
-	FRAME frame {};
-	FRAME OldFrame {};
+	FrameRef frame {};
+	FrameRef OldFrame {};
 	int16_t leading {};
 	GfxText t;
 
@@ -428,7 +428,7 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 	UnbatchGraphics();
 }
 
-static void DrawRestartMenu(MenuState* pMS, uint8_t NewState, FRAME f)
+static void DrawRestartMenu(MenuState* pMS, uint8_t NewState, FrameRef f)
 {
 	GfxPoint origin;
 	origin.x = 0;
@@ -568,8 +568,8 @@ static bool DoRestart(MenuState* pMS)
 								   (3 * c_gameSecond) / 16);
 					if (!DoDiffChooser(pMS))
 					{
-						LastInputTime = GetTimeCounter();			// if we timed out - don't start second credit roll
-						if (uqm::currentActivity() != (ACTIVITY)~0) // just declined
+						LastInputTime = GetTimeCounter();				// if we timed out - don't start second credit roll
+						if (uqm::currentActivity() != (ActivityWord)~0) // just declined
 						{
 							Flash_continue(pMS->flashContext);
 						}
@@ -710,7 +710,7 @@ static bool DoRestart(MenuState* pMS)
 	{ // No input received, check if timed out
 		if (GetTimeCounter() - LastInputTime > InactTimeOut)
 		{
-			uqm::currentActivity() = (ACTIVITY)~0;
+			uqm::currentActivity() = (ActivityWord)~0;
 			return false;
 		}
 	}
@@ -722,7 +722,7 @@ static bool DoRestart(MenuState* pMS)
 
 void ShowGameEnding(void)
 {
-	const ACTIVITY lastActivity {uqm::currentActivity()};
+	const ActivityWord lastActivity {uqm::currentActivity()};
 
 	SetContext(ScreenContext);
 
@@ -835,7 +835,7 @@ static bool RestartMenu(MenuState* pMS)
 		Reload();
 	}
 
-	if (uqm::currentActivity() == (ACTIVITY)~0)
+	if (uqm::currentActivity() == (ActivityWord)~0)
 	{
 		return (false); // timed out
 	}
@@ -871,7 +871,7 @@ static bool TryStartGame(void)
 			uqm::UQMGame::getInstance().endSession();
 			menuState.Initialized = false;
 		}
-		else if (uqm::currentActivity() == (ACTIVITY)~0)
+		else if (uqm::currentActivity() == (ActivityWord)~0)
 		{ // timed out
 			SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 			return (false);
@@ -891,7 +891,7 @@ bool StartGame(void)
 	{
 		while (!TryStartGame())
 		{
-			if (uqm::currentActivity() == (ACTIVITY)~0)
+			if (uqm::currentActivity() == (ActivityWord)~0)
 			{ // timed out
 				uqm::currentActivity() = 0;
 

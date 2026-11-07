@@ -36,7 +36,7 @@
 namespace uqm
 {
 extern uint16_t zoom_out;
-extern PRIM_LINKS DisplayLinks;
+extern PrimLinks DisplayLinks;
 
 
 static constexpr auto BigStarCount {30};
@@ -252,7 +252,7 @@ void InitGalaxy(void)
 					"transition_height = {}",
 					TransitionWidth(), TransitionHeight());
 
-	PRIM_LINKS Links {uqm::makeDword(EndOfList, EndOfList)};
+	PrimLinks Links {uqm::makeDword(EndOfList, EndOfList)};
 	uint16_t factor {OneShift + MaxReduction + (BackgroundShift - 3)};
 	num_sceneries = 0;
 	for (i = 0, ppt = log_star_array; i < NumStars; ++i, ++ppt)
@@ -399,7 +399,7 @@ void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 			else
 			{
 				uint8_t star_object[2];
-				FRAME star_frame[3];
+				FrameRef star_frame[3];
 
 				if (meleeScaleModeIsStep)
 				{

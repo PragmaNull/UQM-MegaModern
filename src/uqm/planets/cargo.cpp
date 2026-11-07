@@ -55,7 +55,7 @@ void ShowRemainingCapacity(void)
 	GfxText t;
 	char buf[40];
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		SetContextFont(TinyFont);
@@ -263,7 +263,7 @@ static void DrawCargoDisplay(void)
 
 void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 {
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		SetContextFont(TinyFont);
@@ -309,7 +309,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	GfxRect r;
 	char buf[40];
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 
 	r.corner.x = ResScale(2);
 	r.extent.width = FieldWidth() + ResScale(1);
@@ -352,7 +352,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	r.corner.x = (StatusWidth() >> 1) - ResScale(6);
 	r.extent.width = ResScale(12);
 	r.extent.height = ElementSpacingY() - ResScale(2);
-	r.corner.y = s.origin.y - s.frame->HotSpot.y + s.frame->Bounds.height
+	r.corner.y = s.origin.y - s.frame->hotSpot.y + s.frame->Bounds.height
 			   + ResScale(3);
 	DrawFilledRectangle(&r);
 	t.pStr = buf;

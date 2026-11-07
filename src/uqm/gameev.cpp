@@ -166,7 +166,7 @@ void EventHandler(GameEventId selector)
 void SetRaceDest(uint8_t which_race, int16_t x, int16_t y, uint8_t days_left,
 				 uint8_t func_index)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, which_race)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, which_race)};
 	FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 
 	FleetPtr->dest_loc.x = x;
@@ -207,8 +207,8 @@ static int arilou_exit_event(int arg)
 
 static void check_race_growth(void)
 {
-	HFLEETINFO hStarShip {};
-	HFLEETINFO hNextShip {};
+	FleetInfoHandle hStarShip {};
+	FleetInfoHandle hNextShip {};
 
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 		 hStarShip; hStarShip = hNextShip)
@@ -294,7 +294,7 @@ static int kohr_ah_victorious_event(int arg)
 
 static int advance_pkunk_mission(int arg)
 {
-	HFLEETINFO hPkunk {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Pkunk)};
+	FleetInfoHandle hPkunk {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Pkunk)};
 	FleetInfo* PkunkPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hPkunk)};
 
 	const GfxPoint yehat = SeedFleetLocation(PkunkPtr, plot_map, *PlotId::Yehat);
@@ -362,7 +362,7 @@ static int advance_thradd_mission(int arg)
 {
 	uint8_t MissionState {};
 
-	HFLEETINFO hThradd {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Thraddash)};
+	FleetInfoHandle hThradd {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Thraddash)};
 	FleetInfo* ThraddPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd)};
 
 	MissionState = uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION);
@@ -439,7 +439,7 @@ static int zoqfot_death_event(int arg)
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS))
 	{
-		HFLEETINFO hZoqFot {};
+		FleetInfoHandle hZoqFot {};
 
 		hZoqFot = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q,
 									   *RaceId::Zoqfotpik);
@@ -457,7 +457,7 @@ static int zoqfot_death_event(int arg)
 
 static int shofixti_return_event(int arg)
 {
-	HFLEETINFO hShofixti {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Shofixti)};
+	FleetInfoHandle hShofixti {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Shofixti)};
 	FleetInfo* ShofixtiPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hShofixti)};
 	if (ShofixtiPtr->actual_strength)
 	{
@@ -489,11 +489,11 @@ static int advance_utwig_supox_mission(int arg)
 {
 	uint8_t MissionState {};
 
-	HFLEETINFO hUtwig {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Utwig)};
+	FleetInfoHandle hUtwig {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Utwig)};
 	FleetInfo* UtwigPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hUtwig)};
-	HFLEETINFO hSupox {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Supox)};
+	FleetInfoHandle hSupox {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Supox)};
 	FleetInfo* SupoxPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hSupox)};
-	HFLEETINFO hKohrAh {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::BlackUrquan)};
+	FleetInfoHandle hKohrAh {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::BlackUrquan)};
 	FleetInfo* KohrAhPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hKohrAh)};
 
 	MissionState = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
@@ -591,9 +591,9 @@ static int kohr_ah_genocide_event(int arg)
 	uint8_t Index {};
 	int16_t best_dx {};
 	int16_t best_dy {};
-	HFLEETINFO hStarShip {};
-	HFLEETINFO hNextShip {};
-	HFLEETINFO hBlackUrquan {};
+	FleetInfoHandle hStarShip {};
+	FleetInfoHandle hNextShip {};
+	FleetInfoHandle hBlackUrquan {};
 
 	if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
 		&& uqm::activityKind(uqm::currentActivity()) == ActivityKind::InInterplanetary
@@ -713,7 +713,7 @@ static int spathi_shield_event(int arg)
 	}
 	else
 	{
-		HFLEETINFO hSpathi {};
+		FleetInfoHandle hSpathi {};
 
 		hSpathi = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q,
 									   *RaceId::Spathi);
@@ -743,9 +743,9 @@ static int advance_ilwrath_mission(int arg)
 {
 	uint8_t ThraddState {};
 
-	HFLEETINFO hIlwrath {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Ilwrath)};
+	FleetInfoHandle hIlwrath {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Ilwrath)};
 	FleetInfo* IlwrathPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hIlwrath)};
-	HFLEETINFO hThradd {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Thraddash)};
+	FleetInfoHandle hThradd {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Thraddash)};
 	FleetInfo* ThraddPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd)};
 	const GfxPoint thradd_home = SeedFleetLocation(ThraddPtr, plot_map, 0);
 	const GfxPoint conflict = SeedFleetLocation(IlwrathPtr, plot_map, *PlotId::Thradd);
@@ -844,7 +844,7 @@ static int advance_ilwrath_mission(int arg)
 
 static int advance_mycon_mission(int arg)
 {
-	HFLEETINFO hMycon {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Mycon)};
+	FleetInfoHandle hMycon {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Mycon)};
 	FleetInfo* MyconPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hMycon)};
 
 	const GfxPoint home = SeedFleetLocation(MyconPtr, plot_map, 0);
@@ -860,7 +860,7 @@ static int advance_mycon_mission(int arg)
 
 			if (IsExtended())
 			{
-				HFLEETINFO hSyreen {};
+				FleetInfoHandle hSyreen {};
 
 				hSyreen = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q,
 											   *RaceId::Syreen);
@@ -893,7 +893,7 @@ static int advance_mycon_mission(int arg)
 			MyconPtr->growth_err_term = 255 >> 1;
 			if (IsExtended())
 			{
-				HFLEETINFO hSyreen {};
+				FleetInfoHandle hSyreen {};
 
 				hSyreen = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q,
 											   *RaceId::Syreen);
@@ -926,9 +926,9 @@ static int arilou_umgah_check(int arg)
 
 static int yehat_rebel_event(int arg)
 {
-	HFLEETINFO hRebel {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::YehatRebel)};
+	FleetInfoHandle hRebel {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::YehatRebel)};
 	FleetInfo* RebelPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hRebel)};
-	HFLEETINFO hRoyalist {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Yehat)};
+	FleetInfoHandle hRoyalist {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Yehat)};
 	FleetInfo* RoyalistPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hRoyalist)};
 	RoyalistPtr->actual_strength = RoyalistPtr->actual_strength * 2 / 3;
 	RebelPtr->actual_strength = RoyalistPtr->actual_strength;

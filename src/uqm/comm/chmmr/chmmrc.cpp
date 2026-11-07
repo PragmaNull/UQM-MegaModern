@@ -183,7 +183,7 @@ static AnimFilterSet chmmr_filters =
 
 static constexpr auto EarthIndex {2}; /* earth is 3rd planet --> 3 - 1 = 2 */
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Peace);
 
@@ -321,7 +321,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void NotReady(RESPONSE_REF R)
+static void NotReady(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -371,7 +371,7 @@ static void NotReady(RESPONSE_REF R)
 	Response(ChmmrPhrase::Bye, ExitConversation);
 }
 
-static void ImproveBomb(RESPONSE_REF R)
+static void ImproveBomb(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -422,7 +422,7 @@ static void ImproveBomb(RESPONSE_REF R)
 	Response(ChmmrPhrase::PerhapsNotInstall, ExitConversation);
 }
 
-static void ChmmrFree(RESPONSE_REF R)
+static void ChmmrFree(ResponseRef R)
 {
 	if (R == 0
 		|| PlayerSaid(R, ChmmrPhrase::IAmCaptain)
@@ -473,18 +473,18 @@ static void ChmmrFree(RESPONSE_REF R)
 		if (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
 			|| !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 		{
-			NotReady((RESPONSE_REF)0);
+			NotReady((ResponseRef)0);
 		}
 		else
 		{
-			ImproveBomb((RESPONSE_REF)0);
+			ImproveBomb((ResponseRef)0);
 		}
 	}
 }
 
-static void ChmmrShielded(RESPONSE_REF R);
+static void ChmmrShielded(ResponseRef R);
 
-static void ChmmrAdvice(RESPONSE_REF R)
+static void ChmmrAdvice(ResponseRef R)
 {
 	if (PlayerSaid(R, ChmmrPhrase::NeedAdvice))
 	{
@@ -556,7 +556,7 @@ static void ChmmrAdvice(RESPONSE_REF R)
 	}
 }
 
-static void ChmmrShielded(RESPONSE_REF R)
+static void ChmmrShielded(ResponseRef R)
 {
 	if (PlayerSaid(R, ChmmrPhrase::FindOutWhatsUp))
 	{
@@ -610,7 +610,7 @@ static void ChmmrShielded(RESPONSE_REF R)
 	Response(ChmmrPhrase::ByeShielded, ExitConversation);
 }
 
-static void AfterBomb(RESPONSE_REF R)
+static void AfterBomb(ResponseRef R)
 {
 	if (PlayerSaid(R, ChmmrPhrase::WhatsUpAfterBomb))
 	{
@@ -664,20 +664,20 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-		AfterBomb((RESPONSE_REF)0);
+		AfterBomb((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::CHMMR_UNLEASHED))
 	{
 		if (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
 			|| !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 		{
-			NotReady((RESPONSE_REF)0);
+			NotReady((ResponseRef)0);
 		}
 		else
 		{
 			NPCPhrase(ChmmrPhrase::YouAreReady);
 
-			ImproveBomb((RESPONSE_REF)0);
+			ImproveBomb((ResponseRef)0);
 		}
 	}
 	else
@@ -710,7 +710,7 @@ static void Intro(void)
 					break;
 			}
 
-			ChmmrShielded((RESPONSE_REF)0);
+			ChmmrShielded((ResponseRef)0);
 		}
 		else
 		{
@@ -719,7 +719,7 @@ static void Intro(void)
 
 			if (NumVisits)
 			{
-				ChmmrFree((RESPONSE_REF)0);
+				ChmmrFree((ResponseRef)0);
 				NumVisits = 0;
 			}
 			else
@@ -738,7 +738,7 @@ static void Intro(void)
 			// so this is purely decorative.
 			if (IsExtended())
 			{
-				HFLEETINFO hChmmr = GetStarShipFromIndex(
+				FleetInfoHandle hChmmr = GetStarShipFromIndex(
 					&uqm::gameState().game().avail_race_q, *RaceId::Chmmr);
 				FleetInfo* ChmmrPtr = LockFleetInfo(
 					&uqm::gameState().game().avail_race_q, hChmmr);

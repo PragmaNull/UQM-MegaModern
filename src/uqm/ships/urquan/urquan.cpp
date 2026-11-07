@@ -137,7 +137,7 @@ static RaceDesc urquan_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_fusion(Element* ShipPtr, HELEMENT FusionArray[])
+static uint16_t initialize_fusion(Element* ShipPtr, ElementHandle FusionArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -176,7 +176,7 @@ static void fighter_postprocess(Element* ElementPtr)
 	LaserBlock.flags = IgnoreSimilar;
 	LaserBlock.pixoffs = FighterOffset();
 	LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E);
-	HELEMENT Laser {initialize_laser(&LaserBlock)};
+	ElementHandle Laser {initialize_laser(&LaserBlock)};
 	if (Laser)
 	{
 		Element* LaserPtr {};
@@ -226,7 +226,7 @@ static void fighter_postprocess(Element* ElementPtr)
 //spawn_fighter_ion_trail (Element *ElementPtr, Starship *StarShipPtr,
 //		uint16_t facing)
 //{
-//	HELEMENT hIonElement;
+//	ElementHandle hIonElement;
 //
 //	hIonElement = AllocElement ();
 //	if (hIonElement)
@@ -389,7 +389,7 @@ static void fighter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	GetElementStarShip(ElementPtr0, &StarShipPtr);
 	if (GravityMass(ElementPtr1->mass_points))
 	{
-		HELEMENT hFighterElement {AllocElement()};
+		ElementHandle hFighterElement {AllocElement()};
 		if (hFighterElement)
 		{
 			uint16_t travel_facing {};
@@ -476,7 +476,7 @@ static void spawn_fighters(Element* ElementPtr)
 {
 	int16_t i {};
 	uint16_t facing {};
-	HELEMENT hFighterElement {};
+	ElementHandle hFighterElement {};
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);

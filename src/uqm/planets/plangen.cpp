@@ -347,7 +347,7 @@ static void ExpandLevelMasks(PlanetOrbit* Orbit)
 	{ // Because sphere frame if 75x67 we need to expand it's height to
 		// avoid information loss and flat lines on the edges of the sphere
 		// itself
-		FRAME dupe {};
+		FrameRef dupe {};
 		double err {NAN};
 
 		err = sin(M_DEG2RAD * (double)PlanetInfo->AxialTilt)
@@ -371,7 +371,7 @@ static void ExpandLevelMasks(PlanetOrbit* Orbit)
 	}
 }
 
-static void RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
+static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 { // Kruzen: Originally there were 3 frames for levels 2,3,4 that was
 	// drawn backwards using masks and prerendered colored spheres
 	// Mask code has been nuked some time ago therefore I'm rendering 1
@@ -388,7 +388,7 @@ static void RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	int16_t num_frames = 3;
 	const int16_t* level_tab {};
 
-	FRAME OldFrame {SetContextFGFrame(mask)};
+	FrameRef OldFrame {SetContextFGFrame(mask)};
 	oldOrigin = SetContextOrigin(MAKE_POINT(0, 0));
 	GetContextClipRect(&ClipRect);
 	SetContextClipRect(nullptr);
@@ -482,7 +482,7 @@ static void RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	SetContextFGFrame(OldFrame);
 }
 
-static void RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
+static void RenderTopography(FrameRef DstFrame, int8_t* pTopoData, int w, int h,
 							 bool SurfDef, COLORMAPPTR scanColors)
 {
 	int16_t base {};
@@ -926,12 +926,12 @@ static auto ShieldRadius() { return (Radius() + ShieldHalo()); }
 static constexpr auto ShieldHaloGlow {ShieldGlowComp + ShieldReflectComp};
 static constexpr auto ShieldHaloGlowMin {ShieldHaloGlow >> 2};
 
-static FRAME CreateShieldMask(uint16_t radius)
+static FrameRef CreateShieldMask(uint16_t radius)
 {
 	Color clear;
 	int x {};
 	int y {};
-	FRAME ShieldFrame {};
+	FrameRef ShieldFrame {};
 	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	const uint16_t shieldradius = ShieldRadius() * radius / Radius();
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
@@ -1011,7 +1011,7 @@ static FRAME CreateShieldMask(uint16_t radius)
 	return ShieldFrame;
 }
 
-FRAME SaveBackFrame(uint16_t radius)
+FrameRef SaveBackFrame(uint16_t radius)
 {
 	GfxRect r;
 	const uint16_t shieldradius = ShieldRadius() * radius / Radius();
@@ -1022,7 +1022,7 @@ FRAME SaveBackFrame(uint16_t radius)
 						  PlanetOrgY() - (shieldradius + 1));
 	r.extent.height = r.extent.width = shielddiam;
 
-	FRAME BackFrame {CaptureDrawable(CopyFrameRect(GetStarBackFround(), &r))};
+	FrameRef BackFrame {CaptureDrawable(CopyFrameRect(GetStarBackFround(), &r))};
 
 	SetFrameHot(BackFrame, MAKE_HOT_SPOT(shieldradius + 1,
 										 shieldradius + 1));
@@ -1052,7 +1052,7 @@ static inline int shield_level(int offset)
 
 // See description above
 // offset is effectively the angle of rotation around the planet's axis
-void SetShieldThrobEffect(FRAME ShieldFrame, int offset, FRAME ThrobFrame)
+void SetShieldThrobEffect(FrameRef ShieldFrame, int offset, FrameRef ThrobFrame)
 {
 	int i {};
 	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
@@ -1134,7 +1134,7 @@ static void ApplyShieldTint(void)
 	GfxRect r;
 
 	// TopoFrame will be permanently changed
-	FRAME oldFrame {SetContextFGFrame(pSolarSysState->TopoFrame)};
+	FrameRef oldFrame {SetContextFGFrame(pSolarSysState->TopoFrame)};
 	SetContextClipRect(nullptr);
 	GetContextClipRect(&r);
 
@@ -1214,7 +1214,7 @@ static inline int get_map_elev(int8_t* elevs, int x, int y, int offset, uint16_t
 // offset is effectively the angle of rotation around the planet's axis
 // We use the SDL routines to directly write to the SDL_Surface to improve
 // performance
-void RenderPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset,
+void RenderPlanetSphere(PlanetOrbit* Orbit, FrameRef MaskFrame, int offset,
 						bool shielded, bool doThrob, uint16_t width, uint16_t height,
 						uint16_t radius)
 {
@@ -1373,7 +1373,7 @@ void RenderPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset,
 #endif
 }
 
-void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset)
+void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FrameRef MaskFrame, int offset)
 {
 	if (!Orbit->TopoMask)
 	{
@@ -1394,13 +1394,13 @@ void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset)
 		r.extent.height = height;
 
 		// Get rect with offset
-		FRAME dupeframe {CaptureDrawable(CopyFrameRect(Orbit->TopoMask, &r))};
+		FrameRef dupeframe {CaptureDrawable(CopyFrameRect(Orbit->TopoMask, &r))};
 
 		if (PlanetInfo->AxialTilt != 0)
 		{ // We need to tilt the frame
 			GfxStamp s;
-			FRAME baseframe {};
-			FRAME rotFrame {};
+			FrameRef baseframe {};
+			FrameRef rotFrame {};
 			DrawMode oldMode;
 			const int16_t trueheight = MaskFrame->Bounds.height;
 
@@ -1411,7 +1411,7 @@ void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset)
 				CreateDrawable(WantPixmap, (int16_t)width, trueheight, 1));
 
 			// Draw everything in offscreen context
-			GFXCONTEXT oldContext {SetContext(OffScreenContext)};
+			GfxContextRef oldContext {SetContext(OffScreenContext)};
 			SetContextFGFrame(baseframe);
 			SetContextClipRect(nullptr);
 
@@ -1462,7 +1462,7 @@ void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset)
 	}
 }
 
-void Render3DOPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset,
+void Render3DOPlanetSphere(PlanetOrbit* Orbit, FrameRef MaskFrame, int offset,
 						   uint16_t rotwidth, uint16_t height)
 {
 	int x {};
@@ -2733,7 +2733,7 @@ void generate_surface_frame(uint16_t width, uint16_t height, PlanetOrbit* Orbit,
 					 Orbit->lpTopoData, width, height, false, nullptr);
 }
 
-void GetPlanetTopography(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame)
+void GetPlanetTopography(SystemPlanet* pPlanetDesc, FrameRef SurfDefFrame)
 {
 	const PlanetData* PlanetInfo = &pSolarSysState->SysInfo.PlanetInfo;
 	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
@@ -2791,12 +2791,12 @@ void GetPlanetTopography(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame)
 }
 
 // Sets the SysGenRNG to the required state first.
-void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
+void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FrameRef SurfDefFrame,
 						   uint16_t width, uint16_t height)
 {
 	PlanetData* PlanetInfo = &pSolarSysState->SysInfo.PlanetInfo;
 	GfxPoint loc;
-	GFXCONTEXT TopoContext {};
+	GfxContextRef TopoContext {};
 	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	bool SurfDef = false;
 	const bool shielded = (pPlanetDesc->data_index & *PlanetType::PlanetShielded) != 0;
@@ -2830,7 +2830,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 	SysGenRNG->reseed(pPlanetDesc->rand_seed);
 
 	TopoContext = CreateContext("Plangen.TopoContext");
-	GFXCONTEXT OldContext {SetContext(TopoContext)};
+	GfxContextRef OldContext {SetContext(TopoContext)};
 
 	planet_orbit_init(width, height, !ForIP);
 
@@ -2845,7 +2845,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 		// elevation data is supplied in Surface Definition frame
 		bool DeleteDef = false;
 		bool DeleteElev = false;
-		FRAME ElevFrame = 0;
+		FrameRef ElevFrame = 0;
 		uint16_t index = 0;
 
 		// load special frame to render Earth with DOS spheres on
@@ -2862,7 +2862,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 		{
 			pSolarSysState->TopoFrame = CaptureDrawable(RescaleFrame(
 				SurfDefFrame, width, height));
-			// will not need the passed FRAME anymore
+			// will not need the passed FrameRef anymore
 			DeleteDef = true;
 		}
 		else

@@ -44,7 +44,7 @@ static auto FlagshipYOffs() { return ResScale(4); }
 static auto FlagshipWidth() { return ResScale(22); }
 static auto FlagshipHeight() { return ResScale(48); }
 
-FRAME PickFrame;
+FrameRef PickFrame;
 GfxPoint frameOrigin;
 
 void InitPickFrame(void)
@@ -105,7 +105,7 @@ static bool DoPickBattleShip(MenuState* pMS)
 	}
 	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
-		if ((HSTARSHIP)pMS->CurFrame)
+		if ((StarshipHandle)pMS->CurFrame)
 		{
 			PlayMenuSound(MenuSoundEffect::Success);
 			return (false);
@@ -140,8 +140,8 @@ static bool DoPickBattleShip(MenuState* pMS)
 			uint16_t crew_level;		 // NOLINT(cppcoreguidelines-init-variables)
 			uint16_t max_crew;			 // NOLINT(cppcoreguidelines-init-variables)
 			uint16_t ship_index;		 // NOLINT(cppcoreguidelines-init-variables)
-			HSTARSHIP hBattleShip;		 // NOLINT(cppcoreguidelines-init-variables)
-			HSTARSHIP hNextShip;		 // NOLINT(cppcoreguidelines-init-variables)
+			StarshipHandle hBattleShip;	 // NOLINT(cppcoreguidelines-init-variables)
+			StarshipHandle hNextShip;	 // NOLINT(cppcoreguidelines-init-variables)
 			const Starship* StarShipPtr; // NOLINT(cppcoreguidelines-init-variables)
 
 			if (new_col < 0)
@@ -225,7 +225,7 @@ ChangeSelection:
 				}
 			}
 
-			pMS->CurFrame = (FRAME)hBattleShip;
+			pMS->CurFrame = (FrameRef)hBattleShip;
 
 			SetContextForeGroundColor(BlackColor);
 			r.corner.x = pMS->flash_rect1.corner.x + ResScale(6) - ResScale(1);
@@ -336,10 +336,10 @@ ChangeSelection:
 	return (true);
 }
 
-static HSTARSHIP GetArmadaStarShip(void)
+static StarshipHandle GetArmadaStarShip(void)
 {
 	GfxRect pick_r;
-	HSTARSHIP hBattleShip {};
+	StarshipHandle hBattleShip {};
 
 	if (battle_counter[1] == 0)
 	{
@@ -350,7 +350,7 @@ static HSTARSHIP GetArmadaStarShip(void)
 	//    MenuSounds = CaptureSound (LoadSound (MenuSoundsRes));
 
 	InitPickFrame();
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	DrawArmadaPickShip(false, &pick_r);
 
 	{
@@ -369,7 +369,7 @@ static HSTARSHIP GetArmadaStarShip(void)
 
 		SetFlashRect(nullptr, false);
 
-		hBattleShip = (HSTARSHIP)menuState.CurFrame;
+		hBattleShip = (StarshipHandle)menuState.CurFrame;
 	}
 
 	if (hBattleShip)
@@ -393,7 +393,7 @@ static HSTARSHIP GetArmadaStarShip(void)
 static constexpr auto RunAwayFuelCost {5 * FuelTankScale};
 
 // Get the next ship to use.
-HSTARSHIP GetEncounterStarShip(Starship* LastStarShipPtr, uint16_t which_player)
+StarshipHandle GetEncounterStarShip(Starship* LastStarShipPtr, uint16_t which_player)
 {
 	if (inHQSpace())
 	{
@@ -404,7 +404,7 @@ HSTARSHIP GetEncounterStarShip(Starship* LastStarShipPtr, uint16_t which_player)
 	else if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee)
 	{
 		// Let the player chose their own ship. (May be a computer player).
-		HSTARSHIP hBattleShip {};
+		StarshipHandle hBattleShip {};
 
 		if (battle_counter[0] == 0 || battle_counter[1] == 0)
 		{ // One side is out of ships. Game over.
@@ -486,15 +486,15 @@ HSTARSHIP GetEncounterStarShip(Starship* LastStarShipPtr, uint16_t which_player)
 
 void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 {
-	HSTARSHIP hBattleShip {};
-	HSTARSHIP hNextShip {};
+	StarshipHandle hBattleShip {};
+	StarshipHandle hNextShip {};
 	const Starship* StarShipPtr {};
 	GfxRect r;
 	GfxRect pick_r;
 	GfxStamp s;
 	GfxText t;
 
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 
 	BatchGraphics();
 
@@ -530,7 +530,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 	s.origin = pick_r.corner;
 	DrawStamp(&s);
 
-	FRAME OldFontEffect {SetContextFontEffect(nullptr)};
+	FrameRef OldFontEffect {SetContextFontEffect(nullptr)};
 
 	t.baseline.x = pick_r.corner.x + (pick_r.extent.width >> 1);
 	t.baseline.y = pick_r.corner.y + pick_r.extent.height - ResScale(5);
@@ -539,7 +539,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 	t.CharCount = (uint16_t)~0;
 
 	// Code to make use of the PC version's font gradient
-	// Along with the FRAME "OldFontEffect"
+	// Along with the FrameRef "OldFontEffect"
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		SetContextFontEffect(SetAbsFrameIndex(FontGradFrame, 6));

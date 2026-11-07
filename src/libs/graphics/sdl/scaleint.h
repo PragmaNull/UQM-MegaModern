@@ -55,7 +55,7 @@ inline constexpr auto ScaleDiffyuvTv {0x0c};
 #define SCALE_BILINEAR_BLEND4(r0, r1, dst, dlen) \
 	SCALE_(Blend_bilinear)(r0, r1, dst, dlen)
 
-typedef enum
+enum RgbYuvIndex
 {
 	YUV_XFORM_R = 0,
 	YUV_XFORM_G = 1,
@@ -63,7 +63,7 @@ typedef enum
 	YUV_XFORM_Y = 0,
 	YUV_XFORM_U = 1,
 	YUV_XFORM_V = 2
-} RGB_YUV_INDEX;
+};
 
 const extern int YUV_matrix[3][3];
 
@@ -71,9 +71,9 @@ const extern int YUV_matrix[3][3];
 extern int RGB_to_YUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 256];
 extern int16_t dRGB_to_dYUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 512];
 
-typedef Uint32 YUV_VECTOR;
+using YuvVector = Uint32;
 // pre-computed transformations for RGB555
-extern YUV_VECTOR RGB15_to_YUV[0x8000];
+extern YuvVector RGB15_to_YUV[0x8000];
 
 
 // Platform+Scaler function lookups
@@ -144,7 +144,7 @@ static inline int SCALE_(GetPixY)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
 		 + RGB_to_YUV[YUV_XFORM_B][YUV_XFORM_Y][b];
 }
 
-static inline YUV_VECTOR SCALE_(RGBtoYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
+static inline YuvVector SCALE_(RGBtoYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
 {
 	return RGB15_to_YUV[(((pix >> (fmt->Rshift + 3)) & 0x1f) << 10) | (((pix >> (fmt->Gshift + 3)) & 0x1f) << 5) | (((pix >> (fmt->Bshift + 3)) & 0x1f))];
 }

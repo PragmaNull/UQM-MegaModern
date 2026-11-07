@@ -30,7 +30,7 @@ const ImVec4 c_changedColor {1.0f, 0.85f, 0.2f, 1.0f};
 // A copy of the game state that the main thread can read.
 struct GameView
 {
-	ACTIVITY activity {};
+	ActivityWord activity {};
 	uqstl::array<uint32_t, c_gameFlagCount> flags {};
 	uint8_t day {};
 	uint8_t month {};
@@ -123,7 +123,7 @@ void textDisabledWrapped(const char* text)
 	ImGui::PopStyleColor();
 }
 
-[[nodiscard]] uqstl::string activityText(ACTIVITY activity)
+[[nodiscard]] uqstl::string activityText(ActivityWord activity)
 {
 	static constexpr const char* c_names[] {"Super Melee or menu", "Last battle", "Encounter", "HyperSpace",
 											"Interplanetary", "Won last battle", "QuasiSpace", "Planet orbit",

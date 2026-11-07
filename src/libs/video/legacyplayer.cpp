@@ -19,7 +19,7 @@
 #include "vidplayer.h"
 #include "uqm/util.h"
 
-LEGACY_VIDEO_REF PlayLegacyVideo(LEGACY_VIDEO vid)
+LegacyVideoRef PlayLegacyVideo(LegacyVideo vid)
 {
 	VideoType type;
 
@@ -32,7 +32,7 @@ LEGACY_VIDEO_REF PlayLegacyVideo(LEGACY_VIDEO vid)
 	const char* speechname {vid->speech.empty() ? nullptr : vid->speech.c_str()};
 	const uint32_t loopframe {vid->loop};
 
-	LEGACY_VIDEO_REF ref {new legacy_video_ref {}};
+	LegacyVideoRef ref {new legacy_video_ref {}};
 	ref->vidref = LoadVideoFile(name);
 	if (!ref->vidref)
 	{
@@ -61,7 +61,7 @@ LEGACY_VIDEO_REF PlayLegacyVideo(LEGACY_VIDEO vid)
 	return ref;
 }
 
-void StopLegacyVideo(LEGACY_VIDEO_REF ref)
+void StopLegacyVideo(LegacyVideoRef ref)
 {
 	if (!ref)
 	{
@@ -82,7 +82,7 @@ void StopLegacyVideo(LEGACY_VIDEO_REF ref)
 	delete ref;
 }
 
-bool PlayingLegacyVideo(LEGACY_VIDEO_REF ref)
+bool PlayingLegacyVideo(LegacyVideoRef ref)
 {
 	if (!ref)
 	{

@@ -21,12 +21,12 @@
 #include "libs/reslib.h"
 
 
-DRAWABLE LoadGraphicFile(const char* pStr)
+DrawableRef LoadGraphicFile(const char* pStr)
 {
-	return static_cast<DRAWABLE>(res_LoadResFile(uqm::contentDir(), pStr, _GetCelData));
+	return static_cast<DrawableRef>(res_LoadResFile(uqm::contentDir(), pStr, _GetCelData));
 }
 
-FONT LoadFontFile(const char* pStr)
+FontRef LoadFontFile(const char* pStr)
 {
-	return static_cast<FONT>(_GetFontData(uqm::contentDir(), pStr));
+	return static_cast<FontRef>(_GetFontData(uqm::contentDir(), pStr));
 }

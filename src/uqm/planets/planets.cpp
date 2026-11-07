@@ -58,7 +58,7 @@ enum class PlanetMenuItem
 };
 consteval bool isArithmeticEnum(PlanetMenuItem) { return true; }
 
-GFXCONTEXT PlanetContext;
+GfxContextRef PlanetContext;
 // Context for rotating planet view and lander surface view
 
 bool useDosSpheres = false;
@@ -170,7 +170,7 @@ static void CreatePlanetContext(void)
 	assert(PlanetContext == nullptr);
 
 	// PlanetContext rect is relative to SpaceContext
-	GFXCONTEXT oldContext {SetContext(SpaceContext)};
+	GfxContextRef oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&r);
 
 	PlanetContext = CreateContext("PlanetContext");
@@ -193,8 +193,8 @@ static void DestroyPlanetContext(void)
 
 void DrawScannedObjects(bool Reversed)
 {
-	HELEMENT hElement {};
-	HELEMENT hNextElement {};
+	ElementHandle hElement {};
+	ElementHandle hNextElement {};
 
 	for (hElement = Reversed ? GetTailElement() : GetHeadElement();
 		 hElement; hElement = hNextElement)
@@ -225,7 +225,7 @@ void DrawPlanetSurfaceBorder(void)
 	GfxRect clipRect;
 	GfxRect r;
 
-	GFXCONTEXT oldContext {SetContext(SpaceContext)};
+	GfxContextRef oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&oldClipRect);
 
 	// Expand the context clip-rect so that we can tweak the existing border
@@ -323,11 +323,11 @@ enum class DrawOrbitalMode
 static void DrawEnterOrbitText(GfxRect rect)
 {
 	GfxText text;
-	FRAME OldFontEffect {};
+	FrameRef OldFontEffect {};
 	int16_t leading {};
 	char buf[256];
 
-	FONT OldFont {SetContextFont(MicroFont)};
+	FontRef OldFont {SetContextFont(MicroFont)};
 	OldFontEffect = SetContextFontEffect(
 		SetAbsFrameIndex(FontGradFrame, 12));
 
@@ -506,7 +506,7 @@ static void DrawOrbitalDisplay(DrawOrbitalMode Mode)
 // also after in-orbit comm and after defeating planet guards in combat.
 // SurfDefFrame contains surface definition images when a planet comes
 // with its own bitmap (currently only for Earth)
-void LoadPlanet(FRAME SurfDefFrame)
+void LoadPlanet(FrameRef SurfDefFrame)
 {
 	const bool WaitMode = !(LastActivity & ActivityFlag::CheckLoad);
 	TimeCount sleep;
@@ -546,7 +546,7 @@ void LoadPlanet(FRAME SurfDefFrame)
 		SleepThreadUntil(sleep);
 	}
 
-	if (!PLRPlaying((MUSIC_REF)~0))
+	if (!PLRPlaying((MusicRef)~0))
 	{
 		PlayMusicResume(LanderMusic, NormalVolume);
 	}

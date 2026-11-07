@@ -37,9 +37,9 @@ constexpr auto GetWeaponRange(const auto& pi) { return ((pi)->WeaponRange); }
 constexpr auto WorldToTurn(const auto& d) { return ((d) >> 6); }
 constexpr auto ResolutionCompensated(const auto& speed) { return (ResScale(ResScale(speed))); }
 
-extern BATTLE_INPUT_STATE computer_intelligence(
+extern BattleInputState computer_intelligence(
 	ComputerInputContext* context, Starship* StarShipPtr);
-extern BATTLE_INPUT_STATE tactical_intelligence(
+extern BattleInputState tactical_intelligence(
 	ComputerInputContext* context, Starship* StarShipPtr);
 extern void ship_intelligence(Element* ShipPtr,
 							  ObjectEvaluation* ObjectsOfConcern, uint16_t ConcernCounter);

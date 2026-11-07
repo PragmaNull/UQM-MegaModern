@@ -70,7 +70,7 @@ static bool done;
 
 static ConnectDialogState* current_state;
 
-static FONT PlayerFont;
+static FontRef PlayerFont;
 
 static int do_connect(Widget* self, WidgetEvent event);
 static int do_listen(Widget* self, WidgetEvent event);
@@ -95,8 +95,8 @@ static void MCD_DrawButton(Widget* _self, int x, int y)
 	Color oldtext;
 	Color inactive;
 	Color selected;
-	FONT oldfont = SetContextFont(StarConFont);
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = SetContextFont(StarConFont);
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 
 	selected = MenuHighlightColor;
@@ -128,8 +128,8 @@ static void MCD_DrawSlider(Widget* _self, int x, int y)
 	Color oldtext;
 	Color default_color;
 	Color selected;
-	FONT oldfont = SetContextFont(PlayerFont);
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = SetContextFont(PlayerFont);
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 	GfxRect r;
 	const int tick = ResScale(ResDescale(McdWidth()) / 8);
@@ -179,8 +179,8 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 	Color inactive;
 	Color default_color;
 	Color selected;
-	FONT oldfont = SetContextFont(PlayerFont);
-	FRAME oldFontEffect = SetContextFontEffect(nullptr);
+	FontRef oldfont = SetContextFont(PlayerFont);
+	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
 	GfxText t;
 
 	default_color = MenuTextColor;

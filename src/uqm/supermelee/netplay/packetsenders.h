@@ -26,7 +26,7 @@
 #include "packet.h"
 
 #include "../../controls.h"
-// for BATTLE_INPUT_STATE
+// for BattleInputState
 #include "../meleeship.h"
 // for MeleeShip
 #include "../meleesetup.h"
@@ -56,7 +56,7 @@ void sendFleetShip(NetConnection* conn, NetplaySide player,
 void sendSeedRandom(NetConnection* conn, uint32_t seed);
 void sendInputDelay(NetConnection* conn, uint32_t delay);
 void sendSelectShip(NetConnection* conn, FleetShipIndex index);
-void sendBattleInput(NetConnection* conn, BATTLE_INPUT_STATE input);
+void sendBattleInput(NetConnection* conn, BattleInputState input);
 void sendFrameCount(NetConnection* conn, BattleFrameCounter frameCount);
 void sendChecksum(NetConnection* conn, BattleFrameCounter frameNr,
 				  Checksum checksum);

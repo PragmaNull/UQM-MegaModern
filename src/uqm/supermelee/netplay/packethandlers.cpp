@@ -31,7 +31,7 @@
 #include "core/log/log.h"
 
 #include "../../controls.h"
-// for BATTLE_INPUT_STATE
+// for BattleInputState
 #include "../../init.h"
 // for NumPlayers
 #include "../../globdata.h"
@@ -571,7 +571,7 @@ NetResult PacketHandler_BattleInput(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	const BATTLE_INPUT_STATE input {(BATTLE_INPUT_STATE)packet->state};
+	const BattleInputState input {(BattleInputState)packet->state};
 	BattleInputBuffer* bib {getBattleInputBuffer(conn->player)};
 	if (!BattleInputBuffer_push(bib, input))
 	{

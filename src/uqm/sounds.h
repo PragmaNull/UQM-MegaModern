@@ -56,35 +56,35 @@ enum class MenuSoundEffect
 };
 consteval bool isArithmeticEnum(MenuSoundEffect) { return true; }
 
-extern SOUND_REF MenuSounds;
-extern SOUND_REF GameSounds;
+extern SoundBankRef MenuSounds;
+extern SoundBankRef GameSounds;
 
 /* Constants for DoInput */
-typedef uint16_t MENU_SOUND_FLAGS;
-inline constexpr auto MenuSoundUp {(MENU_SOUND_FLAGS)(1 << 0)};
-inline constexpr auto MenuSoundDown {(MENU_SOUND_FLAGS)(1 << 1)};
-inline constexpr auto MenuSoundLeft {(MENU_SOUND_FLAGS)(1 << 2)};
-inline constexpr auto MenuSoundRight {(MENU_SOUND_FLAGS)(1 << 3)};
-inline constexpr auto MenuSoundSelect {(MENU_SOUND_FLAGS)(1 << 4)};
-inline constexpr auto MenuSoundCancel {(MENU_SOUND_FLAGS)(1 << 5)};
-inline constexpr auto MenuSoundSpecial {(MENU_SOUND_FLAGS)(1 << 6)};
-inline constexpr auto MenuSoundPageup {(MENU_SOUND_FLAGS)(1 << 7)};
-inline constexpr auto MenuSoundPagedown {(MENU_SOUND_FLAGS)(1 << 8)};
-inline constexpr auto MenuSoundDelete {(MENU_SOUND_FLAGS)(1 << 9)};
+using MenuSoundFlags = uint16_t;
+inline constexpr auto MenuSoundUp {(MenuSoundFlags)(1 << 0)};
+inline constexpr auto MenuSoundDown {(MenuSoundFlags)(1 << 1)};
+inline constexpr auto MenuSoundLeft {(MenuSoundFlags)(1 << 2)};
+inline constexpr auto MenuSoundRight {(MenuSoundFlags)(1 << 3)};
+inline constexpr auto MenuSoundSelect {(MenuSoundFlags)(1 << 4)};
+inline constexpr auto MenuSoundCancel {(MenuSoundFlags)(1 << 5)};
+inline constexpr auto MenuSoundSpecial {(MenuSoundFlags)(1 << 6)};
+inline constexpr auto MenuSoundPageup {(MenuSoundFlags)(1 << 7)};
+inline constexpr auto MenuSoundPagedown {(MenuSoundFlags)(1 << 8)};
+inline constexpr auto MenuSoundDelete {(MenuSoundFlags)(1 << 9)};
 inline constexpr auto MenuSoundArrows {MenuSoundUp | MenuSoundDown | MenuSoundLeft | MenuSoundRight};
 inline constexpr auto MenuSoundPage {MenuSoundPageup | MenuSoundPagedown};
 inline constexpr auto MenuSoundAction {MenuSoundSelect | MenuSoundCancel};
-inline constexpr auto MenuSoundNone {(MENU_SOUND_FLAGS)0};
+inline constexpr auto MenuSoundNone {(MenuSoundFlags)0};
 
-extern void SetMenuSounds(MENU_SOUND_FLAGS sound_0,
-						  MENU_SOUND_FLAGS sound_1);
-extern void GetMenuSounds(MENU_SOUND_FLAGS* sound_0,
-						  MENU_SOUND_FLAGS* sound_1);
+extern void SetMenuSounds(MenuSoundFlags sound_0,
+						  MenuSoundFlags sound_1);
+extern void GetMenuSounds(MenuSoundFlags* sound_0,
+						  MenuSoundFlags* sound_1);
 
-extern void PlaySound(SOUND S, SoundPosition Pos,
+extern void PlaySound(SoundRef S, SoundPosition Pos,
 					  Element* PositionalObject, uint8_t Priority);
 extern void PlayMenuSound(MenuSoundEffect S);
-extern void ProcessSound(SOUND Sound, Element* PositionalObject);
+extern void ProcessSound(SoundRef Sound, Element* PositionalObject);
 // Removes the queued sounds, and ignores new sounds until FlushSounds().
 extern void SuppressSounds(void);
 extern SoundPosition CalcSoundPosition(Element* ElementPtr);

@@ -45,7 +45,7 @@ extern "C" {
 #endif
 
 
-static inline void crc_processELEMENT_FLAGS(crc_State* state, ELEMENT_FLAGS val)
+static inline void crc_processELEMENT_FLAGS(crc_State* state, ElementFlags val)
 {
 	crc_processUint16(state, (uint16_t)val);
 }
@@ -71,7 +71,7 @@ static inline void crc_processCOORD(crc_State* state, int16_t val)
 }
 
 #if 0
-static inline void crc_processTIME_VALUE(crc_State *state, const TIME_VALUE val) {
+static inline void crc_processTIME_VALUE(crc_State *state, const TimeValue val) {
 	crc_processUint16(state, (uint16_t) val);
 }
 #endif

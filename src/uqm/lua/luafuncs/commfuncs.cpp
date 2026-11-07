@@ -114,15 +114,15 @@ int luaUqm_comm_open(lua_State* luaState)
 
 /////////////////////////////////////////////////////////////////////////////
 
-// Helper function. Returns the value of the RESPONSE_REF for the
+// Helper function. Returns the value of the ResponseRef for the
 // phrase given as a string on stack position [1].
 // If it does not exist, -1 is returned and a warning is printed.
 // [1] -> string phraseIdStr
 static int testPhraseId(lua_State* luaState, int argn)
 {
 	const char* phraseIdStr = luaL_checkstring(luaState, argn);
-	const RESPONSE_REF phraseId = phraseIdStrToNum(phraseIdStr);
-	if (phraseId == (RESPONSE_REF)-1)
+	const ResponseRef phraseId = phraseIdStrToNum(phraseIdStr);
+	if (phraseId == (ResponseRef)-1)
 	{
 		// TODO: print script file name.
 		uqm::log::error("[script] Warning: testPhraseId(): No phrase "
@@ -135,7 +135,7 @@ static int testPhraseId(lua_State* luaState, int argn)
 }
 
 // Pushes the string, or nil if the string is not known.
-static void pushPhraseId(lua_State* luaState, RESPONSE_REF response)
+static void pushPhraseId(lua_State* luaState, ResponseRef response)
 {
 	const char* phraseIdStr = phraseIdNumToStr(response);
 	if (phraseIdStr != nullptr)
@@ -189,7 +189,7 @@ static void setResponseCallback(lua_State* luaState, int responseArgN,
 }
 
 // The callback function is pushed on the stack.
-static void pushResponseCallback(lua_State* luaState, RESPONSE_REF response)
+static void pushResponseCallback(lua_State* luaState, ResponseRef response)
 {
 	pushResponseCallbackRegistry(luaState);
 	pushPhraseId(luaState, response);
@@ -222,7 +222,7 @@ static void npcPhraseCallback(CallbackArg extra)
 
 // Used as a callback function for Response().
 // It in turn calls the registered Lua callback function.
-static void responseCallback(RESPONSE_REF response)
+static void responseCallback(ResponseRef response)
 {
 	lua_State* const luaState {uqm::lua().commState()};
 	pushResponseCallback(luaState, response);

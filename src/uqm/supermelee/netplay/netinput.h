@@ -21,7 +21,7 @@
 #define UQM_SUPERMELEE_NETPLAY_NETINPUT_H
 
 #include "../../controls.h"
-// for BATTLE_INPUT_STATE
+// for BattleInputState
 #include "../../init.h"
 
 namespace uqm
@@ -33,7 +33,7 @@ extern "C" {
 
 struct BattleInputBuffer
 {
-	BATTLE_INPUT_STATE* buf;
+	BattleInputState* buf;
 	// Cyclic buffer. if 'size' > 0, then 'first' is an index to
 	// the first used entry, 'size' is the number of used
 	// entries in the buffer, and (first + size) % maxSize is the
@@ -48,9 +48,9 @@ size_t getBattleInputDelay(void);
 void initBattleInputBuffers(void);
 void uninitBattleInputBuffers(void);
 bool BattleInputBuffer_push(BattleInputBuffer* bib,
-							BATTLE_INPUT_STATE input);
+							BattleInputState input);
 bool BattleInputBuffer_pop(BattleInputBuffer* bib,
-						   BATTLE_INPUT_STATE* input);
+						   BattleInputState* input);
 
 BattleInputBuffer* getBattleInputBuffer(size_t player);
 

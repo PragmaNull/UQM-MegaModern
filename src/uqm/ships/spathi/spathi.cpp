@@ -177,7 +177,7 @@ static void spawn_butt_missile(Element* ShipPtr)
 	ButtMissileBlock.life = DiscriminatorLife;
 	ButtMissileBlock.preprocess_func = butt_missile_preprocess;
 	ButtMissileBlock.blast_offs = DiscriminatorOffset();
-	HELEMENT ButtMissile {initialize_missile(&ButtMissileBlock)};
+	ElementHandle ButtMissile {initialize_missile(&ButtMissileBlock)};
 	if (ButtMissile)
 	{
 		Element* ButtPtr {};
@@ -247,7 +247,7 @@ static void spathi_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	}
 }
 
-static uint16_t initialize_standard_missile(Element* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missile(Element* ShipPtr, ElementHandle MissileArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;

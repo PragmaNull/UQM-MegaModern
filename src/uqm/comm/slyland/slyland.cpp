@@ -261,7 +261,7 @@ static void sayCoord(int coord)
 	NPCNumber(ac % 10, nullptr);
 }
 
-static void CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -540,7 +540,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_PROBE_VISITS, static_cast<uint32_t>(NumVisits));
 
-		CombatIsInevitable((RESPONSE_REF)0);
+		CombatIsInevitable((ResponseRef)0);
 	}
 }
 

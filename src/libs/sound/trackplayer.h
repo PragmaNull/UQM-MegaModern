@@ -62,11 +62,11 @@ namespace tfb
 struct SoundChunk;
 } // namespace tfb
 
-typedef struct tfb::SoundChunk* SUBTITLE_REF;
+using SubtitleRef = struct tfb::SoundChunk*;
 
-extern SUBTITLE_REF GetFirstTrackSubtitle(void);
-extern SUBTITLE_REF GetNextTrackSubtitle(SUBTITLE_REF LastRef);
-extern const char* GetTrackSubtitleText(SUBTITLE_REF SubRef);
+extern SubtitleRef GetFirstTrackSubtitle(void);
+extern SubtitleRef GetNextTrackSubtitle(SubtitleRef LastRef);
+extern const char* GetTrackSubtitleText(SubtitleRef SubRef);
 
 extern const char* GetTrackSubtitle(void);
 extern uint16_t GetSubtitleNumberByTrack(uint16_t track);

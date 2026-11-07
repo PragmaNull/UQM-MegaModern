@@ -19,7 +19,7 @@
 //       currently in use.
 
 // NOTE:
-// - If you change the properties of the original GFXCONTEXT, specifically the
+// - If you change the properties of the original GfxContextRef, specifically the
 //   dimensions and origin, you'll need to call Flash_preUpdate() before and
 //   Flash_postUpdate() after that change. Note that this may change which
 //   part of the screen is flashing.
@@ -47,7 +47,7 @@
 
 namespace uqm
 {
-static FlashContext* Flash_create(GFXCONTEXT gfxContext);
+static FlashContext* Flash_create(GfxContextRef gfxContext);
 static void Flash_fixState(FlashContext* context);
 static void Flash_nextState(FlashContext* context);
 static void Flash_clearCache(FlashContext* context);
@@ -56,10 +56,10 @@ static void Flash_grabOriginal(FlashContext* context);
 static void Flash_blendFraction(FlashContext* context, int numer, int denom,
 								int* resNumer, int* resDenom);
 static void Flash_makeFrame(FlashContext* context,
-							FRAME dest, int numer, int denom);
+							FrameRef dest, int numer, int denom);
 static inline void Flash_prepareCacheFrame(FlashContext* context,
 										   uint16_t index);
-static void Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect);
+static void Flash_drawFrame(FlashContext* context, FrameRef frame, bool pcRect);
 static void Flash_drawCacheFrame(FlashContext* context, uint16_t index);
 static inline void Flash_drawUncachedFrame(FlashContext* context,
 										   int numer, int denom);
@@ -67,10 +67,10 @@ static inline void Flash_drawCachedFrame(FlashContext* context,
 										 int numer, int denom);
 static void Flash_drawCurrentFrame(FlashContext* context);
 
-static GFXCONTEXT workGfxContext;
+static GfxContextRef workGfxContext;
 // Off-screen internal drawing context
 
-static FlashContext* Flash_create(GFXCONTEXT gfxContext)
+static FlashContext* Flash_create(GfxContextRef gfxContext)
 {
 	auto* context {new FlashContext {}};
 
@@ -112,7 +112,7 @@ static FlashContext* Flash_create(GFXCONTEXT gfxContext)
 // 'startNumer / denom' is the brightness in the start state of the sequence.
 // 'endNumer / denom' is the brightness in the end state of the sequence.
 // These numbers are relative to the brighness of the original image.
-FlashContext* Flash_createHighlight(GFXCONTEXT gfxContext, const GfxRect* rect)
+FlashContext* Flash_createHighlight(GfxContextRef gfxContext, const GfxRect* rect)
 {
 	FlashContext* context = Flash_create(gfxContext);
 
@@ -134,8 +134,8 @@ FlashContext* Flash_createHighlight(GFXCONTEXT gfxContext, const GfxRect* rect)
 	return context;
 }
 
-FlashContext* Flash_createTransition(GFXCONTEXT gfxContext, const GfxPoint* origin,
-									 FRAME first, FRAME final)
+FlashContext* Flash_createTransition(GfxContextRef gfxContext, const GfxPoint* origin,
+									 FrameRef first, FrameRef final)
 {
 	FlashContext* context = Flash_create(gfxContext);
 
@@ -149,7 +149,7 @@ FlashContext* Flash_createTransition(GFXCONTEXT gfxContext, const GfxPoint* orig
 	return context;
 }
 
-FlashContext* Flash_createOverlay(GFXCONTEXT gfxContext, const GfxPoint* origin, FRAME overlay)
+FlashContext* Flash_createOverlay(GfxContextRef gfxContext, const GfxPoint* origin, FrameRef overlay)
 {
 	FlashContext* context = Flash_create(gfxContext);
 
@@ -428,22 +428,22 @@ static void Flash_clearCache(FlashContext* context)
 	{
 		// First frame is not allocated by the flash code, so
 		// we shouldn't free it.
-		context->cache[0] = (FRAME)0;
+		context->cache[0] = (FrameRef)0;
 	}
 	if (context->type == FlashType::Transition)
 	{
 		// Final frame is not allocated by the flash code, so
 		// we shouldn't free it.
-		context->cache[context->cacheSize - 1] = (FRAME)0;
+		context->cache[context->cacheSize - 1] = (FrameRef)0;
 	}
 #endif /* BEGIN_AND_END_FRMAE_EXCEPTIONS */
 
 	for (uint16_t i {0}; i < context->cacheSize; i++)
 	{
-		if (context->cache[i] != (FRAME)0)
+		if (context->cache[i] != (FrameRef)0)
 		{
 			DestroyDrawable(ReleaseDrawable(context->cache[i]));
-			context->cache[i] = (FRAME)0;
+			context->cache[i] = (FrameRef)0;
 		}
 	}
 }
@@ -479,7 +479,7 @@ void Flash_getRect(FlashContext* context, GfxRect* rect)
 // JMS_GFX: The cleanup boolean can be used when changing between normal and hi-res modes.
 // It ensures that an ugly wrong-sized flash overlay from previous resolution is cleaned
 // from the flash process.
-void Flash_setOverlay(FlashContext* context, const GfxPoint* origin, FRAME overlay, bool cleanup)
+void Flash_setOverlay(FlashContext* context, const GfxPoint* origin, FrameRef overlay, bool cleanup)
 {
 	assert(context->type == FlashType::Overlay);
 
@@ -557,12 +557,12 @@ uint16_t Flash_getCacheSize(const FlashContext* context)
 
 static void Flash_grabOriginal(FlashContext* context)
 {
-	if (context->original != (FRAME)0)
+	if (context->original != (FrameRef)0)
 	{
 		DestroyDrawable(ReleaseDrawable(context->original));
 	}
 
-	GFXCONTEXT oldGfxContext {SetContext(context->gfxContext)};
+	GfxContextRef oldGfxContext {SetContext(context->gfxContext)};
 	context->original = CaptureDrawable(CopyContextRect(&context->rect));
 	SetContext(oldGfxContext);
 	FlushGraphics();
@@ -594,7 +594,7 @@ static inline void Flash_blendFraction(FlashContext* context, int numer, int den
 	*resDenom = denom * context->denom;
 }
 
-static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
+static void Flash_makeFrame(FlashContext* context, FrameRef dest, int numer, int denom)
 {
 	GfxStamp s;
 	int blendedNumer {};
@@ -605,7 +605,7 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 
 	Flash_blendFraction(context, numer, denom, &blendedNumer, &blendedDenom);
 
-	GFXCONTEXT oldGfxContext {SetContext(workGfxContext)};
+	GfxContextRef oldGfxContext {SetContext(workGfxContext)};
 	SetContextFGFrame(dest);
 
 	switch (context->type)
@@ -624,16 +624,16 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 			}
 		case FlashType::Transition:
 			{
-				FRAME first {};
-				FRAME final {};
+				FrameRef first {};
+				FrameRef final {};
 
 				first = context->u.transition.first;
-				if (first == (FRAME)0)
+				if (first == (FrameRef)0)
 				{
 					first = context->original;
 				}
 				final = context->u.transition.final;
-				if (final == (FRAME)0)
+				if (final == (FrameRef)0)
 				{
 					final = context->original;
 				}
@@ -675,7 +675,7 @@ static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int de
 // Prepare an entry in the cache.
 static inline void Flash_prepareCacheFrame(FlashContext* context, uint16_t index)
 {
-	if (context->cache[index] != (FRAME)0)
+	if (context->cache[index] != (FrameRef)0)
 	{
 		return;
 	}
@@ -687,13 +687,13 @@ static inline void Flash_prepareCacheFrame(FlashContext* context, uint16_t index
 	}
 	else if (index == 0 && context->type == FlashType::Transition)
 	{
-		context->cache[index] = context->u.transition.first != (FRAME)0 ?
+		context->cache[index] = context->u.transition.first != (FrameRef)0 ?
 									context->u.transition.first :
 									context->original;
 	}
 	else if (index == context->cacheSize - 1 && context->type == FlashType::Transition)
 	{
-		context->cache[index] = context->u.transition.final != (FRAME)0 ?
+		context->cache[index] = context->u.transition.final != (FrameRef)0 ?
 									context->u.transition.final :
 									context->original;
 	}
@@ -727,11 +727,11 @@ Color GetFlashPCColor(void)
 	return cycle_tab[cycle_index];
 }
 
-static void Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
+static void Flash_drawFrame(FlashContext* context, FrameRef frame, bool pcRect)
 {
 	GfxStamp stamp;
 
-	GFXCONTEXT oldGfxContext {SetContext(context->gfxContext)};
+	GfxContextRef oldGfxContext {SetContext(context->gfxContext)};
 
 	if (!pcRect)
 	{
@@ -757,7 +757,7 @@ static void Flash_drawCacheFrame(FlashContext* context, uint16_t index)
 		return;
 	}
 
-	FRAME frame {context->cache[index]};
+	FrameRef frame {context->cache[index]};
 
 	Flash_drawFrame(context, frame, context->isPulsing);
 
@@ -809,7 +809,7 @@ static inline void Flash_drawUncachedFrame(FlashContext* context, int numer, int
 
 	{
 		// Painting to the screen; we need a temporary frame to draw to.
-		FRAME work {};
+		FrameRef work {};
 
 		work = CaptureDrawable(CreateDrawable(WantPixmap,
 											  context->rect.extent.width, context->rect.extent.height, 1));

@@ -35,7 +35,7 @@
 #include <fmt/format.h>
 
 
-static void process_image(FRAME FramePtr, tfb::Canvas img[], const uqm::AniFrame* ani, int cel_ct)
+static void process_image(FrameRef FramePtr, tfb::Canvas img[], const uqm::AniFrame* ani, int cel_ct)
 {
 	FramePtr->Type = RomDrawable;
 	FramePtr->Index = cel_ct;
@@ -71,7 +71,7 @@ static void process_image(FRAME FramePtr, tfb::Canvas img[], const uqm::AniFrame
 	tfbimg->colormap_index = ani[cel_ct].colormapIndex;
 	img[cel_ct] = tfbimg->NormalImg;
 
-	FramePtr->HotSpot = MAKE_HOT_SPOT(hx, hy);
+	FramePtr->hotSpot = MAKE_HOT_SPOT(hx, hy);
 	SetFrameBounds(FramePtr, tfbimg->extent.width, tfbimg->extent.height);
 
 #ifdef CLIPDEBUG
@@ -99,7 +99,7 @@ static void process_image(FRAME FramePtr, tfb::Canvas img[], const uqm::AniFrame
 #endif
 }
 
-static void processFontChar(tfb::Char* CharPtr, tfb::Canvas canvas, FONT fontPtr)
+static void processFontChar(tfb::Char* CharPtr, tfb::Canvas canvas, FontRef fontPtr)
 {
 	size_t dpitch {};
 
@@ -115,7 +115,7 @@ static void processFontChar(tfb::Char* CharPtr, tfb::Canvas canvas, FONT fontPtr
 	CharPtr->pitch = dpitch;
 	CharPtr->disp.width = CharPtr->extent.width;
 	CharPtr->disp.height = CharPtr->extent.height;
-	CharPtr->HotSpot.x = 0;
+	CharPtr->hotSpot.x = 0;
 
 	{
 		// This tunes the font positioning to be about what it should
@@ -141,7 +141,7 @@ static void processFontChar(tfb::Char* CharPtr, tfb::Canvas canvas, FONT fontPtr
 			tune_amount = fontPtr->VertAlign;
 		}
 
-		CharPtr->HotSpot.y = CharPtr->disp.height - tune_amount;
+		CharPtr->hotSpot.y = CharPtr->disp.height - tune_amount;
 	}
 }
 
@@ -173,7 +173,7 @@ void* _GetCelData(const ResourceFile& resource)
 		}
 	}
 
-	const DRAWABLE Drawable {AllocDrawable(count)};
+	const DrawableRef Drawable {AllocDrawable(count)};
 	if (Drawable == nullptr)
 	{
 		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
@@ -190,7 +190,7 @@ void* _GetCelData(const ResourceFile& resource)
 
 bool _ReleaseCelData(void* handle)
 {
-	auto* DrawablePtr {static_cast<DRAWABLE>(handle)};
+	auto* DrawablePtr {static_cast<DrawableRef>(handle)};
 	if (DrawablePtr == nullptr)
 	{
 		return (false);
@@ -221,7 +221,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 	uqstl::vector<BuildCharDesc> bcds {};
 	size_t numBCDs = 0;
 	uqstl::optional<uqm::io::Directory> fontDirHandle {};
-	FONT fontPtr = nullptr;
+	FontRef fontPtr = nullptr;
 	const char* cfg_name = "kerndat.fnt.json";
 
 	if (const uqstl::optional<uqm::io::FileInfo> info {dir.stat(path)}; info && !info->isDirectory())
@@ -425,7 +425,7 @@ err:
 
 bool _ReleaseFontData(void* handle)
 {
-	FONT font = (FONT)handle;
+	FontRef font = (FontRef)handle;
 	if (font == nullptr)
 	{
 		return false;

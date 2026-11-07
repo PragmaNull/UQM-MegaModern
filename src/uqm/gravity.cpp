@@ -32,8 +32,8 @@ static auto MaxMagnitude() { return ResScale(6); }	  // JMS_GFX: Because of the 
 bool CalculateGravity(Element* ElementPtr)
 {
 	bool HasGravity {};
-	HELEMENT hTestElement {};
-	HELEMENT hSuccElement {};
+	ElementHandle hTestElement {};
+	ElementHandle hSuccElement {};
 
 	bool retval {false};
 	HasGravity = (bool)(CollidingElement(ElementPtr)
@@ -167,8 +167,8 @@ bool CalculateGravity(Element* ElementPtr)
 
 bool TimeSpaceMatterConflict(Element* ElementPtr)
 {
-	HELEMENT hTestElement {};
-	HELEMENT hSuccElement {};
+	ElementHandle hTestElement {};
+	ElementHandle hSuccElement {};
 	IntersectInfo ElementControl;
 
 	ElementControl.IntersectStamp.origin.x =

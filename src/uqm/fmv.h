@@ -40,7 +40,7 @@ extern void SplashScreen(void (*DoProcessing)(TimeCount TimeOut));
 extern void Introduction(void);
 extern void Victory(void);
 extern void GameOver(EndgameScenario DeathType);
-extern void DoShipSpin(uint16_t index, MUSIC_REF hMusic);
+extern void DoShipSpin(uint16_t index, MusicRef hMusic);
 extern void Logo(void);
 extern void Drumall(void);
 extern void Reload(void);

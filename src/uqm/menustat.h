@@ -39,17 +39,17 @@ struct MenuState
 	int16_t Initialized;
 
 	uint8_t CurState;
-	FRAME CurFrame;
-	COLORMAP HangarColorMap;
+	FrameRef CurFrame;
+	ColorMapRef HangarColorMap;
 	GfxPoint first_item;
 	int16_t delta_item;
 
-	FRAME ModuleFrame;
+	FrameRef ModuleFrame;
 	GfxRect flash_rect0, flash_rect1, flash_rect2;
-	FRAME flash_frame0, flash_frame1;
+	FrameRef flash_frame0, flash_frame1;
 	FlashContext* flashContext;
 
-	MUSIC_REF hMusic;
+	MusicRef hMusic;
 
 	// For private use by various menus
 	// Usually, a menu associates its internal data struct using this

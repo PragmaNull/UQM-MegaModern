@@ -261,7 +261,7 @@ void DrawBorderPadding(uint32_t videoWidth)
 		return;
 	}
 
-	GFXCONTEXT OldContext {SetContext(ScreenContext)};
+	GfxContextRef OldContext {SetContext(ScreenContext)};
 
 	if (videoWidth)
 	{
@@ -309,7 +309,7 @@ void DrawRadarBorder(void)
 		return;
 	}
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 
 	r.corner.x = ResScale(4) - ResScale(1);
 	r.corner.y = RadarY() - ResScale(1);
@@ -369,7 +369,7 @@ static void DrawPauseText(GfxRect* rect)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(DosBool(LabelFont, StarConFont))};
+	FontRef OldFont {SetContextFont(DosBool(LabelFont, StarConFont))};
 	OldColor = SetContextForeGroundColor(
 		BuildShadeRgba(DosBool(0x74, 0x6B)));
 
@@ -428,7 +428,7 @@ bool PauseGame(void)
 
 	deltaT = GetTimeCounter();
 
-	GFXCONTEXT OldContext {SetContext(ScreenContext)};
+	GfxContextRef OldContext {SetContext(ScreenContext)};
 	OldOrigin = SetContextOrigin(MAKE_POINT(0, 0));
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(nullptr);

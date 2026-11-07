@@ -23,11 +23,11 @@
 #include <string.h>
 
 
-MUSIC_REF LoadMusicFile(const char* pStr)
+MusicRef LoadMusicFile(const char* pStr)
 {
 	char filename[256] {};
 	uqm::strncpy_safe(filename, pStr);
 	CheckMusicResName(filename);
 
-	return static_cast<MUSIC_REF>(res_LoadResFile(uqm::contentDir(), filename, _GetMusicData));
+	return static_cast<MusicRef>(res_LoadResFile(uqm::contentDir(), filename, _GetMusicData));
 }

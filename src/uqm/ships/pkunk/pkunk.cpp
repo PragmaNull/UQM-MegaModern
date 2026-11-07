@@ -136,7 +136,7 @@ static RaceDesc pkunk_desc =
 // Private per-instance ship data
 struct PkunkData
 {
-	HELEMENT hPhoenix;
+	ElementHandle hPhoenix;
 	ElementProcessFunc* saved_preprocess_func;
 	ElementProcessFunc* saved_postprocess_func;
 	ElementProcessFunc* saved_death_func;
@@ -188,7 +188,7 @@ static void animate(Element* ElementPtr)
 	}
 }
 
-static uint16_t initialize_bug_missile(Element* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_bug_missile(Element* ShipPtr, ElementHandle MissileArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -410,7 +410,7 @@ static void spawn_phoenix_trail(Element* ElementPtr)
 
 static void phoenix_transition(Element* ElementPtr)
 {
-	HELEMENT hShipImage {};
+	ElementHandle hShipImage {};
 	Element* ShipImagePtr {};
 	Starship* StarShipPtr {};
 
@@ -474,7 +474,7 @@ static void phoenix_transition(Element* ElementPtr)
 	UnlockElement(StarShipPtr->hShip);
 }
 
-SOUND_REF FwiffoSounds = 0;
+SoundBankRef FwiffoSounds = 0;
 
 static void pkunk_preprocess(Element* ElementPtr)
 {
@@ -491,7 +491,7 @@ static void pkunk_preprocess(Element* ElementPtr)
 
 	if (ElementPtr->state_flags & Appearing)
 	{
-		HELEMENT hPhoenix = 0;
+		ElementHandle hPhoenix = 0;
 
 		if (uqm::random().next() & 1)
 		{

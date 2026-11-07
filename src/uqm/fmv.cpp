@@ -37,15 +37,15 @@ namespace uqm
 {
 static constexpr auto MaxLoadEntries {40};
 
-void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
+void DoShipSpin(uint16_t index, MusicRef hMusic)
 {
 	GfxRect old_r;
 
-	GFXCONTEXT OldContext {SetContext(ScreenContext)};
+	GfxContextRef OldContext {SetContext(ScreenContext)};
 
 	if (uqm::currentSeed().ships)
 	{
-		HMASTERSHIP hMaster = GetStarShipFromIndex(&master_q, index);
+		MasterShipHandle hMaster = GetStarShipFromIndex(&master_q, index);
 		const MasterShipInfo* mPtr = LockMasterShip(&master_q, hMaster);
 		index = FindMasterShipIndex(SeedShip(mPtr->SpeciesID, false));
 		UnlockMasterShip(&master_q, hMaster);

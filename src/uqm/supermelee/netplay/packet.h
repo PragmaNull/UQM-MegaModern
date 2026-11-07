@@ -306,7 +306,7 @@ struct Packet_SelectShip
 struct Packet_BattleInput
 {
 	PacketHeader header;
-	uint8_t state; /* Actually BATTLE_INPUT_STATE */
+	uint8_t state; /* Actually BattleInputState */
 	uint8_t padding0;
 	uint16_t padding1;
 };

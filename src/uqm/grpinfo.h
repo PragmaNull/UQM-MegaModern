@@ -35,9 +35,9 @@ extern "C" {
 // XXX: Needed to maintain savegame compatibility
 inline constexpr auto NumSavedBattleGroups {64};
 
-typedef HLINK HIPGROUP;
+using IpGroupHandle = LinkHandle;
 
-typedef uint8_t IP_FLAGS;
+using IpFlags = uint8_t;
 
 inline constexpr auto CanTurn {1 << 0};
 inline constexpr auto Rotates {1 << 1};
@@ -47,8 +47,8 @@ inline constexpr auto IsXform {1 << 3};
 struct InterplanetaryGroup
 {
 	// QueueLink elements; must be first
-	HIPGROUP pred;
-	HIPGROUP succ;
+	IpGroupHandle pred;
+	IpGroupHandle succ;
 
 	uint16_t group_counter;
 	uint8_t race_id;
@@ -67,9 +67,9 @@ struct InterplanetaryGroup
 	uint8_t group_id;
 	GfxPoint loc;
 
-	FRAME melee_icon;
+	FrameRef melee_icon;
 
-	IP_FLAGS flags;
+	IpFlags flags;
 };
 
 enum class GroupTask
@@ -92,7 +92,7 @@ inline constexpr auto MaxRevolutions {5};
 inline constexpr auto StationRadius {1600};
 inline constexpr auto OrbitRadius {2400};
 
-static inline InterplanetaryGroup* LockIpGroup(const Queue* pq, HIPGROUP h)
+static inline InterplanetaryGroup* LockIpGroup(const Queue* pq, IpGroupHandle h)
 {
 	assert(GetLinkSize(pq) == sizeof(InterplanetaryGroup));
 	return (InterplanetaryGroup*)LockLink(pq, h);
@@ -101,7 +101,7 @@ static inline InterplanetaryGroup* LockIpGroup(const Queue* pq, HIPGROUP h)
 constexpr auto UnlockIpGroup(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
 constexpr auto FreeIpGroup(const auto& pq, const auto& h) { return FreeLink(pq, h); }
 
-extern HIPGROUP BuildGroup(Queue* pDstQueue, uint8_t race_id);
+extern IpGroupHandle BuildGroup(Queue* pDstQueue, uint8_t race_id);
 
 #if 0 //defined(__cplusplus)
 }

@@ -142,7 +142,7 @@ static ConversationData mycon_desc =
 
 static uint8_t MadeChoice;
 
-static void DoRamble(RESPONSE_REF R)
+static void DoRamble(ResponseRef R)
 {
 	uint8_t Counter {};
 
@@ -273,7 +273,7 @@ static void DoRamble(RESPONSE_REF R)
 	}
 }
 
-static void CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(ResponseRef R)
 {
 	setSegue(Segue::Hostile);
 
@@ -310,7 +310,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	MadeChoice = 0;
 }
 
-static void SunDevice(RESPONSE_REF R)
+static void SunDevice(ResponseRef R)
 {
 	if (PlayerSaid(R, MyconPhrase::WhatsUpSunDevice))
 	{
@@ -351,7 +351,7 @@ static void SunDevice(RESPONSE_REF R)
 	Response(MyconPhrase::ByeSunDevice, CombatIsInevitable);
 }
 
-static void TrickMycon(RESPONSE_REF R)
+static void TrickMycon(ResponseRef R)
 {
 	if (PlayerSaid(R, MyconPhrase::IHaveACunningPlan))
 	{
@@ -407,9 +407,9 @@ static void TrickMycon(RESPONSE_REF R)
 	}
 }
 
-static void NormalMycon(RESPONSE_REF R)
+static void NormalMycon(ResponseRef R)
 {
-	RESPONSE_FUNC RespFunc {};
+	ResponseFunc RespFunc {};
 
 	if (PlayerSaid(R, MyconPhrase::WhatAboutShattered))
 	{
@@ -427,11 +427,11 @@ static void NormalMycon(RESPONSE_REF R)
 
 	if ((uint8_t)uqm::random().next() < 256 * 30 / 100)
 	{
-		RespFunc = (RESPONSE_FUNC)CombatIsInevitable;
+		RespFunc = (ResponseFunc)CombatIsInevitable;
 	}
 	else
 	{
-		RespFunc = (RESPONSE_FUNC)NormalMycon;
+		RespFunc = (ResponseFunc)NormalMycon;
 	}
 	if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 	{
@@ -601,7 +601,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::MYCON_SUN_VISITS, static_cast<uint32_t>(NumVisits));
 
-		SunDevice((RESPONSE_REF)0);
+		SunDevice((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
@@ -636,7 +636,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::MYCON_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-		NormalMycon((RESPONSE_REF)0);
+		NormalMycon((ResponseRef)0);
 	}
 	else
 	{
@@ -672,7 +672,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::MYCON_VISITS, static_cast<uint32_t>(NumVisits));
 
-		NormalMycon((RESPONSE_REF)0);
+		NormalMycon((ResponseRef)0);
 	}
 }
 

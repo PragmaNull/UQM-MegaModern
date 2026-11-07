@@ -122,7 +122,7 @@ static constexpr auto GoodReason2 {1 << 1};
 static constexpr auto BadReason1 {1 << 2};
 static constexpr auto BadReason2 {1 << 3};
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Peace);
 
@@ -242,9 +242,9 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void PkunkHome(RESPONSE_REF R);
+static void PkunkHome(ResponseRef R);
 
-static void PkunkAngry(RESPONSE_REF R)
+static void PkunkAngry(ResponseRef R)
 {
 	if (PlayerSaid(R, PkunkPhrase::WhyInsults))
 	{
@@ -292,7 +292,7 @@ static void PkunkAngry(RESPONSE_REF R)
 	Response(PkunkPhrase::ByeAngry, ExitConversation);
 }
 
-static void DiscussConquer(RESPONSE_REF R)
+static void DiscussConquer(ResponseRef R)
 {
 	if (PlayerSaid(R, PkunkPhrase::WeConquer))
 	{
@@ -330,7 +330,7 @@ static void DiscussConquer(RESPONSE_REF R)
 				shared_phrase_buf,
 				PkunkPhrase::ConquerBecause1,
 				buf,
-				(RESPONSE_REF)-1);
+				(ResponseRef)-1);
 		DoResponsePhrase (PkunkPhrase::ConquerBecause1, DiscussConquer, shared_phrase_buf);
 #endif
 		Response(PkunkPhrase::ConquerBecause1, DiscussConquer);
@@ -343,7 +343,7 @@ static void DiscussConquer(RESPONSE_REF R)
 	Response(PkunkPhrase::NoConquest, PkunkHome);
 }
 
-static void OfferAlliance(RESPONSE_REF R)
+static void OfferAlliance(ResponseRef R)
 {
 	if (PlayerSaid(R, PkunkPhrase::WeAreVindicator))
 	{
@@ -374,7 +374,7 @@ static void OfferAlliance(RESPONSE_REF R)
 	}
 }
 
-static void AboutPkunk(RESPONSE_REF R)
+static void AboutPkunk(ResponseRef R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, PkunkPhrase::WhatAboutYou))
@@ -445,7 +445,7 @@ static void AboutPkunk(RESPONSE_REF R)
 	}
 }
 
-static void AboutIlwrath(RESPONSE_REF R)
+static void AboutIlwrath(ResponseRef R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, PkunkPhrase::WhatAboutIlwrath))
@@ -505,7 +505,7 @@ static void AboutIlwrath(RESPONSE_REF R)
 	}
 }
 
-static void PkunkHome(RESPONSE_REF R)
+static void PkunkHome(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -672,7 +672,7 @@ static void PkunkHome(RESPONSE_REF R)
 	Response(PkunkPhrase::ByeFriendly, ExitConversation);
 }
 
-static void PkunkFriendlySpace(RESPONSE_REF R)
+static void PkunkFriendlySpace(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -795,7 +795,7 @@ static void PkunkFriendlySpace(RESPONSE_REF R)
 	Response(PkunkPhrase::FriendlyByeSpace, ExitConversation);
 }
 
-static void PkunkNeutralSpace(RESPONSE_REF R)
+static void PkunkNeutralSpace(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -866,7 +866,7 @@ static void PkunkNeutralSpace(RESPONSE_REF R)
 	Response(PkunkPhrase::NeutralByeSpace, ExitConversation);
 }
 
-static void PkunkMigrate(RESPONSE_REF R)
+static void PkunkMigrate(ResponseRef R)
 {
 	uint8_t ReasonMask {};
 	(void)R; // ignored
@@ -951,7 +951,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(NumVisits));
 
-		PkunkAngry((RESPONSE_REF)0);
+		PkunkAngry((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
@@ -1043,7 +1043,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-		PkunkHome((RESPONSE_REF)0);
+		PkunkHome((ResponseRef)0);
 	}
 	else if ((NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_MISSION)) == 0
 			 || !(NumVisits & 1))
@@ -1082,7 +1082,7 @@ static void Intro(void)
 					break;
 			}
 
-			PkunkFriendlySpace((RESPONSE_REF)0);
+			PkunkFriendlySpace((ResponseRef)0);
 		}
 		else
 		{
@@ -1104,7 +1104,7 @@ static void Intro(void)
 					break;
 			}
 
-			PkunkNeutralSpace((RESPONSE_REF)0);
+			PkunkNeutralSpace((ResponseRef)0);
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(NumVisits));
 	}
@@ -1143,7 +1143,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MIGRATE_VISITS, static_cast<uint32_t>(NumVisits));
 
-		PkunkMigrate((RESPONSE_REF)0);
+		PkunkMigrate((ResponseRef)0);
 	}
 }
 

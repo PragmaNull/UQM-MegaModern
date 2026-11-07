@@ -289,7 +289,7 @@ uint16_t PlotIntercept(Element* ElementPtr0, Element* ElementPtr1,
 
 					do
 					{
-						TIME_VALUE when {};
+						TimeValue when {};
 
 						++time_y_0;
 
@@ -401,7 +401,7 @@ bool ship_weapons(Element* ShipPtr, Element* OtherPtr, uint16_t margin_of_error)
 	uint16_t n {};
 	uint16_t num_weapons {};
 	Element Ship;
-	HELEMENT Weapon[6];
+	ElementHandle Weapon[6];
 	Starship* StarShipPtr {};
 
 	if (ObjectCloaked(OtherPtr))
@@ -424,11 +424,11 @@ bool ship_weapons(Element* ShipPtr, Element* OtherPtr, uint16_t margin_of_error)
 
 	if ((n = num_weapons))
 	{
-		HELEMENT w {};
+		ElementHandle w {};
 		//Starship *StarShipPtr;
 		Element* EPtr {};
 
-		HELEMENT* WeaponPtr {&Weapon[0]};
+		ElementHandle* WeaponPtr {&Weapon[0]};
 		do
 		{
 			w = *WeaponPtr;
@@ -1147,13 +1147,13 @@ void Avoid(Element* ShipPtr, ObjectEvaluation* EvalDescPtr)
 	(void)EvalDescPtr; /* Satisfying compiler (unused parameter) */
 }
 
-BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship* StarShipPtr)
+BattleInputState tactical_intelligence(ComputerInputContext* context, Starship* StarShipPtr)
 {
 	Element* ShipPtr {};
 	Element Ship;
 	uint16_t ShipFacing {};
-	HELEMENT hElement {};
-	HELEMENT hNextElement {};
+	ElementHandle hElement {};
+	ElementHandle hNextElement {};
 	uint16_t ConcernCounter {};
 	ObjectEvaluation ObjectsOfConcern[10];
 	bool UltraManeuverable {};
@@ -1472,7 +1472,7 @@ BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, Starship
 
 	StarShipPtr->ShipFacing = ShipFacing;
 	{
-		BATTLE_INPUT_STATE InputState {0};
+		BattleInputState InputState {0};
 		if (StarShipPtr->ship_input_state & LeftFlag)
 		{
 			InputState |= BattleLeft;

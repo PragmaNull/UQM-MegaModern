@@ -38,7 +38,7 @@ namespace uqm
 {
 bool legacySave;
 uint8_t GTFO = 0;
-extern FRAME SpaceJunkFrame;
+extern FrameRef SpaceJunkFrame;
 
 static inline int16_t RaceIPSpeed(RaceId Index)
 {
@@ -62,7 +62,7 @@ static inline int16_t RaceIPSpeed(RaceId Index)
 
 	if (uqm::currentSeed().ships && (seedStamp != uqm::currentSeed().value || speedMap[0] == 0))
 	{
-		HFLEETINFO hFleet {};
+		FleetInfoHandle hFleet {};
 		for (x = 0; x < numRaces; x++)
 		{
 			hFleet = GetSeededFleetFromIndex(x);
@@ -86,8 +86,8 @@ static inline int16_t RaceIPSpeed(RaceId Index)
 
 void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 {
-	HSHIPFRAG hGroup {};
-	HSHIPFRAG hNextGroup {};
+	ShipFragmentHandle hGroup {};
+	ShipFragmentHandle hNextGroup {};
 
 	// NOTE: "Others" includes the group causing the notification too.
 
@@ -197,8 +197,8 @@ static uint8_t getFlagshipLocation(void)
 
 // These need to be global in case something else uses them
 // after shipseed write to them
-FRAME Xform = NullResource;
-FRAME Ywing = NullResource;
+FrameRef Xform = NullResource;
+FrameRef Ywing = NullResource;
 
 static constexpr auto TrackWait {5};
 static constexpr auto OrbitSpeed {60};
@@ -349,7 +349,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 		int16_t delta_x {};
 		int16_t delta_y {};
 		uint16_t angle {};
-		FRAME suggestedFrame {};
+		FrameRef suggestedFrame {};
 		const bool FilthyCheater =
 			(GroupPtr->race_id == RaceId::UrquanDrone
 			 && (uqm::UQMOptions::read().bubbleWarp
@@ -802,7 +802,7 @@ static void ip_group_collision(Element* ElementPtr0, GfxPoint* pPt0,
 
 static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 {
-	HELEMENT hIPSHIPElement {AllocElement()};
+	ElementHandle hIPSHIPElement {AllocElement()};
 	if (hIPSHIPElement)
 	{
 		Element* IPSHIPElementPtr {};
@@ -815,7 +815,7 @@ static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 			Changing | FiniteLife | IgnoreVelocity;
 
 		SetPrimType(&DisplayArray[IPSHIPElementPtr->PrimIndex], PrimitiveType::Stamp);
-		// XXX: Hack: farray points to FRAME[3] and given FRAME
+		// XXX: Hack: farray points to FrameRef[3] and given FrameRef
 		IPSHIPElementPtr->current.image.farray = &GroupPtr->melee_icon;
 		IPSHIPElementPtr->current.image.frame = SetAbsFrameIndex(
 			GroupPtr->melee_icon, 1);
@@ -841,7 +841,7 @@ static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 		if (uqm::currentSeed().ships)
 		{
 			const FleetInfo* TemplatePtr = nullptr;
-			HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, GroupPtr->race_id)};
+			FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, GroupPtr->race_id)};
 			if (hFleet)
 			{
 				TemplatePtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
@@ -936,7 +936,7 @@ static void flag_ship_preprocess(Element* ElementPtr)
 	if (--ElementPtr->thrust_wait == 0)
 	/* juggle list after flagship */
 	{
-		HELEMENT hSuccElement {};
+		ElementHandle hSuccElement {};
 
 		if ((hSuccElement = GetSuccElement(ElementPtr))
 			&& hSuccElement != GetTailElement())
@@ -944,7 +944,7 @@ static void flag_ship_preprocess(Element* ElementPtr)
 			Element* TailPtr {};
 
 			LockElement(GetTailElement(), &TailPtr);
-			HELEMENT hPredElement {_GetPredLink(TailPtr)};
+			ElementHandle hPredElement {_GetPredLink(TailPtr)};
 			UnlockElement(GetTailElement());
 
 			RemoveElement(hSuccElement);
@@ -1049,7 +1049,7 @@ static void AdjustInitialPosition(void)
 
 static void spawn_flag_ship(void)
 {
-	HELEMENT hFlagShipElement {AllocElement()};
+	ElementHandle hFlagShipElement {AllocElement()};
 	if (hFlagShipElement)
 	{
 		Element* FlagShipElementPtr {};
@@ -1093,8 +1093,8 @@ static void spawn_flag_ship(void)
 
 void DoMissions(void)
 {
-	HSHIPFRAG hGroup {};
-	HSHIPFRAG hNextGroup {};
+	ShipFragmentHandle hGroup {};
+	ShipFragmentHandle hNextGroup {};
 
 	spawn_flag_ship();
 

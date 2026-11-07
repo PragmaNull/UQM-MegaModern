@@ -35,7 +35,7 @@
 namespace uqm
 {
 static GfxRect cursor;
-static GFXCONTEXT curContext;
+static GfxContextRef curContext;
 static bool block = false;
 
 // TODO: This may be better done with UniChar at the cost of a tiny bit
@@ -125,7 +125,7 @@ void SetCursorFlashBlock(bool state)
 	block = state;
 }
 
-void SetCursorRect(GfxRect* r, GFXCONTEXT context)
+void SetCursorRect(GfxRect* r, GfxContextRef context)
 {
 	cursor = *r;
 	curContext = context;
@@ -152,7 +152,7 @@ static void FlashCursor(void)
 	{
 		NextTime = GetTimeCounter() + BlinkRate;
 
-		GFXCONTEXT OldContext {SetContext(curContext)};
+		GfxContextRef OldContext {SetContext(curContext)};
 
 		if (curContext == OffScreenContext)
 		{

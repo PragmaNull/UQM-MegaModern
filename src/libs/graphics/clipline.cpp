@@ -18,7 +18,7 @@
 
 #include "gfxintrn.h"
 
-INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
+IntersectCode _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 {
 	int16_t p {};
 	int16_t x0 {};
@@ -53,10 +53,10 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 
 	if (pLine->first.x > xmax || pLine->second.x < xmin || (pLine->first.y > ymax && pLine->second.y > ymax) || (pLine->first.y < ymin && pLine->second.y < ymin))
 	{
-		return ((INTERSECT_CODE)0);
+		return ((IntersectCode)0);
 	}
 
-	INTERSECT_CODE intersect_code {IntersectNoclip};
+	IntersectCode intersect_code {IntersectNoclip};
 	x0 = y0 = 0;
 	abs_delta_x = (pLine->second.x - pLine->first.x) << 1;
 	abs_delta_y = (pLine->second.y - pLine->first.y) << 1;
@@ -136,7 +136,7 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 			{
 				if ((y0 = (int16_t)(((long)abs_delta_y * (x0 = xmin) + half_dx) / abs_delta_x)) > ymax)
 				{
-					return ((INTERSECT_CODE)0);
+					return ((IntersectCode)0);
 				}
 				intersect_code |= IntersectLeft;
 			}
@@ -144,7 +144,7 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 			{
 				if ((y1 = (int16_t)(((long)abs_delta_y * (x1 = xmax) + half_dx) / abs_delta_x)) < ymin)
 				{
-					return ((INTERSECT_CODE)0);
+					return ((IntersectCode)0);
 				}
 				intersect_code |= IntersectRight;
 			}
@@ -152,7 +152,7 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 			{
 				if ((x0 = (int16_t)(((long)abs_delta_x * (y0 = ymin) - half_dx + (abs_delta_y - 1)) / abs_delta_y)) > xmax)
 				{
-					return ((INTERSECT_CODE)0);
+					return ((IntersectCode)0);
 				}
 				intersect_code |= IntersectTop;
 				intersect_code &= ~IntersectLeft;
@@ -161,7 +161,7 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 			{
 				if ((x1 = (int16_t)(((long)abs_delta_x * ((y1 = ymax) + 1) - half_dx + (abs_delta_y - 1)) / abs_delta_y) - 1) < xmin)
 				{
-					return ((INTERSECT_CODE)0);
+					return ((IntersectCode)0);
 				}
 				intersect_code |= IntersectBottom;
 				intersect_code &= ~IntersectRight;
@@ -176,7 +176,7 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 			{
 				if ((x0 = (int16_t)(((long)abs_delta_x * (y0 = ymin) + half_dy) / abs_delta_y)) > xmax)
 				{
-					return ((INTERSECT_CODE)0);
+					return ((IntersectCode)0);
 				}
 				intersect_code |= IntersectTop;
 			}
@@ -184,7 +184,7 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 			{
 				if ((x1 = (int16_t)(((long)abs_delta_x * (y1 = ymax) + half_dy) / abs_delta_y)) < xmin)
 				{
-					return ((INTERSECT_CODE)0);
+					return ((IntersectCode)0);
 				}
 				intersect_code |= IntersectBottom;
 			}
@@ -192,7 +192,7 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 			{
 				if ((y0 = (int16_t)(((long)abs_delta_y * (x0 = xmin) - half_dy + (abs_delta_x - 1)) / abs_delta_x)) > ymax)
 				{
-					return ((INTERSECT_CODE)0);
+					return ((IntersectCode)0);
 				}
 				intersect_code |= IntersectLeft;
 				intersect_code &= ~IntersectTop;
@@ -201,7 +201,7 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 			{
 				if ((y1 = (int16_t)(((long)abs_delta_y * ((x1 = xmax) + 1) - half_dy + (abs_delta_x - 1)) / abs_delta_x) - 1) < ymin)
 				{
-					return ((INTERSECT_CODE)0);
+					return ((IntersectCode)0);
 				}
 				intersect_code |= IntersectRight;
 				intersect_code &= ~IntersectBottom;
@@ -217,13 +217,13 @@ INTERSECT_CODE _clip_line(const LargeRect* pClipRect, BresenhamLine* pLine)
 		}
 		else
 		{
-			INTERSECT_CODE y_code {};
+			IntersectCode y_code {};
 
 			pLine->second.y = pLine->first.y - y1;
 			pLine->first.y -= y0;
 
-			y_code = (INTERSECT_CODE)(intersect_code
-									  & (IntersectTop | IntersectBottom));
+			y_code = (IntersectCode)(intersect_code
+									 & (IntersectTop | IntersectBottom));
 			if (y_code && y_code != (IntersectTop | IntersectBottom))
 			{
 				intersect_code ^= (IntersectTop | IntersectBottom);

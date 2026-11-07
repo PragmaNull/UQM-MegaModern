@@ -156,7 +156,7 @@ static void laser_death(Element* ElementPtr)
 		int32_t dx {};
 		int32_t dy {};
 		long dist {};
-		HELEMENT hIonSpots {};
+		ElementHandle hIonSpots {};
 		Element* ShipPtr {};
 
 		LockElement(StarShipPtr->hShip, &ShipPtr);
@@ -211,7 +211,7 @@ static void laser_death(Element* ElementPtr)
 	}
 }
 
-static uint16_t initialize_megawatt_laser(Element* ShipPtr, HELEMENT LaserArray[])
+static uint16_t initialize_megawatt_laser(Element* ShipPtr, ElementHandle LaserArray[])
 {
 	GfxRect r;
 	Starship* StarShipPtr {};
@@ -291,7 +291,7 @@ static void chmmr_postprocess(Element* ElementPtr)
 
 	if (StarShipPtr->cur_status_flags & WeaponFlag)
 	{
-		HELEMENT hMuzzleFlash {};
+		ElementHandle hMuzzleFlash {};
 		Element* MuzzleFlashPtr {};
 
 		LockElement(GetTailElement(), &MuzzleFlashPtr);
@@ -408,7 +408,7 @@ static void chmmr_postprocess(Element* ElementPtr)
 				// add tractor beam graphical effects
 				for (int16_t i {0}; i < NumShadows; ++i)
 				{
-					HELEMENT hShadow {AllocElement()};
+					ElementHandle hShadow {AllocElement()};
 					if (hShadow)
 					{
 						Element* ShadowElementPtr {};
@@ -501,14 +501,14 @@ static void spawn_point_defense(Element* ElementPtr)
 {
 	uint16_t best_dist {};
 	Starship* StarShipPtr {};
-	HELEMENT hObject {};
-	HELEMENT hNextObject {};
+	ElementHandle hObject {};
+	ElementHandle hNextObject {};
 	Element* ShipPtr {};
 	Element* SattPtr {};
 	Element* ObjectPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	HELEMENT hBestObject {0};
+	ElementHandle hBestObject {0};
 	best_dist = DefenseRange() + ResScale(1);
 	uint8_t weakest {255};
 	LockElement(StarShipPtr->hShip, &ShipPtr);
@@ -571,7 +571,7 @@ static void spawn_point_defense(Element* ElementPtr)
 		LaserBlock.flags = IgnoreSimilar;
 		LaserBlock.pixoffs = 0;
 		LaserBlock.color = BuildColor(MakeRgb15(0x00, 0x01, 0x1F), 0x4D);
-		HELEMENT hPointDefense {initialize_laser(&LaserBlock)};
+		ElementHandle hPointDefense {initialize_laser(&LaserBlock)};
 		if (hPointDefense)
 		{
 			Element* PDPtr {};
@@ -603,7 +603,7 @@ static void satellite_postprocess(Element* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hDefense {AllocElement()};
+		ElementHandle hDefense {AllocElement()};
 		if (hDefense)
 		{
 			Element* DefensePtr {};
@@ -673,7 +673,7 @@ static void spawn_satellites(Element* ElementPtr)
 		LockElement(StarShipPtr->hShip, &ElementPtr);
 		for (i = 0; i < NumSatellites; ++i)
 		{
-			HELEMENT hSatellite {AllocElement()};
+			ElementHandle hSatellite {AllocElement()};
 			if (hSatellite)
 			{
 				uint16_t angle {};
@@ -722,7 +722,7 @@ static void chmmr_preprocess(Element* ElementPtr)
 	Starship* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	HELEMENT hSatellite {AllocElement()};
+	ElementHandle hSatellite {AllocElement()};
 	if (hSatellite)
 	{
 		Element* SattPtr {};

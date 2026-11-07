@@ -124,14 +124,14 @@ static RaceDesc slylandro_desc =
 };
 
 static uint16_t initialize_lightning(Element* ElementPtr,
-									 HELEMENT LaserArray[]);
+									 ElementHandle LaserArray[]);
 
 static void lightning_postprocess(Element* ElementPtr)
 {
 	if (ElementPtr->turn_wait
 		&& !(ElementPtr->state_flags & Collision))
 	{
-		HELEMENT Lightning {};
+		ElementHandle Lightning {};
 
 		initialize_lightning(ElementPtr, &Lightning);
 		if (Lightning)
@@ -158,7 +158,7 @@ static void lightning_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
-static uint16_t initialize_lightning(Element* ElementPtr, HELEMENT LaserArray[])
+static uint16_t initialize_lightning(Element* ElementPtr, ElementHandle LaserArray[])
 {
 	LaserDesc LaserBlock;
 
@@ -324,8 +324,8 @@ static void slylandro_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 
 static bool harvest_space_junk(Element* ElementPtr)
 {
-	HELEMENT hElement {};
-	HELEMENT hNextElement {};
+	ElementHandle hElement {};
+	ElementHandle hNextElement {};
 
 	bool retval {false};
 	for (hElement = GetHeadElement();
@@ -393,7 +393,7 @@ static void slylandro_postprocess(Element* ElementPtr)
 	if (StarShipPtr->weapon_counter
 		&& StarShipPtr->weapon_counter < WeaponWait)
 	{
-		HELEMENT Lightning {};
+		ElementHandle Lightning {};
 
 		initialize_lightning(ElementPtr, &Lightning);
 		if (Lightning)

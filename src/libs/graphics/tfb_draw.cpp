@@ -20,7 +20,7 @@
 #include "core/log/log.h"
 
 
-const static HOT_SPOT NullHs = {0, 0};
+const static HotSpot NullHs = {0, 0};
 
 void TFB_DrawScreen_Line(int x1, int y1, int x2, int y2, Color color,
 						 DrawMode mode, ScreenBuffer dest, uint8_t thickness)

@@ -39,15 +39,15 @@ inline constexpr auto NumCaptainsNames {16};
 
 constexpr auto PickCaptainName() { return (((uint16_t)uqm::random().next() & (NumCaptainsNames - 1)) + NameOffset); }
 
-extern HLINK Build(Queue* pQueue, SpeciesId SpeciesID);
-extern HSHIPFRAG CloneShipFragment(RaceId shipIndex, Queue* pDstQueue,
-								   uint16_t crew_level);
-extern HLINK GetStarShipFromIndex(Queue* pShipQ, uint16_t Index);
-extern HFLEETINFO GetSeededFleetFromIndex(uint16_t Index);
-extern HSHIPFRAG GetEscortByStarShipIndex(uint16_t index);
+extern LinkHandle Build(Queue* pQueue, SpeciesId SpeciesID);
+extern ShipFragmentHandle CloneShipFragment(RaceId shipIndex, Queue* pDstQueue,
+											uint16_t crew_level);
+extern LinkHandle GetStarShipFromIndex(Queue* pShipQ, uint16_t Index);
+extern FleetInfoHandle GetSeededFleetFromIndex(uint16_t Index);
+extern ShipFragmentHandle GetEscortByStarShipIndex(uint16_t index);
 extern uint8_t NameCaptain(Queue* pQueue, SpeciesId SpeciesID);
 
-extern uint16_t GetIndexFromStarShip(Queue* pShipQ, HLINK hStarShip);
+extern uint16_t GetIndexFromStarShip(Queue* pShipQ, LinkHandle hStarShip);
 extern int SetEscortCrewComplement(RaceId which_ship, uint16_t crew_level,
 								   uint8_t captain);
 
@@ -56,7 +56,7 @@ extern RaceId RaceIdStrToIndex(const char* raceIdStr);
 extern uint16_t AddEscortShips(RaceId race, int16_t count);
 extern uint16_t CalculateEscortsWorth(void);
 extern uint16_t CalculateEscortsPoints(void);
-extern bool CanBuyPoints(HFLEETINFO hFleet);
+extern bool CanBuyPoints(FleetInfoHandle hFleet);
 extern bool ShipsReady(RaceId race);
 extern void PrepareShip(RaceId race);
 extern bool SetRaceAllied(RaceId race, bool flag);

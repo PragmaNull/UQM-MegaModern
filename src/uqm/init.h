@@ -31,9 +31,9 @@ extern "C" {
 inline constexpr auto NumPlayers {2};
 inline constexpr auto NumSides {2};
 
-extern FRAME stars_in_space;
-extern FRAME stars_misc[NumViews];
-extern FRAME scenery;
+extern FrameRef stars_in_space;
+extern FrameRef stars_misc[NumViews];
+extern FrameRef scenery;
 
 extern bool InitSpace(void);
 extern void UninitSpace(void);
@@ -42,9 +42,9 @@ extern int16_t InitShips(void);
 extern void UninitShips(void);
 extern void ReloadGameContent(void);
 
-extern bool load_animation(FRAME* pixarray, RESOURCE big_res,
+extern bool load_animation(FrameRef* pixarray, RESOURCE big_res,
 						   RESOURCE med_res, RESOURCE sml_res);
-extern bool free_image(FRAME* pixarray);
+extern bool free_image(FrameRef* pixarray);
 
 #if 0 //defined(__cplusplus)
 }

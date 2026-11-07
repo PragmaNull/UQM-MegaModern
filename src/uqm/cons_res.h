@@ -30,14 +30,14 @@ extern "C" {
 void load_gravity_well(uint8_t selector);
 void free_gravity_well(void);
 
-FRAME load_life_form(uint8_t selector);
+FrameRef load_life_form(uint8_t selector);
 
 inline constexpr auto NumOrbitThemes {6};
-MUSIC_REF load_orbit_theme(uint8_t selector);
+MusicRef load_orbit_theme(uint8_t selector);
 extern int num_orbit_themes(void);
 
 inline constexpr auto NumMmThemes {3};
-MUSIC_REF loadMainMenuMusic(uint8_t selector);
+MusicRef loadMainMenuMusic(uint8_t selector);
 
 #if 0 //defined(__cplusplus)
 }

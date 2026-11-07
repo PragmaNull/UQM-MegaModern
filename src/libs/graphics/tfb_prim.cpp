@@ -137,7 +137,7 @@ void TFB_Prim_Stamp(GfxStamp* stmp, DrawMode mode, GfxPoint ctxOrigin, bool unsc
 	tfb::ColorMap* cmap = nullptr;
 	int scaleMode {};
 
-	FRAME SrcFramePtr {stmp->frame};
+	FrameRef SrcFramePtr {stmp->frame};
 	if (!SrcFramePtr)
 	{
 		uqm::log::warn("TFB_Prim_Stamp: Tried to draw a nullptr frame"
@@ -156,7 +156,7 @@ void TFB_Prim_Stamp(GfxStamp* stmp, DrawMode mode, GfxPoint ctxOrigin, bool unsc
 	{
 		const uqm::LockGuard imageLock {img->mutex};
 
-		img->NormalHs = SrcFramePtr->HotSpot;
+		img->NormalHs = SrcFramePtr->hotSpot;
 		// We scale the image size here, but the caller must scale the origin!
 		x = stmp->origin.x + ctxOrigin.x;
 		y = stmp->origin.y + ctxOrigin.y;
@@ -195,7 +195,7 @@ void TFB_Prim_StampFill(GfxStamp* stmp, Color color, DrawMode mode, GfxPoint ctx
 	int y {};
 	int scaleMode {};
 
-	FRAME SrcFramePtr {stmp->frame};
+	FrameRef SrcFramePtr {stmp->frame};
 	if (!SrcFramePtr)
 	{
 		uqm::log::warn("TFB_Prim_StampFill: Tried to draw a nullptr frame"
@@ -214,7 +214,7 @@ void TFB_Prim_StampFill(GfxStamp* stmp, Color color, DrawMode mode, GfxPoint ctx
 	{
 		const uqm::LockGuard imageLock {img->mutex};
 
-		img->NormalHs = SrcFramePtr->HotSpot;
+		img->NormalHs = SrcFramePtr->hotSpot;
 		// We scale the image size here, but the caller must scale the origin!
 		x = stmp->origin.x + ctxOrigin.x;
 		y = stmp->origin.y + ctxOrigin.y;
@@ -265,7 +265,7 @@ void TFB_Prim_FontChar(GfxPoint charOrigin, tfb::Char* fontChar, tfb::Image* bac
 
 // Text rendering is in font.c, under the name _text_blt
 
-void TFB_Prim_MaskFrame(FRAME layer, FRAME base, DrawMode mode, Color* fill)
+void TFB_Prim_MaskFrame(FrameRef layer, FrameRef base, DrawMode mode, Color* fill)
 {
 	tfb::Image* img {};
 

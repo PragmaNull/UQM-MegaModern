@@ -41,7 +41,7 @@ namespace uqm
 extern "C" {
 #endif
 
-typedef BATTLE_INPUT_STATE (*BattleFrameInputFunction)(
+typedef BattleInputState (*BattleFrameInputFunction)(
 	InputContext* context, Starship* StarShipPtr);
 typedef bool (*SelectShipFunction)(InputContext* context,
 								   PickMeleeState* gms);
@@ -89,8 +89,8 @@ NetworkInputContext* NetworkInputContext_new(uint16_t playerNr);
 extern InputContext* PlayerInput[];
 
 
-BATTLE_INPUT_STATE frameInputHuman(HumanInputContext* context,
-								   Starship* StarShipPtr);
+BattleInputState frameInputHuman(HumanInputContext* context,
+								 Starship* StarShipPtr);
 void InputContext_init(InputContext* context, BattleInputHandlers* handlers,
 					   uint16_t playerNr);
 // Do not call directly, only from the FreeInputContextFunction.

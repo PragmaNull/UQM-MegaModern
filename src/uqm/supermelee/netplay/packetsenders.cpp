@@ -124,7 +124,7 @@ void sendSelectShip(NetConnection* conn, FleetShipIndex index)
 	queuePacket(conn, (Packet*)packet);
 }
 
-void sendBattleInput(NetConnection* conn, BATTLE_INPUT_STATE input)
+void sendBattleInput(NetConnection* conn, BattleInputState input)
 {
 	Packet_BattleInput* packet {Packet_BattleInput_create((uint8_t)input)};
 	queuePacket(conn, (Packet*)packet);

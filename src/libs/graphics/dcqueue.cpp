@@ -610,8 +610,8 @@ void TFB_FlushGraphics(void)
 					{
 						GfxRect r;
 
-						r.corner.x = x - DC_char->HotSpot.x;
-						r.corner.y = y - DC_char->HotSpot.y;
+						r.corner.x = x - DC_char->hotSpot.x;
+						r.corner.y = y - DC_char->hotSpot.y;
 						r.extent.width = DC_char->extent.width;
 						r.extent.height = DC_char->extent.height;
 

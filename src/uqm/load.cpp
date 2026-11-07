@@ -46,7 +46,7 @@ namespace uqm
 {
 //#define DEBUG_LOAD
 
-ACTIVITY NextActivity;
+ActivityWord NextActivity;
 uint8_t IndependantResFactor;
 
 namespace
@@ -238,7 +238,7 @@ void LoadShipQueue(SaveReader& reader, yyjson_val* root, const char* key, Queue*
 	{
 		uint16_t raceId {};
 		reader.get(item, "race_id", raceId);
-		const HSHIPFRAG hStarShip {reader.ok() ? CloneShipFragment(static_cast<RaceId>(raceId), pQueue, 0) : HSHIPFRAG {}};
+		const ShipFragmentHandle hStarShip {reader.ok() ? CloneShipFragment(static_cast<RaceId>(raceId), pQueue, 0) : ShipFragmentHandle {}};
 		if (!hStarShip)
 		{
 			reader.fail(key);
@@ -260,7 +260,7 @@ void LoadRaceQueue(SaveReader& reader, yyjson_val* root, Queue* pQueue)
 	{
 		uint16_t Index {};
 		reader.get(item, "Index", Index);
-		const HFLEETINFO hStarShip {reader.ok() ? GetStarShipFromIndex(pQueue, Index) : HFLEETINFO {}};
+		const FleetInfoHandle hStarShip {reader.ok() ? GetStarShipFromIndex(pQueue, Index) : FleetInfoHandle {}};
 		if (!hStarShip)
 		{
 			reader.fail("raceQueue");
@@ -297,7 +297,7 @@ void LoadGroupQueue(SaveReader& reader, yyjson_val* root, Queue* pQueue)
 	yyjson_val* item {};
 	yyjson_arr_foreach(reader.optionalArray(root, "ipGroupQueue"), index, count, item)
 	{
-		const HIPGROUP hGroup {BuildGroup(pQueue, 0)};
+		const IpGroupHandle hGroup {BuildGroup(pQueue, 0)};
 		InterplanetaryGroup* GroupPtr {LockIpGroup(pQueue, hGroup)};
 		LoadIpGroup(reader, item, *GroupPtr);
 		UnlockIpGroup(pQueue, hGroup);
@@ -348,7 +348,7 @@ void LoadEncounters(SaveReader& reader, yyjson_val* root)
 	yyjson_val* item {};
 	yyjson_arr_foreach(reader.optionalArray(root, "encounters"), index, count, item)
 	{
-		const HENCOUNTER hEncounter {AllocEncounter()};
+		const EncounterHandle hEncounter {AllocEncounter()};
 		Encounter* EncounterPtr {};
 		LockEncounter(hEncounter, &EncounterPtr);
 		*EncounterPtr = Encounter {};
@@ -365,7 +365,7 @@ void LoadEvents(SaveReader& reader, yyjson_val* root)
 	yyjson_val* item {};
 	yyjson_arr_foreach(reader.optionalArray(root, "events"), index, count, item)
 	{
-		const HEVENT hEvent {AllocEvent()};
+		const EventHandle hEvent {AllocEvent()};
 		GameEvent* EventPtr {};
 		bool DeCleanse {false};
 		LockEvent(hEvent, &EventPtr);
@@ -882,7 +882,7 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SaveSumm
 	uqm::lua().openState();
 	initEventSystem();
 
-	const ACTIVITY Activity {uqm::currentActivity()};
+	const ActivityWord Activity {uqm::currentActivity()};
 	LoadGameState(reader, root, uqm::gameState());
 	NextActivity = uqm::currentActivity();
 	uqm::currentActivity() = Activity;

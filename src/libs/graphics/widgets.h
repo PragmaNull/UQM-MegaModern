@@ -210,7 +210,7 @@ struct WidgetControlEntry
 void DrawShadowedBox(GfxRect* r, Color bg, Color dark, Color medium);
 void DrawLabelAsWindow(WidgetLabel* label, GfxRect* windowRect);
 void Widget_SetWindowColors(Color bg, Color dark, Color medium);
-FONT Widget_SetFont(FONT newFont);
+FontRef Widget_SetFont(FontRef newFont);
 
 
 int Widget_Event(WidgetEvent event);

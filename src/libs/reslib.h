@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 struct ResourceIndexDesc;
-typedef ResourceIndexDesc* RESOURCE_INDEX;
+using ResourceIndex = ResourceIndexDesc*;
 
 const typedef char* RESOURCE;
 
@@ -82,7 +82,7 @@ long TellResFile(uqm::io::File& fp);
 size_t LengthResFile(uqm::io::File& fp);
 bool DeleteResFile(const uqm::io::Directory& dir, const char* filename);
 
-RESOURCE_INDEX InitResourceSystem(void);
+ResourceIndex InitResourceSystem(void);
 void UninitResourceSystem(void);
 bool InstallResTypeVectors(const char* res_type, ResourceLoadFun* loadFun, ResourceFreeFun* freeFun);
 bool InstallResTextTypeVectors(const char* res_type, ResourceTextLoadFun* loadFun, ResourceFreeFun* freeFun);

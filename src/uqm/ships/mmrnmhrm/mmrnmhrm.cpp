@@ -141,10 +141,10 @@ static RaceDesc mmrnmhrm_desc =
 };
 
 // Private per-instance ship data
-typedef ShipCharacteristics MMRNMHRM_DATA;
+using MmrnmhrmData = ShipCharacteristics;
 
 // Local typedef
-typedef MMRNMHRM_DATA CustomShipData_t;
+typedef MmrnmhrmData CustomShipData_t;
 
 // Retrieve race-specific ship data from a race desc
 static CustomShipData_t* GetCustomShipData(RaceDesc* pRaceDesc)
@@ -310,7 +310,7 @@ static void twin_laser_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	}
 }
 
-static uint16_t initialize_dual_weapons(Element* ShipPtr, HELEMENT WeaponArray[])
+static uint16_t initialize_dual_weapons(Element* ShipPtr, ElementHandle WeaponArray[])
 {
 	int16_t cx {};
 	int16_t cy {};
@@ -417,8 +417,8 @@ static void mmrnmhrm_postprocess(Element* ElementPtr)
 	/* take care of transform effect */
 	if (ElementPtr->next.image.farray != ElementPtr->current.image.farray)
 	{
-		MMRNMHRM_DATA tempShipData;
-		const MMRNMHRM_DATA* otherwing_desc {};
+		MmrnmhrmData tempShipData;
+		const MmrnmhrmData* otherwing_desc {};
 
 		ProcessSound(GetSound(
 						 /* TRANSFORM */
@@ -512,7 +512,7 @@ RaceDesc* init_mmrnmhrm(void)
 {
 	// The caller of this func will copy the struct
 	static RaceDesc new_mmrnmhrm_desc;
-	MMRNMHRM_DATA otherwing_desc;
+	MmrnmhrmData otherwing_desc;
 
 	if (IsHd())
 	{

@@ -474,7 +474,7 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 	return queued;
 }
 
-void construct_response(uqstl::span<char> buf, int R /* promoted from RESPONSE_REF */, ...)
+void construct_response(uqstl::span<char> buf, int R /* promoted from ResponseRef */, ...)
 {
 	const char* buf_start = buf.data();
 	const char* name {};
@@ -502,12 +502,12 @@ void construct_response(uqstl::span<char> buf, int R /* promoted from RESPONSE_R
 			destBuf = destBuf.subspan(len);
 
 			/*
-			if ((R = va_arg (vlist, RESPONSE_REF)) == (RESPONSE_REF)-1)
+			if ((R = va_arg (vlist, ResponseRef)) == (ResponseRef)-1)
 				name = 0;
 			*/
 
 			R = va_arg(vlist, int);
-			if (R == ((RESPONSE_REF)-1))
+			if (R == ((ResponseRef)-1))
 			{
 				name = 0;
 			}
@@ -637,19 +637,19 @@ ConversationData* init_race(Conversation comm_id)
 	}
 }
 
-RESPONSE_REF phraseIdStrToNum(const char* phraseIdStr)
+ResponseRef phraseIdStrToNum(const char* phraseIdStr)
 {
 	const uqstl::optional<size_t> phrase {CommData.ConversationPhrases->find(phraseIdStr)};
 	if (!phrase)
 	{
-		return (RESPONSE_REF)-1;
+		return (ResponseRef)-1;
 	}
 
-	return static_cast<RESPONSE_REF>(*phrase + 1);
+	return static_cast<ResponseRef>(*phrase + 1);
 	// Index 0 is for NULL_PHRASE, hence the '+ 1"
 }
 
-const char* phraseIdNumToStr(RESPONSE_REF response)
+const char* phraseIdNumToStr(ResponseRef response)
 {
 	// Index 0 is for NULL_PHRASE, hence the '- 1'.
 	return CommData.ConversationPhrases->name(response - 1);

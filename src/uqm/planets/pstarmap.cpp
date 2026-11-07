@@ -90,7 +90,7 @@ static constexpr auto DeathSoi {1 << 7};
 static GfxPoint cursorLoc;
 static GfxPoint mapOrigin;
 static int zoomLevel;
-static FRAME StarMapFrame;
+static FrameRef StarMapFrame;
 static StarmapView which_starmap;
 
 static inline long signedDivWithError(long val, long divisor)
@@ -220,7 +220,7 @@ static void flashCurrentLocation(GfxPoint* where, bool force)
 		Color OldColor;
 		GfxStamp s;
 
-		GFXCONTEXT OldContext {SetContext(SpaceContext)};
+		GfxContextRef OldContext {SetContext(SpaceContext)};
 
 		OldColor = SetContextForeGroundColor(
 			BuildColor(MakeRgb15(c, c, c), c));
@@ -1273,13 +1273,13 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 		DrawFuelCircle(true);
 	}
 
-	FRAME star_frame {SetRelFrameIndex(StarMapFrame, 2)};
+	FrameRef star_frame {SetRelFrameIndex(StarMapFrame, 2)};
 	if (which_space <= 1 && which_starmap != StarmapView::ConstellationMap)
 	{
 		uint16_t index {};
 		const uint16_t race_index = (race_update & 0x1F) - 1;
-		HFLEETINFO hStarShip {};
-		HFLEETINFO hNextShip {};
+		FleetInfoHandle hStarShip {};
+		FleetInfoHandle hNextShip {};
 		Nameplate nameplate[26];
 		uint8_t currMax = 0;
 
@@ -2088,7 +2088,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			// In HS, display default star search button name.
 			if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 			{
-				GFXCONTEXT OldContext {SetContext(OffScreenContext)};
+				GfxContextRef OldContext {SetContext(OffScreenContext)};
 
 				if (which_starmap == StarmapView::WarEraStarmap)
 				{
@@ -3004,8 +3004,8 @@ static void UpdateMap(void)
 	bool MapDrawn {};
 	bool Interrupted {};
 	uint16_t index {};
-	HFLEETINFO hStarShip {};
-	HFLEETINFO hNextShip {};
+	FleetInfoHandle hStarShip {};
+	FleetInfoHandle hNextShip {};
 	uint16_t GrowthFactor {};
 
 	FlushInput();
@@ -3250,7 +3250,7 @@ static void DrawStarmapHelper(void)
 	GfxRect r;
 	int16_t leading {};
 
-	GFXCONTEXT OldContext {SetContext(StatusContext)};
+	GfxContextRef OldContext {SetContext(StatusContext)};
 
 	BatchGraphics();
 
@@ -3375,7 +3375,7 @@ bool StarMap(void)
 {
 	MenuState menuState;
 	GfxPoint universe;
-	//FRAME OldFrame;
+	//FrameRef OldFrame;
 	GfxRect clip_r;
 
 	memset(&menuState, 0, sizeof(menuState));
@@ -3442,7 +3442,7 @@ bool StarMap(void)
 	transition_pending = false;
 
 	BatchGraphics();
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&clip_r);
 	SetContext(OldContext);
 	LoadIntoExtraScreen(&clip_r);

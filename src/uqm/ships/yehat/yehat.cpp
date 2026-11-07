@@ -127,7 +127,7 @@ static RaceDesc yehat_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_standard_missiles(Element* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missiles(Element* ShipPtr, ElementHandle MissileArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -281,7 +281,7 @@ static void yehat_postprocess(Element* ElementPtr)
 #ifdef OLD
 		if (ElementPtr->life_span > NormalLife)
 		{
-			HELEMENT hShipElement;
+			ElementHandle hShipElement;
 
 			if (hShipElement = AllocElement())
 			{

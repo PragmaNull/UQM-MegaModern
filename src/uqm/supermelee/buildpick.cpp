@@ -29,7 +29,7 @@
 
 namespace uqm
 {
-static FRAME BuildPickFrame;
+static FrameRef BuildPickFrame;
 
 static constexpr auto TtipFrameOffset {43};
 static constexpr auto BuildpickFrameOffset {27};
@@ -38,7 +38,7 @@ void BuildBuildPickFrame(void)
 {
 	GfxStamp s;
 	GfxRect r;
-	GFXCONTEXT OldContext = SetContext(OffScreenContext);
+	GfxContextRef OldContext = SetContext(OffScreenContext);
 
 	// create team building ship selection box
 	s.origin.x = 0;
@@ -101,7 +101,7 @@ void RepairBuildPickFrame(GfxRect* pRect, GfxPoint* origin)
 	r.corner.y = origin->y;
 	r.extent.width = r.extent.height = ResScale(16);
 
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(&r);
 	if (IsPad())
@@ -196,10 +196,10 @@ void DrawTooltip(ShipInfoDesc* SIPtr)
 	Text.baseline.y = r.corner.y + ResScale(8) + ResScale(1);
 	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + ResScale(1);
 
-	GFXCONTEXT oldContext {SetContext(SpaceContext)};
+	GfxContextRef oldContext {SetContext(SpaceContext)};
 	DrawTooltipBox();
 
-	FONT oldFont {SetContextFont(StarConFont)};
+	FontRef oldFont {SetContextFont(StarConFont)};
 	oldColor = SetContextForeGroundColor(TooltipColorNameBack);
 	font_DrawText(&Text);
 

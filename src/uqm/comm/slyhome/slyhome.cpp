@@ -230,7 +230,7 @@ static AnimFilterSet slyhome_filters =
 								  }
 };
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	(void)R; // ignored
 	setSegue(Segue::Peace);
@@ -246,9 +246,9 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void HomeWorld(RESPONSE_REF R);
+static void HomeWorld(ResponseRef R);
 
-static void HumanInfo(RESPONSE_REF R)
+static void HumanInfo(ResponseRef R)
 {
 	if (PlayerSaid(R, SlylandroHomePhrase::HappyToTellMore))
 	{
@@ -325,7 +325,7 @@ static void HumanInfo(RESPONSE_REF R)
 	}
 }
 
-static void SlylandroInfo(RESPONSE_REF R)
+static void SlylandroInfo(ResponseRef R)
 {
 	if (PlayerSaid(R, SlylandroHomePhrase::LikeMoreAboutYou))
 	{
@@ -385,7 +385,7 @@ static void SlylandroInfo(RESPONSE_REF R)
 	}
 }
 
-static void FixBug(RESPONSE_REF R)
+static void FixBug(ResponseRef R)
 {
 	if (PlayerSaid(R, SlylandroHomePhrase::ThinkAboutRepPriorities))
 	{
@@ -425,7 +425,7 @@ static void FixBug(RESPONSE_REF R)
 	Response(SlylandroHomePhrase::MegaSelfDestruct, HomeWorld);
 }
 
-static void ProbeBug(RESPONSE_REF R)
+static void ProbeBug(ResponseRef R)
 {
 	if (PlayerSaid(R, SlylandroHomePhrase::ProbeHasBug))
 	{
@@ -468,9 +468,9 @@ static void ProbeBug(RESPONSE_REF R)
 	}
 }
 
-static void ProbeInfo(RESPONSE_REF R);
+static void ProbeInfo(ResponseRef R);
 
-static void ProbeFunction(RESPONSE_REF R)
+static void ProbeFunction(ResponseRef R)
 {
 	SlylandroHomePhrase pStr[2];
 
@@ -608,7 +608,7 @@ static void ProbeFunction(RESPONSE_REF R)
 	Response(SlylandroHomePhrase::EnoughProblem, ProbeInfo);
 }
 
-static void ProbeInfo(RESPONSE_REF R)
+static void ProbeInfo(ResponseRef R)
 {
 	uint8_t i {};
 	uint8_t InfoLeft {};
@@ -732,7 +732,7 @@ static void ProbeInfo(RESPONSE_REF R)
 	}
 }
 
-static void HomeWorld(RESPONSE_REF R)
+static void HomeWorld(ResponseRef R)
 {
 	uint8_t i {};
 	SlylandroHomePhrase pStr[3];
@@ -973,7 +973,7 @@ static void Intro(void)
 		SetHomeworldKnown(*HomeId::Slylandro);
 	}
 
-	HomeWorld((RESPONSE_REF)0);
+	HomeWorld((ResponseRef)0);
 }
 
 static uint16_t uninit_slylandro(void)

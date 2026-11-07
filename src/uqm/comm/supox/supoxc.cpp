@@ -125,7 +125,7 @@ static ConversationData supox_desc =
 		nullptr,
 };
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Peace);
 
@@ -175,9 +175,9 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void AlliedHome(RESPONSE_REF R);
+static void AlliedHome(ResponseRef R);
 
-static void AlliedHome(RESPONSE_REF R)
+static void AlliedHome(ResponseRef R)
 {
 	uint8_t NumVisits {};
 	uint8_t News {};
@@ -293,7 +293,7 @@ static void AlliedHome(RESPONSE_REF R)
 	Response(SupoxPhrase::ByeAlliedHomeworld, ExitConversation);
 }
 
-static void BeforeKohrAh(RESPONSE_REF R)
+static void BeforeKohrAh(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -332,7 +332,7 @@ static void BeforeKohrAh(RESPONSE_REF R)
 	Response(SupoxPhrase::ByeBeforeSpace, ExitConversation);
 }
 
-static void AfterKohrAh(RESPONSE_REF R)
+static void AfterKohrAh(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -371,7 +371,7 @@ static void AfterKohrAh(RESPONSE_REF R)
 	Response(SupoxPhrase::ByeAfterSpace, ExitConversation);
 }
 
-static void NeutralSupox(RESPONSE_REF R)
+static void NeutralSupox(ResponseRef R)
 {
 	uint8_t i {};
 	uint8_t NumVisits {};
@@ -643,7 +643,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-			AlliedHome((RESPONSE_REF)0);
+			AlliedHome((ResponseRef)0);
 		}
 		else
 		{
@@ -663,7 +663,7 @@ static void Intro(void)
 				}
 				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(NumVisits));
 
-				BeforeKohrAh((RESPONSE_REF)0);
+				BeforeKohrAh((ResponseRef)0);
 			}
 			else if (NumVisits < 5)
 			{
@@ -695,7 +695,7 @@ static void Intro(void)
 				}
 				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(NumVisits));
 
-				AfterKohrAh((RESPONSE_REF)0);
+				AfterKohrAh((ResponseRef)0);
 			}
 		}
 	}
@@ -734,7 +734,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
-		NeutralSupox((RESPONSE_REF)0);
+		NeutralSupox((ResponseRef)0);
 	}
 }
 

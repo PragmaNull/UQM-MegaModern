@@ -281,7 +281,7 @@ static void flame_napalm_preprocess(Element* ElementPtr)
 	}
 }
 
-static uint16_t initialize_horn(Element* ShipPtr, HELEMENT HornArray[])
+static uint16_t initialize_horn(Element* ShipPtr, ElementHandle HornArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -322,7 +322,7 @@ static void thraddash_preprocess(Element* ElementPtr)
 	{
 		uint16_t max_thrust {};
 		uint16_t thrust_increment {};
-		HELEMENT hTrailElement {};
+		ElementHandle hTrailElement {};
 
 		if (!(StarShipPtr->old_status_flags & SpecialFlag))
 		{
@@ -343,7 +343,7 @@ static void thraddash_preprocess(Element* ElementPtr)
 		StarShipPtr->RaceDescPtr->characteristics.max_thrust =
 			SpecialMaxThrust();
 
-		const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
+		const StatusFlags thrust_status {inertial_thrust(ElementPtr)};
 		StarShipPtr->cur_status_flags &=
 			~(ShipAtMaxSpeed
 			  | ShipBeyondMaxSpeed

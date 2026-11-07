@@ -37,8 +37,8 @@
 
 namespace uqm
 {
-static void TellMission(RESPONSE_REF R);
-static void SellMinerals(RESPONSE_REF R);
+static void TellMission(ResponseRef R);
+static void SellMinerals(ResponseRef R);
 
 
 static ConversationData commander_desc =
@@ -394,7 +394,7 @@ static StarbasePhrase EveryOnesACritic(uint16_t total)
 	return pStr;
 }
 
-static void ByeBye(RESPONSE_REF R)
+static void ByeBye(ResponseRef R)
 {
 	(void)R; // ignored
 
@@ -442,9 +442,9 @@ static void ByeBye(RESPONSE_REF R)
 	}
 }
 
-static void NeedInfo(RESPONSE_REF R);
-static void TellHistory(RESPONSE_REF R);
-static void AlienRaces(RESPONSE_REF R);
+static void NeedInfo(ResponseRef R);
+static void TellHistory(ResponseRef R);
+static void AlienRaces(ResponseRef R);
 
 static uint8_t stack0;
 static uint8_t stack1;
@@ -458,7 +458,7 @@ static constexpr auto AllianceChenjesu {1 << 3};
 static constexpr auto AllianceMmrnmhrm {1 << 4};
 static constexpr auto AllianceSyreen {1 << 5};
 
-static void AllianceInfo(RESPONSE_REF R)
+static void AllianceInfo(ResponseRef R)
 {
 	static uint8_t AllianceMask = 0;
 
@@ -534,7 +534,7 @@ static constexpr auto HierarchyIlwrath {1 << 4};
 static constexpr auto HierarchyVux {1 << 5};
 static constexpr auto HierarchyUrquan {1 << 6};
 
-static void HierarchyInfo(RESPONSE_REF R)
+static void HierarchyInfo(ResponseRef R)
 {
 	static uint8_t HierarchyMask = 0;
 
@@ -615,7 +615,7 @@ static constexpr auto RacesAlliance {1 << 0};
 static constexpr auto RacesHierarchy {1 << 1};
 static constexpr auto RacesOther {1 << 2};
 
-static void AlienRaces(RESPONSE_REF R)
+static void AlienRaces(ResponseRef R)
 {
 	static uint8_t RacesMask = 0;
 
@@ -660,7 +660,7 @@ static constexpr auto WarWasLike {1 << 1};
 static constexpr auto WarLost {1 << 2};
 static constexpr auto WarAftermath {1 << 3};
 
-static void WarInfo(RESPONSE_REF R)
+static void WarInfo(ResponseRef R)
 {
 	static uint8_t WarMask = 0;
 
@@ -713,7 +713,7 @@ static constexpr auto AncientPrecursors {1 << 0};
 static constexpr auto AncientRaces {1 << 1};
 static constexpr auto AncientEarth {1 << 2};
 
-static void AncientHistory(RESPONSE_REF R)
+static void AncientHistory(ResponseRef R)
 {
 	static uint8_t AncientMask = 0;
 
@@ -753,7 +753,7 @@ static void AncientHistory(RESPONSE_REF R)
 	Response(StarbasePhrase::EnoughAncient, TellHistory);
 }
 
-static void TellHistory(RESPONSE_REF R)
+static void TellHistory(ResponseRef R)
 {
 	StarbasePhrase pstack[3];
 
@@ -831,7 +831,7 @@ static constexpr auto HowFightUrquan {1 << 1};
 static constexpr auto HowAllyAgainstUrquan {1 << 2};
 static constexpr auto HowStrongAgainstUrquan {1 << 3};
 
-static void DefeatUrquan(RESPONSE_REF R)
+static void DefeatUrquan(ResponseRef R)
 {
 	static uint8_t DefeatMask = 0;
 
@@ -1117,7 +1117,7 @@ static void AnalyzeCondition(void)
 	}
 }
 
-static void TellMission(RESPONSE_REF R)
+static void TellMission(ResponseRef R)
 {
 	StarbasePhrase pstack[4];
 
@@ -1227,7 +1227,7 @@ static void TellMission(RESPONSE_REF R)
 	Response(StarbasePhrase::EnoughMission, NeedInfo);
 }
 
-static void TellStarBase(RESPONSE_REF R)
+static void TellStarBase(ResponseRef R)
 {
 	StarbasePhrase pstack[4];
 
@@ -1348,9 +1348,9 @@ static void TellStarBase(RESPONSE_REF R)
 	Response(StarbasePhrase::EnoughStarbase, NeedInfo);
 }
 
-static void NormalStarbase(RESPONSE_REF R);
+static void NormalStarbase(ResponseRef R);
 
-static void NeedInfo(RESPONSE_REF R)
+static void NeedInfo(ResponseRef R)
 {
 	if (PlayerSaid(R, StarbasePhrase::NeedInfo))
 	{
@@ -1992,7 +1992,7 @@ static void CheckBulletins(bool Repeat)
 	}
 }
 
-static void NormalStarbase(RESPONSE_REF R)
+static void NormalStarbase(ResponseRef R)
 {
 	if (PlayerSaid(R, StarbasePhrase::NoNeedInfo))
 	{
@@ -2078,7 +2078,7 @@ static void NormalStarbase(RESPONSE_REF R)
 	Response(StarbasePhrase::GoodbyeCommander, ByeBye);
 }
 
-static void SellMinerals(RESPONSE_REF R)
+static void SellMinerals(ResponseRef R)
 {
 	uint16_t total = 0;
 	StarbasePhrase pStr {};

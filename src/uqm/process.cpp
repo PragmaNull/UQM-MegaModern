@@ -80,9 +80,9 @@ static inline void CALC_ZOOM_STUFF(uint16_t* idx, uint16_t* sc)
 }
 #endif
 
-HELEMENT AllocElement(void)
+ElementHandle AllocElement(void)
 {
-	HELEMENT hElement {AllocLink(&disp_q)};
+	ElementHandle hElement {AllocLink(&disp_q)};
 	if (hElement)
 	{
 		Element* ElementPtr {};
@@ -103,7 +103,7 @@ HELEMENT AllocElement(void)
 	return (hElement);
 }
 
-void FreeElement(HELEMENT hElement)
+void FreeElement(ElementHandle hElement)
 {
 	if (hElement)
 	{
@@ -130,7 +130,7 @@ void SetUpElement(Element* ElementPtr)
 
 static void PreProcess(Element* ElementPtr)
 {
-	ELEMENT_FLAGS state_flags {};
+	ElementFlags state_flags {};
 
 	if (ElementPtr->life_span == 0)
 	{
@@ -416,10 +416,10 @@ static ViewState CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
 }
 
 
-static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, Element* ElementPtr,
-									   TIME_VALUE min_time, ELEMENT_FLAGS process_flags)
+static ElementFlags ProcessCollisions(ElementHandle hSuccElement, Element* ElementPtr,
+									  TimeValue min_time, ElementFlags process_flags)
 {
-	HELEMENT hTestElement {};
+	ElementHandle hTestElement {};
 
 	while ((hTestElement = hSuccElement) != 0)
 	{
@@ -440,11 +440,11 @@ static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, Element* ElementPt
 
 		if (CollisionPossible(TestElementPtr, ElementPtr))
 		{
-			ELEMENT_FLAGS state_flags {};
-			TIME_VALUE time_val {};
+			ElementFlags state_flags {};
+			TimeValue time_val {};
 
 			state_flags = ElementPtr->state_flags;
-			ELEMENT_FLAGS test_state_flags {TestElementPtr->state_flags};
+			ElementFlags test_state_flags {TestElementPtr->state_flags};
 			if (((state_flags | test_state_flags) & FiniteLife)
 				&& (((state_flags & Appearing)
 					 && ElementPtr->life_span > 1)
@@ -476,10 +476,10 @@ static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, Element* ElementPt
 
 					if (time_val == 1)
 					{
-						FRAME CurFrame {ElementPtr->current.image.frame};
-						FRAME NextFrame {ElementPtr->next.image.frame};
-						FRAME TestCurFrame {TestElementPtr->current.image.frame};
-						FRAME TestNextFrame {TestElementPtr->next.image.frame};
+						FrameRef CurFrame {ElementPtr->current.image.frame};
+						FrameRef NextFrame {ElementPtr->next.image.frame};
+						FrameRef TestCurFrame {TestElementPtr->current.image.frame};
+						FrameRef TestNextFrame {TestElementPtr->next.image.frame};
 						if (NextFrame == CurFrame
 							&& TestNextFrame == TestCurFrame)
 						{
@@ -720,7 +720,7 @@ static ViewState PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 	Origin.x = (int32_t)(LogSpaceWidth() >> 1);
 	Origin.y = (int32_t)(LogSpaceHeight() >> 1);
 
-	HELEMENT hElement {GetHeadElement()};
+	ElementHandle hElement {GetHeadElement()};
 	uint16_t ships_alive {0};
 	while (hElement != 0)
 	{
@@ -732,7 +732,7 @@ static ViewState PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 		{
 			PreProcess(ElementPtr);
 		}
-		HELEMENT hNextElement {GetSuccElement(ElementPtr)};
+		ElementHandle hNextElement {GetSuccElement(ElementPtr)};
 
 		if (CollidingElement(ElementPtr)
 			&& !(ElementPtr->state_flags & Collision))
@@ -835,10 +835,10 @@ static ViewState PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 	return (CalcView(&Origin, min_reduction, pscroll_x, pscroll_y, ships_alive));
 }
 
-void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI)
+void InsertPrim(PrimLinks* pLinks, uint16_t primIndex, uint16_t iPI)
 {
 	uint16_t Link {};
-	PRIM_LINKS PL {};
+	PrimLinks PL {};
 
 	if (iPI == EndOfList)
 	{
@@ -875,7 +875,7 @@ void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI)
 	SetPrimLinks(&DisplayArray[primIndex], Link, iPI);
 }
 
-PRIM_LINKS DisplayLinks;
+PrimLinks DisplayLinks;
 
 static inline int16_t CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reduction)
 {
@@ -906,12 +906,12 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 		reduction = zoom_out << OneShift;
 	}
 
-	HELEMENT hElement {GetHeadElement()};
+	ElementHandle hElement {GetHeadElement()};
 	while (hElement != 0)
 	{
-		ELEMENT_FLAGS state_flags {};
+		ElementFlags state_flags {};
 		Element* ElementPtr {};
-		HELEMENT hNextElement {};
+		ElementHandle hNextElement {};
 
 		LockElement(hElement, &ElementPtr);
 
@@ -940,7 +940,7 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 		}
 		else
 		{
-			HELEMENT hPostElement {hElement};
+			ElementHandle hPostElement {hElement};
 			do
 			{
 				Element* PostElementPtr {};
@@ -980,7 +980,7 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 		}
 		else
 		{
-			const GRAPHICS_PRIM ObjType {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
+			const PrimitiveType ObjType {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
 			if (view_state != ViewState::Stable
 				|| (state_flags & (Appearing | Changing)))
 			{
@@ -1036,16 +1036,16 @@ static void PostProcessQueue(ViewState view_state, int32_t scroll_x, int32_t scr
 								// (smaller) zoom level image as mipmap,
 								// needed for trilinear scaling
 
-								FRAME frame = ElementPtr->next.image.frame;
-								FRAME mmframe = SetEquFrameIndex(
+								FrameRef frame = ElementPtr->next.image.frame;
+								FrameRef mmframe = SetEquFrameIndex(
 									ElementPtr->next.image.farray[index + 1], frame);
 
 								// TODO: This is currently hacky, this code
-								//   really should not dereference FRAME.
+								//   really should not dereference FrameRef.
 								//   Perhaps make mipmap part of GfxStamp prim?
 								if (frame && mmframe)
 								{
-									const HOT_SPOT mmhs = GetFrameHot(mmframe);
+									const HotSpot mmhs = GetFrameHot(mmframe);
 									TFB_DrawScreen_SetMipmap(frame->image,
 															 mmframe->image, mmhs.x, mmhs.y);
 								}
@@ -1163,11 +1163,11 @@ void RedrawQueue(bool clear)
 // have hTarget set to ElementPtr.
 void Untarget(Element* ElementPtr)
 {
-	HELEMENT hNextElement {};
+	ElementHandle hNextElement {};
 
-	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
+	for (ElementHandle hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		HELEMENT hTarget {};
+		ElementHandle hTarget {};
 		Element* ListPtr {};
 
 		LockElement(hElement, &ListPtr);
@@ -1190,7 +1190,7 @@ void Untarget(Element* ElementPtr)
 	}
 }
 
-void RemoveElement(HLINK hLink)
+void RemoveElement(LinkHandle hLink)
 {
 	if (uqm::UQMOptions::read().stereoSFX)
 	{

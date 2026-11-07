@@ -861,13 +861,13 @@ tfb::SoundChunk* find_prev_page(tfb::SoundChunk* cur)
 
 
 // External access to the chunks list
-SUBTITLE_REF GetFirstTrackSubtitle(void)
+SubtitleRef GetFirstTrackSubtitle(void)
 {
 	return chunks_head;
 }
 
 // External access to the chunks list
-SUBTITLE_REF GetNextTrackSubtitle(SUBTITLE_REF LastRef)
+SubtitleRef GetNextTrackSubtitle(SubtitleRef LastRef)
 {
 	if (!LastRef)
 	{
@@ -878,7 +878,7 @@ SUBTITLE_REF GetNextTrackSubtitle(SUBTITLE_REF LastRef)
 }
 
 // External access to the chunk subtitles
-const char* GetTrackSubtitleText(SUBTITLE_REF SubRef)
+const char* GetTrackSubtitleText(SubtitleRef SubRef)
 {
 	if (!SubRef)
 	{

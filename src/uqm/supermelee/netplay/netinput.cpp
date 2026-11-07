@@ -46,7 +46,7 @@ size_t getBattleInputDelay(void)
 
 static void BattleInputBuffer_init(BattleInputBuffer* bib, size_t bufSize)
 {
-	bib->buf = (BATTLE_INPUT_STATE*)malloc(bufSize * sizeof(BATTLE_INPUT_STATE));
+	bib->buf = (BattleInputState*)malloc(bufSize * sizeof(BattleInputState));
 	bib->maxSize = bufSize;
 	bib->first = 0;
 	bib->size = 0;
@@ -92,7 +92,7 @@ void initBattleInputBuffers(void)
 			// frames, so we fill the buffer with inputDelay zeros.
 			for (size_t i {0}; i < BattleInput_inputDelay; i++)
 			{
-				BattleInputBuffer_push(bib, (BATTLE_INPUT_STATE)0);
+				BattleInputBuffer_push(bib, (BattleInputState)0);
 			}
 		}
 	}
@@ -108,7 +108,7 @@ void uninitBattleInputBuffers(void)
 }
 
 // Returns false if the buffer is full.
-bool BattleInputBuffer_push(BattleInputBuffer* bib, BATTLE_INPUT_STATE input)
+bool BattleInputBuffer_push(BattleInputBuffer* bib, BattleInputState input)
 {
 	if (bib->size == bib->maxSize)
 	{
@@ -124,7 +124,7 @@ bool BattleInputBuffer_push(BattleInputBuffer* bib, BATTLE_INPUT_STATE input)
 }
 
 // Returns false if the buffer is empty. Then *input does not change.
-bool BattleInputBuffer_pop(BattleInputBuffer* bib, BATTLE_INPUT_STATE* input)
+bool BattleInputBuffer_pop(BattleInputBuffer* bib, BattleInputState* input)
 {
 	if (bib->size == 0)
 	{

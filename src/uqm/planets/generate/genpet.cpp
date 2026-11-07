@@ -207,7 +207,7 @@ static constexpr auto LostDays {15};
 
 static void ZapToUrquanEncounter(void)
 {
-	HENCOUNTER hEncounter {};
+	EncounterHandle hEncounter {};
 
 	if ((hEncounter = AllocEncounter())
 		|| (hEncounter = GetHeadEncounter()))
@@ -215,7 +215,7 @@ static void ZapToUrquanEncounter(void)
 		int16_t dx {};
 		int16_t dy {};
 		Encounter* EncounterPtr {};
-		HFLEETINFO hStarShip {};
+		FleetInfoHandle hStarShip {};
 
 		LockEncounter(hEncounter, &EncounterPtr);
 
@@ -241,7 +241,7 @@ static void ZapToUrquanEncounter(void)
 		BSIPtr->max_crew = TemplatePtr->max_crew;
 		BSIPtr->max_energy = TemplatePtr->max_energy;
 
-		HFLEETINFO hUmgah = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Umgah);
+		FleetInfoHandle hUmgah = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Umgah);
 		FleetInfo* UmgahPtr =
 			LockFleetInfo(&uqm::gameState().game().avail_race_q, hUmgah);
 

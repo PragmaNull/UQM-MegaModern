@@ -42,7 +42,7 @@ extern bool InvokeSpawner(void);
 
 extern int16_t InventoryDevices(uint8_t* pDeviceMap, uint16_t Size);
 
-extern FONT ModuleFont;
+extern FontRef ModuleFont;
 
 #if 0 //defined(__cplusplus)
 }

@@ -122,8 +122,8 @@ static bool GenerateRainbowWorld_generateOrbital(SolarSystemState* solarSys,
 
 static void GenerateSlylandro(SolarSystemState* solarSys)
 {
-	HIPGROUP hGroup {};
-	HIPGROUP hNextGroup {};
+	IpGroupHandle hGroup {};
+	IpGroupHandle hNextGroup {};
 	uint8_t angle {};
 	uint8_t num_groups {};
 	uint8_t which_group {};

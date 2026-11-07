@@ -22,9 +22,9 @@
 #include "tfb_prim.h"
 #include "uqm/units.h"
 
-HOT_SPOT MAKE_HOT_SPOT(int16_t x, int16_t y)
+HotSpot MAKE_HOT_SPOT(int16_t x, int16_t y)
 {
-	HOT_SPOT hs;
+	HotSpot hs;
 	hs.x = x;
 	hs.y = y;
 	return hs;
@@ -42,8 +42,8 @@ typedef union
 
 struct InternalPrimitive
 {
-	PRIM_LINKS Links;
-	GRAPHICS_PRIM Type;
+	PrimLinks Links;
+	PrimitiveType Type;
 	Color Color;
 	INTERNAL_PRIM_DESC Object;
 };
@@ -68,7 +68,7 @@ bool GetContextValidRect(GfxRect* pValidRect, GfxPoint* origin)
 	pValidRect->corner.x = 0;
 	pValidRect->corner.y = 0;
 	pValidRect->extent = GetFrameBounds(_CurFramePtr);
-	*origin = _CurFramePtr->HotSpot;
+	*origin = _CurFramePtr->hotSpot;
 
 	if (_pCurContext->ClipRect.extent.width)
 	{
@@ -100,8 +100,8 @@ static void ClearBackGround(GfxRect* pClipRect)
 					  pClipRect->corner);
 }
 
-void DrawBatch(Primitive* lpBasePrim, PRIM_LINKS PrimLinks,
-			   BATCH_FLAGS BatchFlags)
+void DrawBatch(Primitive* lpBasePrim, PrimLinks primLinks,
+			   BatchFlags batchFlags)
 {
 	GfxRect ValidRect;
 	GfxPoint origin;
@@ -113,12 +113,12 @@ void DrawBatch(Primitive* lpBasePrim, PRIM_LINKS PrimLinks,
 
 		BatchGraphics();
 
-		if (BatchFlags & BatchBuildPage)
+		if (batchFlags & BatchBuildPage)
 		{
 			ClearBackGround(&ValidRect);
 		}
 
-		uint16_t CurIndex {GetPredLink(PrimLinks)};
+		uint16_t CurIndex {GetPredLink(primLinks)};
 
 		for (; CurIndex != EndOfList;
 			 CurIndex = GetSuccLink(GetPrimLinks(lpPrim)))
@@ -127,7 +127,7 @@ void DrawBatch(Primitive* lpBasePrim, PRIM_LINKS PrimLinks,
 			Color color;
 
 			lpPrim = &lpBasePrim[CurIndex];
-			const GRAPHICS_PRIM PrimType {GetPrimType(lpPrim)};
+			const PrimitiveType PrimType {GetPrimType(lpPrim)};
 			if (!ValidPrimType(PrimType))
 			{
 				continue;
@@ -343,7 +343,7 @@ void DrawFilledStamp(GfxStamp* stmp)
 // Works with paletted but only with REPLACE mode (doesn't alter the palette).
 // If layer frame is nullptr and color pointer is not nullptr - blend will be
 // applied to every pixel equally with alpha = 255
-void ApplyMask(FRAME layer, FRAME base, DrawMode mode, Color* fill)
+void ApplyMask(FrameRef layer, FrameRef base, DrawMode mode, Color* fill)
 {
 	GfxPoint origin;
 

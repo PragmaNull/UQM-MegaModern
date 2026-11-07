@@ -24,7 +24,7 @@
 
 // At other times, it is nullptr.
 
-ResourceDesc* lookupResourceDesc(RESOURCE_INDEX idx, RESOURCE res)
+ResourceDesc* lookupResourceDesc(ResourceIndex idx, RESOURCE res)
 {
 	auto it = idx->map->find(res);
 	return it != idx->map->end() ? it->second : nullptr;
@@ -71,7 +71,7 @@ const char* res_GetResourceType(RESOURCE res)
 		return nullptr;
 	}
 
-	RESOURCE_INDEX resourceIndex {_get_current_index_header()};
+	ResourceIndex resourceIndex {_get_current_index_header()};
 	const ResourceDesc* desc {lookupResourceDesc(resourceIndex, res)};
 	if (desc == nullptr)
 	{
@@ -93,7 +93,7 @@ void* res_GetResource(RESOURCE res)
 		return nullptr;
 	}
 
-	RESOURCE_INDEX resourceIndex {_get_current_index_header()};
+	ResourceIndex resourceIndex {_get_current_index_header()};
 
 	ResourceDesc* desc {lookupResourceDesc(resourceIndex, res)};
 	if (desc == nullptr)
@@ -124,7 +124,7 @@ uint32_t res_GetIntResource(RESOURCE res)
 		return 0;
 	}
 
-	RESOURCE_INDEX resourceIndex {_get_current_index_header()};
+	ResourceIndex resourceIndex {_get_current_index_header()};
 
 	const ResourceDesc* desc {lookupResourceDesc(resourceIndex, res)};
 	if (desc == nullptr)

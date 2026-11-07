@@ -49,7 +49,7 @@ const static char* planet_types[] = {
 const static char* planet_sizes[] = {
 	"large", "medium", "small"};
 
-FRAME planet[NumViews];
+FrameRef planet[NumViews];
 static char buffer[80] {};
 
 void load_gravity_well(uint8_t selector)
@@ -100,19 +100,19 @@ void free_gravity_well(void)
 	}
 }
 
-FRAME load_life_form(uint8_t selector)
+FrameRef load_life_form(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "graphics.life.{}", selector);
 	return CaptureDrawable(LoadGraphic(buffer));
 }
 
-MUSIC_REF load_orbit_theme(uint8_t selector)
+MusicRef load_orbit_theme(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "music.orbit{}", selector + 1);
 	return LoadMusicInstance(buffer);
 }
 
-MUSIC_REF loadMainMenuMusic(uint8_t selector)
+MusicRef loadMainMenuMusic(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "music.mainmenu{}", selector + 1);
 	return LoadMusicInstance(buffer);

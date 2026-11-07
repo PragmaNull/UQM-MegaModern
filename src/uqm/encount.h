@@ -46,7 +46,7 @@ extern "C" {
 #endif
 
 
-typedef HLINK HENCOUNTER;
+using EncounterHandle = LinkHandle;
 
 inline constexpr auto MaxHyperShips {7};
 
@@ -71,9 +71,9 @@ struct BriefShipInfo
 struct Encounter
 {
 	// QueueLink elements; must be first
-	HENCOUNTER pred, succ;
+	EncounterHandle pred, succ;
 
-	HELEMENT hElement;
+	ElementHandle hElement;
 
 	int16_t transition_state;
 	GfxPoint origin;
@@ -95,7 +95,7 @@ constexpr auto PutEncounter(const auto& h) { return PutQueue(&uqm::gameState().g
 constexpr auto InsertEncounter(const auto& h, const auto& i) { return InsertQueue(&uqm::gameState().game().encounter_q, h, i); }
 constexpr auto GetHeadEncounter() { return GetHeadLink(&uqm::gameState().game().encounter_q); }
 
-inline void LockEncounter(HENCOUNTER h, Encounter** ppe)
+inline void LockEncounter(EncounterHandle h, Encounter** ppe)
 {
 	*ppe = reinterpret_cast<Encounter*>(LockLink(&uqm::gameState().game().encounter_q, h));
 }

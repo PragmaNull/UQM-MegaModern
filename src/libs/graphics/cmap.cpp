@@ -595,7 +595,7 @@ void FlushColorXForms(void)
 
 // The type conversions are implicit and will generate errors
 // or warnings if types change imcompatibly
-COLORMAPPTR GetColorMapAddress(COLORMAP map, size_t index)
+COLORMAPPTR GetColorMapAddress(ColorMapRef map, size_t index)
 {
 	if (map == nullptr || map->size() == 0)
 	{
@@ -656,7 +656,7 @@ Color GetColorMapColor(uint16_t ColorMapIndex, uint16_t ColorIndex)
 								 ColorIndex);
 }
 
-uint8_t GetColorMapTableIndex(COLORMAP map, size_t index)
+uint8_t GetColorMapTableIndex(ColorMapRef map, size_t index)
 {
 	return *static_cast<const uint8_t*>(GetColorMapAddress(map, index));
 }

@@ -42,7 +42,7 @@ namespace uqm
 {
 static void CleanupAfterStarBase(void);
 
-static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
+static void DrawBaseStateStrings(StarbaseState OldState, StarbaseState NewState)
 {
 	GfxText t;
 	const uint16_t text_base_y = ResScale(106 + 28);
@@ -55,7 +55,7 @@ static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewStat
 	t.baseline.x = ResScale(73 - 4) + SafeX();
 	t.align = TextAlign::Center;
 
-	if (OldState == (STARBASE_STATE)~0)
+	if (OldState == (StarbaseState)~0)
 	{
 		t.baseline.y = text_base_y + SafeY();
 		for (OldState = *StarbaseMenuItem::TalkCommander; OldState < StarbaseMenuItem::DepartBase; ++OldState)
@@ -83,7 +83,7 @@ static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewStat
 	font_DrawText(&t);
 }
 
-void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
+void DrawShipPiece(FrameRef ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 				   bool DrawBluePrint)
 {
 	Color OldColor = UndefinedColor;
@@ -305,7 +305,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	}
 }
 
-static void rotateStarbase(MenuState* pMS, FRAME AniFrame)
+static void rotateStarbase(MenuState* pMS, FrameRef AniFrame)
 {
 	static TimeCount NextTime {};
 	const TimeCount Now = GetTimeCounter();
@@ -372,7 +372,7 @@ bool DoStarBase(MenuState* pMS)
 		SetContextBackGroundColor(BlackColor);
 		ClearDrawable();
 		rotateStarbase(pMS, pMS->CurFrame);
-		DrawBaseStateStrings((STARBASE_STATE)~0, pMS->CurState);
+		DrawBaseStateStrings((StarbaseState)~0, pMS->CurState);
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
 
 		PlayMusicResume(pMS->hMusic, NormalVolume);
@@ -450,7 +450,7 @@ ExitStarBase:
 	}
 	else
 	{
-		STARBASE_STATE NewState {pMS->CurState};
+		StarbaseState NewState {pMS->CurState};
 		if (PulsedInputState.menu[*MenuKey::MenuLeft] || PulsedInputState.menu[*MenuKey::MenuUp])
 		{
 			if (NewState-- == StarbaseMenuItem::TalkCommander)
@@ -516,7 +516,7 @@ static void DoTimePassage(void)
 void VisitStarBase(void)
 {
 	MenuState menuState;
-	GFXCONTEXT OldContext {};
+	GfxContextRef OldContext {};
 	StatMsgMode prevMsgMode = StatMsgMode::Undefined;
 
 	// XXX: This should probably be moved out to Starcon2Main()
@@ -530,7 +530,7 @@ void VisitStarBase(void)
 
 	if (!uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 	{
-		HSHIPFRAG hStarShip {};
+		ShipFragmentHandle hStarShip {};
 		ShipFragment* FragPtr {};
 
 		// Unallied Starbase conversation

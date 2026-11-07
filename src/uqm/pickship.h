@@ -27,8 +27,8 @@ namespace uqm
 extern "C" {
 #endif
 
-extern HSTARSHIP GetEncounterStarShip(Starship* LastStarShipPtr,
-									  uint16_t which_player);
+extern StarshipHandle GetEncounterStarShip(Starship* LastStarShipPtr,
+										   uint16_t which_player);
 extern void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect);
 
 extern void InitPickFrame(void);

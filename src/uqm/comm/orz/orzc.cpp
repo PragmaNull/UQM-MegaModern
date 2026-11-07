@@ -235,7 +235,7 @@ static AnimFilterSet orz_filters =
 								  }
 };
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Peace);
 
@@ -357,7 +357,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void TaaloWorld(RESPONSE_REF R)
+static void TaaloWorld(ResponseRef R)
 {
 	// We can only get here when ORZ_MANNER != HOSTILE (2)
 	uint8_t Manner {};
@@ -457,7 +457,7 @@ static void TaaloWorld(RESPONSE_REF R)
 	Response(OrzPhrase::ByeTaalo, ExitConversation);
 }
 
-static void OrzAllied(RESPONSE_REF R)
+static void OrzAllied(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -543,9 +543,9 @@ static void OrzAllied(RESPONSE_REF R)
 	Response(OrzPhrase::ByeAlly, ExitConversation);
 }
 
-static void OrzNeutral(RESPONSE_REF R);
+static void OrzNeutral(ResponseRef R);
 
-static void WhereAndrosyn(RESPONSE_REF R)
+static void WhereAndrosyn(ResponseRef R)
 {
 	(void)R; // ignored
 	NPCPhrase(OrzPhrase::DisembleAboutAndrosyn);
@@ -555,7 +555,7 @@ static void WhereAndrosyn(RESPONSE_REF R)
 	Response(OrzPhrase::DontReallyCare, OrzNeutral);
 }
 
-static void OfferAlliance(RESPONSE_REF R)
+static void OfferAlliance(ResponseRef R)
 {
 	if (PlayerSaid(R, OrzPhrase::SeemLikeNiceGuys))
 	{
@@ -581,7 +581,7 @@ static void OfferAlliance(RESPONSE_REF R)
 	Response(OrzPhrase::YesAlliance, ExitConversation);
 }
 
-static void OrzNeutral(RESPONSE_REF R)
+static void OrzNeutral(ResponseRef R)
 {
 	OrzPhrase pStr[3];
 
@@ -699,7 +699,7 @@ static void OrzNeutral(RESPONSE_REF R)
 	Response(OrzPhrase::ByeNeutral, ExitConversation);
 }
 
-static void OrzAngry(RESPONSE_REF R)
+static void OrzAngry(ResponseRef R)
 {
 	if (PlayerSaid(R, OrzPhrase::WhatsUpAngry))
 	{
@@ -835,7 +835,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::TAALO_VISITS, static_cast<uint32_t>(NumVisits));
 
-		TaaloWorld((RESPONSE_REF)0);
+		TaaloWorld((ResponseRef)0);
 	}
 	else if (Manner == 3 && CheckAlliance(RaceId::Orz) == RaceAllegiance::Good)
 	{
@@ -882,7 +882,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
-		OrzAllied((RESPONSE_REF)0);
+		OrzAllied((ResponseRef)0);
 	}
 	else if (Manner != 1)
 	{
@@ -929,7 +929,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
-		OrzNeutral((RESPONSE_REF)0);
+		OrzNeutral((ResponseRef)0);
 	}
 	else
 	{
@@ -964,7 +964,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
-		OrzAngry((RESPONSE_REF)0);
+		OrzAngry((ResponseRef)0);
 	}
 
 	if (!uqm::gameState().flag(uqm::GameFlag::MET_ORZ_BEFORE))

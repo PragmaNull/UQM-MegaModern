@@ -27,13 +27,13 @@ namespace uqm
 extern "C" {
 #endif
 
-typedef HLINK HMASTERSHIP;
+using MasterShipHandle = LinkHandle;
 
 struct MasterShipInfo
 {
 	// QueueLink elements; must be first
-	HMASTERSHIP pred;
-	HMASTERSHIP succ;
+	MasterShipHandle pred;
+	MasterShipHandle succ;
 
 	SpeciesId SpeciesID;
 
@@ -47,7 +47,7 @@ extern Queue master_q;
 /* List of ships available in SuperMelee;
 		 * queue Element is MasterShipInfo */
 
-static inline MasterShipInfo* LockMasterShip(const Queue* pq, HMASTERSHIP h)
+static inline MasterShipInfo* LockMasterShip(const Queue* pq, MasterShipHandle h)
 {
 	assert(GetLinkSize(pq) == sizeof(MasterShipInfo));
 	return (MasterShipInfo*)LockLink(pq, h);
@@ -59,11 +59,11 @@ constexpr auto UnlockMasterShip(const auto& pq, const auto& h) { return UnlockLi
 extern void LoadMasterShipList(void (*YieldProcessing)(void));
 extern void FreeMasterShipList(void);
 extern void ReloadMasterShipList(void (*YieldProcessing)(void));
-extern HMASTERSHIP FindMasterShip(SpeciesId ship_ref);
+extern MasterShipHandle FindMasterShip(SpeciesId ship_ref);
 extern int FindMasterShipIndex(SpeciesId ship_ref);
 uint16_t GetShipCostFromIndex(unsigned Index);
-FRAME GetShipIconsFromIndex(unsigned Index);
-FRAME GetShipMeleeIconsFromIndex(unsigned Index);
+FrameRef GetShipIconsFromIndex(unsigned Index);
+FrameRef GetShipMeleeIconsFromIndex(unsigned Index);
 
 #if 0 //defined(__cplusplus)
 }

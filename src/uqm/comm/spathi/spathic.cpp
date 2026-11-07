@@ -176,7 +176,7 @@ static ConversationData spathi_desc =
 		nullptr,
 };
 
-static void ExitConversation(RESPONSE_REF Response)
+static void ExitConversation(ResponseRef Response)
 {
 	const uint8_t SpaCrew = ifEasyDifficulty(MaxCrewSize, 1);
 	setSegue(Segue::Peace);
@@ -268,7 +268,7 @@ static void ExitConversation(RESPONSE_REF Response)
 
 static uint8_t join_us_refusals;
 
-static void SpathiOnPluto(RESPONSE_REF R)
+static void SpathiOnPluto(ResponseRef R)
 {
 	if (PlayerSaid(R, SpathiPhrase::HiThere))
 	{
@@ -498,7 +498,7 @@ static void SpathiOnPluto(RESPONSE_REF R)
 	Response(SpathiPhrase::ChangedMind, ExitConversation);
 }
 
-static void SpathiMustGrovel(RESPONSE_REF R)
+static void SpathiMustGrovel(ResponseRef R)
 {
 	if (PlayerSaid(R, SpathiPhrase::Identify))
 	{
@@ -533,7 +533,7 @@ static void SpathiMustGrovel(RESPONSE_REF R)
 	}
 }
 
-static void SpathiAllies(RESPONSE_REF R)
+static void SpathiAllies(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -600,7 +600,7 @@ static void SpathiAllies(RESPONSE_REF R)
 	Response(SpathiPhrase::ByeAllySpace, ExitConversation);
 }
 
-static void SpathiFriendly(RESPONSE_REF R)
+static void SpathiFriendly(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -643,9 +643,9 @@ static void SpathiFriendly(RESPONSE_REF R)
 	Response(SpathiPhrase::ByeFriendlySpace, ExitConversation);
 }
 
-static void SpathiNeutral(RESPONSE_REF R);
+static void SpathiNeutral(ResponseRef R);
 
-static void SpathiBefriend(RESPONSE_REF R)
+static void SpathiBefriend(ResponseRef R)
 {
 	SpathiPhrase pStr[2];
 
@@ -728,7 +728,7 @@ static void SpathiBefriend(RESPONSE_REF R)
 	}
 }
 
-static void SpathiAntagonize(RESPONSE_REF R)
+static void SpathiAntagonize(ResponseRef R)
 {
 	if (PlayerSaid(R, SpathiPhrase::PrepareToDie))
 	{
@@ -780,7 +780,7 @@ static void SpathiAntagonize(RESPONSE_REF R)
 	Response(SpathiPhrase::AttackYouNow, ExitConversation);
 }
 
-static void SpathiNeutral(RESPONSE_REF R)
+static void SpathiNeutral(ResponseRef R)
 {
 	if (R == 0)
 	{
@@ -891,15 +891,15 @@ static void Intro(void)
 	}
 	else if (CheckAlliance(RaceId::Spathi) == RaceAllegiance::Good)
 	{
-		SpathiAllies((RESPONSE_REF)0);
+		SpathiAllies((ResponseRef)0);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::SPATHI_QUEST))
 	{
-		SpathiFriendly((RESPONSE_REF)0);
+		SpathiFriendly((ResponseRef)0);
 	}
 	else
 	{
-		SpathiNeutral((RESPONSE_REF)0);
+		SpathiNeutral((ResponseRef)0);
 	}
 }
 

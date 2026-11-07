@@ -47,7 +47,7 @@ inline constexpr auto MeleeFleetSize {14};
 inline auto IconWidth() { return ResScale(16); }
 inline auto IconHeight() { return ResScale(16); }
 
-extern FRAME PickMeleeFrame;
+extern FrameRef PickMeleeFrame;
 
 inline constexpr auto PickBgColor {BuildColor(MakeRgb15(0x00, 0x01, 0x0F), 0x01)};
 inline constexpr auto PickValueColor {BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C)};
@@ -78,7 +78,6 @@ enum class MeleeMenuItem
 	BuildPick  // Selecting a ship to add to a fleet
 };
 consteval bool isArithmeticEnum(MeleeMenuItem) { return true; }
-using MELEE_OPTIONS = MeleeMenuItem;
 
 #if 0 //defined(__cplusplus)
 }
@@ -104,7 +103,7 @@ struct MeleeState
 
 	bool Initialized;
 	bool meleeStarted;
-	MELEE_OPTIONS MeleeOption;
+	MeleeMenuItem MeleeOption;
 	uint16_t side;
 	uint16_t row;
 	uint16_t col;
@@ -126,7 +125,7 @@ struct MeleeState
 			 * decisions that are not shared among network parties. */
 	TimeCount LastInputTime;
 
-	MUSIC_REF hMusic;
+	MusicRef hMusic;
 };
 
 extern void Melee(void);
@@ -138,7 +137,7 @@ void DrawMeleeIcon(uint16_t which_icon, bool HiLite);
 void GetShipBox(GfxRect* pRect, uint16_t side, uint16_t row, uint16_t col);
 void RepairMeleeFrame(const GfxRect* pRect);
 void DrawMeleeShipStrings(MeleeState* pMS, MeleeShip NewStarShip);
-extern FRAME MeleeFrame;
+extern FrameRef MeleeFrame;
 void Melee_flashSelection(MeleeState* pMS);
 extern void QuickRepair(uint16_t whichFrame, GfxRect* pRect);
 

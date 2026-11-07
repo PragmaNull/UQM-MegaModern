@@ -35,10 +35,10 @@ extern "C" {
 
 inline constexpr auto NormalLife {1};
 
-typedef HLINK HELEMENT;
+using ElementHandle = LinkHandle;
 struct Starship;
 
-// Bits for ELEMENT_FLAGS:
+// Bits for ElementFlags:
 // bits 0 and 1 are now available
 inline constexpr auto PlayerShip {1 << 2};
 // The Element is a player controlable ship, and not some bullet,
@@ -84,7 +84,7 @@ enum class ViewState
 	Change
 };
 
-typedef uint16_t ELEMENT_FLAGS;
+using ElementFlags = uint16_t;
 
 inline constexpr auto NoPrim {PrimitiveType::Count};
 
@@ -93,8 +93,8 @@ struct ElementState
 	GfxPoint location;
 	struct
 	{
-		FRAME frame;
-		FRAME* farray;
+		FrameRef frame;
+		FrameRef* farray;
 	} image;
 };
 
@@ -109,7 +109,7 @@ typedef void(ElementCollisionFunc)(Element* ElementPtr0, GfxPoint* pPt0,
 struct Element
 {
 	// QueueLink elements; must be first
-	HELEMENT pred, succ;
+	ElementHandle pred, succ;
 
 	ElementProcessFunc* preprocess_func;
 	ElementProcessFunc* postprocess_func;
@@ -122,7 +122,7 @@ struct Element
 	//  1: Melee: top player;    Full-game: the NPC opponent
 	int16_t playerNr;
 
-	ELEMENT_FLAGS state_flags;
+	ElementFlags state_flags;
 	union
 	{
 		uint16_t life_span;
@@ -169,7 +169,7 @@ struct Element
 
 	void* pParent;
 	// The ship this Element belongs to.
-	HELEMENT hTarget;
+	ElementHandle hTarget;
 };
 
 inline constexpr auto NeutralPlayerNum {-1};
@@ -212,17 +212,17 @@ inline auto GravityThreshold() { return (uint16_t)ResScale(255); }
 constexpr auto ObjectCloaked(const auto& eptr) { return (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) >= PrimitiveType::Count || (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) == PrimitiveType::StampFill && sameColor(GetPrimColor(&DisplayArray[(eptr)->PrimIndex]), BlackColor))); }
 
 
-extern HELEMENT AllocElement(void);
-extern void FreeElement(HELEMENT hElement);
+extern ElementHandle AllocElement(void);
+extern void FreeElement(ElementHandle hElement);
 constexpr auto PutElement(const auto& h) { return PutQueue(&disp_q, h); }
 constexpr auto InsertElement(const auto& h, const auto& i) { return InsertQueue(&disp_q, h, i); }
 constexpr auto GetHeadElement() { return GetHeadLink(&disp_q); }
 constexpr auto GetTailElement() { return GetTailLink(&disp_q); }
-inline void LockElement(HELEMENT h, Element** ppe) { *ppe = reinterpret_cast<Element*>(LockLink(&disp_q, h)); }
+inline void LockElement(ElementHandle h, Element** ppe) { *ppe = reinterpret_cast<Element*>(LockLink(&disp_q, h)); }
 constexpr auto UnlockElement(const auto& h) { return UnlockLink(&disp_q, h); }
 constexpr auto GetPredElement(const auto& l) { return _GetPredLink(l); }
 constexpr auto GetSuccElement(const auto& l) { return _GetSuccLink(l); }
-extern void RemoveElement(HLINK hLink);
+extern void RemoveElement(LinkHandle hLink);
 
 // XXX: The following functions should not really be here
 extern void spawn_planet(void);

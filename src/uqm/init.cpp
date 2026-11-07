@@ -41,17 +41,17 @@
 
 namespace uqm
 {
-FRAME stars_in_space;
-FRAME stars_misc[NumViews];
-FRAME scenery;
-FRAME asteroid[NumViews];
-FRAME blast[NumViews];
-FRAME explosion[NumViews];
+FrameRef stars_in_space;
+FrameRef stars_misc[NumViews];
+FrameRef scenery;
+FrameRef asteroid[NumViews];
+FrameRef blast[NumViews];
+FrameRef explosion[NumViews];
 
 
-bool load_animation(FRAME* pixarray, RESOURCE big_res, RESOURCE med_res, RESOURCE sml_res)
+bool load_animation(FrameRef* pixarray, RESOURCE big_res, RESOURCE med_res, RESOURCE sml_res)
 {
-	DRAWABLE d {LoadGraphic(big_res)};
+	DrawableRef d {LoadGraphic(big_res)};
 	if (!d)
 	{
 		return false;
@@ -83,7 +83,7 @@ bool load_animation(FRAME* pixarray, RESOURCE big_res, RESOURCE med_res, RESOURC
 
 /* Warning: Some ships (such as the Umgah) will alias their pixarrays,
    so we need to track to make sure that we do not double-free. */
-bool free_image(FRAME* pixarray)
+bool free_image(FrameRef* pixarray)
 {
 	uint16_t j {};
 	void* already_freed[NumViews];
@@ -197,9 +197,9 @@ void UninitSpace(void)
 	}
 }
 
-static HSTARSHIP BuildSIS(void)
+static StarshipHandle BuildSIS(void)
 {
-	HSTARSHIP hStarShip {Build(&race_q[0], SpeciesId::SisShip)};
+	StarshipHandle hStarShip {Build(&race_q[0], SpeciesId::SisShip)};
 	if (!hStarShip)
 	{
 		return 0;
@@ -255,7 +255,7 @@ int16_t InitShips(void)
 
 		SetContextBackGroundColor(BlackColor);
 		{
-			GFXCONTEXT OldContext {SetContext(ScreenContext)};
+			GfxContextRef OldContext {SetContext(ScreenContext)};
 
 			SetContextBackGroundColor(BlackColor);
 			ClearDrawable();
@@ -290,8 +290,8 @@ int16_t InitShips(void)
 // Count the crew elements in the display list.
 static uint16_t CountCrewElements(void)
 {
-	HELEMENT hElement {};
-	HELEMENT hNextElement {};
+	ElementHandle hElement {};
+	ElementHandle hNextElement {};
 
 	uint16_t result {0};
 	for (hElement = GetHeadElement();
@@ -315,8 +315,8 @@ static uint16_t CountCrewElements(void)
 void UninitShips(void)
 {
 	int i {};
-	HELEMENT hElement {};
-	HELEMENT hNextElement {};
+	ElementHandle hElement {};
+	ElementHandle hNextElement {};
 	Starship* SPtr[NumPlayers];
 
 	StopSound();

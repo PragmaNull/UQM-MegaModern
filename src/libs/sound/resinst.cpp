@@ -46,7 +46,7 @@ uqm::SoundBankPtr uqm::loadSoundBank(RESOURCE res)
 	return SoundBankPtr {static_cast<SoundBank*>(data)};
 }
 
-MUSIC_REF LoadMusicInstance(RESOURCE res)
+MusicRef LoadMusicInstance(RESOURCE res)
 {
 	void* hData {res_GetResource(res)};
 	if (hData)
@@ -54,5 +54,5 @@ MUSIC_REF LoadMusicInstance(RESOURCE res)
 		res_DetachResource(res);
 	}
 
-	return ((MUSIC_REF)hData);
+	return ((MusicRef)hData);
 }

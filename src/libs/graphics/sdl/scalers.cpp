@@ -65,7 +65,7 @@ int RGB_to_YUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 256];
 int16_t dRGB_to_dYUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 512];
 
 // pre-computed transformations for RGB555
-YUV_VECTOR RGB15_to_YUV[0x8000];
+YuvVector RGB15_to_YUV[0x8000];
 
 Scale_PlatType_t Scale_Platform = SCALEPLAT_NULL;
 

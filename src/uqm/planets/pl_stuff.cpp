@@ -49,7 +49,7 @@ void DrawCurrentPlanetSphere(void)
 {
 	GfxStamp s;
 	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
-	GFXCONTEXT oldContext = SetContext(PlanetContext);
+	GfxContextRef oldContext = SetContext(PlanetContext);
 
 	s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
 	s.origin.y = PlanetOrgY();
@@ -156,7 +156,7 @@ void DrawPlanetSphere(int x, int y, bool back)
 
 void DrawDefaultPlanetSphere(void)
 {
-	GFXCONTEXT oldContext {SetContext(PlanetContext)};
+	GfxContextRef oldContext {SetContext(PlanetContext)};
 	DrawPlanetSphere(
 		ResScale(OrigSisScreenWidth() >> 1), PlanetOrgY(), true);
 	SetContext(oldContext);
@@ -525,7 +525,7 @@ static void renderTintFrame(Color tintColor)
 		is_red = 0.5;
 	}
 
-	GFXCONTEXT oldContext {SetContext(OffScreenContext)};
+	GfxContextRef oldContext {SetContext(OffScreenContext)};
 	SetContextFGFrame(Orbit->TintFrame);
 	SetContextClipRect(nullptr);
 	// get the rect of the whole context (or our frame really)
@@ -579,7 +579,7 @@ void DrawPlanet(int tintY, Color tintColor)
 	}
 	else
 	{ // apply different scan type tints
-		FRAME tintFrame = Orbit->TintFrame;
+		FrameRef tintFrame = Orbit->TintFrame;
 		const int height = GetFrameHeight(tintFrame);
 
 		if (!sameColor(tintColor, Orbit->TintColor))
@@ -612,7 +612,7 @@ void DrawPlanet(int tintY, Color tintColor)
 
 			edge.extent.height = 1;
 			edge.extent.width = ScaledMapWidth();
-			edge.corner.x = tintFrame->HotSpot.x;
+			edge.corner.x = tintFrame->hotSpot.x;
 			edge.corner.y = clipRect.extent.height;
 
 			for (i = 0x90; i > 0; i -= 0x90 / ResScale(3))

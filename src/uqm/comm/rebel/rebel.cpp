@@ -243,7 +243,7 @@ static ConversationData yehat_desc =
 		nullptr,
 };
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	if (PlayerSaid(R, YehatRebelPhrase::ByeRebel))
 	{
@@ -251,9 +251,9 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void Rebels(RESPONSE_REF R);
+static void Rebels(ResponseRef R);
 
-static void RebelInfo(RESPONSE_REF R)
+static void RebelInfo(ResponseRef R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, YehatRebelPhrase::GiveInfoRebels))
@@ -325,7 +325,7 @@ static void RebelInfo(RESPONSE_REF R)
 	}
 }
 
-static void Rebels(RESPONSE_REF R)
+static void Rebels(ResponseRef R)
 {
 	uint16_t NumVisits {};
 
@@ -461,7 +461,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_VISITS, static_cast<uint32_t>(NumVisits));
 
-		Rebels((RESPONSE_REF)0);
+		Rebels((ResponseRef)0);
 	}
 }
 

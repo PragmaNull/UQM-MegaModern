@@ -37,11 +37,11 @@
 namespace uqm
 {
 // Allocate a new Starship or ShipFragment and put it in the queue
-HLINK Build(Queue* pQueue, SpeciesId SpeciesID)
+LinkHandle Build(Queue* pQueue, SpeciesId SpeciesID)
 {
 	assert(GetLinkSize(pQueue) == sizeof(Starship) || GetLinkSize(pQueue) == sizeof(ShipFragment));
 
-	HLINK hNewShip {AllocLink(pQueue)};
+	LinkHandle hNewShip {AllocLink(pQueue)};
 	if (!hNewShip)
 	{
 		return 0;
@@ -57,10 +57,10 @@ HLINK Build(Queue* pQueue, SpeciesId SpeciesID)
 	return hNewShip;
 }
 
-HLINK GetStarShipFromIndex(Queue* pShipQ, uint16_t Index)
+LinkHandle GetStarShipFromIndex(Queue* pShipQ, uint16_t Index)
 {
-	HLINK hStarShip {};
-	HLINK hNextShip {};
+	LinkHandle hStarShip {};
+	LinkHandle hNextShip {};
 
 	for (hStarShip = GetHeadLink(pShipQ);
 		 Index > 0 && hStarShip; hStarShip = hNextShip, --Index)
@@ -74,10 +74,10 @@ HLINK GetStarShipFromIndex(Queue* pShipQ, uint16_t Index)
 }
 
 // Gives the first fleet in avail_race_q that builds specified ship.
-HLINK GetFleetFromSpecies(SpeciesId id)
+LinkHandle GetFleetFromSpecies(SpeciesId id)
 {
-	HLINK hFleet {};
-	HLINK hNextFleet {};
+	LinkHandle hFleet {};
+	LinkHandle hNextFleet {};
 
 	for (hFleet = GetHeadLink(&uqm::gameState().game().avail_race_q);
 		 hFleet; hFleet = hNextFleet)
@@ -101,13 +101,13 @@ HLINK GetFleetFromSpecies(SpeciesId id)
 // This is for every part of the game that assumes a RACE_ID is a SPECIES_ID
 // If shipseed is not in use, it will do GetStarShipFromIndex on avail_race_q
 // If this seems like overkill just remember the Yehat rebels.
-HFLEETINFO GetSeededFleetFromIndex(uint16_t Index)
+FleetInfoHandle GetSeededFleetFromIndex(uint16_t Index)
 {
 	const FleetInfo* TemplatePtr = nullptr;
 	SpeciesId ship;
 	const bool loadWindow = ((uqm::currentSeed().ships && uqm::gameState().sis().ShipSeed == 0) || (!uqm::currentSeed().ships && uqm::gameState().sis().ShipSeed != 0) || (uqm::currentSeed().value != uqm::gameState().sis().Seed));
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, Index)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, Index)};
 	if (!hFleet)
 	{
 		return hFleet;
@@ -123,10 +123,10 @@ HFLEETINFO GetSeededFleetFromIndex(uint16_t Index)
 	return hFleet;
 }
 
-HSHIPFRAG GetEscortByStarShipIndex(uint16_t index)
+ShipFragmentHandle GetEscortByStarShipIndex(uint16_t index)
 {
-	HSHIPFRAG hStarShip {};
-	HSHIPFRAG hNextShip {};
+	ShipFragmentHandle hStarShip {};
+	ShipFragmentHandle hNextShip {};
 	const ShipFragment* StarShipPtr {};
 
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q);
@@ -149,8 +149,8 @@ HSHIPFRAG GetEscortByStarShipIndex(uint16_t index)
 
 SpeciesId ShipIdStrToIndex(const char* shipIdStr)
 {
-	HMASTERSHIP hStarShip {};
-	HMASTERSHIP hNextShip {};
+	MasterShipHandle hStarShip {};
+	MasterShipHandle hNextShip {};
 	SpeciesId result = SpeciesId::None;
 
 	for (hStarShip = GetHeadLink(&master_q);
@@ -241,7 +241,7 @@ uint16_t AddEscortShips(RaceId race, int16_t count)
 {
 	uint16_t i {};
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
 	if (!hFleet || count <= 0)
 	{
 		return 0;
@@ -250,8 +250,8 @@ uint16_t AddEscortShips(RaceId race, int16_t count)
 	uint8_t which_window {0};
 	for (i = 0; i < (uint16_t)count; i++)
 	{
-		HSHIPFRAG hStarShip {};
-		HSHIPFRAG hOldShip {};
+		ShipFragmentHandle hStarShip {};
+		ShipFragmentHandle hOldShip {};
 		ShipFragment* StarShipPtr {};
 
 		if (!StorageQ())
@@ -303,8 +303,8 @@ uint16_t AddEscortShips(RaceId race, int16_t count)
 uint16_t CalculateEscortsWorth(void)
 {
 	uint16_t total = 0;
-	HSHIPFRAG hStarShip {};
-	HSHIPFRAG hNextShip {};
+	ShipFragmentHandle hStarShip {};
+	ShipFragmentHandle hNextShip {};
 
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q);
 		 hStarShip; hStarShip = hNextShip)
@@ -398,7 +398,7 @@ void PrepareShip(RaceId race)
  */
 uint16_t GetRaceKnownSize (RaceId race)
 {
-	HFLEETINFO hFleet;
+	FleetInfoHandle hFleet;
 	FleetInfo *FleetPtr;
 	uint16_t result;
 
@@ -424,7 +424,7 @@ uint16_t GetRaceKnownSize (RaceId race)
  */
 bool SetRaceAllied(RaceId race, bool flag)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
 	if (!hFleet)
 	{
 		return false;
@@ -455,7 +455,7 @@ bool SetRaceAllied(RaceId race, bool flag)
  */
 uint16_t StartSphereTracking(RaceId race)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
 	if (!hFleet)
 	{
 		return 0;
@@ -492,7 +492,7 @@ bool CheckSphereTracking(RaceId race)
 {
 	uint16_t result {};
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
 	if (!hFleet)
 	{
 		return false;
@@ -517,7 +517,7 @@ bool CheckSphereTracking(RaceId race)
 
 bool KillRace(RaceId race)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
 	if (!hFleet)
 	{
 		return false;
@@ -538,11 +538,11 @@ bool KillRace(RaceId race)
  */
 uint16_t CountEscortShips(RaceId race)
 {
-	HSHIPFRAG hStarShip {};
-	HSHIPFRAG hNextShip {};
+	ShipFragmentHandle hStarShip {};
+	ShipFragmentHandle hNextShip {};
 	uint16_t result = 0;
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
 	if (!hFleet)
 	{
 		return 0;
@@ -580,7 +580,7 @@ bool HaveEscortShip(RaceId race)
  */
 uint16_t EscortFeasibilityStudy(RaceId race)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
 	if (!hFleet)
 	{
 		return 0;
@@ -596,7 +596,7 @@ uint16_t EscortFeasibilityStudy(RaceId race)
  */
 uint16_t CheckAlliance(RaceId race)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *race)};
 	if (!hFleet)
 	{
 		return 0;
@@ -621,8 +621,8 @@ bool RaceDead(RaceId race)
 uint16_t RemoveSomeEscortShips(RaceId race, uint16_t count)
 {
 	Queue* ship_q = &uqm::gameState().game().built_ship_q;
-	HSHIPFRAG hStarShip = GetHeadLink(ship_q);
-	HSHIPFRAG hNextShip {};
+	ShipFragmentHandle hStarShip = GetHeadLink(ship_q);
+	ShipFragmentHandle hNextShip {};
 
 	if (count == 0)
 	{
@@ -673,13 +673,13 @@ uint16_t RemoveEscortShips(RaceId race)
 	return RemoveSomeEscortShips(race, (uint16_t)-1);
 }
 
-uint16_t GetIndexFromStarShip(Queue* pShipQ, HLINK hStarShip)
+uint16_t GetIndexFromStarShip(Queue* pShipQ, LinkHandle hStarShip)
 {
 	uint16_t Index {0};
 	while (hStarShip != GetHeadLink(pShipQ))
 	{
 		const QueueLink* StarShipPtr {LockLink(pShipQ, hStarShip)};
-		HLINK hNextShip {_GetPredLink(StarShipPtr)};
+		LinkHandle hNextShip {_GetPredLink(StarShipPtr)};
 		UnlockLink(pShipQ, hStarShip);
 
 		hStarShip = hNextShip;
@@ -692,13 +692,13 @@ uint16_t GetIndexFromStarShip(Queue* pShipQ, HLINK hStarShip)
 uint8_t NameCaptain(Queue* pQueue, SpeciesId SpeciesID)
 {
 	uint8_t name_index {};
-	HLINK hStarShip {};
+	LinkHandle hStarShip {};
 
 	assert(GetLinkSize(pQueue) == sizeof(Starship) || GetLinkSize(pQueue) == sizeof(ShipFragment));
 
 	do
 	{
-		HLINK hNextShip {};
+		LinkHandle hNextShip {};
 
 		name_index = PickCaptainName();
 		for (hStarShip = GetHeadLink(pQueue); hStarShip;
@@ -726,9 +726,9 @@ uint8_t NameCaptain(Queue* pQueue, SpeciesId SpeciesID)
 
 // crew_level can be set to InfiniteFleet for a ship which is to
 // represent an infinite number of ships.
-HSHIPFRAG CloneShipFragment(RaceId shipIndex, Queue* pDstQueue, uint16_t crew_level)
+ShipFragmentHandle CloneShipFragment(RaceId shipIndex, Queue* pDstQueue, uint16_t crew_level)
 {
-	HFLEETINFO hFleet {};
+	FleetInfoHandle hFleet {};
 	uint8_t captains_name_index {};
 
 	assert(GetLinkSize(pDstQueue) == sizeof(ShipFragment));
@@ -761,7 +761,7 @@ HSHIPFRAG CloneShipFragment(RaceId shipIndex, Queue* pDstQueue, uint16_t crew_le
 		captains_name_index = NameCaptain(pDstQueue,
 										  TemplatePtr->SpeciesID);
 	}
-	HSHIPFRAG hBuiltShip {Build(pDstQueue, TemplatePtr->SpeciesID)};
+	ShipFragmentHandle hBuiltShip {Build(pDstQueue, TemplatePtr->SpeciesID)};
 	if (hBuiltShip)
 	{
 		ShipFragment* ShipFragPtr {LockShipFrag(pDstQueue, hBuiltShip)};
@@ -793,12 +793,12 @@ HSHIPFRAG CloneShipFragment(RaceId shipIndex, Queue* pDstQueue, uint16_t crew_le
  * ship of race 'which_ship' */
 int SetEscortCrewComplement(RaceId which_ship, uint16_t crew_level, uint8_t captain)
 {
-	HSHIPFRAG hStarShip {};
-	HSHIPFRAG hNextShip {};
+	ShipFragmentHandle hStarShip {};
+	ShipFragmentHandle hNextShip {};
 	ShipFragment* StarShipPtr = 0;
 	int Index {};
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *which_ship)};
+	FleetInfoHandle hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *which_ship)};
 	if (!hFleet)
 	{
 		return -1;

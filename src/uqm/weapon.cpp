@@ -47,9 +47,9 @@ static void weapon_collision_cb(Element* WeaponElementPtr, GfxPoint* pWPt,
 
 static constexpr auto LaserLife {1};
 
-HELEMENT initialize_laser(LaserDesc* pLaserBlock)
+ElementHandle initialize_laser(LaserDesc* pLaserBlock)
 {
-	HELEMENT hLaserElement {AllocElement()};
+	ElementHandle hLaserElement {AllocElement()};
 	if (hLaserElement)
 	{
 		Element* LaserElementPtr {};
@@ -86,9 +86,9 @@ HELEMENT initialize_laser(LaserDesc* pLaserBlock)
 	return (hLaserElement);
 }
 
-HELEMENT initialize_missile(MissileDesc* pMissileBlock)
+ElementHandle initialize_missile(MissileDesc* pMissileBlock)
 {
-	HELEMENT hMissileElement {AllocElement()};
+	ElementHandle hMissileElement {AllocElement()};
 	if (hMissileElement)
 	{
 		int16_t delta_x {};
@@ -131,15 +131,15 @@ HELEMENT initialize_missile(MissileDesc* pMissileBlock)
 	return (hMissileElement);
 }
 
-HELEMENT weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
-						  Element* HitElementPtr, GfxPoint* pHPt)
+ElementHandle weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
+							   Element* HitElementPtr, GfxPoint* pHPt)
 {
 	int16_t damage {};
-	HELEMENT hBlastElement {};
+	ElementHandle hBlastElement {};
 
 	if (WeaponElementPtr->state_flags & Collision) /* if already did effect */
 	{
-		return ((HELEMENT)0);
+		return ((ElementHandle)0);
 	}
 
 	damage = (int16_t)WeaponElementPtr->mass_points;
@@ -196,7 +196,7 @@ HELEMENT weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 			int16_t blast_offs {};
 			uint16_t num_blast_frames {};
 			Element* BlastElementPtr {};
-			extern FRAME blast[];
+			extern FrameRef blast[];
 
 			PutElement(hBlastElement);
 			LockElement(hBlastElement, &BlastElementPtr);
@@ -250,20 +250,20 @@ HELEMENT weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 	}
 
 	(void)pHPt; /* Satisfying compiler (unused parameter) */
-	return ((HELEMENT)0);
+	return ((ElementHandle)0);
 }
 
-FRAME ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
-					   uint8_t modify_flags)
+FrameRef ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
+						  uint8_t modify_flags)
 {
 	GfxRect r {};
 	GfxRect originalRect {};
 	IntersectInfo ShipIntersect;
 	IntersectInfo ObjectIntersect;
 	Starship* StarShipPtr {};
-	GFXCONTEXT OldContext {};
+	GfxContextRef OldContext {};
 
-	FRAME f {0};
+	FrameRef f {0};
 	ObjectIntersect.IntersectStamp = *modify_stamp;
 	GetFrameRect(ObjectIntersect.IntersectStamp.frame, &originalRect);
 
@@ -327,13 +327,13 @@ FRAME ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
 // set for the Tracker.
 int16_t TrackShip(Element* Tracker, uint16_t* pfacing)
 {
-	HELEMENT hNextShip {};
+	ElementHandle hNextShip {};
 	Element* Trackee {};
 
 	int16_t best_delta {0};
 	int16_t best_delta_facing {-1};
 
-	HELEMENT hShip {Tracker->hTarget};
+	ElementHandle hShip {Tracker->hTarget};
 	if (hShip)
 	{
 		LockElement(hShip, &Trackee);

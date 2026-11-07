@@ -206,7 +206,7 @@ static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	}
 }
 
-static uint16_t initialize_horn(Element* ShipPtr, HELEMENT HornArray[])
+static uint16_t initialize_horn(Element* ShipPtr, ElementHandle HornArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -288,7 +288,7 @@ static void supox_preprocess(Element* ElementPtr)
 			const uint16_t facing {StarShipPtr->ShipFacing};
 			StarShipPtr->ShipFacing = NormalizeFacing(
 				facing + add_facing);
-			const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
+			const StatusFlags thrust_status {inertial_thrust(ElementPtr)};
 			StarShipPtr->cur_status_flags &=
 				~(ShipAtMaxSpeed
 				  | ShipBeyondMaxSpeed

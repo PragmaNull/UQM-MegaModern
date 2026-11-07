@@ -45,7 +45,7 @@ static auto NumCellCols() { return (UqmMapWidth / ColMultiplier()); }
 static constexpr auto NumCellRows {Sc2MapHeight / 6};
 
 
-extern FRAME SpaceJunkFrame;
+extern FrameRef SpaceJunkFrame;
 
 static void ClearReportArea(int16_t startx)
 {
@@ -93,7 +93,7 @@ static void ClearReportArea(int16_t startx)
 	UnbatchGraphics();
 }
 
-static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
+static void MakeReport(SoundBankRef ReadOutSounds, const char* pStr, uint16_t StrLen)
 {
 	int end_page_len {};
 	char end_page_buf[200] {};
@@ -353,7 +353,7 @@ static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLe
 	}
 }
 
-void DoDiscoveryReport(SOUND_REF ReadOutSounds)
+void DoDiscoveryReport(SoundBankRef ReadOutSounds)
 {
 	bool ownContext {};
 	GfxStamp saveStamp;
@@ -365,12 +365,12 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 	}
 #endif
 
-	GFXCONTEXT context {GetScanContext(&ownContext)};
-	GFXCONTEXT OldContext {SetContext(context)};
+	GfxContextRef context {GetScanContext(&ownContext)};
+	GfxContextRef OldContext {SetContext(context)};
 	saveStamp = SaveContextFrame(nullptr);
 	{
-		FONT OldFont {};
-		FRAME OldFontEffect {};
+		FontRef OldFont {};
+		FrameRef OldFontEffect {};
 
 		OldFont = SetContextFont(
 			pSolarSysState->SysInfo.PlanetInfo.LanderFont);
@@ -403,7 +403,7 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 	// Restore previous screen
 	DrawStamp(&saveStamp);
 	SetContext(OldContext);
-	// TODO: Make GFXCONTEXT ref-counted
+	// TODO: Make GfxContextRef ref-counted
 	if (ownContext)
 	{
 		DestroyScanContext();

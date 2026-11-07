@@ -149,7 +149,7 @@ static void howitzer_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	}
 }
 
-static uint16_t initialize_turret_missile(Element* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_turret_missile(Element* ShipPtr, ElementHandle MissileArray[])
 {
 	Element* TurretPtr {};
 	Starship* StarShipPtr {};
@@ -207,8 +207,8 @@ static uint16_t initialize_turret_missile(Element* ShipPtr, HELEMENT MissileArra
 static uint8_t count_marines(Starship* StarShipPtr, bool FindSpot)
 {
 	uint8_t id_use[MaxMarines];
-	HELEMENT hElement {};
-	HELEMENT hNextElement {};
+	ElementHandle hElement {};
+	ElementHandle hNextElement {};
 
 	uint8_t num_marines {MaxMarines};
 	while (num_marines--)
@@ -383,8 +383,8 @@ static void marine_preprocess(Element* ElementPtr);
 
 void intruder_preprocess(Element* ElementPtr)
 {
-	HELEMENT hElement {};
-	HELEMENT hNextElement {};
+	ElementHandle hElement {};
+	ElementHandle hNextElement {};
 	Element* ShipPtr {};
 	Starship* StarShipPtr {};
 
@@ -507,7 +507,7 @@ static void
 spawn_marine_ion_trail(Element* ElementPtr, Starship* StarShipPtr,
 					   uint16_t facing)
 {
-	HELEMENT hIonElement {AllocElement()};
+	ElementHandle hIonElement {AllocElement()};
 	if (hIonElement)
 	{
 		uint16_t angle {};
@@ -579,15 +579,15 @@ static void marine_preprocess(Element* ElementPtr)
 		int32_t delta_x {};
 		int32_t delta_y {};
 		int32_t delta_facing {};
-		HELEMENT hObject {};
-		HELEMENT hNextObject {};
+		ElementHandle hObject {};
+		ElementHandle hNextObject {};
 		Element* ObjectPtr {};
 
 		// XXX: thrust_wait is abused to store marine speed and
 		//   gravity well flags
 		ElementPtr->thrust_wait &= ~(ShipInGravityWell >> 6);
 
-		HELEMENT hTarget {0};
+		ElementHandle hTarget {0};
 		for (hObject = GetHeadElement();
 			 hObject; hObject = hNextObject)
 		{
@@ -743,7 +743,7 @@ static void marine_preprocess(Element* ElementPtr)
 			// XXX: Hack: abusing the primary Starship struct in order
 			//   to call inertial_thrust() for a marine
 			const uint16_t OldFacing {StarShipPtr->ShipFacing};
-			const STATUS_FLAGS OldStatus {StarShipPtr->cur_status_flags};
+			const StatusFlags OldStatus {StarShipPtr->cur_status_flags};
 			const uint16_t OldIncrement {StarShipPtr->RaceDescPtr->characteristics.thrust_increment};
 			const uint16_t OldThrust {StarShipPtr->RaceDescPtr->characteristics.max_thrust};
 
@@ -756,7 +756,7 @@ static void marine_preprocess(Element* ElementPtr)
 			StarShipPtr->RaceDescPtr->characteristics.max_thrust =
 				MarineMaxThrust();
 
-			const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
+			const StatusFlags thrust_status {inertial_thrust(ElementPtr)};
 
 			StarShipPtr->RaceDescPtr->characteristics.max_thrust = OldThrust;
 			StarShipPtr->RaceDescPtr->characteristics.thrust_increment =
@@ -890,11 +890,11 @@ static void turret_postprocess(Element* ElementPtr)
 		if (StarShipPtr->hShip)
 		{
 			uint16_t facing {};
-			HELEMENT hSpaceMarine {};
+			ElementHandle hSpaceMarine {};
 			Element* ShipPtr {};
 
 			LockElement(StarShipPtr->hShip, &ShipPtr);
-			HELEMENT hTurret {AllocElement()};
+			ElementHandle hTurret {AllocElement()};
 			if (hTurret)
 			{
 				Element* TurretPtr {};
@@ -940,7 +940,7 @@ static void turret_postprocess(Element* ElementPtr)
 				facing = FacingToAngle(facing);
 				if (StarShipPtr->cur_status_flags & WeaponFlag)
 				{
-					HELEMENT hTurretEffect {};
+					ElementHandle hTurretEffect {};
 					Element* TurretEffectPtr {};
 
 					LockElement(GetTailElement(), &TurretEffectPtr);
@@ -1088,7 +1088,7 @@ static void orz_preprocess(Element* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hTurret {AllocElement()};
+		ElementHandle hTurret {AllocElement()};
 		if (hTurret)
 		{
 			Element* TurretPtr {};

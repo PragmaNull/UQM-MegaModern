@@ -57,9 +57,9 @@ static Starship* winnerStarShip;
 
 bool OpponentAlive(Starship* TestStarShipPtr)
 {
-	HELEMENT hSuccElement {};
+	ElementHandle hSuccElement {};
 
-	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hSuccElement)
+	for (ElementHandle hElement {GetHeadElement()}; hElement; hElement = hSuccElement)
 	{
 		Element* ElementPtr {};
 		Starship* StarShipPtr {};
@@ -101,7 +101,7 @@ static bool DittyPlaying(void)
 		return false;
 	}
 
-	dittyIsPlaying = PLRPlaying((MUSIC_REF)~0);
+	dittyIsPlaying = PLRPlaying((MusicRef)~0);
 	return dittyIsPlaying;
 }
 
@@ -297,8 +297,8 @@ void cleanup_dead_ship(Element* DeadShipPtr)
 		// Ship explosion has finished, or ship has just warped out
 		// if DeadStarShipPtr->crew_level != 0
 		bool MusicStarted {};
-		HELEMENT hElement {};
-		HELEMENT hSuccElement {};
+		ElementHandle hElement {};
+		ElementHandle hSuccElement {};
 
 		/* Record crew left after the battle */
 		DeadStarShipPtr->crew_level =
@@ -412,11 +412,11 @@ static void checkOtherShipLifeSpan(Element* deadShip)
 	}
 	else if (winnerStarShip == nullptr)
 	{ // Both died at the same time, or the loser has already expired
-		HELEMENT hNextElement {};
+		ElementHandle hNextElement {};
 
 		// Find the other dead ship(s) and keep them alive for at least as
 		// long as this ship.
-		for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
+		for (ElementHandle hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 		{
 			Element* Element {};
 			Starship* starShip {};
@@ -576,13 +576,13 @@ static void explosion_preprocess(Element* ShipPtr)
 
 	do
 	{
-		HELEMENT hElement {AllocElement()};
+		ElementHandle hElement {AllocElement()};
 		if (hElement)
 		{
 			uint16_t angle {};
 			uint16_t dist {};
 			Element* ElementPtr {};
-			extern FRAME explosion[];
+			extern FrameRef explosion[];
 
 			PutElement(hElement);
 			LockElement(hElement, &ElementPtr);
@@ -624,10 +624,10 @@ void StopAllBattleMusic(void)
 Starship* FindAliveStarShip(Element* deadShip)
 {
 	Starship* aliveShip = nullptr;
-	HELEMENT hNextElement {};
+	ElementHandle hNextElement {};
 
 	// Find the remaining ship, if any, and see if it is still alive.
-	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
+	for (ElementHandle hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
 		Element* ElementPtr {};
 
@@ -795,7 +795,7 @@ void spawn_ion_trail(Element* ElementPtr, int16_t x_offset, int16_t y_offset)
 {
 	assert(ElementPtr->state_flags & PlayerShip);
 
-	HELEMENT hIonElement {AllocElement()};
+	ElementHandle hIonElement {AllocElement()};
 	if (hIonElement)
 	{
 		uint16_t angle {};
@@ -902,7 +902,7 @@ void ship_transition(Element* ElementPtr)
 	}
 
 	{
-		HELEMENT hShipImage {};
+		ElementHandle hShipImage {};
 		Element* ShipImagePtr {};
 		Starship* StarShipPtr {};
 

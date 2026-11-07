@@ -34,7 +34,7 @@ constexpr uint8_t c_startDay {17};
 	return year < otherYear || (year == otherYear && (month < otherMonth || (month == otherMonth && day < otherDay)));
 }
 
-[[nodiscard]] GameEvent* lockEvent(const Queue& events, HEVENT event)
+[[nodiscard]] GameEvent* lockEvent(const Queue& events, EventHandle event)
 {
 	// An GameEvent starts with the QueueLink fields.
 	return reinterpret_cast<GameEvent*>(LockLink(&events, event));
@@ -163,9 +163,9 @@ bool GameClock::resolveDate(EventType type, uint16_t& month, uint16_t& day, uint
 	return !dateIsBefore(year, month, day, m_year, m_month, m_day);
 }
 
-HEVENT GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, GameEventId funcIndex)
+EventHandle GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, GameEventId funcIndex)
 {
-	const HEVENT newEvent {AllocLink(&m_events)};
+	const EventHandle newEvent {AllocLink(&m_events)};
 	if (!newEvent)
 	{
 		return 0;
@@ -177,12 +177,12 @@ HEVENT GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, GameEven
 	newPtr->func_index = funcIndex;
 	UnlockLink(&m_events, newEvent);
 
-	HEVENT event {GetHeadLink(&m_events)};
+	EventHandle event {GetHeadLink(&m_events)};
 	while (event != 0)
 	{
 		const GameEvent* const eventPtr {lockEvent(m_events, event)};
 		const bool later {dateIsBefore(year, month, day, eventPtr->year_index, eventPtr->month_index, eventPtr->day_index)};
-		const HEVENT next {_GetSuccLink(eventPtr)};
+		const EventHandle next {_GetSuccLink(eventPtr)};
 		UnlockLink(&m_events, event);
 		if (later)
 		{
@@ -196,7 +196,7 @@ HEVENT GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, GameEven
 
 uqstl::optional<GameEvent> GameClock::firstEvent() const
 {
-	const HEVENT event {GetHeadLink(&m_events)};
+	const EventHandle event {GetHeadLink(&m_events)};
 	if (event == nullptr)
 	{
 		return uqstl::nullopt;
@@ -209,11 +209,11 @@ uqstl::optional<GameEvent> GameClock::firstEvent() const
 uqstl::vector<GameEvent> GameClock::eventList() const
 {
 	uqstl::vector<GameEvent> events {};
-	for (HEVENT event {GetHeadLink(&m_events)}; event != nullptr;)
+	for (EventHandle event {GetHeadLink(&m_events)}; event != nullptr;)
 	{
 		const GameEvent* const eventPtr {lockEvent(m_events, event)};
 		events.push_back(*eventPtr);
-		const HEVENT next {_GetSuccLink(eventPtr)};
+		const EventHandle next {_GetSuccLink(eventPtr)};
 		UnlockLink(&m_events, event);
 		event = next;
 	}
@@ -227,7 +227,7 @@ bool GameClock::isBefore(uint16_t year, uint16_t month, uint16_t day) const noex
 
 bool GameClock::takeDueEvent(GameEventId& funcIndex)
 {
-	const HEVENT event {GetHeadLink(&m_events)};
+	const EventHandle event {GetHeadLink(&m_events)};
 	if (event == 0)
 	{
 		return false;

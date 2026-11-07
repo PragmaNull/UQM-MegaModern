@@ -31,13 +31,13 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-FRAME _CurFramePtr;
+FrameRef _CurFramePtr;
 
-FRAME SetContextFGFrame(FRAME Frame)
+FrameRef SetContextFGFrame(FrameRef Frame)
 {
-	FRAME LastFrame {};
+	FrameRef LastFrame {};
 
-	if (Frame != (LastFrame = (FRAME)_CurFramePtr))
+	if (Frame != (LastFrame = (FrameRef)_CurFramePtr))
 	{
 		if (LastFrame)
 		{
@@ -59,15 +59,15 @@ FRAME SetContextFGFrame(FRAME Frame)
 	return (LastFrame);
 }
 
-FRAME GetContextFGFrame(void)
+FrameRef GetContextFGFrame(void)
 {
 	return _CurFramePtr;
 }
 
-static DRAWABLE request_drawable(uint16_t NumFrames, DRAWABLE_TYPE DrawableType,
-								 CREATE_FLAGS flags, int16_t width, int16_t height)
+static DrawableRef request_drawable(uint16_t NumFrames, DrawableType drawableType,
+									CreateFlags flags, int16_t width, int16_t height)
 {
-	DRAWABLE Drawable {AllocDrawable(NumFrames)};
+	DrawableRef Drawable {AllocDrawable(NumFrames)};
 	if (!Drawable)
 	{
 		return nullptr;
@@ -78,15 +78,15 @@ static DRAWABLE request_drawable(uint16_t NumFrames, DRAWABLE_TYPE DrawableType,
 
 	for (uint16_t i {0}; i < NumFrames; ++i)
 	{
-		FRAME FramePtr = &Drawable->Frame[i];
+		FrameRef FramePtr = &Drawable->Frame[i];
 
-		if (DrawableType == RamDrawable && width > 0 && height > 0)
+		if (drawableType == RamDrawable && width > 0 && height > 0)
 		{
 			FramePtr->image = TFB_DrawImage_New(TFB_DrawCanvas_New_TrueColor(
 				width, height, (flags & WantAlpha) ? true : false));
 		}
 
-		FramePtr->Type = DrawableType;
+		FramePtr->Type = drawableType;
 		FramePtr->Index = i;
 		SetFrameBounds(FramePtr, width, height);
 	}
@@ -96,9 +96,9 @@ static DRAWABLE request_drawable(uint16_t NumFrames, DRAWABLE_TYPE DrawableType,
 
 // Kruzen: New construct to create paletted drawable
 // Uses previously unused TFB_DrawCanvas_New_Paletted()
-static DRAWABLE request_indexed_drawable(Color* palette, int16_t width, int16_t height)
+static DrawableRef request_indexed_drawable(Color* palette, int16_t width, int16_t height)
 {
-	DRAWABLE Drawable {AllocDrawable(1)};
+	DrawableRef Drawable {AllocDrawable(1)};
 	if (!Drawable)
 	{
 		return nullptr;
@@ -108,7 +108,7 @@ static DRAWABLE request_indexed_drawable(Color* palette, int16_t width, int16_t 
 	Drawable->MaxIndex = 0;
 
 	{
-		FRAME FramePtr = &Drawable->Frame[0];
+		FrameRef FramePtr = &Drawable->Frame[0];
 
 		if (width > 0 && height > 0)
 		{
@@ -129,18 +129,18 @@ static DRAWABLE request_indexed_drawable(Color* palette, int16_t width, int16_t 
 	return Drawable;
 }
 
-DRAWABLE CreateDisplay(CREATE_FLAGS CreateFlags, int16_t* pwidth, int16_t* pheight)
+DrawableRef CreateDisplay(CreateFlags createFlags, int16_t* pwidth, int16_t* pheight)
 {
-	DRAWABLE Drawable {};
+	DrawableRef Drawable {};
 
 	// TODO: CanvasWidth and CanvasHeight should be passed in
 	//   instead of returned.
 	Drawable = request_drawable(1, ScreenDrawable,
-								(CreateFlags & (WantPixmap | WantMask)),
+								(createFlags & (WantPixmap | WantMask)),
 								CanvasWidth, CanvasHeight);
 	if (Drawable)
 	{
-		FRAME F {CaptureDrawable(Drawable)};
+		FrameRef F {CaptureDrawable(Drawable)};
 		if (F == 0)
 		{
 			DestroyDrawable(Drawable);
@@ -159,7 +159,7 @@ DRAWABLE CreateDisplay(CREATE_FLAGS CreateFlags, int16_t* pwidth, int16_t* pheig
 	return (0);
 }
 
-DRAWABLE AllocDrawable(uint16_t n)
+DrawableRef AllocDrawable(uint16_t n)
 {
 	auto* Drawable {new DrawableDesc {}};
 	Drawable->Frame.assign(n, FrameDesc {});
@@ -170,16 +170,16 @@ DRAWABLE AllocDrawable(uint16_t n)
 	return Drawable;
 }
 
-DRAWABLE CreateDrawable(CREATE_FLAGS CreateFlags, int16_t width, int16_t height, uint16_t num_frames)
+DrawableRef CreateDrawable(CreateFlags createFlags, int16_t width, int16_t height, uint16_t num_frames)
 {
-	DRAWABLE Drawable {};
+	DrawableRef Drawable {};
 
 	Drawable = request_drawable(num_frames, RamDrawable,
-								(CreateFlags & (WantMask | WantPixmap | WantAlpha | MappedToDisplay)),
+								(createFlags & (WantMask | WantPixmap | WantAlpha | MappedToDisplay)),
 								width, height);
 	if (Drawable)
 	{
-		FRAME F {CaptureDrawable(Drawable)};
+		FrameRef F {CaptureDrawable(Drawable)};
 		if (F)
 		{
 			ReleaseDrawable(F);
@@ -192,13 +192,13 @@ DRAWABLE CreateDrawable(CREATE_FLAGS CreateFlags, int16_t width, int16_t height,
 }
 
 // Kruzen: New construct to create paletted drawable
-DRAWABLE CreateIndexedDrawable(Color* palette, int16_t width, int16_t height)
+DrawableRef CreateIndexedDrawable(Color* palette, int16_t width, int16_t height)
 {
-	DRAWABLE Drawable {request_indexed_drawable(palette, width, height)};
+	DrawableRef Drawable {request_indexed_drawable(palette, width, height)};
 
 	if (Drawable)
 	{
-		FRAME F {CaptureDrawable(Drawable)};
+		FrameRef F {CaptureDrawable(Drawable)};
 		if (F)
 		{
 			ReleaseDrawable(F);
@@ -210,11 +210,11 @@ DRAWABLE CreateIndexedDrawable(Color* palette, int16_t width, int16_t height)
 	return (0);
 }
 
-bool DestroyDrawable(DRAWABLE Drawable)
+bool DestroyDrawable(DrawableRef Drawable)
 {
 	if (_CurFramePtr && (Drawable == _CurFramePtr->parent))
 	{
-		SetContextFGFrame((FRAME) nullptr);
+		SetContextFGFrame((FrameRef) nullptr);
 	}
 
 	if (Drawable)
@@ -227,12 +227,12 @@ bool DestroyDrawable(DRAWABLE Drawable)
 	return (false);
 }
 
-bool GetFrameRect(FRAME FramePtr, GfxRect* pRect)
+bool GetFrameRect(FrameRef FramePtr, GfxRect* pRect)
 {
 	if (FramePtr)
 	{
-		pRect->corner.x = -FramePtr->HotSpot.x;
-		pRect->corner.y = -FramePtr->HotSpot.y;
+		pRect->corner.x = -FramePtr->hotSpot.x;
+		pRect->corner.y = -FramePtr->hotSpot.y;
 		pRect->extent = GetFrameBounds(FramePtr);
 
 		return (true);
@@ -241,14 +241,14 @@ bool GetFrameRect(FRAME FramePtr, GfxRect* pRect)
 	return (false);
 }
 
-HOT_SPOT SetFrameHot(FRAME FramePtr, HOT_SPOT HotSpot)
+HotSpot SetFrameHot(FrameRef FramePtr, HotSpot hotSpot)
 {
 	if (FramePtr)
 	{
-		HOT_SPOT OldHot;
+		HotSpot OldHot;
 
-		OldHot = FramePtr->HotSpot;
-		FramePtr->HotSpot = HotSpot;
+		OldHot = FramePtr->hotSpot;
+		FramePtr->hotSpot = hotSpot;
 
 		return (OldHot);
 	}
@@ -256,17 +256,17 @@ HOT_SPOT SetFrameHot(FRAME FramePtr, HOT_SPOT HotSpot)
 	return (MAKE_HOT_SPOT(0, 0));
 }
 
-HOT_SPOT GetFrameHot(FRAME FramePtr)
+HotSpot GetFrameHot(FrameRef FramePtr)
 {
 	if (FramePtr)
 	{
-		return FramePtr->HotSpot;
+		return FramePtr->hotSpot;
 	}
 
 	return (MAKE_HOT_SPOT(0, 0));
 }
 
-DRAWABLE RotateFrame(FRAME Frame, int angle_deg)
+DrawableRef RotateFrame(FrameRef Frame, int angle_deg)
 {
 	double dx {NAN};
 	double dy {NAN};
@@ -280,12 +280,12 @@ DRAWABLE RotateFrame(FRAME Frame, int angle_deg)
 
 	assert(Frame->Type != ScreenDrawable);
 
-	DRAWABLE Drawable {request_drawable(1, RamDrawable, WantPixmap, 0, 0)};
+	DrawableRef Drawable {request_drawable(1, RamDrawable, WantPixmap, 0, 0)};
 	if (!Drawable)
 	{
 		return 0;
 	}
-	FRAME RotFramePtr {CaptureDrawable(Drawable)};
+	FrameRef RotFramePtr {CaptureDrawable(Drawable)};
 	if (!RotFramePtr)
 	{
 		FreeDrawable(Drawable);
@@ -298,8 +298,8 @@ DRAWABLE RotateFrame(FRAME Frame, int angle_deg)
 				   RotFramePtr->image->extent.height);
 
 	/* now we need to rotate the hot-spot, eww */
-	dx = Frame->HotSpot.x - (GetFrameWidth(Frame) / 2);
-	dy = Frame->HotSpot.y - (GetFrameHeight(Frame) / 2);
+	dx = Frame->hotSpot.x - (GetFrameWidth(Frame) / 2);
+	dy = Frame->hotSpot.y - (GetFrameHeight(Frame) / 2);
 	d = sqrt((double)dx * dx + (double)dy * dy);
 	if ((int)d != 0)
 	{
@@ -307,8 +307,8 @@ DRAWABLE RotateFrame(FRAME Frame, int angle_deg)
 		dx = cos(organg + angle) * d;
 		dy = -sin(organg + angle) * d;
 	}
-	RotFramePtr->HotSpot.x = (GetFrameWidth(RotFramePtr) / 2) + (int)dx;
-	RotFramePtr->HotSpot.y = (GetFrameHeight(RotFramePtr) / 2) + (int)dy;
+	RotFramePtr->hotSpot.x = (GetFrameWidth(RotFramePtr) / 2) + (int)dx;
+	RotFramePtr->hotSpot.y = (GetFrameHeight(RotFramePtr) / 2) + (int)dy;
 
 	ReleaseDrawable(RotFramePtr);
 
@@ -316,7 +316,7 @@ DRAWABLE RotateFrame(FRAME Frame, int angle_deg)
 }
 
 // color.a is ignored
-void SetFrameTransparentColor(FRAME frame, Color color)
+void SetFrameTransparentColor(FrameRef frame, Color color)
 {
 	if (!frame)
 	{
@@ -332,7 +332,7 @@ void SetFrameTransparentColor(FRAME frame, Color color)
 	TFB_DrawCanvas_SetTransparentColor(img->NormalImg, color, false);
 }
 
-Color GetFramePixel(FRAME frame, GfxPoint pixelPt)
+Color GetFramePixel(FrameRef frame, GfxPoint pixelPt)
 {
 	Color ret;
 
@@ -352,18 +352,18 @@ Color GetFramePixel(FRAME frame, GfxPoint pixelPt)
 	return ret;
 }
 
-static FRAME makeMatchingFrame(FRAME frame, int width, int height)
+static FrameRef makeMatchingFrame(FrameRef frame, int width, int height)
 {
 	const bool dst_has_alpha =
 		SDL_GetPixelFormatDetails(((SDL_Surface*)(frame->image->NormalImg))->format)->Amask != 0;
 
-	const CREATE_FLAGS flags {dst_has_alpha ? WantAlpha : GetFrameParentDrawable(frame)->Flags};
-	DRAWABLE drawable {CreateDrawable(flags, width, height, 1)};
+	const CreateFlags flags {dst_has_alpha ? WantAlpha : GetFrameParentDrawable(frame)->Flags};
+	DrawableRef drawable {CreateDrawable(flags, width, height, 1)};
 	if (!drawable)
 	{
 		return nullptr;
 	}
-	FRAME newFrame {CaptureDrawable(drawable)};
+	FrameRef newFrame {CaptureDrawable(drawable)};
 	if (!newFrame)
 	{
 		FreeDrawable(drawable);
@@ -375,9 +375,9 @@ static FRAME makeMatchingFrame(FRAME frame, int width, int height)
 
 // Kruzen: New construct to create paletted drawable
 // Copies makeMatchingFrame() call hierarchy
-static FRAME makeMatchingIndexedFrame(FRAME frame, int width, int height)
+static FrameRef makeMatchingIndexedFrame(FrameRef frame, int width, int height)
 {
-	DRAWABLE drawable {};
+	DrawableRef drawable {};
 	uqstl::optional<uqstl::array<Color, 256>> palette {TFB_DrawCanvas_ExtractPalette(frame->image->NormalImg)};
 
 	drawable =
@@ -386,7 +386,7 @@ static FRAME makeMatchingIndexedFrame(FRAME frame, int width, int height)
 	{
 		return nullptr;
 	}
-	FRAME newFrame {CaptureDrawable(drawable)};
+	FrameRef newFrame {CaptureDrawable(drawable)};
 	if (!newFrame)
 	{
 		FreeDrawable(drawable);
@@ -396,11 +396,11 @@ static FRAME makeMatchingIndexedFrame(FRAME frame, int width, int height)
 	return newFrame;
 }
 
-// Creates an new DRAWABLE containing a copy of specified FRAME's rect
-// Source FRAME must not be a ScreenDrawable
-DRAWABLE CopyFrameRect(FRAME frame, const GfxRect* area)
+// Creates an new DrawableRef containing a copy of specified FrameRef's rect
+// Source FrameRef must not be a ScreenDrawable
+DrawableRef CopyFrameRect(FrameRef frame, const GfxRect* area)
 {
-	FRAME newFrame {};
+	FrameRef newFrame {};
 	const GfxPoint nullPt = MAKE_POINT(0, 0);
 
 	if (!frame)
@@ -422,9 +422,9 @@ DRAWABLE CopyFrameRect(FRAME frame, const GfxRect* area)
 	return ReleaseDrawable(newFrame);
 }
 
-// Creates an new DRAWABLE mostly identical to specified FRAME
-// Source FRAME must not be a ScreenDrawable
-DRAWABLE CloneFrame(FRAME frame)
+// Creates an new DrawableRef mostly identical to specified FrameRef
+// Source FrameRef must not be a ScreenDrawable
+DrawableRef CloneFrame(FrameRef frame)
 {
 	GfxRect r;
 
@@ -439,23 +439,23 @@ DRAWABLE CloneFrame(FRAME frame)
 	r.corner.x = 0;
 	r.corner.y = 0;
 
-	FRAME newFrame {CaptureDrawable(CopyFrameRect(frame, &r))};
+	FrameRef newFrame {CaptureDrawable(CopyFrameRect(frame, &r))};
 	if (!newFrame)
 	{
 		return nullptr;
 	}
 
 	// copy the hot-spot
-	newFrame->HotSpot = frame->HotSpot;
+	newFrame->hotSpot = frame->hotSpot;
 
 	return ReleaseDrawable(newFrame);
 }
 
-// Creates a new DRAWABLE of specified size and scales the passed
+// Creates a new DrawableRef of specified size and scales the passed
 // frame onto it. The aspect ratio is not preserved.
-DRAWABLE RescaleFrame(FRAME frame, int width, int height)
+DrawableRef RescaleFrame(FrameRef frame, int width, int height)
 {
-	FRAME newFrame {};
+	FrameRef newFrame {};
 
 	if (!frame)
 	{
@@ -479,8 +479,8 @@ DRAWABLE RescaleFrame(FRAME frame, int width, int height)
 	}
 
 	// scale the hot-spot
-	newFrame->HotSpot.x = frame->HotSpot.x * width / frame->Bounds.width;
-	newFrame->HotSpot.y = frame->HotSpot.y * height / frame->Bounds.height;
+	newFrame->hotSpot.x = frame->hotSpot.x * width / frame->Bounds.width;
+	newFrame->hotSpot.y = frame->hotSpot.y * height / frame->Bounds.height;
 
 	tfb::Image* img {frame->image};
 	const uqm::LockGuard imageLock {img->mutex};
@@ -494,11 +494,11 @@ DRAWABLE RescaleFrame(FRAME frame, int width, int height)
 	return ReleaseDrawable(newFrame);
 }
 
-// Creates a new DRAWABLE of specified percentage and scales the passed
+// Creates a new DrawableRef of specified percentage and scales the passed
 // frame onto it. The aspect ratio is preserved.
-DRAWABLE RescalePercentage(FRAME frame, float percentage)
+DrawableRef RescalePercentage(FrameRef frame, float percentage)
 {
-	FRAME newFrame {};
+	FrameRef newFrame {};
 
 	if (!frame || (frame->Bounds.height == 1 && frame->Bounds.width == 1))
 	{
@@ -519,8 +519,8 @@ DRAWABLE RescalePercentage(FRAME frame, float percentage)
 	}
 
 	// scale the hot-spot
-	newFrame->HotSpot.x = (int16_t)(frame->HotSpot.x * percentage);
-	newFrame->HotSpot.y = (int16_t)(frame->HotSpot.y * percentage);
+	newFrame->hotSpot.x = (int16_t)(frame->hotSpot.x * percentage);
+	newFrame->hotSpot.y = (int16_t)(frame->hotSpot.y * percentage);
 
 	tfb::Image* img {frame->image};
 	const uqm::LockGuard imageLock {img->mutex};
@@ -534,7 +534,7 @@ DRAWABLE RescalePercentage(FRAME frame, float percentage)
 	return ReleaseDrawable(newFrame);
 }
 
-bool ReadFramePixelColors(FRAME frame, Color* pixels, int width, int height)
+bool ReadFramePixelColors(FrameRef frame, Color* pixels, int width, int height)
 {
 	if (!frame)
 	{
@@ -550,7 +550,7 @@ bool ReadFramePixelColors(FRAME frame, Color* pixels, int width, int height)
 }
 
 // Warning: this functions bypasses DCQ, which is why it is not a DrawXXX
-bool WriteFramePixelColors(FRAME frame, const Color* pixels, int width, int height)
+bool WriteFramePixelColors(FrameRef frame, const Color* pixels, int width, int height)
 {
 	if (!frame)
 	{
@@ -565,7 +565,7 @@ bool WriteFramePixelColors(FRAME frame, const Color* pixels, int width, int heig
 										 width, height);
 }
 
-bool ReadFramePixelIndexes(FRAME frame, uint8_t* pixels, int width, int height, bool paletted)
+bool ReadFramePixelIndexes(FrameRef frame, uint8_t* pixels, int width, int height, bool paletted)
 {
 	if (!frame)
 	{
@@ -590,7 +590,7 @@ bool ReadFramePixelIndexes(FRAME frame, uint8_t* pixels, int width, int height, 
 }
 
 // Warning: this functions bypasses DCQ, which is why it is not a DrawXXX
-bool WriteFramePixelIndexes(FRAME frame, const uint8_t* pixels, int width, int height)
+bool WriteFramePixelIndexes(FrameRef frame, const uint8_t* pixels, int width, int height)
 {
 	if (!frame)
 	{

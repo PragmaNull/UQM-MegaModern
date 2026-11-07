@@ -167,7 +167,7 @@ static void spawn_point_defense(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (ElementPtr->state_flags & PlayerShip)
 	{
-		HELEMENT hDefense {AllocElement()};
+		ElementHandle hDefense {AllocElement()};
 		if (hDefense)
 		{
 			Element* DefensePtr {};
@@ -186,13 +186,13 @@ static void spawn_point_defense(Element* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hNextObject {};
+		ElementHandle hNextObject {};
 		Element* ShipPtr {};
 
 		bool PaidFor {false};
 
 		LockElement(StarShipPtr->hShip, &ShipPtr);
-		for (HELEMENT hObject {GetTailElement()}; hObject; hObject = hNextObject)
+		for (ElementHandle hObject {GetTailElement()}; hObject; hObject = hNextObject)
 		{
 			Element* ObjectPtr {};
 
@@ -217,7 +217,7 @@ static void spawn_point_defense(Element* ElementPtr)
 				delta_y = WorldToDisplay(delta_y);
 				if ((uint16_t)delta_x <= LaserRange() && (uint16_t)delta_y <= LaserRange() && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LaserRange() * LaserRange())
 				{
-					HELEMENT hPointDefense {};
+					ElementHandle hPointDefense {};
 					LaserDesc LaserBlock;
 
 					if (!PaidFor)
@@ -267,7 +267,7 @@ static void spawn_point_defense(Element* ElementPtr)
 	}
 }
 
-static uint16_t initialize_nuke(Element* ShipPtr, HELEMENT NukeArray[])
+static uint16_t initialize_nuke(Element* ShipPtr, ElementHandle NukeArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;

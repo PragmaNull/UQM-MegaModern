@@ -30,14 +30,14 @@ extern void ToggleMusic(void);
 extern void StopMusic(void);
 extern void ResumeMusic(void);
 extern void PauseMusic(void);
-extern void PlayMusicResume(MUSIC_REF hMusic, uint8_t Volume);
+extern void PlayMusicResume(MusicRef hMusic, uint8_t Volume);
 extern void ToggleSoundEffect(void);
 extern void SeekMusic(uint32_t pos);
 
-extern void PlayMusic(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority);
-extern void PlaySoundEffect(SOUND S, uint16_t Channel, SoundPosition Pos,
+extern void PlayMusic(MusicRef musicRef, bool Continuous, uint8_t Priority);
+extern void PlaySoundEffect(SoundRef S, uint16_t Channel, SoundPosition Pos,
 							void* PositionalObject, uint8_t Priority);
-extern void PlaySpeechEffect(SOUND S, SoundPosition Pos, void* PositionalObject, uint8_t Priority);
+extern void PlaySpeechEffect(SoundRef S, SoundPosition Pos, void* PositionalObject, uint8_t Priority);
 
 
 #if 0 //defined(__cplusplus)

@@ -68,11 +68,11 @@ static auto OscilloscopeRate() { return (c_gameSecond / chooseIfHd(32, 60)); }
 // The highest known stable animation rate is 40fps, so that's what we use.
 static constexpr auto CommAnimRate {c_gameSecond / 40};
 
-static GFXCONTEXT AnimContext;
+static GfxContextRef AnimContext;
 
 ConversationData CommData;
 char shared_phrase_buf[2048];
-FONT ComputerFont;
+FontRef ComputerFont;
 
 static bool TalkingFinished;
 static CommIntroMode curIntroMode = CommIntroMode::Default;
@@ -86,9 +86,9 @@ static uint16_t fadeIndex;
 
 struct ResponseEntry
 {
-	RESPONSE_REF response_ref;
+	ResponseRef response_ref;
 	GfxText response_text;
-	RESPONSE_FUNC response_func;
+	ResponseFunc response_func;
 	// The response text after Lua interpolation, if it needed that.
 	uqstl::string allocedResponse;
 };
@@ -131,8 +131,8 @@ static bool next_page = false;
 static GfxText SubtitleText;
 const static char* last_subtitle;
 
-static GFXCONTEXT TextCacheContext;
-static FRAME TextCacheFrame;
+static GfxContextRef TextCacheContext;
+static FrameRef TextCacheFrame;
 
 
 GfxRect CommWndRect = {
@@ -188,7 +188,7 @@ static int16_t add_text(int status, GfxText* pTextIn)
 	int num_lines = 0;
 	static int16_t last_baseline;
 	bool eol {};
-	GFXCONTEXT OldContext = nullptr;
+	GfxContextRef OldContext = nullptr;
 	GfxRect arrow;
 
 	BatchGraphics();
@@ -567,7 +567,7 @@ void DrawCommBorder(GfxRect r)
 
 static void DrawSISComWindow(void)
 {
-	GFXCONTEXT OldContext {};
+	GfxContextRef OldContext {};
 
 	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::WonLastBattle)
 	{
@@ -763,7 +763,7 @@ static void UpdateSpeechGraphics(void)
 
 	NextTime = GetTimeCounter() + OscilloscopeRate();
 
-	GFXCONTEXT OldContext {SetContext(RadarContext)};
+	GfxContextRef OldContext {SetContext(RadarContext)};
 	DrawOscilloscope();
 	SetContext(SpaceContext);
 	DrawSlider();
@@ -781,7 +781,7 @@ static void UpdateAnimations(bool paused)
 
 	NextTime = GetTimeCounter() + CommAnimRate;
 
-	GFXCONTEXT OldContext {SetContext(AnimContext)};
+	GfxContextRef OldContext {SetContext(AnimContext)};
 	BatchGraphics();
 	// Advance and draw ambient, transit and talk animations
 	const bool change {ProcessCommAnimations(clear_subtitles, paused)};
@@ -882,7 +882,7 @@ static void FadePlayerUI(void)
 
 		NextTime = GetTimeCounter() + c_gameSecond / 15;
 
-		GFXCONTEXT OldContext {SetContext(ScreenContext)};
+		GfxContextRef OldContext {SetContext(ScreenContext)};
 
 		SetContextForeGroundColor(
 			BuildColorRgba(
@@ -1233,7 +1233,7 @@ void AlienTalkSegue(uint16_t wait_track)
 
 	if (!pCurInputState->Initialized)
 	{
-		MUSIC_REF AlienSong = CommData.AlienSong;
+		MusicRef AlienSong = CommData.AlienSong;
 
 		InitSpeechGraphics();
 		SetColorMap(GetColorMapAddress(CommData.AlienColorMap, CommData.AlienColorMapIndex));
@@ -1278,7 +1278,7 @@ struct ConversationSummaryState
 	// extended state
 	bool Initialized;
 	bool PrintNext;
-	SUBTITLE_REF NextSub;
+	SubtitleRef NextSub;
 	const char* LeftOver;
 };
 
@@ -1711,7 +1711,7 @@ static bool DoCommunication(CommEncounterState* pES)
 	return false;
 }
 
-void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
+void DoResponsePhrase(ResponseRef R, ResponseFunc response_func,
 					  char* ConstructStr)
 {
 	CommEncounterState* pES = pCurInputState;
@@ -1815,7 +1815,7 @@ void SetUpCommData(void)
 static void HailAlien(void)
 {
 	CommEncounterState ES {};
-	FONT PlayerFont {};
+	FontRef PlayerFont {};
 	Color TextBack;
 
 	pCurInputState = &ES;
@@ -1877,7 +1877,7 @@ static void HailAlien(void)
 	ES.phrase_buf[0] = '\0';
 
 	SetContext(SpaceContext);
-	FONT OldFont {SetContextFont(PlayerFont)};
+	FontRef OldFont {SetContextFont(PlayerFont)};
 
 	{
 		GfxRect r;
@@ -2200,9 +2200,9 @@ void RaceCommunication(void)
 {
 	uint16_t i {};
 	uint16_t status {};
-	HSHIPFRAG hStarShip {};
+	ShipFragmentHandle hStarShip {};
 	const ShipFragment* FragPtr {};
-	HENCOUNTER hEncounter = 0;
+	EncounterHandle hEncounter = 0;
 	const auto& RaceComm {RaceConversations};
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
@@ -2331,7 +2331,7 @@ void RaceCommunication(void)
 
 		for (uint8_t i {0}; i < NumShips; ++i)
 		{
-			HSHIPFRAG hStarShip {GetStarShipFromIndex(&uqm::gameState().game().npc_built_ship_q, i)};
+			ShipFragmentHandle hStarShip {GetStarShipFromIndex(&uqm::gameState().game().npc_built_ship_q, i)};
 			const ShipFragment* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
 			BriefShipInfo* BSIPtr {&EncounterPtr->ShipList[i]};
 			BSIPtr->race_id = FragPtr->race_id;

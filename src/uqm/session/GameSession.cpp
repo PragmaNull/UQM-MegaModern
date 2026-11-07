@@ -60,7 +60,7 @@ GameState& gameState()
 	return s_noSession;
 }
 
-ACTIVITY& currentActivity()
+ActivityWord& currentActivity()
 {
 	return UQMGame::getInstance().activity();
 }

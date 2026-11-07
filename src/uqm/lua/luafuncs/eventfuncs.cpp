@@ -109,7 +109,7 @@ static int addEvent(lua_State* luaState, EventType type)
 		return 1;
 	}
 
-	HEVENT event {AddEvent(type, month, day, year, static_cast<GameEventId>(eventNum))};
+	EventHandle event {AddEvent(type, month, day, year, static_cast<GameEventId>(eventNum))};
 	lua_pushinteger(luaState, (event == nullptr) ? -1 : 0);
 	return 1;
 }

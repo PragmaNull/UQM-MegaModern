@@ -45,7 +45,7 @@
 
 namespace uqm
 {
-extern FRAME PlayFrame;
+extern FrameRef PlayFrame;
 
 static constexpr auto MaxSavedGames {50};
 static auto SavesPerPage() { return (optWindowType != uqm::WindowStyle::UQM ? 2 : 5); }
@@ -254,7 +254,7 @@ static bool DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 	GfxText lf;
 	Color BackGround;
 	Color ForeGround;
-	FONT Font {};
+	FontRef Font {};
 
 	{
 		r.corner.x = ResScale(2);
@@ -515,7 +515,7 @@ static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, ui
 	r.corner.x = ResScale(30);
 	DrawRectangle(&r, IsHd());
 
-	FONT Font {TinyFont};
+	FontRef Font {TinyFont};
 	lf.baseline.x = r.corner.x + ResScale(3);
 	lf.baseline.y = r.corner.y + ResScale(8);
 
@@ -836,7 +836,7 @@ struct PickGameState
 	// true when saving, false when loading
 	bool success;
 	// true when load/save succeeded
-	FRAME SummaryFrame;
+	FrameRef SummaryFrame;
 };
 
 static void DrawLines(GfxPoint pt, int16_t width)
@@ -883,7 +883,7 @@ static void DrawLabel(GfxPoint pt, int16_t width, uint32_t gamestr)
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf), GameString(gamestr));
 
-	FONT OldFont {SetContextFont(LabelFont)};
+	FontRef OldFont {SetContextFont(LabelFont)};
 	OldColor = SetContextForeGroundColor(SummTextColor);
 
 	GetContextFontLeading(&leading);
@@ -1026,7 +1026,7 @@ static void DrawSaveLoadText(PickGameState* pickState)
 	SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 
-	FONT OldFont {SetContextFont(SafeBool(MicroFont, LabelFont))};
+	FontRef OldFont {SetContextFont(SafeBool(MicroFont, LabelFont))};
 	OldColor = SetContextForeGroundColor(
 		SafeBool(SummTextColor, LoadSaveLabelColor));
 
@@ -1226,7 +1226,7 @@ static void DrawBombPodText(GfxStamp* s)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(SquareFont)};
+	FontRef OldFont {SetContextFont(SquareFont)};
 	OldColor = SetContextForeGroundColor(BlackColor);
 
 	GetContextFontLeading(&leading);
@@ -1304,7 +1304,7 @@ static void DrawNoLimit(void)
 	SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 
-	FONT OldFont {SetContextFont(LabelFont)};
+	FontRef OldFont {SetContextFont(LabelFont)};
 
 	GetContextFontLeading(&leading);
 
@@ -1386,7 +1386,7 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 		// Save the states because we will hack them
 		SaveSS = uqm::gameState().sis();
 
-		GFXCONTEXT OldContext {SetContext(StatusContext)};
+		GfxContextRef OldContext {SetContext(StatusContext)};
 		// Hack StatusContext so we can use standard SIS display funcs
 		GetContextClipRect(&OldRect);
 		r.corner.x = SisOrgX()
@@ -1917,7 +1917,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 
 	LoadGameDescriptions(pickState.summary);
 
-	GFXCONTEXT OldContext {SetContext(SpaceContext)};
+	GfxContextRef OldContext {SetContext(SpaceContext)};
 	// Save the current state of the screen for later restoration
 	DlgStamp = SaveContextFrame(nullptr);
 	GetContextClipRect(&DlgRect);

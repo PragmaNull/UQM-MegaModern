@@ -136,13 +136,13 @@ void crc_processELEMENT(crc_State* state, const Element* val)
 
 void crc_processDispQueue(crc_State* state)
 {
-	HELEMENT nextElement {};
+	ElementHandle nextElement {};
 
 #ifdef DUMP_CRC_OPS
 	size_t i = 0;
 	crc_log("START crc_processDispQueue().");
 #endif
-	for (HELEMENT hElement {GetHeadElement()}; hElement != 0; hElement = nextElement)
+	for (ElementHandle hElement {GetHeadElement()}; hElement != 0; hElement = nextElement)
 	{
 		Element* elementPtr {};
 

@@ -234,7 +234,7 @@ static ConversationData arilou_desc =
 		nullptr,
 };
 
-static void ExitConversation(RESPONSE_REF R)
+static void ExitConversation(ResponseRef R)
 {
 	setSegue(Segue::Peace);
 
@@ -268,7 +268,7 @@ static void ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void ArilouHome(RESPONSE_REF R)
+static void ArilouHome(ResponseRef R)
 {
 	uint8_t i {};
 	ArilouPhrase pStr[4];
@@ -514,7 +514,7 @@ static void ArilouHome(RESPONSE_REF R)
 	Response(ArilouPhrase::ByeFriendlyHomeworld, ExitConversation);
 }
 
-static void AngryHomeArilou(RESPONSE_REF R)
+static void AngryHomeArilou(ResponseRef R)
 {
 	if (PlayerSaid(R, ArilouPhrase::InvadersFromMars))
 	{
@@ -567,7 +567,7 @@ static void AngryHomeArilou(RESPONSE_REF R)
 	}
 }
 
-static void AngrySpaceArilou(RESPONSE_REF R)
+static void AngrySpaceArilou(ResponseRef R)
 {
 	if (PlayerSaid(R, ArilouPhrase::ImSorry))
 	{
@@ -584,7 +584,7 @@ static void AngrySpaceArilou(RESPONSE_REF R)
 	Response(ArilouPhrase::ByeAngrySpace, ExitConversation);
 }
 
-static void FriendlySpaceArilou(RESPONSE_REF R)
+static void FriendlySpaceArilou(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -724,17 +724,17 @@ static void Intro(void)
 	}
 	else if (!uqm::gameState().flag(uqm::GameFlag::MET_ARILOU))
 	{
-		RESPONSE_FUNC RespFunc {};
+		ResponseFunc RespFunc {};
 
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
 			NPCPhrase(ArilouPhrase::InitHello);
-			RespFunc = (RESPONSE_FUNC)FriendlySpaceArilou;
+			RespFunc = (ResponseFunc)FriendlySpaceArilou;
 		}
 		else
 		{
 			NPCPhrase(ArilouPhrase::FrdlyHomeworldHello1);
-			RespFunc = (RESPONSE_FUNC)ArilouHome;
+			RespFunc = (ResponseFunc)ArilouHome;
 			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HOME_VISITS, static_cast<uint32_t>(1));
 		}
 		Response(ArilouPhrase::ConfusedByHello, RespFunc);
@@ -775,7 +775,7 @@ static void Intro(void)
 			NPCPhrase(ArilouPhrase::InitAngryHwldHello);
 			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HOME_VISITS, static_cast<uint32_t>(1));
 
-			AngryHomeArilou((RESPONSE_REF)0);
+			AngryHomeArilou((ResponseRef)0);
 		}
 		else
 		{
@@ -792,7 +792,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_VISITS, static_cast<uint32_t>(NumVisits));
 
-			AngrySpaceArilou((RESPONSE_REF)0);
+			AngrySpaceArilou((ResponseRef)0);
 		}
 	}
 	else
@@ -818,7 +818,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_VISITS, static_cast<uint32_t>(NumVisits));
 
-			FriendlySpaceArilou((RESPONSE_REF)0);
+			FriendlySpaceArilou((ResponseRef)0);
 		}
 		else
 		{
@@ -860,7 +860,7 @@ static void Intro(void)
 				uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 			}
 
-			ArilouHome((RESPONSE_REF)0);
+			ArilouHome((ResponseRef)0);
 		}
 	}
 }

@@ -301,7 +301,7 @@ static void buzzsaw_preprocess(Element* ElementPtr)
 static void buzzsaw_postprocess(Element* ElementPtr)
 {
 	ElementPtr->postprocess_func = 0;
-	HELEMENT hElement {AllocElement()};
+	ElementHandle hElement {AllocElement()};
 	if (hElement)
 	{
 		Element* ListElementPtr {};
@@ -330,7 +330,7 @@ static void buzzsaw_postprocess(Element* ElementPtr)
 	}
 }
 
-static uint16_t initialize_buzzsaw(Element* ShipPtr, HELEMENT SawArray[])
+static uint16_t initialize_buzzsaw(Element* ShipPtr, ElementHandle SawArray[])
 {
 	Starship* StarShipPtr {};
 	MissileDesc MissileBlock;
@@ -398,13 +398,13 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 	if (lpEvalDesc->ObjectPtr)
 	{
-		HELEMENT h {};
-		HELEMENT hNext {};
+		ElementHandle h {};
+		ElementHandle hNext {};
 		Element* BuzzSawPtr {};
 
 		h = (StarShipPtr->old_status_flags & WeaponFlag) ?
 				GetSuccElement(ShipPtr) :
-				(HELEMENT)0;
+				(ElementHandle)0;
 		for (; h; h = hNext)
 		{
 			LockElement(h, &BuzzSawPtr);
@@ -520,7 +520,7 @@ static void spawn_gas_cloud(Element* ElementPtr)
 		 MissileBlock.face +=
 		 (AngleToFacing(FullCircle) / NumGasClouds))
 	{
-		HELEMENT hGasCloud {initialize_missile(&MissileBlock)};
+		ElementHandle hGasCloud {initialize_missile(&MissileBlock)};
 		if (hGasCloud)
 		{
 			Element* GasCloudPtr {};

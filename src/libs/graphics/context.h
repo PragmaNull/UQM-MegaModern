@@ -22,7 +22,7 @@
 
 #include "tfb_draw.h"
 
-typedef uint16_t FBK_FLAGS;
+using FbkFlags = uint16_t;
 inline constexpr auto FbkDirty {1 << 0};
 inline constexpr auto FbkImage {1 << 1};
 
@@ -30,36 +30,36 @@ struct GraphicsContextDesc
 {
 	uint16_t Flags;
 	// Low nibble currently unused
-	// High nibble contains GRAPHICS_STATUS
+	// High nibble contains GraphicsStatusFlags
 
 	Color ForeGroundColor, BackGroundColor;
 	DrawMode Mode;
-	FRAME ForeGroundFrame;
-	FONT Font;
+	FrameRef ForeGroundFrame;
+	FontRef Font;
 
 	GfxRect ClipRect;
 
-	FRAME FontEffect;
+	FrameRef FontEffect;
 	tfb::Image* FontBacking;
-	FBK_FLAGS BackingFlags;
+	FbkFlags BackingFlags;
 
 #ifdef DEBUG
 	const char* name;
-	GFXCONTEXT next;
+	GfxContextRef next;
 #endif
 };
 
 
-extern GFXCONTEXT _pCurContext;
+extern GfxContextRef _pCurContext;
 extern Primitive _locPrim;
 
 inline Color& _get_context_fg_color() { return _pCurContext->ForeGroundColor; }
 inline Color& _get_context_bg_color() { return _pCurContext->BackGroundColor; }
 inline uint16_t& _get_context_flags() { return _pCurContext->Flags; }
-inline FRAME& _get_context_fg_frame() { return _pCurContext->ForeGroundFrame; }
-inline FONT& _get_context_font() { return _pCurContext->Font; }
-inline FBK_FLAGS& _get_context_fbk_flags() { return _pCurContext->BackingFlags; }
-inline FRAME& _get_context_fonteff() { return _pCurContext->FontEffect; }
+inline FrameRef& _get_context_fg_frame() { return _pCurContext->ForeGroundFrame; }
+inline FontRef& _get_context_font() { return _pCurContext->Font; }
+inline FbkFlags& _get_context_fbk_flags() { return _pCurContext->BackingFlags; }
+inline FrameRef& _get_context_fonteff() { return _pCurContext->FontEffect; }
 inline tfb::Image*& _get_context_font_backing() { return _pCurContext->FontBacking; }
 inline DrawMode& _get_context_draw_mode() { return _pCurContext->Mode; }
 
@@ -68,29 +68,29 @@ inline void SwitchContextForeGroundColor(Color c) { _pCurContext->ForeGroundColo
 inline void SwitchContextBackGroundColor(Color c) { _pCurContext->BackGroundColor = c; }
 inline void SetContextFlags(uint16_t f) { _pCurContext->Flags |= f; }
 inline void UnsetContextFlags(uint16_t f) { _pCurContext->Flags &= ~f; }
-inline void SwitchContextFGFrame(FRAME f) { _pCurContext->ForeGroundFrame = f; }
-inline void SetContextFBkFlags(FBK_FLAGS f) { _pCurContext->BackingFlags |= f; }
-inline void UnsetContextFBkFlags(FBK_FLAGS f) { _pCurContext->BackingFlags &= ~f; }
+inline void SwitchContextFGFrame(FrameRef f) { _pCurContext->ForeGroundFrame = f; }
+inline void SetContextFBkFlags(FbkFlags f) { _pCurContext->BackingFlags |= f; }
+inline void UnsetContextFBkFlags(FbkFlags f) { _pCurContext->BackingFlags &= ~f; }
 
-inline void SwitchContextFont(FONT f)
+inline void SwitchContextFont(FontRef f)
 {
 	_pCurContext->Font = f;
 	SetContextFBkFlags(FbkDirty);
 }
 
-inline void SwitchContextFontEffect(FRAME f)
+inline void SwitchContextFontEffect(FrameRef f)
 {
 	_pCurContext->FontEffect = f;
 	SetContextFBkFlags(FbkDirty);
 }
 
-typedef uint8_t GRAPHICS_STATUS;
+using GraphicsStatusFlags = uint8_t;
 
-extern GRAPHICS_STATUS _GraphicsStatusFlags;
-inline constexpr auto GraphicsActiveFlag {(GRAPHICS_STATUS)(1 << 0)};
-inline constexpr auto GraphicsVisible {(GRAPHICS_STATUS)(1 << 1)};
-inline constexpr auto ContextActiveFlag {(GRAPHICS_STATUS)(1 << 2)};
-inline constexpr auto DrawableActiveFlag {(GRAPHICS_STATUS)(1 << 3)};
+extern GraphicsStatusFlags _GraphicsStatusFlags;
+inline constexpr auto GraphicsActiveFlag {(GraphicsStatusFlags)(1 << 0)};
+inline constexpr auto GraphicsVisible {(GraphicsStatusFlags)(1 << 1)};
+inline constexpr auto ContextActiveFlag {(GraphicsStatusFlags)(1 << 2)};
+inline constexpr auto DrawableActiveFlag {(GraphicsStatusFlags)(1 << 3)};
 inline void DeactivateGraphics() { _GraphicsStatusFlags &= ~GraphicsActiveFlag; }
 inline void ActivateGraphics() { _GraphicsStatusFlags |= GraphicsActiveFlag; }
 inline bool GraphicsActive() { return (_GraphicsStatusFlags & GraphicsActiveFlag) != 0; }
@@ -103,10 +103,10 @@ inline void DeactivateDrawable() { _GraphicsStatusFlags &= ~DrawableActiveFlag; 
 inline void ActivateDrawable() { _GraphicsStatusFlags |= DrawableActiveFlag; }
 inline bool DrawableActive() { return (_GraphicsStatusFlags & DrawableActiveFlag) != 0; }
 
-inline constexpr auto SystemActive {(GRAPHICS_STATUS)(ContextActiveFlag | DrawableActiveFlag)};
+inline constexpr auto SystemActive {(GraphicsStatusFlags)(ContextActiveFlag | DrawableActiveFlag)};
 
 inline bool GraphicsSystemActive() { return (_GraphicsStatusFlags & SystemActive) == SystemActive; }
-inline GRAPHICS_STATUS GraphicsStatus() { return _GraphicsStatusFlags & (GRAPHICS_STATUS)(GraphicsActiveFlag | GraphicsVisible); }
+inline GraphicsStatusFlags GraphicsStatus() { return _GraphicsStatusFlags & (GraphicsStatusFlags)(GraphicsActiveFlag | GraphicsVisible); }
 
 // pValidRect or origin may be nullptr
 bool GetContextValidRect(GfxRect* pValidRect, GfxPoint* origin);

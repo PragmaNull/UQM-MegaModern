@@ -174,7 +174,7 @@ static ConversationData blackurq_desc =
 		nullptr,
 };
 
-static void CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(ResponseRef R)
 {
 	uint8_t NumVisits {};
 
@@ -338,7 +338,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void Frenzy(RESPONSE_REF R)
+static void Frenzy(ResponseRef R)
 {
 	(void)R; // ignored
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
@@ -388,7 +388,7 @@ static void Frenzy(RESPONSE_REF R)
 	}
 }
 
-static void KohrAhStory(RESPONSE_REF R)
+static void KohrAhStory(ResponseRef R)
 {
 	if (PlayerSaid(R, KohrAhPhrase::KeyPhrase))
 	{
@@ -440,7 +440,7 @@ static void KohrAhStory(RESPONSE_REF R)
 	Response(KohrAhPhrase::GuessThatsAll, CombatIsInevitable);
 }
 
-static void DieHuman(RESPONSE_REF R)
+static void DieHuman(ResponseRef R)
 {
 	(void)R; // ignored
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
@@ -552,7 +552,7 @@ static void Intro(void)
 					break;
 			}
 
-			Frenzy((RESPONSE_REF)0);
+			Frenzy((ResponseRef)0);
 		}
 		else
 		{
@@ -573,7 +573,7 @@ static void Intro(void)
 					break;
 			}
 
-			DieHuman((RESPONSE_REF)0);
+			DieHuman((ResponseRef)0);
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_VISITS, static_cast<uint32_t>(NumVisits));
 	}

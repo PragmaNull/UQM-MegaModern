@@ -124,7 +124,7 @@ static RaceDesc arilou_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t initialize_autoaim_laser(Element* ShipPtr, HELEMENT LaserArray[])
+static uint16_t initialize_autoaim_laser(Element* ShipPtr, ElementHandle LaserArray[])
 {
 	uint16_t orig_facing {};
 	int16_t delta_facing {};

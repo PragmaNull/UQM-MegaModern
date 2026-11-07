@@ -74,7 +74,7 @@ static bool GenerateShofixti_initNpcs(SolarSystemState* solarSys)
 		if (uqm::gameState().game().BattleGroupRef == 0
 			|| !GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp))
 		{
-			HSHIPFRAG hStarShip {};
+			ShipFragmentHandle hStarShip {};
 
 			if (uqm::gameState().game().BattleGroupRef == 0)
 			{
@@ -304,7 +304,7 @@ static void check_old_shofixti(void)
 		return; // nothing to check
 	}
 
-	HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
+	IpGroupHandle hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 	if (!hGroup)
 	{
 		return; // still nothing to check

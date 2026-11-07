@@ -55,12 +55,12 @@ struct PresentationInputState
 	TimeCount TimeOut;
 	int TimeOutOnSkip;
 	const uqstl::vector<uqm::SlideCommand>* Commands;
-	FONT Fonts[uqm::c_slideshowMaxFonts];
-	FRAME Frame;
-	MUSIC_REF MusicRef;
+	FontRef Fonts[uqm::c_slideshowMaxFonts];
+	FrameRef Frame;
+	MusicRef musicRef;
 	bool Batched;
-	FRAME SisFrame;
-	FRAME RotatedFrame;
+	FrameRef SisFrame;
+	FrameRef RotatedFrame;
 	int LastDrawKind;
 	int LastAngle;
 	size_t OperIndex;
@@ -103,7 +103,7 @@ struct VideoInputState
 	// standard state required by DoInput
 	bool (*InputFunc)(void* pInputState);
 
-	LEGACY_VIDEO_REF CurVideo;
+	LegacyVideoRef CurVideo;
 };
 
 static bool DoPresentation(void* pIS);
@@ -173,18 +173,18 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 	const auto ModuleTopXP = [&] {
 		return ModuleTopX();
 	};
-	FRAME SisFrame {};
+	FrameRef SisFrame {};
 	GfxStamp s;
 	GfxRect r;
-	HOT_SPOT hs;
+	HotSpot hs;
 	int slot {};
 	uint16_t piece {};
 	Color SisBack;
 
-	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
+	GfxContextRef OldContext {SetContext(OffScreenContext)};
 
-	FRAME SkelFrame {CaptureDrawable(LoadGraphic(SisskelMaskPmapAnimRes))};
-	FRAME ModuleFrame {CaptureDrawable(LoadGraphic(SismodsMaskPmapAnimRes))};
+	FrameRef SkelFrame {CaptureDrawable(LoadGraphic(SisskelMaskPmapAnimRes))};
+	FrameRef ModuleFrame {CaptureDrawable(LoadGraphic(SismodsMaskPmapAnimRes))};
 
 	GetFrameRect(SkelFrame, &r);
 	SisFrame = CaptureDrawable(CreateDrawable(
@@ -273,7 +273,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 	pPIS->SisFrame = SisFrame;
 }
 
-static void DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
+static void DoSpinText(const char* buf, int16_t x, int16_t y, FrameRef repair, bool* skip)
 {
 	GfxText Text;
 
@@ -740,7 +740,7 @@ static bool DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::Font:
 				{ /* set and/or load a font */
-					FONT* const pFont {&pPIS->Fonts[cmd.index]};
+					FontRef* const pFont {&pPIS->Fonts[cmd.index]};
 
 					if (!cmd.text.empty())
 					{ /* asked to load a font */
@@ -765,13 +765,13 @@ static bool DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::Music:
 				{ /* set music */
-					if (pPIS->MusicRef)
+					if (pPIS->musicRef)
 					{
 						StopMusic();
-						DestroyMusic(pPIS->MusicRef);
+						DestroyMusic(pPIS->musicRef);
 					}
-					pPIS->MusicRef = LoadMusicFile(cmd.text.c_str());
-					PlayMusic(pPIS->MusicRef, false, 1);
+					pPIS->musicRef = LoadMusicFile(cmd.text.c_str());
+					PlayMusic(pPIS->musicRef, false, 1);
 					break;
 				}
 			case uqm::SlideOp::Ditty:
@@ -785,14 +785,14 @@ static bool DoPresentation(void* pIS)
 						fmt::format_to_sz_n(pPIS->Buffer, "ship.{}.ditty", cmd.text);
 					}
 
-					if (pPIS->MusicRef)
+					if (pPIS->musicRef)
 					{
 						StopMusic();
-						DestroyMusic(pPIS->MusicRef);
+						DestroyMusic(pPIS->musicRef);
 					}
 
-					pPIS->MusicRef = LoadMusicInstance(pPIS->Buffer);
-					PlayMusic(pPIS->MusicRef, false, 1);
+					pPIS->musicRef = LoadMusicInstance(pPIS->Buffer);
+					PlayMusic(pPIS->musicRef, false, 1);
 					break;
 				}
 			case uqm::SlideOp::Wait:
@@ -1236,7 +1236,7 @@ static bool DoPresentation(void* pIS)
 					break;
 				}
 			case uqm::SlideOp::GetRect:
-				{ /* Get currently drawn FRAME rect */
+				{ /* Get currently drawn FrameRef rect */
 					if (pPIS->HaveFrame)
 					{
 						GetFrameRect(SetAbsFrameIndex(
@@ -1362,9 +1362,9 @@ static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& comman
 	pis.Commands = &commands;
 	pis.OperIndex = 0;
 
-	GFXCONTEXT OldContext {SetContext(ScreenContext)};
+	GfxContextRef OldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&OldRect);
-	FONT OldFont {SetContextFont(nullptr)};
+	FontRef OldFont {SetContextFont(nullptr)};
 	SetContextBackGroundColor(BlackColor);
 
 	SetMenuSounds(MenuSoundNone, MenuSoundNone);
@@ -1376,14 +1376,14 @@ static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& comman
 	pis.LastSyncTime = pis.StartTime;
 	DoInput(&pis, true);
 
-	if (pis.MusicRef && PlayingStream(MusicSource))
+	if (pis.musicRef && PlayingStream(MusicSource))
 	{
 		SleepThreadUntil(FadeMusic(0, c_gameSecond));
 		StopMusic();
 		FadeMusic(NormalVolume, TimePeriod {});
 	}
 
-	DestroyMusic(pis.MusicRef);
+	DestroyMusic(pis.musicRef);
 	DestroyDrawable(ReleaseDrawable(pis.RotatedFrame));
 	DestroyDrawable(ReleaseDrawable(pis.Frame));
 	for (int i {0}; i < uqm::c_slideshowMaxFonts; ++i)
@@ -1458,13 +1458,13 @@ static void FadeClearScreen(void)
 	FadeScreen(ScreenFadeType::FadeAllToColor, TimePeriod {});
 }
 
-static bool ShowLegacyVideo(LEGACY_VIDEO vid)
+static bool ShowLegacyVideo(LegacyVideo vid)
 {
 	VideoInputState vis;
 
 	FadeClearScreen();
 
-	LEGACY_VIDEO_REF ref {PlayLegacyVideo(vid)};
+	LegacyVideoRef ref {PlayLegacyVideo(vid)};
 	if (!ref)
 	{
 		return false;
@@ -1494,7 +1494,7 @@ bool ShowPresentation(RESOURCE res)
 	}
 	else if (!strcmp(resType, "3DOVID"))
 	{
-		LEGACY_VIDEO vid = LoadLegacyVideoInstance(res);
+		LegacyVideo vid = LoadLegacyVideoInstance(res);
 		const bool result = ShowLegacyVideo(vid);
 		DestroyLegacyVideo(vid);
 		return result;

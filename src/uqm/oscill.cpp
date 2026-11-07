@@ -33,14 +33,14 @@
 
 namespace uqm
 {
-static FRAME scope_frame;
+static FrameRef scope_frame;
 static int scope_init = 0;
-static FRAME scopeWork;
+static FrameRef scopeWork;
 static GfxExtent scopeSize;
 static uqstl::vector<uint8_t> scopeData {};
 bool oscillDisabled = false;
 
-void InitOscilloscope(FRAME scopeBg)
+void InitOscilloscope(FrameRef scopeBg)
 {
 	scope_frame = scopeBg;
 	if (!scope_init)
@@ -100,7 +100,7 @@ void DrawOscilloscopeLines(GfxStamp* s, uint8_t* scope_data, bool nonStop, bool 
 	int i {};
 	Color scopeColor;
 
-	GFXCONTEXT oldContext {SetContext(OffScreenContext)};
+	GfxContextRef oldContext {SetContext(OffScreenContext)};
 	SetContextFGFrame(scopeWork);
 	SetContextClipRect(nullptr);
 
@@ -198,7 +198,7 @@ void FlattenOscilloscope(void)
 {
 	GfxStamp s;
 
-	GFXCONTEXT OldContext {SetContext(RadarContext)};
+	GfxContextRef OldContext {SetContext(RadarContext)};
 
 	DrawOscilloscopeLines(&s, nullptr, false, false);
 	s.origin = MAKE_POINT(0, 0);
@@ -223,7 +223,7 @@ bool sliderDisabled = false;
  * f - image for the slider
  */
 
-void InitSlider(int x, int y, int width, FRAME sliderFrame, FRAME buttonFrame)
+void InitSlider(int x, int y, int width, FrameRef sliderFrame, FrameRef buttonFrame)
 {
 	const GfxExtent sliderSize = GetFrameBounds(sliderFrame);
 	const GfxExtent buttonSize = GetFrameBounds(buttonFrame);
@@ -239,7 +239,7 @@ void InitSlider(int x, int y, int width, FRAME sliderFrame, FRAME buttonFrame)
 	sliderSpace = width - buttonSize.width;
 }
 
-void SetSliderImage(FRAME f)
+void SetSliderImage(FrameRef f)
 {
 	sliderChanged = true;
 	buttonStamp.frame = f;

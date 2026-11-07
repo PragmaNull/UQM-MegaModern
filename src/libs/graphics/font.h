@@ -61,7 +61,7 @@ struct FontDesc
 };
 
 
-extern FONT _CurFontPtr;
+extern FontRef _CurFontPtr;
 
 // A font is a directory of glyph images, or a zip archive of them.
 extern void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path);

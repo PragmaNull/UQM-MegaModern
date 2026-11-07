@@ -18,12 +18,12 @@
 
 #include "gfxintrn.h"
 
-INTERSECT_CODE BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* pinter)
+IntersectCode BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* pinter)
 {
 	int16_t x1 {};
 	int16_t delta {};
 
-	INTERSECT_CODE intersect_code {IntersectNoclip};
+	IntersectCode intersect_code {IntersectNoclip};
 
 	x1 = pr1->corner.x - pr2->corner.x;
 
@@ -88,7 +88,7 @@ INTERSECT_CODE BoxIntersect(GfxRect* pr1, GfxRect* pr2, GfxRect* pinter)
 		}
 	}
 
-	return ((INTERSECT_CODE)0);
+	return ((IntersectCode)0);
 }
 
 void BoxUnion(GfxRect* pr1, GfxRect* pr2, GfxRect* punion)
@@ -111,7 +111,7 @@ void BoxUnion(GfxRect* pr1, GfxRect* pr2, GfxRect* punion)
 
 
 #if NEVER // FIXME - I think this is broken, but keeping it around for reference
-		  // FIXME - just in case.
+	// FIXME - just in case.
 
 #if 1 /* alter based on 0 widths */
 
