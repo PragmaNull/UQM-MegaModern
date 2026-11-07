@@ -29,7 +29,7 @@
 #include "libs/strlib.h"
 
 // Copies 'len' bytes of 'value' into the entry. A length of 0 empties the entry.
-void SetStringTableEntry(uqm::StringTable* strtab, int index, const void* value, int len);
+void SetStringTableEntry(uqm::StringTable* strtab, int index, uqstl::string_view value);
 
 void* _GetStringData(const ResourceFile& resource);
 void* _GetBinaryTableData(const ResourceFile& resource);

@@ -640,8 +640,10 @@ void InstallBombAtEarth(void)
 }
 
 // XXX: Doesn't really belong in this file.
-uint16_t WrapText(const char* pStr, uint16_t len, GfxText* tarray, int16_t field_width)
+uint16_t WrapText(uqstl::string_view text, GfxText* tarray, int16_t field_width)
 {
+	const char* pStr {text.data()};
+	uint16_t len {static_cast<uint16_t>(text.size())};
 	uint16_t num_lines {0};
 	do
 	{

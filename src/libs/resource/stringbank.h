@@ -41,12 +41,12 @@ void StringBank_Free(stringbank* bank);
 
 /* Put str or n chars after str into the string bank. */
 const char* StringBank_AddString(stringbank* bank, const char* str);
-const char* StringBank_AddSubstring(stringbank* bank, const char* str, unsigned int n);
+const char* StringBank_AddSubstring(stringbank* bank, uqstl::string_view str);
 
 /* Put str or n chars after str into the string bank if it's not already
    there.  Much slower. */
 const char* StringBank_AddOrFindString(stringbank* bank, const char* str);
-const char* StringBank_AddOrFindSubstring(stringbank* bank, const char* str, unsigned int n);
+const char* StringBank_AddOrFindSubstring(stringbank* bank, uqstl::string_view str);
 
 /* Split a string s into at most n substrings, separated by splitchar.
    Pointers to these substrings will be stored in result; the

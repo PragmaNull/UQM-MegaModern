@@ -300,8 +300,7 @@ static uint16_t initialize_nuke(Element* ShipPtr, ElementHandle NukeArray[])
 	return (1);
 }
 
-static void human_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							   uint16_t ConcernCounter)
+static void human_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -321,7 +320,7 @@ static void human_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr = nullptr;
 
 	ship_intelligence(ShipPtr,
-					  ObjectsOfConcern, ConcernCounter);
+					  ObjectsOfConcern);
 
 	if (StarShipPtr->weapon_counter == 0)
 	{

@@ -218,7 +218,7 @@ struct AnimFilterSet
 extern AnimFilterSet FilterData;
 
 // Returns true if there was an animation change
-extern bool DrawAlienFrame(AnimSequence* pSeq, uint16_t Num, bool fullRedraw);
+extern bool DrawAlienFrame(uqstl::span<AnimSequence> pSeq, bool fullRedraw);
 extern void InitCommAnimations(void);
 extern bool ProcessCommAnimations(bool fullRedraw, bool paused);
 extern void ShutYourMouth(void);

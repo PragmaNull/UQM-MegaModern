@@ -30,22 +30,22 @@
 
 static constexpr int c_stringTableVersion {1};
 
-static void dword_convert(uint32_t* dword_array, uint16_t num_dwords)
+static void dword_convert(uqstl::span<uint32_t> dword_array)
 {
-	const uint8_t* p = (uint8_t*)dword_array;
+	const uint8_t* p {reinterpret_cast<const uint8_t*>(dword_array.data())};
 
-	do
+	for (uint32_t& dword : dword_array)
 	{
-		*dword_array++ = uqm::makeDword(
+		dword = uqm::makeDword(
 			uqm::makeWord(p[3], p[2]),
 			uqm::makeWord(p[1], p[0]));
 		p += 4;
-	} while (--num_dwords);
+	}
 }
 
-void SetStringTableEntry(uqm::StringTable* strtab, int index, const void* value, int len)
+void SetStringTableEntry(uqm::StringTable* strtab, int index, uqstl::string_view value)
 {
-	strtab->set(static_cast<size_t>(index), uqstl::string_view {static_cast<const char*>(value), static_cast<size_t>(len)});
+	strtab->set(static_cast<size_t>(index), value);
 }
 
 namespace
@@ -123,7 +123,7 @@ void setEntry(uqm::StringTable* table, int index, const uqstl::optional<uqstl::s
 {
 	if (text)
 	{
-		SetStringTableEntry(table, index, text->c_str(), static_cast<int>(text->size() + 1));
+		SetStringTableEntry(table, index, {text->c_str(), text->size() + 1});
 	}
 }
 
@@ -311,7 +311,7 @@ void* _GetBinaryTableData(const ResourceFile& resource)
 	}
 	const uint32_t length {resource.length - static_cast<uint32_t>(sizeof(uint32_t))};
 	uqstl::vector<uint32_t> data((length + 3) / 4, 0);
-	if (!resource.file.readExact(uqm::io::asBytes(data.data(), length)))
+	if (!resource.file.readExact(uqstl::as_writable_bytes(uqstl::span {data}).first(length)))
 	{
 		return nullptr;
 	}
@@ -320,7 +320,7 @@ void* _GetBinaryTableData(const ResourceFile& resource)
 	{
 		uint32_t* fileData {data.data()};
 
-		dword_convert(fileData, 1); /* Length */
+		dword_convert({fileData, 1}); /* Length */
 
 		lpST = new uqm::StringTable {fileData[0], 0};
 		if (lpST)
@@ -329,11 +329,11 @@ void* _GetBinaryTableData(const ResourceFile& resource)
 
 			size = static_cast<int>(lpST->size());
 
-			dword_convert(fileData + 1, size + 1);
-			const uint8_t* stringptr {(uint8_t*)(fileData + 2 + size + fileData[1])};
+			dword_convert({fileData + 1, static_cast<size_t>(size) + 1});
+			const char* stringptr {reinterpret_cast<const char*>(fileData + 2 + size + fileData[1])};
 			for (int i {0}; i < size; i++)
 			{
-				SetStringTableEntry(lpST, i, stringptr, fileData[2 + i]);
+				SetStringTableEntry(lpST, i, {stringptr, fileData[2 + i]});
 				stringptr += fileData[2 + i];
 			}
 		}

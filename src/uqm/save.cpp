@@ -397,8 +397,7 @@ static void PrepareSummary(SaveSummaryData* SummPtr, const char* name)
 			break;
 		case ActivityKind::InInterplanetary:
 			// Get a better planet name for summary
-			GetPlanetOrMoonName(SummPtr->SS.PlanetName.data(),
-								sizeof(SummPtr->SS.PlanetName));
+			GetPlanetOrMoonName(SummPtr->SS.PlanetName);
 			if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0)
 			{
 				SummPtr->Activity = ActivityKind::InStarbase;
@@ -435,8 +434,7 @@ static void PrepareSummary(SaveSummaryData* SummPtr, const char* name)
 		}
 	}
 
-	SummPtr->NumDevices = InventoryDevices(SummPtr->DeviceList.data(),
-										   MaxExclusiveDevices);
+	SummPtr->NumDevices = InventoryDevices(SummPtr->DeviceList);
 
 	SummPtr->Flags = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS)
 				   | (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SPEED) << (4 + 0))

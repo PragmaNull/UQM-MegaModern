@@ -93,8 +93,8 @@ GameStateFile* OpenStateFile(int stateFile, const char* mode);
 void CloseStateFile(GameStateFile* fp);
 void DeleteStateFile(int stateFile);
 uint32_t LengthStateFile(GameStateFile* fp);
-int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GameStateFile* fp);
-int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GameStateFile* fp);
+bool ReadStateFile(GameStateFile* fp, uqstl::span<uqstl::byte> buf);
+bool WriteStateFile(GameStateFile* fp, uqstl::span<const uqstl::byte> buf);
 int SeekStateFile(GameStateFile* fp, long offset, int whence);
 
 static inline uint16_t sread_8(GameStateFile* fp, uint8_t* v)
@@ -104,7 +104,7 @@ static inline uint16_t sread_8(GameStateFile* fp, uint8_t* v)
 	{
 		v = &t;
 	}
-	return ReadStateFile(v, 1, 1, fp);
+	return ReadStateFile(fp, uqstl::as_writable_bytes(uqstl::span {v, 1}));
 }
 
 static inline uint16_t sread_16(GameStateFile* fp, uint16_t* v)
@@ -114,7 +114,7 @@ static inline uint16_t sread_16(GameStateFile* fp, uint16_t* v)
 	{
 		v = &t;
 	}
-	return ReadStateFile(v, 2, 1, fp);
+	return ReadStateFile(fp, uqstl::as_writable_bytes(uqstl::span {v, 1}));
 }
 
 static inline uint16_t sread_16s(GameStateFile* fp, int16_t* v)
@@ -136,16 +136,14 @@ static inline uint16_t sread_32(GameStateFile* fp, uint32_t* v)
 	{
 		v = &t;
 	}
-	return ReadStateFile(v, 4, 1, fp);
+	return ReadStateFile(fp, uqstl::as_writable_bytes(uqstl::span {v, 1}));
 }
 
-static inline uint16_t sread_a32(GameStateFile* fp, uint32_t* ar, uint16_t count)
+static inline uint16_t sread_a32(GameStateFile* fp, uqstl::span<uint32_t> ar)
 {
-	assert(ar != nullptr);
-
-	for (; count > 0; --count, ++ar)
+	for (uint32_t& value : ar)
 	{
-		if (sread_32(fp, ar) != 1)
+		if (sread_32(fp, &value) != 1)
 		{
 			return 0;
 		}
@@ -155,24 +153,24 @@ static inline uint16_t sread_a32(GameStateFile* fp, uint32_t* ar, uint16_t count
 
 static inline uint16_t swrite_8(GameStateFile* fp, uint8_t v)
 {
-	return WriteStateFile(&v, 1, 1, fp);
+	return WriteStateFile(fp, uqstl::as_bytes(uqstl::span {&v, 1}));
 }
 
 static inline uint16_t swrite_16(GameStateFile* fp, uint16_t v)
 {
-	return WriteStateFile(&v, 2, 1, fp);
+	return WriteStateFile(fp, uqstl::as_bytes(uqstl::span {&v, 1}));
 }
 
 static inline uint16_t swrite_32(GameStateFile* fp, uint32_t v)
 {
-	return WriteStateFile(&v, 4, 1, fp);
+	return WriteStateFile(fp, uqstl::as_bytes(uqstl::span {&v, 1}));
 }
 
-static inline uint16_t swrite_a32(GameStateFile* fp, const uint32_t* ar, uint16_t count)
+static inline uint16_t swrite_a32(GameStateFile* fp, uqstl::span<const uint32_t> ar)
 {
-	for (; count > 0; --count, ++ar)
+	for (const uint32_t value : ar)
 	{
-		if (swrite_32(fp, *ar) != 1)
+		if (swrite_32(fp, value) != 1)
 		{
 			return 0;
 		}

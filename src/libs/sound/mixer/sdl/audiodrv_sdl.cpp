@@ -263,8 +263,8 @@ static void audioCallback(void* userdata, SDL_AudioStream* audioStream, int addi
 		return;
 	}
 	s_mixBuffer.resize(additionalAmount);
-	mixer_MixChannels(userdata, s_mixBuffer.data(), additionalAmount);
-	SDL_PutAudioStreamData(audioStream, s_mixBuffer.data(), additionalAmount);
+	mixer_MixChannels(userdata, s_mixBuffer);
+	SDL_PutAudioStreamData(audioStream, s_mixBuffer.data(), static_cast<int>(s_mixBuffer.size()));
 }
 
 /*
@@ -443,8 +443,7 @@ void mixSDL_GetBufferi(audio_Object bufobj, int32_t pname,
 	*value = temp;
 }
 
-void mixSDL_BufferData(audio_Object bufobj, uint32_t format, void* data,
-					   uint32_t size, uint32_t freq)
+void mixSDL_BufferData(audio_Object bufobj, uint32_t format, uqstl::span<const uint8_t> data, uint32_t freq)
 {
-	mixer_BufferData((mixer_Object)bufobj, format, data, size, freq);
+	mixer_BufferData((mixer_Object)bufobj, format, data, freq);
 }

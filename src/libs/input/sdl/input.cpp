@@ -510,8 +510,7 @@ void TFB_ResetControls(void)
 	lastchar = 0;
 }
 
-void InterrogateInputState(int templat, int control, int index, char* buffer,
-						   int maxlen)
+void InterrogateInputState(int templat, int control, int index, uqstl::span<char> buffer)
 {
 	VControlGesture* g = ControlPtr(templat, control, index);
 
@@ -546,26 +545,26 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 	switch (g->type)
 	{
 		case VControlGestureType::Key:
-			fmt::format_to_sz_n(buffer, maxlen, "{}",
+			fmt::format_to_sz_n(buffer, "{}",
 								VControl_code2name(g->gesture.key));
-			buffer[maxlen - 1] = 0;
+			buffer[buffer.size() - 1] = 0;
 			break;
 		case VControlGestureType::JoyButton:
 			switch (uqm::UQMOptions::read().optControllerType)
 			{
 				case uqm::ControllerType::XBox:
-					fmt::format_to_sz_n(buffer, maxlen, "[J{} {}]",
+					fmt::format_to_sz_n(buffer, "[J{} {}]",
 										g->gesture.button.port,
 										xbx_buttons[g->gesture.button.index]);
 					break;
 				case uqm::ControllerType::Playstation:
-					fmt::format_to_sz_n(buffer, maxlen, "[J{} {}]",
+					fmt::format_to_sz_n(buffer, "[J{} {}]",
 										g->gesture.button.port,
 										ds4_buttons[g->gesture.button.index]);
 					break;
 				case uqm::ControllerType::KeyboardMouse:
 				default:
-					fmt::format_to_sz_n(buffer, maxlen, "[J{} B{}]",
+					fmt::format_to_sz_n(buffer, "[J{} B{}]",
 										g->gesture.button.port,
 										g->gesture.button.index);
 					break;
@@ -575,20 +574,20 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 			switch (uqm::UQMOptions::read().optControllerType)
 			{
 				case uqm::ControllerType::XBox:
-					fmt::format_to_sz_n(buffer, maxlen, "[J{} {}{}]",
+					fmt::format_to_sz_n(buffer, "[J{} {}{}]",
 										g->gesture.axis.port,
 										xbx_axes[g->gesture.axis.index],
 										g->gesture.axis.polarity > 0 ? '+' : '-');
 					break;
 				case uqm::ControllerType::Playstation:
-					fmt::format_to_sz_n(buffer, maxlen, "[J{} {}{}]",
+					fmt::format_to_sz_n(buffer, "[J{} {}{}]",
 										g->gesture.axis.port,
 										ds4_axes[g->gesture.axis.index],
 										g->gesture.axis.polarity > 0 ? '+' : '-');
 					break;
 				case uqm::ControllerType::KeyboardMouse:
 				default:
-					fmt::format_to_sz_n(buffer, maxlen, "[J{} A{} {}]",
+					fmt::format_to_sz_n(buffer, "[J{} A{} {}]",
 										g->gesture.axis.port,
 										g->gesture.axis.index,
 										g->gesture.axis.polarity > 0 ? '+' : '-');

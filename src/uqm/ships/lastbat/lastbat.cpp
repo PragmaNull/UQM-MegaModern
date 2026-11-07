@@ -741,10 +741,9 @@ static void sentinel_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	}
 }
 
-static void samatra_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								 uint16_t ConcernCounter)
+static void samatra_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 }
 
 static void samatra_postprocess(Element* ElementPtr)

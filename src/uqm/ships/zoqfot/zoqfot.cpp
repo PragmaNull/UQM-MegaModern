@@ -302,8 +302,7 @@ static void spawn_tongue(Element* ElementPtr)
 	}
 }
 
-static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								   uint16_t ConcernCounter)
+static void zoqfotpik_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -340,7 +339,7 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 	}
 
 	++StarShipPtr->weapon_counter;
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 	--StarShipPtr->weapon_counter;
 
 	if (StarShipPtr->weapon_counter == 0)
@@ -348,20 +347,19 @@ static void zoqfotpik_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 		StarShipPtr->ship_input_state &= ~StatusFlags::Weapon;
 		if (!GiveTongueJob)
 		{
-			ObjectsOfConcern += ConcernCounter;
-			while (ConcernCounter--)
+			for (size_t ConcernCounter {ObjectsOfConcern.size()}; ConcernCounter-- > 0;)
 			{
-				--ObjectsOfConcern;
-				if (ObjectsOfConcern->ObjectPtr
+				ObjectEvaluation* const pConcern {&ObjectsOfConcern[ConcernCounter]};
+				if (pConcern->ObjectPtr
 					&& (ConcernCounter == IntelObjectIndex::EnemyShip
 						|| (ConcernCounter == IntelObjectIndex::EnemyWeapon
-							&& ObjectsOfConcern->MoveState != MovementState::Avoid
+							&& pConcern->MoveState != MovementState::Avoid
 #ifdef NEVER
 							&& !(StarShipPtr->control & STANDARD_RATING)
 #endif /* NEVER */
 								))
 					&& ship_weapons(ShipPtr,
-									ObjectsOfConcern->ObjectPtr, DisplayToWorld(ResScale(20))))
+									pConcern->ObjectPtr, DisplayToWorld(ResScale(20))))
 				{
 					StarShipPtr->ship_input_state |= StatusFlags::Weapon;
 					break;

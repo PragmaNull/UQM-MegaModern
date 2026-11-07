@@ -57,7 +57,7 @@ uqm::UniChar GetLastCharacter(void);
 
 /* Interrogating the current key configuration */
 
-void InterrogateInputState(int templat, int control, int index, char* buffer, int maxlen);
+void InterrogateInputState(int templat, int control, int index, uqstl::span<char> buffer);
 void RemoveInputState(int templat, int control, int index);
 void RebindInputState(int templat, int control, int index);
 

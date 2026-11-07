@@ -36,7 +36,7 @@ extern void ShowRemainingCapacity(void);
 extern void DrawRainbowPlanet(uint16_t planet);
 extern bool InvokeSpawner(void);
 
-extern int16_t InventoryDevices(uint8_t* pDeviceMap, uint16_t Size);
+extern int16_t InventoryDevices(uqstl::span<uint8_t> pDeviceMap);
 
 extern FontRef ModuleFont;
 

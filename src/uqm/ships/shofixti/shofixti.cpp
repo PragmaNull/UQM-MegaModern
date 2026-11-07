@@ -418,12 +418,11 @@ static void self_destruct(Element* ElementPtr)
 	ElementPtr->death_func = shofixti_destruct_death;
 }
 
-static void shofixti_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								  uint16_t ConcernCounter)
+static void shofixti_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter != 0)

@@ -549,8 +549,7 @@ static void spawn_fighters(Element* ElementPtr)
 	}
 }
 
-static void urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								uint16_t ConcernCounter)
+static void urquan_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -571,7 +570,7 @@ static void urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	}
 
 	ship_intelligence(ShipPtr,
-					  ObjectsOfConcern, ConcernCounter);
+					  ObjectsOfConcern);
 
 	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 	{

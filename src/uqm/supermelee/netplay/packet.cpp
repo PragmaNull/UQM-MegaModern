@@ -139,16 +139,16 @@ Packet_Fleet* Packet_Fleet_create(NetplaySide side, size_t numShips)
 // 'size' is the number of bytes (not characters) in 'name', excluding
 // a possible terminating '\0'. A '\0' will be included in the packet though.
 // This function takes care of the required padding.
-Packet_TeamName* Packet_TeamName_create(NetplaySide side, const char* name, size_t size)
+Packet_TeamName* Packet_TeamName_create(NetplaySide side, uqstl::string_view name)
 {
-	const size_t extraSize {((size + 1) + 3) & ~0x03};
+	const size_t extraSize {((name.size() + 1) + 3) & ~0x03};
 	// The +1 is for the '\0'.
 	Packet_TeamName* packet {(Packet_TeamName*)Packet_create(PacketType::TeamName, extraSize)};
 	packet->side = (uint8_t)side;
 	packet->padding = 0;
-	memcpy(teamName(packet), name, size);
-	memset((char*)packet + sizeof(Packet_TeamName) + size, '\0',
-		   extraSize - size);
+	memcpy(teamName(packet), name.data(), name.size());
+	memset((char*)packet + sizeof(Packet_TeamName) + name.size(), '\0',
+		   extraSize - name.size());
 	// This takes care of the terminating '\0', as well as the
 	// padding.
 

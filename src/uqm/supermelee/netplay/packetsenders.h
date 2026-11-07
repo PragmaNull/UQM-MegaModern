@@ -42,10 +42,8 @@ void sendHandshake0(NetConnection* conn);
 void sendHandshake1(NetConnection* conn);
 void sendHandshakeCancel(NetConnection* conn);
 void sendHandshakeCancelAck(NetConnection* conn);
-void sendTeamName(NetConnection* conn, NetplaySide side,
-				  const char* name, size_t len);
-void sendFleet(NetConnection* conn, NetplaySide side,
-			   const MeleeShip* ships, size_t numShips);
+void sendTeamName(NetConnection* conn, NetplaySide side, uqstl::string_view name);
+void sendFleet(NetConnection* conn, NetplaySide side, uqstl::span<const MeleeShip> ships);
 void sendFleetShip(NetConnection* conn, NetplaySide player,
 				   FleetShipIndex shipIndex, MeleeShip ship);
 void sendSeedRandom(NetConnection* conn, uint32_t seed);

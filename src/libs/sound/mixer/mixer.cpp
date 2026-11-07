@@ -128,9 +128,10 @@ void mixer_Uninit(void)
  *
  */
 
-void mixer_MixChannels(void* userdata, uint8_t* stream, int32_t len)
+void mixer_MixChannels(void* userdata, uqstl::span<uint8_t> stream)
 {
-	const uint8_t* end_stream = stream + len;
+	uint8_t* cursor {stream.data()};
+	const uint8_t* end_stream {stream.data() + stream.size()};
 	bool left = true;
 
 	/* keep this order or die */
@@ -138,7 +139,7 @@ void mixer_MixChannels(void* userdata, uint8_t* stream, int32_t len)
 	buf_mutex.lock();
 	act_mutex.lock();
 
-	for (; stream < end_stream; stream += mixer_chansize)
+	for (; cursor < end_stream; cursor += mixer_chansize)
 	{
 		float fullsamp = 0;
 
@@ -185,7 +186,7 @@ void mixer_MixChannels(void* userdata, uint8_t* stream, int32_t len)
 			}
 		}
 
-		mixer_PutSampleExt(stream, mixer_chansize, (int32_t)fullsamp);
+		mixer_PutSampleExt(cursor, mixer_chansize, (int32_t)fullsamp);
 		if (mixer_channels == 2)
 		{
 			left = !left;
@@ -201,9 +202,10 @@ void mixer_MixChannels(void* userdata, uint8_t* stream, int32_t len)
 }
 
 /* fake mixer -- only process buffer and source states */
-void mixer_MixFake(void* userdata, uint8_t* stream, int32_t len)
+void mixer_MixFake(void* userdata, uqstl::span<uint8_t> stream)
 {
-	const uint8_t* end_stream = stream + len;
+	uint8_t* cursor {stream.data()};
+	const uint8_t* end_stream {stream.data() + stream.size()};
 	bool left = true;
 
 	/* keep this order or die */
@@ -211,7 +213,7 @@ void mixer_MixFake(void* userdata, uint8_t* stream, int32_t len)
 	buf_mutex.lock();
 	act_mutex.lock();
 
-	for (; stream < end_stream; stream += mixer_chansize)
+	for (; cursor < end_stream; cursor += mixer_chansize)
 	{
 		for (uint32_t i {0}; i < MaxSources; i++)
 		{
@@ -1387,14 +1389,13 @@ void mixer_GetBufferi(mixer_Object bufobj, MixerBufferProp pname,
 }
 
 /* fill buffer with external data */
-void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
-					  uint32_t size, uint32_t freq)
+void mixer_BufferData(mixer_Object bufobj, uint32_t format, uqstl::span<const uint8_t> data, uint32_t freq)
 {
 	mixer_Buffer* buf = (mixer_Buffer*)bufobj;
 	mixer_Convertion conv;
 	uint32_t dstsize {};
 
-	if (!buf || !data || !size)
+	if (!buf || data.empty())
 	{
 		mixer_SetError(buf ? MixerError::InvalidValue : MixerError::InvalidName);
 		uqm::log::debug("mixer_BufferData() called with bad param");
@@ -1429,14 +1430,14 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 		buf->size = 0;
 
 		/* Store original buffer values for OpenAL compatibility */
-		buf->orgdata = data;
+		buf->orgdata = data.data();
 		buf->orgfreq = freq;
-		buf->orgsize = size;
+		buf->orgsize = static_cast<uint32_t>(data.size());
 		buf->orgchannels = MixFormatChans(format);
 		buf->orgchansize = MixFormatBpc(format);
 
 		conv.srcsamples = conv.dstsamples =
-			size / MixFormatSampsize(format);
+			static_cast<uint32_t>(data.size()) / MixFormatSampsize(format);
 
 		if (conv.dstsamples > UINT32_MAX / MixFormatSampsize(format))
 		{
@@ -1465,7 +1466,7 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 					buf->locked = true;
 					buf_mutex.unlock();
 
-					memcpy(buf->data.get(), data, size);
+					memcpy(buf->data.get(), data.data(), data.size());
 					if (MixFormatBpc(format) == 1)
 					{
 						/* convert buffer to S8 format internally */
@@ -1482,8 +1483,8 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 				{
 					/* needs convertion */
 					conv.srcfmt = format;
-					conv.srcdata = data;
-					conv.srcsize = size;
+					conv.srcdata = data.data();
+					conv.srcsize = static_cast<uint32_t>(data.size());
 
 					if (MixFormatChans(format) < MixFormatChans(mixer_format))
 					{
@@ -1597,28 +1598,28 @@ static void mixer_ConvertBuffer_internal(mixer_Convertion* conv)
 /* get a sample from external buffer
  * in internal format
  */
-static inline int32_t mixer_GetSampleExt(void* src, uint32_t bpc)
+static inline int32_t mixer_GetSampleExt(const void* src, uint32_t bpc)
 {
 	if (bpc == 2)
 	{
-		return *(int16_t*)src;
+		return *static_cast<const int16_t*>(src);
 	}
 	else
 	{
-		return (*(uint8_t*)src) - 128;
+		return *static_cast<const uint8_t*>(src) - 128;
 	}
 }
 
 /* get a sample from internal buffer */
-static inline int32_t mixer_GetSampleInt(void* src, uint32_t bpc)
+static inline int32_t mixer_GetSampleInt(const void* src, uint32_t bpc)
 {
 	if (bpc == 2)
 	{
-		return *(int16_t*)src;
+		return *static_cast<const int16_t*>(src);
 	}
 	else
 	{
-		return *(int8_t*)src;
+		return *static_cast<const int8_t*>(src);
 	}
 }
 
@@ -1809,7 +1810,7 @@ static float mixer_UpsampleCubic(mixer_Source* src, bool left)
  * in internal format, while performing
  * convertion if necessary
  */
-static inline int32_t mixer_GetConvSample(uint8_t** psrc, uint32_t bpc, MixerConvFlags flags)
+static inline int32_t mixer_GetConvSample(const uint8_t** psrc, uint32_t bpc, MixerConvFlags flags)
 {
 	int32_t samp {mixer_GetSampleExt(*psrc, bpc)};
 	*psrc += bpc;
@@ -1856,7 +1857,7 @@ static inline void mixer_PutConvSample(uint8_t** pdst, uint32_t bpc, MixerConvFl
 static void mixer_ResampleFlat(mixer_Convertion* conv)
 {
 	const MixerConvFlags flags = conv->flags;
-	uint8_t* src = (uint8_t*)conv->srcdata;
+	const uint8_t* src {static_cast<const uint8_t*>(conv->srcdata)};
 	uint8_t* dst = (uint8_t*)conv->dstdata;
 	const uint32_t srcbpc = conv->srcbpc;
 	const uint32_t dstbpc = conv->dstbpc;

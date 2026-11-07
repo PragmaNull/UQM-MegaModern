@@ -54,23 +54,21 @@ void Netplay_Notify_battleInput(NetConnection* conn, BattleInputState input)
 	sendBattleInput(conn, input);
 }
 
-void Netplay_Notify_setTeamName(NetConnection* conn, int player,
-								const char* name, size_t len)
+void Netplay_Notify_setTeamName(NetConnection* conn, int player, uqstl::string_view name)
 {
 	assert(NetConnection_getState(conn) == NetState::InSetup);
 	assert(!conn->stateFlags.handshake.localOk);
 
-	sendTeamName(conn, netSide(conn, player), name, len);
+	sendTeamName(conn, netSide(conn, player), name);
 }
 
 // On initialisation, or load.
-void Netplay_Notify_setFleet(NetConnection* conn, int player,
-							 const MeleeShip* fleet, size_t fleetSize)
+void Netplay_Notify_setFleet(NetConnection* conn, int player, uqstl::span<const MeleeShip> fleet)
 {
 	assert(NetConnection_getState(conn) == NetState::InSetup);
 	assert(!conn->stateFlags.handshake.localOk);
 
-	sendFleet(conn, netSide(conn, player), fleet, fleetSize);
+	sendFleet(conn, netSide(conn, player), fleet);
 }
 
 void Netplay_Notify_setShip(NetConnection* conn, int player,

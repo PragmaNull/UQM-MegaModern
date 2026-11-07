@@ -48,7 +48,7 @@ static bool bufa_Init(tfb::SoundDecoder*);
 static void bufa_Term(tfb::SoundDecoder*);
 static bool bufa_Open(tfb::SoundDecoder*, const uqm::io::Directory& dir, const char* filename);
 static void bufa_Close(tfb::SoundDecoder*);
-static int bufa_Decode(tfb::SoundDecoder*, void* buf, int32_t bufsize);
+static int bufa_Decode(tfb::SoundDecoder*, uqstl::span<uint8_t> buf);
 static uint32_t bufa_Seek(tfb::SoundDecoder*, uint32_t pcm_pos);
 static uint32_t bufa_GetFrame(tfb::SoundDecoder*);
 
@@ -80,7 +80,7 @@ static bool nula_Init(tfb::SoundDecoder*);
 static void nula_Term(tfb::SoundDecoder*);
 static bool nula_Open(tfb::SoundDecoder*, const uqm::io::Directory& dir, const char* filename);
 static void nula_Close(tfb::SoundDecoder*);
-static int nula_Decode(tfb::SoundDecoder*, void* buf, int32_t bufsize);
+static int nula_Decode(tfb::SoundDecoder*, uqstl::span<uint8_t> buf);
 static uint32_t nula_Seek(tfb::SoundDecoder*, uint32_t pcm_pos);
 static uint32_t nula_GetFrame(tfb::SoundDecoder*);
 
@@ -136,25 +136,12 @@ static uqstl::array<tfb::RegSoundDecoder, MaxRegDecoders + 1> sd_decoders {
 static tfb::DecoderFormats decoder_formats;
 static AudioFlags sd_flags {AudioFlags::None};
 
-/* change endianness of 16bit words
- * Only works optimal when 'data' is aligned on a 32 bits boundary.
- */
-void SoundDecoder_SwapWords(uint16_t* data, uint32_t size)
+// Change the byte order of the 16-bit words in 'data'.
+void SoundDecoder_SwapWords(uqstl::span<uint8_t> data)
 {
-	uint32_t fsize = size & (~3U);
-
-	size -= fsize;
-	fsize >>= 2;
-	for (; fsize; fsize--, data += 2)
+	for (size_t i {0}; i + 1 < data.size(); i += 2)
 	{
-		const uint32_t v = *(uint32_t*)data;
-		*(uint32_t*)data = ((v & 0x00ff00ff) << 8)
-						 | ((v & 0xff00ff00) >> 8);
-	}
-	if (size)
-	{
-		/* leftover word */
-		*data = ((*data & 0x00ff) << 8) | ((*data & 0xff00) >> 8);
+		uqstl::swap(data[i], data[i + 1]);
 	}
 }
 
@@ -465,8 +452,7 @@ uint32_t SoundDecoder_Decode(tfb::SoundDecoder* decoder)
 
 	for (decoded_bytes = 0, rc = 1; rc > 0 && decoded_bytes < buffer_size;)
 	{
-		rc = decoder->funcs->Decode(decoder, buffer + decoded_bytes,
-									buffer_size - decoded_bytes);
+		rc = decoder->funcs->Decode(decoder, {buffer + decoded_bytes, static_cast<size_t>(buffer_size - decoded_bytes)});
 		if (rc < 0)
 		{
 			uqm::log::warn("SoundDecoder_Decode(): "
@@ -520,8 +506,7 @@ uint32_t SoundDecoder_Decode(tfb::SoundDecoder* decoder)
 
 	if (decoder->need_swap && decoded_bytes > 0 && (decoder->format == decoder_formats.stereo16 || decoder->format == decoder_formats.mono16))
 	{
-		SoundDecoder_SwapWords(
-			(uint16_t*)decoder->buffer, decoded_bytes);
+		SoundDecoder_SwapWords({static_cast<uint8_t*>(decoder->buffer), static_cast<size_t>(decoded_bytes)});
 	}
 
 	return decoded_bytes;
@@ -562,9 +547,7 @@ uint32_t SoundDecoder_DecodeAll(tfb::SoundDecoder* decoder)
 			decoder->buffer = decoder->storage.data();
 		}
 
-		rc = decoder->funcs->Decode(decoder,
-									(uint8_t*)decoder->buffer + decoded_bytes,
-									decoder->buffer_size - decoded_bytes);
+		rc = decoder->funcs->Decode(decoder, {static_cast<uint8_t*>(decoder->buffer) + decoded_bytes, static_cast<size_t>(decoder->buffer_size - decoded_bytes)});
 
 		if (rc > 0)
 		{
@@ -580,8 +563,7 @@ uint32_t SoundDecoder_DecodeAll(tfb::SoundDecoder* decoder)
 
 	if (decoder->need_swap && decoded_bytes > 0 && (decoder->format == decoder_formats.stereo16 || decoder->format == decoder_formats.mono16))
 	{
-		SoundDecoder_SwapWords(
-			(uint16_t*)decoder->buffer, decoded_bytes);
+		SoundDecoder_SwapWords({static_cast<uint8_t*>(decoder->buffer), static_cast<size_t>(decoded_bytes)});
 	}
 
 	if (rc < 0)
@@ -762,9 +744,9 @@ static void bufa_Close(tfb::SoundDecoder* This)
 	This->buffered_cur_pcm = 0;
 }
 
-static int bufa_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
+static int bufa_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf)
 {
-	uint32_t dec_pcm {bufsize / This->bytes_per_samp};
+	uint32_t dec_pcm {static_cast<uint32_t>(buf.size()) / This->bytes_per_samp};
 	if (dec_pcm > This->buffered_max_pcm - This->buffered_cur_pcm)
 	{
 		dec_pcm = This->buffered_max_pcm - This->buffered_cur_pcm;
@@ -780,8 +762,6 @@ static int bufa_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
 	}
 
 	return dec_bytes;
-
-	(void)buf; // laugh at compiler warning
 }
 
 static uint32_t bufa_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos)
@@ -875,12 +855,12 @@ static void nula_Close(tfb::SoundDecoder* This)
 	nula->cur_pcm = 0;
 }
 
-static int nula_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
+static int nula_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf)
 {
 	tfb::NullSoundDecoder* nula = (tfb::NullSoundDecoder*)This;
 
 	const uint32_t max_pcm {(uint32_t)(This->length * This->frequency)};
-	uint32_t dec_pcm {bufsize / This->bytes_per_samp};
+	uint32_t dec_pcm {static_cast<uint32_t>(buf.size()) / This->bytes_per_samp};
 	if (dec_pcm > max_pcm - nula->cur_pcm)
 	{
 		dec_pcm = max_pcm - nula->cur_pcm;
@@ -889,7 +869,7 @@ static int nula_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
 
 	if (dec_pcm > 0)
 	{
-		memset(buf, 0, dec_bytes);
+		uqstl::ranges::fill(buf.first(dec_bytes), uint8_t {0});
 		nula->cur_pcm += dec_pcm;
 	}
 

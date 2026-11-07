@@ -46,7 +46,7 @@ static bool ova_Init(tfb::SoundDecoder* This);
 static void ova_Term(tfb::SoundDecoder* This);
 static bool ova_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
 static void ova_Close(tfb::SoundDecoder* This);
-static int ova_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize);
+static int ova_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf);
 static uint32_t ova_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos);
 static uint32_t ova_GetFrame(tfb::SoundDecoder* This);
 
@@ -84,7 +84,11 @@ const static tfb::DecoderFormats* ova_formats = nullptr;
 
 static size_t ogg_read(void* ptr, size_t size, size_t nmemb, void* datasource)
 {
-	return ReadResFile(ptr, size, nmemb, *static_cast<uqm::io::File*>(datasource));
+	if (size == 0)
+	{
+		return 0;
+	}
+	return ReadResFile(uqm::io::asBytes(ptr, size * nmemb), *static_cast<uqm::io::File*>(datasource)) / size;
 }
 
 static int ogg_seek(void* datasource, ogg_int64_t offset, int whence)
@@ -224,16 +228,16 @@ static void ova_Close(tfb::SoundDecoder* This)
 	ov_clear(&ova->vf);
 }
 
-static int ova_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
+static int ova_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf)
 {
 	tfb::OggSoundDecoder* ova = (tfb::OggSoundDecoder*)This;
 	long rc {};
 	int bitstream {};
 
 #ifdef OVCODEC_TREMOR
-	rc = ov_read(&ova->vf, buf, bufsize, &bitstream);
+	rc = ov_read(&ova->vf, buf.data(), static_cast<int>(buf.size()), &bitstream);
 #else
-	rc = ov_read(&ova->vf, (char*)buf, bufsize, ova_formats->want_big_endian,
+	rc = ov_read(&ova->vf, reinterpret_cast<char*>(buf.data()), static_cast<int>(buf.size()), ova_formats->want_big_endian,
 				 2, 1, &bitstream);
 #endif /* OVCODEC_TREMOR */
 

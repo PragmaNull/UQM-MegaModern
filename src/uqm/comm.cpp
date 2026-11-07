@@ -1238,7 +1238,7 @@ void AlienTalkSegue(uint16_t wait_track)
 		InitSpeechGraphics();
 		SetColorMap(GetColorMapAddress(CommData.AlienColorMap, CommData.AlienColorMapIndex));
 		SetContext(AnimContext);
-		DrawAlienFrame(nullptr, 0, true);
+		DrawAlienFrame({}, true);
 		UpdateSpeechGraphics();
 		CommIntroTransition();
 

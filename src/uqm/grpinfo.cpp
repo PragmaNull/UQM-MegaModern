@@ -45,7 +45,7 @@ void ReadGroupHeader(GameStateFile* fp, BattleGroupHeader* pGH)
 	sread_8(fp, nullptr); /* padding */
 	sread_16(fp, &pGH->star_index);
 	sread_16(fp, &pGH->year_index);
-	sread_a32(fp, pGH->GroupOffset.data(), NumSavedBattleGroups + 1);
+	sread_a32(fp, pGH->GroupOffset);
 }
 
 void WriteGroupHeader(GameStateFile* fp, const BattleGroupHeader* pGH)
@@ -56,7 +56,7 @@ void WriteGroupHeader(GameStateFile* fp, const BattleGroupHeader* pGH)
 	swrite_8(fp, 0); /* padding */
 	swrite_16(fp, pGH->star_index);
 	swrite_16(fp, pGH->year_index);
-	swrite_a32(fp, pGH->GroupOffset.data(), NumSavedBattleGroups + 1);
+	swrite_a32(fp, pGH->GroupOffset);
 }
 
 void ReadShipFragment(GameStateFile* fp, ShipFragment* FragPtr)

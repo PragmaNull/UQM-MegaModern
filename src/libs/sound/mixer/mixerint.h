@@ -52,7 +52,7 @@ MixerConvFlags operator|=(MixerConvFlags lhs, MixerConvFlags rhs)
 struct mixer_Convertion
 {
 	uint32_t srcfmt;
-	void* srcdata;
+	const void* srcdata;
 	uint32_t srcsize;
 	uint32_t srcbpc; /* bytes/sample for 1 chan */
 	uint32_t srcchans;
@@ -78,8 +78,8 @@ struct mixer_Resampling
 static void mixer_ConvertBuffer_internal(mixer_Convertion* conv);
 static void mixer_ResampleFlat(mixer_Convertion* conv);
 
-static inline int32_t mixer_GetSampleExt(void* src, uint32_t bpc);
-static inline int32_t mixer_GetSampleInt(void* src, uint32_t bpc);
+static inline int32_t mixer_GetSampleExt(const void* src, uint32_t bpc);
+static inline int32_t mixer_GetSampleInt(const void* src, uint32_t bpc);
 static inline void mixer_PutSampleInt(void* dst, uint32_t bpc,
 									  int32_t samp);
 static inline void mixer_PutSampleExt(void* dst, uint32_t bpc,

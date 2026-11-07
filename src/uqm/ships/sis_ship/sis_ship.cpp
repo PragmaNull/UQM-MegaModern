@@ -685,8 +685,7 @@ static uint16_t initialize_blasters(Element* ShipPtr, ElementHandle BlasterArray
 	return SisData->num_blasters;
 }
 
-static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							 uint16_t ConcernCounter)
+static void sis_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -726,7 +725,7 @@ static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 		}
 	}
 
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyShip];
 	if (SisData->num_trackers

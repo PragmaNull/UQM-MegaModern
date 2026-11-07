@@ -43,7 +43,7 @@ extern bool DoShipyard(MenuState* pMS);
 
 extern void DrawShipPiece(FrameRef ModuleFrame, uint16_t which_piece, uint16_t which_slot, bool DrawBluePrint);
 
-extern uint16_t WrapText(const char* pStr, uint16_t len, GfxText* tarray, int16_t field_width);
+extern uint16_t WrapText(uqstl::string_view pStr, GfxText* tarray, int16_t field_width);
 // XXX: Doesn't really belong in this file.
 
 extern uint16_t ShipCost(uint8_t race_id);

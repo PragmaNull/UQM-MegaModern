@@ -164,8 +164,7 @@ struct ObjectEvaluation
 	MovementState MoveState;
 };
 
-typedef void(IntelligenceFunc)(Element* ShipPtr,
-							   ObjectEvaluation* ObjectsOfConcern, uint16_t ConcernCounter);
+using IntelligenceFunc = void(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern);
 struct ShipIntelligence
 {
 	uint16_t ManeuverabilityIndex;

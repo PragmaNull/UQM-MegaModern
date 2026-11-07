@@ -79,19 +79,18 @@ void crc_init(crc_State* state)
 	state->crc = 0xffffffff;
 }
 
-void crc_processBytes(crc_State* state, uint8_t* buf, size_t bufLen)
+void crc_processBytes(crc_State* state, uqstl::span<const uint8_t> buf)
 {
-	const uint8_t* end = buf + bufLen;
 	uint32_t newCrc = state->crc;
 
-	while (buf < end)
+	for (const uint8_t byte : buf)
 	{
-		newCrc = (newCrc >> 8) ^ crcTable[(newCrc ^ *buf) & 0xff];
+		newCrc = (newCrc >> 8) ^ crcTable[(newCrc ^ byte) & 0xff];
 	}
 
 #ifdef DUMP_CRC_OPS
 	crc_log("crc_processBytes(%08x, [%zu bytes]) --> %08x.",
-			state->crc, bufLen, newCrc);
+			state->crc, buf.size(), newCrc);
 #endif
 	state->crc = newCrc;
 }

@@ -80,7 +80,7 @@ struct SoundDecoderFuncs
 	void (*Term)(SoundDecoder*);
 	bool (*Open)(SoundDecoder*, const uqm::io::Directory& dir, const char* filename);
 	void (*Close)(SoundDecoder*);
-	int (*Decode)(SoundDecoder*, void* buf, int32_t bufsize);
+	int (*Decode)(SoundDecoder*, uqstl::span<uint8_t> buf);
 	// returns <0 on error, ==0 when no more data, >0 bytes returned
 	uint32_t (*Seek)(SoundDecoder*, uint32_t pcm_pos);
 	// returns the pcm position set
@@ -147,7 +147,7 @@ tfb::RegSoundDecoder* SoundDecoder_Register(const char* fileext,
 void SoundDecoder_Unregister(tfb::RegSoundDecoder* regdec);
 const tfb::SoundDecoderFuncs* SoundDecoder_Lookup(const char* fileext);
 
-void SoundDecoder_SwapWords(uint16_t* data, uint32_t size);
+void SoundDecoder_SwapWords(uqstl::span<uint8_t> data);
 int32_t SoundDecoder_Init(AudioFlags flags, tfb::DecoderFormats* formats);
 void SoundDecoder_Uninit(void);
 tfb::SoundDecoder* SoundDecoder_Load(const uqm::io::Directory& dir,

@@ -198,8 +198,7 @@ static uint16_t initialize_cannon(Element* ShipPtr, ElementHandle CannonArray[])
 	return (1);
 }
 
-static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								uint16_t ConcernCounter)
+static void druuge_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	ShipFlags ship_flags {};
 	Starship* StarShipPtr {};
@@ -226,7 +225,7 @@ static void druuge_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 			++ShipPtr->thrust_wait;
 		}
 	}
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 	if (EnemyStarShipPtr)
 	{
 		EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags = ship_flags;

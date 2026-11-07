@@ -271,8 +271,7 @@ static uint16_t initialize_lightning(Element* ElementPtr, ElementHandle LaserArr
 	return (1);
 }
 
-static void slylandro_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								   uint16_t ConcernCounter)
+static void slylandro_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -290,7 +289,7 @@ static void slylandro_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 		&& StarShipPtr->RaceDescPtr->ship_info.energy_level == 0
 		&& ObjectsOfConcern[*IntelObjectIndex::GravityMass].ObjectPtr == 0)
 	{
-		ConcernCounter = *IntelObjectIndex::FirstEmpty + 1;
+		ObjectsOfConcern = ObjectsOfConcern.first(*IntelObjectIndex::FirstEmpty + 1);
 	}
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Pursue
 		&& lpEvalDesc->which_turn <= 6)
@@ -299,7 +298,7 @@ static void slylandro_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 	}
 
 	++ShipPtr->thrust_wait;
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 	--ShipPtr->thrust_wait;
 
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 14)

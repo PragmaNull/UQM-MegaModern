@@ -159,8 +159,7 @@ static uint16_t initialize_standard_missiles(Element* ShipPtr, ElementHandle Mis
 	return (2);
 }
 
-static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							   uint16_t ConcernCounter)
+static void yehat_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -236,7 +235,7 @@ static void yehat_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 	}
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 	/*
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level <= SpecialEnergyCost)
 		StarShipPtr->ship_input_state &= ~WeaponFlag;

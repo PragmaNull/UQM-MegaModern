@@ -3005,7 +3005,7 @@ const char* GetNamedPlanetaryBody(void)
 	return nullptr;
 }
 
-void GetPlanetOrMoonName(char* buf, uint16_t bufsize)
+void GetPlanetOrMoonName(uqstl::span<char> buf)
 {
 	int i {};
 	bool name_has_suffix = false;
@@ -3013,12 +3013,12 @@ void GetPlanetOrMoonName(char* buf, uint16_t bufsize)
 	const char* named {GetNamedPlanetaryBody()};
 	if (named)
 	{
-		uqm::utf8StringCopy({buf, bufsize}, named);
+		uqm::utf8StringCopy(buf, named);
 		return;
 	}
 
 	// Either not named or we already have a name
-	uqm::utf8StringCopy({buf, bufsize}, uqm::gameState().sis().PlanetName.data());
+	uqm::utf8StringCopy(buf, uqm::gameState().sis().PlanetName.data());
 
 	if (!playerInSolarSystem() || !playerInInnerSystem()
 		|| worldIsPlanet(pSolarSysState, pSolarSysState->pOrbitalDesc)
@@ -3028,10 +3028,9 @@ void GetPlanetOrMoonName(char* buf, uint16_t bufsize)
 	}
 
 	// Orbiting an unnamed moon
-	i = strlen(buf);
-	const char* tempbuf {buf};
-	buf += i;
-	bufsize -= i;
+	i = strlen(buf.data());
+	const char* tempbuf {buf.data()};
+	buf = buf.subspan(i);
 	const int moon {moonIndex(pSolarSysState, pSolarSysState->pOrbitalDesc)};
 
 	// log_add (log_Debug,"last %02d, i {}", tempbuf[i-1], i);
@@ -3046,10 +3045,10 @@ void GetPlanetOrMoonName(char* buf, uint16_t bufsize)
 		}
 	}
 
-	if (bufsize >= 3 && !name_has_suffix)
+	if (buf.size() >= 3 && !name_has_suffix)
 	{
-		fmt::format_to_sz_n(buf, bufsize, "-{}", 'A' + moon);
-		buf[bufsize - 1] = '\0';
+		fmt::format_to_sz_n(buf, "-{}", 'A' + moon);
+		buf[buf.size() - 1] = '\0';
 	}
 }
 

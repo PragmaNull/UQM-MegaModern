@@ -531,8 +531,9 @@ SeedLineSpinPassThru:
 	return;
 }
 
-static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
+static void SeedTextSpin(uqstl::span<char> buf, uqgsl::czstring str, int* x, int* y)
 {
+	size_t pos {0};
 	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= NumShips || raceID >= NumShips)
 	{
 		goto SeedTextSpinPassThru;
@@ -568,8 +569,8 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 	}
 
 	linespun = true;
-	uqm::utf8StringCopy({buf, size}, ship_map[raceID].race.data());
-	buf += strlen(ship_map[raceID].race.data()) * sizeof(char);
+	uqm::utf8StringCopy(buf.subspan(pos), ship_map[raceID].race.data());
+	pos += strlen(ship_map[raceID].race.data()) * sizeof(char);
 
 	switch (ship_map[shipID].sID)
 	{
@@ -580,7 +581,7 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 		case SpeciesId::Thraddash: // Right hand huggers
 			if ((ship_map[shipID].sID == SpeciesId::Earthling || (ship_map[shipID].sID == SpeciesId::KohrAh && IsHd())) && ship_map[raceID].sID == SpeciesId::Arilou)
 			{ // Special case - ship doesn't have room, cuts to "ARILOU"
-				buf -= 8 * sizeof(char);
+				pos -= 8 * sizeof(char);
 				*x += ship_map[shipID].width - 50;
 				break;
 			}
@@ -596,7 +597,7 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 		case SpeciesId::Vux: // Middle but squeeze the right a little
 			if (ship_map[shipID].sID == SpeciesId::Vux && ship_map[raceID].sID == SpeciesId::Arilou)
 			{ // Special case - ship doesn't have room, cuts to "ARILOU"
-				buf -= 8 * sizeof(char);
+				pos -= 8 * sizeof(char);
 				*x += (ship_map[shipID].width - 50) * 3 / 5;
 				break;
 			}
@@ -611,7 +612,7 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 		case SpeciesId::Mmrnmhrm: // Middle-ships
 			if (ship_map[shipID].sID == SpeciesId::Spathi && ship_map[raceID].sID == SpeciesId::Arilou)
 			{ // Special case - ship doesn't have room, cuts to "ARILOU"
-				buf -= 8 * sizeof(char);
+				pos -= 8 * sizeof(char);
 				*x += (ship_map[shipID].width - 50) / 2;
 				break;
 			}
@@ -636,7 +637,7 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 		case SpeciesId::Zoqfotpik: // Lefties need no adjustment
 			if ((ship_map[shipID].sID == SpeciesId::Chmmr || ship_map[shipID].sID == SpeciesId::Orz || ship_map[shipID].sID == SpeciesId::Zoqfotpik) && ship_map[raceID].sID == SpeciesId::Arilou)
 			{ // Special case - ship doesn't have room, cuts to "ARILOU"
-				buf -= 8 * sizeof(char);
+				pos -= 8 * sizeof(char);
 				break;
 			}
 			if (ship_map[shipID].sID == SpeciesId::Umgah && !IsHd())
@@ -651,23 +652,23 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 			if (ship_map[raceID].width > 80)
 			{
 				const char* pad = (IsHd() ? "\n   " : "\n       ");
-				uqm::utf8StringCopy({buf, size}, pad);
-				buf += strlen(pad) * sizeof(char);
+				uqm::utf8StringCopy(buf.subspan(pos), pad);
+				pos += strlen(pad) * sizeof(char);
 			}
 			break;
 		default:
 			break;
 	}
 
-	uqm::utf8StringCopy({buf, size}, ship_map[shipID].ship.data());
+	uqm::utf8StringCopy(buf.subspan(pos), ship_map[shipID].ship.data());
 	return;
 
 SeedTextSpinSkipLine:
-	uqm::utf8StringCopy({buf, size}, "");
+	uqm::utf8StringCopy(buf.subspan(pos), "");
 	return;
 
 SeedTextSpinPassThru:
-	uqm::utf8StringCopy({buf, size}, str);
+	uqm::utf8StringCopy(buf.subspan(pos), str);
 	return;
 }
 
@@ -910,7 +911,7 @@ static bool DoPresentation(void* pIS)
 
 					if (uqm::currentSeed().ships)
 					{
-						SeedTextSpin(pPIS->Buffer.data(), sizeof(pPIS->Buffer),
+						SeedTextSpin(pPIS->Buffer,
 									 cmd.text.c_str(), &x, &y);
 					}
 					else

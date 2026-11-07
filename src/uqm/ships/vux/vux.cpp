@@ -276,8 +276,7 @@ static uint16_t initialize_horrific_laser(Element* ShipPtr, ElementHandle LaserA
 	return (1);
 }
 
-static void vux_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							 uint16_t ConcernCounter)
+static void vux_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -298,7 +297,7 @@ static void vux_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 	}
 
 	ship_intelligence(ShipPtr,
-					  ObjectsOfConcern, ConcernCounter);
+					  ObjectsOfConcern);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0

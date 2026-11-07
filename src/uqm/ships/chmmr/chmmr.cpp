@@ -258,12 +258,11 @@ static uint16_t initialize_megawatt_laser(Element* ShipPtr, ElementHandle LaserA
 	return (1);
 }
 
-static void chmmr_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							   uint16_t ConcernCounter)
+static void chmmr_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~StatusFlags::Special;

@@ -311,7 +311,7 @@ static bool dukv_ReadFrames(tfb::DuckVideoDecoder* dukv, const uqm::io::Director
 	dukv->cframes = static_cast<uint32_t>(fp->size() / sizeof(uint32_t));
 	dukv->frames.assign(dukv->cframes, 0);
 
-	if (!fp->readExact(uqm::io::asBytes(dukv->frames.data(), sizeof(uint32_t) * dukv->cframes)))
+	if (!fp->readExact(uqstl::as_writable_bytes(uqstl::span {dukv->frames})))
 	{
 		dukv->frames.clear();
 		return false;
@@ -326,7 +326,7 @@ static bool dukv_ReadFrames(tfb::DuckVideoDecoder* dukv, const uqm::io::Director
 	return true;
 }
 
-static bool dukv_ReadVectors(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir, uint8_t* vectors)
+static bool dukv_ReadVectors(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir, uqstl::span<uint8_t> vectors)
 {
 	uqstl::optional<uqm::io::File> fp {};
 	uqstl::array<char, 280> filename {};
@@ -338,13 +338,13 @@ static bool dukv_ReadVectors(tfb::DuckVideoDecoder* dukv, const uqm::io::Directo
 		return false;
 	}
 
-	const int ret {static_cast<int>(fp->read(uqm::io::asBytes(vectors, NumVecItems * NumVectors)) / NumVecItems)};
+	const int ret {static_cast<int>(fp->read(uqstl::as_writable_bytes(vectors)) / NumVecItems)};
 	fp.reset();
 
 	return ret == NumVectors;
 }
 
-static bool dukv_ReadHeader(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir, int32_t* pl, int32_t* pc)
+static bool dukv_ReadHeader(tfb::DuckVideoDecoder* dukv, const uqm::io::Directory& dir, uqstl::span<int32_t, 8> pl, uqstl::span<int32_t, 8> pc)
 {
 	uqstl::optional<uqm::io::File> fp {};
 	uqstl::array<char, 280> filename {};
@@ -368,10 +368,10 @@ static bool dukv_ReadHeader(tfb::DuckVideoDecoder* dukv, const uqm::io::Director
 	dukv->wb = uqm::convertBigEndian<uint16_t>(hdr.wb);
 	dukv->hb = uqm::convertBigEndian<uint16_t>(hdr.hb);
 
-	for (int i {0}; i < 8; ++i)
+	for (size_t i {0}; i < pl.size(); ++i)
 	{
-		pl[i] = (int16_t)uqm::convertBigEndian<uint16_t>(hdr.lumas[i]);
-		pc[i] = (int16_t)uqm::convertBigEndian<uint16_t>(hdr.chromas[i]);
+		pl[i] = static_cast<int16_t>(uqm::convertBigEndian<uint16_t>(hdr.lumas[i]));
+		pc[i] = static_cast<int16_t>(uqm::convertBigEndian<uint16_t>(hdr.chromas[i]));
 	}
 
 	dukv->decoder.w = dukv->wb * 4;
@@ -646,8 +646,8 @@ static bool dukv_Open(tfb::VideoDecoder* This, const uqm::io::Directory& dir, co
 
 	if (!dukv_OpenStream(dukv, dir)
 		|| !dukv_ReadFrames(dukv, dir)
-		|| !dukv_ReadHeader(dukv, dir, lumas.data(), chromas.data())
-		|| !dukv_ReadVectors(dukv, dir, vectors.data()))
+		|| !dukv_ReadHeader(dukv, dir, lumas, chromas)
+		|| !dukv_ReadVectors(dukv, dir, vectors))
 	{
 		dukv_Close(This);
 		dukv->last_error = *DukVidError::BadFile;
@@ -705,7 +705,7 @@ static int dukv_DecodeNext(tfb::VideoDecoder* This)
 	}
 
 	dukv->stream->seek(vofs, uqm::io::SeekFrom::Current);
-	if (!dukv->stream->readExact(uqm::io::asBytes(dukv->inbuf.data(), vsize)))
+	if (!dukv->stream->readExact(uqstl::as_writable_bytes(uqstl::span {dukv->inbuf}.first(vsize))))
 	{
 		dukv->last_error = *DukVidError::Eof;
 		return 0;

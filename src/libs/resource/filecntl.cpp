@@ -71,22 +71,9 @@ bool DeleteResFile(const uqm::io::Directory& dir, const char* filename)
 	return !dir.remove(filename);
 }
 
-size_t ReadResFile(void* lpBuf, size_t size, size_t count, uqm::io::File& fp)
+size_t ReadResFile(uqstl::span<uqstl::byte> buf, uqm::io::File& fp)
 {
-	if (size == 0 || count == 0)
-	{
-		return 0;
-	}
-	return fp.read({static_cast<uqstl::byte*>(lpBuf), size * count}) / size;
-}
-
-size_t WriteResFile(const void* lpBuf, size_t size, size_t count, uqm::io::File& fp)
-{
-	if (size == 0 || count == 0)
-	{
-		return 0;
-	}
-	return fp.write({static_cast<const uqstl::byte*>(lpBuf), size * count}) / size;
+	return fp.read(buf);
 }
 
 int GetResFileChar(uqm::io::File& fp)

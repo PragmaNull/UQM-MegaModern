@@ -186,8 +186,7 @@ static void cone_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	}
 }
 
-static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							   uint16_t ConcernCounter)
+static void umgah_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 	Starship* EnemyStarShipPtr {};
@@ -218,7 +217,7 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		|| lpEvalDesc->ObjectPtr == 0)
 	{
 		StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = CloseRangeWeapon;
-		ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+		ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 		if (lpEvalDesc->which_turn < 16)
 		{
@@ -271,7 +270,7 @@ static void umgah_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = CloseRangeWeapon;
 		}
 
-		ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+		ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 		if (StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange == CloseRangeWeapon)
 		{

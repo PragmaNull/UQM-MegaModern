@@ -197,12 +197,11 @@ static void spawn_butt_missile(Element* ShipPtr)
 	}
 }
 
-static void spathi_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								uint16_t ConcernCounter)
+static void spathi_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~StatusFlags::Special;

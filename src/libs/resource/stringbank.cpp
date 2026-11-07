@@ -114,33 +114,33 @@ const char* StringBank_AddOrFindString(stringbank* bank, const char* str)
 
 static uqstl::array<char, StrbankChunkSize> buffer;
 
-const char* StringBank_AddSubstring(stringbank* bank, const char* str, unsigned int n)
+const char* StringBank_AddSubstring(stringbank* bank, uqstl::string_view str)
 {
-	const unsigned int len = strlen(str);
-	if (n > len)
+	const unsigned int len = strlen(str.data());
+	if (str.size() > len)
 	{
-		return StringBank_AddString(bank, str);
+		return StringBank_AddString(bank, str.data());
 	}
-	if (n >= StrbankChunkSize)
+	if (str.size() >= StrbankChunkSize)
 	{
 		return nullptr;
 	}
-	uqm::strncpy_safe(buffer, {str, n});
+	uqm::strncpy_safe(buffer, str);
 	return StringBank_AddString(bank, buffer.data());
 }
 
-const char* StringBank_AddOrFindSubstring(stringbank* bank, const char* str, unsigned int n)
+const char* StringBank_AddOrFindSubstring(stringbank* bank, uqstl::string_view str)
 {
-	const unsigned int len = strlen(str);
-	if (n > len)
+	const unsigned int len = strlen(str.data());
+	if (str.size() > len)
 	{
-		return StringBank_AddOrFindString(bank, str);
+		return StringBank_AddOrFindString(bank, str.data());
 	}
-	if (n >= StrbankChunkSize)
+	if (str.size() >= StrbankChunkSize)
 	{
 		return nullptr;
 	}
-	uqm::strncpy_safe(buffer, {str, n});
+	uqm::strncpy_safe(buffer, str);
 	return StringBank_AddOrFindString(bank, buffer.data());
 }
 
@@ -160,7 +160,7 @@ int SplitString(const char* s, char splitchar, int n, const char** result, strin
 		}
 
 		len = next - index;
-		result[i] = StringBank_AddOrFindSubstring(bank, index, len);
+		result[i] = StringBank_AddOrFindSubstring(bank, {index, static_cast<size_t>(len)});
 		index = next + 1;
 	}
 	result[i] = StringBank_AddOrFindString(bank, index);

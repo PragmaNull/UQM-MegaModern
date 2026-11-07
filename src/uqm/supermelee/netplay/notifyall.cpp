@@ -45,7 +45,7 @@ void Netplay_NotifyAll_setTeamName(MeleeState* pMS, size_t playerNr)
 			continue;
 		}
 
-		Netplay_Notify_setTeamName(conn, playerNr, name, len);
+		Netplay_Notify_setTeamName(conn, playerNr, {name, len});
 	}
 }
 
@@ -74,7 +74,7 @@ void Netplay_NotifyAll_setFleet(MeleeState* pMS, size_t playerNr)
 			continue;
 		}
 
-		Netplay_Notify_setFleet(conn, playerNr, ships, MeleeFleetSize);
+		Netplay_Notify_setFleet(conn, playerNr, {ships, MeleeFleetSize});
 	}
 }
 

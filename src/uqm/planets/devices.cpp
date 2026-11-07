@@ -621,10 +621,10 @@ static bool DoManipulateDevices(MenuState* pMS)
 	return true;
 }
 
-int16_t InventoryDevices(uint8_t* pDeviceMap, uint16_t Size)
+int16_t InventoryDevices(uqstl::span<uint8_t> pDeviceMap)
 {
 	int16_t DevicesOnBoard {0};
-	for (Device i {}; i < Device::NumDevices && Size > 0; ++i)
+	for (Device i {}; i < Device::NumDevices && static_cast<size_t>(DevicesOnBoard) < pDeviceMap.size(); ++i)
 	{
 		uint8_t DeviceState {0};
 		switch (i)
@@ -714,9 +714,8 @@ int16_t InventoryDevices(uint8_t* pDeviceMap, uint16_t Size)
 		if (DeviceState)
 #endif /* DEBUG_DEVICES */
 		{
-			*pDeviceMap++ = *i;
+			pDeviceMap[DevicesOnBoard] = *i;
 			++DevicesOnBoard;
-			--Size;
 		}
 	}
 
@@ -733,7 +732,7 @@ bool DevicesMenu(void)
 
 	memset(&DevicesState, 0, sizeof DevicesState);
 
-	DevicesState.count = InventoryDevices(DevicesState.list.data(), *Device::NumDevices);
+	DevicesState.count = InventoryDevices({DevicesState.list.data(), *Device::NumDevices});
 	if (!DevicesState.count)
 	{
 		return false;

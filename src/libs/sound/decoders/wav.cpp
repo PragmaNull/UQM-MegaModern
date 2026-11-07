@@ -70,7 +70,7 @@ static bool wava_Init(tfb::SoundDecoder* This);
 static void wava_Term(tfb::SoundDecoder* This);
 static bool wava_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
 static void wava_Close(tfb::SoundDecoder* This);
-static int wava_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize);
+static int wava_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf);
 static uint32_t wava_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos);
 static uint32_t wava_GetFrame(tfb::SoundDecoder* This);
 
@@ -337,18 +337,18 @@ static void wava_Close(tfb::SoundDecoder* This)
 	}
 }
 
-static int wava_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
+static int wava_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf)
 {
 	tfb::WaveSoundDecoder* wava = (tfb::WaveSoundDecoder*)This;
 	uint32_t dec_pcm {};
 
-	dec_pcm = bufsize / wava->fmtHdr.blockAlign;
+	dec_pcm = static_cast<uint32_t>(buf.size()) / wava->fmtHdr.blockAlign;
 	if (dec_pcm > wava->max_pcm - wava->cur_pcm)
 	{
 		dec_pcm = wava->max_pcm - wava->cur_pcm;
 	}
 
-	dec_pcm = static_cast<decltype(dec_pcm)>(wava->fp->read(uqm::io::asBytes(buf, wava->fmtHdr.blockAlign * dec_pcm)) / wava->fmtHdr.blockAlign);
+	dec_pcm = static_cast<decltype(dec_pcm)>(wava->fp->read(uqstl::as_writable_bytes(buf.first(wava->fmtHdr.blockAlign * dec_pcm))) / wava->fmtHdr.blockAlign);
 	wava->cur_pcm += dec_pcm;
 
 	return dec_pcm * wava->fmtHdr.blockAlign;

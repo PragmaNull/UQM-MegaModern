@@ -39,10 +39,8 @@ namespace uqm
 void Netplay_Notify_shipSelected(NetConnection* conn, FleetShipIndex index);
 void Netplay_Notify_battleInput(NetConnection* conn,
 								BattleInputState input);
-void Netplay_Notify_setTeamName(NetConnection* conn, int player,
-								const char* name, size_t len);
-void Netplay_Notify_setFleet(NetConnection* conn, int player,
-							 const MeleeShip* fleet, size_t fleetSize);
+void Netplay_Notify_setTeamName(NetConnection* conn, int player, uqstl::string_view name);
+void Netplay_Notify_setFleet(NetConnection* conn, int player, uqstl::span<const MeleeShip> fleet);
 void Netplay_Notify_setShip(NetConnection* conn, int player,
 							FleetShipIndex index, MeleeShip ship);
 void Netplay_Notify_seedRandom(NetConnection* conn, uint32_t seed);

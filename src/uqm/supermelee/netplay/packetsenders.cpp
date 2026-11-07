@@ -74,19 +74,17 @@ void sendHandshakeCancelAck(NetConnection* conn)
 	queuePacket(conn, (Packet*)packet);
 }
 
-void sendTeamName(NetConnection* conn, NetplaySide side, const char* name,
-				  size_t len)
+void sendTeamName(NetConnection* conn, NetplaySide side, uqstl::string_view name)
 {
-	Packet_TeamName* packet {Packet_TeamName_create(side, name, len)};
+	Packet_TeamName* packet {Packet_TeamName_create(side, name)};
 	queuePacket(conn, (Packet*)packet);
 }
 
-void sendFleet(NetConnection* conn, NetplaySide side, const MeleeShip* ships,
-			   size_t shipCount)
+void sendFleet(NetConnection* conn, NetplaySide side, uqstl::span<const MeleeShip> ships)
 {
-	Packet_Fleet* packet {Packet_Fleet_create(side, shipCount)};
+	Packet_Fleet* packet {Packet_Fleet_create(side, ships.size())};
 
-	for (size_t i {0}; i < shipCount; i++)
+	for (size_t i {0}; i < ships.size(); i++)
 	{
 		fleetEntries(packet)[i].index = (uint8_t)i;
 		fleetEntries(packet)[i].ship = (uint8_t)ships[i];

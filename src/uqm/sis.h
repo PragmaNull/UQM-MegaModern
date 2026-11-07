@@ -241,7 +241,7 @@ extern bool DrawSISMessageEx(const char* pStr, int16_t CurPos,
 							 int16_t ExPos, SisMessageFlags flags);
 
 extern void DrawSISMessage(const char* pStr);
-extern void DateToString(char* buf, size_t bufLen,
+extern void DateToString(uqstl::span<char> buf,
 						 uint8_t month_index, uint8_t day_index, uint16_t year_index);
 
 // Returned GfxRect is relative to the StatusContext

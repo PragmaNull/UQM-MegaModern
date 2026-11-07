@@ -418,11 +418,9 @@ void openAL_GetBufferi(audio_Object bufobj, int32_t pname,
 	*value = temp;
 }
 
-void openAL_BufferData(audio_Object bufobj, uint32_t format, void* data,
-					   uint32_t size, uint32_t freq)
+void openAL_BufferData(audio_Object bufobj, uint32_t format, uqstl::span<const uint8_t> data, uint32_t freq)
 {
-	alBufferData((ALuint)bufobj, (ALenum)format, (ALvoid*)data,
-				 (ALsizei)size, (ALsizei)freq);
+	alBufferData(static_cast<ALuint>(bufobj), static_cast<ALenum>(format), data.data(), static_cast<ALsizei>(data.size()), static_cast<ALsizei>(freq));
 }
 
 #endif

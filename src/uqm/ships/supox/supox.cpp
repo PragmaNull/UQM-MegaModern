@@ -127,8 +127,7 @@ static RaceDesc supox_desc =
 		0, /* CodeRef */
 };
 
-static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							   uint16_t ConcernCounter)
+static void supox_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -179,7 +178,7 @@ static void supox_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	}
 
 	ship_intelligence(ShipPtr,
-					  ObjectsOfConcern, ConcernCounter);
+					  ObjectsOfConcern);
 
 	if (testFlag(StarShipPtr->ship_input_state, StatusFlags::Special))
 	{

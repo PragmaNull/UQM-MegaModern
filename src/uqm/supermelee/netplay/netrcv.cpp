@@ -35,20 +35,19 @@ namespace uqm
 // Try to get a single packet from a stream of data.
 // Returns the length of the packet that was processed, 0 if the packet is
 // not complete, or an error, in which case the state is unchanged.
-static uqstl::expected<size_t, uqstl::error_code> dataReceivedSingle(NetConnection* conn, const uint8_t* data,
-																	 size_t dataLen)
+static uqstl::expected<size_t, uqstl::error_code> dataReceivedSingle(NetConnection* conn, uqstl::span<const uint8_t> data)
 {
 	uint32_t packetLen {};
 	PacketType type;
 
-	if (dataLen < sizeof(PacketHeader))
+	if (data.size() < sizeof(PacketHeader))
 	{
 		// Incomplete packet. We'll have to wait for the rest.
 		return 0;
 	}
 
-	packetLen = packetLength((const Packet*)data);
-	type = packetType((const Packet*)data);
+	packetLen = packetLength(reinterpret_cast<const Packet*>(data.data()));
+	type = packetType(reinterpret_cast<const Packet*>(data.data()));
 
 	if (!validPacketType(type))
 	{
@@ -66,7 +65,7 @@ static uqstl::expected<size_t, uqstl::error_code> dataReceivedSingle(NetConnecti
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (dataLen < packetLen)
+	if (data.size() < packetLen)
 	{
 		// Incomplete packet. We'll have to wait for the rest.
 		return 0;
@@ -95,7 +94,7 @@ static uqstl::expected<size_t, uqstl::error_code> dataReceivedSingle(NetConnecti
 #endif /* NETPLAY_DEBUG_FILE */
 #endif /* NETPLAY_DEBUG */
 
-	if (NetResult result {packetTypeData[*type].handler(conn, data)}; !result)
+	if (NetResult result {packetTypeData[*type].handler(conn, data.data())}; !result)
 	{
 		return uqstl::unexpected {result.error()};
 	}
@@ -105,12 +104,12 @@ static uqstl::expected<size_t, uqstl::error_code> dataReceivedSingle(NetConnecti
 
 // Try to get all the packets from a stream of data.
 // Returns the number of bytes processed.
-static uqstl::expected<size_t, uqstl::error_code> dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
+static uqstl::expected<size_t, uqstl::error_code> dataReceivedMulti(NetConnection* conn, uqstl::span<const uint8_t> data)
 {
 	size_t processed {0};
-	while (len > 0)
+	while (data.size() > 0)
 	{
-		const uqstl::expected<size_t, uqstl::error_code> single {dataReceivedSingle(conn, data, len)};
+		const uqstl::expected<size_t, uqstl::error_code> single {dataReceivedSingle(conn, data)};
 		if (!single)
 		{
 			return single;
@@ -125,8 +124,7 @@ static uqstl::expected<size_t, uqstl::error_code> dataReceivedMulti(NetConnectio
 		}
 
 		processed += packetLen;
-		data += packetLen;
-		len -= packetLen;
+		data = data.subspan(packetLen);
 	}
 
 	return processed;
@@ -134,7 +132,7 @@ static uqstl::expected<size_t, uqstl::error_code> dataReceivedMulti(NetConnectio
 
 uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std::byte> data)
 {
-	const uqstl::expected<size_t, uqstl::error_code> processed {dataReceivedMulti(conn, reinterpret_cast<const uint8_t*>(data.data()), data.size())};
+	const uqstl::expected<size_t, uqstl::error_code> processed {dataReceivedMulti(conn, {reinterpret_cast<const uint8_t*>(data.data()), data.size()})};
 	if (!processed)
 	{
 		return uqstl::nullopt;

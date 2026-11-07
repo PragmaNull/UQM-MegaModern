@@ -194,8 +194,7 @@ static uint16_t initialize_lance(Element* ShipPtr, ElementHandle WeaponArray[])
 	return (6);
 }
 
-static void utwig_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							   uint16_t ConcernCounter)
+static void utwig_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	int16_t ShieldStatus {};
 	Starship* StarShipPtr {};
@@ -270,7 +269,7 @@ static void utwig_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 			lpEvalDesc->MoveState = MovementState::Pursue;
 		}
 	}
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 }
 
 static void utwig_collision(Element* ElementPtr0, GfxPoint* pPt0,

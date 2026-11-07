@@ -43,7 +43,7 @@ static bool moda_Init(tfb::SoundDecoder* This);
 static void moda_Term(tfb::SoundDecoder* This);
 static bool moda_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
 static void moda_Close(tfb::SoundDecoder* This);
-static int moda_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize);
+static int moda_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf);
 static uint32_t moda_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos);
 static uint32_t moda_GetFrame(tfb::SoundDecoder* This);
 
@@ -82,14 +82,12 @@ struct ModSoundDecoder
 //  we provide our own so that we can use MikMod as
 //  generic decoder
 
-static void* buffer;
-static ULONG bufsize;
+static uqstl::span<uint8_t> buffer {};
 static ULONG written;
 
-static ULONG* moda_mmout_SetOutputBuffer(void* buf, ULONG size)
+static ULONG* moda_mmout_SetOutputBuffer(uqstl::span<uint8_t> buf)
 {
 	buffer = buf;
-	bufsize = size;
 	written = 0;
 	return &written;
 }
@@ -113,12 +111,12 @@ static void moda_mmout_Exit(void)
 static void moda_mmout_Update(void)
 {
 	written = 0;
-	if (!buffer || bufsize == 0)
+	if (buffer.empty())
 	{
 		return;
 	}
 
-	written = VC_WriteBytes((int8_t*)buffer, bufsize);
+	written = VC_WriteBytes(reinterpret_cast<SBYTE*>(buffer.data()), static_cast<ULONG>(buffer.size()));
 }
 
 static BOOL moda_mmout_Reset(void)
@@ -189,7 +187,7 @@ static BOOL moda_ioReader_Eof(MREADER* reader)
 
 static BOOL moda_ioReader_Read(MREADER* reader, void* ptr, size_t size)
 {
-	return ReadResFile(ptr, size, 1, *((MikModReader*)reader)->file);
+	return ReadResFile(uqm::io::asBytes(ptr, size), *((MikModReader*)reader)->file) == size;
 }
 
 static int moda_ioReader_Get(MREADER* reader)
@@ -369,7 +367,7 @@ static void moda_Close(tfb::SoundDecoder* This)
 	}
 }
 
-static int moda_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
+static int moda_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf)
 {
 	const tfb::ModSoundDecoder* moda = (tfb::ModSoundDecoder*)This;
 	const volatile ULONG* poutsize {};
@@ -380,7 +378,7 @@ static int moda_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
 		return 0;
 	}
 
-	poutsize = moda_mmout_SetOutputBuffer(buf, bufsize);
+	poutsize = moda_mmout_SetOutputBuffer(buf);
 	MikMod_Update();
 
 	return *poutsize;

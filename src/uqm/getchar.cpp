@@ -78,26 +78,25 @@ static uqstl::vector<joy_char_t> LoadJoystickAlpha(const char* str, int* count)
 	return chars;
 }
 
-static int JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
-						 int setsize)
+static int JoyCharFindIn(const joy_char_t* ch, uqstl::span<const joy_char_t> set)
 {
 	int i {};
 
-	for (i = 0; i < setsize && strcmp(set[i].enc.data(), ch->enc.data()) != 0; ++i)
+	for (i = 0; i < set.size() && strcmp(set[i].enc.data(), ch->enc.data()) != 0; ++i)
 		;
 
-	return (i < setsize) ? i : -1;
+	return (i < set.size()) ? i : -1;
 }
 
 static int JoyCharIsLower(const joy_char_t* ch, TextEntryState* pTES)
 {
-	return 0 <= JoyCharFindIn(ch, pTES->JoyLower.data(), pTES->JoyRegLength);
+	return 0 <= JoyCharFindIn(ch, uqstl::span {pTES->JoyLower}.first(pTES->JoyRegLength));
 }
 
 static void JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
 							 const joy_char_t* to, int regsize)
 {
-	const int i = JoyCharFindIn(ch, from, regsize);
+	const int i = JoyCharFindIn(ch, {from, static_cast<size_t>(regsize)});
 	if (i >= 0)
 	{
 		*ch = to[i];
@@ -383,7 +382,7 @@ bool DoTextEntry(TextEntryState* pTES)
 		JoyCharToUpper(&cmpch, &ch, pTES);
 
 		// find current char in the alphabet
-		int i {JoyCharFindIn(&cmpch, pTES->JoyAlpha.data(), pTES->JoyAlphaLength)};
+		int i {JoyCharFindIn(&cmpch, uqstl::span {pTES->JoyAlpha}.first(pTES->JoyAlphaLength))};
 
 		if (PulsedInputState.menu[*MenuKey::MenuUp])
 		{

@@ -492,27 +492,27 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 	return (true);
 }
 
-void DateToString(char* buf, size_t bufLen,
+void DateToString(uqstl::span<char> buf,
 				  uint8_t month_index, uint8_t day_index, uint16_t year_index)
 {
 	switch (uqm::UQMOptions::read().optDateFormat)
 	{
 		case uqm::DateFormat::MMM_dd_yyyy: //MMM dd.yyyy ie: Mar 01.2500
-			fmt::format_to_sz_n(buf, bufLen, "{} {:02}{}{:04}",
+			fmt::format_to_sz_n(buf, "{} {:02}{}{:04}",
 								GameString(GameStringBase::MonthsString + month_index - 1),
 								day_index, StrMiddleDot, year_index);
 			break;
 		case uqm::DateFormat::MM_dd_yyyy: //MM.dd.yyyy  ie: 03.01.2500
-			fmt::format_to_sz_n(buf, bufLen, "{:02}{}{:02}{}{:04}", month_index, StrMiddleDot,
+			fmt::format_to_sz_n(buf, "{:02}{}{:02}{}{:04}", month_index, StrMiddleDot,
 								day_index, StrMiddleDot, year_index);
 			break;
 		case uqm::DateFormat::dd_MMM_yyyy: //dd MMM yyyy ie: 01 Mar 2500
-			fmt::format_to_sz_n(buf, bufLen, "{:02} {} {:04}", day_index,
+			fmt::format_to_sz_n(buf, "{:02} {} {:04}", day_index,
 								GameString(GameStringBase::MonthsString + month_index - 1),
 								year_index);
 			break;
 		case uqm::DateFormat::dd_MM_yyyy: //dd MM yyyy  ie: 01.03.2500
-			fmt::format_to_sz_n(buf, bufLen, "{:02}{}{:02}{}{:04}", day_index, StrMiddleDot,
+			fmt::format_to_sz_n(buf, "{:02}{}{:02}{}{:04}", day_index, StrMiddleDot,
 								month_index, StrMiddleDot, year_index);
 			break;
 	}
@@ -585,7 +585,7 @@ void DrawStatusMessage(const char* pStr)
 		}
 		else
 		{ // Just a date
-			DateToString(buf.data(), sizeof buf,
+			DateToString(buf,
 						 uqm::gameState().clock().month(),
 						 uqm::gameState().clock().day(),
 						 uqm::gameState().clock().year());

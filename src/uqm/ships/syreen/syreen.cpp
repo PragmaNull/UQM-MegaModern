@@ -237,11 +237,10 @@ static void spawn_crew(Element* ElementPtr)
 	}
 }
 
-static void syreen_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								uint16_t ConcernCounter)
+static void syreen_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	ship_intelligence(ShipPtr,
-					  ObjectsOfConcern, ConcernCounter);
+					  ObjectsOfConcern);
 
 	const ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyShip]};
 	if (lpEvalDesc->ObjectPtr != nullptr)

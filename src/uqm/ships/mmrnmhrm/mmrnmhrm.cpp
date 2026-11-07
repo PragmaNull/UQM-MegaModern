@@ -198,8 +198,7 @@ static void missile_preprocess(Element* ElementPtr)
 	}
 }
 
-static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								  uint16_t ConcernCounter)
+static void mmrnmhrm_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	bool CanTransform {};
 	Starship* StarShipPtr {};
@@ -215,7 +214,7 @@ static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 	}
 
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	if (CanTransform

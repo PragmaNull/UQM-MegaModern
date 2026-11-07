@@ -173,7 +173,7 @@ struct mixer_Buffer
 	uint32_t low;
 	float (*Resample)(mixer_Source* src, bool left);
 	/* original buffer values for OpenAL compat */
-	void* orgdata;
+	const void* orgdata;
 	uint32_t orgfreq;
 	uint32_t orgsize;
 	uint32_t orgchannels;
@@ -215,8 +215,8 @@ MixerError mixer_GetError(void);
 bool mixer_Init(uint32_t frequency, uint32_t format, MixerQuality quality,
 				MixerFlags flags);
 void mixer_Uninit(void);
-void mixer_MixChannels(void* userdata, uint8_t* stream, int32_t len);
-void mixer_MixFake(void* userdata, uint8_t* stream, int32_t len);
+void mixer_MixChannels(void* userdata, uqstl::span<uint8_t> stream);
+void mixer_MixFake(void* userdata, uqstl::span<uint8_t> stream);
 
 /*************************************************
  *  Sources
@@ -251,8 +251,7 @@ void mixer_DeleteBuffers(uint32_t n, mixer_Object* pbufobj);
 bool mixer_IsBuffer(mixer_Object bufobj);
 void mixer_GetBufferi(mixer_Object bufobj, MixerBufferProp pname,
 					  mixer_IntVal* value);
-void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
-					  uint32_t size, uint32_t freq);
+void mixer_BufferData(mixer_Object bufobj, uint32_t format, uqstl::span<const uint8_t> data, uint32_t freq);
 
 
 static_assert(sizeof(mixer_Object) >= sizeof(void*), "mixer_Object must be able to hold a pointer");

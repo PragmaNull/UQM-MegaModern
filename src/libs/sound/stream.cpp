@@ -99,8 +99,7 @@ void PlayStream(tfb::SoundSample* sample, uint32_t source, bool looping, bool sc
 			break;
 		}
 
-		audio_BufferData(sample->buffer[i], decoder->format,
-						 decoder->buffer, decoded_bytes, decoder->frequency);
+		audio_BufferData(sample->buffer[i], decoder->format, {static_cast<const uint8_t*>(decoder->buffer), decoded_bytes}, decoder->frequency);
 		audio_SourceQueueBuffers(soundSource[source].handle, 1,
 								 &sample->buffer[i]);
 		if (sample->callbacks.OnQueueBuffer)
@@ -540,8 +539,7 @@ static void process_stream(tfb::SoundSource* source) UQM_REQUIRES(source->stream
 		}
 
 		// And a new buffer is born
-		audio_BufferData(buffer, decoder->format, decoder->buffer,
-						 decoded_bytes, decoder->frequency);
+		audio_BufferData(buffer, decoder->format, {static_cast<const uint8_t*>(decoder->buffer), decoded_bytes}, decoder->frequency);
 		error = audio_GetError();
 		if (error != AudioEnum::NoError)
 		{

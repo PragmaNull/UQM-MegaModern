@@ -63,7 +63,7 @@ void Connection::Impl::onRead(std::error_code error, size_t count)
 		return;
 	}
 	m_used += count;
-	const uqstl::optional<size_t> processed {m_onReceive(uqstl::span<const std::byte> {m_buffer.data(), m_used})};
+	const uqstl::optional<size_t> processed {m_onReceive(uqstl::span<const uqstl::byte> {m_buffer}.first(m_used))};
 	if (!m_open)
 	{
 		return;

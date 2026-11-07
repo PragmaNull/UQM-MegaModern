@@ -137,8 +137,7 @@ static RaceDesc thraddash_desc =
 		0, /* CodeRef */
 };
 
-static void thraddash_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								   uint16_t ConcernCounter)
+static void thraddash_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 
 	Starship* StarShipPtr {};
@@ -161,7 +160,7 @@ static void thraddash_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOf
 			lpEvalDesc->MoveState = MovementState::Entice;
 		}
 	}
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0)

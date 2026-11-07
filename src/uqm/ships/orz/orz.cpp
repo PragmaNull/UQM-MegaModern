@@ -254,8 +254,7 @@ static uint8_t count_marines(Starship* StarShipPtr, bool FindSpot)
 	return (num_marines);
 }
 
-static void orz_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							 uint16_t ConcernCounter)
+static void orz_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Element* TurretPtr {};
 	Starship* StarShipPtr {};
@@ -263,7 +262,7 @@ static void orz_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 	LockElement(GetSuccElement(ShipPtr), &TurretPtr);
 
 	++TurretPtr->turn_wait;
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 	--TurretPtr->turn_wait;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);

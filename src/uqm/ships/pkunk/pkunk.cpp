@@ -239,8 +239,7 @@ static uint16_t initialize_bug_missile(Element* ShipPtr, ElementHandle MissileAr
 	return (3);
 }
 
-static void pkunk_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							   uint16_t ConcernCounter)
+static void pkunk_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -263,7 +262,7 @@ static void pkunk_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 	{
 		StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 	}
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 }
 
 static void pkunk_preprocess(Element* ElementPtr);

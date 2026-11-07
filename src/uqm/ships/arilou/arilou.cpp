@@ -155,8 +155,7 @@ static uint16_t initialize_autoaim_laser(Element* ShipPtr, ElementHandle LaserAr
 	return (1);
 }
 
-static void arilou_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								uint16_t ConcernCounter)
+static void arilou_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -164,7 +163,7 @@ static void arilou_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 	StarShipPtr->ship_input_state |= StatusFlags::Thrust;
 
 	ObjectsOfConcern[*IntelObjectIndex::EnemyShip].MoveState = MovementState::Entice;
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	if (StarShipPtr->special_counter == 0)
 	{

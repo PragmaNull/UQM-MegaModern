@@ -367,8 +367,7 @@ static uint16_t initialize_buzzsaw(Element* ShipPtr, ElementHandle SawArray[])
 	return (1);
 }
 
-static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-									  uint16_t ConcernCounter)
+static void black_urquan_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -382,7 +381,7 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 	}
 
 	ship_intelligence(ShipPtr,
-					  ObjectsOfConcern, ConcernCounter);
+					  ObjectsOfConcern);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~StatusFlags::Special;

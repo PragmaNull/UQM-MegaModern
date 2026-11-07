@@ -241,8 +241,7 @@ static void plasma_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	}
 }
 
-static void mycon_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-							   uint16_t ConcernCounter)
+static void mycon_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -260,7 +259,7 @@ static void mycon_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConc
 		}
 	}
 
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].MoveState == MovementState::Pursue)

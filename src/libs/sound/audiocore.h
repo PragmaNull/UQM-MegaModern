@@ -67,8 +67,7 @@ struct audio_Driver
 	bool (*IsBuffer)(audio_Object bufobj);
 	void (*GetBufferi)(audio_Object bufobj, int32_t pname,
 					   audio_IntVal* value);
-	void (*BufferData)(audio_Object bufobj, uint32_t format, void* data,
-					   uint32_t size, uint32_t freq);
+	void (*BufferData)(audio_Object bufobj, uint32_t format, uqstl::span<const uint8_t> data, uint32_t freq);
 };
 
 
@@ -108,8 +107,7 @@ void audio_DeleteBuffers(uint32_t n, audio_Object* pbufobj);
 bool audio_IsBuffer(audio_Object bufobj);
 void audio_GetBufferi(audio_Object bufobj, audio_BufferProp pname,
 					  audio_IntVal* value);
-void audio_BufferData(audio_Object bufobj, uint32_t format, void* data,
-					  uint32_t size, uint32_t freq);
+void audio_BufferData(audio_Object bufobj, uint32_t format, uqstl::span<const uint8_t> data, uint32_t freq);
 
 bool audio_GetFormatInfo(uint32_t format, int* channels, int* sample_size);
 

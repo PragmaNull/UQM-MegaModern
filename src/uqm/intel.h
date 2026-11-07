@@ -41,8 +41,7 @@ extern BattleInputState computer_intelligence(
 	ComputerInputContext* context, Starship* StarShipPtr);
 extern BattleInputState tactical_intelligence(
 	ComputerInputContext* context, Starship* StarShipPtr);
-extern void ship_intelligence(Element* ShipPtr,
-							  ObjectEvaluation* ObjectsOfConcern, uint16_t ConcernCounter);
+extern void ship_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern);
 extern bool ship_weapons(Element* ShipPtr, Element* OtherPtr,
 						 uint16_t margin_of_error);
 

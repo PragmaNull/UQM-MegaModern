@@ -183,7 +183,7 @@ void* _GetSoundBankData(const ResourceFile& resource)
 		const uint32_t decoded_bytes {SoundDecoder_DecodeAll(decoder)};
 		uqm::log::debug("_GetSoundBankData(): decoded bytes {}", decoded_bytes);
 
-		audio_BufferData(sample->buffer[0], decoder->format, decoder->buffer, decoded_bytes, decoder->frequency);
+		audio_BufferData(sample->buffer[0], decoder->format, {static_cast<const uint8_t*>(decoder->buffer), decoded_bytes}, decoder->frequency);
 		// just for informational purposes
 		sample->length = decoder->length;
 

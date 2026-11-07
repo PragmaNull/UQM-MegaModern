@@ -468,7 +468,7 @@ extern void DrawPlanetSurfaceBorder(void);
 
 extern FrameRef GetStarBackGround(bool Encounter);
 const extern char* GetNamedPlanetaryBody(void);
-extern void GetPlanetOrMoonName(char* buf, uint16_t bufsize);
+extern void GetPlanetOrMoonName(uqstl::span<char> buf);
 
 extern void PlanetOrbitMenu(void);
 extern void SaveSolarSysLocation(void);

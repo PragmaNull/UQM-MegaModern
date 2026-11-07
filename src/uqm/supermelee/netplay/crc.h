@@ -31,7 +31,7 @@ struct crc_State
 };
 
 void crc_init(crc_State* state);
-void crc_processBytes(crc_State* state, uint8_t* buf, size_t bufLen);
+void crc_processBytes(crc_State* state, uqstl::span<const uint8_t> buf);
 void crc_processUint8(crc_State* state, uint8_t val);
 void crc_processUint16(crc_State* state, uint16_t val);
 void crc_processUint32(crc_State* state, uint32_t val);

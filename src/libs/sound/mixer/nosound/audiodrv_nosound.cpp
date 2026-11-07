@@ -211,7 +211,7 @@ void PlaybackTaskFunc(uqstl::stop_token stopToken)
 	while (!stopToken.stop_requested())
 	{
 		const TimeCount entryTime {GetTimeCounter()};
-		mixer_MixFake(nullptr, stream.data(), len);
+		mixer_MixFake(nullptr, uqstl::span {stream}.first(len));
 		const TimePeriod delay {period - (GetTimeCounter() - entryTime)};
 		if (delay > TimePeriod {})
 		{
@@ -400,8 +400,7 @@ void noSound_GetBufferi(audio_Object bufobj, int32_t pname,
 	*value = temp;
 }
 
-void noSound_BufferData(audio_Object bufobj, uint32_t format, void* data,
-						uint32_t size, uint32_t freq)
+void noSound_BufferData(audio_Object bufobj, uint32_t format, uqstl::span<const uint8_t> data, uint32_t freq)
 {
-	mixer_BufferData((mixer_Object)bufobj, format, data, size, freq);
+	mixer_BufferData((mixer_Object)bufobj, format, data, freq);
 }

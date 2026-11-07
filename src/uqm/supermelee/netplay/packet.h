@@ -332,8 +332,7 @@ Packet_HandshakeCancelAck* Packet_HandshakeCancelAck_create(void);
 Packet_SeedRandom* Packet_SeedRandom_create(uint32_t seed);
 Packet_InputDelay* Packet_InputDelay_create(uint32_t delay);
 Packet_Fleet* Packet_Fleet_create(NetplaySide side, size_t numShips);
-Packet_TeamName* Packet_TeamName_create(NetplaySide side, const char* name,
-										size_t size);
+Packet_TeamName* Packet_TeamName_create(NetplaySide side, uqstl::string_view name);
 Packet_SelectShip* Packet_SelectShip_create(uint16_t ship);
 Packet_BattleInput* Packet_BattleInput_create(uint8_t state);
 Packet_FrameCount* Packet_FrameCount_create(uint32_t frameCount);

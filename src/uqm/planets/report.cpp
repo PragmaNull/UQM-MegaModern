@@ -93,8 +93,10 @@ static void ClearReportArea(int16_t startx)
 	UnbatchGraphics();
 }
 
-static void MakeReport(SoundBankRef ReadOutSounds, const char* pStr, uint16_t StrLen)
+static void MakeReport(SoundBankRef ReadOutSounds, uqstl::string_view text)
 {
+	const char* pStr {text.data()};
+	uint16_t StrLen {static_cast<uint16_t>(text.size())};
 	int end_page_len {};
 	uqstl::array<char, 200> end_page_buf {};
 	uqm::UniChar last_c = 0;
@@ -393,7 +395,7 @@ void DoDiscoveryReport(SoundBankRef ReadOutSounds)
 			interpolatedReport.emplace(uqm::lua().interpolate(report));
 			report = *interpolatedReport;
 		}
-		MakeReport(ReadOutSounds, report.data(), (uint16_t)report.size());
+		MakeReport(ReadOutSounds, report);
 
 		uqm::lua().endComm();
 

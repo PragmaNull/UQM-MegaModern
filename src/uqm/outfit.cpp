@@ -251,19 +251,18 @@ static void ManipulateModules(int16_t NewState)
 	DrawModules(modState, NewState);
 }
 
-int16_t InventoryModules(uint8_t* pModuleMap, uint16_t Size)
+int16_t InventoryModules(uqstl::span<uint8_t> pModuleMap)
 {
 	int16_t ModulesOnBoard {0};
-	for (uint8_t i {0}; i < ModuleType::NumPurchaseModules && Size > 0; ++i)
+	for (uint8_t i {0}; i < ModuleType::NumPurchaseModules && static_cast<size_t>(ModulesOnBoard) < pModuleMap.size(); ++i)
 	{
 		//uint8_t ActiveModule;
 
 		//ActiveModule = GLOBAL (ModuleCost[i]);
 
 		{
-			*pModuleMap++ = i;
+			pModuleMap[ModulesOnBoard] = i;
 			++ModulesOnBoard;
-			--Size;
 		}
 	}
 
@@ -1439,8 +1438,7 @@ ExitOutfit:
 				if (DosMenu())
 				{
 					memset(&ModuleState, 0, sizeof ModuleState);
-					ModuleState.count = InventoryModules(ModuleState.list.data(),
-														 *ModuleType::NumPurchaseModules);
+					ModuleState.count = InventoryModules({ModuleState.list.data(), *ModuleType::NumPurchaseModules});
 				}
 
 				DrawMenuStateStrings(MenuString::Fuel, pMS->CurState);

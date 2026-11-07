@@ -234,8 +234,7 @@ static void populate_editkeys(int templat)
 		for (j = 0; j < 2; j++)
 		{
 			InterrogateInputState(templat, i, j,
-								  controlentries[i].controlname[j].data(),
-								  WidgetControlentryWidth);
+								  {controlentries[i].controlname[j].data(), WidgetControlentryWidth});
 		}
 	}
 }

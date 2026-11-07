@@ -230,10 +230,9 @@ void audio_GetBufferi(audio_Object bufobj, audio_BufferProp pname,
 	audiodrv.GetBufferi(bufobj, audiodrv.EnumLookup[*pname], value);
 }
 
-void audio_BufferData(audio_Object bufobj, uint32_t format, void* data,
-					  uint32_t size, uint32_t freq)
+void audio_BufferData(audio_Object bufobj, uint32_t format, uqstl::span<const uint8_t> data, uint32_t freq)
 {
-	audiodrv.BufferData(bufobj, audiodrv.EnumLookup[format], data, size,
+	audiodrv.BufferData(bufobj, audiodrv.EnumLookup[format], data,
 						freq);
 }
 

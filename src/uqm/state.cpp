@@ -127,31 +127,21 @@ uint32_t LengthStateFile(GameStateFile* fp)
 	return fp->used;
 }
 
-int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GameStateFile* fp)
+bool ReadStateFile(GameStateFile* fp, uqstl::span<uqstl::byte> buf)
 {
-	uint32_t bytes = size * count;
-
-	if (fp->ptr >= fp->size)
-	{ // EOF
-		return 0;
-	}
-	else if (fp->ptr + bytes > fp->size)
-	{ // dont have that much data
-		bytes = fp->size - fp->ptr;
-		bytes -= bytes % size;
-	}
-
-	if (bytes > 0)
+	if (fp->ptr + buf.size() > fp->size)
 	{
-		memcpy(lpBuf, fp->data.data() + fp->ptr, bytes);
-		fp->ptr += bytes;
+		return false;
 	}
-	return (bytes / size);
+
+	memcpy(buf.data(), fp->data.data() + fp->ptr, buf.size());
+	fp->ptr += static_cast<uint32_t>(buf.size());
+	return true;
 }
 
-int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GameStateFile* fp)
+bool WriteStateFile(GameStateFile* fp, uqstl::span<const uqstl::byte> buf)
 {
-	const uint32_t bytes = size * count;
+	const uint32_t bytes {static_cast<uint32_t>(buf.size())};
 
 	if (fp->ptr + bytes > fp->size)
 	{ // dont have that much space available
@@ -171,16 +161,13 @@ int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GameStateFi
 		}
 	}
 
-	if (bytes > 0)
+	memcpy(fp->data.data() + fp->ptr, buf.data(), bytes);
+	fp->ptr += bytes;
+	if (fp->ptr > fp->used)
 	{
-		memcpy(fp->data.data() + fp->ptr, lpBuf, bytes);
-		fp->ptr += bytes;
-		if (fp->ptr > fp->used)
-		{
-			fp->used = fp->ptr;
-		}
+		fp->used = fp->ptr;
 	}
-	return (bytes / size);
+	return true;
 }
 
 int SeekStateFile(GameStateFile* fp, long offset, int whence)
@@ -285,8 +272,7 @@ void GetPlanetInfo(void)
 			offset += moon_index * ScanRecordSize;
 
 			SeekStateFile(fp, offset, SEEK_SET);
-			sread_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask.data(),
-					  *ScanType::Count);
+			sread_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask);
 
 			{
 				uint8_t* ar = &(pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[0][0]);
@@ -364,7 +350,7 @@ void PutPlanetInfo(void)
 			{
 				const uint8_t* ar = &(PartiallyScavengedList[0][0]);
 
-				swrite_a32(fp, ScanRetrieveMask.data(), *ScanType::Count);
+				swrite_a32(fp, ScanRetrieveMask);
 
 				// JMS: Also init with zeroes the list of partially scavenged mineral amounts.
 				for (l = *ScanType::Mineral; l < ScanType::Count; l++)
@@ -380,7 +366,7 @@ void PutPlanetInfo(void)
 				{
 					const uint8_t* ar = &(PartiallyScavengedList[0][0]);
 
-					swrite_a32(fp, ScanRetrieveMask.data(), *ScanType::Count);
+					swrite_a32(fp, ScanRetrieveMask);
 
 					// JMS: Ditto for the moons.
 					for (l = *ScanType::Mineral; l < ScanType::Count; l++)
@@ -406,8 +392,7 @@ void PutPlanetInfo(void)
 		SeekStateFile(fp, offset, SEEK_SET);
 
 		// Store which mineral deposits we have already retrieved.
-		swrite_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask.data(),
-				   *ScanType::Count);
+		swrite_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask);
 
 		{
 			const uint8_t* ar = &(pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[0][0]);

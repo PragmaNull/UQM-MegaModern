@@ -115,7 +115,7 @@ static bool aifa_Init(tfb::SoundDecoder* This);
 static void aifa_Term(tfb::SoundDecoder* This);
 static bool aifa_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
 static void aifa_Close(tfb::SoundDecoder* This);
-static int aifa_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize);
+static int aifa_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf);
 static uint32_t aifa_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos);
 static uint32_t aifa_GetFrame(tfb::SoundDecoder* This);
 
@@ -170,8 +170,8 @@ struct AiffSoundDecoder
 
 const static tfb::DecoderFormats* aifa_formats = nullptr;
 
-static int aifa_DecodePCM(tfb::AiffSoundDecoder*, void* buf, int32_t bufsize);
-static int aifa_DecodeSDX2(tfb::AiffSoundDecoder*, void* buf, int32_t bufsize);
+static int aifa_DecodePCM(tfb::AiffSoundDecoder*, uqstl::span<uint8_t> buf);
+static int aifa_DecodeSDX2(tfb::AiffSoundDecoder*, uqstl::span<uint8_t> buf);
 
 
 const static char* aifa_GetName(void)
@@ -538,58 +538,58 @@ static void aifa_Close(tfb::SoundDecoder* This)
 	}
 }
 
-static int aifa_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
+static int aifa_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf)
 {
 	tfb::AiffSoundDecoder* aifa = (tfb::AiffSoundDecoder*)This;
 	switch (aifa->comp_type)
 	{
 		case AiffCompression::None:
-			return aifa_DecodePCM(aifa, buf, bufsize);
+			return aifa_DecodePCM(aifa, buf);
 		case AiffCompression::Sdx2:
-			return aifa_DecodeSDX2(aifa, buf, bufsize);
+			return aifa_DecodeSDX2(aifa, buf);
 		default:
 			assert(false && "Unknown comp_type");
 			return 0;
 	}
 }
 
-static int aifa_DecodePCM(tfb::AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
+static int aifa_DecodePCM(tfb::AiffSoundDecoder* aifa, uqstl::span<uint8_t> buf)
 {
-	uint32_t dec_pcm {bufsize / aifa->block_align};
+	uint32_t dec_pcm {static_cast<uint32_t>(buf.size()) / aifa->block_align};
 	if (dec_pcm > aifa->max_pcm - aifa->cur_pcm)
 	{
 		dec_pcm = aifa->max_pcm - aifa->cur_pcm;
 	}
 
-	dec_pcm = static_cast<decltype(dec_pcm)>(aifa->fp->read(uqm::io::asBytes(buf, aifa->file_block * dec_pcm)) / aifa->file_block);
+	dec_pcm = static_cast<decltype(dec_pcm)>(aifa->fp->read(uqstl::as_writable_bytes(buf.first(aifa->file_block * dec_pcm))) / aifa->file_block);
 	aifa->cur_pcm += dec_pcm;
 	const uint32_t size {dec_pcm * aifa->block_align};
 
 	if (aifa->bits_per_sample == 8)
 	{ // AIFF files store 8-bit data as signed
 		// and we need it unsigned
-		uint8_t* ptr = (uint8_t*)buf;
-		for (uint32_t left {size}; left > 0; --left, ++ptr)
+		for (uint8_t& sample : buf.first(size))
 		{
-			*ptr += 128;
+			sample += 128;
 		}
 	}
 
 	return size;
 }
 
-static int aifa_DecodeSDX2(tfb::AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
+static int aifa_DecodeSDX2(tfb::AiffSoundDecoder* aifa, uqstl::span<uint8_t> buf)
 {
-	int16_t* dst = (int16_t*)buf;
+	int16_t* dst {reinterpret_cast<int16_t*>(buf.data())};
 
-	uint32_t dec_pcm {bufsize / aifa->block_align};
+	uint32_t dec_pcm {static_cast<uint32_t>(buf.size()) / aifa->block_align};
 	if (dec_pcm > aifa->max_pcm - aifa->cur_pcm)
 	{
 		dec_pcm = aifa->max_pcm - aifa->cur_pcm;
 	}
 
-	int8_t* src {(int8_t*)buf + bufsize - (dec_pcm * aifa->file_block)};
-	dec_pcm = static_cast<decltype(dec_pcm)>(aifa->fp->read(uqm::io::asBytes(src, aifa->file_block * dec_pcm)) / aifa->file_block);
+	const uqstl::span<uint8_t> packed {buf.last(dec_pcm * aifa->file_block)};
+	const int8_t* src {reinterpret_cast<const int8_t*>(packed.data())};
+	dec_pcm = static_cast<decltype(dec_pcm)>(aifa->fp->read(uqstl::as_writable_bytes(packed)) / aifa->file_block);
 	aifa->cur_pcm += dec_pcm;
 
 	for (uint32_t left {dec_pcm}; left > 0; --left)

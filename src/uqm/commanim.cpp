@@ -70,10 +70,11 @@ static inline uint16_t randomFrameIndex(AnimSequence* pSeq, uint16_t from)
 	return from + uqm::random().next() % (ADPtr->NumFrames - from);
 }
 
-static void SetupAmbientSequences(AnimSequence* pSeq, uint16_t Num)
+static void SetupAmbientSequences(uqstl::span<AnimSequence> sequences)
 {
-	for (uint16_t i {0}; i < Num; ++i, ++pSeq)
+	for (uint16_t i {0}; i < sequences.size(); ++i)
 	{
+		AnimSequence* pSeq {&sequences[i]};
 		AnimationDesc* ADPtr = &CommData.AlienAmbientArray[i];
 
 		memset(pSeq, 0, sizeof(*pSeq));
@@ -140,10 +141,11 @@ static inline bool conflictsWithTalkingAnim(AnimSequence* pSeq)
 	return testFlag(ADPtr->AnimFlags, AnimationFlags::WaitTalking) && testFlag(CommData.AlienTalkDesc.AnimFlags, AnimationFlags::WaitTalking);
 }
 
-static void ProcessColormapAnims(AnimSequence* pSeq, uint16_t Num)
+static void ProcessColormapAnims(uqstl::span<AnimSequence> sequences)
 {
-	for (uint16_t i {0}; i < Num; ++i, ++pSeq)
+	for (AnimSequence& seq : sequences)
 	{
+		AnimSequence* pSeq {&seq};
 		const AnimationDesc* ADPtr = pSeq->ADPtr;
 
 		if ((testFlag(ADPtr->AnimFlags, AnimationFlags::Disabled))
@@ -377,7 +379,7 @@ void InitCommAnimations(void)
 	SetupTalkSequence(Talk, &TalkDesc);
 	++TotalSequences;
 	FirstAmbient = TotalSequences;
-	SetupAmbientSequences(Sequences.data() + FirstAmbient, CommData.NumAnimations);
+	SetupAmbientSequences(uqstl::span {Sequences}.subspan(FirstAmbient, CommData.NumAnimations));
 	TotalSequences += CommData.NumAnimations;
 
 	LastTime = GetTimeCounter();
@@ -547,10 +549,9 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 
 			// Colormap animations are processed separately
 			// from picture anims (see XFormColorMap_step)
-			ProcessColormapAnims(Sequences.data() + FirstAmbient,
-								 CommData.NumAnimations);
+			ProcessColormapAnims(uqstl::span {Sequences}.subspan(FirstAmbient, CommData.NumAnimations));
 
-			Change = DrawAlienFrame(Sequences.data(), TotalSequences, FullRedraw);
+			Change = DrawAlienFrame(uqstl::span {Sequences}.first(TotalSequences), FullRedraw);
 			if (FullRedraw)
 			{
 				Change = true;
@@ -637,7 +638,7 @@ static void ApplyFilterToStamp(GfxStamp s)
 	}
 }
 
-bool DrawAlienFrame(AnimSequence* Sequences, uint16_t Num, bool fullRedraw)
+bool DrawAlienFrame(uqstl::span<AnimSequence> Sequences, bool fullRedraw)
 {
 	int i {};
 	GfxStamp s;
@@ -675,9 +676,9 @@ bool DrawAlienFrame(AnimSequence* Sequences, uint16_t Num, bool fullRedraw)
 		}
 	}
 
-	if (Sequences)
+	if (!Sequences.empty())
 	{ // Draw the animation sequences (has to be in reverse)
-		for (i = Num - 1; i >= 0; --i)
+		for (i = Sequences.size() - 1; i >= 0; --i)
 		{
 			AnimSequence* pSeq = &Sequences[i];
 			const AnimationDesc* ADPtr = pSeq->ADPtr;

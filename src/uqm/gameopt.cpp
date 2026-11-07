@@ -496,7 +496,7 @@ static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, ui
 	uqstl::array<char, 256> fullStr {};
 	uqstl::array<char, 80> dateStr {};
 
-	DateToString(dateStr.data(), sizeof dateStr, uqm::gameState().clock().month(),
+	DateToString(dateStr, uqm::gameState().clock().month(),
 				 uqm::gameState().clock().day(), uqm::gameState().clock().year());
 	fmt::format_to_sz_n(fullStr, "{}: {}", dateStr.data(), Str);
 
@@ -1409,7 +1409,7 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 			CloneShipFragment(
 				(RaceId)pSD->ShipList[i], &uqm::gameState().game().built_ship_q, 0);
 		}
-		DateToString(buf.data(), sizeof buf,
+		DateToString(buf,
 					 pSD->month_index, pSD->day_index, pSD->year_index);
 		ClearSISRect(ClearSisFlags::DrawDisplay);
 		DrawBorder(BorderFrameIndex::SisStatSumm);
@@ -1688,7 +1688,7 @@ static void DrawGameSelection(PickGameState* pickState, uint16_t selSlot)
 		}
 		else
 		{
-			DateToString(buf2.data(), sizeof(buf2), desc->month_index,
+			DateToString(buf2, desc->month_index,
 						 desc->day_index, desc->year_index);
 
 			SaveName = desc->SaveName[0] ? desc->SaveName.data() :

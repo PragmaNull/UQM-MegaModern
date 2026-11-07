@@ -150,8 +150,7 @@ static void flame_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	ElementPtr0->state_flags |= ElementFlags::Nonsolid;
 }
 
-static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								 uint16_t ConcernCounter)
+static void ilwrath_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -163,7 +162,7 @@ static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCo
 		ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon].ObjectPtr = 0;
 	}
 
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (lpEvalDesc->ObjectPtr

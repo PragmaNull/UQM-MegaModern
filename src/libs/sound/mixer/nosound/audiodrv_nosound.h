@@ -64,8 +64,7 @@ void noSound_DeleteBuffers(uint32_t n, audio_Object* pbufobj);
 bool noSound_IsBuffer(audio_Object bufobj);
 void noSound_GetBufferi(audio_Object bufobj, int32_t pname,
 						audio_IntVal* value);
-void noSound_BufferData(audio_Object bufobj, uint32_t format, void* data,
-						uint32_t size, uint32_t freq);
+void noSound_BufferData(audio_Object bufobj, uint32_t format, uqstl::span<const uint8_t> data, uint32_t freq);
 
 
 #endif // UQM_LIBS_SOUND_MIXER_NOSOUND_AUDIODRV_NOSOUND_H

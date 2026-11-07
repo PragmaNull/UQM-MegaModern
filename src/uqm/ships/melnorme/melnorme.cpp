@@ -659,8 +659,7 @@ static uint16_t initialize_test_pump_up(Element* ShipPtr, ElementHandle PumpUpAr
 	return (1);
 }
 
-static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								  uint16_t ConcernCounter)
+static void melnorme_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -694,7 +693,7 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 			}
 		}
 	}
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	if (StarShipPtr->weapon_counter == 0
 		&& (old_count != 0
@@ -716,7 +715,7 @@ static void melnorme_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 
 		++ShipPtr->turn_wait;
 		++ShipPtr->thrust_wait;
-		ship_intelligence(ShipPtr, ObjectsOfConcern, *IntelObjectIndex::EnemyShip + 1);
+		ship_intelligence(ShipPtr, ObjectsOfConcern.first(*IntelObjectIndex::EnemyShip + 1));
 		--ShipPtr->thrust_wait;
 		--ShipPtr->turn_wait;
 

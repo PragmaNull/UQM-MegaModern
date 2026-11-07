@@ -408,8 +408,7 @@ static void spawn_doggy(Element* ElementPtr)
 	}
 }
 
-static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-								  uint16_t ConcernCounter)
+static void chenjesu_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -448,7 +447,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 		lpEvalDesc = &ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon];
 	}
 
-	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+	ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 	if (lpEvalDesc->ObjectPtr)
 	{

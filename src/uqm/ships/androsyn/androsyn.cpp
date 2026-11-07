@@ -272,8 +272,7 @@ static uint16_t initialize_bubble(Element* ShipPtr, ElementHandle BubbleArray[])
 	return (1);
 }
 
-static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-									uint16_t ConcernCounter)
+static void androsynth_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	Starship* StarShipPtr {};
 
@@ -297,7 +296,7 @@ static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsO
 			}
 		}
 
-		ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+		ship_intelligence(ShipPtr, ObjectsOfConcern);
 	}
 	else
 	{
@@ -319,7 +318,7 @@ static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsO
 			}
 		}
 
-		ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
+		ship_intelligence(ShipPtr, ObjectsOfConcern);
 
 		if (StarShipPtr->special_counter == 0)
 		{

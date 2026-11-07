@@ -43,7 +43,7 @@ static bool duka_Init(tfb::SoundDecoder* This);
 static void duka_Term(tfb::SoundDecoder* This);
 static bool duka_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
 static void duka_Close(tfb::SoundDecoder* This);
-static int duka_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize);
+static int duka_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf);
 static uint32_t duka_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos);
 static uint32_t duka_GetFrame(tfb::SoundDecoder* This);
 
@@ -182,7 +182,7 @@ static uqstl::array<int, 16> adpcm_index {
 	-1, -1, -1, -1, 2, 4, 6, 8,
 	-1, -1, -1, -1, 2, 4, 6, 8};
 
-static void decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
+static void decode_nibbles(uqstl::span<int16_t> output, int32_t channels,
 						   int32_t* predictors, uint16_t* indices)
 {
 	uqstl::array<int32_t, 2> step;
@@ -198,7 +198,7 @@ static void decode_nibbles(int16_t* output, int32_t output_size, int32_t channel
 	step[0] = adpcm_step[index[0]];
 	step[1] = adpcm_step[index[1]];
 
-	for (int32_t i {0}; i < output_size; i++)
+	for (int32_t i {0}; i < output.size(); i++)
 	{
 		delta = output[i];
 
@@ -255,7 +255,7 @@ static int32_t duka_decodeFrame(tfb::DuckSoundDecoder* duka, DukAud_AudSubframe*
 		*(outptr++) = *input & 0x0f;
 	}
 
-	decode_nibbles(output, header->numsamples * 2, duka->channels,
+	decode_nibbles({output, static_cast<size_t>(header->numsamples) * 2}, duka->channels,
 				   duka->predictors.data(), header->indices.data());
 
 	duka->cbdata += outputsize;
@@ -277,8 +277,9 @@ static int32_t duka_readNextFrame(tfb::DuckSoundDecoder* duka)
 	hdr.audsize = uqm::convertBigEndian<uint32_t>(hdr.audsize);
 
 	// dump encoded data at the end of the buffer aligned on 8-byte
-	uint8_t* p {(duka->data.data() + duka->maxdata - ((hdr.audsize + 7) & (-8)))};
-	if (!duka->duk->readExact(uqm::io::asBytes(p, hdr.audsize)))
+	const uqstl::span<uint8_t> packed {uqstl::span {duka->data}.subspan(duka->maxdata - ((hdr.audsize + 7) & (-8)), hdr.audsize)};
+	uint8_t* p {packed.data()};
+	if (!duka->duk->readExact(uqstl::as_writable_bytes(packed)))
 	{
 		duka->last_error = errno;
 		return *DukAudError::BadFile;
@@ -302,18 +303,18 @@ static int32_t duka_readNextFrame(tfb::DuckSoundDecoder* duka)
 	return duka_decodeFrame(duka, aud, p);
 }
 
-static int32_t duka_stuffBuffer(tfb::DuckSoundDecoder* duka, void* buf, int32_t bufsize)
+static int32_t duka_stuffBuffer(tfb::DuckSoundDecoder* duka, uqstl::span<uint8_t> buf)
 {
 	int32_t dataleft {};
 
 	dataleft = duka->cbdata - duka->dataofs;
 	if (dataleft > 0)
 	{
-		if (dataleft > bufsize)
+		if (static_cast<size_t>(dataleft) > buf.size())
 		{
-			dataleft = bufsize & (-4);
+			dataleft = static_cast<int32_t>(buf.size()) & (-4);
 		}
-		memcpy(buf, duka->data.data() + duka->dataofs, dataleft);
+		memcpy(buf.data(), duka->data.data() + duka->dataofs, dataleft);
 		duka->dataofs += dataleft;
 	}
 
@@ -421,7 +422,7 @@ static bool duka_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, co
 	}
 
 	duka->frames.assign(duka->cframes, 0);
-	const size_t cread {frm->read(uqm::io::asBytes(duka->frames.data(), sizeof(uint32_t) * duka->cframes)) / sizeof(uint32_t)};
+	const size_t cread {frm->read(uqstl::as_writable_bytes(uqstl::span {duka->frames})) / sizeof(uint32_t)};
 	delete frm;
 	if (cread != duka->cframes)
 	{
@@ -472,25 +473,24 @@ static void duka_Close(tfb::SoundDecoder* This)
 	duka->last_error = 0;
 }
 
-static int duka_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
+static int duka_Decode(tfb::SoundDecoder* This, uqstl::span<uint8_t> buf)
 {
 	tfb::DuckSoundDecoder* duka = (tfb::DuckSoundDecoder*)This;
 	int32_t stuffed {};
 	int32_t total = 0;
 
-	if (bufsize <= 0)
+	if (buf.empty())
 	{
 		return duka->last_error = *DukAudError::BadArg;
 	}
 
 	do
 	{
-		stuffed = duka_stuffBuffer(duka, buf, bufsize);
-		buf = (uint8_t*)buf + stuffed;
-		bufsize -= stuffed;
+		stuffed = duka_stuffBuffer(duka, buf);
+		buf = buf.subspan(stuffed);
 		total += stuffed;
 
-		if (bufsize > 0 && duka->iframe < duka->cframes)
+		if (!buf.empty() && duka->iframe < duka->cframes)
 		{
 			stuffed = duka_readNextFrame(duka);
 			if (stuffed <= 0)
@@ -498,7 +498,7 @@ static int duka_Decode(tfb::SoundDecoder* This, void* buf, int32_t bufsize)
 				return stuffed;
 			}
 		}
-	} while (bufsize > 0 && duka->iframe < duka->cframes);
+	} while (!buf.empty() && duka->iframe < duka->cframes);
 
 	return total;
 }

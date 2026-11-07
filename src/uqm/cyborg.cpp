@@ -473,8 +473,7 @@ bool ship_weapons(Element* ShipPtr, Element* OtherPtr, uint16_t margin_of_error)
 	return (num_weapons > 0);
 }
 
-void ship_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
-					   uint16_t ConcernCounter)
+void ship_intelligence(Element* ShipPtr, uqstl::span<ObjectEvaluation> ObjectsOfConcern)
 {
 	uint16_t margin_of_error {};
 	Starship* StarShipPtr {};
@@ -515,37 +514,36 @@ void ship_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcern,
 		margin_of_error = DisplayToWorld(ResScale(40));
 	}
 
-	ObjectsOfConcern += ConcernCounter;
 
-	// ObjectsOfConcernEWeapon = ObjectsOfConcern - ConcernCounter + ENEMY_WEAPON_INDEX;
+	// ObjectsOfConcernEWeapon = ObjectsOfConcern - ObjectsOfConcern.size() + ENEMY_WEAPON_INDEX;
 
-	while (ConcernCounter--)
+	for (size_t ConcernCounter {ObjectsOfConcern.size()}; ConcernCounter-- > 0;)
 	{
-		--ObjectsOfConcern;
-		if (ObjectsOfConcern->ObjectPtr)
+		ObjectEvaluation* const pConcern {&ObjectsOfConcern[ConcernCounter]};
+		if (pConcern->ObjectPtr)
 		{
 			if (!ShipMoved
 				&& (ConcernCounter != IntelObjectIndex::EnemyWeapon
-					|| ObjectsOfConcern->MoveState == MovementState::Pursue
-					|| (testFlag(ObjectsOfConcern->ObjectPtr->state_flags, ElementFlags::CrewObject))
+					|| pConcern->MoveState == MovementState::Pursue
+					|| (testFlag(pConcern->ObjectPtr->state_flags, ElementFlags::CrewObject))
 					|| Maneuverability(
 						   &StarShipPtr->RaceDescPtr->cyborg_control)
 						   >= ResolutionCompensated(MediumShip)))
 			{
-				ship_movement(ShipPtr, ObjectsOfConcern);
+				ship_movement(ShipPtr, pConcern);
 				ShipMoved = true;
 			}
 			if (!ShipFired
 				&& (ConcernCounter == IntelObjectIndex::EnemyShip
 					|| (ConcernCounter == IntelObjectIndex::EnemyWeapon
-						&& ObjectsOfConcern->MoveState != MovementState::Avoid
+						&& pConcern->MoveState != MovementState::Avoid
 #ifdef NEVER
 						&& !(StarShipPtr->control & STANDARD_RATING)
 #endif /* NEVER */
 							)))
 			{
 				ShipFired = ship_weapons(ShipPtr,
-										 ObjectsOfConcern->ObjectPtr, margin_of_error);
+										 pConcern->ObjectPtr, margin_of_error);
 				if (ShipFired)
 				{
 					StarShipPtr->ship_input_state |= StatusFlags::Weapon;
@@ -1455,8 +1453,7 @@ BattleInputState tactical_intelligence(ComputerInputContext* context, Starship* 
 		UnlockElement(hElement);
 	}
 
-	RDPtr->cyborg_control.intelligence_func(&Ship, ObjectsOfConcern.data(),
-											ConcernCounter);
+	RDPtr->cyborg_control.intelligence_func(&Ship, uqstl::span {ObjectsOfConcern}.first(ConcernCounter));
 #ifdef DEBUG_CYBORG
 	StarShipPtr->ship_input_state &= ~StatusFlags::Special;
 #endif /* DEBUG_CYBORG */
