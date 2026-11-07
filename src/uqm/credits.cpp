@@ -118,7 +118,6 @@ static FrameRef Credits_RenderTextFrame(GfxContextRef TempContext, int* istr, in
 										Color BackColor, Color ForeColor)
 {
 	FrameRef f {};
-	FrameRef OldFrame {};
 	uqstl::array<GfxText, uqm::c_creditsMaxLines> TextLines;
 	int i {};
 	const FontSizeDef* fdef {};
@@ -192,7 +191,7 @@ static FrameRef Credits_RenderTextFrame(GfxContextRef TempContext, int* istr, in
 	t.pStr = " ";
 	t.CharCount = 1;
 
-	GfxContextRef OldContext {SetContext(TempContext)};
+	const ContextScope contextScope {TempContext};
 
 	// get font dimensions
 	SetContextFont(fdef->font);
@@ -235,16 +234,13 @@ static FrameRef Credits_RenderTextFrame(GfxContextRef TempContext, int* istr, in
 
 	f = Credits_MakeTransFrame(CreditsExtent.width, leading * rows + (leading >> 1),
 							   BackColor);
-	OldFrame = SetContextFGFrame(f);
+	const FGFrameScope frameScope {f};
 	// draw text
 	SetContextForeGroundColor(ForeColor);
 	for (i = 0; i < cnt; ++i)
 	{
 		font_DrawText(TextLines.data() + i);
 	}
-
-	SetContextFGFrame(OldFrame);
-	SetContext(OldContext);
 
 	return f;
 }

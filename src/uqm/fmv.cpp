@@ -40,49 +40,49 @@ static constexpr auto MaxLoadEntries {40};
 
 void DoShipSpin(uint16_t index, MusicRef hMusic)
 {
-	GfxContextRef OldContext {SetContext(ScreenContext)};
-
-	if (uqm::currentSeed().ships)
 	{
-		MasterShipHandle hMaster = GetStarShipFromIndex(&master_q, index);
-		const MasterShipInfo* mPtr = LockMasterShip(&master_q, hMaster);
-		index = FindMasterShipIndex(SeedShip(mPtr->SpeciesID, false));
-		UnlockMasterShip(&master_q, hMaster);
-	}
+		const ContextScope contextScope {ScreenContext};
 
-	LoadIntoExtraScreen(nullptr);
-
-	if (hMusic)
-	{
-		StopMusic();
-	}
-
-	FreeHyperData();
-
-	if (isPC(uqm::UQMOptions::read().whichIntro))
-	{
-		if (IsPad() || OutfitOrShipyard == 3)
+		if (uqm::currentSeed().ships)
 		{
-			SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 4));
-			FlushColorXForms();
+			MasterShipHandle hMaster = GetStarShipFromIndex(&master_q, index);
+			const MasterShipInfo* mPtr = LockMasterShip(&master_q, hMaster);
+			index = FindMasterShipIndex(SeedShip(mPtr->SpeciesID, false));
+			UnlockMasterShip(&master_q, hMaster);
 		}
 
-		ShowPresentation(AccessdataStrtabRes);
+		LoadIntoExtraScreen(nullptr);
+
+		if (hMusic)
+		{
+			StopMusic();
+		}
+
+		FreeHyperData();
+
+		if (isPC(uqm::UQMOptions::read().whichIntro))
+		{
+			if (IsPad() || OutfitOrShipyard == 3)
+			{
+				SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 4));
+				FlushColorXForms();
+			}
+
+			ShowPresentation(AccessdataStrtabRes);
+		}
+
+		// TODO: It would be nice to have better resource names for these.
+		uqstl::array<char, 24> vnbuf {}; // From 32 to 24
+		fmt::format_to_n(vnbuf.data(), sizeof(vnbuf) - 1, "slides.spins. {:02}", (unsigned)index);
+
+		ShowPresentation(vnbuf.data());
+
+		if (is3DO(uqm::UQMOptions::read().whichIntro))
+		{
+			SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 4));
+		}
+		FlushColorXForms();
 	}
-
-	// TODO: It would be nice to have better resource names for these.
-	uqstl::array<char, 24> vnbuf {}; // From 32 to 24
-	fmt::format_to_n(vnbuf.data(), sizeof(vnbuf) - 1, "slides.spins. {:02}", (unsigned)index);
-
-	ShowPresentation(vnbuf.data());
-
-	if (is3DO(uqm::UQMOptions::read().whichIntro))
-	{
-		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 4));
-	}
-	FlushColorXForms();
-
-	SetContext(OldContext);
 
 	{
 		const ClipRectScope clipRectScope {};

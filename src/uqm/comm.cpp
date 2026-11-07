@@ -876,7 +876,7 @@ static void FadePlayerUI(void)
 
 		NextTime = GetTimeCounter() + c_gameSecond / 15;
 
-		GfxContextRef OldContext {SetContext(ScreenContext)};
+		const ContextScope contextScope {ScreenContext};
 
 		SetContextForeGroundColor(
 			BuildColorRgba(
@@ -903,7 +903,6 @@ static void FadePlayerUI(void)
 				DrawFilledRectangle(&DarkModeRect[5]);
 			}
 		}
-		SetContext(OldContext);
 		fadeIndex++;
 	}
 }

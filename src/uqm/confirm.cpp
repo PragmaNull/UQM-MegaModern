@@ -102,9 +102,7 @@ bool DoConfirmExit(void)
 		GfxStamp s;
 		GfxRect ctxRect;
 		bool response = false;
-		Color OldColor;
 		DrawMode mode;
-		DrawMode oldMode;
 		TimeCount deltaT;
 
 		deltaT = GetTimeCounter();
@@ -121,12 +119,14 @@ bool DoConfirmExit(void)
 		s = SaveContextFrame(&ctxRect);
 
 		mode = MAKE_DRAW_MODE(DrawKind::Desaturate, DesatAmount);
-		oldMode = SetContextDrawMode(mode);
-		DrawFilledRectangle(&ctxRect);
-		SetContextDrawMode(oldMode);
-		OldColor = SetContextForeGroundColor(BuildColorRgba(0x00, 0x00, 0x00, 0x30));
-		DrawFilledRectangle(&ctxRect);
-		SetContextForeGroundColor(OldColor);
+		{
+			const DrawModeScope drawModeScope {mode};
+			DrawFilledRectangle(&ctxRect);
+		}
+		{
+			const ForegroundColorScope colorScope {BuildColorRgba(0x00, 0x00, 0x00, 0x30)};
+			DrawFilledRectangle(&ctxRect);
+		}
 
 		// There was a SetSystemRect(&r) call which we don't need anymore
 
@@ -229,7 +229,6 @@ void DoPopupWindow(const char* msg)
 	uqstl::array<uqgsl::czstring, 30> lines;
 	WidgetLabel label;
 	GfxStamp s;
-	GfxRect oldRect;
 	GfxRect windowRect;
 	PopupState state;
 	MenuSoundFlags s0 {};
@@ -254,32 +253,32 @@ void DoPopupWindow(const char* msg)
 
 	const bool FlashPaused {PauseFlash()};
 
-	GfxContextRef oldContext {SetContext(ScreenContext)};
-	GetContextClipRect(&oldRect);
-	SetContextClipRect(nullptr);
-
-	// TODO: Maybe DrawLabelAsWindow() should return a saved GfxStamp?
-	//   We do not know the dimensions here, and so save the whole context
-	s = SaveContextFrame(nullptr);
-
-	Widget_SetFont(StarConFont);
-	Widget_SetWindowColors(ShadowboxBackgroundColor,
-						   ShadowboxDarkColor, ShadowboxMediumColor);
-	DrawLabelAsWindow(&label, &windowRect);
-	// There was a SetSystemRect(&windowRect) call which we don't need anymore
-
-	GetMenuSounds(&s0, &s1);
-	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
 	{
-		const InputCallbackScope noCallback {nullptr};
-		state.InputFunc = DoPopup;
-		DoInput(&state, true);
+		const ContextScope contextScope {ScreenContext};
+		const ClipRectScope clipRectScope {};
+		SetContextClipRect(nullptr);
+
+		// TODO: Maybe DrawLabelAsWindow() should return a saved GfxStamp?
+		//   We do not know the dimensions here, and so save the whole context
+		s = SaveContextFrame(nullptr);
+
+		Widget_SetFont(StarConFont);
+		Widget_SetWindowColors(ShadowboxBackgroundColor,
+							   ShadowboxDarkColor, ShadowboxMediumColor);
+		DrawLabelAsWindow(&label, &windowRect);
+		// There was a SetSystemRect(&windowRect) call which we don't need anymore
+
+		GetMenuSounds(&s0, &s1);
+		SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
+		{
+			const InputCallbackScope noCallback {nullptr};
+			state.InputFunc = DoPopup;
+			DoInput(&state, true);
+		}
+		ClearSystemRect();
+		DrawStamp(&s);
+		DestroyDrawable(ReleaseDrawable(s.frame));
 	}
-	ClearSystemRect();
-	DrawStamp(&s);
-	DestroyDrawable(ReleaseDrawable(s.frame));
-	SetContextClipRect(&oldRect);
-	SetContext(oldContext);
 
 	if (FlashPaused)
 	{

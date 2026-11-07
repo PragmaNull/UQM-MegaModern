@@ -99,9 +99,9 @@ void DrawShadowedBox(GfxRect* r, Color bg, Color dark, Color medium)
 // window drawn.
 void DrawLabelAsWindow(WidgetLabel* label, GfxRect* windowRect)
 {
-	const Color oldfg = SetContextForeGroundColor(WidgetDialogTextColor);
+	const ForegroundColorScope colorScope {WidgetDialogTextColor};
 	FontRef oldfont = 0;
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxRect r;
 	GfxText t;
 	int i {};
@@ -152,12 +152,10 @@ void DrawLabelAsWindow(WidgetLabel* label, GfxRect* windowRect)
 		}
 	}
 
-	SetContextFontEffect(oldFontEffect);
 	if (oldfont)
 	{
 		SetContextFont(oldfont);
 	}
-	SetContextForeGroundColor(oldfg);
 
 	if (windowRect != nullptr)
 	{ // Add the outer border added by DrawShadowedBox.
@@ -244,9 +242,8 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 { // Main menu function that draws backgroung and all widgets
 	GfxRect r;
 	Color title;
-	Color oldtext;
 	FontRef oldfont = 0;
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxText t;
 	int widget_index {};
 	int height {};
@@ -274,7 +271,7 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 
 	DrawStamp(&self->bgStamp);
 
-	oldtext = SetContextForeGroundColor(title);
+	const ForegroundColorScope colorScope {title};
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y + uqm::ResScale(6);
 	t.pStr = self->title;
@@ -386,12 +383,10 @@ void Widget_DrawMenuScreen(Widget* _self, int x, int y)
 		widget_y += (*c->height)(c) + uqm::ResScale(5);
 	}
 
-	SetContextFontEffect(oldFontEffect);
 	if (oldfont)
 	{
 		SetContextFont(oldfont);
 	}
-	SetContextForeGroundColor(oldtext);
 
 	(void)x;
 	(void)y;
@@ -562,9 +557,9 @@ void Widget_DrawButton(Widget* _self, int x, int y)
 void Widget_DrawLabel(Widget* _self, int x, int y)
 { // Special labels
 	const WidgetLabel* self = (WidgetLabel*)_self;
-	const Color oldtext = SetContextForeGroundColor(WidgetLabelColor);
+	const ForegroundColorScope colorScope {WidgetLabelColor};
 	FontRef oldfont = 0;
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxText t;
 	GfxRect r;
 	const char* amperScore = "&_";
@@ -617,12 +612,10 @@ void Widget_DrawLabel(Widget* _self, int x, int y)
 		}
 	}
 
-	SetContextFontEffect(oldFontEffect);
 	if (oldfont)
 	{
 		SetContextFont(oldfont);
 	}
-	SetContextForeGroundColor(oldtext);
 
 	(void)x;
 }

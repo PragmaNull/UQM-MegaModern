@@ -391,11 +391,7 @@ bool PauseGame(void)
 	GfxStamp s;
 	GfxStamp saveStamp;
 	GfxRect ctxRect;
-	GfxPoint OldOrigin;
-	GfxRect OldRect;
-	Color OldColor;
 	DrawMode mode;
-	DrawMode oldMode;
 	TimeCount deltaT;
 
 	if (ActivityFrame == 0
@@ -414,66 +410,65 @@ bool PauseGame(void)
 
 	deltaT = GetTimeCounter();
 
-	GfxContextRef OldContext {SetContext(ScreenContext)};
-	OldOrigin = SetContextOrigin(MAKE_POINT(0, 0));
-	GetContextClipRect(&OldRect);
-	SetContextClipRect(nullptr);
-
-	GetContextClipRect(&ctxRect);
-	GetFrameRect(ActivityFrame, &r);
-	r.corner.x = (ctxRect.extent.width - r.extent.width) >> 1;
-	r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
-	saveStamp = SaveContextFrame(&ctxRect);
-
-	mode = MAKE_DRAW_MODE(DrawKind::Desaturate, DesatAmount);
-	oldMode = SetContextDrawMode(mode);
-	DrawFilledRectangle(&ctxRect);
-	SetContextDrawMode(oldMode);
-	OldColor = SetContextForeGroundColor(
-		BuildColorRgba(0x00, 0x00, 0x00, 0x30));
-	DrawFilledRectangle(&ctxRect);
-	SetContextForeGroundColor(OldColor);
-
-	s.origin = r.corner;
-	s.frame = ActivityFrame;
-	// There was a SetSystemRect(&r) call which we don't need anymore
-	DrawStamp(&s);
-	DrawPauseText(&r);
-
-	const uint8_t oldVolume {GetCurrMusicVol()};
-	FadeMusic(60, c_gameSecond / 2);
-
-	FlushGraphics();
-
-	while (ImmediateInputState.menu[*MenuKey::Pause] && GamePaused)
 	{
-		BeginInputFrame();
-		TaskSwitch();
+		const ContextScope contextScope {ScreenContext};
+		const OriginScope originScope {MAKE_POINT(0, 0)};
+		const ClipRectScope clipRectScope {};
+		SetContextClipRect(nullptr);
+
+		GetContextClipRect(&ctxRect);
+		GetFrameRect(ActivityFrame, &r);
+		r.corner.x = (ctxRect.extent.width - r.extent.width) >> 1;
+		r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
+		saveStamp = SaveContextFrame(&ctxRect);
+
+		mode = MAKE_DRAW_MODE(DrawKind::Desaturate, DesatAmount);
+		{
+			const DrawModeScope drawModeScope {mode};
+			DrawFilledRectangle(&ctxRect);
+		}
+		{
+			const ForegroundColorScope colorScope {BuildColorRgba(0x00, 0x00, 0x00, 0x30)};
+			DrawFilledRectangle(&ctxRect);
+		}
+
+		s.origin = r.corner;
+		s.frame = ActivityFrame;
+		// There was a SetSystemRect(&r) call which we don't need anymore
+		DrawStamp(&s);
+		DrawPauseText(&r);
+
+		const uint8_t oldVolume {GetCurrMusicVol()};
+		FadeMusic(60, c_gameSecond / 2);
+
+		FlushGraphics();
+
+		while (ImmediateInputState.menu[*MenuKey::Pause] && GamePaused)
+		{
+			BeginInputFrame();
+			TaskSwitch();
+		}
+
+		while (!ImmediateInputState.menu[*MenuKey::Pause] && GamePaused)
+		{
+			BeginInputFrame();
+			TaskSwitch();
+		}
+
+		while (ImmediateInputState.menu[*MenuKey::Pause] && GamePaused)
+		{
+			BeginInputFrame();
+			TaskSwitch();
+		}
+
+		GamePaused = false;
+
+		DrawStamp(&saveStamp);
+		DestroyDrawable(ReleaseDrawable(saveStamp.frame));
+		ClearSystemRect();
+
+		FadeMusic(oldVolume, c_gameSecond / 2);
 	}
-
-	while (!ImmediateInputState.menu[*MenuKey::Pause] && GamePaused)
-	{
-		BeginInputFrame();
-		TaskSwitch();
-	}
-
-	while (ImmediateInputState.menu[*MenuKey::Pause] && GamePaused)
-	{
-		BeginInputFrame();
-		TaskSwitch();
-	}
-
-	GamePaused = false;
-
-	DrawStamp(&saveStamp);
-	DestroyDrawable(ReleaseDrawable(saveStamp.frame));
-	ClearSystemRect();
-
-	FadeMusic(oldVolume, c_gameSecond / 2);
-
-	SetContextClipRect(&OldRect);
-	SetContextOrigin(OldOrigin);
-	SetContext(OldContext);
 
 	WaitForNoInput(c_gameSecond / 4, true);
 
