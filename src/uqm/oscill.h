@@ -23,10 +23,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern bool sliderDisabled;
 extern bool oscillDisabled;
 
@@ -39,10 +35,6 @@ extern void InitSlider(int x, int y, int width, FrameRef sliderFrame,
 					   FrameRef buttonFrame);
 extern void SetSliderImage(FrameRef f);
 void DrawSlider(void);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

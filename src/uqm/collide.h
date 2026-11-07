@@ -24,10 +24,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 inline constexpr auto CollisionTurnWait {1};
 inline constexpr auto CollisionThrustWait {3};
 
@@ -53,10 +49,6 @@ inline void InitIntersectFrame(Element* eptr)
 }
 
 extern void collide(Element* ElementPtr0, Element* ElementPtr1);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

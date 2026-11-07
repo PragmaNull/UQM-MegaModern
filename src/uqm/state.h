@@ -30,10 +30,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern void InitPlanetInfo(void);
 extern void UninitPlanetInfo(void);
 extern void GetPlanetInfo(void);
@@ -182,10 +178,6 @@ static inline uint16_t swrite_a32(GameStateFile* fp, const uint32_t* ar, uint16_
 	}
 	return 1;
 }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -26,10 +26,6 @@ namespace uqm
 {
 // for NETPLAY_STATISTICS
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 typedef struct NetConnection NetConnection;
 typedef struct NetConnectionError NetConnectionError;
 #ifdef NETPLAY_STATISTICS
@@ -44,10 +40,6 @@ typedef void (*NetConnection_DeleteCallback)(NetConnection* nd);
 
 typedef void (*NetConnection_ReadyCallback)(NetConnection* conn, void* arg);
 typedef void (*NetConnection_ResetCallback)(NetConnection* conn, void* arg);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 
@@ -65,10 +57,6 @@ typedef void (*NetConnection_ResetCallback)(NetConnection* conn, void* arg);
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct NetConnectionError
 {
 	NetState state;
@@ -83,14 +71,6 @@ struct NetStatistics
 	size_t packetsSent;
 	size_t packetTypeSent[*PacketType::Count];
 };
-#endif
-
-#if 0 //defined(__cplusplus)
-}
-#endif
-
-#if 0 //defined(__cplusplus)
-extern "C" {
 #endif
 
 } // namespace uqm
@@ -272,10 +252,6 @@ void netplayDebugPrint(uqm::io::File* file, fmt::format_string<Args...> format, 
 		const uqstl::string text {fmt::format(format, uqstl::forward<Args>(args)...)};
 		file->write(uqstl::as_bytes(uqstl::span {text}));
 	}
-}
-#endif
-
-#if 0 //defined(__cplusplus)
 }
 #endif
 

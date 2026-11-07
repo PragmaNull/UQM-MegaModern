@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 /*------------------------------ Type Defines ----------------------------- */
 
 
@@ -329,10 +325,6 @@ inline constexpr auto HighTectonics {140};
 inline constexpr auto SuperTectonics {200};
 
 const extern PlanetFrame* PlanData;
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

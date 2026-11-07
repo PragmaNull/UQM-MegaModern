@@ -24,10 +24,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern bool GetNextStarShip(Starship* LastStarShipPtr, uint16_t which_side);
 extern bool GetInitialStarShips(void);
 
@@ -38,10 +34,6 @@ extern void collision(Element* ElementPtr0, GfxPoint* pPt0,
 					  Element* ElementPtr1, GfxPoint* pPt1);
 
 extern StatusFlags inertial_thrust(Element* ElementPtr);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

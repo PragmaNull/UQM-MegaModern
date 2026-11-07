@@ -28,11 +28,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
-
 inline constexpr auto NormalLife {1};
 
 using ElementHandle = LinkHandle;
@@ -242,11 +237,6 @@ extern void SetStarPoint(GfxPoint pt, uint16_t i);
 extern void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy);
 
 extern bool CalculateGravity(Element* ElementPtr);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

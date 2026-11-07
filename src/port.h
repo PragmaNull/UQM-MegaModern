@@ -80,13 +80,7 @@
 
 #if !defined(_MSC_VER) && !defined(HAVE_READDIR_R)
 #include <dirent.h>
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
 int readdir_r(DIR* dirp, struct dirent* entry, struct dirent** result);
-#if 0 //defined(__cplusplus)
-}
-#endif
 #endif
 
 // Directories
@@ -159,17 +153,11 @@ typedef unsigned short mode_t;
 #ifdef _MSC_VER
 #include <stdarg.h>
 // Defined in port.c
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
 #if (_MSC_VER < 1500)
 // Use Windows SDK version of snprintf & vsnprintf when building with Visual Studio
 // versions higher than 2005
 int snprintf(char* str, size_t size, const char* format, ...);
 int vsnprintf(char* str, size_t size, const char* format, va_list args);
-#endif
-#if 0 //defined(__cplusplus)
-}
 #endif
 
 #endif /* _MSC_VER */

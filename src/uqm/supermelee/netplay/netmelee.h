@@ -37,10 +37,6 @@ namespace uqm
 {
 // for Starship
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern struct NetConnection* netConnections[];
 
 
@@ -88,10 +84,6 @@ bool waitReady(NetConnection* conn);
 
 bool waitReset(NetConnection* conn, NetState nextState);
 bool waitResetConnections(NetState nextState);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

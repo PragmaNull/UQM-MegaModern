@@ -23,10 +23,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern void ConfirmSaveLoad(GfxStamp* MsgStamp);
 extern bool GameOptions(void);
 
@@ -38,10 +34,6 @@ extern bool NewGameInit;
 extern uint8_t OutfitOrShipyard;
 extern bool SaveOrLoad;
 extern bool TextEntry3DO;
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

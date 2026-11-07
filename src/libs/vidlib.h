@@ -24,10 +24,6 @@
 #include "libs/sndlib.h"
 #include "libs/reslib.h"
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 enum class VideoType
 {
 	None = 0,
@@ -66,9 +62,5 @@ extern bool DestroyLegacyVideo(LegacyVideo vid);
 extern LegacyVideoRef PlayLegacyVideo(LegacyVideo vid);
 extern void StopLegacyVideo(LegacyVideoRef ref);
 extern bool PlayingLegacyVideo(LegacyVideoRef ref);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 #endif // UQM_LIBS_VIDLIB_H

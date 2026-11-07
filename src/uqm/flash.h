@@ -97,10 +97,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 enum class FlashState
 {
 	FadeIn = 0,
@@ -231,11 +227,6 @@ void Flash_postUpdate(FlashContext* context);
 void Flash_setCacheSize(FlashContext* context, uint16_t size);
 uint16_t Flash_getCacheSize(const FlashContext* context);
 void Flash_UpdateOriginal(FlashContext* context);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

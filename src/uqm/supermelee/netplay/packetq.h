@@ -33,10 +33,6 @@ typedef struct PacketQueue PacketQueue;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 typedef struct PacketQueueLink PacketQueueLink;
 struct PacketQueueLink
 {
@@ -58,11 +54,6 @@ void PacketQueue_init(PacketQueue* queue);
 void PacketQueue_uninit(PacketQueue* queue);
 void queuePacket(NetConnection* conn, Packet* packet);
 NetResult flushPacketQueue(NetConnection* conn);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

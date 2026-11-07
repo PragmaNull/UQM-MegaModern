@@ -34,10 +34,6 @@ struct ScanBlock;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct ScanDesc
 {
 	GfxPoint start;
@@ -74,10 +70,6 @@ void setNodeRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t nodeNr)
 void setNodeNotRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t nodeNr);
 
 void GetPlanetTitle(uqstl::span<char> buf);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

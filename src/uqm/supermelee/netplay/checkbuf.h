@@ -22,16 +22,8 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 typedef struct ChecksumEntry ChecksumEntry;
 typedef struct ChecksumBuffer ChecksumBuffer;
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 
@@ -41,11 +33,6 @@ typedef struct ChecksumBuffer ChecksumBuffer;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
-
 struct ChecksumEntry
 {
 #ifdef NETPLAY_DEBUG
@@ -78,10 +65,6 @@ bool ChecksumBuffer_addChecksum(ChecksumBuffer* cb,
 								BattleFrameCounter frameNr, Checksum checksum);
 bool ChecksumBuffer_getChecksum(ChecksumBuffer* cb,
 								BattleFrameCounter frameNr, Checksum* result);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

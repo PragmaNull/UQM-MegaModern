@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct LaserDesc
 {
 	int16_t cx, cy, ex, ey;
@@ -63,10 +59,6 @@ inline constexpr auto ModifySwap {1 << 1};
 
 extern FrameRef ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
 								 uint8_t modify_flags);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

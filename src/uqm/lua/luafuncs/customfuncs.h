@@ -20,15 +20,7 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 typedef struct luaUqm_custom_Function luaUqm_custom_Function;
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 
@@ -36,10 +28,6 @@ typedef struct luaUqm_custom_Function luaUqm_custom_Function;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct
 	luaUqm_custom_Function
 {
@@ -49,10 +37,6 @@ struct
 
 int luaUqm_custom_init(lua_State* luaState,
 					   const luaUqm_custom_Function* funs);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

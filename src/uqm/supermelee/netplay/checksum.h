@@ -40,11 +40,6 @@ typedef uint32_t Checksum;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
-
 static inline void crc_processELEMENT_FLAGS(crc_State* state, ElementFlags val)
 {
 	crc_processUint16(state, (uint16_t)val);
@@ -97,10 +92,6 @@ void addLocalChecksum(BattleFrameCounter frameNr, Checksum checksum);
 void addRemoteChecksum(NetConnection* conn, BattleFrameCounter frameNr,
 					   Checksum checksum);
 bool verifyChecksums(BattleFrameCounter frameNr);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

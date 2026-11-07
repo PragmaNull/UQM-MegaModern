@@ -29,10 +29,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern ConversationData CommData;
 extern char shared_phrase_buf[2048];
 
@@ -338,10 +334,6 @@ enum class RobotPhrase : uint16_t
 	SubClip = 0xFFFF,
 };
 consteval bool isArithmeticEnum(RobotPhrase) { return true; }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -29,10 +29,6 @@ namespace uqm
 {
 // for CONVERSATION
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 } // namespace uqm
 
 #ifdef COMM_INTERNAL
@@ -180,10 +176,6 @@ inline constexpr auto UseAltColormap {1 << 1};
 inline constexpr auto UseAltSong {1 << 2};
 inline constexpr auto UseAltAll {UseAltFrame | UseAltColormap | UseAltSong};
 extern uint8_t altResFlags;
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -7,10 +7,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 enum class MeleeShip
 {
 	Androsynth,
@@ -55,10 +51,6 @@ static inline bool MeleeShip_valid(MeleeShip ship)
 {
 	return (ship < NumMeleeShips) || (ship == MeleeShip::None);
 }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

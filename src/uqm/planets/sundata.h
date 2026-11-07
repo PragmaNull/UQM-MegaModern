@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 /*------------------------------ Global Data ------------------------------ */
 
 
@@ -68,10 +64,6 @@ inline constexpr auto SupergiantElementDensity {8};
 
 extern void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr,
 								SystemPlanet* pPlanetDesc);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

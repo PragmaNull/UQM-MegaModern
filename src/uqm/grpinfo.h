@@ -28,10 +28,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // XXX: Needed to maintain savegame compatibility
 inline constexpr auto NumSavedBattleGroups {64};
 
@@ -102,10 +98,6 @@ constexpr auto UnlockIpGroup(const auto& pq, const auto& h) { return UnlockLink(
 constexpr auto FreeIpGroup(const auto& pq, const auto& h) { return FreeLink(pq, h); }
 
 extern IpGroupHandle BuildGroup(Queue* pDstQueue, uint8_t race_id);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

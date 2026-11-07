@@ -24,10 +24,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 #define DECLARE_PACKETHANDLER(type)                     \
 	NetResult PacketHandler_##type(NetConnection* conn, \
 								   const Packet_##type* packet)
@@ -50,11 +46,6 @@ DECLARE_PACKETHANDLER(FrameCount);
 DECLARE_PACKETHANDLER(Checksum);
 DECLARE_PACKETHANDLER(Abort);
 DECLARE_PACKETHANDLER(Reset);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

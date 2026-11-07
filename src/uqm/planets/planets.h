@@ -206,10 +206,6 @@ struct PlanetOrbit
 	Color* ShadeColors;
 };
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct SystemPlanet
 {
 	uint32_t rand_seed; // seed for topography and node generation
@@ -476,10 +472,6 @@ extern void PlanetOrbitMenu(void);
 extern void SaveSolarSysLocation(void);
 
 extern uint8_t PickClosestHabitable(SolarSystemState* solarSys);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

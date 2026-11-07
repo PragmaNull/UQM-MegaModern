@@ -30,10 +30,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 inline constexpr auto StarStringCount {149};
 inline constexpr auto DeviceStringCount {29};
 inline constexpr auto CargoStringCount {14};
@@ -104,10 +100,6 @@ inline auto GameString(ArithmeticEnum auto i) { return GameStrings->text(static_
 extern void SetCursorRect(GfxRect* r, GfxContextRef context);
 extern void FlushCursorRect(void);
 void SetCursorFlashBlock(bool state);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

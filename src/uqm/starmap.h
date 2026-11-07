@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // Moving NumHyperVortices here for portal map; one fewer than the map
 // because of the Arilou homeworld.
 inline constexpr auto NumSolarSystems {502};
@@ -112,10 +108,6 @@ inline constexpr auto InternalStarIndex {-1};
 extern bool isStarMarked(const int star_index,
 						 const char* marker_state);
 extern void setStarMarked(const int star_index, const char* marker_state);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

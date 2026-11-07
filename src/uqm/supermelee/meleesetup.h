@@ -43,10 +43,6 @@ typedef uint16_t FleetShipIndex;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 #ifdef MELEETEAM_INTERNAL
 struct MeleeTeam
 {
@@ -145,10 +141,6 @@ void MeleeState_setTeamName(MeleeState* pMS, size_t teamNr,
 							const char* name);
 void MeleeState_setTeam(MeleeState* pMS, size_t teamNr,
 						const MeleeTeam* team);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

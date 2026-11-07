@@ -30,10 +30,6 @@ typedef struct GenerateFunctions GenerateFunctions;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 /*
  * To do (for further cleanups):
  * - split off generateOrbital in a calculation and an activation
@@ -113,9 +109,6 @@ struct GenerateFunctions
 // JSD - GenerateFunctions moved from gendef.h due to dependency issues caused by needing
 // to #include planets/generate.h only for this one declaration.  Anyway, it belongs here.
 const GenerateFunctions* getGenerateFunctions(uint8_t Index);
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

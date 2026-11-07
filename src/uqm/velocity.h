@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct VelocityDesc
 {
 	uint16_t TravelAngle;
@@ -73,10 +69,6 @@ inline constexpr auto VelocityScale {1 << VelocityShift};
 
 constexpr auto VelocityToWorld(const auto& v) { return ((v) >> VelocityShift); }
 constexpr auto WorldToVelocity(const auto& l) { return ((l) << VelocityShift); }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

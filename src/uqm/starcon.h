@@ -21,10 +21,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern uqstl::atomic<bool> MainExited;
 extern void SignalStopMainThread(void);
 extern void ProcessUtilityKeys(void);
@@ -33,10 +29,6 @@ extern int Starcon2Main(void* threadArg);
 // True while a game runs, from its start until the player quits it. Use on the game thread only.
 bool IsGameInProgress(void);
 extern void FreeGameData(void);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

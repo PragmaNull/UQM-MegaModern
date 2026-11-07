@@ -34,10 +34,6 @@ inline auto ShipInfoHeight() { return ResScale(65); }
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 constexpr auto MenuBool(const auto& a, const auto& b) { return (isPC(uqm::UQMOptions::read().whichMenu) ? (b) : (a)); }
 
 
@@ -82,10 +78,6 @@ extern bool DeltaCrew(Element* ElementPtr, int16_t crew_delta);
 
 extern void PreProcessStatus(Element* ShipPtr);
 extern void PostProcessStatus(Element* ShipPtr);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

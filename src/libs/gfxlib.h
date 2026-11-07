@@ -40,10 +40,6 @@ struct Color
 
 #include "libs/reslib.h"
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct GraphicsContextDesc;
 struct FrameDesc;
 struct FontDesc;
@@ -442,15 +438,7 @@ struct GfxText
 	uint16_t CharCount;
 };
 
-#if 0 //defined(__cplusplus)
-}
-#endif
-
 #include "libs/strlib.h"
-
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
 
 using ColorMapRef = uqm::StringTable*;
 // COLORMAPPTR is really a pointer to colortable entry structure
@@ -711,9 +699,5 @@ extern COLORMAPPTR GetColorMapAddress(ColorMapRef map, size_t index);
 
 void SetSystemRect(const GfxRect* pRect);
 void ClearSystemRect(void);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 #endif // UQM_LIBS_GFXLIB_H

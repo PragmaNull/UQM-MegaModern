@@ -24,15 +24,7 @@
 
 SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src);
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* rw, int freedst);
 extern SDL_Surface* SDL_PNGFormatAlpha(SDL_Surface* src);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 #endif // UQM_LIBS_GRAPHICS_SDL_PNG2SDL_H

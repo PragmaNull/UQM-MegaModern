@@ -29,11 +29,6 @@ extern unsigned int resolutionFactor;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
-
 /* Most basic resolution units. */
 inline constexpr auto HdResolutionFactor {2};
 
@@ -323,10 +318,6 @@ constexpr auto WrapX(const auto& x) { return WrapVal(x, LogSpaceWidth()); }
 constexpr auto WrapY(const auto& y) { return WrapVal(y, LogSpaceHeight()); }
 constexpr auto WrapDeltaX(const auto& dx) { return ((dx) < 0 ? ((-(dx) <= LogSpaceWidth() >> 1) ? (dx) : (LogSpaceWidth() + (dx))) : (((dx) <= LogSpaceWidth() >> 1) ? (dx) : ((dx)-LogSpaceWidth()))); }
 constexpr auto WrapDeltaY(const auto& dy) { return ((dy) < 0 ? ((-(dy) <= LogSpaceHeight() >> 1) ? (dy) : (LogSpaceHeight() + (dy))) : (((dy) <= LogSpaceHeight() >> 1) ? (dy) : ((dy)-LogSpaceHeight()))); }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

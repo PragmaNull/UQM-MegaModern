@@ -27,10 +27,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 bool battleEndReadyHuman(HumanInputContext* context);
 bool battleEndReadyComputer(ComputerInputContext* context);
 #ifdef NETPLAY
@@ -52,10 +48,6 @@ extern Starship* GetWinnerStarShip(void);
 extern void SetWinnerStarShip(Starship* winner);
 extern void RecordShipDeath(Element* deadShip);
 extern void StartShipExplosion(Element* ShipPtr, bool playSound);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -33,16 +33,11 @@
 /* This has to go here because reslib requires the above typedefs. */
 #include "libs/reslib.h"
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern bool InstallStringTableResType(void);
 const extern char* LoadStringInstance(RESOURCE res);
 
 namespace uqm
 {
-
 // Returns an empty pointer if the resource is not a string table.
 [[nodiscard]] StringTablePtr loadStringTable(RESOURCE res);
 
@@ -84,9 +79,5 @@ inline constexpr uqgsl::czstring StrNull {"null"};
 // and add n (scaled to the resolution) to the offset.
 const char* AlignText(const char* str, int16_t* loc_x);
 const char* AddPadd(const char* str, int16_t* padding);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 #endif // UQM_LIBS_STRLIB_H

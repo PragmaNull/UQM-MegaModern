@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern void DrawStarConBox(GfxRect* pRect, int16_t BorderWidth,
 						   Color TopLeftColor, Color BottomRightColor, bool FillInterior,
 						   Color InteriorColor, bool CreateCorners, Color CornerColor);
@@ -48,10 +44,6 @@ extern void DrawFlagStatDisplay(const char* str);
 extern char* WholeFuelValue(void);
 
 void formatFuelValue(uint32_t coarseFuel, uqstl::span<char> buf);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

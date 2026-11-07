@@ -36,10 +36,6 @@ namespace uqm
 {
 // for BattleFrameCounter, BattleFrameRateTicks
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct BattleStateData : NetConnectionStateData
 {
 	struct MeleeState* meleeState;
@@ -69,11 +65,6 @@ static inline bool readyFlagsMeaningful(NetState state)
 {
 	return state == NetState::Init || state == NetState::PreBattle || state == NetState::SelectShip || state == NetState::InterBattle || state == NetState::InBattle || state == NetState::EndingBattle || state == NetState::EndingBattle2;
 }
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

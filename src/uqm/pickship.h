@@ -23,10 +23,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern StarshipHandle GetEncounterStarShip(Starship* LastStarShipPtr,
 										   uint16_t which_player);
 extern void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect);
@@ -34,10 +30,6 @@ extern void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect);
 extern void InitPickFrame(void);
 extern void DestroyPickFrame(void);
 extern void RepairPickFrame(GfxRect* pRect, uint16_t frame);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

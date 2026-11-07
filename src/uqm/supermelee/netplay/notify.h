@@ -36,10 +36,6 @@ namespace uqm
 {
 // for FleetShipIndex
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 void Netplay_Notify_shipSelected(NetConnection* conn, FleetShipIndex index);
 void Netplay_Notify_battleInput(NetConnection* conn,
 								BattleInputState input);
@@ -56,11 +52,6 @@ void Netplay_Notify_frameCount(NetConnection* conn,
 #ifdef NETPLAY_CHECKSUM
 void Netplay_Notify_checksum(NetConnection* conn,
 							 BattleFrameCounter frameCount, Checksum checksum);
-#endif
-
-
-#if 0 //defined(__cplusplus)
-}
 #endif
 
 } // namespace uqm

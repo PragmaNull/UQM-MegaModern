@@ -25,11 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
-
 enum class GameEventId : uint8_t
 {
 	ArilouEntranceEvent = 0,
@@ -72,11 +67,6 @@ extern void AddInitialGameEvents(void);
 extern void EventHandler(GameEventId selector);
 extern void SetRaceDest(uint8_t which_race, int16_t x, int16_t y, uint8_t days_left,
 						uint8_t func_index);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

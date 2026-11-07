@@ -27,10 +27,6 @@ namespace uqm
 {
 // for UnitScreenWidth()/HEIGHT
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 inline constexpr auto NumRadarScreens {12};
 
 inline auto RadarScanWidth() { return ResDescale(UnitScreenWidth() * NumRadarScreens); }
@@ -56,10 +52,6 @@ extern bool hyper_transition(Element* ElementPtr);
 
 extern void HyperspaceMenu(void);
 extern void SaveSisHyperState(void);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

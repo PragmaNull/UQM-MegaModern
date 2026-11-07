@@ -24,10 +24,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 inline constexpr auto NumPlayers {2};
 inline constexpr auto NumSides {2};
 
@@ -45,10 +41,6 @@ extern void ReloadGameContent(void);
 extern bool load_animation(FrameRef* pixarray, RESOURCE big_res,
 						   RESOURCE med_res, RESOURCE sml_res);
 extern bool free_image(FrameRef* pixarray);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -31,10 +31,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // Enumerated type for controls
 enum class BattleKey
 {
@@ -247,10 +243,6 @@ struct TextEntryState
 extern bool DoTextEntry(TextEntryState* pTES);
 
 extern void TestSpeechSound(SoundRef snd);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

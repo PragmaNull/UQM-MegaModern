@@ -22,10 +22,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern void NotifyOthers(uint16_t which_race, uint8_t target_loc);
 // Special target locations for NotifyOthers()
 inline constexpr auto IpnlInterceptPlayer {0};
@@ -33,10 +29,6 @@ inline constexpr auto IpnlFlee {1};
 inline constexpr auto IpnlAllClear {(uint8_t)-1};
 
 extern void DoMissions(void);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -33,10 +33,6 @@ namespace uqm
 {
 // for NetplayAbortReason and NetplayResetReason.
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct MeleeState;
 
 inline constexpr auto NumMeleeRows {2};
@@ -79,10 +75,6 @@ enum class MeleeMenuItem
 };
 consteval bool isArithmeticEnum(MeleeMenuItem) { return true; }
 
-#if 0 //defined(__cplusplus)
-}
-#endif
-
 } // namespace uqm
 
 #include "loadmele.h"
@@ -91,10 +83,6 @@ consteval bool isArithmeticEnum(MeleeMenuItem) { return true; }
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 inline constexpr auto MeleeStateIndexDone {(uint16_t)-1};
 
 struct MeleeState
@@ -247,10 +235,6 @@ enum class MeleeFrameIndex
 	SpecialPs,
 };
 consteval bool isArithmeticEnum(MeleeFrameIndex) { return true; }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

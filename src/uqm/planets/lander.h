@@ -31,10 +31,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // Surface magnification shift (x4)
 inline constexpr auto MagShift {2};
 
@@ -97,10 +93,6 @@ enum class PlanetsidePlayer
 	NonPlayer,
 };
 consteval bool isArithmeticEnum(PlanetsidePlayer) { return true; }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

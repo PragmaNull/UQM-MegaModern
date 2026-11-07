@@ -37,10 +37,6 @@ typedef struct NetworkInputContext NetworkInputContext;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 typedef BattleInputState (*BattleFrameInputFunction)(
 	InputContext* context, Starship* StarShipPtr);
 typedef bool (*SelectShipFunction)(InputContext* context,
@@ -96,10 +92,6 @@ void InputContext_init(InputContext* context, BattleInputHandlers* handlers,
 // Do not call directly, only from the FreeInputContextFunction.
 // Call InputContext->handlers->freeContext() to release an
 // InputContext.
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -34,10 +34,6 @@ struct melee_load_state;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct melee_load_state
 {
 	uqstl::vector<MeleeTeam*> preBuiltList;
@@ -65,10 +61,6 @@ void UninitMeleeLoadState(MeleeState* pMS);
 bool DoLoadTeam(MeleeState* pMS);
 bool DoSaveTeam(MeleeState* pMS);
 void LoadTeamList(MeleeState* pMS);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -473,10 +473,6 @@ static inline void SetHomeworldKnown(uint32_t homeworld)
 	uqm::gameState().setFlag(uqm::GameFlag::KNOW_HOMEWORLD, static_cast<uint32_t>(current));
 }
 
-#if 0 //defined(__cplusplus)
-}
-#endif
-
 } // namespace uqm
 
 #endif // UQM_GLOBDATA_H

@@ -27,10 +27,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct MenuState
 {
 	// Standard field required by DoInput()
@@ -157,10 +153,6 @@ extern void DrawMenuStateStrings(MenuString beg_index, int16_t NewState);
 extern void DrawMineralHelpers(void);
 enum class BorderFrameIndex;
 extern void DrawBorder(BorderFrameIndex Visible);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

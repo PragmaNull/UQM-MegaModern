@@ -23,10 +23,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 using MasterShipHandle = LinkHandle;
 
 struct MasterShipInfo
@@ -64,10 +60,6 @@ extern int FindMasterShipIndex(SpeciesId ship_ref);
 uint16_t GetShipCostFromIndex(unsigned Index);
 FrameRef GetShipIconsFromIndex(unsigned Index);
 FrameRef GetShipMeleeIconsFromIndex(unsigned Index);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -27,10 +27,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 void Netplay_NotifyAll_setTeamName(MeleeState* pMS, size_t playerNr);
 void Netplay_NotifyAll_setFleet(MeleeState* pMS, size_t playerNr);
 void Netplay_NotifyAll_setShip(MeleeState* pMS, size_t playerNr,
@@ -42,11 +38,6 @@ void Netplay_NotifyAll_checksum(BattleFrameCounter frameNr,
 								Checksum checksum);
 #endif /* NETPLAY_CHECKSUM */
 void Netplay_NotifyAll_battleInput(BattleInputState input);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

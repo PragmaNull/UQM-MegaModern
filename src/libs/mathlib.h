@@ -27,10 +27,6 @@
 #include <cmath>
 #include <zlib.h>
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 #include "math/Random.h"
 
 // The integer square root of 'value', rounded down.
@@ -49,9 +45,5 @@ inline static float scaleThing(float original, float thingToScale)
 	return (original / thingToScale);
 }
 
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 #endif // UQM_LIBS_MATHLIB_H

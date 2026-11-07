@@ -24,10 +24,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern bool InstallCodeResType(void);
 extern void* LoadCodeResInstance(RESOURCE res);
 extern void* CaptureCodeRes(void* hCode, void* pData, void** ppLocData);
@@ -38,10 +34,6 @@ struct CodeResRef
 {
 	uint16_t size;
 };
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -24,10 +24,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 inline auto FieldWidth() { return (StatusWidth() - ResScale(5)); }
 
 extern void CargoMenu(void);
@@ -43,10 +39,6 @@ extern bool InvokeSpawner(void);
 extern int16_t InventoryDevices(uint8_t* pDeviceMap, uint16_t Size);
 
 extern FontRef ModuleFont;
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

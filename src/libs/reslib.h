@@ -26,10 +26,6 @@
 #include "libs/io/FileSystem.h"
 #include "libs/resource/resindex.h"
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct ResourceIndexDesc;
 using ResourceIndex = ResourceIndexDesc*;
 
@@ -101,16 +97,8 @@ void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, cons
 bool ConvertLegacyResourceIndex(const uqm::io::Directory& dir, const char* oldName, const char* newName);
 
 
-#if 0 //defined(__cplusplus)
-}
-#endif
-
 #include "libs/strlib.h"
 #include "libs/gfxlib.h"
-
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
 
 namespace uqm
 {
@@ -141,9 +129,5 @@ void res_PutBoolean(const char* key, bool value);
 
 
 bool res_Remove(const char* key);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 #endif // UQM_LIBS_RESLIB_H

@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 typedef struct Packet Packet;
 
 enum class PacketType
@@ -76,10 +72,6 @@ enum class NetplayResetReason
 };
 consteval bool isArithmeticEnum(NetplayResetReason) { return true; }
 
-#if 0 //defined(__cplusplus)
-}
-#endif
-
 } // namespace uqm
 
 #ifndef PACKET_H_STANDALONE
@@ -90,10 +82,6 @@ consteval bool isArithmeticEnum(NetplayResetReason) { return true; }
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 /* NB: These handlers are expected not to modify the state if an
  *     error occurs.
  * When a handler is called, it has already been validated that the
@@ -110,20 +98,12 @@ struct PacketTypeData
 
 extern PacketTypeData packetTypeData[];
 
-#if 0 //defined(__cplusplus)
-}
-#endif
-
 } // namespace uqm
 
 #endif
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // When adding new packets, be sure to have all the fields properly aligned,
 // and that the size of a packet is a multiple of 4 bytes in length.
 // Fields should be no longer than 4 bytes in themselves, as larger
@@ -360,10 +340,6 @@ Packet_FrameCount* Packet_FrameCount_create(uint32_t frameCount);
 Packet_Checksum* Packet_Checksum_create(uint32_t frameNr, uint32_t checksum);
 Packet_Abort* Packet_Abort_create(uint16_t reason);
 Packet_Reset* Packet_Reset_create(uint16_t reason);
-#endif
-
-#if 0 //defined(__cplusplus)
-}
 #endif
 
 } // namespace uqm

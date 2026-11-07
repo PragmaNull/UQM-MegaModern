@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 /*------------------------------ Type Defines ----------------------------- */
 enum class MineralCategory
 {
@@ -212,10 +208,6 @@ inline constexpr auto MaxElementUnits {0xF};
 
 const extern uint8_t* Elements;
 inline auto ElementCategory(const auto& et) { return Elements[et] & 0x7; }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -28,10 +28,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 inline constexpr auto NumRaceLabels {3};
 inline constexpr auto NumClassLabels {2};
 inline constexpr auto NameOffset {NumRaceLabels + NumClassLabels};
@@ -86,10 +82,6 @@ extern void SeedFleet(FleetInfo* FleetPtr, PlotLocation* plotmap);
 extern SpeciesId SeedShip(SpeciesId SpeciesID, bool loadWindow);
 extern bool legacySave;
 extern uint8_t GTFO;
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

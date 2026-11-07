@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 enum class StarbaseMenuItem
 {
 	TalkCommander = 0,
@@ -51,10 +47,6 @@ extern uint16_t WrapText(const char* pStr, uint16_t len, GfxText* tarray, int16_
 // XXX: Doesn't really belong in this file.
 
 extern uint16_t ShipCost(uint8_t race_id);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

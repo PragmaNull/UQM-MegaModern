@@ -14,10 +14,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 //const GenerateFunctions *getGenerateFunctions (uint8_t Index);
 
 enum class PlotId : uint8_t
@@ -102,10 +98,6 @@ enum class PlotId : uint8_t
 consteval bool isArithmeticEnum(PlotId) { return true; }
 
 inline constexpr auto UmgahDefined {PlotId::TalkingPet};
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

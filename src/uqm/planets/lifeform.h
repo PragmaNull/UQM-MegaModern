@@ -24,10 +24,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 inline constexpr auto BehaviorHunt {0 << 0};
 inline constexpr auto BehaviorFlee {1 << 0};
 inline constexpr auto BehaviorUnpredictable {2 << 0};
@@ -74,10 +70,6 @@ struct LifeformDesc
 };
 
 extern LifeformDesc CreatureData[];
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

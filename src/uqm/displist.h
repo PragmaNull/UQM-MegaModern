@@ -27,10 +27,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // Each queue has a fixed table of elements. The size of encounter_q sets
 // the maximum number of HyperSpace Encounter globes.
 
@@ -145,11 +141,6 @@ public:
 		uqstl::swap(static_cast<Queue&>(first), static_cast<Queue&>(second));
 	}
 };
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 inline constexpr auto SmallRocky {1 << 0};
 inline constexpr auto LargeRocky {1 << 1};
 inline constexpr auto AllRocky {1 << 2};
@@ -92,10 +88,6 @@ enum class HardModeEncounter
 	ReadyToBargain	 // druuge sell rosy sphere on second deal
 };
 consteval bool isArithmeticEnum(HardModeEncounter) { return true; }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -20,19 +20,11 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 RaceDesc* init_orz(void);
 
 void intruder_preprocess(Element* ElementPtr);
 void marine_collision(Element* ElementPtr0, GfxPoint* pPt0,
 					  Element* ElementPtr1, GfxPoint* pPt1);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

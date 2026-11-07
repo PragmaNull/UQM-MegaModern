@@ -41,11 +41,6 @@ struct Encounter;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
-
 using EncounterHandle = LinkHandle;
 
 inline constexpr auto MaxHyperShips {7};
@@ -126,10 +121,6 @@ extern void SetBattlePlanet(void);
 // the flagship.
 extern int16_t EncounterRace;
 extern uint8_t EncounterGroup;
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

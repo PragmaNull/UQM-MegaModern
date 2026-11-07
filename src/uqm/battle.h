@@ -36,10 +36,6 @@ namespace uqm
 {
 // For NumSides
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // The callback function is called on every battle frame
 // just before the display queue is drawn
 typedef void(BattleFrameCallback)(void);
@@ -71,10 +67,6 @@ static constexpr TimePeriod BattleFrameRateTicks {getTicksForFramerate(BattleFPS
 extern void BattleSong(bool DoPlay);
 extern void FreeBattleSong(void);
 extern bool RunAwayAllowed(void);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

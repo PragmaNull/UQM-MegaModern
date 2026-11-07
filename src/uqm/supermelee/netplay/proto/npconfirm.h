@@ -25,16 +25,8 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 NetResult Netplay_confirm(NetConnection* conn);
 NetResult Netplay_cancelConfirmation(NetConnection* conn);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

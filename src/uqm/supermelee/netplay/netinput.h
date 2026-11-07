@@ -26,9 +26,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
 // for NumPlayers
 
 struct BattleInputBuffer
@@ -53,10 +50,6 @@ bool BattleInputBuffer_pop(BattleInputBuffer* bib,
 						   BattleInputState* input);
 
 BattleInputBuffer* getBattleInputBuffer(size_t player);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -24,10 +24,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // Some background: every animation has a neutral frame which returns
 // the image to the state it was in before the animation began. Which
 // frame is neutral depends on the animation type.
@@ -220,10 +216,6 @@ extern void SwitchSequences(bool enableAll);
 extern void RunOneTimeSequence(uint16_t animIndex, uint16_t flags);
 extern void EngageFilters(AnimFilterSet* f_desc);
 extern void DisengageFilters(void);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

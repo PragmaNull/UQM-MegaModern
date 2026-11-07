@@ -26,10 +26,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // XXX: Theoretically, a player can have 17 devices on board without
 //   cheating. We only provide
 //   room for 16 below, which is not really a problem since this
@@ -69,11 +65,6 @@ extern void SaveProblem(void);
 extern bool SaveGame(uint16_t which_game, SaveSummaryData* summary_desc, const char* name);
 // Saves the game to the text of a save file, or nullopt if it cannot.
 uqstl::optional<uqstl::string> SaveGameJson(SaveSummaryData* summary_desc, const char* name);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

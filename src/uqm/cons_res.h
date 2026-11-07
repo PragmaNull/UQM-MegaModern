@@ -23,10 +23,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 void load_gravity_well(uint8_t selector);
 void free_gravity_well(void);
 
@@ -38,10 +34,6 @@ extern int num_orbit_themes(void);
 
 inline constexpr auto NumMmThemes {3};
 MusicRef loadMainMenuMusic(uint8_t selector);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

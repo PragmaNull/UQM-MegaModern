@@ -22,10 +22,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern void ToggleMusic(void);
 extern void StopMusic(void);
 extern void ResumeMusic(void);
@@ -38,11 +34,6 @@ extern void PlayMusic(MusicRef musicRef, bool Continuous, uint8_t Priority);
 extern void PlaySoundEffect(SoundRef S, uint16_t Channel, SoundPosition Pos,
 							void* PositionalObject, uint8_t Priority);
 extern void PlaySpeechEffect(SoundRef S, SoundPosition Pos, void* PositionalObject, uint8_t Priority);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

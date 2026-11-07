@@ -29,10 +29,6 @@
 #include "core/stl/memory.h"
 #include "core/stl/vector.h"
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 namespace tfb
 {
 struct SoundSample;
@@ -40,7 +36,6 @@ struct SoundSample;
 
 namespace uqm
 {
-
 // The sound samples of a sound bank resource.
 class SoundBank
 {
@@ -171,9 +166,5 @@ static inline void print_mp_array(const MusicPosition mp_array[], const uint16_t
 	print_mp(mp_array[0]);
 	fmt::print("\n--------------------\n\n");
 }
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 #endif // UQM_LIBS_SNDLIB_H

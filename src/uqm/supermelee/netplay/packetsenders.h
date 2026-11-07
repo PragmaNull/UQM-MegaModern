@@ -35,10 +35,6 @@ namespace uqm
 {
 // for FleetShipIndex
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 void sendInit(NetConnection* conn);
 void sendPing(NetConnection* conn, uint32_t id);
 void sendAck(NetConnection* conn, uint32_t id);
@@ -62,11 +58,6 @@ void sendChecksum(NetConnection* conn, BattleFrameCounter frameNr,
 				  Checksum checksum);
 void sendAbort(NetConnection* conn, NetplayAbortReason reason);
 void sendReset(NetConnection* conn, NetplayResetReason reason);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

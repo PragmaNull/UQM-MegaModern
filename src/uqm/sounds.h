@@ -30,10 +30,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 enum class SoundEffect
 {
 	GrabCrew = 0,
@@ -92,10 +88,6 @@ extern SoundPosition NotPositional(void);
 extern void UpdateSoundPositions(void);
 extern void FlushSounds(void);
 extern void RemoveSoundsForObject(Element* PosObj);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

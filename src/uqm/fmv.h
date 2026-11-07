@@ -24,10 +24,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 enum class EndgameScenario
 {
 	DeathMarch,
@@ -50,10 +46,6 @@ extern void InitMenuMusic(void);
 extern void UninitMenuMusic(void);
 
 extern bool ShowPresentation(RESOURCE presentation);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

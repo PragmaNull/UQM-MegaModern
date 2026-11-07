@@ -32,10 +32,6 @@ typedef struct crc_State crc_State;
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct crc_State
 {
 	uint32_t crc;
@@ -47,10 +43,6 @@ void crc_processUint8(crc_State* state, uint8_t val);
 void crc_processUint16(crc_State* state, uint16_t val);
 void crc_processUint32(crc_State* state, uint32_t val);
 uint32_t crc_finish(const crc_State* state);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

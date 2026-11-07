@@ -26,10 +26,6 @@
 #include "core/string/Utf8.h"
 #include "core/stl/atomic.h"
 
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 
 namespace uqm
 {
@@ -69,9 +65,5 @@ void SaveKeyConfiguration(const uqm::io::Directory& path);
 /* Separate inputs into frames for dealing with very fast inputs */
 
 void BeginInputFrame(void);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 #endif // UQM_LIBS_INPLIB_H

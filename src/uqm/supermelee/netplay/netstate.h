@@ -25,10 +25,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 typedef struct NetConnectionStateData NetConnectionStateData;
 
 // State of a NetConnection.
@@ -47,20 +43,12 @@ enum class NetState
 };
 consteval bool isArithmeticEnum(NetState) { return true; }
 
-#if 0 //defined(__cplusplus)
-}
-#endif
-
 } // namespace uqm
 
 #include <cstdint>
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 struct NetStateData
 {
 	const char* name;
@@ -82,11 +70,6 @@ static inline bool NetState_battleActive(NetState state)
 {
 	return state == NetState::InBattle || state == NetState::EndingBattle || state == NetState::EndingBattle2;
 }
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

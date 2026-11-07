@@ -22,20 +22,11 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
-
 extern bool StartGame(void);
 // The save file of --play-save, the first time that LOAD of the main menu asks for it. Then nullptr.
 const char* TakePlaySave(void);
 // Shows how the last game ended, for example the Game Over or Victory screens. Call before the session ends.
 void ShowGameEnding(void);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

@@ -28,16 +28,8 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 // Processes the complete packets in 'data'. Returns the number of bytes that it processed, or nullopt on an error.
 uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std::byte> data);
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 

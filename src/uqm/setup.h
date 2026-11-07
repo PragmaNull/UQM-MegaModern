@@ -28,10 +28,6 @@
 
 namespace uqm
 {
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-
 extern ResourceIndex hResIndex;
 
 extern FrameRef Screen;
@@ -108,11 +104,6 @@ bool SetPlayerInput(uint16_t playerI);
 bool SetPlayerInputAll(void);
 void ClearPlayerInput(uint16_t playerI);
 void ClearPlayerInputAll(void);
-
-
-#if 0 //defined(__cplusplus)
-}
-#endif
 
 } // namespace uqm
 
