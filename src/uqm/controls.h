@@ -200,6 +200,27 @@ void DoPopupWindow(const char* msg);
 
 typedef void(InputFrameCallback)(void);
 InputFrameCallback* SetInputCallback(InputFrameCallback*);
+
+// Sets the input frame callback, and restores the previous one on destruction.
+class InputCallbackScope
+{
+public:
+	explicit InputCallbackScope(InputFrameCallback* callback)
+		: m_previous {SetInputCallback(callback)}
+	{
+	}
+
+	~InputCallbackScope()
+	{
+		SetInputCallback(m_previous);
+	}
+
+	InputCallbackScope(const InputCallbackScope&) = delete;
+	InputCallbackScope& operator=(const InputCallbackScope&) = delete;
+
+private:
+	InputFrameCallback* m_previous;
+};
 // pInputState must point to a struct derived from InputStateDesc
 void DoInput(void* pInputState, bool resetInput);
 

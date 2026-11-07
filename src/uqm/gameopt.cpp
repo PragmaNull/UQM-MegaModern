@@ -1913,7 +1913,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 	TimeOut = FadeMusic(0, c_gameSecond / 2);
 
 	// Deactivate any background drawing, like planet rotation
-	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
+	const InputCallbackScope noCallback {nullptr};
 
 	LoadGameDescriptions(pickState.summary.data());
 
@@ -2058,9 +2058,6 @@ static bool PickGame(bool saving, bool fromMainMenu)
 	SetContext(OldContext);
 
 	ResumeMusic();
-
-	// Reactivate any background drawing, like planet rotation
-	SetInputCallback(oldCallback);
 
 	return pickState.success;
 }

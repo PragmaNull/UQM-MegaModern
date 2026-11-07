@@ -797,7 +797,7 @@ static bool DispatchLander(void)
 	EraseCoarseScan();
 
 	// Deactivate planet rotation callback
-	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
+	const InputCallbackScope noCallback {nullptr};
 
 	if (!uqm::UQMOptions::read().infiniteFuel)
 	{
@@ -839,9 +839,6 @@ static bool DispatchLander(void)
 	{
 		PrintCoarseScanPC();
 	}
-
-	// Reactivate planet rotation callback
-	SetInputCallback(oldCallback);
 
 	return true;
 }

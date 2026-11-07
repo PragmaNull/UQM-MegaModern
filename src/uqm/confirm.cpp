@@ -279,12 +279,11 @@ void DoPopupWindow(const char* msg)
 
 	GetMenuSounds(&s0, &s1);
 	SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
-	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
-
-	state.InputFunc = DoPopup;
-	DoInput(&state, true);
-
-	SetInputCallback(oldCallback);
+	{
+		const InputCallbackScope noCallback {nullptr};
+		state.InputFunc = DoPopup;
+		DoInput(&state, true);
+	}
 	ClearSystemRect();
 	DrawStamp(&s);
 	DestroyDrawable(ReleaseDrawable(s.frame));

@@ -725,33 +725,33 @@ void Credits(bool WithOuttakes)
 	CommWndRect.corner.y = ResScale(5);
 
 	InitCredits();
-	SetInputCallback(on_input_frame);
-
-	if (WithOuttakes)
 	{
-		OutTakesRunning = true;
-		OutTakes();
-		OutTakesRunning = false;
-	}
+		const InputCallbackScope creditsCallback {on_input_frame};
 
-	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
-	{
-		if (hMusic)
+		if (WithOuttakes)
 		{
-			PlayMusic(hMusic, true, 1);
+			OutTakesRunning = true;
+			OutTakes();
+			OutTakesRunning = false;
 		}
 
-		// nothing to do now but wait until credits
-		//  are done or canceled by user
-		cis.InputFunc = DoCreditsInput;
-		cis.AllowCancel = !WithOuttakes;
-		cis.CloseWhenDone = !WithOuttakes;
-		cis.AllowSpeedChange = true;
-		SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
-		DoInput(&cis, true);
-	}
+		if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
+		{
+			if (hMusic)
+			{
+				PlayMusic(hMusic, true, 1);
+			}
 
-	SetInputCallback(nullptr);
+			// nothing to do now but wait until credits
+			//  are done or canceled by user
+			cis.InputFunc = DoCreditsInput;
+			cis.AllowCancel = !WithOuttakes;
+			cis.CloseWhenDone = !WithOuttakes;
+			cis.AllowSpeedChange = true;
+			SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
+			DoInput(&cis, true);
+		}
+	}
 	FadeMusic(0, c_gameSecond / 2);
 	UninitCredits();
 

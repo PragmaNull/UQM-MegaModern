@@ -685,19 +685,19 @@ static bool DoPlanetOrbit(MenuState* pMS)
 			break;
 		case *PlanetMenuItem::Starmap:
 			{
-				// Deactivate planet rotation
-				InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
-
-				RepairSISBorder();
-
-				const bool AutoPilotSet {StarMap()};
-				if (uqm::currentActivity() & ActivityFlag::CheckAbort)
+				bool AutoPilotSet {};
 				{
-					return false;
-				}
+					// Deactivate planet rotation
+					const InputCallbackScope noCallback {nullptr};
 
-				// Reactivate planet rotation
-				SetInputCallback(oldCallback);
+					RepairSISBorder();
+
+					AutoPilotSet = StarMap();
+					if (uqm::currentActivity() & ActivityFlag::CheckAbort)
+					{
+						return false;
+					}
+				}
 
 				if (!AutoPilotSet)
 				{													  // Redraw the orbital display
@@ -747,12 +747,11 @@ void PlanetOrbitMenu(void)
 
 	menuState.CurState = *PlanetMenuItem::Scan;
 	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
-	InputFrameCallback* oldCallback {SetInputCallback(on_input_frame)};
-
-	menuState.InputFunc = DoPlanetOrbit;
-	DoInput(&menuState, true);
-
-	SetInputCallback(oldCallback);
+	{
+		const InputCallbackScope rotationCallback {on_input_frame};
+		menuState.InputFunc = DoPlanetOrbit;
+		DoInput(&menuState, true);
+	}
 
 	SetFlashRect(nullptr, false);
 	if (!(uqm::currentActivity() & ActivityFlag::CheckLoad))
