@@ -20,13 +20,11 @@
 #ifndef UQM_LIBS_RESOURCE_INDEX_H
 #define UQM_LIBS_RESOURCE_INDEX_H
 
-struct ResourceHandlers;
-struct ResourceDesc;
-
 #include <stdio.h>
 #include "core/stl/string.h"
 #include "core/stl/map.h"
 #include "libs/reslib.h"
+
 
 struct ResourceHandlers
 {

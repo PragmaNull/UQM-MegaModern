@@ -24,11 +24,10 @@
 #include <sys/types.h>
 
 #include "core/thread/Mutex.h"
+#include "callback.h"
 
-struct CallbackLink;
 
 #define CALLBACK_INTERNAL
-#include "callback.h"
 
 struct CallbackLink
 {

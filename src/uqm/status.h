@@ -23,17 +23,12 @@
 #include "races.h"
 #include "options/options.h"
 #include "globdata.h"
+#include "core/misc/bittricks.h"
 
 namespace uqm
 {
 inline auto ShipInfoHeight() { return ResScale(65); }
 
-} // namespace uqm
-
-#include "core/misc/bittricks.h"
-
-namespace uqm
-{
 constexpr auto MenuBool(const auto& a, const auto& b) { return (isPC(uqm::UQMOptions::read().whichMenu) ? (b) : (a)); }
 
 

@@ -25,26 +25,15 @@
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 
-namespace uqm
-{
-// for CONVERSATION
-
-} // namespace uqm
-
 #ifdef COMM_INTERNAL
+#include "commanim.h"
 
 namespace uqm
 {
 inline auto SliderY() { return (ResScale(107)); }
 inline auto SliderHeight() { return ResScale((!usingSpeech && isPC(uqm::UQMOptions::read().smoothScroll)) ? 4 : DosBool(15, 4)); }
 
-} // namespace uqm
 
-#include "commanim.h"
-
-
-namespace uqm
-{
 extern ConversationData CommData;
 
 static inline bool haveTalkingAnim(void)

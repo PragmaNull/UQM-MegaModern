@@ -22,6 +22,7 @@
 
 #include "core/types/enum.h"
 #include "port.h"
+#include <cstdint>
 
 namespace uqm
 {
@@ -43,12 +44,6 @@ enum class NetState
 };
 consteval bool isArithmeticEnum(NetState) { return true; }
 
-} // namespace uqm
-
-#include <cstdint>
-
-namespace uqm
-{
 struct NetStateData
 {
 	const char* name;

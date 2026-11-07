@@ -22,16 +22,6 @@
 
 
 #include "core/types/enum.h"
-
-namespace uqm
-{
-struct BriefShipInfo;
-struct Encounter;
-
-// XXX: temporary, for CONVERSATION
-
-} // namespace uqm
-
 #include "commglue.h"
 #include "displist.h"
 #include "libs/gfxlib.h"
@@ -41,6 +31,10 @@ struct Encounter;
 
 namespace uqm
 {
+struct Encounter;
+
+// XXX: temporary, for CONVERSATION
+
 using EncounterHandle = LinkHandle;
 
 inline constexpr auto MaxHyperShips {7};

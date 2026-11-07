@@ -25,6 +25,8 @@
 #include "core/thread/Mutex.h"
 #include "core/stl/array.h"
 #include "core/stl/optional.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/graphics/cmap.h"
 
 
 namespace tfb
@@ -42,8 +44,6 @@ enum class ScreenBuffer
 };
 consteval bool isArithmeticEnum(ScreenBuffer) { return true; }
 
-#include "libs/graphics/gfx_common.h"
-#include "libs/graphics/cmap.h"
 
 namespace tfb
 {

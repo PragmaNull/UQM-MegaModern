@@ -27,21 +27,15 @@
 #include "units.h"
 #include "displist.h"
 #include "uqm/inteldefs.h"
+#include "element.h"
+#include "libs/sndlib.h"
+#include "libs/reslib.h"
 
 namespace uqm
 {
 struct Starship;
 using StarshipHandle = LinkHandle;
 
-} // namespace uqm
-
-#include "element.h"
-#include "libs/sndlib.h"
-#include "libs/reslib.h"
-
-
-namespace uqm
-{
 // TODO: remove RacesPerPlayer remnant of SC1
 
 inline constexpr auto MaxShipsPerSide {14};

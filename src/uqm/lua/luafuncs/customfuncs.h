@@ -18,16 +18,12 @@
 #ifndef UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H
 #define UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H
 
-namespace uqm
-{
-struct luaUqm_custom_Function;
-
-} // namespace uqm
-
 #include "uqm/lua/UQMLua.h"
 
 namespace uqm
 {
+struct luaUqm_custom_Function;
+
 struct
 	luaUqm_custom_Function
 {

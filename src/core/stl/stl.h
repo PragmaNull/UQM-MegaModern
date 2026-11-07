@@ -2,11 +2,12 @@
 #ifndef UQM_CORE_STL_STL_H
 #define UQM_CORE_STL_STL_H
 
+#include <gsl-lite/gsl-lite.hpp>
+
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
 
-#include <gsl-lite/gsl-lite.hpp>
 namespace uqgsl = gsl_lite;
 
 #ifndef USING_EASTL

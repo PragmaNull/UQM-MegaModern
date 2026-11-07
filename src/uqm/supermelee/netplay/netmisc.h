@@ -20,16 +20,9 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_NETMISC_H
 #define UQM_SUPERMELEE_NETPLAY_NETMISC_H
 
-namespace uqm
-{
-struct BattleStateData;
-
-} // namespace uqm
-
 #include "netconnection.h"
 #include "netstate.h"
 #include <cstdint>
-
 #include "../../battle.h"
 
 namespace uqm

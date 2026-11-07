@@ -25,6 +25,8 @@
 #include "uqm/tactrans.h"
 #include "libs/mathlib.h"
 #include "../../starmap.h"
+#include "../orz/orz.h"
+#include "uqm/random/UQMRandom.h"
 
 namespace uqm
 {
@@ -266,13 +268,6 @@ static void destruct_preprocess(Element* ElementPtr)
 /* In order to detect any Orz Marines that have boarded the ship
    when it self-destructs, we'll need to see some Orz functions */
 
-} // namespace uqm
-
-#include "../orz/orz.h"
-#include "uqm/random/UQMRandom.h"
-
-namespace uqm
-{
 constexpr auto OrzMarine(const auto& ptr) { return (ptr->preprocess_func == intruder_preprocess && ptr->collision_func == marine_collision); }
 
 static void self_destruct_kill_objects(Element* ElementPtr)

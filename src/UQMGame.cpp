@@ -63,15 +63,10 @@
 #include "uqm/setup.h"
 #include "uqm/starcon.h"
 #include "libs/math/Random.h"
-
-bool restartGame;
-
 #if defined(GFXMODULE_SDL)
 #include <SDL3/SDL.h>
 // Including this is actually necessary on OSX.
 #endif
-
-// Version headers for library startup logging
 #include <CLI/Version.hpp>
 #include <fmt/base.h>
 #include <gsl-lite/gsl-lite.hpp>
@@ -85,6 +80,11 @@ bool restartGame;
 #include <vorbis/codec.h>
 #include <zlib.h>
 #include "uqm/random/UQMRandom.h"
+
+bool restartGame;
+
+
+// Version headers for library startup logging
 
 
 namespace uqm

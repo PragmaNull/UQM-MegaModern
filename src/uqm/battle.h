@@ -21,6 +21,7 @@
 #include "options.h"
 #include "core/misc/bittricks.h"
 #include "libs/time/timelib.h"
+#include "init.h"
 
 namespace uqm
 {
@@ -28,12 +29,6 @@ namespace uqm
 typedef uint32_t BattleFrameCounter;
 #endif
 
-} // namespace uqm
-
-#include "init.h"
-
-namespace uqm
-{
 // For NumSides
 
 // The callback function is called on every battle frame

@@ -4,6 +4,11 @@
 #ifndef UQM_LIBS_NETWORK_NETIMPL_H
 #define UQM_LIBS_NETWORK_NETIMPL_H
 
+#include <asio.hpp>
+#include "Connection.h"
+#include "NetContext.h"
+#include "core/stl/vector.h"
+
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -16,12 +21,6 @@
 #endif
 #endif
 
-#include <asio.hpp>
-
-#include "Connection.h"
-#include "NetContext.h"
-
-#include "core/stl/vector.h"
 
 namespace uqm::net
 {

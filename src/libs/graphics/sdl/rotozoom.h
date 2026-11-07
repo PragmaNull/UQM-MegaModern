@@ -14,12 +14,11 @@
 #define UQM_LIBS_GRAPHICS_SDL_ROTOZOOM_H
 
 #include <math.h>
+#include "port.h"
+#include <SDL3/SDL.h>
 #ifndef M_PI
 #define M_PI 3.141592654
 #endif
-
-#include "port.h"
-#include <SDL3/SDL.h>
 
 
 /* ---- Defines */

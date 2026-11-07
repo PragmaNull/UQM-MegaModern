@@ -3,6 +3,30 @@
 #define UQM_PORT_H
 
 #include "config.h"
+#ifdef _MSC_VER
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
+#include <sys/stat.h>
+#ifdef _MSC_VER
+#include <direct.h>
+#define chdir _chdir
+#define getcwd _getcwd
+#define access _access
+#define F_OK 0
+#define W_OK 2
+#define R_OK 4
+#endif
+#ifdef WIN32
+#ifdef __MINGW32__
+#include <malloc.h>
+#elif defined(_MSC_VER)
+#define alloca _alloca
+#endif
+#elif defined(__linux__) || defined(__svr4__)
+#include <alloca.h>
+#endif
 
 // For quelching intentional fallthrough warnings in switch statements.
 #if defined(__GNUC__) && __GNUC__ >= 7
@@ -57,12 +81,6 @@
 //#pragma warning(4 :4244)
 //#endif
 
-
-#ifdef _MSC_VER
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
 
 // Using "HAVE_STRCASECMP_UQM" instead of "HAVE_STRCASECMP" as the latter
 // conflicts with SDL.
@@ -120,7 +138,6 @@ typedef unsigned short mode_t;
 #endif
 
 // Directories
-#include <sys/stat.h>
 #ifdef _MSC_VER
 #define MKDIR(name, mode) ((void)mode, _mkdir(name))
 #elif defined(__MINGW32__)
@@ -128,26 +145,8 @@ typedef unsigned short mode_t;
 #else
 #define MKDIR mkdir
 #endif
-#ifdef _MSC_VER
-#include <direct.h>
-#define chdir _chdir
-#define getcwd _getcwd
-#define access _access
-#define F_OK 0
-#define W_OK 2
-#define R_OK 4
-#endif
 
 // Memory
-#ifdef WIN32
-#ifdef __MINGW32__
-#include <malloc.h>
-#elif defined(_MSC_VER)
-#define alloca _alloca
-#endif
-#elif defined(__linux__) || defined(__svr4__)
-#include <alloca.h>
-#endif
 
 // String formatting
 #ifdef _MSC_VER
