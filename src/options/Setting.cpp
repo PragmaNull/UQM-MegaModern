@@ -8,6 +8,8 @@
 #include "core/log/log.h"
 #include "core/stl/limits.h"
 
+#include "libs/file/json.h"
+
 namespace uqm
 {
 
@@ -234,7 +236,8 @@ void readObject(const SettingsRegistry& registry, yyjson_val* obj, const uqstl::
 
 uqstl::string SettingsRegistry::toJson() const
 {
-	yyjson_mut_doc* doc {yyjson_mut_doc_new(nullptr)};
+	const uqm::JsonMutDoc docOwner {uqm::newJsonDoc()};
+	yyjson_mut_doc* const doc {docOwner.get()};
 	yyjson_mut_val* root {yyjson_mut_obj(doc)};
 	yyjson_mut_doc_set_root(doc, root);
 	yyjson_mut_obj_add_sint(doc, root, "version", c_fileVersion);
@@ -255,32 +258,21 @@ uqstl::string SettingsRegistry::toJson() const
 		yyjson_mut_obj_add(parent, yyjson_mut_strncpy(doc, leaf.data(), leaf.size()), setting->writeJson(doc));
 	}
 
-	size_t length {};
-	char* text {yyjson_mut_write(doc, YYJSON_WRITE_PRETTY_TWO_SPACES | YYJSON_WRITE_NEWLINE_AT_END, &length)};
-	uqstl::string result {
-		text ? uqstl::string {text, length}
-			: uqstl::string {}
-	  };
-	free(text);
-	yyjson_mut_doc_free(doc);
-	return result;
+	return uqm::writeJson(docOwner).value_or(uqstl::string {});
 }
 
 bool SettingsRegistry::fromJson(uqstl::string_view json)
 {
-	yyjson_read_err err {};
-	yyjson_doc* doc {yyjson_read_opts(const_cast<char*>(json.data()), json.size(), YYJSON_READ_NOFLAG, nullptr, &err)};
-	if (doc == nullptr)
+	const uqm::JsonDoc doc {uqm::parseJson(json, "Settings")};
+	if (!doc)
 	{
-		uqm::log::error("Settings: JSON parse error at byte {}: {}", err.pos, err.msg);
 		return false;
 	}
 
-	yyjson_val* root {yyjson_doc_get_root(doc)};
+	yyjson_val* root {yyjson_doc_get_root(doc.get())};
 	if (!yyjson_is_obj(root))
 	{
 		uqm::log::error("Settings: the top level of the file must be an object.");
-		yyjson_doc_free(doc);
 		return false;
 	}
 
@@ -290,7 +282,6 @@ bool SettingsRegistry::fromJson(uqstl::string_view json)
 	}
 
 	readObject(*this, root, {});
-	yyjson_doc_free(doc);
 	return true;
 }
 

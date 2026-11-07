@@ -18,7 +18,25 @@
 namespace uqm
 {
 
-using JsonDoc = uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)>;
+struct JsonFree
+{
+	void operator()(yyjson_doc* doc) const { yyjson_doc_free(doc); }
+	void operator()(yyjson_mut_doc* doc) const { yyjson_mut_doc_free(doc); }
+};
+
+using JsonDoc = uqstl::unique_ptr<yyjson_doc, JsonFree>;
+using JsonMutDoc = uqstl::unique_ptr<yyjson_mut_doc, JsonFree>;
+
+// Returns an empty document.
+[[nodiscard]] inline JsonMutDoc newJsonDoc()
+{
+	return JsonMutDoc {yyjson_mut_doc_new(nullptr)};
+}
+
+inline constexpr yyjson_write_flag JsonWritePretty {YYJSON_WRITE_PRETTY_TWO_SPACES | YYJSON_WRITE_NEWLINE_AT_END};
+
+// Returns the text of 'doc', or nullopt if yyjson cannot write it.
+[[nodiscard]] uqstl::optional<uqstl::string> writeJson(const JsonMutDoc& doc, yyjson_write_flag flags = JsonWritePretty);
 
 // Returns an empty JsonDoc, and logs the error with 'what', if 'text' is not valid JSON.
 [[nodiscard]] JsonDoc parseJson(uqstl::string_view text, uqstl::string_view what, yyjson_read_flag flags = YYJSON_READ_NOFLAG);

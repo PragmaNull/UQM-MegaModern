@@ -8,6 +8,7 @@
 #include "core/log/log.h"
 #include "core/stl/memory.h"
 #include "core/stl/vector.h"
+#include "libs/file/json.h"
 #include "libs/file/textfile.h"
 #include "uqm/save.h"
 #include "uqm/session/GameSession.h"
@@ -19,15 +20,13 @@ namespace uqm
 namespace
 {
 
-using DocPtr = uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)>;
-
 constexpr size_t c_maxReportedDifferences {50};
 // Values that the save takes from the settings of the running game, not from the game state.
 constexpr uqstl::array<uqstl::string_view, 1> c_ignoredPaths {"/summary/res_factor"};
 
-[[nodiscard]] DocPtr readJson(uqstl::string_view text)
+[[nodiscard]] JsonDoc readJson(uqstl::string_view text)
 {
-	return {yyjson_read(text.data(), text.size(), YYJSON_READ_ALLOW_INVALID_UNICODE), &yyjson_doc_free};
+	return JsonDoc {yyjson_read(text.data(), text.size(), YYJSON_READ_ALLOW_INVALID_UNICODE)};
 }
 
 [[nodiscard]] uqstl::string valueText(yyjson_val* val)
@@ -108,8 +107,8 @@ void compare(yyjson_val* loaded, yyjson_val* saved, const uqstl::string& path, u
 		return false;
 	}
 
-	const DocPtr loadedDoc {readJson(text)};
-	const DocPtr savedDoc {readJson(*saved)};
+	const JsonDoc loadedDoc {readJson(text)};
+	const JsonDoc savedDoc {readJson(*saved)};
 	if (!loadedDoc || !savedDoc)
 	{
 		log::error("{}: could not read the JSON to compare it.", path);

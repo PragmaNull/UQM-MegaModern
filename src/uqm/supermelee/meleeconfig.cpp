@@ -8,6 +8,8 @@
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
 
+#include "libs/file/json.h"
+
 
 namespace uqm
 {
@@ -113,7 +115,8 @@ uqstl::optional<MeleeSideConfig> readSide(yyjson_val* sideObj)
 
 uqstl::string meleeConfigToJson(uqstl::span<const MeleeSideConfig> sides)
 {
-	yyjson_mut_doc* doc {yyjson_mut_doc_new(nullptr)};
+	const uqm::JsonMutDoc docOwner {uqm::newJsonDoc()};
+	yyjson_mut_doc* const doc {docOwner.get()};
 	yyjson_mut_val* root {yyjson_mut_obj(doc)};
 	yyjson_mut_doc_set_root(doc, root);
 	yyjson_mut_obj_add_sint(doc, root, "version", c_meleeConfigVersion);
@@ -148,29 +151,19 @@ uqstl::string meleeConfigToJson(uqstl::span<const MeleeSideConfig> sides)
 		}
 	}
 
-	size_t length {};
-	char* text {yyjson_mut_write(doc, YYJSON_WRITE_PRETTY_TWO_SPACES | YYJSON_WRITE_NEWLINE_AT_END, &length)};
-	uqstl::string result {
-		text ? uqstl::string {text, length}
-			: uqstl::string {}
-	  };
-	free(text);
-	yyjson_mut_doc_free(doc);
-	return result;
+	return uqm::writeJson(docOwner).value_or(uqstl::string {});
 }
 
 uqstl::optional<uqstl::vector<MeleeSideConfig>> meleeConfigFromJson(uqstl::string_view json)
 {
-	yyjson_read_err err {};
-	yyjson_doc* doc {yyjson_read_opts(const_cast<char*>(json.data()), json.size(), YYJSON_READ_NOFLAG, nullptr, &err)};
-	if (doc == nullptr)
+	const uqm::JsonDoc doc {uqm::parseJson(json, "Melee configuration")};
+	if (!doc)
 	{
-		uqm::log::error("Melee configuration: JSON parse error at byte {}: {}", err.pos, err.msg);
 		return uqstl::nullopt;
 	}
 
 	uqstl::optional<uqstl::vector<MeleeSideConfig>> result {};
-	yyjson_val* sideArray {yyjson_obj_get(yyjson_doc_get_root(doc), "sides")};
+	yyjson_val* sideArray {yyjson_obj_get(yyjson_doc_get_root(doc.get()), "sides")};
 	if (yyjson_is_arr(sideArray))
 	{
 		result.emplace();
@@ -193,7 +186,6 @@ uqstl::optional<uqstl::vector<MeleeSideConfig>> meleeConfigFromJson(uqstl::strin
 	{
 		uqm::log::error("Melee configuration: the file does not have the expected structure.");
 	}
-	yyjson_doc_free(doc);
 	return result;
 }
 

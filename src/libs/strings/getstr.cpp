@@ -58,7 +58,7 @@ namespace
 	if (!text)
 	{
 		uqm::log::warn("Warning: Can't open '{}'", path);
-		return {nullptr, &yyjson_doc_free};
+		return {};
 	}
 	return uqm::parseJson(*text, path, YYJSON_READ_ALLOW_INVALID_UNICODE);
 }
@@ -162,7 +162,7 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 		return;
 	}
 
-	uqm::JsonDoc timingDoc {nullptr, &yyjson_doc_free};
+	uqm::JsonDoc timingDoc {};
 	yyjson_val* timingLines {};
 	if (!timingPath.empty())
 	{

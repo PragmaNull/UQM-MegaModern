@@ -9,12 +9,23 @@ namespace uqm
 JsonDoc parseJson(uqstl::string_view text, uqstl::string_view what, yyjson_read_flag flags)
 {
 	yyjson_read_err err {};
-	JsonDoc doc {yyjson_read_opts(const_cast<char*>(text.data()), text.size(), flags, nullptr, &err), &yyjson_doc_free};
+	JsonDoc doc {yyjson_read_opts(const_cast<char*>(text.data()), text.size(), flags, nullptr, &err)};
 	if (!doc)
 	{
 		uqm::log::error("{}: JSON parse error at byte {}: {}", what, err.pos, err.msg);
 	}
 	return doc;
+}
+
+uqstl::optional<uqstl::string> writeJson(const JsonMutDoc& doc, yyjson_write_flag flags)
+{
+	size_t length {};
+	const uqstl::unique_ptr<char, decltype(&free)> text {yyjson_mut_write(doc.get(), flags, &length), &free};
+	if (!text)
+	{
+		return uqstl::nullopt;
+	}
+	return uqstl::string {text.get(), length};
 }
 
 yyjson_val* versionedRoot(const JsonDoc& doc, int64_t version, uqstl::string_view what)

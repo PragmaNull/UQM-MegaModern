@@ -7,6 +7,7 @@
 
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
+#include "libs/file/json.h"
 #include "options/Setting.h"
 
 
@@ -325,16 +326,14 @@ const MenuDef* MenuDefinition::find(uqstl::string_view id) const noexcept
 
 uqstl::optional<MenuDefinition> menuDefinitionFromJson(uqstl::string_view json)
 {
-	yyjson_read_err err {};
-	yyjson_doc* doc {yyjson_read_opts(const_cast<char*>(json.data()), json.size(), YYJSON_READ_NOFLAG, nullptr, &err)};
-	if (doc == nullptr)
+	const uqm::JsonDoc doc {uqm::parseJson(json, "Menu definition")};
+	if (!doc)
 	{
-		uqm::log::error("Menu definition: JSON parse error at byte {}: {}", err.pos, err.msg);
 		return uqstl::nullopt;
 	}
 
 	uqstl::optional<MenuDefinition> result {};
-	yyjson_val* root {yyjson_doc_get_root(doc)};
+	yyjson_val* root {yyjson_doc_get_root(doc.get())};
 	yyjson_val* menus {yyjson_obj_get(root, "menus")};
 	const yyjson_val* titleVal {yyjson_obj_get(root, "title")};
 	const auto title {titleVal == nullptr ? uqstl::string {} : getString(root, "title")};
@@ -373,7 +372,6 @@ uqstl::optional<MenuDefinition> menuDefinitionFromJson(uqstl::string_view json)
 	{
 		uqm::log::error("Menu definition: the file does not have the expected structure.");
 	}
-	yyjson_doc_free(doc);
 	return result;
 }
 

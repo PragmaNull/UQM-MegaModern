@@ -233,7 +233,7 @@ yyjson_mut_val* valueToJson(yyjson_mut_doc* doc, const auto& value)
 
 uqstl::string resourceIndexToJson(uqstl::span<const ResourceEntry> entries)
 {
-	const uqstl::unique_ptr<yyjson_mut_doc, decltype(&yyjson_mut_doc_free)> doc {yyjson_mut_doc_new(nullptr), &yyjson_mut_doc_free};
+	const JsonMutDoc doc {newJsonDoc()};
 	yyjson_mut_val* const root {yyjson_mut_obj(doc.get())};
 	yyjson_mut_doc_set_root(doc.get(), root);
 	yyjson_mut_obj_add_sint(doc.get(), root, "version", c_resourceIndexVersion);
@@ -245,10 +245,7 @@ uqstl::string resourceIndexToJson(uqstl::span<const ResourceEntry> entries)
 		yyjson_mut_obj_add_val(doc.get(), obj, "data", valueToJson(doc.get(), entry.arg));
 		yyjson_mut_obj_add(resources, yyjson_mut_strncpy(doc.get(), entry.key.data(), entry.key.size()), obj);
 	}
-	size_t length {};
-	const uqstl::unique_ptr<char, decltype(&free)> text {
-		yyjson_mut_write(doc.get(), YYJSON_WRITE_PRETTY_TWO_SPACES | YYJSON_WRITE_NEWLINE_AT_END, &length), &free};
-	return text ? uqstl::string {text.get(), length} : uqstl::string {};
+	return writeJson(doc).value_or(uqstl::string {});
 }
 
 } // namespace uqm

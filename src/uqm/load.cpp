@@ -28,6 +28,7 @@
 #include "gameev.h"
 #include "globdata.h"
 #include "grpintrn.h"
+#include "libs/file/json.h"
 #include "libs/file/textfile.h"
 #include "libs/time/timelib.h"
 #include "master.h"
@@ -39,6 +40,7 @@
 #include "uqm/lua/UQMLua.h"
 #include "uqm/random/UQMRandom.h"
 #include "uqmdebug.h"
+
 
 namespace uqm
 {
@@ -827,13 +829,9 @@ bool LoadGameFile(const char* path)
 
 bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SaveSummaryData* SummPtr)
 {
-	yyjson_read_err err {};
-	const uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)> doc {
-		yyjson_read_opts(const_cast<char*>(json.data()), json.size(), YYJSON_READ_ALLOW_INVALID_UNICODE, nullptr, &err),
-		&yyjson_doc_free};
+	const JsonDoc doc {parseJson(json, file, YYJSON_READ_ALLOW_INVALID_UNICODE)};
 	if (!doc)
 	{
-		uqm::log::error("{}: JSON parse error at byte {}: {}", file, err.pos, err.msg);
 		return false;
 	}
 

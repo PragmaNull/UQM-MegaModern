@@ -41,8 +41,10 @@
 
 #include "colors.h"
 #include "core/log/log.h"
+#include "libs/file/json.h"
 #include "libs/file/textfile.h"
 #include "libs/inplib.h"
+
 
 namespace uqm
 {
@@ -731,11 +733,9 @@ bool SaveGame(uint16_t which_game, SaveSummaryData* SummPtr, const char* name)
 	return true;
 }
 
-using MutDocPtr = uqstl::unique_ptr<yyjson_mut_doc, decltype(&yyjson_mut_doc_free)>;
-using TextPtr = uqstl::unique_ptr<char, decltype(&free)>;
 
 // Makes the save document from the game state.
-static MutDocPtr WriteGameDocument(const SaveSummaryData& summary)
+static JsonMutDoc WriteGameDocument(const SaveSummaryData& summary)
 {
 	StarDesc SD {};
 	if (CurStarDescPtr())
@@ -743,7 +743,7 @@ static MutDocPtr WriteGameDocument(const SaveSummaryData& summary)
 		SD = *CurStarDescPtr();
 	}
 
-	MutDocPtr doc {yyjson_mut_doc_new(nullptr), &yyjson_mut_doc_free};
+	JsonMutDoc doc {newJsonDoc()};
 	yyjson_mut_val* root {yyjson_mut_obj(doc.get())};
 	yyjson_mut_doc_set_root(doc.get(), root);
 	yyjson_mut_obj_add_uint(doc.get(), root, "version", c_saveFormatVersion);
@@ -796,22 +796,14 @@ uqstl::optional<uqstl::string> SaveGameJson(SaveSummaryData* SummPtr, const char
 	}
 
 	PrepareSummary(SummPtr, name);
-	const MutDocPtr doc {WriteGameDocument(*SummPtr)};
+	const JsonMutDoc doc {WriteGameDocument(*SummPtr)};
 
 	// XXX: Restore
 	uqm::flagship().ipLocation = pt;
 	// Only relevant when loading a game and must be cleaned
 	uqm::flagship().inOrbit = 0;
 
-	size_t length {};
-	const TextPtr text {
-		yyjson_mut_write(doc.get(), YYJSON_WRITE_PRETTY_TWO_SPACES | YYJSON_WRITE_ALLOW_INVALID_UNICODE | YYJSON_WRITE_NEWLINE_AT_END, &length),
-		&free};
-	if (!text)
-	{
-		return uqstl::nullopt;
-	}
-	return uqstl::string {text.get(), length};
+	return writeJson(doc, JsonWritePretty | YYJSON_WRITE_ALLOW_INVALID_UNICODE);
 }
 
 } // namespace uqm

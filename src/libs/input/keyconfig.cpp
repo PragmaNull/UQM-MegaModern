@@ -6,6 +6,8 @@
 
 #include "core/log/log.h"
 
+#include "libs/file/json.h"
+
 namespace uqm
 {
 
@@ -13,7 +15,8 @@ static constexpr int64_t c_keyConfigVersion {1};
 
 uqstl::string keyConfigToJson(uqstl::span<const KeyTemplate> templates, uqstl::span<const uqgsl::czstring> controlNames)
 {
-	yyjson_mut_doc* doc {yyjson_mut_doc_new(nullptr)};
+	const uqm::JsonMutDoc docOwner {uqm::newJsonDoc()};
+	yyjson_mut_doc* const doc {docOwner.get()};
 	yyjson_mut_val* root {yyjson_mut_obj(doc)};
 	yyjson_mut_doc_set_root(doc, root);
 	yyjson_mut_obj_add_sint(doc, root, "version", c_keyConfigVersion);
@@ -38,15 +41,7 @@ uqstl::string keyConfigToJson(uqstl::span<const KeyTemplate> templates, uqstl::s
 		}
 	}
 
-	size_t length {};
-	char* text {yyjson_mut_write(doc, YYJSON_WRITE_PRETTY_TWO_SPACES | YYJSON_WRITE_NEWLINE_AT_END, &length)};
-	uqstl::string result {
-		text ? uqstl::string {text, length}
-			: uqstl::string {}
-	  };
-	free(text);
-	yyjson_mut_doc_free(doc);
-	return result;
+	return uqm::writeJson(docOwner).value_or(uqstl::string {});
 }
 
 namespace
@@ -96,16 +91,14 @@ uqstl::optional<KeyTemplate> readTemplate(yyjson_val* templateObj, uqstl::span<c
 
 uqstl::optional<uqstl::vector<KeyTemplate>> keyConfigFromJson(uqstl::string_view json, uqstl::span<const uqgsl::czstring> controlNames)
 {
-	yyjson_read_err err {};
-	yyjson_doc* doc {yyjson_read_opts(const_cast<char*>(json.data()), json.size(), YYJSON_READ_NOFLAG, nullptr, &err)};
-	if (doc == nullptr)
+	const uqm::JsonDoc doc {uqm::parseJson(json, "Key configuration")};
+	if (!doc)
 	{
-		uqm::log::error("Key configuration: JSON parse error at byte {}: {}", err.pos, err.msg);
 		return uqstl::nullopt;
 	}
 
 	uqstl::optional<uqstl::vector<KeyTemplate>> result {};
-	yyjson_val* templateArray {yyjson_obj_get(yyjson_doc_get_root(doc), "templates")};
+	yyjson_val* templateArray {yyjson_obj_get(yyjson_doc_get_root(doc.get()), "templates")};
 	if (yyjson_is_arr(templateArray))
 	{
 		result.emplace();
@@ -128,7 +121,6 @@ uqstl::optional<uqstl::vector<KeyTemplate>> keyConfigFromJson(uqstl::string_view
 	{
 		uqm::log::error("Key configuration: the file does not have the expected structure.");
 	}
-	yyjson_doc_free(doc);
 	return result;
 }
 
