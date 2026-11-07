@@ -61,14 +61,13 @@ void DestroyPickFrame(void)
 
 void RepairPickFrame(GfxRect* pRect, uint16_t frame)
 {
-	GfxRect OldRect;
 	GfxStamp s;
 	GfxRect r;
 
-	GetContextClipRect(&OldRect);
+	const ClipRectScope clipRectScope {};
 
-	r.corner.x = pRect->corner.x + OldRect.corner.x;
-	r.corner.y = pRect->corner.y + OldRect.corner.y;
+	r.corner.x = pRect->corner.x + clipRectScope.previous().corner.x;
+	r.corner.y = pRect->corner.y + clipRectScope.previous().corner.y;
 	r.extent = pRect->extent;
 
 	SetContextClipRect(&r);
@@ -77,8 +76,6 @@ void RepairPickFrame(GfxRect* pRect, uint16_t frame)
 	s.origin.y = frameOrigin.y - pRect->corner.y;
 	s.frame = SetAbsFrameIndex(PickFrame, frame);
 	DrawStamp(&s);
-
-	SetContextClipRect(&OldRect);
 }
 
 static bool DoPickBattleShip(MenuState* pMS)

@@ -2177,8 +2177,6 @@ static bool DoConnectingDialog(MeleeState* pMS)
 	if (!pMS->Initialized)
 	{
 		GfxRect r;
-		FontRef oldfont {};
-		Color oldcolor;
 		GfxText t;
 
 		// Build a network connection.
@@ -2192,8 +2190,8 @@ static bool DoConnectingDialog(MeleeState* pMS)
 		pMS->InputFunc = DoConnectingDialog;
 
 		/* Draw the dialog box here */
-		oldfont = SetContextFont(StarConFont);
-		oldcolor = SetContextForeGroundColor(BlackColor);
+		const FontScope fontScope {StarConFont};
+		const ForegroundColorScope colorScope {BlackColor};
 		const BatchScope batch {};
 		r.extent.width = ResScale(200);
 		r.extent.height = ResScale(30);
@@ -2224,8 +2222,6 @@ static bool DoConnectingDialog(MeleeState* pMS)
 		font_DrawText(&t);
 
 		// Restore original graphics
-		SetContextFont(oldfont);
-		SetContextForeGroundColor(oldcolor);
 	}
 
 	netInput();
