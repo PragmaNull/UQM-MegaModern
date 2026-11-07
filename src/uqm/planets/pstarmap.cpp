@@ -220,17 +220,17 @@ static void flashCurrentLocation(GfxPoint* where, bool force)
 		Color OldColor;
 		GfxStamp s;
 
-		GfxContextRef OldContext {SetContext(SpaceContext)};
+		{
+			const ContextScope contextScope {SpaceContext};
 
-		OldColor = SetContextForeGroundColor(
-			BuildColor(MakeRgb15(c, c, c), c));
-		s.origin.x = UniverseToDispx(universe.x);
-		s.origin.y = UniverseToDispy(universe.y);
-		s.frame = IncFrameIndex(StarMapFrame);
-		DrawFilledStamp(&s);
-		SetContextForeGroundColor(OldColor);
-
-		SetContext(OldContext);
+			OldColor = SetContextForeGroundColor(
+				BuildColor(MakeRgb15(c, c, c), c));
+			s.origin.x = UniverseToDispx(universe.x);
+			s.origin.y = UniverseToDispy(universe.y);
+			s.frame = IncFrameIndex(StarMapFrame);
+			DrawFilledStamp(&s);
+			SetContextForeGroundColor(OldColor);
+		}
 
 		redraw = false;
 	}
@@ -3438,9 +3438,10 @@ bool StarMap(void)
 	transition_pending = false;
 
 	BatchGraphics();
-	GfxContextRef OldContext {SetContext(SpaceContext)};
-	GetContextClipRect(&clip_r);
-	SetContext(OldContext);
+	{
+		const ContextScope contextScope {SpaceContext};
+		GetContextClipRect(&clip_r);
+	}
 	LoadIntoExtraScreen(&clip_r);
 	DrawCursor(UniverseToDispx(cursorLoc.x),
 			   UniverseToDispy(cursorLoc.y));

@@ -561,9 +561,10 @@ static void Flash_grabOriginal(FlashContext* context)
 		DestroyDrawable(ReleaseDrawable(context->original));
 	}
 
-	GfxContextRef oldGfxContext {SetContext(context->gfxContext)};
-	context->original = CaptureDrawable(CopyContextRect(&context->rect));
-	SetContext(oldGfxContext);
+	{
+		const ContextScope contextScope {context->gfxContext};
+		context->original = CaptureDrawable(CopyContextRect(&context->rect));
+	}
 	FlushGraphics();
 	// CopyContextRect() may have queued the command to read
 	// a rectangle from the screen; a FlushGraphics()

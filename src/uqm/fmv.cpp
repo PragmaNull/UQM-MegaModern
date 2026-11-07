@@ -40,8 +40,6 @@ static constexpr auto MaxLoadEntries {40};
 
 void DoShipSpin(uint16_t index, MusicRef hMusic)
 {
-	GfxRect old_r;
-
 	GfxContextRef OldContext {SetContext(ScreenContext)};
 
 	if (uqm::currentSeed().ships)
@@ -86,10 +84,11 @@ void DoShipSpin(uint16_t index, MusicRef hMusic)
 
 	SetContext(OldContext);
 
-	GetContextClipRect(&old_r);
-	SetContextClipRect(nullptr);
-	DrawFromExtraScreen(nullptr);
-	SetContextClipRect(&old_r);
+	{
+		const ClipRectScope clipRectScope {};
+		SetContextClipRect(nullptr);
+		DrawFromExtraScreen(nullptr);
+	}
 
 	if (hMusic)
 	{

@@ -475,29 +475,30 @@ bool DoSaveTeam(MeleeState* pMS)
 	fmt::format_to_sz_n(file, "{}.mle",
 						MeleeSetup_getTeamName(pMS->meleeSetup, pMS->side));
 
-	GfxContextRef OldContext {SetContext(ScreenContext)};
-	ConfirmSaveLoad(&MsgStamp);
-	// Show the "Saving . . ." message.
-
-	if (uqm::io::Result<uqm::io::File> stream {uqm::meleeDir().open(file.data(), uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)})
 	{
-		opened = true;
-		saveOk = MeleeTeam_serialize(&pMS->meleeSetup->teams[pMS->side], *stream) == 0 && stream->flush();
-		stream->close();
+		const ContextScope contextScope {ScreenContext};
+		ConfirmSaveLoad(&MsgStamp);
+		// Show the "Saving . . ." message.
 
-		if (!saveOk)
+		if (uqm::io::Result<uqm::io::File> stream {uqm::meleeDir().open(file.data(), uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)})
 		{
-			(void)uqm::meleeDir().remove(file.data());
+			opened = true;
+			saveOk = MeleeTeam_serialize(&pMS->meleeSetup->teams[pMS->side], *stream) == 0 && stream->flush();
+			stream->close();
+
+			if (!saveOk)
+			{
+				(void)uqm::meleeDir().remove(file.data());
+			}
 		}
+
+		pMS->load.top = 0;
+		pMS->load.cur = 0;
+
+		// Undo the screen damage done by the "Saving . . ." message.
+		DrawStamp(&MsgStamp);
+		DestroyDrawable(ReleaseDrawable(MsgStamp.frame));
 	}
-
-	pMS->load.top = 0;
-	pMS->load.cur = 0;
-
-	// Undo the screen damage done by the "Saving . . ." message.
-	DrawStamp(&MsgStamp);
-	DestroyDrawable(ReleaseDrawable(MsgStamp.frame));
-	SetContext(OldContext);
 
 	if (!saveOk)
 	{

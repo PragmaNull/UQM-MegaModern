@@ -530,15 +530,16 @@ void SaveProblem(void)
 {
 	GfxStamp s;
 
-	GfxContextRef OldContext {SetContext(SpaceContext)};
-	SaveProblemMessage(&s);
-	FlushGraphics();
+	{
+		const ContextScope contextScope {SpaceContext};
+		SaveProblemMessage(&s);
+		FlushGraphics();
 
-	WaitForAnyButton(true, WaitInfinite, false);
+		WaitForAnyButton(true, WaitInfinite, false);
 
-	// Restore the screen under the message
-	DrawStamp(&s);
-	SetContext(OldContext);
+		// Restore the screen under the message
+		DrawStamp(&s);
+	}
 	DestroyDrawable(ReleaseDrawable(s.frame));
 }
 

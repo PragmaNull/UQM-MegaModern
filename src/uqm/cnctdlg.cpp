@@ -96,29 +96,29 @@ static void MCD_DrawButton(Widget* _self, int x, int y)
 	Color oldtext;
 	Color inactive;
 	Color selected;
-	FontRef oldfont = SetContextFont(StarConFont);
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
-	GfxText t;
-
-	selected = MenuHighlightColor;
-	inactive = MenuTextColor;
-
-	t.baseline.x = ResScale(160);
-	t.baseline.y = y;
-	t.align = TextAlign::Center;
-	t.CharCount = ~0;
-	t.pStr = self->name;
-	if (widget_focus == _self)
 	{
-		oldtext = SetContextForeGroundColor(selected);
+		const FontScope fontScope {StarConFont};
+		const FontEffectScope fontEffectScope {nullptr};
+		GfxText t;
+
+		selected = MenuHighlightColor;
+		inactive = MenuTextColor;
+
+		t.baseline.x = ResScale(160);
+		t.baseline.y = y;
+		t.align = TextAlign::Center;
+		t.CharCount = ~0;
+		t.pStr = self->name;
+		if (widget_focus == _self)
+		{
+			oldtext = SetContextForeGroundColor(selected);
+		}
+		else
+		{
+			oldtext = SetContextForeGroundColor(inactive);
+		}
+		font_DrawText(&t);
 	}
-	else
-	{
-		oldtext = SetContextForeGroundColor(inactive);
-	}
-	font_DrawText(&t);
-	SetContextFontEffect(oldFontEffect);
-	SetContextFont(oldfont);
 	SetContextForeGroundColor(oldtext);
 	(void)x;
 }
@@ -129,8 +129,8 @@ static void MCD_DrawSlider(Widget* _self, int x, int y)
 	Color oldtext;
 	Color default_color;
 	Color selected;
-	FontRef oldfont = SetContextFont(PlayerFont);
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontScope fontScope {PlayerFont};
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxText t;
 	GfxRect r;
 	const int tick = ResScale(ResDescale(McdWidth()) / 8);
@@ -168,8 +168,6 @@ static void MCD_DrawSlider(Widget* _self, int x, int y)
 
 	(*self->draw_value)(self, t.baseline.x + 7 * tick, t.baseline.y);
 
-	SetContextFontEffect(oldFontEffect);
-	SetContextFont(oldfont);
 	SetContextForeGroundColor(oldtext);
 }
 

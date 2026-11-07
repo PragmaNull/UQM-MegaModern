@@ -299,29 +299,29 @@ static void InitCredits(void)
 	CreditsExtent = ctxRect.extent;
 
 	// prep our local context
-	GfxContextRef oldContext {SetContext(LocalContext)};
-	// Local screen copy. We draw everything to this frame, then cut
-	// the Outtakes rect out and draw this frame to the screen.
-	CreditsFrame = Credits_MakeTransFrame(CreditsExtent.width,
-										  CreditsExtent.height, BrightBlueColor);
-	SetContextFGFrame(CreditsFrame);
+	{
+		const ContextScope contextScope {LocalContext};
+		// Local screen copy. We draw everything to this frame, then cut
+		// the Outtakes rect out and draw this frame to the screen.
+		CreditsFrame = Credits_MakeTransFrame(CreditsExtent.width,
+											  CreditsExtent.height, BrightBlueColor);
+		SetContextFGFrame(CreditsFrame);
 
-	// The first credits frame is fake, the height of the screen,
-	// so that the credits can roll in from the bottom
-	textFrames[0].frame = Credits_MakeTransFrame(1, CreditsExtent.height,
-												 BrightBlueColor);
-	textFrames[0].strIndex = -1;
-	firstFrame = 0;
-	lastFrame = firstFrame + 1;
+		// The first credits frame is fake, the height of the screen,
+		// so that the credits can roll in from the bottom
+		textFrames[0].frame = Credits_MakeTransFrame(1, CreditsExtent.height,
+													 BrightBlueColor);
+		textFrames[0].strIndex = -1;
+		firstFrame = 0;
+		lastFrame = firstFrame + 1;
 
-	totalHeight = GetFrameHeight(textFrames[0].frame);
-	curFrameOfs = 0;
+		totalHeight = GetFrameHeight(textFrames[0].frame);
+		curFrameOfs = 0;
 
-	// We use an own screen draw context to avoid collisions
-	SetContext(DrawContext);
-	SetContextFGFrame(targetFrame);
-
-	SetContext(oldContext);
+		// We use an own screen draw context to avoid collisions
+		SetContext(DrawContext);
+		SetContextFGFrame(targetFrame);
+	}
 
 	// Prepare the first screen frame
 	RenderCreditsScreen(LocalContext);
@@ -406,9 +406,10 @@ static void processCreditsFrame(void)
 		s.origin.y = 0;
 		s.frame = CreditsFrame;
 
-		GfxContextRef OldContext {SetContext(DrawContext)};
-		DrawStamp(&s);
-		SetContext(OldContext);
+		{
+			const ContextScope contextScope {DrawContext};
+			DrawStamp(&s);
+		}
 		FlushGraphics();
 
 		// prepare next screen frame

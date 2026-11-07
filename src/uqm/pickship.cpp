@@ -530,30 +530,29 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 	s.origin = pick_r.corner;
 	DrawStamp(&s);
 
-	FrameRef OldFontEffect {SetContextFontEffect(nullptr)};
-
-	t.baseline.x = pick_r.corner.x + (pick_r.extent.width >> 1);
-	t.baseline.y = pick_r.corner.y + pick_r.extent.height - ResScale(5);
-	t.align = TextAlign::Center;
-	t.pStr = uqm::gameState().sis().ShipName.data();
-	t.CharCount = (uint16_t)~0;
-
-	// Code to make use of the PC version's font gradient
-	// Along with the FrameRef "OldFontEffect"
-	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
-		SetContextFontEffect(SetAbsFrameIndex(FontGradFrame, 6));
-	}
-	else
-	{
-		SetContextForeGroundColor(
-			BuildColor(MakeRgb15(0x12, 0x12, 0x12), 0x17));
-	}
+		const FontEffectScope fontEffectScope {nullptr};
 
-	SetContextFont(StarConFont);
-	font_DrawText(&t);
+		t.baseline.x = pick_r.corner.x + (pick_r.extent.width >> 1);
+		t.baseline.y = pick_r.corner.y + pick_r.extent.height - ResScale(5);
+		t.align = TextAlign::Center;
+		t.pStr = uqm::gameState().sis().ShipName.data();
+		t.CharCount = (uint16_t)~0;
 
-	SetContextFontEffect(OldFontEffect);
+		// Code to make use of the PC version's font gradient
+		if (isPC(uqm::UQMOptions::read().whichFonts))
+		{
+			SetContextFontEffect(SetAbsFrameIndex(FontGradFrame, 6));
+		}
+		else
+		{
+			SetContextForeGroundColor(
+				BuildColor(MakeRgb15(0x12, 0x12, 0x12), 0x17));
+		}
+
+		SetContextFont(StarConFont);
+		font_DrawText(&t);
+	}
 
 	r.extent.width = IconWidth();
 	r.extent.height = IconHeight();

@@ -142,11 +142,12 @@ static bool processAudioSyncedFrame(VideoRef vid)
 
 	// draw the frame
 	// We have the cliprect precalculated and don't need the rest
-	GfxContextRef oldContext {SetContext(nullptr)};
-	TFB_DrawScreen_Image(vid->frame,
-						 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, tfb::ScaleMode::None,
-						 nullptr, DrawReplaceMode, ScreenBuffer::Main);
-	SetContext(oldContext);
+	{
+		const ContextScope contextScope {nullptr};
+		TFB_DrawScreen_Image(vid->frame,
+							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, tfb::ScaleMode::None,
+							 nullptr, DrawReplaceMode, ScreenBuffer::Main);
+	}
 	FlushGraphics(); // needed to prevent half-frame updates
 
 	// increase interframe with positive lag-count to allow audio to catch up
@@ -191,11 +192,12 @@ static bool processMuteFrame(VideoRef vid)
 		vid->cur_frame = vid->decoder->cur_frame;
 
 		// We have the cliprect precalculated and don't need the rest
-		GfxContextRef oldContext {SetContext(nullptr)};
-		TFB_DrawScreen_Image(vid->frame,
-							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, tfb::ScaleMode::None,
-							 nullptr, DrawReplaceMode, ScreenBuffer::Main);
-		SetContext(oldContext);
+		{
+			const ContextScope contextScope {nullptr};
+			TFB_DrawScreen_Image(vid->frame,
+								 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, tfb::ScaleMode::None,
+								 nullptr, DrawReplaceMode, ScreenBuffer::Main);
+		}
 		FlushGraphics(); // needed to prevent half-frame updates
 
 		if (vid->cur_frame == vid->loop_frame)

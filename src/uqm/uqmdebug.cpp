@@ -1942,14 +1942,10 @@ static bool isContextVisible(GfxContextRef context)
 {
 	FrameRef contextFrame;
 
-	// Save the original context.
-	GfxContextRef oldContext = SetContext(context);
-
-	// Get the frame of the specified context.
-	contextFrame = GetContextFGFrame();
-
-	// Restore the original context.
-	SetContext(oldContext);
+	{
+		const ContextScope contextScope {context};
+		contextFrame = GetContextFGFrame();
+	}
 
 	return contextFrame == Screen;
 }

@@ -190,7 +190,7 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 	// which explains what the current option does.
 	GfxRect r;
 	FontRef oldfont = 0;
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontEffectScope fontEffectScope {nullptr};
 	const ForegroundColorScope colorScope {WidgetTooltipColor};
 	GfxText t;
 	const char* amperBang = "&!";
@@ -234,7 +234,6 @@ static void Widget_DrawToolTips(int numlines, const char** tips)
 		t.baseline.y += uqm::ResScale(9);
 	}
 
-	SetContextFontEffect(oldFontEffect);
 	if (oldfont)
 	{
 		SetContextFont(oldfont);
@@ -408,7 +407,7 @@ void Widget_DrawChoice(Widget* _self, int x, int y)
 	Color disabled;
 	Color canbe;
 	FontRef oldfont = 0;
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxText t;
 	int i {};
 
@@ -511,7 +510,6 @@ void Widget_DrawChoice(Widget* _self, int x, int y)
 			}
 		}
 	}
-	SetContextFontEffect(oldFontEffect);
 	if (oldfont)
 	{
 		SetContextFont(oldfont);
@@ -526,32 +524,33 @@ void Widget_DrawButton(Widget* _self, int x, int y)
 	Color inactive;
 	Color selected;
 	FontRef oldfont = 0;
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
-	GfxText t;
+	{
+		const FontEffectScope fontEffectScope {nullptr};
+		GfxText t;
 
-	if (cur_font)
-	{
-		oldfont = SetContextFont(cur_font);
-	}
+		if (cur_font)
+		{
+			oldfont = SetContextFont(cur_font);
+		}
 
-	selected = WidgetActiveColor;
-	inactive = WidgetInactiveColor;
-	t.baseline.x = ScreenCenter();
-	t.baseline.y = y;
-	t.align = TextAlign::Center;
-	t.CharCount = ~0;
-	t.pStr = self->name;
-	if (widget_focus == _self)
-	{
-		Widget_DrawToolTips(3, self->tooltip.data());
-		oldtext = SetContextForeGroundColor(selected);
+		selected = WidgetActiveColor;
+		inactive = WidgetInactiveColor;
+		t.baseline.x = ScreenCenter();
+		t.baseline.y = y;
+		t.align = TextAlign::Center;
+		t.CharCount = ~0;
+		t.pStr = self->name;
+		if (widget_focus == _self)
+		{
+			Widget_DrawToolTips(3, self->tooltip.data());
+			oldtext = SetContextForeGroundColor(selected);
+		}
+		else
+		{
+			oldtext = SetContextForeGroundColor(inactive);
+		}
+		font_DrawText(&t);
 	}
-	else
-	{
-		oldtext = SetContextForeGroundColor(inactive);
-	}
-	font_DrawText(&t);
-	SetContextFontEffect(oldFontEffect);
 	if (oldfont)
 	{
 		SetContextFont(oldfont);
@@ -635,7 +634,7 @@ void Widget_DrawSlider(Widget* _self, int x, int y)
 	Color default_color;
 	Color selected;
 	FontRef oldfont = 0;
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxText t;
 	GfxRect r;
 	const int tick = (CanvasWidth - x) / 8;
@@ -682,7 +681,6 @@ void Widget_DrawSlider(Widget* _self, int x, int y)
 	//printf("%d + 3 * %d - 22 * %d\n", Rstep(), tick, tick);
 	(*self->draw_value)(self, slider_width, t.baseline.y);
 
-	SetContextFontEffect(oldFontEffect);
 	if (oldfont)
 	{
 		SetContextFont(oldfont);
@@ -892,7 +890,7 @@ void Widget_DrawControlEntry(Widget* _self, int x, int y)
 	Color default_color;
 	Color selected;
 	FontRef oldfont = 0;
-	FrameRef oldFontEffect = SetContextFontEffect(nullptr);
+	const FontEffectScope fontEffectScope {nullptr};
 	GfxText t;
 
 	if (cur_font)
@@ -942,7 +940,6 @@ void Widget_DrawControlEntry(Widget* _self, int x, int y)
 		}
 		font_DrawText(&t);
 	}
-	SetContextFontEffect(oldFontEffect);
 	if (oldfont)
 	{
 		SetContextFont(oldfont);

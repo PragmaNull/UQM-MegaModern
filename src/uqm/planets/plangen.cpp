@@ -1405,21 +1405,22 @@ void RenderDOSPlanetSphere(PlanetOrbit* Orbit, FrameRef MaskFrame, int offset)
 				CreateDrawable(CreateFlags::WantPixmap, (int16_t)width, trueheight, 1));
 
 			// Draw everything in offscreen context
-			GfxContextRef oldContext {SetContext(OffScreenContext)};
-			SetContextFGFrame(baseframe);
-			SetContextClipRect(nullptr);
+			{
+				const ContextScope contextScope {OffScreenContext};
+				SetContextFGFrame(baseframe);
+				SetContextClipRect(nullptr);
 
-			oldMode = SetContextDrawMode(DrawReplaceMode);
+				oldMode = SetContextDrawMode(DrawReplaceMode);
 
-			SetFrameHot(rotFrame, MAKE_HOT_SPOT(0, 0));
+				SetFrameHot(rotFrame, MAKE_HOT_SPOT(0, 0));
 
-			s.origin.x = (width - r.extent.width) / 2 - 1;
-			s.origin.y = (trueheight - r.extent.height) / 2;
-			s.frame = rotFrame;
-			DrawStamp(&s);
+				s.origin.x = (width - r.extent.width) / 2 - 1;
+				s.origin.y = (trueheight - r.extent.height) / 2;
+				s.frame = rotFrame;
+				DrawStamp(&s);
 
-			SetContextDrawMode(oldMode);
-			SetContext(oldContext);
+				SetContextDrawMode(oldMode);
+			}
 
 			// We got our colors - dump everything to avoid memory leak
 			ReadFramePixelColors(baseframe, Orbit->ScratchArray, width,

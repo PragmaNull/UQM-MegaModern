@@ -641,7 +641,6 @@ void DrawCaptainsName(bool NewGame)
 	GfxRect r;
 	GfxText t;
 	FontRef OldFont {};
-	Color OldColor;
 
 	const ContextScope contextScope {StatusContext};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
@@ -653,7 +652,7 @@ void DrawCaptainsName(bool NewGame)
 		OldFont = SetContextFont(TinyFontBold);
 	}
 
-	OldColor = SetContextForeGroundColor(CaptainNameBackgroundColor);
+	const ForegroundColorScope colorScope {CaptainNameBackgroundColor};
 
 	r.corner.x = ResScale(2 + 1);
 	r.corner.y = ResScale(10);
@@ -674,7 +673,6 @@ void DrawCaptainsName(bool NewGame)
 	SetContextForeGroundColor(CaptainNameTextColor);
 	font_DrawText(&t);
 
-	SetContextForeGroundColor(OldColor);
 	SetContextFont(OldFont);
 }
 

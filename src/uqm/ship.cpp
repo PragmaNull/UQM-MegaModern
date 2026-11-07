@@ -209,15 +209,15 @@ void ship_preprocess(Element* ElementPtr)
 		else if (uqm::activityKind(uqm::currentActivity()) <= ActivityKind::InEncounter)
 		{
 			InitShipStatus(&RDPtr->ship_info, StarShipPtr, nullptr, false);
-			GfxContextRef OldContext {SetContext(StatusContext)};
-			DrawCaptainsWindow(StarShipPtr);
-
-			if (IsHd())
 			{
-				DrawHDMeleeBorder(StarShipPtr);
-			}
+				const ContextScope contextScope {StatusContext};
+				DrawCaptainsWindow(StarShipPtr);
 
-			SetContext(OldContext);
+				if (IsHd())
+				{
+					DrawHDMeleeBorder(StarShipPtr);
+				}
+			}
 			if (RDPtr->preprocess_func)
 			{
 				(*RDPtr->preprocess_func)(ElementPtr);
