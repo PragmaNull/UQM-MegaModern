@@ -276,16 +276,16 @@ static bool DoSetupMenu(SetupMenuState* pInputState)
 		SetTransitionSource(nullptr);
 	}
 
-	BatchGraphics();
-	(*next->draw)(next, 0, 0);
-
-	if (current != next)
 	{
-		ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, nullptr);
-		current = next;
-	}
+		const BatchScope batch {};
+		(*next->draw)(next, 0, 0);
 
-	UnbatchGraphics();
+		if (current != next)
+		{
+			ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, nullptr);
+			current = next;
+		}
+	}
 
 	if (PulsedInputState.menu[*MenuKey::MenuUp])
 	{
@@ -323,9 +323,8 @@ static bool DoSetupMenu(SetupMenuState* pInputState)
 
 static void redraw_menu(void)
 {
-	BatchGraphics();
+	const BatchScope batch {};
 	(*next->draw)(next, 0, 0);
-	UnbatchGraphics();
 }
 
 static bool OnTextEntryChange(TextEntryState* pTES)

@@ -63,7 +63,7 @@ static void ClearReportArea(int16_t startx)
 		s.frame = SetAbsFrameIndex(SpaceJunkFrame, 18);
 	}
 	GetFrameRect(s.frame, &r);
-	BatchGraphics();
+	const BatchScope batch {};
 
 	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
@@ -89,8 +89,6 @@ static void ClearReportArea(int16_t startx)
 		}
 		s.origin.y += r.extent.height + ResScale(1);
 	}
-
-	UnbatchGraphics();
 }
 
 static void MakeReport(SoundBankRef ReadOutSounds, uqstl::string_view text)

@@ -346,22 +346,23 @@ static bool DoBattle(BattleState* bs)
 		r.extent.height = SisScreenHeight();
 		SetTransitionSource(&r);
 	}
-	BatchGraphics();
-
-	// Call the callback function, if set
-	if (bs->frame_cb)
 	{
-		bs->frame_cb();
-	}
+		const BatchScope batch {};
 
-	RedrawQueue(true);
+		// Call the callback function, if set
+		if (bs->frame_cb)
+		{
+			bs->frame_cb();
+		}
 
-	if (bs->first_time)
-	{
-		bs->first_time = false;
-		ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
+		RedrawQueue(true);
+
+		if (bs->first_time)
+		{
+			bs->first_time = false;
+			ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
+		}
 	}
-	UnbatchGraphics();
 	if ((!(uqm::currentActivity() & ActivityFlag::InBattle)) || (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
 		return false;

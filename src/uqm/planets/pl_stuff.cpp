@@ -97,23 +97,24 @@ void DrawCurrentPlanetSphere(void)
 							   (rotheight >> 1) - IfHd(2));
 		}
 	}
-	BatchGraphics();
-	s.frame = Orbit->SphereFrame;
-	DrawStamp(&s);
-	if (Orbit->ObjectFrame)
 	{
-		s.frame = Orbit->ObjectFrame;
+		const BatchScope batch {};
+		s.frame = Orbit->SphereFrame;
+		DrawStamp(&s);
+		if (Orbit->ObjectFrame)
+		{
+			s.frame = Orbit->ObjectFrame;
 
-		if (use3DOSpheres)
-		{
-			Draw3DOShield(s);
-		}
-		else
-		{
-			DrawStamp(&s);
+			if (use3DOSpheres)
+			{
+				Draw3DOShield(s);
+			}
+			else
+			{
+				DrawStamp(&s);
+			}
 		}
 	}
-	UnbatchGraphics();
 	SetContext(oldContext);
 
 	PrepareNextRotationFrame();
@@ -125,7 +126,7 @@ void DrawPlanetSphere(int x, int y, bool back)
 	GfxStamp s;
 	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 
-	BatchGraphics();
+	const BatchScope batch {};
 	// Draw background on static image and not during zoom
 	if (Orbit->BackFrame && back)
 	{
@@ -151,7 +152,6 @@ void DrawPlanetSphere(int x, int y, bool back)
 			DrawStamp(&s);
 		}
 	}
-	UnbatchGraphics();
 }
 
 void DrawDefaultPlanetSphere(void)
@@ -440,19 +440,19 @@ void ZoomInPlanetSphere(void)
 
 		SetContext(PlanetContext);
 
-		BatchGraphics();
-		if (i > 0)
 		{
-			RepairBackRect(&repairRect);
+			const BatchScope batch {};
+			if (i > 0)
+			{
+				RepairBackRect(&repairRect);
+			}
+
+			const tfb::ScaleMode oldMode = SetGraphicScaleMode(tfb::ScaleMode::Bilinear);
+			oldScale = SetGraphicScale((int)(base * scale + 0.5));
+			DrawPlanetSphere(pt.x, pt.y, false);
+			SetGraphicScale(oldScale);
+			SetGraphicScaleMode(oldMode);
 		}
-
-		const tfb::ScaleMode oldMode = SetGraphicScaleMode(tfb::ScaleMode::Bilinear);
-		oldScale = SetGraphicScale((int)(base * scale + 0.5));
-		DrawPlanetSphere(pt.x, pt.y, false);
-		SetGraphicScale(oldScale);
-		SetGraphicScaleMode(oldMode);
-
-		UnbatchGraphics();
 
 		repairRect.corner.x = pt.x + frameRect.corner.x;
 		repairRect.corner.y = pt.y + frameRect.corner.y;

@@ -1147,9 +1147,8 @@ static void DrawMeleeStatusMessage(const char* message)
 		SetContextFont(MicroFont);
 		SetContextForeGroundColor(MeleeStatusColor);
 
-		BatchGraphics();
+		const BatchScope batch {};
 		multiLineDrawText(&lfText, &r);
-		UnbatchGraphics();
 	}
 }
 
@@ -2195,7 +2194,7 @@ static bool DoConnectingDialog(MeleeState* pMS)
 		/* Draw the dialog box here */
 		oldfont = SetContextFont(StarConFont);
 		oldcolor = SetContextForeGroundColor(BlackColor);
-		BatchGraphics();
+		const BatchScope batch {};
 		r.extent.width = ResScale(200);
 		r.extent.height = ResScale(30);
 		r.corner.x = (CanvasWidth - r.extent.width) >> 1;
@@ -2227,7 +2226,6 @@ static bool DoConnectingDialog(MeleeState* pMS)
 		// Restore original graphics
 		SetContextFont(oldfont);
 		SetContextForeGroundColor(oldcolor);
-		UnbatchGraphics();
 	}
 
 	netInput();

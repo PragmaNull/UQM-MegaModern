@@ -79,14 +79,13 @@ void ShowRemainingCapacity(void)
 	r.extent.width = t.baseline.x - r.corner.x + ResScale(1);
 	r.extent.height = ElementSpacingY() - ResScale(2);
 
-	BatchGraphics();
+	const BatchScope batch {};
 	// erase previous free amount
 	SetContextForeGroundColor(CargoBackColor);
 	DrawFilledRectangle(&r);
 	// print the new free amount
 	SetContextForeGroundColor(CargoWorthColor);
 	font_DrawText(&t);
-	UnbatchGraphics();
 }
 
 static void DrawElementAmount(uint16_t Element, bool selected)
@@ -271,7 +270,7 @@ void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 		SetContextFont(TinyFontBold);
 	}
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	if (OldElement > MineralCategory::NumElementCategories)
 	{ // Asked for the initial display
@@ -290,8 +289,6 @@ void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 	{ // select the new Element
 		DrawElementAmount(NewElement, true);
 	}
-
-	UnbatchGraphics();
 }
 
 static void DrawElementDescription(uint16_t Element)
@@ -313,7 +310,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	r.corner.y = ResScale(20);
 	r.extent.height = (ResScale(129) - r.corner.y);
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	if (!uqm::UQMOptions::read().customBorder && !IsHd())
 	{
@@ -399,8 +396,6 @@ void DrawRainbowPlanet(uint16_t planet)
 		t.baseline.y += ResScale(7);
 		font_DrawText(&t);
 	}
-
-	UnbatchGraphics();
 }
 
 static bool DoDiscardCargo(MenuState* pMS)

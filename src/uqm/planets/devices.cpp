@@ -206,7 +206,7 @@ static void DrawDevicesDisplay(DevicesMenuState* devState)
 
 static void DrawDevices(DevicesMenuState* devState, uint16_t OldDevice, uint16_t NewDevice)
 {
-	BatchGraphics();
+	const BatchScope batch {};
 
 	SetContext(StatusContext);
 
@@ -229,8 +229,6 @@ static void DrawDevices(DevicesMenuState* devState, uint16_t OldDevice, uint16_t
 		DrawDevice(devState->list[NewDevice], NewDevice - devState->topIndex,
 				   true);
 	}
-
-	UnbatchGraphics();
 }
 
 // Returns true if the broadcaster has been successfully activated,

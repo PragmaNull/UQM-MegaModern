@@ -1061,14 +1061,15 @@ static bool DoPresentation(void* pIS)
 
 					/* do transition */
 					SetTransitionSource(&pPIS->tfade_r);
-					BatchGraphics();
-					for (i = 0; i < pPIS->LinesCount; ++i)
 					{
-						DrawTextEffect(pPIS->TextLines.data() + i, pPIS->TextColor,
-									   pPIS->TextBackColor, pPIS->TextTraced);
+						const BatchScope batch {};
+						for (i = 0; i < pPIS->LinesCount; ++i)
+						{
+							DrawTextEffect(pPIS->TextLines.data() + i, pPIS->TextColor,
+										   pPIS->TextBackColor, pPIS->TextTraced);
+						}
+						ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &pPIS->tfade_r);
 					}
-					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &pPIS->tfade_r);
-					UnbatchGraphics();
 					break;
 				}
 			case uqm::SlideOp::TextFadeOut:
@@ -1079,14 +1080,15 @@ static bool DoPresentation(void* pIS)
 
 					/* do transition */
 					SetTransitionSource(&pPIS->tfade_r);
-					BatchGraphics();
-					for (i = 0; i < pPIS->LinesCount; ++i)
 					{
-						DrawTextEffect(pPIS->TextLines.data() + i, pPIS->TextFadeColor,
-									   pPIS->TextFadeColor, pPIS->TextTraced);
+						const BatchScope batch {};
+						for (i = 0; i < pPIS->LinesCount; ++i)
+						{
+							DrawTextEffect(pPIS->TextLines.data() + i, pPIS->TextFadeColor,
+										   pPIS->TextFadeColor, pPIS->TextTraced);
+						}
+						ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &pPIS->tfade_r);
 					}
-					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &pPIS->tfade_r);
-					UnbatchGraphics();
 					break;
 				}
 			case uqm::SlideOp::SaveBackground:

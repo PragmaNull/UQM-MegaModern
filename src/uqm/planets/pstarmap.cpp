@@ -1899,11 +1899,10 @@ static void UpdateCursorLocation(int sx, int sy, const GfxPoint* newpt)
 	}
 	else
 	{
-		BatchGraphics();
+		const BatchScope batch {};
 		EraseCursor(ResScale(pt.x), ResScale(pt.y));
 		DrawCursor(ResScale(s.origin.x), ResScale(s.origin.y));
 		flashCurrentLocation(nullptr, true);
-		UnbatchGraphics();
 	}
 }
 
@@ -3250,7 +3249,7 @@ static void DrawStarmapHelper(void)
 
 	const ContextScope contextScope {StatusContext};
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	DrawFlagStatDisplay(GameString(GameStringBase::StatusString + 7));
 
@@ -3363,8 +3362,6 @@ static void DrawStarmapHelper(void)
 	t.pStr = WholeFuelValue();
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
-
-	UnbatchGraphics();
 }
 
 bool StarMap(void)

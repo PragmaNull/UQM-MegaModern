@@ -50,7 +50,7 @@ void DrawSISFrame(void)
 
 	SetContext(ScreenContext);
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	if (!IsHd())
 	{
@@ -248,8 +248,6 @@ void DrawSISFrame(void)
 
 	InitSISContexts();
 	ClearSISRect(ClearSisFlags::DrawDisplay);
-
-	UnbatchGraphics();
 }
 
 } // namespace uqm

@@ -536,29 +536,29 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 			}
 		}
 
-		BatchGraphics();
-
-		// Draw all animations
 		{
-			const bool ColorChange = XFormColorMap_step();
+			const BatchScope batch {};
 
-			if (ColorChange)
+			// Draw all animations
 			{
-				FullRedraw = true;
-			}
+				const bool ColorChange = XFormColorMap_step();
 
-			// Colormap animations are processed separately
-			// from picture anims (see XFormColorMap_step)
-			ProcessColormapAnims(uqstl::span {Sequences}.subspan(FirstAmbient, CommData.NumAnimations));
+				if (ColorChange)
+				{
+					FullRedraw = true;
+				}
 
-			Change = DrawAlienFrame(uqstl::span {Sequences}.first(TotalSequences), FullRedraw);
-			if (FullRedraw)
-			{
-				Change = true;
+				// Colormap animations are processed separately
+				// from picture anims (see XFormColorMap_step)
+				ProcessColormapAnims(uqstl::span {Sequences}.subspan(FirstAmbient, CommData.NumAnimations));
+
+				Change = DrawAlienFrame(uqstl::span {Sequences}.first(TotalSequences), FullRedraw);
+				if (FullRedraw)
+				{
+					Change = true;
+				}
 			}
 		}
-
-		UnbatchGraphics();
 
 		// Post-process ambient animations
 		pSeq = Sequences.data() + FirstAmbient;

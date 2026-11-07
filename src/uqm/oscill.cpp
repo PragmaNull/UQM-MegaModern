@@ -257,10 +257,9 @@ void DrawSlider(void)
 		sliderChanged = false;
 		last_offs = offs;
 		buttonStamp.origin.x = sliderStamp.origin.x + offs;
-		BatchGraphics();
+		const BatchScope batch {};
 		DrawStamp(&sliderStamp);
 		DrawStamp(&buttonStamp);
-		UnbatchGraphics();
 	}
 }
 

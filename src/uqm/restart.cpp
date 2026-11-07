@@ -262,9 +262,10 @@ static bool DoDiffChooser(MenuState* pMS)
 			}
 			if (NewState != a)
 			{
-				BatchGraphics();
-				DrawDiffChooser(pMS, NewState, false);
-				UnbatchGraphics();
+				{
+					const BatchScope batch {};
+					DrawDiffChooser(pMS, NewState, false);
+				}
 				a = NewState;
 			}
 
@@ -371,7 +372,7 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 	s.origin.y = (CanvasHeight - r.extent.height) >> 1;
 
 	SetContextBackGroundColor(BlackColor);
-	BatchGraphics();
+	const BatchScope batch {};
 
 	ClearDrawable();
 	FlushColorXForms();
@@ -421,8 +422,6 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 		t.align = TextAlign::Left;
 		font_DrawText(&t);
 	}
-
-	UnbatchGraphics();
 }
 
 static void DrawRestartMenu(MenuState* pMS, uint8_t NewState, FrameRef f)
@@ -586,13 +585,12 @@ static bool DoRestart(MenuState* pMS)
 				{
 					LastInputTime = GetTimeCounter();
 					SetTransitionSource(nullptr);
-					BatchGraphics();
+					const BatchScope batch {};
 					DrawRestartMenuGraphic(pMS);
 					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, nullptr);
 					Flash_UpdateOriginal(pMS->flashContext);
 					DrawRestartMenu(pMS, pMS->CurState, nullptr);
 					Flash_continue(pMS->flashContext);
-					UnbatchGraphics();
 					return true;
 				}
 
@@ -625,13 +623,14 @@ static bool DoRestart(MenuState* pMS)
 				InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 
 				SetTransitionSource(nullptr);
-				BatchGraphics();
-				DrawRestartMenuGraphic(pMS);
-				ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, nullptr);
-				Flash_UpdateOriginal(pMS->flashContext);
-				DrawRestartMenu(pMS, pMS->CurState, nullptr);
-				Flash_continue(pMS->flashContext);
-				UnbatchGraphics();
+				{
+					const BatchScope batch {};
+					DrawRestartMenuGraphic(pMS);
+					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, nullptr);
+					Flash_UpdateOriginal(pMS->flashContext);
+					DrawRestartMenu(pMS, pMS->CurState, nullptr);
+					Flash_continue(pMS->flashContext);
+				}
 
 				RestartMessage();
 
@@ -674,9 +673,10 @@ static bool DoRestart(MenuState* pMS)
 		}
 		if (NewState != pMS->CurState)
 		{
-			BatchGraphics();
-			DrawRestartMenu(pMS, NewState, nullptr);
-			UnbatchGraphics();
+			{
+				const BatchScope batch {};
+				DrawRestartMenu(pMS, NewState, nullptr);
+			}
 			pMS->CurState = NewState;
 		}
 

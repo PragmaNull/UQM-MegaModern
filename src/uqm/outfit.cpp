@@ -214,13 +214,11 @@ static void DrawModules(ModulesMenuState* modState, uint16_t NewItem)
 {
 	const ContextScope contextScope {StatusContext};
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	DrawModuleDisplay(modState);
 	DrawModuleStatus(modState->list[NewItem],
 					 NewItem - modState->topIndex, true);
-
-	UnbatchGraphics();
 }
 
 static void ManipulateModules(int16_t NewState)
@@ -332,7 +330,7 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 	s.origin.x = RadarX() - r.corner.x;
 	s.origin.y = RadarY() - r.corner.y;
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	if (!IsDos())
 	{
@@ -437,18 +435,15 @@ static void DrawModuleStrings(MenuState* pMS, uint8_t NewModule)
 			font_DrawText(&t);
 		}
 	}
-	UnbatchGraphics();
 }
 
 static void RedistributeFuel(void)
 {
 	const ContextScope contextScope {SpaceContext};
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	DrawFuelInFTanks(true);
-
-	UnbatchGraphics();
 }
 
 static void DrawEscapePodText(GfxRect rect)

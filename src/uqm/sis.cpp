@@ -59,7 +59,7 @@ void RepairSISBorder(void)
 
 	const ContextScope contextScope {ScreenContext};
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	// Left border
 	r.corner.x = SisOrgX() - ResScale(1);
@@ -82,8 +82,6 @@ void RepairSISBorder(void)
 	DrawFilledRectangle(&r);
 
 	DrawBorder(BorderFrameIndex::SisRepair);
-
-	UnbatchGraphics();
 }
 
 void ClearSISRect(ClearSisFlags ClearFlags)
@@ -96,7 +94,7 @@ void ClearSISRect(ClearSisFlags ClearFlags)
 	//r.corner.x = ResScale (2);
 	//r.extent.width = StatusWidth() - ResScale (4); Unused
 
-	BatchGraphics();
+	const BatchScope batch {};
 	if (testFlag(ClearFlags, ClearSisFlags::DrawDisplay))
 	{
 		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
@@ -116,7 +114,6 @@ void ClearSISRect(ClearSisFlags ClearFlags)
 					   false, Transparent);
 #endif /* NEVER */
 	}
-	UnbatchGraphics();
 }
 
 // Draw the SIS title. This is the field at the top of the screen, on the
@@ -156,19 +153,19 @@ void DrawSISTitle(const char* pStr)
 		t.CharCount = (uint16_t)~0;
 	}
 
-	BatchGraphics();
+	{
+		const BatchScope batch {};
 
-	// Background color
-	SetContextBackGroundColor(SisTitleBackgroundColor);
-	ClearDrawable();
+		// Background color
+		SetContextBackGroundColor(SisTitleBackgroundColor);
+		ClearDrawable();
 
-	DrawBorder(BorderFrameIndex::SisTitle);
+		DrawBorder(BorderFrameIndex::SisTitle);
 
-	// Text color
-	SetContextForeGroundColor(SisTitleTextColor);
-	font_DrawText(&t);
-
-	UnbatchGraphics();
+		// Text color
+		SetContextForeGroundColor(SisTitleTextColor);
+		font_DrawText(&t);
+	}
 
 	SetContextClipRect(nullptr);
 }
@@ -1439,7 +1436,7 @@ void DeltaSISGauges(int16_t crew_delta, int32_t fuel_delta, int resunit_delta)
 
 	const ContextScope contextScope {StatusContext};
 
-	BatchGraphics();
+	const BatchScope batch {};
 	if (isUndefinedDelta(crew_delta, fuel_delta, resunit_delta))
 	{
 		GfxStamp s;
@@ -1486,8 +1483,6 @@ void DeltaSISGauges(int16_t crew_delta, int32_t fuel_delta, int resunit_delta)
 	}
 
 	DeltaSISGauges_resunitDelta(resunit_delta);
-
-	UnbatchGraphics();
 }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -407,7 +407,7 @@ static bool DoModifyRoster(MenuState* pMS)
 			}
 		}
 
-		BatchGraphics();
+		const BatchScope batch {};
 		SetContext(StatusContext);
 
 		if (NewState != pMS->CurState)
@@ -442,8 +442,6 @@ static bool DoModifyRoster(MenuState* pMS)
 		{
 			flashSupportShip(rosterState, false);
 		}
-
-		UnbatchGraphics();
 	}
 
 	return true;

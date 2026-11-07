@@ -288,12 +288,10 @@ static void DrawShips(ShipyardShipsState* shipState, uint16_t NewItem)
 	const ContextScope contextScope {StatusContext};
 	const uint16_t pos = NewItem - shipState->topIndex;
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	DrawShipsDisplay(shipState);
 	DrawShipsStatus(NewItem, pos, true);
-
-	UnbatchGraphics();
 }
 
 static void ManipulateShips(int16_t NewState)
@@ -439,7 +437,7 @@ static void showRemainingCrew(void)
 		return;
 	}
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	remaining_crew = InitialCrew - (int16_t)uqm::makeWord(uqm::gameState().flag(uqm::GameFlag::CREW_PURCHASED0), uqm::gameState().flag(uqm::GameFlag::CREW_PURCHASED1));
 
@@ -491,8 +489,6 @@ static void showRemainingCrew(void)
 	}
 
 	font_DrawText(&t);
-
-	UnbatchGraphics();
 }
 
 uint16_t ShipPoints(FleetInfoHandle hFleet)
@@ -596,7 +592,7 @@ static void showRemainingPoints(int delta)
 		return;
 	}
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	// Draw black rectangle before drawing text
 	r.extent = MAKE_EXTENT(ResScale(100), ResScale(7));
@@ -648,8 +644,6 @@ static void showRemainingPoints(int delta)
 
 	SetContextForeGroundColor(BlueprintColor);
 	font_DrawText(&t);
-
-	UnbatchGraphics();
 }
 
 static void animatePowerLines(MenuState* pMS)
@@ -840,7 +834,7 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 	r.corner.y = s.origin.y - ResScale(12);
 	r.extent.width = RadarWidth() + ResScale(4);
 	r.extent.height = ResScale(12);
-	BatchGraphics();
+	const BatchScope batch {};
 	ClearSISRect(ClearSisFlags::ClearRadar);
 	SetContextForeGroundColor(DkgrayColor);
 
@@ -1039,7 +1033,6 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 			font_DrawText(&t);
 		}
 	}
-	UnbatchGraphics();
 }
 
 // Width of an escort ship window.

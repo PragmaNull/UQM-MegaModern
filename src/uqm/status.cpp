@@ -349,7 +349,7 @@ void DrawCaptainsWindow(Starship* StarShipPtr)
 		RDPtr->ship_data.captain_control.special = Frame;
 	}
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	// Grey area under and around captain's window.
 	assert(StarShipPtr->playerNr >= 0);
@@ -465,8 +465,6 @@ void DrawCaptainsWindow(Starship* StarShipPtr)
 		y_offs += SafeX();
 		DrawBattleCrewAmount(&RDPtr->ship_info, y_offs);
 	}
-
-	UnbatchGraphics();
 }
 
 bool DeltaEnergy(Element* ElementPtr, int16_t energy_delta)

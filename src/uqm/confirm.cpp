@@ -49,7 +49,7 @@ static void DrawConfirmationWindow(bool answer, bool confirm)
 	GfxRect r;
 	GfxText t;
 
-	BatchGraphics();
+	const BatchScope batch {};
 	r.corner.x = (CanvasWidth - ConfirmWinWidth()) >> 1;
 	r.corner.y = (CanvasHeight - ConfirmWinHeight()) >> 1;
 	r.extent.width = ConfirmWinWidth();
@@ -84,8 +84,6 @@ static void DrawConfirmationWindow(bool answer, bool confirm)
 	SetContextForeGroundColor(
 		answer ? BlackColor : MenuHighlightColor);
 	font_DrawText(&t);
-
-	UnbatchGraphics();
 }
 
 bool DoConfirmExit(void)

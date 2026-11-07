@@ -90,10 +90,9 @@ static void EraseCoarseScan(void)
 {
 	SetContext(PlanetContext);
 
-	BatchGraphics();
+	const BatchScope batch {};
 	DrawStarBackGround();
 	DrawDefaultPlanetSphere();
-	UnbatchGraphics();
 }
 
 static void PrintScanTitleText(GfxText* t)
@@ -740,7 +739,7 @@ void RedrawSurfaceScan(const GfxPoint* newLoc)
 {
 	const ContextScope contextScope {ScanContext};
 
-	BatchGraphics();
+	const BatchScope batch {};
 	DrawPlanet(0, BlackColor);
 	DrawScannedObjects(true);
 	if (newLoc)
@@ -748,7 +747,6 @@ void RedrawSurfaceScan(const GfxPoint* newLoc)
 		setPlanetLoc(*newLoc, false);
 		drawPlanetCursor(false);
 	}
-	UnbatchGraphics();
 }
 
 static uint16_t getLandingFuelNeeded(void)
@@ -1008,10 +1006,11 @@ static bool PickPlanetSide(void)
 	}
 
 	SetContext(ScanContext);
-	BatchGraphics();
-	DrawPlanet(0, BlackColor);
-	DrawScannedObjects(false);
-	UnbatchGraphics();
+	{
+		const BatchScope batch {};
+		DrawPlanet(0, BlackColor);
+		DrawScannedObjects(false);
+	}
 
 	drawLandingFuelUsage(fuel);
 	// Set the current flash location
@@ -1390,10 +1389,9 @@ static void ScanPlanet(uint16_t scanType)
 					{
 						TimeOutDraw = Now + ScanLineFps();
 
-						BatchGraphics();
+						const BatchScope batch {};
 						DrawPlanet(i, tintColor);
 						DrawScannedStuff(i, scan);
-						UnbatchGraphics();
 					}
 				}
 				RotatePlanetSphere(true, nullptr);
@@ -1430,10 +1428,9 @@ static void ScanPlanet(uint16_t scanType)
 		if (i < ScanLines() && uqm::UQMOptions::read().scanStyle != uqm::EmulationMode::PC)
 		{ // not for PC-scan, frame flashes otherwise
 			// Aborted by a keypress; draw in finished state
-			BatchGraphics();
+			const BatchScope batch {};
 			DrawPlanet(ScanLines() - 1, tintColor);
 			DrawScannedStuff(ScanLines() - 1, scan);
-			UnbatchGraphics();
 		}
 	}
 
@@ -1643,12 +1640,11 @@ void ScanSystem(void)
 	// cleanup scan graphics
 	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
-		BatchGraphics();
+		const BatchScope batch {};
 		SetContext(ScanContext);
 		DrawPlanet(0, BlackColor);
 
 		EraseCoarseScan();
-		UnbatchGraphics();
 	}
 
 	DestroyDrawable(ReleaseDrawable(eraseFrame));

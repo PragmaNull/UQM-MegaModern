@@ -616,7 +616,7 @@ static void RefreshResponsesSpecial(CommEncounterState* pES)
 
 	SetContext(SpaceContext);
 	GetContextFontLeading(&leading);
-	BatchGraphics();
+	const BatchScope batch {};
 
 	DrawSISComWindow();
 	y = SliderY() + SliderHeight() + ResScale(is3DO(uqm::UQMOptions::read().whichFonts));
@@ -637,8 +637,6 @@ static void RefreshResponsesSpecial(CommEncounterState* pES)
 			y = add_text(-3, &pES->response_list[response].response_text);
 		}
 	}
-
-	UnbatchGraphics();
 }
 
 static void RefreshResponses(CommEncounterState* pES)
@@ -651,7 +649,7 @@ static void RefreshResponses(CommEncounterState* pES)
 
 	SetContext(SpaceContext);
 	GetContextFontLeading(&leading);
-	BatchGraphics();
+	const BatchScope batch {};
 
 	DrawSISComWindow();
 	y = SliderY() + SliderHeight() + ResScale(is3DO(uqm::UQMOptions::read().whichFonts));
@@ -695,15 +693,13 @@ static void RefreshResponses(CommEncounterState* pES)
 		s.origin.x = SisScreenWidth() - r.extent.width - ResScale(1);
 		DrawStamp(&s);
 	}
-
-	UnbatchGraphics();
 }
 
 static void FeedbackPlayerPhrase(char* pStr)
 {
 	SetContext(SpaceContext);
 
-	BatchGraphics();
+	const BatchScope batch {};
 	DrawSISComWindow();
 	if (pStr[0])
 	{
@@ -733,7 +729,6 @@ static void FeedbackPlayerPhrase(char* pStr)
 		ct.pStr = pStr;
 		add_text(-4, &ct);
 	}
-	UnbatchGraphics();
 }
 
 static void InitSpeechGraphics(void)
@@ -781,14 +776,15 @@ static void UpdateAnimations(bool paused)
 	NextTime = GetTimeCounter() + CommAnimRate;
 
 	const ContextScope contextScope {AnimContext};
-	BatchGraphics();
-	// Advance and draw ambient, transit and talk animations
-	const bool change {ProcessCommAnimations(clear_subtitles, paused)};
-	if (change || clear_subtitles)
 	{
-		RedrawSubtitles();
+		const BatchScope batch {};
+		// Advance and draw ambient, transit and talk animations
+		const bool change {ProcessCommAnimations(clear_subtitles, paused)};
+		if (change || clear_subtitles)
+		{
+			RedrawSubtitles();
+		}
 	}
-	UnbatchGraphics();
 	clear_subtitles = false;
 }
 
@@ -886,27 +882,27 @@ static void FadePlayerUI(void)
 			BuildColorRgba(
 				0x00, 0x00, 0x00, DrawFactor1 * 0.02 * fadeIndex));
 
-		BatchGraphics();
-
-		for (uint8_t i {0}; i < (std::size(DarkModeRect) - 1); i++)
 		{
-			DrawFilledRectangle(&DarkModeRect[i]);
-		}
+			const BatchScope batch {};
 
-		if (fadeIndex < 16)
-		{
-			ClearSubtitles();
-			CommData.AlienTextFColor = DarkModeFGTextColor[fadeIndex];
-			CommData.AlienTextBColor = DarkModeBGTextColor[fadeIndex];
-			RedrawSubtitles();
-		}
+			for (uint8_t i {0}; i < (std::size(DarkModeRect) - 1); i++)
+			{
+				DrawFilledRectangle(&DarkModeRect[i]);
+			}
 
-		if (cwLock)
-		{
-			DrawFilledRectangle(&DarkModeRect[5]);
-		}
+			if (fadeIndex < 16)
+			{
+				ClearSubtitles();
+				CommData.AlienTextFColor = DarkModeFGTextColor[fadeIndex];
+				CommData.AlienTextBColor = DarkModeBGTextColor[fadeIndex];
+				RedrawSubtitles();
+			}
 
-		UnbatchGraphics();
+			if (cwLock)
+			{
+				DrawFilledRectangle(&DarkModeRect[5]);
+			}
+		}
 		SetContext(OldContext);
 		fadeIndex++;
 	}
@@ -1577,7 +1573,7 @@ static void PlayerResponseInput(CommEncounterState* pES)
 		{
 			int16_t y {};
 
-			BatchGraphics();
+			const BatchScope batch {};
 			add_text(-2,
 					 &pES->response_list[pES->cur_response].response_text);
 
@@ -1599,8 +1595,6 @@ static void PlayerResponseInput(CommEncounterState* pES)
 			{
 				RefreshResponses(pES);
 			}
-
-			UnbatchGraphics();
 		}
 
 		UpdateCommGraphics();

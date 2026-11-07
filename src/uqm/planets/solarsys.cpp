@@ -1763,7 +1763,7 @@ static bool CheckShipLocation(int16_t* newRadius)
 static void DrawSystemTransition(bool inner)
 {
 	SetTransitionSource(nullptr);
-	BatchGraphics();
+	const BatchScope batch {};
 	if (inner)
 	{
 		DrawInnerSystem();
@@ -1774,7 +1774,6 @@ static void DrawSystemTransition(bool inner)
 	}
 	RedrawQueue(false);
 	ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
-	UnbatchGraphics();
 }
 
 static void TransitionSystemIn(void)
@@ -1814,10 +1813,11 @@ static void ScaleSystem(int16_t new_radius)
 		XFormIPLoc(&uqm::flagship().ipLocation, &uqm::flagship().shipStamp.origin,
 				   true);
 
-		BatchGraphics();
-		DrawOuterSystem();
-		RedrawQueue(false);
-		UnbatchGraphics();
+		{
+			const BatchScope batch {};
+			DrawOuterSystem();
+			RedrawQueue(false);
+		}
 
 		SleepThread(GameTicksPerSecond / 30);
 	}
@@ -1826,10 +1826,11 @@ static void ScaleSystem(int16_t new_radius)
 	pSolarSysState->SunDesc[0].radius = new_radius;
 	XFormIPLoc(&uqm::flagship().ipLocation, &uqm::flagship().shipStamp.origin, true);
 
-	BatchGraphics();
-	DrawOuterSystem();
-	RedrawQueue(false);
-	UnbatchGraphics();
+	{
+		const BatchScope batch {};
+		DrawOuterSystem();
+		RedrawQueue(false);
+	}
 
 #else  // !SMOOTH_SYSTEM_ZOOM
 	GfxRect r;
@@ -1839,11 +1840,12 @@ static void ScaleSystem(int16_t new_radius)
 
 	GetContextClipRect(&r);
 	SetTransitionSource(&r);
-	BatchGraphics();
-	DrawOuterSystem();
-	RedrawQueue(false);
-	ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
-	UnbatchGraphics();
+	{
+		const BatchScope batch {};
+		DrawOuterSystem();
+		RedrawQueue(false);
+		ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
+	}
 #endif // SMOOTH_SYSTEM_ZOOM
 }
 
@@ -1863,7 +1865,7 @@ static void DrawTexturedBody(SystemPlanet* planet, GfxStamp s)
 	int16_t moonDiameter {};
 	const uint16_t size = PBodySize[planet->size];
 
-	BatchGraphics();
+	const BatchScope batch {};
 	const tfb::ScaleMode oldMode = SetGraphicScaleMode(tfb::ScaleMode::Bilinear);
 
 	if (worldIsMoon(pSolarSysState, planet))
@@ -1893,8 +1895,6 @@ static void DrawTexturedBody(SystemPlanet* planet, GfxStamp s)
 
 	SetGraphicScale(oldScale);
 	SetGraphicScaleMode(oldMode);
-
-	UnbatchGraphics();
 }
 
 void RotatePlanets(bool IsInnerSystem)
@@ -1962,7 +1962,7 @@ static void IP_frame(void)
 	}
 	else if (!pSolarSysState->InOrbit)
 	{ // Just flying around, minding own business..
-		BatchGraphics();
+		const BatchScope batch {};
 		RestoreSystemView();
 		if (AnimatedSun() || uqm::UQMOptions::read().orbitingPlanets || uqm::UQMOptions::read().texturedPlanets)
 		{
@@ -1982,7 +1982,6 @@ static void IP_frame(void)
 		}
 		RedrawQueue(false);
 		DrawAutoPilotMessage(false);
-		UnbatchGraphics();
 	}
 }
 

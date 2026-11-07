@@ -1900,7 +1900,7 @@ static void InitPlanetSide(GfxPoint pt)
 		GetContextClipRect(&r);
 
 		SetTransitionSource(&r);
-		BatchGraphics();
+		const BatchScope batch {};
 
 		{
 			GfxStamp s;
@@ -1925,7 +1925,6 @@ static void InitPlanetSide(GfxPoint pt)
 				ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
 			}
 		}
-		UnbatchGraphics();
 	}
 
 
@@ -2535,14 +2534,13 @@ static void ReturnToOrbit(void)
 		GetContextClipRect(&r);
 
 		SetTransitionSource(&r);
-		BatchGraphics();
+		const BatchScope batch {};
 
 		DrawStarBackGround();
 		DrawDefaultPlanetSphere();
 		DrawPlanetSurfaceBorder();
 		RedrawSurfaceScan(nullptr);
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
-		UnbatchGraphics();
 	}
 	else
 	{
@@ -2555,7 +2553,7 @@ static void ReturnToOrbit(void)
 
 		b.corner.x = b.corner.y = 0;
 
-		BatchGraphics();
+		const BatchScope batch {};
 		ClearDrawable(); // TODO: color this frame smh
 
 		DrawRadarArea();
@@ -2566,7 +2564,6 @@ static void ReturnToOrbit(void)
 		}
 
 		RedrawSurfaceScan(nullptr);
-		UnbatchGraphics();
 	}
 
 	SetContext(OldContext);
@@ -2950,7 +2947,7 @@ void InitLander(uint8_t LanderFlags)
 	GfxRect r;
 
 	SetContext(RadarContext);
-	BatchGraphics();
+	const BatchScope batch {};
 
 	r.corner.x = 0;
 	r.corner.y = 0;
@@ -3054,8 +3051,6 @@ void InitLander(uint8_t LanderFlags)
 			DrawStamp(&s);
 		}
 	}
-
-	UnbatchGraphics();
 }
 
 void InitPCLander(bool Loading)
@@ -3068,7 +3063,7 @@ void InitPCLander(bool Loading)
 	r.corner = MAKE_POINT(0, 0);
 	SetContextForeGroundColor(BlackColor);
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	DrawFilledRectangle(&r);
 
@@ -3142,8 +3137,6 @@ void InitPCLander(bool Loading)
 			DrawStamp(&s);
 		}
 	}
-
-	UnbatchGraphics();
 }
 
 } // namespace uqm

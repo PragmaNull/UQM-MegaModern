@@ -496,7 +496,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 
 	const ContextScope contextScope {SpaceContext};
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	s.frame = PickFrame;
 	GetFrameRect(s.frame, &pick_r);
@@ -603,8 +603,6 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 		hNextShip = _GetSuccLink(StarShipPtr);
 		UnlockStarShip(&race_q[0], hBattleShip);
 	}
-
-	UnbatchGraphics();
 }
 
 } // namespace uqm

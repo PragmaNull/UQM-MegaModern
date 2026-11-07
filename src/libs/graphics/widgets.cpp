@@ -126,31 +126,31 @@ void DrawLabelAsWindow(WidgetLabel* label, GfxRect* windowRect)
 	}
 	win_w = (win_w * 6) + uqm::ResScale(16);
 
-	BatchGraphics();
-	r.corner.x = uqm::ResScale(
-					 (uqm::ResDescale(CanvasWidth) - uqm::ResDescale(win_w)) >> 1)
-			   - uqm::ResScale(2);
-	r.corner.y = uqm::ResScale(
-					 (uqm::ResDescale(CanvasHeight) - uqm::ResDescale(win_h)) >> 1)
-			   - uqm::ResScale(2);
-	r.extent.width = win_w + uqm::ResScale(4);
-	r.extent.height = win_h + uqm::ResScale(4);
-
-	DrawShadowedBox(&r, win_bg_clr, win_dark_clr, win_medium_clr);
-
-	t.baseline.x = r.corner.x
-				 + uqm::ResScale(uqm::ResDescale(r.extent.width) >> 1);
-	t.baseline.y = r.corner.y + uqm::ResScale(16);
-	for (i = 0; i < label->line_count; i++)
 	{
-		t.pStr = label->lines[i];
-		t.align = TextAlign::Center;
-		t.CharCount = (uint16_t)~0;
-		font_DrawText(&t);
-		t.baseline.y += uqm::ResScale(8);
-	}
+		const BatchScope batch {};
+		r.corner.x = uqm::ResScale(
+						 (uqm::ResDescale(CanvasWidth) - uqm::ResDescale(win_w)) >> 1)
+				   - uqm::ResScale(2);
+		r.corner.y = uqm::ResScale(
+						 (uqm::ResDescale(CanvasHeight) - uqm::ResDescale(win_h)) >> 1)
+				   - uqm::ResScale(2);
+		r.extent.width = win_w + uqm::ResScale(4);
+		r.extent.height = win_h + uqm::ResScale(4);
 
-	UnbatchGraphics();
+		DrawShadowedBox(&r, win_bg_clr, win_dark_clr, win_medium_clr);
+
+		t.baseline.x = r.corner.x
+					 + uqm::ResScale(uqm::ResDescale(r.extent.width) >> 1);
+		t.baseline.y = r.corner.y + uqm::ResScale(16);
+		for (i = 0; i < label->line_count; i++)
+		{
+			t.pStr = label->lines[i];
+			t.align = TextAlign::Center;
+			t.CharCount = (uint16_t)~0;
+			font_DrawText(&t);
+			t.baseline.y += uqm::ResScale(8);
+		}
+	}
 
 	SetContextFontEffect(oldFontEffect);
 	if (oldfont)

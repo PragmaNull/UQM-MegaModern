@@ -249,13 +249,11 @@ static void SelectFileString(MeleeState* pMS, bool hilite)
 
 	const ContextScope contextScope {SpaceContext};
 	SetContextFont(MicroFont);
-	BatchGraphics();
+	const BatchScope batch {};
 
 	origin.x = FileStringOriginX();
 	origin.y = FileStringOriginY() + viewI * EntryHeight();
 	DrawFileString(pMS->load.view[viewI], &origin, false, hilite);
-
-	UnbatchGraphics();
 }
 
 static void DrawFileStrings(MeleeState* pMS)
@@ -267,7 +265,7 @@ static void DrawFileStrings(MeleeState* pMS)
 
 	const ContextScope contextScope {SpaceContext};
 	SetContextFont(MicroFont);
-	BatchGraphics();
+	const BatchScope batch {};
 
 	DrawMeleeIcon(30 + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value), false); /* The load team frame */
 
@@ -280,8 +278,6 @@ static void DrawFileStrings(MeleeState* pMS)
 			origin.y += EntryHeight();
 		}
 	}
-
-	UnbatchGraphics();
 }
 
 static void RefocusView(MeleeState* pMS, uint16_t index)

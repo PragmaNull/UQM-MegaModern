@@ -748,6 +748,24 @@ using FGFrameScope = ContextValueScope<FrameRef, &SetContextFGFrame>;
 using DrawModeScope = ContextValueScope<DrawMode, &SetContextDrawMode>;
 using OriginScope = ContextValueScope<GfxPoint, &SetContextOrigin>;
 
+// Batches the drawing commands from construction to destruction.
+class BatchScope
+{
+public:
+	BatchScope()
+	{
+		BatchGraphics();
+	}
+
+	~BatchScope()
+	{
+		UnbatchGraphics();
+	}
+
+	BatchScope(const BatchScope&) = delete;
+	BatchScope& operator=(const BatchScope&) = delete;
+};
+
 // Saves the clip rectangle of the drawing context, and restores it on destruction.
 class ClipRectScope
 {

@@ -367,7 +367,7 @@ bool DoStarBase(MenuState* pMS)
 
 		SetContext(ScreenContext);
 		SetTransitionSource(nullptr);
-		BatchGraphics();
+		const BatchScope batch {};
 		SetContextBackGroundColor(BlackColor);
 		ClearDrawable();
 		rotateStarbase(pMS, pMS->CurFrame);
@@ -377,8 +377,6 @@ bool DoStarBase(MenuState* pMS)
 		PlayMusicResume(pMS->hMusic, NormalVolume);
 
 		DrawBorderPadding(0);
-
-		UnbatchGraphics();
 	}
 	else if (PulsedInputState.menu[*MenuKey::MenuSelect])
 	{
@@ -465,20 +463,20 @@ ExitStarBase:
 			}
 		}
 
-		BatchGraphics();
-		SetContext(ScreenContext);
-
-		if (NewState != pMS->CurState)
 		{
-			DrawBaseStateStrings(pMS->CurState, NewState);
-			pMS->CurState = NewState;
+			const BatchScope batch {};
+			SetContext(ScreenContext);
+
+			if (NewState != pMS->CurState)
+			{
+				DrawBaseStateStrings(pMS->CurState, NewState);
+				pMS->CurState = NewState;
+			}
+
+			rotateStarbase(pMS, nullptr);
+
+			DrawBorderPadding(0);
 		}
-
-		rotateStarbase(pMS, nullptr);
-
-		DrawBorderPadding(0);
-
-		UnbatchGraphics();
 
 		SleepThread(c_gameSecond / 30);
 	}

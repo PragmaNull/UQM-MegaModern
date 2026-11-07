@@ -617,10 +617,9 @@ bool LoadHyperspace(void)
 
 void EraseRadar(void)
 {
-	BatchGraphics();
+	const BatchScope batch {};
 	ClearSISRect(ClearSisFlags::ClearRadar);
 	SeedUniverse();
-	UnbatchGraphics();
 }
 
 bool FreeHyperspace(void)

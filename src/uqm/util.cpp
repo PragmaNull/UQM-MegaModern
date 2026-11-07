@@ -47,7 +47,7 @@ void DrawStarConBox(GfxRect* pRect, int16_t BorderWidth, Color TopLeftColor,
 	GfxRect locRect;
 	Color oldcolor;
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	if (FillInterior)
 	{
@@ -156,8 +156,6 @@ void DrawStarConBox(GfxRect* pRect, int16_t BorderWidth, Color TopLeftColor,
 	}
 
 	SetContextForeGroundColor(oldcolor);
-
-	UnbatchGraphics();
 }
 
 void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, BevelLevel type,
@@ -173,7 +171,7 @@ void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, BevelLevel type,
 		return;
 	}
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	if (filled)
 	{
@@ -245,8 +243,6 @@ void DrawRenderedBox(GfxRect* r, bool filled, Color fill_color, BevelLevel type,
 	stamp.frame = SetAbsFrameIndex(stamp.frame, type + 3);
 	stamp.origin.x = r->corner.x;
 	DrawStamp(&stamp);
-
-	UnbatchGraphics();
 }
 
 void DrawBorderPadding(uint32_t videoWidth)

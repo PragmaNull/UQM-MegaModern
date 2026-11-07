@@ -622,7 +622,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, Fr
 
 					SleepThread(getTicksForFramerate(16));
 				}
-				BatchGraphics();
+				const BatchScope batch {};
 				if (repair && !*skip)
 				{
 					TFB_DrawImage_Image(repair->image, -r.corner.x, -r.corner.y,
@@ -632,7 +632,6 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, Fr
 				}
 				TFB_Prim_FontChar(origin, fontChar, b_second, mode,
 								  ctxOrigin);
-				UnbatchGraphics();
 			}
 
 			if (next_ch == '\n' || next_ch == '\r')

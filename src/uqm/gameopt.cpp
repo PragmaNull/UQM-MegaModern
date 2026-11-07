@@ -1059,7 +1059,7 @@ static void DrawSavegameCargo(FlagshipData* sisState)
 	};
 
 	SetContext(SpaceContext);
-	BatchGraphics();
+	const BatchScope batch {};
 	SetContextFont(StarConFont);
 
 	// setup Element icons
@@ -1109,8 +1109,6 @@ static void DrawSavegameCargo(FlagshipData* sisState)
 	fmt::format_to_sz_n(buf, "{}", sisState->TotalBioMass);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
-
-	UnbatchGraphics();
 }
 
 static void DrawEmptySlot(void)
@@ -1620,7 +1618,7 @@ static void DrawGameSelection(PickGameState* pickState, uint16_t selSlot)
 	const Color UnSelected = SaveUnselectedColor;
 	const Color Selected = SaveSelectedColor;
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	SetContextFont(TinyFont);
 
@@ -1687,17 +1685,14 @@ static void DrawGameSelection(PickGameState* pickState, uint16_t selSlot)
 		}
 		font_DrawText(&t);
 	}
-
-	UnbatchGraphics();
 }
 
 static void RedrawPickDisplay(PickGameState* pickState, uint16_t selSlot)
 {
-	BatchGraphics();
+	const BatchScope batch {};
 	DrawBlankSavegameDisplay(pickState);
 	DrawSavegameSummary(pickState, selSlot);
 	DrawGameSelection(pickState, selSlot);
-	UnbatchGraphics();
 }
 
 static void LoadGameDescriptions(SaveSummaryData* pSD)
@@ -2004,7 +1999,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 		DlgRect.corner.x = DlgRect.corner.y = 0;
 
 		SetTransitionSource(&DlgRect);
-		BatchGraphics();
+		const BatchScope batch {};
 
 		DrawStamp(&DlgStamp);
 
@@ -2037,7 +2032,6 @@ static bool PickGame(bool saving, bool fromMainMenu)
 		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 
 		ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &DlgRect);
-		UnbatchGraphics();
 	}
 
 	DestroyDrawable(ReleaseDrawable(DlgStamp.frame));
