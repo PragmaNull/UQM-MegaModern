@@ -19,28 +19,27 @@
  * for now there's few options which indicate 3do/pc flavors.
  */
 
-#include "core/platform/platform.h"
-#include "core/string/StringUtils.h"
-
 #include "options.h"
 
-#include "port.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/file/paths.h"
-#include "config.h"
-#include "core/misc/bittricks.h"
-#include "libs/strlib.h"
-#include "core/log/log.h"
-#include "libs/reslib.h"
-#include "uqm/starmap.h"
-#include "uqm/planets/scan.h"
 #include <cstdint>
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <errno.h>
 #include <locale.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "config.h"
+#include "core/log/log.h"
+#include "core/misc/bittricks.h"
+#include "core/platform/platform.h"
+#include "core/string/StringUtils.h"
+#include "libs/file/paths.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/reslib.h"
+#include "libs/strlib.h"
+#include "port.h"
+#include "uqm/planets/scan.h"
+#include "uqm/starmap.h"
 #ifdef __APPLE__
 #include <libgen.h>
 /* for dirname() */

@@ -18,9 +18,9 @@
 
 #include "colors.h"
 #include "globdata.h"
-#include "status.h"
-#include "setup.h"
 #include "libs/gfxlib.h"
+#include "setup.h"
+#include "status.h"
 #include "util.h"
 
 namespace uqm

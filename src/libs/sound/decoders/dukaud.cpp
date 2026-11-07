@@ -17,15 +17,17 @@
 /* .duk sound track decoder
  */
 
+#include "dukaud.h"
+
+#include <cstdint>
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <errno.h>
-#include <cstdint>
-#include "libs/reslib.h"
-#include "dukaud.h"
-#include "decoder.h"
+
 #include "core/misc/bittricks.h"
 #include "core/string/StringUtils.h"
+#include "decoder.h"
+#include "libs/reslib.h"
 
 static constexpr auto DataBufSize {0x8000};
 static constexpr auto DuckGeneralFps {14.622f};

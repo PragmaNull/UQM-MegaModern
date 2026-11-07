@@ -4,10 +4,9 @@
 #ifndef UQM_CORE_THREAD_MUTEX_H
 #define UQM_CORE_THREAD_MUTEX_H
 
+#include "core/stl/mutex.h"
 #include "core/stl/stl.h"
 #include "core/thread/ThreadSafety.h"
-
-#include "core/stl/mutex.h"
 
 namespace uqm
 {

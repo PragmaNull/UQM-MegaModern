@@ -17,30 +17,28 @@
  */
 
 #include <assert.h>
+#include <yyjson.h>
 
 #include "build.h"
+#include "core/log/log.h"
+#include "core/stl/stl.h"
+#include "core/stl/utility.h"
+#include "core/string/StringUtils.h"
 #include "encount.h"
-#include "starmap.h"
+#include "gameev.h"
 #include "globdata.h"
+#include "grpintrn.h"
+#include "libs/file/textfile.h"
+#include "libs/time/timelib.h"
+#include "master.h"
 #include "options.h"
 #include "save.h"
 #include "setup.h"
+#include "starmap.h"
 #include "state.h"
-#include "grpintrn.h"
-#include "uqmdebug.h"
-#include "gameev.h"
-#include "libs/time/timelib.h"
-#include "core/log/log.h"
-#include "core/stl/stl.h"
-#include "master.h"
-#include "libs/file/textfile.h"
-#include "core/string/StringUtils.h"
 #include "uqm/lua/UQMLua.h"
-
-#include <yyjson.h>
-
-#include "core/stl/utility.h"
 #include "uqm/random/UQMRandom.h"
+#include "uqmdebug.h"
 
 namespace uqm
 {

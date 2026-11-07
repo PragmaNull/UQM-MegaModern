@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_UTWIG_RESINST_H
 #define UQM_COMM_UTWIG_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring UtwigColorMap {"comm.utwig.colortable"};

@@ -4,14 +4,13 @@
 
 #include "core/stl/stl.h"
 #include "core/string/StringUtils.h"
-#include "options/netoptions.h"
-#include "options/OptionConstants.h"
-#include "options/OptionTypes.h"
-#include "options/OptionDefs.h"
-#include "options/Setting.h"
-
 #include "lib/Math2D/Math2D.h"
 #include "libs/math/randomdefs.h" // TODO: only used for the PrimeA constant and SeedType. Find a better way to share that perhaps?
+#include "options/netoptions.h"
+#include "options/OptionConstants.h"
+#include "options/OptionDefs.h"
+#include "options/OptionTypes.h"
+#include "options/Setting.h"
 
 namespace uqm
 {

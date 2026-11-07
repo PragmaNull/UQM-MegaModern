@@ -21,12 +21,13 @@
  * handled by the underlying tfb::Canvas implementation, we need not
  * worry about this. */
 
-#include "gfxintrn.h"
-#include "gfx_common.h"
-#include "tfb_draw.h"
 #include "tfb_prim.h"
+
 #include "cmap.h"
 #include "core/log/log.h"
+#include "gfx_common.h"
+#include "gfxintrn.h"
+#include "tfb_draw.h"
 #include "uqm/units.h"
 
 void TFB_Prim_Point(GfxPoint* p, Color color, DrawMode mode, GfxPoint ctxOrigin, bool scaled)

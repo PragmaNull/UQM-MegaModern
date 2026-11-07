@@ -16,8 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "genall.h"
-#include "../planets.h"
 #include "../../build.h"
 #include "../../comm.h"
 #include "../../gendef.h"
@@ -26,6 +24,8 @@
 #include "../../setup.h"
 #include "../../starmap.h"
 #include "../../state.h"
+#include "../planets.h"
+#include "genall.h"
 #include "uqm/random/UQMRandom.h"
 
 

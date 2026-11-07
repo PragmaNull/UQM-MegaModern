@@ -20,8 +20,8 @@
 #ifndef UQM_PLANETS_ELEMDATA_H
 #define UQM_PLANETS_ELEMDATA_H
 
-#include "core/types/enum.h"
 #include "core/misc/bittricks.h"
+#include "core/types/enum.h"
 
 namespace uqm
 {

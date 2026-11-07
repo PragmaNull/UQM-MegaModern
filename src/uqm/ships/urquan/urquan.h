@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_URQUAN_URQUAN_H
 #define UQM_SHIPS_URQUAN_URQUAN_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_urquan(void);

@@ -18,14 +18,13 @@
 #ifndef UQM_LIBS_SOUND_SOUND_H
 #define UQM_LIBS_SOUND_SOUND_H
 
-#ifndef LIBS_SOUND_SOUND_H_ // try avoiding collisions on id
-#define LIBS_SOUND_SOUND_H_
 
 #include <cstdint>
+
 #include "audiocore.h"
 #include "decoders/decoder.h"
-#include "libs/time/timelib.h"
 #include "libs/sndlib.h"
+#include "libs/time/timelib.h"
 
 
 inline constexpr auto FirstSfxSource {0};
@@ -82,9 +81,5 @@ tfb::SoundDecoder* TFB_GetSoundSampleDecoder(tfb::SoundSample*);
 tfb::SoundTag* TFB_FindTaggedBuffer(tfb::SoundSample*, audio_Object buffer);
 void TFB_ClearBufferTag(tfb::SoundTag*);
 bool TFB_TagBuffer(tfb::SoundSample*, audio_Object buffer, intptr_t data);
-
-#include "stream.h"
-
-#endif // LIBS_SOUND_SOUND_H_
 
 #endif // UQM_LIBS_SOUND_SOUND_H

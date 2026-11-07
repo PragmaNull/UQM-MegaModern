@@ -20,8 +20,8 @@
 #ifndef UQM_UNITS_H
 #define UQM_UNITS_H
 
-#include "libs/gfxlib.h"
 #include "../options.h"
+#include "libs/gfxlib.h"
 
 extern int CanvasWidth;
 extern int CanvasHeight;

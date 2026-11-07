@@ -21,11 +21,12 @@
 #endif
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+
+#include "core/log/log.h"
 #include "port.h"
 #include "resintrn.h"
-#include "core/log/log.h"
 
 uqstl::optional<uqm::io::File> res_OpenResFile(const uqm::io::Directory& dir, const char* filename, uqm::io::OpenMode mode)
 {

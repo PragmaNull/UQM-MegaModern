@@ -4,14 +4,14 @@
 #ifndef UQM_OPTIONS_SETTING_H
 #define UQM_OPTIONS_SETTING_H
 
+#include <fmt/format.h>
+
+#include "core/stl/optional.h"
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
 #include "lib/Math2D/Math2D.h"
 #include "options/OptionTypes.h"
-
-#include <fmt/format.h>
-#include "core/stl/optional.h"
 
 struct yyjson_val;
 struct yyjson_mut_doc;

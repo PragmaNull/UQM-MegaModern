@@ -1,9 +1,9 @@
 // File name filter for directory listings.
 #include "libs/io/Matcher.h"
 
-#include "core/string/StringUtils.h"
-
 #include <cassert>
+
+#include "core/string/StringUtils.h"
 
 namespace uqm::io
 {

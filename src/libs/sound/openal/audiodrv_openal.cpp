@@ -21,9 +21,12 @@
 
 
 #include "audiodrv_openal.h"
+
+#include <stdlib.h>
+
 #include "../sndintrn.h"
 #include "core/log/log.h"
-#include <stdlib.h>
+#include "libs/sound/stream.h"
 
 
 ALCcontext* alcContext = nullptr;

@@ -4,13 +4,13 @@
 #ifndef UQM_SLIDESHOW_H
 #define UQM_SLIDESHOW_H
 
-#include "core/stl/stl.h"
+#include <cstdint>
+
 #include "core/stl/array.h"
 #include "core/stl/optional.h"
+#include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
-
-#include <cstdint>
 
 
 namespace uqm

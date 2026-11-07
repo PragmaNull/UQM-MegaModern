@@ -4,10 +4,10 @@
 #ifndef UQM_CORE_STRING_UTF8_H
 #define UQM_CORE_STRING_UTF8_H
 
+#include <cstdint>
+
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
-
-#include <cstdint>
 
 namespace uqm
 {

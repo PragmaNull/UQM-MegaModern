@@ -16,10 +16,10 @@
 
 #include "video.h"
 
-#include "options.h"
-#include "vidplayer.h"
 #include "libs/sndlib.h"
+#include "options.h"
 #include "uqm/units.h"
+#include "vidplayer.h"
 
 
 static constexpr VideoRef NullVideoRef {nullptr};

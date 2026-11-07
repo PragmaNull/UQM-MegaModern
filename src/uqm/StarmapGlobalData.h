@@ -21,10 +21,10 @@
 #define UQM_STARMAPGLOBALDATA_H
 
 #include "gendef.h"
-#include "resinst.h"
 #include "hyper.h" // JMS: For ARILOU_HOME_X and Y
-#include "planets/planets.h"
 #include "planets/elemdata.h"
+#include "planets/planets.h"
+#include "resinst.h"
 
 
 namespace uqm

@@ -18,6 +18,10 @@
 #ifndef UQM_SHIPS_ORZ_ORZ_H
 #define UQM_SHIPS_ORZ_ORZ_H
 
+#include "libs/gfxlib.h"
+#include "uqm/element.h"
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_orz(void);

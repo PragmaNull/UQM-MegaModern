@@ -18,17 +18,20 @@
 #ifndef UQM_LIBS_VIDEO_VIDEO_H
 #define UQM_LIBS_VIDEO_VIDEO_H
 
-#include "libs/vidlib.h"
-#include "libs/sndlib.h"
-#include "libs/graphics/tfb_draw.h"
 #include <cstdint>
-#include "videodec.h"
-#include "libs/sound/sound.h"
+
 #include "core/thread/Mutex.h"
+#include "libs/graphics/tfb_draw.h"
+#include "libs/sndlib.h"
+#include "libs/sound/sound.h"
+#include "libs/vidlib.h"
+#include "videodec.h"
 
 
 namespace tfb
 {
+struct VideoDecoder;
+
 struct VideoClip
 {
 	VideoDecoder* decoder; // decoder to read from

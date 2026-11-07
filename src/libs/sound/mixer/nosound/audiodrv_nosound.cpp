@@ -18,11 +18,14 @@
  */
 
 #include "audiodrv_nosound.h"
-#include "../../sndintrn.h"
-#include "core/thread/Thread.h"
-#include "libs/time/timelib.h"
-#include "core/log/log.h"
+
 #include <stdlib.h>
+
+#include "../../sndintrn.h"
+#include "core/log/log.h"
+#include "core/thread/Thread.h"
+#include "libs/sound/stream.h"
+#include "libs/time/timelib.h"
 
 
 static uqstl::jthread s_playbackThread {};

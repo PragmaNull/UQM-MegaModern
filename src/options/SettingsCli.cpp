@@ -1,12 +1,11 @@
 // Command-line options generated from the settings registry.
 #include "SettingsCli.h"
 
-#include "options/options.h"
-
+#include <cassert>
 #include <CLI/CLI.hpp>
 #include <fmt/format.h>
 
-#include <cassert>
+#include "options/options.h"
 
 namespace uqm
 {

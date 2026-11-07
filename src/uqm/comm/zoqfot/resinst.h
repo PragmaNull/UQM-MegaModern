@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_ZOQFOT_RESINST_H
 #define UQM_COMM_ZOQFOT_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring ZoqfotpikColorMap {"comm.zoqfotpik.colortable"};

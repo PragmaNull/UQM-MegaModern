@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_ILWRATH_RESINST_H
 #define UQM_SHIPS_ILWRATH_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring FireBigMaskPmapAnim {"ship.ilwrath.graphics.fire.large"};

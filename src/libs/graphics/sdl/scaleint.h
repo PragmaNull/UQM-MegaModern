@@ -22,8 +22,10 @@
 #ifndef UQM_LIBS_GRAPHICS_SDL_SCALEINT_H
 #define UQM_LIBS_GRAPHICS_SDL_SCALEINT_H
 
-#include "libs/graphics/sdl/sdl_common.h"
 #include <cstdint>
+
+#include "libs/graphics/sdl/scalers.h"
+#include "libs/graphics/sdl/sdl_common.h"
 
 
 // Plain C names

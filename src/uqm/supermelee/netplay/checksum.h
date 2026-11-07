@@ -30,13 +30,11 @@ typedef uint32_t Checksum;
 } // namespace uqm
 
 
-#include "netplay.h"
-#include "crc.h"
-
 #include "../../element.h"
+#include "crc.h"
 #include "libs/gfxlib.h"
-
 #include "netconnection.h"
+#include "netplay.h"
 
 namespace uqm
 {

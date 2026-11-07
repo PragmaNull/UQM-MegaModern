@@ -20,10 +20,10 @@
 #include "coderes.h"
 #include "corecode.h"
 #include "globdata.h"
-#include "nameref.h"
-#include "races.h"
 #include "init.h"
 #include "libs/strings/strintrn.h"
+#include "nameref.h"
+#include "races.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

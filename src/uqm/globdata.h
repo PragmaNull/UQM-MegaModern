@@ -20,16 +20,16 @@
 #ifndef UQM_GLOBDATA_H
 #define UQM_GLOBDATA_H
 
-#include "core/types/enum.h"
-#include "options/OptionTypes.h"
-#include "options/options.h"
 #include "clock.h"
+#include "commanim.h"
+#include "core/types/enum.h"
 #include "libs/gfxlib.h"
 #include "libs/reslib.h"
 #include "libs/sndlib.h"
+#include "options/options.h"
+#include "options/OptionTypes.h"
 #include "sis.h"
 #include "velocity.h"
-#include "commanim.h"
 
 namespace uqm
 {

@@ -1,11 +1,11 @@
 // Reads and writes whole files in a directory.
 #include "textfile.h"
 
+#include <fmt/format.h>
+
 #include "core/log/log.h"
 #include "core/stl/fstream.h"
 #include "core/stl/iterator.h"
-
-#include <fmt/format.h>
 
 namespace uqm
 {

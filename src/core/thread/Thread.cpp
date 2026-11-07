@@ -4,9 +4,9 @@
 #include "core/stl/chrono.h"
 
 #ifdef _WIN32
-#include "core/string/Utf8.h"
-
 #include <windows.h>
+
+#include "core/string/Utf8.h"
 #else
 #include <pthread.h>
 #endif

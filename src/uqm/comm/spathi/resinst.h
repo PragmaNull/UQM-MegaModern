@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_SPATHI_RESINST_H
 #define UQM_COMM_SPATHI_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring FwiffoMusic {"comm.fwiffo.music"};

@@ -21,10 +21,11 @@
 #define UQM_LIBS_INPLIB_H
 
 #include <stddef.h>
+
 #include "core/misc/bittricks.h"
-#include "libs/io/FileSystem.h"
-#include "core/string/Utf8.h"
 #include "core/stl/atomic.h"
+#include "core/string/Utf8.h"
+#include "libs/io/FileSystem.h"
 
 
 namespace uqm

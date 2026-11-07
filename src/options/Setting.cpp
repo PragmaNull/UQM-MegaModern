@@ -1,12 +1,11 @@
 // Persisted options (Setting<T>) and the registry that saves them as JSON.
 #include "Setting.h"
 
-#include "core/log/log.h"
-
-#include <yyjson.h>
-
 #include <cassert>
 #include <cstdlib>
+#include <yyjson.h>
+
+#include "core/log/log.h"
 #include "core/stl/limits.h"
 
 namespace uqm

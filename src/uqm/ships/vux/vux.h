@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_VUX_VUX_H
 #define UQM_SHIPS_VUX_VUX_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_vux(void);

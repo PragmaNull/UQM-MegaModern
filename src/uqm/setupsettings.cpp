@@ -3,17 +3,17 @@
 #include "setupsettings.h"
 
 #include "controls.h"
-#include "options.h"
-#include "setup.h"
-#include "units.h"
 #include "core/log/log.h"
+#include "libs/file/textfile.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
-#include "libs/file/textfile.h"
 #include "libs/math/Random.h"
 #include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/sound/sound.h"
+#include "options.h"
+#include "setup.h"
+#include "units.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

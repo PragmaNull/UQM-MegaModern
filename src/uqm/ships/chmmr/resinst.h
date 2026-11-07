@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_CHMMR_RESINST_H
 #define UQM_SHIPS_CHMMR_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring ChmmrBigMaskPmapAnim {"ship.chmmr.graphics.avatar.large"};

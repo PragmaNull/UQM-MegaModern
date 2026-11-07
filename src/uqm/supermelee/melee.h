@@ -20,13 +20,13 @@
 #ifndef UQM_SUPERMELEE_MELEE_H
 #define UQM_SUPERMELEE_MELEE_H
 
-#include "core/types/enum.h"
 #include "../init.h"
+#include "core/types/enum.h"
 #include "libs/gfxlib.h"
 #include "libs/mathlib.h"
+#include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/time/timelib.h"
-#include "libs/reslib.h"
 #include "netplay/packet.h"
 
 namespace uqm

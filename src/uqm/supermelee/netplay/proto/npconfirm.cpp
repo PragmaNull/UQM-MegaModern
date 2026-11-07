@@ -17,14 +17,14 @@
  */
 
 #define NETCONNECTION_INTERNAL
-#include "../netplay.h"
 #include "npconfirm.h"
 
-#include <cstdint>
-#include "../netmisc.h"
-#include "../packetsenders.h"
-
 #include <assert.h>
+#include <cstdint>
+
+#include "../netmisc.h"
+#include "../netplay.h"
+#include "../packetsenders.h"
 
 namespace uqm
 {

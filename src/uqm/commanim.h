@@ -18,8 +18,8 @@
 #ifndef UQM_COMMANIM_H
 #define UQM_COMMANIM_H
 
-#include "core/types/enum.h"
 #include "core/misc/bittricks.h"
+#include "core/types/enum.h"
 #include "libs/gfxlib.h"
 
 namespace uqm

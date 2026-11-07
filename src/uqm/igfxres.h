@@ -6,6 +6,8 @@
 #ifndef UQM_IGFXRES_H
 #define UQM_IGFXRES_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring ActivityAnimRes {"graphics.activity"};

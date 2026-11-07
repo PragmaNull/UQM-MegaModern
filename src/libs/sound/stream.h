@@ -18,8 +18,8 @@
 #ifndef UQM_LIBS_SOUND_STREAM_H
 #define UQM_LIBS_SOUND_STREAM_H
 
-#include "sndintrn.h"
 #include "libs/time/timelib.h"
+#include "sndintrn.h"
 
 int InitStreamDecoder(void);
 void UninitStreamDecoder(void);

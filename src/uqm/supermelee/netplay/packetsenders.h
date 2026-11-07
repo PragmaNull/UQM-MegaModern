@@ -22,10 +22,9 @@
 
 #include <cstdint>
 
+#include "../../controls.h"
 #include "netconnection.h"
 #include "packet.h"
-
-#include "../../controls.h"
 // for BattleInputState
 #include "../meleeship.h"
 // for MeleeShip

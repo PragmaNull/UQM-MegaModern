@@ -4,13 +4,12 @@
 #ifndef UQM_OPTIONS_SETTINGSCLI_H
 #define UQM_OPTIONS_SETTINGSCLI_H
 
+#include "core/stl/map.h"
+#include "core/stl/memory.h"
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
 #include "options/OptionDefs.h"
-
-#include "core/stl/map.h"
-#include "core/stl/memory.h"
 
 namespace CLI
 {

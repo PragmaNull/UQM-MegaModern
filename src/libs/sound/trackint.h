@@ -18,15 +18,15 @@
 #ifndef UQM_LIBS_SOUND_TRACKINT_H
 #define UQM_LIBS_SOUND_TRACKINT_H
 
-#include "libs/callback/callback.h"
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
+#include "libs/callback/callback.h"
 
 namespace tfb
 {
 struct SoundChunk
 {
-	SoundDecoder* decoder;			 // decoder for this chunk
+	SoundDecoder* decoder;				 // decoder for this chunk
 	float start_time;					 // relative time from track start
 	int tag_me;							 // set for chunks with subtitles
 	uint32_t track_num;					 // logical track #, comm code needs this

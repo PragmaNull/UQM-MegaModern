@@ -18,20 +18,20 @@
 
 #include "weapon.h"
 
-#include "options/options.h"
-#include "options.h"
+#include <stdio.h>
+
 #include "colors.h"
 #include "globdata.h"
-#include "status.h"
 #include "init.h"
-#include "races.h"
-#include "ship.h"
-#include "setup.h"
-#include "sounds.h"
-#include "units.h"
 #include "libs/mathlib.h"
-
-#include <stdio.h>
+#include "options.h"
+#include "options/options.h"
+#include "races.h"
+#include "setup.h"
+#include "ship.h"
+#include "sounds.h"
+#include "status.h"
+#include "units.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

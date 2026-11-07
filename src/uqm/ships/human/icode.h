@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_HUMAN_ICODE_H
 #define UQM_SHIPS_HUMAN_ICODE_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring HumanCode {"ship.earthling.code"};

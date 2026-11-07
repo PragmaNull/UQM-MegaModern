@@ -2,13 +2,13 @@
 
 #include "GameSession.h"
 
-#include "UQMGame.h"
 #include "core/log/log.h"
+#include "libs/time/timelib.h"
 #include "uqm/clock.h"
 #include "uqm/gameev.h"
 #include "uqm/globdata.h"
-#include "libs/time/timelib.h"
 #include "uqm/lua/UQMLua.h"
+#include "UQMGame.h"
 
 
 namespace uqm

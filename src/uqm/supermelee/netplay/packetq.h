@@ -20,19 +20,16 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_PACKETQ_H
 #define UQM_SUPERMELEE_NETPLAY_PACKETQ_H
 
-namespace uqm
-{
-struct PacketQueue;
-
-} // namespace uqm
-
-#include "packet.h"
 #include <cstdint>
-
 #include <sys/types.h>
 
+#include "netplay.h"
+
 namespace uqm
 {
+struct NetConnection;
+struct Packet;
+
 struct PacketQueueLink
 {
 	PacketQueueLink* next;

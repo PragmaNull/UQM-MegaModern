@@ -16,22 +16,22 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "controls.h"
+#include <ctype.h>
+#include <stdlib.h>
+
+#include "battle.h"
 #include "colors.h"
+#include "comm.h"
+#include "controls.h"
+#include "core/log/log.h"
+#include "gamestr.h"
+#include "libs/graphics/widgets.h"
+#include "libs/resource/stringbank.h"
+#include "libs/sound/trackplayer.h"
 #include "settings.h"
 #include "setup.h"
 #include "sounds.h"
-#include "gamestr.h"
 #include "util.h"
-#include "libs/graphics/widgets.h"
-#include "libs/sound/trackplayer.h"
-#include "core/log/log.h"
-#include "libs/resource/stringbank.h"
-#include "battle.h"
-#include "comm.h"
-
-#include <ctype.h>
-#include <stdlib.h>
 
 
 namespace uqm

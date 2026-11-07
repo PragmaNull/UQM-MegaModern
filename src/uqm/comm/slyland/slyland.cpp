@@ -16,12 +16,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "../commall.h"
 #include <stdlib.h>
+
+#include "../commall.h"
+#include "options.h"
 #include "resinst.h"
 #include "strings.h"
-
-#include "options.h"
 #include "uqm/battle.h"
 #include "uqm/setup.h"
 #include "uqm/starmap.h"

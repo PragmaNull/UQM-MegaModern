@@ -21,12 +21,12 @@
 #define UQM_ENCOUNT_H
 
 
-#include "core/types/enum.h"
 #include "commglue.h"
+#include "core/types/enum.h"
 #include "displist.h"
+#include "element.h"
 #include "libs/gfxlib.h"
 #include "planets/planets.h"
-#include "element.h"
 #include "races.h"
 
 namespace uqm

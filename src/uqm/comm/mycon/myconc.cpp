@@ -17,13 +17,12 @@
  */
 
 #include "../commall.h"
+#include "libs/mathlib.h"
 #include "resinst.h"
 #include "strings.h"
-
 #include "uqm/gameev.h"
-#include "libs/mathlib.h"
-#include "uqm/races.h"
 #include "uqm/lua/UQMLua.h"
+#include "uqm/races.h"
 #include "uqm/random/UQMRandom.h"
 
 

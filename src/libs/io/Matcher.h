@@ -4,12 +4,12 @@
 #ifndef UQM_LIBS_IO_MATCHER_H
 #define UQM_LIBS_IO_MATCHER_H
 
+#include <cstdint>
+
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
-#include "core/stl/string.h"
-
-#include <cstdint>
 #include "core/stl/regex.h"
+#include "core/stl/string.h"
 
 namespace uqm::io
 {

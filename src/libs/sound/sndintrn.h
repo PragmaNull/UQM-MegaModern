@@ -20,12 +20,16 @@
 #ifndef UQM_LIBS_SOUND_SNDINTRN_H
 #define UQM_LIBS_SOUND_SNDINTRN_H
 
-#include <stdio.h>
 #include <cstdint>
-#include "libs/reslib.h"
-#include "libs/time/timelib.h"
+#include <stdio.h>
+
 #include "core/stl/vector.h"
 #include "core/thread/Mutex.h"
+#include "libs/reslib.h"
+#include "libs/sound/audiocoredefs.h"
+#include "libs/sound/decoders/decoder.h"
+#include "libs/sound/sound.h"
+#include "libs/time/timelib.h"
 
 inline constexpr auto PadScopeBytes {256};
 
@@ -43,12 +47,12 @@ namespace tfb
 struct SoundSample
 {
 	SoundDecoder* decoder; // decoder to read from
-	float length;				// total length of decoder chain in seconds
+	float length;		   // total length of decoder chain in seconds
 	uqstl::vector<audio_Object> buffer;
 	uint32_t num_buffers;
 	uqstl::vector<SoundTag> buffer_tag;
-	int32_t offset;				   // initial offset
-	void* data;					   // user-defined data
+	int32_t offset;			  // initial offset
+	void* data;				  // user-defined data
 	SoundCallbacks callbacks; // user-defined callbacks
 };
 } // namespace tfb

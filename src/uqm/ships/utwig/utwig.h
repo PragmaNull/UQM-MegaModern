@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_UTWIG_UTWIG_H
 #define UQM_SHIPS_UTWIG_UTWIG_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_utwig(void);

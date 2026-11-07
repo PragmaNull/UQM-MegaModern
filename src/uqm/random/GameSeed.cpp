@@ -1,11 +1,11 @@
 // The seed that generates the star map, the planets and the seeded ships of a game.
 #include "uqm/random/GameSeed.h"
 
-#include "UQMGame.h"
+#include <random>
+
 #include "options/options.h"
 #include "uqm/session/GameSession.h"
-
-#include <random>
+#include "UQMGame.h"
 
 
 namespace uqm

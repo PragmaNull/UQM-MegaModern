@@ -4,9 +4,8 @@
 
 #include "../options.h"
 #include "libs/graphics/sdl/pure.h" // for enumerating renderer backends.
-#include "uqm/init.h"				// for NUM_PLAYERS, which we need to know to set up netplay options. Maybe we should move that somewhere else?
-
 #include "options/SettingsCli.h"
+#include "uqm/init.h" // for NUM_PLAYERS, which we need to know to set up netplay options. Maybe we should move that somewhere else?
 #ifdef NETPLAY
 #include "options/netoptions.h" // for NETPLAY options
 #endif

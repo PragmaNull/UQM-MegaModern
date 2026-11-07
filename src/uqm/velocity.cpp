@@ -18,8 +18,8 @@
 
 #include "velocity.h"
 
-#include "units.h"
 #include "core/misc/bittricks.h"
+#include "units.h"
 
 namespace uqm
 {

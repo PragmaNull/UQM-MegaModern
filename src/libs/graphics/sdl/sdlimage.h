@@ -18,8 +18,9 @@
 #ifndef UQM_LIBS_GRAPHICS_SDL_SDLIMAGE_H
 #define UQM_LIBS_GRAPHICS_SDL_SDLIMAGE_H
 
-#include "libs/io/FileSystem.h"
 #include <SDL3/SDL.h>
+
+#include "libs/io/FileSystem.h"
 
 SDL_Surface* sdl_loadImage(const uqm::io::Directory& dir, const char* fileName);
 

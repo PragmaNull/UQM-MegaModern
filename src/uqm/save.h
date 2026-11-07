@@ -18,11 +18,11 @@
 #ifndef UQM_SAVE_H
 #define UQM_SAVE_H
 
-#include "sis.h" // SaveSummaryData includes FlagshipData in it
-#include "globdata.h"
 #include "core/misc/bittricks.h"
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
+#include "globdata.h"
+#include "sis.h" // SaveSummaryData includes FlagshipData in it
 
 namespace uqm
 {

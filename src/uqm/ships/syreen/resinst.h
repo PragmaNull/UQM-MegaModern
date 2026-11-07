@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_SYREEN_RESINST_H
 #define UQM_SHIPS_SYREEN_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring DaggerBigMaskPmapAnim {"ship.syreen.graphics.dagger.large"};

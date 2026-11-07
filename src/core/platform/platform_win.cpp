@@ -1,9 +1,9 @@
-#include "platform.h"
-
 #include <cerrno>
 #include <stdlib.h>
+
 #include "core/stl/system_error.h"
 #include "core/string/StringUtils.h"
+#include "platform.h"
 
 namespace uqm
 {

@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_DRUUGE_DRUUGE_H
 #define UQM_SHIPS_DRUUGE_DRUUGE_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_druuge(void);

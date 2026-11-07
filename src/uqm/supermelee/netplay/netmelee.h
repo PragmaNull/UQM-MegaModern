@@ -22,12 +22,11 @@
 
 #if defined(NETPLAY)
 
-#include "netplay.h"
-#include "netinput.h"
-#include "netconnection.h"
-#include "packetsenders.h"
-
 #include "../../battlecontrols.h"
+#include "netconnection.h"
+#include "netinput.h"
+#include "netplay.h"
+#include "packetsenders.h"
 // for NetworkInputContext
 #include "../../controls.h"
 // for BattleInputState

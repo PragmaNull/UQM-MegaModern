@@ -21,7 +21,6 @@
 #define UQM_LIBS_GRAPHICS_CONTEXT_H
 
 #include "core/types/enum.h"
-
 #include "tfb_draw.h"
 
 enum class FbkFlags : uint16_t

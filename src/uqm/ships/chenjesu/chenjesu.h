@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_CHENJESU_CHENJESU_H
 #define UQM_SHIPS_CHENJESU_CHENJESU_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_chenjesu(void);

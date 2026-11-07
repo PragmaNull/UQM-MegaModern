@@ -75,10 +75,10 @@ consteval bool isArithmeticEnum(NetplayResetReason) { return true; }
 } // namespace uqm
 
 #ifndef PACKET_H_STANDALONE
-#include "netconnection.h"
-
 #include <cstdint>
+
 #include "core/misc/bittricks.h"
+#include "netconnection.h"
 
 namespace uqm
 {

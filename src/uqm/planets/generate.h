@@ -25,8 +25,9 @@ struct GenerateFunctions;
 } // namespace uqm
 
 #include <cstdint>
-#include "planets.h"
+
 #include "core/misc/bittricks.h"
+#include "planets.h"
 
 namespace uqm
 {

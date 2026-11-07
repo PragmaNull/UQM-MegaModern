@@ -15,14 +15,16 @@
  */
 
 #include <string.h>
-#include "options.h"
-#include "sound.h"
-#include "sndintrn.h"
-#include "libs/reslib.h"
+
 #include "core/log/log.h"
+#include "libs/mathlib.h"
+#include "libs/reslib.h"
+#include "libs/sound/stream.h"
+#include "options.h"
+#include "sndintrn.h"
+#include "sound.h"
 #include "uqm/globdata.h"
 #include "uqm/setup.h"
-#include "libs/mathlib.h"
 
 
 static MusicRef curMusicRef;

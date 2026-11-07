@@ -18,10 +18,11 @@
 #ifndef UQM_PLANETS_GENERATE_GENDEFAULT_H
 #define UQM_PLANETS_GENERATE_GENDEFAULT_H
 
-#include "core/types/enum.h"
 #include <cstdint>
+
 #include "../planets.h"
 #include "core/misc/bittricks.h"
+#include "core/types/enum.h"
 
 namespace uqm
 {

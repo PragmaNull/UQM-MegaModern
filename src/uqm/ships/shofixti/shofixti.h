@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_SHOFIXTI_SHOFIXTI_H
 #define UQM_SHIPS_SHOFIXTI_SHOFIXTI_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_shofixti(void);

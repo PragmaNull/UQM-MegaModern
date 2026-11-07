@@ -17,8 +17,8 @@
  */
 
 #include "gfxintrn.h"
-#include "options.h"
 #include "libs/reslib.h"
+#include "options.h"
 
 
 DrawableRef LoadGraphicFile(const char* pStr)

@@ -4,8 +4,8 @@
 #ifndef UQM_LIBS_GRAPHICS_IMGUI_TOOLWINDOWS_H
 #define UQM_LIBS_GRAPHICS_IMGUI_TOOLWINDOWS_H
 
-#include "core/stl/stl.h"
 #include "core/stl/functional.h"
+#include "core/stl/stl.h"
 #include "core/stl/string.h"
 
 namespace uqm

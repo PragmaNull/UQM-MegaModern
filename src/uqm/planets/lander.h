@@ -21,13 +21,13 @@
 #define UQM_PLANETS_LANDER_H
 
 
+#include "../element.h"
+#include "core/misc/bittricks.h"
 #include "core/types/enum.h"
 #include "elemdata.h"
-#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "libs/sndlib.h"
 #include "libs/time/timelib.h"
-#include "../element.h"
 
 namespace uqm
 {

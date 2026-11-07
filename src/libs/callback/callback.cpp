@@ -16,14 +16,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <cstdint>
+#include "callback.h"
 
 #include <assert.h>
+#include <cstdint>
 #include <stdlib.h>
 #include <sys/types.h>
 
 #include "core/thread/Mutex.h"
-#include "callback.h"
 
 
 #define CALLBACK_INTERNAL

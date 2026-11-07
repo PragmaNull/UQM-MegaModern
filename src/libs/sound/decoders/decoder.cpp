@@ -18,15 +18,17 @@
  * API is heavily influenced by SDL_sound.
  */
 
-#include <string.h>
+#include "decoder.h"
+
 #include <stdlib.h>
-#include "port.h"
+#include <string.h>
+
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
-#include "decoder.h"
-#include "wav.h"
 #include "dukaud.h"
 #include "modaud.h"
+#include "port.h"
+#include "wav.h"
 #ifndef OVCODEC_NONE
 #include "oggaud.h"
 #endif /* OVCODEC_NONE */

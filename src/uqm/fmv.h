@@ -19,8 +19,8 @@
 #define UQM_FMV_H
 
 #include "core/misc/bittricks.h"
-#include "libs/sndlib.h"
 #include "libs/gfxlib.h"
+#include "libs/sndlib.h"
 
 namespace uqm
 {

@@ -16,19 +16,18 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "core/types/enum.h"
 #include "melee.h"
 
-#include "core/string/StringUtils.h"
-
-#include "options.h"
-#include "buildpick.h"
-#include "meleeship.h"
 #include "../battle.h"
 #include "../build.h"
-#include "../status.h"
 #include "../colors.h"
 #include "../comm.h"
+#include "../status.h"
+#include "buildpick.h"
+#include "core/string/StringUtils.h"
+#include "core/types/enum.h"
+#include "meleeship.h"
+#include "options.h"
 // for getLineWithinWidth()
 #include "../cons_res.h"
 // for load_gravity_well() and free_gravity_well()
@@ -39,12 +38,12 @@
 #include "../master.h"
 #include "../nameref.h"
 #ifdef NETPLAY
+#include "libs/graphics/widgets.h"
 #include "netplay/netconnection.h"
 #include "netplay/netmelee.h"
 #include "netplay/notify.h"
 #include "netplay/notifyall.h"
 #include "options/options.h"
-#include "libs/graphics/widgets.h"
 // for DrawShadowedBox()
 #include "../cnctdlg.h"
 // for MeleeConnectDialog()
@@ -57,17 +56,16 @@
 // for DrawStarConBox()
 #include "../planets/planets.h"
 // for NUMBER_OF_PLANET_TYPES
-#include "libs/gfxlib.h"
-#include "libs/mathlib.h"
-#include "uqm/random/UQMRandom.h"
-#include "libs/reslib.h"
-#include "core/log/log.h"
-#include "libs/file/textfile.h"
-#include "uqm/supermelee/meleeconfig.h"
-
-
 #include <assert.h>
 #include <string.h>
+
+#include "core/log/log.h"
+#include "libs/file/textfile.h"
+#include "libs/gfxlib.h"
+#include "libs/mathlib.h"
+#include "libs/reslib.h"
+#include "uqm/random/UQMRandom.h"
+#include "uqm/supermelee/meleeconfig.h"
 
 
 namespace uqm

@@ -1,9 +1,9 @@
 // The random number generator of the game.
 #include "uqm/random/UQMRandom.h"
 
-#include "UQMGame.h"
 #include "core/log/log.h"
 #include "uqm/session/GameSession.h"
+#include "UQMGame.h"
 
 
 namespace uqm

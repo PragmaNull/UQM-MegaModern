@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_ORZ_RESINST_H
 #define UQM_SHIPS_ORZ_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring HowitzerBigMaskPmapAnim {"ship.orz.graphics.howitzer.large"};

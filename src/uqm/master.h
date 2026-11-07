@@ -18,8 +18,8 @@
 #ifndef UQM_MASTER_H
 #define UQM_MASTER_H
 
-#include "races.h"
 #include "core/misc/bittricks.h"
+#include "races.h"
 
 namespace uqm
 {

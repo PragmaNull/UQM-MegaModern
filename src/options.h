@@ -23,16 +23,14 @@
 #ifndef UQM_OPTIONS_H
 #define UQM_OPTIONS_H
 
-#include "core/stl/stl.h"
-#include "port.h"
 #include "core/misc/bittricks.h"
+#include "core/stl/stl.h"
 #include "libs/io/FileSystem.h"
-#include "uqm/setupmenu.h"
-
 #include "options/OptionDefs.h"
-#include "options/OptionTypes.h"
 #include "options/options.h"
-
+#include "options/OptionTypes.h"
+#include "port.h"
+#include "uqm/setupmenu.h"
 #include "uqmversion.h"
 
 

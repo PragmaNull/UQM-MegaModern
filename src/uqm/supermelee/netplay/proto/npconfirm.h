@@ -20,8 +20,8 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_PROTO_NPCONFIRM_H
 #define UQM_SUPERMELEE_NETPLAY_PROTO_NPCONFIRM_H
 
-#include "../netplay.h"
 #include "../netconnection.h"
+#include "../netplay.h"
 
 namespace uqm
 {

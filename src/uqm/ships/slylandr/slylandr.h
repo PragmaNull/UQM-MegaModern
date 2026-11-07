@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_SLYLANDR_SLYLANDR_H
 #define UQM_SHIPS_SLYLANDR_SLYLANDR_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_slylandro(void);

@@ -8,8 +8,8 @@
 
 #ifndef USING_EASTL
 
-#include <thread>
 #include <stop_token>
+#include <thread>
 
 #else
 

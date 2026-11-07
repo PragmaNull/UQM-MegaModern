@@ -16,19 +16,19 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "port.h"
-#include "controls.h"
-#include "libs/inplib.h"
-#include "core/log/log.h"
-#include "globdata.h"
-#include "options.h"
-#include "sounds.h"
-#include "settings.h"
-#include "resinst.h"
-#include "nameref.h"
-#include "setup.h"
-#include "gamestr.h"
 #include "colors.h"
+#include "controls.h"
+#include "core/log/log.h"
+#include "gamestr.h"
+#include "globdata.h"
+#include "libs/inplib.h"
+#include "nameref.h"
+#include "options.h"
+#include "port.h"
+#include "resinst.h"
+#include "settings.h"
+#include "setup.h"
+#include "sounds.h"
 // for bool TextEntry3DO
 #include "gameopt.h"
 

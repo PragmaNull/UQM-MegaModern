@@ -4,8 +4,8 @@
 #ifndef UQM_LIBS_SOUND_SOUNDBANK_H
 #define UQM_LIBS_SOUND_SOUNDBANK_H
 
-#include "core/stl/stl.h"
 #include "core/stl/optional.h"
+#include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
 

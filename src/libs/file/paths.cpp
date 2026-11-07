@@ -1,10 +1,10 @@
 // Expands and creates the host directories that the game uses.
 #include "paths.h"
 
+#include <cctype>
+
 #include "core/log/log.h"
 #include "core/platform/platform.h"
-
-#include <cctype>
 #include "core/stl/filesystem.h"
 
 #ifndef _WIN32

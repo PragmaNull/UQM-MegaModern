@@ -16,8 +16,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "gfxintrn.h"
 #include "gfx_common.h"
+#include "gfxintrn.h"
 #include "tfb_draw.h"
 #include "tfb_prim.h"
 #include "uqm/units.h"

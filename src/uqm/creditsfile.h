@@ -4,12 +4,12 @@
 #ifndef UQM_CREDITSFILE_H
 #define UQM_CREDITSFILE_H
 
-#include "core/stl/stl.h"
+#include <cstdint>
+
 #include "core/stl/optional.h"
+#include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
-
-#include <cstdint>
 
 
 namespace uqm

@@ -18,14 +18,16 @@
  * Code is based on Creative's Win32 OpenAL implementation.
  */
 
-#include <stdio.h>
-#include <errno.h>
-#include "port.h"
-#include <cstdint>
-#include "libs/reslib.h"
-#include "core/misc/bittricks.h"
-#include "core/log/log.h"
 #include "wav.h"
+
+#include <cstdint>
+#include <errno.h>
+#include <stdio.h>
+
+#include "core/log/log.h"
+#include "core/misc/bittricks.h"
+#include "libs/reslib.h"
+#include "port.h"
 
 constexpr auto WaveMakeId(auto x1, auto x2, auto x3, auto x4) { return (((x4) << 24) | ((x3) << 16) | ((x2) << 8) | (x1)); }
 

@@ -19,11 +19,12 @@
 //  Template
 //    When this file is built standalone is produces a plain C version
 
-#include "libs/graphics/sdl/sdl_common.h"
 #include <cstdint>
-#include "scalers.h"
-#include "scaleint.h"
+
 #include "2xscalers.h"
+#include "libs/graphics/sdl/sdl_common.h"
+#include "scaleint.h"
+#include "scalers.h"
 
 
 // Triscan scaling to 2x

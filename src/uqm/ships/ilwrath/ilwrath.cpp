@@ -16,10 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "../ship.h"
 #include "ilwrath.h"
-#include "resinst.h"
 
+#include "../ship.h"
+#include "resinst.h"
 #include "uqm/colors.h"
 #include "uqm/globdata.h"
 

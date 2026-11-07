@@ -19,6 +19,7 @@
 #ifdef NETPLAY
 
 #include "checksum.h"
+
 #include "options/netoptions.h"
 
 #ifdef NETPLAY_CHECKSUM
@@ -26,10 +27,10 @@
 #include "checkbuf.h"
 #include "crc.h"
 // for DUMP_CRC_OPS
-#include "netconnection.h"
-#include "netmelee.h"
 #include "core/log/log.h"
 #include "libs/mathlib.h"
+#include "netconnection.h"
+#include "netmelee.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

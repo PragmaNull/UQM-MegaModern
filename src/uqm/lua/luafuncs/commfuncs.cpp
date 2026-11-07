@@ -27,19 +27,19 @@
 
 #define LUAUQM_INTERNAL
 #include "commfuncs.h"
-#include "uqm/lua/UQMLua.h"
-#include "core/stl/array.h"
 #include "core/log/log.h"
+#include "core/stl/array.h"
 #include "core/string/StringUtils.h"
-
-#include "uqm/commglue.h"
 #include "uqm/battle.h"
+#include "uqm/commglue.h"
+#include "uqm/lua/UQMLua.h"
 // For instantVictory
+#include <ctype.h> // for islower, isupper, toupper
+
 #include "uqm/comm.h"
-#include "uqm/starmap.h" // for plot map, etc.
 #include "uqm/gamestr.h" // for GAME_STRING
-#include <ctype.h>		 // for islower, isupper, toupper
 #include "uqm/random/UQMRandom.h"
+#include "uqm/starmap.h" // for plot map, etc.
 
 
 namespace uqm

@@ -20,16 +20,16 @@
 #ifndef UQM_UQMGAME_H
 #define UQM_UQMGAME_H
 
-#include "core/stl/stl.h"
-#include "options/options.h"
-#include "core/log/logger.h"
-
-#include "core/stl/memory.h"
-#include "core/stl/thread.h"
-#include "core/stl/optional.h"
-#include "core/stl/utility.h"
-#include "uqm/random/GameSeed.h"
 #include <cstdint>
+
+#include "core/log/logger.h"
+#include "core/stl/memory.h"
+#include "core/stl/optional.h"
+#include "core/stl/stl.h"
+#include "core/stl/thread.h"
+#include "core/stl/utility.h"
+#include "options/options.h"
+#include "uqm/random/GameSeed.h"
 
 namespace uqm
 {

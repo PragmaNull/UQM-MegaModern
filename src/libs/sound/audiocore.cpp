@@ -17,12 +17,14 @@
 /* Audio Core API (derived from OpenAL)
  */
 
+#include "audiocore.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "audiocore.h"
-#include "sound.h"
+
 #include "core/log/log.h"
 #include "core/stl/atomic.h"
+#include "sound.h"
 
 static audio_Driver audiodrv;
 

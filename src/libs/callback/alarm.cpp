@@ -18,11 +18,9 @@
 
 #include "alarm.h"
 
-#include "libs/time/timelib.h"
-
-#include "core/stl/memory.h"
-
 #include "core/stl/map.h"
+#include "core/stl/memory.h"
+#include "libs/time/timelib.h"
 
 // The alarms in time order. Alarms with the same time stay in the order they were added.
 static uqstl::multimap<AlarmTime, uqstl::unique_ptr<Alarm>> s_alarms {};

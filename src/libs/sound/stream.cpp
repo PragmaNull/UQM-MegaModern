@@ -15,15 +15,16 @@
  */
 
 #include <assert.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 // for abs()
-#include "sound.h"
-#include "sndintrn.h"
-#include "libs/time/timelib.h"
+#include "core/log/log.h"
 #include "core/thread/Mutex.h"
 #include "core/thread/Thread.h"
-#include "core/log/log.h"
+#include "libs/sound/stream.h"
+#include "libs/time/timelib.h"
+#include "sndintrn.h"
+#include "sound.h"
 
 
 static uqstl::jthread s_decoderThread {};

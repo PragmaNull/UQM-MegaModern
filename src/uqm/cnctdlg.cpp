@@ -19,15 +19,16 @@
 #ifdef NETPLAY
 
 #include "cnctdlg.h"
-#include "controls.h"
+
 #include "colors.h"
+#include "controls.h"
 #include "gamestr.h"
+#include "libs/graphics/widgets.h"
+#include "nameref.h"
+#include "options/options.h"
+#include "resinst.h"
 #include "setup.h"
 #include "units.h"
-#include "resinst.h"
-#include "nameref.h"
-#include "libs/graphics/widgets.h"
-#include "options/options.h"
 
 
 namespace uqm

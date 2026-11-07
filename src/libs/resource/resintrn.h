@@ -21,8 +21,9 @@
 #define UQM_LIBS_RESOURCE_RESINTRN_H
 
 #include <string.h>
-#include "libs/reslib.h"
+
 #include "index.h"
+#include "libs/reslib.h"
 
 ResourceDesc* lookupResourceDesc(ResourceIndex idx, RESOURCE res);
 void loadResourceDesc(ResourceDesc* desc);

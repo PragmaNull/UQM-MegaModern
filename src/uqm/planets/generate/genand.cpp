@@ -16,18 +16,18 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "genall.h"
-#include "../lander.h"
-#include "../planets.h"
-#include "../scan.h"
-#include "../../globdata.h"
+#include "../../build.h"
 #include "../../gendef.h"
+#include "../../globdata.h"
 #include "../../nameref.h"
 #include "../../resinst.h"
 #include "../../sounds.h"
 #include "../../starmap.h"
+#include "../lander.h"
+#include "../planets.h"
+#include "../scan.h"
+#include "genall.h"
 #include "libs/mathlib.h"
-#include "../../build.h"
 #include "uqm/random/UQMRandom.h"
 
 

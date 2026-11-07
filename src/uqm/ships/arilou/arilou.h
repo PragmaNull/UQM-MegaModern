@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_ARILOU_ARILOU_H
 #define UQM_SHIPS_ARILOU_ARILOU_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_arilou(void);

@@ -16,10 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/log/log.h"
+#include "libs/mathlib.h"
 #include "lifeform.h"
 #include "planets.h"
-#include "libs/mathlib.h"
-#include "core/log/log.h"
 #include "uqm/globdata.h"
 
 

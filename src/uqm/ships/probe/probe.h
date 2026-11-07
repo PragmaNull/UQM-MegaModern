@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_PROBE_PROBE_H
 #define UQM_SHIPS_PROBE_PROBE_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_probe(void);

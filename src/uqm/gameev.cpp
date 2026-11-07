@@ -17,25 +17,25 @@
 
 #include "gameev.h"
 
+#include <stdlib.h>
+
 #include "build.h"
 #include "clock.h"
-#include "starmap.h"
+#include "core/log/log.h"
+#include "core/misc/bittricks.h"
 #include "gendef.h"
 #include "globdata.h"
 #include "hyper.h"
-#include "resinst.h"
-#include "uqm/lua/UQMLua.h"
-#include "lua/luafuncs/customfuncs.h"
-#include "lua/luafuncs/customfuncs.h"
-#include "core/misc/bittricks.h"
-#include "core/log/log.h"
 #include "libs/mathlib.h"
+#include "lua/luafuncs/customfuncs.h"
 #include "nameref.h"
 #include "options.h"
-#include <stdlib.h>
+#include "planets/lander.h"
+#include "resinst.h"
 #include "setup.h"
 #include "sounds.h"
-#include "planets/lander.h"
+#include "starmap.h"
+#include "uqm/lua/UQMLua.h"
 
 namespace uqm
 {

@@ -16,22 +16,22 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "../commall.h"
 #include "../comandr/resinst.h"
-#include "strings.h"
+#include "../commall.h"
 #include "options.h"
-#include "uqm/lua/UQMLua.h"
+#include "strings.h"
 #include "uqm/build.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/setup.h"
 #include "uqm/shipcont.h"
 #include "uqm/sis.h"
 // for DeltaSISGauges()
 #include "libs/graphics/gfx_common.h"
-#include "libs/mathlib.h"
 #include "libs/inplib.h"
-#include "uqm/oscill.h"
-#include "uqm/nameref.h"
+#include "libs/mathlib.h"
 #include "uqm/controls.h"
+#include "uqm/nameref.h"
+#include "uqm/oscill.h"
 #include "uqm/random/UQMRandom.h"
 
 

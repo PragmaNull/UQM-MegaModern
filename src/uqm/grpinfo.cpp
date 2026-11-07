@@ -17,16 +17,15 @@
  */
 
 #include "build.h"
-#include "starmap.h"
-#include "gendef.h"
-#include "core/stl/array.h"
-#include "globdata.h"
-#include "intel.h"
-#include "state.h"
-#include "grpintrn.h"
-
-#include "libs/mathlib.h"
 #include "core/log/log.h"
+#include "core/stl/array.h"
+#include "gendef.h"
+#include "globdata.h"
+#include "grpintrn.h"
+#include "intel.h"
+#include "libs/mathlib.h"
+#include "starmap.h"
+#include "state.h"
 #include "uqm/random/UQMRandom.h"
 
 #ifdef HAVE_UNISTD_H

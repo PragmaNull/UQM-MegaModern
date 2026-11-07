@@ -20,11 +20,11 @@
 #ifndef UQM_ELEMENT_H
 #define UQM_ELEMENT_H
 
+#include "colors.h"
 #include "displist.h"
+#include "libs/gfxlib.h"
 #include "units.h"
 #include "velocity.h"
-#include "libs/gfxlib.h"
-#include "colors.h"
 
 namespace uqm
 {

@@ -22,14 +22,16 @@
 //#define DEBUG_STARSEED_TRACE_Y
 //#define DEBUG_STARSEED_TRACE_Z
 
-#include "StarmapGlobalData.h"
 #include "starmap.h"
-#include "gamestr.h"
-#include "globdata.h"
-#include "libs/gfxlib.h"
-#include "hyper.h"	// JSD: For arilou_home in the portal map
+
 #include <stdlib.h> // bsearch needs this or it cores!
 #include <time.h>	// For the clock.
+
+#include "gamestr.h"
+#include "globdata.h"
+#include "hyper.h" // JSD: For arilou_home in the portal map
+#include "libs/gfxlib.h"
+#include "StarmapGlobalData.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

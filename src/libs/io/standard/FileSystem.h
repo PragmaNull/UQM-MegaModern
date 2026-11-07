@@ -4,16 +4,15 @@
 #ifndef UQM_LIBS_IO_STANDARD_FILESYSTEM_H
 #define UQM_LIBS_IO_STANDARD_FILESYSTEM_H
 
+#include "core/stl/filesystem.h"
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
+#include "core/stl/system_error.h"
 #include "core/stl/vector.h"
 #include "libs/io/Matcher.h"
-#include "libs/io/Types.h"
 #include "libs/io/standard/File.h"
-
-#include "core/stl/filesystem.h"
-#include "core/stl/system_error.h"
+#include "libs/io/Types.h"
 
 namespace uqm::io::standard
 {

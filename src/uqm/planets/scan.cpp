@@ -16,29 +16,30 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "core/types/enum.h"
-#include "lander.h"
-#include "lifeform.h"
 #include "scan.h"
+
 #include "../build.h"
 #include "../colors.h"
 #include "../cons_res.h"
 #include "../controls.h"
-#include "../menustat.h"
 #include "../encount.h"
+#include "../menustat.h"
+#include "core/types/enum.h"
+#include "lander.h"
+#include "lifeform.h"
 // for EncounterGroup
 #include "../gamestr.h"
 #include "../nameref.h"
-#include "../util.h" // for get_fuel_to_sol()
 #include "../process.h"
+#include "../save.h"
 #include "../setup.h"
+#include "../sis.h"
 #include "../sounds.h"
 #include "../state.h"
-#include "../sis.h"
-#include "../save.h"
+#include "../util.h" // for get_fuel_to_sol()
 #include "core/string/StringUtils.h"
-#include "libs/graphics/gfx_common.h"
 #include "libs/graphics/drawable.h"
+#include "libs/graphics/gfx_common.h"
 #include "libs/inplib.h"
 #include "uqm/random/UQMRandom.h"
 

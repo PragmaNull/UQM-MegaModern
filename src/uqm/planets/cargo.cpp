@@ -19,14 +19,14 @@
 #include "../colors.h"
 #include "../controls.h"
 #include "../gamestr.h"
-#include "../shipcont.h"
 #include "../setup.h"
+#include "../shipcont.h"
+#include "../sis.h"
 #include "../sounds.h"
 #include "../util.h"
-#include "../sis.h"
 // for ClearSISRect(), DrawStatusMessage()
-#include "planets.h"
 #include "libs/graphics/drawable.h"
+#include "planets.h"
 // for GetFrameBounds()
 
 #include "core/string/StringUtils.h"

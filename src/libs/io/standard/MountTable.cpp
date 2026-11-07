@@ -1,11 +1,10 @@
 // The mount stack of a file system, shared by its directories.
 #include "libs/io/standard/MountTable.h"
 
-#include "libs/io/Path.h"
-#include "libs/io/standard/ZipSource.h"
-
 #include "core/stl/mutex.h"
 #include "core/stl/set.h"
+#include "libs/io/Path.h"
+#include "libs/io/standard/ZipSource.h"
 
 namespace uqm::io::standard
 {

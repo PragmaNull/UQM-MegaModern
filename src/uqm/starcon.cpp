@@ -16,51 +16,52 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <stdlib.h>
-#include "core/stl/atomic.h"
+#include "starcon.h"
 
-#include "comm.h"
+#include <cstdint>
+#include <stdlib.h>
+
 #include "battle.h"
+#include "clock.h"
+#include "comm.h"
+#include "controls.h"
+#include "core/stl/atomic.h"
 #include "fmv.h"
 #include "gameev.h"
-#include <cstdint>
 #include "globdata.h"
+#include "master.h"
 #include "resinst.h"
 #include "restart.h"
-#include "starbase.h"
 #include "save.h"
 #include "setup.h"
-#include "master.h"
-#include "controls.h"
-#include "starcon.h"
-#include "clock.h"
+#include "starbase.h"
 // for GameClockTick()
 #include "hyper.h"
 // for SeedUniverse()
 #include "planets/planets.h"
 // for ExploreSolarSys()
-#include "uqmdebug.h"
-#include "libs/time/timelib.h"
+#include <time.h> //required to use 'srand(time(nullptr))'
+
+#include "build.h"
+#include "cons_res.h"
 #include "core/log/log.h"
+#include "core/misc/FatalExit.h"
 #include "core/platform/platform.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
-#include "core/misc/FatalExit.h"
-#include "build.h"
-#include "uqmversion.h"
-#include "options.h"
-#include "setupmenu.h"
-#include "build.h"
+#include "libs/time/timelib.h"
 #include "nameref.h"
+#include "options.h"
 #include "settings.h"
-#include "cons_res.h"
-#include <time.h> //required to use 'srand(time(nullptr))'
+#include "setupmenu.h"
 #include "sounds.h"
-#include "UQMGame.h"
+#include "uqm/random/UQMRandom.h"
 #include "uqm/session/GameSession.h"
 #include "uqm/session/SaveCheck.h"
-#include "uqm/random/UQMRandom.h"
+#include "uqmdebug.h"
+#include "UQMGame.h"
+#include "uqmversion.h"
 
 namespace uqm
 {

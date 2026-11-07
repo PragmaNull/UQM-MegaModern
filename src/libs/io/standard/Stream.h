@@ -4,10 +4,10 @@
 #ifndef UQM_LIBS_IO_STANDARD_STREAM_H
 #define UQM_LIBS_IO_STANDARD_STREAM_H
 
-#include "core/stl/stl.h"
-
 #include <cstddef>
 #include <cstdint>
+
+#include "core/stl/stl.h"
 #include "core/stl/system_error.h"
 
 namespace uqm::io::standard

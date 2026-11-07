@@ -18,13 +18,13 @@
 #ifndef UQM_UQMDEBUG_H
 #define UQM_UQMDEBUG_H
 
+#include <stdio.h>
+
 #include "clock.h"
-#include "planets/planets.h"
-#include "races.h"
 #include "core/misc/bittricks.h"
 #include "core/stl/atomic.h"
-
-#include <stdio.h>
+#include "planets/planets.h"
+#include "races.h"
 
 namespace uqm
 {

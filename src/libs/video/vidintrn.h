@@ -21,9 +21,10 @@
 #define UQM_LIBS_VIDEO_VIDINTRN_H
 
 #include <cstdint>
+
 #include "core/stl/string.h"
-#include "libs/vidlib.h"
 #include "libs/time/timelib.h"
+#include "libs/vidlib.h"
 
 struct LegacyVideoDesc
 {

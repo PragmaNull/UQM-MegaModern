@@ -16,35 +16,34 @@
 
 
 #include "uqmdebug.h"
-#include "core/stl/atomic.h"
+
+#include <errno.h>
+#include <stdio.h>
 
 #include "build.h"
+#include "clock.h"
 #include "colors.h"
 #include "controls.h"
-#include "clock.h"
-#include "starmap.h"
-#include "intel.h"
-#include "sis.h"
-#include "status.h"
-#include "gamestr.h"
+#include "core/platform/platform.h"
+#include "core/stl/atomic.h"
+#include "core/string/StringUtils.h"
 #include "gameev.h"
+#include "gamestr.h"
 #include "gendef.h"
 #include "globdata.h"
+#include "intel.h"
+#include "libs/mathlib.h"
 #include "planets/lifeform.h"
 #include "planets/scan.h"
 #include "races.h"
 #include "setup.h"
+#include "sis.h"
 #include "starmap.h"
-#include "state.h"
-#include "core/platform/platform.h"
-#include "core/string/StringUtils.h"
-#include "libs/mathlib.h"
-#include "uqm/lua/UQMLua.h"
-#include "tactrans.h"
 #include "StarmapGlobalData.h"
-
-#include <stdio.h>
-#include <errno.h>
+#include "state.h"
+#include "status.h"
+#include "tactrans.h"
+#include "uqm/lua/UQMLua.h"
 
 namespace uqm
 {

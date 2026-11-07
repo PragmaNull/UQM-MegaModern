@@ -76,10 +76,10 @@ struct NetStatistics
 } // namespace uqm
 
 #ifdef NETCONNECTION_INTERNAL
+#include "core/stl/memory.h"
 #include "libs/network/Connection.h"
 #include "libs/network/Connector.h"
 #include "libs/network/Listener.h"
-#include "core/stl/memory.h"
 #include "packetq.h"
 
 

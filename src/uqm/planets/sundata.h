@@ -20,8 +20,8 @@
 #ifndef UQM_PLANETS_SUNDATA_H
 #define UQM_PLANETS_SUNDATA_H
 
-#include "plandata.h"
 #include "core/misc/bittricks.h"
+#include "plandata.h"
 
 namespace uqm
 {

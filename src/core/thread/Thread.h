@@ -6,7 +6,6 @@
 
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
-
 #include "core/stl/thread.h"
 #include "core/stl/utility.h"
 

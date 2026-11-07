@@ -16,50 +16,50 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "core/types/enum.h"
 #include "solarsys.h"
-#include "lander.h"
+
 #include "../build.h"
 #include "../colors.h"
 #include "../controls.h"
 #include "../menustat.h"
+#include "core/types/enum.h"
+#include "lander.h"
 // for DrawMenuStateStrings()
-#include "../starmap.h"
-#include "../races.h"
+#include "../gameopt.h"
 #include "../gamestr.h"
 #include "../gendef.h"
 #include "../globdata.h"
-#include "../sis.h"
-#include "../init.h"
-#include "../shipcont.h"
-#include "../gameopt.h"
-#include "../nameref.h"
-#include "../resinst.h"
-#include "../settings.h"
-#include "../ipdisp.h"
 #include "../grpinfo.h"
+#include "../hyper.h"
+#include "../init.h"
+#include "../ipdisp.h"
+#include "../nameref.h"
 #include "../process.h"
+#include "../races.h"
+#include "../resinst.h"
+#include "../save.h"
+#include "../settings.h"
 #include "../setup.h"
+#include "../shipcont.h"
+#include "../sis.h"
 #include "../sounds.h"
+#include "../starmap.h"
 #include "../state.h"
 #include "../uqmdebug.h"
-#include "../save.h"
-#include "options.h"
-#include "core/string/StringUtils.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/mathlib.h"
 #include "core/log/log.h"
 #include "core/misc/FatalExit.h"
-#include "scan.h"
+#include "core/string/StringUtils.h"
 #include "libs/graphics/cmap.h"
-
-#include "../hyper.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/mathlib.h"
+#include "options.h"
+#include "scan.h"
 // for SOL_X/Y
 
 #include <math.h>
+#include <SDL3/SDL_version.h>
 #include <time.h>
 
-#include <SDL3/SDL_version.h>
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

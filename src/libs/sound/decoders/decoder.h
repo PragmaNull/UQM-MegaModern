@@ -22,14 +22,15 @@
 #ifndef UQM_LIBS_SOUND_DECODERS_DECODER_H
 #define UQM_LIBS_SOUND_DECODERS_DECODER_H
 
-#include "core/types/enum.h"
-#include "port.h"
 #include <cstdint>
-#include "libs/io/FileSystem.h"
-#include "libs/sound/audiocoredefs.h"
-#include "libs/mathlib.h"
+
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
+#include "core/types/enum.h"
+#include "libs/io/FileSystem.h"
+#include "libs/mathlib.h"
+#include "libs/sound/audiocoredefs.h"
+#include "port.h"
 
 #ifndef OVCODEC_NONE
 #ifdef _MSC_VER

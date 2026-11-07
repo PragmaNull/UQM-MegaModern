@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_CHMMR_RESINST_H
 #define UQM_COMM_CHMMR_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring ChmmrColorMap {"comm.chmmr.colortable"};

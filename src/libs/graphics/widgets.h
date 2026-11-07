@@ -20,8 +20,8 @@
 #ifndef UQM_LIBS_GRAPHICS_WIDGETS_H
 #define UQM_LIBS_GRAPHICS_WIDGETS_H
 
-#include "core/types/enum.h"
 #include "core/stl/stl.h"
+#include "core/types/enum.h"
 #include "libs/gfxlib.h"
 
 enum class WidgetEvent

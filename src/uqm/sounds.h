@@ -20,13 +20,13 @@
 #ifndef UQM_SOUNDS_H
 #define UQM_SOUNDS_H
 
+#include "cons_res.h"
+#include "core/misc/bittricks.h"
 #include "core/types/enum.h"
 #include "element.h"
-#include "core/misc/bittricks.h"
+#include "globdata.h"
 #include "libs/sndlib.h"
 #include "races.h"
-#include "globdata.h"
-#include "cons_res.h"
 
 namespace uqm
 {

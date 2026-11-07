@@ -16,11 +16,12 @@
 
 #include "sdlimage.h"
 
-#include "libs/file/textfile.h"
-#include "libs/io/FileSystem.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_iostream.h>
+
+#include "libs/file/textfile.h"
+#include "libs/io/FileSystem.h"
 #include "png2sdl.h"
 
 SDL_Surface* sdl_loadImage(const uqm::io::Directory& dir, const char* fileName)

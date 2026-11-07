@@ -20,10 +20,10 @@
 #ifndef UQM_STATUS_H
 #define UQM_STATUS_H
 
-#include "races.h"
-#include "options/options.h"
-#include "globdata.h"
 #include "core/misc/bittricks.h"
+#include "globdata.h"
+#include "options/options.h"
+#include "races.h"
 
 namespace uqm
 {

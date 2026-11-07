@@ -1,9 +1,11 @@
 // Dear ImGui overlay that draws on top of the game screen with the SDL renderer.
 
 #include "imguilayer.h"
+
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
+
 #include "core/log/log.h"
 #include "toolwindows.h"
 

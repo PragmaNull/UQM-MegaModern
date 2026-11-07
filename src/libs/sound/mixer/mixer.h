@@ -21,10 +21,11 @@
 #ifndef UQM_LIBS_SOUND_MIXER_MIXER_H
 #define UQM_LIBS_SOUND_MIXER_MIXER_H
 
-#include "core/types/enum.h"
-#include "config.h"
 #include <cstdint>
+
+#include "config.h"
 #include "core/stl/memory.h"
+#include "core/types/enum.h"
 
 /**
  * The interface heavily influenced by OpenAL

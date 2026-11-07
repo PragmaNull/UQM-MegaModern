@@ -22,8 +22,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "core/stl/atomic.h"
 
+#include "core/stl/atomic.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_defs.h"
 #include "options/OptionDefs.h" // EmulationMode

@@ -19,8 +19,8 @@
 #define UQM_GAMEEV_H
 
 
-#include "core/types/enum.h"
 #include "core/misc/bittricks.h"
+#include "core/types/enum.h"
 #include "libs/gfxlib.h"
 
 namespace uqm

@@ -14,10 +14,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "gfx_common.h"
 #include "tfb_draw.h"
-#include "drawcmd.h"
+
 #include "core/log/log.h"
+#include "drawcmd.h"
+#include "gfx_common.h"
 
 
 const static HotSpot NullHs = {0, 0};

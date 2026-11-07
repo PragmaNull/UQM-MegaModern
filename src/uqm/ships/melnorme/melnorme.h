@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_MELNORME_MELNORME_H
 #define UQM_SHIPS_MELNORME_MELNORME_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_melnorme(void);

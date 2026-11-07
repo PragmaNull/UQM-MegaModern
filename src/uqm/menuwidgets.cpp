@@ -2,9 +2,8 @@
 #include "menuwidgets.h"
 
 #include "core/log/log.h"
-#include "options/Setting.h"
-
 #include "core/stl/map.h"
+#include "options/Setting.h"
 
 
 namespace uqm

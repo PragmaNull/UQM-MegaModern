@@ -30,13 +30,14 @@
 #ifndef _WIN32_WCE
 #include <memory.h>
 #endif
-#include <string.h>
-#include "port.h"
 #include <cstdint>
-#include "libs/reslib.h"
-#include "core/misc/bittricks.h"
-#include "core/log/log.h"
+#include <string.h>
+
 #include "aiffaud.h"
+#include "core/log/log.h"
+#include "core/misc/bittricks.h"
+#include "libs/reslib.h"
+#include "port.h"
 
 typedef uint32_t aiff_ID;
 

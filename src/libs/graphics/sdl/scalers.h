@@ -18,6 +18,8 @@
 #ifndef UQM_LIBS_GRAPHICS_SDL_SCALERS_H
 #define UQM_LIBS_GRAPHICS_SDL_SCALERS_H
 
+#include <SDL3/SDL.h>
+
 #include "libs/graphics/gfx_defs.h"
 
 void Scale_Init(void);

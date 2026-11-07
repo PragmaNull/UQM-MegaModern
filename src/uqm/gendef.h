@@ -9,8 +9,8 @@
 // Added NUM_PLOTS for plot iteration.
 // These are used in the plot randomizer.
 //#include "planets/generate.h"
-#include "core/types/enum.h"
 #include "core/misc/bittricks.h"
+#include "core/types/enum.h"
 
 namespace uqm
 {

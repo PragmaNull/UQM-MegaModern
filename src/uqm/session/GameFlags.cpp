@@ -1,6 +1,7 @@
 // The game state flags, such as SHOFIXTI_VISITS, by enum and by name.
 
 #include "GameFlags.h"
+
 #include "core/stl/map.h"
 
 

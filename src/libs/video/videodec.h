@@ -18,11 +18,11 @@
 #ifndef UQM_LIBS_VIDEO_VIDEODEC_H
 #define UQM_LIBS_VIDEO_VIDEODEC_H
 
-#include "core/types/enum.h"
-#include "libs/vidlib.h"
-#include "libs/video/video.h"
-#include "libs/reslib.h"
 #include "core/stl/string.h"
+#include "core/types/enum.h"
+#include "libs/reslib.h"
+#include "libs/video/video.h"
+#include "libs/vidlib.h"
 
 // forward-declare
 namespace tfb

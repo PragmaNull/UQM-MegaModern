@@ -16,16 +16,17 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "libs/graphics/sdl/sdl_common.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/gfxlib.h"
-#include "libs/graphics/context.h"
 #include "libs/graphics/drawable.h"
-#include "libs/graphics/tfb_draw.h"
-#include "tfb_draw.h"
+
 #include <math.h>
 
 #include "core/log/log.h"
+#include "libs/gfxlib.h"
+#include "libs/graphics/context.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/graphics/sdl/sdl_common.h"
+#include "libs/graphics/tfb_draw.h"
+#include "tfb_draw.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

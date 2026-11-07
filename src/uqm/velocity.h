@@ -21,6 +21,7 @@
 #define UQM_VELOCITY_H
 
 #include <string.h> /* for memset */
+
 #include "libs/gfxlib.h"
 
 namespace uqm

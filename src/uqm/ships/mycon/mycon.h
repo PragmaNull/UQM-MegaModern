@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_MYCON_MYCON_H
 #define UQM_SHIPS_MYCON_MYCON_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_mycon(void);

@@ -21,9 +21,10 @@
 #define UQM_DISPLIST_H
 
 #include <assert.h>
-#include "port.h"
+
 #include "core/misc/bittricks.h"
 #include "core/stl/utility.h"
+#include "port.h"
 
 namespace uqm
 {

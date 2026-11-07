@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_CHMMR_CHMMR_H
 #define UQM_SHIPS_CHMMR_CHMMR_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_chmmr(void);

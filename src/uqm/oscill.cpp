@@ -17,13 +17,16 @@
  */
 
 #include "oscill.h"
+
 #include <cmath>
+
 #include "setup.h"
 // for OffScreenContext
+#include "colors.h"
 #include "libs/graphics/drawable.h"
 #include "libs/sound/sound.h"
+#include "libs/sound/stream.h"
 #include "libs/sound/trackplayer.h"
-#include "colors.h"
 #include "util.h"
 
 namespace uqm

@@ -15,11 +15,11 @@
  */
 
 #define MELEESETUP_INTERNAL
-#include "port.h"
 #include "meleesetup.h"
 
 #include "../master.h"
 #include "core/log/log.h"
+#include "port.h"
 
 
 namespace uqm

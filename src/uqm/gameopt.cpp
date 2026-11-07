@@ -16,32 +16,32 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "core/types/enum.h"
 #include "gameopt.h"
+
+#include <ctype.h>
 
 #include "build.h"
 #include "colors.h"
+#include "comm.h"
 #include "controls.h"
-#include "starmap.h"
-#include "menustat.h"
-#include "sis.h"
-#include "units.h"
+#include "core/log/log.h"
+#include "core/string/StringUtils.h"
+#include "core/types/enum.h"
 #include "gamestr.h"
+#include "libs/graphics/gfx_common.h"
+#include "master.h"
+#include "menustat.h"
 #include "options.h"
+#include "restart.h"
 #include "save.h"
 #include "settings.h"
 #include "setup.h"
+#include "sis.h"
 #include "sounds.h"
-#include "util.h"
-#include "libs/graphics/gfx_common.h"
-#include "core/log/log.h"
-#include "core/string/StringUtils.h"
-#include "comm.h"
-#include "master.h"
-#include "restart.h"
-
-#include <ctype.h>
+#include "starmap.h"
+#include "units.h"
 #include "uqm/random/UQMRandom.h"
+#include "util.h"
 
 namespace uqm
 {

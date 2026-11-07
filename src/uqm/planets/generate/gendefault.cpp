@@ -14,17 +14,17 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "genall.h"
-#include "../planets.h"
-#include "../lander.h"
 #include "../../encount.h"
 #include "../../gamestr.h"
 #include "../../globdata.h"
 #include "../../grpinfo.h"
 #include "../../races.h"
 #include "../../setup.h"
-#include "../../state.h"
 #include "../../sounds.h"
+#include "../../state.h"
+#include "../lander.h"
+#include "../planets.h"
+#include "genall.h"
 #include "libs/mathlib.h"
 
 

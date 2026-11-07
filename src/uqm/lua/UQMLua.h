@@ -19,15 +19,15 @@
 #ifndef UQM_LUA_UQMLUA_H
 #define UQM_LUA_UQMLUA_H
 
+#include <cstdio>
+#include <lua.hpp>
+
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "libs/io/FileSystem.h"
 #include "libs/reslib.h"
-
-#include <cstdio>
-#include <lua.hpp>
 
 namespace uqm
 {

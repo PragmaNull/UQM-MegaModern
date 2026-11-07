@@ -18,6 +18,10 @@
 #ifndef UQM_LIBS_GRAPHICS_SDL_2XSCALERS_H
 #define UQM_LIBS_GRAPHICS_SDL_2XSCALERS_H
 
+#include <SDL3/SDL.h>
+
+#include "libs/graphics/sdl/scaleint.h"
+
 void Scale_Nearest(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r);
 void Scale_BilinearFilter(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r);
 void Scale_BiAdaptFilter(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r);

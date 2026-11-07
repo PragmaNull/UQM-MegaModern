@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_ARILOU_RESINST_H
 #define UQM_COMM_ARILOU_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring ArilouColorMap {"comm.arilou.colortable"};

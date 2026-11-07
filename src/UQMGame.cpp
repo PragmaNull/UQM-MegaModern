@@ -17,13 +17,12 @@
  */
 
 #include "UQMGame.h"
-#include "uqm/session/GameSession.h"
 
-#include "core/log/log.h"
-#include "options/options.h"
+#include "configuration/Configuration.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
-#include "configuration/Configuration.h"
+#include "options/options.h"
+#include "uqm/session/GameSession.h"
 
 //////////////////////////////////////////////////
 // legacy includes below
@@ -33,36 +32,38 @@
 #include <unistd.h>
 #endif
 
-#include <stdarg.h>
 #include <errno.h>
-#include "libs/graphics/gfx_common.h"
-#include "libs/graphics/cmap.h"
-#include "libs/sound/sound.h"
-#include "libs/input/input_common.h"
-#include "libs/inplib.h"
+#include <stdarg.h>
+
 #include "core/thread/Thread.h"
+#include "libs/graphics/cmap.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/inplib.h"
+#include "libs/input/input_common.h"
+#include "libs/sound/sound.h"
 #include "libs/time/timelib.h"
-#include "uqm/lua/UQMLua.h"
-#include "uqm/controls.h"
 #include "uqm/battle.h"
+#include "uqm/controls.h"
+#include "uqm/lua/UQMLua.h"
 // For BattleFrameRateTicks
 #include <cstdint>
-#include "port.h"
+
 #include "core/log/log.h"
 #include "options.h"
-#include "uqmversion.h"
+#include "port.h"
 #include "uqm/comm.h"
+#include "uqmversion.h"
 #ifdef NETPLAY
-#include "libs/callback/callback.h"
 #include "libs/callback/alarm.h"
+#include "libs/callback/callback.h"
 #include "uqm/supermelee/netplay/netcontext.h"
 #include "uqm/supermelee/netplay/netplay.h"
 #endif
+#include "libs/math/Random.h"
 #include "uqm/imgui/gamewindow.h"
 #include "uqm/imgui/settingswindow.h"
 #include "uqm/setup.h"
 #include "uqm/starcon.h"
-#include "libs/math/Random.h"
 #if defined(GFXMODULE_SDL)
 #include <SDL3/SDL.h>
 // Including this is actually necessary on OSX.
@@ -79,6 +80,7 @@
 #include <spdlog/version.h>
 #include <vorbis/codec.h>
 #include <zlib.h>
+
 #include "uqm/random/UQMRandom.h"
 
 bool restartGame;

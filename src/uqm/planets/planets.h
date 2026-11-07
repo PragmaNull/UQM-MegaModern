@@ -20,12 +20,12 @@
 #ifndef UQM_PLANETS_PLANETS_H
 #define UQM_PLANETS_PLANETS_H
 
+#include "../globdata.h"
+#include "../units.h"
 #include "core/types/enum.h"
 #include "libs/mathlib.h"
 #include "libs/sndlib.h"
 #include "options.h"
-#include "../units.h"
-#include "../globdata.h"
 
 namespace uqm
 {
@@ -149,11 +149,11 @@ struct PortalLocation;
 
 } // namespace uqm
 
+#include "../gendef.h" //JSD need gendef.h unless we move plots & starmap to starmap
 #include "generate.h"
 #include "lifeform.h"
 #include "plandata.h"
 #include "sundata.h"
-#include "../gendef.h" //JSD need gendef.h unless we move plots & starmap to starmap
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

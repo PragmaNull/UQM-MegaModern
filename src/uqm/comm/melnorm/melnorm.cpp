@@ -16,28 +16,27 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "core/types/enum.h"
 #include "../commall.h"
-#include "resinst.h"
-#include "strings.h"
-
-#include "uqm/gameev.h"
-#include "uqm/shipcont.h"
+#include "core/log/log.h"
+#include "core/types/enum.h"
 #include "libs/inplib.h"
 #include "libs/mathlib.h"
-#include "core/log/log.h"
-#include "uqm/lua/UQMLua.h"
+#include "resinst.h"
+#include "strings.h"
+#include "uqm/gameev.h"
 #include "uqm/hyper.h"
+#include "uqm/lua/UQMLua.h"
+#include "uqm/shipcont.h"
 // for SOL_X/SOL_Y
 #include "uqm/planets/planets.h"
 // for xxx_DISASTER
-#include "uqm/sis.h"
 #include "../../gendef.h"
 #include "../../starmap.h"
-#include "uqm/oscill.h"
 #include "uqm/controls.h"
+#include "uqm/oscill.h"
 #include "uqm/races.h"
 #include "uqm/random/UQMRandom.h"
+#include "uqm/sis.h"
 
 namespace uqm
 {

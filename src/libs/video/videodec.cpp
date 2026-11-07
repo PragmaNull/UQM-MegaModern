@@ -14,13 +14,15 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <string.h>
-#include "video.h"
 #include "videodec.h"
-#include "dukvid.h"
+
+#include <string.h>
+
+#include "../../uqm/units.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
-#include "../../uqm/units.h"
+#include "dukvid.h"
+#include "video.h"
 
 static constexpr auto MaxRegDecoders {31};
 

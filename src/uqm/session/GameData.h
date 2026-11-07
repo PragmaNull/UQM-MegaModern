@@ -5,6 +5,7 @@
 #define UQM_SESSION_GAMEDATA_H
 
 #include <cstdint>
+
 #include "uqm/displist.h"
 #include "uqm/sis.h"
 

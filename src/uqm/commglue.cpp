@@ -21,16 +21,16 @@
 
 #include "battle.h"
 // For instantVictory
-#include "races.h"
-#include "uqm/lua/UQMLua.h"
+#include <assert.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdlib.h>
+
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
-
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <assert.h>
 #include "libs/math/Random.h"
+#include "races.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

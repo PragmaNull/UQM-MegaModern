@@ -5,8 +5,9 @@
 #define UQM_SETUPSETTINGS_H
 
 #include <cstdint>
-#include "core/stl/stl.h"
+
 #include "core/stl/optional.h"
+#include "core/stl/stl.h"
 #include "uqm/menudef.h"
 
 

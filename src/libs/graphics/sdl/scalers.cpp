@@ -14,12 +14,14 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <cstdint>
-#include "libs/graphics/sdl/sdl_common.h"
-#include "core/log/log.h"
 #include "scalers.h"
-#include "scaleint.h"
+
+#include <cstdint>
+
 #include "2xscalers.h"
+#include "core/log/log.h"
+#include "libs/graphics/sdl/sdl_common.h"
+#include "scaleint.h"
 
 
 typedef enum

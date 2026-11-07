@@ -16,23 +16,23 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <string.h>
-#include <stdio.h>
+#include <fmt/format.h>
 #include <scn/scan.h>
+#include <stdio.h>
+#include <string.h>
 
+#include "core/log/log.h"
+#include "libs/file/textfile.h"
+#include "libs/graphics/anifile.h"
+#include "libs/graphics/drawable.h"
+#include "libs/graphics/font.h"
+#include "libs/graphics/fontfile.h"
+#include "libs/graphics/tfb_draw.h"
+#include "libs/io/Path.h"
+#include "libs/reslib.h"
 #include "options.h"
 #include "port.h"
 #include "uqm/units.h"
-#include "libs/reslib.h"
-#include "libs/io/Path.h"
-#include "core/log/log.h"
-#include "libs/graphics/tfb_draw.h"
-#include "libs/graphics/drawable.h"
-#include "libs/graphics/font.h"
-#include "libs/graphics/anifile.h"
-#include "libs/graphics/fontfile.h"
-#include "libs/file/textfile.h"
-#include <fmt/format.h>
 
 
 static void process_image(FrameRef FramePtr, tfb::Canvas img[], const uqm::AniFrame* ani, int cel_ct)

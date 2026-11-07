@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_MMRNMHRM_RESINST_H
 #define UQM_SHIPS_MMRNMHRM_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring MmrnmhrmBigMaskPmapAnim {"ship.mmrnmhrm.graphics.xform.large"};

@@ -28,10 +28,10 @@
 //#include "reslib.h"
 #include "uqm/intel.h"
 #include "uqm/races.h"
-#include "uqm/status.h"
-#include "uqm/sounds.h"
-#include "uqm/weapon.h"
 #include "uqm/ship.h"
+#include "uqm/sounds.h"
+#include "uqm/status.h"
+#include "uqm/weapon.h"
 
 
 #endif // UQM_SHIPS_SHIP_H

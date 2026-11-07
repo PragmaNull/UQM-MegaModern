@@ -19,10 +19,9 @@
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
-
-#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/hyper.h"
+#include "uqm/lua/UQMLua.h"
 // for SOL_X/SOL_Y
 #include "../../nameref.h"
 // JMS_GFX: For LoadGraphic()

@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_SUPOX_SUPOX_H
 #define UQM_SHIPS_SUPOX_SUPOX_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_supox(void);

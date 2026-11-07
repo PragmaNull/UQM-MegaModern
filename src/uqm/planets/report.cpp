@@ -16,25 +16,25 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "lander.h"
-#include "scan.h"
-#include "planets.h"
+#include <ctype.h>
+#include <string.h>
+
 #include "../colors.h"
 #include "../controls.h"
 #include "../gamestr.h"
-#include "../setup.h"
-#include "../util.h"
-#include "../sounds.h"
-#include "../uqmdebug.h"
-#include "options.h"
-#include "libs/inplib.h"
-#include "../nameref.h"
 #include "../ifontres.h"
 #include "../igfxres.h"
+#include "../nameref.h"
+#include "../setup.h"
+#include "../sounds.h"
+#include "../uqmdebug.h"
+#include "../util.h"
 #include "core/stl/optional.h"
-
-#include <ctype.h>
-#include <string.h>
+#include "lander.h"
+#include "libs/inplib.h"
+#include "options.h"
+#include "planets.h"
+#include "scan.h"
 #include "uqm/lua/UQMLua.h"
 
 

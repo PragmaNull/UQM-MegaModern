@@ -14,10 +14,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "vidintrn.h"
-#include "video.h"
-#include "vidplayer.h"
 #include "uqm/util.h"
+#include "video.h"
+#include "vidintrn.h"
+#include "vidplayer.h"
 
 LegacyVideoRef PlayLegacyVideo(LegacyVideo vid)
 {

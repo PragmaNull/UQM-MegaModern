@@ -16,29 +16,27 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "core/types/enum.h"
-#include "options.h"
 #include "colors.h"
 #include "controls.h"
-#include "menustat.h"
+#include "core/types/enum.h"
 #include "gameopt.h"
 #include "gamestr.h"
-#include "resinst.h"
 #include "menustat.h"
 #include "nameref.h"
+#include "options.h"
+#include "planets/planets.h"
+#include "resinst.h"
 #include "settings.h"
-#include "starbase.h"
 #include "setup.h"
 #include "sis.h"
-#include "units.h"
 #include "sounds.h"
-#include "planets/planets.h"
+#include "starbase.h"
+#include "units.h"
 // for xxx_DISASTER
-#include "libs/graphics/gfx_common.h"
-#include "util.h"
-#include "shipcont.h"
-
 #include "core/string/StringUtils.h"
+#include "libs/graphics/gfx_common.h"
+#include "shipcont.h"
+#include "util.h"
 
 namespace uqm
 {

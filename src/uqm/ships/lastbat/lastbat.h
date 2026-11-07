@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_LASTBAT_LASTBAT_H
 #define UQM_SHIPS_LASTBAT_LASTBAT_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_samatra(void);

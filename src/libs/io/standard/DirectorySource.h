@@ -4,9 +4,8 @@
 #ifndef UQM_LIBS_IO_STANDARD_DIRECTORYSOURCE_H
 #define UQM_LIBS_IO_STANDARD_DIRECTORYSOURCE_H
 
-#include "libs/io/standard/MountSource.h"
-
 #include "core/stl/filesystem.h"
+#include "libs/io/standard/MountSource.h"
 
 namespace uqm::io::standard
 {

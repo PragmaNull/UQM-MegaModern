@@ -18,27 +18,27 @@
 
 #include "globdata.h"
 
-#include "coderes.h"
-#include "encount.h"
-#include "starmap.h"
-#include "master.h"
-#include "setup.h"
-#include "units.h"
-#include "hyper.h"
-#include "resinst.h"
-#include "nameref.h"
-#include "build.h"
-#include "state.h"
-#include "grpinfo.h"
-#include "gamestr.h"
-#include "core/log/log.h"
-#include "options.h"
 #include <assert.h>
 #include <stdlib.h>
-#include "uqmdebug.h"
 
-#include "UQMGame.h"
+#include "build.h"
+#include "coderes.h"
+#include "core/log/log.h"
+#include "encount.h"
+#include "gamestr.h"
+#include "grpinfo.h"
+#include "hyper.h"
+#include "master.h"
+#include "nameref.h"
+#include "options.h"
+#include "resinst.h"
+#include "setup.h"
+#include "starmap.h"
+#include "state.h"
+#include "units.h"
 #include "uqm/random/UQMRandom.h"
+#include "uqmdebug.h"
+#include "UQMGame.h"
 
 namespace uqm
 {

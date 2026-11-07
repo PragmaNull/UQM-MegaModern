@@ -22,8 +22,8 @@
 
 #include "netplay.h"
 // for NETPLAY_CHECKSUM
-#include "netconnection.h"
 #include "../../controls.h"
+#include "netconnection.h"
 // for BattleInputState
 #ifdef NETPLAY_CHECKSUM
 #include "checksum.h"

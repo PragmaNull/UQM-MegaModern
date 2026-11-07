@@ -20,10 +20,11 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_NETMISC_H
 #define UQM_SUPERMELEE_NETPLAY_NETMISC_H
 
+#include <cstdint>
+
+#include "../../battle.h"
 #include "netconnection.h"
 #include "netstate.h"
-#include <cstdint>
-#include "../../battle.h"
 
 namespace uqm
 {

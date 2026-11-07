@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_ZOQFOT_RESINST_H
 #define UQM_SHIPS_ZOQFOT_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring SpitBigMaskPmapAnim {"ship.zoqfotpik.graphics.spit.large"};

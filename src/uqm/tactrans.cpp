@@ -18,30 +18,30 @@
 
 #include "tactrans.h"
 
+#include "battle.h"
 #include "battlecontrols.h"
 #include "build.h"
 #include "collide.h"
-#include "globdata.h"
 #include "element.h"
+#include "globdata.h"
+#include "init.h"
 #include "ship.h"
 #include "status.h"
-#include "battle.h"
-#include "init.h"
 #include "supermelee/pickmele.h"
 #ifdef NETPLAY
 #include "supermelee/netplay/netmelee.h"
 #include "supermelee/netplay/netmisc.h"
 #include "supermelee/netplay/notify.h"
-#include "supermelee/netplay/proto/ready.h"
 #include "supermelee/netplay/packet.h"
 #include "supermelee/netplay/packetq.h"
+#include "supermelee/netplay/proto/ready.h"
 #endif
-#include "races.h"
 #include "encount.h"
+#include "intel.h"
+#include "libs/mathlib.h"
+#include "races.h"
 #include "settings.h"
 #include "sounds.h"
-#include "libs/mathlib.h"
-#include "intel.h"
 #include "uqm/random/UQMRandom.h"
 
 

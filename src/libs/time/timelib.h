@@ -4,9 +4,9 @@
 #ifndef UQM_LIBS_TIME_TIMELIB_H
 #define UQM_LIBS_TIME_TIMELIB_H
 
-#include "core/stl/chrono.h"
-
 #include <cstdint>
+
+#include "core/stl/chrono.h"
 
 /* GameTicksPerSecond is the LCM of all the fractions of a second the game uses.
  * Battle is 24 FPS, Landers are 35 FPS, most UI-level things are 15 FPS,

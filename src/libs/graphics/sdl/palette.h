@@ -20,9 +20,10 @@
 #ifndef UQM_LIBS_GRAPHICS_SDL_PALETTE_H
 #define UQM_LIBS_GRAPHICS_SDL_PALETTE_H
 
-#include "port.h"
 #include <SDL3/SDL.h>
+
 #include "libs/graphics/cmap.h"
+#include "port.h"
 
 struct NativePalette
 {

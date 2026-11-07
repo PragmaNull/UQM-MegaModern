@@ -17,17 +17,18 @@
  */
 
 #include "status.h"
+
 #include "colors.h"
 #include "globdata.h"
+#include "init.h"
 #include "races.h"
 #include "setup.h"
-#include "init.h"
 // for NumPlayers
-#include "util.h"
-#include "intel.h"
-
 #include <stdio.h>
 #include <string.h>
+
+#include "intel.h"
+#include "util.h"
 
 
 namespace uqm

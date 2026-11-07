@@ -2,14 +2,13 @@
 #ifndef UQM_OPTIONS_OPTIONDEFS_H
 #define UQM_OPTIONS_OPTIONDEFS_H
 
-#include "libs/graphics/gfx_defs.h"	  // for GfxFlags
-#include "libs/sound/audiocoredefs.h" // for AudioFlags.
+#include <magic_enum/magic_enum.hpp>
 
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
 #include "core/string/StringUtils.h"
-
-#include <magic_enum/magic_enum.hpp>
+#include "libs/graphics/gfx_defs.h"	  // for GfxFlags
+#include "libs/sound/audiocoredefs.h" // for AudioFlags.
 namespace uqm
 {
 

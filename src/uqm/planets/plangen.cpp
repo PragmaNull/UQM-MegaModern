@@ -21,21 +21,22 @@
 // (Black & White) indexed pic with 128 colors top. Lesser indices (black)
 // will correspond to lower altitudes.
 
-#include "planets.h"
-#include "scan.h"
+#include <math.h>
+#include <time.h>
+
+#include "../colors.h"
+#include "../gendef.h"
 #include "../nameref.h"
 #include "../resinst.h"
 #include "../setup.h"
-#include "options.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/graphics/drawable.h"
-#include "libs/mathlib.h"
-#include "core/log/log.h"
 #include "../starmap.h"
-#include "../gendef.h"
-#include "../colors.h"
-#include <math.h>
-#include <time.h>
+#include "core/log/log.h"
+#include "libs/graphics/drawable.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/mathlib.h"
+#include "options.h"
+#include "planets.h"
+#include "scan.h"
 
 namespace uqm
 {

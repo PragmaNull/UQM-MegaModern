@@ -22,8 +22,9 @@
 #include "reset.h"
 
 #include <cstdint>
-#include "../packetsenders.h"
+
 #include "../../melee.h"
+#include "../packetsenders.h"
 // For resetFeedback.
 
 #include <assert.h>

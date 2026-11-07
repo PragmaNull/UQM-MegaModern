@@ -16,10 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/log/log.h"
 #include "libs/graphics/context.h"
 #include "libs/graphics/drawable.h"
 #include "libs/graphics/tfb_draw.h"
-#include "core/log/log.h"
 #include "uqm/units.h"
 
 //#define DEBUG_INTERSEC

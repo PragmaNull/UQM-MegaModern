@@ -17,8 +17,10 @@
  */
 
 #include "sound.h"
-#include "sndintrn.h"
+
 #include "libs/inplib.h"
+#include "libs/sound/stream.h"
+#include "sndintrn.h"
 
 
 int musicVolume = NormalVolume;

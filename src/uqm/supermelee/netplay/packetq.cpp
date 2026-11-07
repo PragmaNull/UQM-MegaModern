@@ -17,9 +17,10 @@
  */
 
 #define NETCONNECTION_INTERNAL
-#include "netplay.h"
-#include "netconnection.h"
 #include "packetq.h"
+
+#include "netconnection.h"
+#include "netplay.h"
 #include "netsend.h"
 #include "packetsenders.h"
 #ifdef NETPLAY_DEBUG

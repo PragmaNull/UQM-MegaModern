@@ -16,12 +16,12 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "netplay.h"
 #include "packetsenders.h"
 
+#include "netplay.h"
+#include "netsend.h"
 #include "packet.h"
 #include "packetq.h"
-#include "netsend.h"
 
 
 namespace uqm

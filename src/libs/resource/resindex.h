@@ -4,14 +4,14 @@
 #ifndef UQM_LIBS_RESOURCE_RESINDEX_H
 #define UQM_LIBS_RESOURCE_RESINDEX_H
 
-#include "core/stl/stl.h"
+#include <cstdint>
+
 #include "core/stl/map.h"
 #include "core/stl/optional.h"
+#include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "core/stl/variant.h"
 #include "core/stl/vector.h"
-
-#include <cstdint>
 
 // A value in the data of a resource.
 using ResourceScalar = uqstl::variant<uqstl::string, int64_t, double, bool>;

@@ -14,17 +14,19 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "port.h"
+#include "vcontrol.h"
+
+#include <ctype.h>
 #include <SDL3/SDL.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include "vcontrol.h"
-#include "keynames.h"
+
 #include "core/log/log.h"
-#include "libs/reslib.h"
 #include "core/string/StringUtils.h"
 #include "core/thread/Mutex.h"
+#include "keynames.h"
+#include "libs/reslib.h"
+#include "port.h"
 
 /* How many binding slots are allocated at once. */
 static constexpr auto PoolChunkSize {64};

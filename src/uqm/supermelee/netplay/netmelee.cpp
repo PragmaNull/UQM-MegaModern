@@ -17,18 +17,18 @@
  */
 
 #include "netmelee.h"
+
+#include "../../battlecontrols.h"
 #include "libs/callback/async.h"
 #include "libs/callback/callback.h"
 #include "netcontext.h"
 #include "netinput.h"
 #include "netmisc.h"
+#include "options/options.h"
 #include "packetq.h"
 #include "proto/npconfirm.h"
 #include "proto/ready.h"
 #include "proto/reset.h"
-#include "options/options.h"
-
-#include "../../battlecontrols.h"
 // for NetworkInputContext
 #include "../../controls.h"
 // for BattleInputState

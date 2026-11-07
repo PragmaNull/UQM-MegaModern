@@ -21,8 +21,9 @@
 #ifndef UQM_LIBS_SOUND_AUDIOCORE_H
 #define UQM_LIBS_SOUND_AUDIOCORE_H
 
-#include "config.h"
 #include <cstdint>
+
+#include "config.h"
 #include "libs/sound/audiocoredefs.h"
 
 

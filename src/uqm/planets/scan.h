@@ -21,9 +21,9 @@
 #define UQM_PLANETS_SCAN_H
 
 #include "core/misc/bittricks.h"
+#include "core/string/StringUtils.h"
 #include "libs/gfxlib.h"
 #include "planets.h"
-#include "core/string/StringUtils.h"
 
 namespace uqm
 {

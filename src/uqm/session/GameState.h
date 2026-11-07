@@ -4,19 +4,20 @@
 #ifndef UQM_SESSION_GAMESTATE_H
 #define UQM_SESSION_GAMESTATE_H
 
+#include <cstdint>
+
+#include "core/stl/array.h"
 #include "core/stl/functional.h"
 #include "core/stl/map.h"
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
-#include "core/stl/array.h"
+#include "uqm/random/GameSeed.h"
+#include "uqm/session/FlagshipState.h"
 #include "uqm/session/GameClock.h"
 #include "uqm/session/GameData.h"
 #include "uqm/session/GameFlags.h"
-#include "uqm/session/FlagshipState.h"
-#include "uqm/random/GameSeed.h"
 #include "uqm/sis.h"
 #include "uqm/state.h"
-#include <cstdint>
 
 namespace uqm
 {

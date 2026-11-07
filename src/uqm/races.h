@@ -21,15 +21,16 @@
 #define UQM_RACES_H
 
 
-#include "core/types/enum.h"
 #include <cstdint>
+
 #include "core/misc/bittricks.h"
-#include "units.h"
+#include "core/types/enum.h"
 #include "displist.h"
-#include "uqm/inteldefs.h"
 #include "element.h"
-#include "libs/sndlib.h"
 #include "libs/reslib.h"
+#include "libs/sndlib.h"
+#include "units.h"
+#include "uqm/inteldefs.h"
 
 namespace uqm
 {

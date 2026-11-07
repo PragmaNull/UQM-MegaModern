@@ -17,10 +17,10 @@
  */
 
 //#include <string_view>
+#include "core/log/log.h"
 #include "options.h"
 #include "port.h"
 #include "resintrn.h"
-#include "core/log/log.h"
 
 // At other times, it is nullptr.
 

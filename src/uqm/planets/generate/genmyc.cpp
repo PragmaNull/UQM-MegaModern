@@ -16,19 +16,19 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "genall.h"
-#include "../lander.h"
-#include "../planets.h"
-#include "../scan.h"
 #include "../../build.h"
 #include "../../comm.h"
+#include "../../gamestr.h"
 #include "../../gendef.h"
-#include "../../starmap.h"
 #include "../../globdata.h"
 #include "../../ipdisp.h"
 #include "../../nameref.h"
+#include "../../starmap.h"
 #include "../../state.h"
-#include "../../gamestr.h"
+#include "../lander.h"
+#include "../planets.h"
+#include "../scan.h"
+#include "genall.h"
 #include "uqm/random/UQMRandom.h"
 
 

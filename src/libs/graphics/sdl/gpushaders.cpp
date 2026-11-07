@@ -1,6 +1,7 @@
 // GPU shaders for gamma correction and the screen scalers, for the SDL GPU renderer.
 
 #include "gpushaders.h"
+
 #include "core/log/log.h"
 #include "shaders/biadapt.frag.h"
 #include "shaders/biadaptadv.frag.h"

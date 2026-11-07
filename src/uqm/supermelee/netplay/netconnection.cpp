@@ -17,12 +17,12 @@
  */
 
 #define NETCONNECTION_INTERNAL
-#include "netplay.h"
 #include "netconnection.h"
 
-#include "netrcv.h"
-#include "netcontext.h"
 #include "core/log/log.h"
+#include "netcontext.h"
+#include "netplay.h"
+#include "netrcv.h"
 
 #if defined(DEBUG) || defined(NETPLAY_DEBUG)
 #include "core/log/log.h"

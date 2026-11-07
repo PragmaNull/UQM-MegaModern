@@ -20,29 +20,28 @@
 
 #include "coderes.h"
 #include "controls.h"
-#include "options.h"
 #include "nameref.h"
+#include "options.h"
 #ifdef NETPLAY
 #include "supermelee/netplay/netmelee.h"
 #endif
-#include "init.h"
+#include <assert.h>
+#include <errno.h>
+#include <string.h>
 
-#include "status.h"
-#include "resinst.h"
-#include "sounds.h"
-#include "fmv.h"
+#include "core/log/log.h"
 #include "core/misc/bittricks.h"
+#include "core/misc/FatalExit.h"
+#include "core/stl/vector.h"
+#include "fmv.h"
+#include "init.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/sound/sound.h"
 #include "libs/time/timelib.h"
 #include "libs/vidlib.h"
-#include "core/log/log.h"
-#include "core/stl/vector.h"
-#include "core/misc/FatalExit.h"
-
-#include <assert.h>
-#include <errno.h>
-#include <string.h>
+#include "resinst.h"
+#include "sounds.h"
+#include "status.h"
 
 
 namespace uqm

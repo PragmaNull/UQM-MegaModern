@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_YEHAT_RESINST_H
 #define UQM_SHIPS_YEHAT_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring ShieldBigMaskAnim {"ship.yehat.graphics.shield.large"};

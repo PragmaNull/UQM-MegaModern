@@ -33,10 +33,12 @@
  *    directly editing the format contents
  */
 
-#include <fmt/base.h>
 #include "png2sdl.h"
-#include "sdl_common.h"
+
+#include <fmt/base.h>
 #include <png.h>
+
+#include "sdl_common.h"
 
 /* Link function between SDL_IOStream and PNG's data source */
 static void png_read_data(png_structp ctx, png_bytep area, png_size_t size)

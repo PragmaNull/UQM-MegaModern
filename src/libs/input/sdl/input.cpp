@@ -16,22 +16,24 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "input.h"
+
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
-#include "input.h"
+
 #include "../inpintrn.h"
-#include "libs/time/timelib.h"
-#include "libs/input/sdl/vcontrol.h"
-#include "libs/input/sdl/keynames.h"
 #include "core/log/log.h"
-#include "libs/reslib.h"
-#include "options.h"
+#include "core/stl/atomic.h"
 #include "core/string/StringUtils.h"
 #include "libs/file/textfile.h"
-#include "libs/input/keyconfig.h"
 #include "libs/graphics/sdl/pure.h"
-#include "core/stl/atomic.h"
+#include "libs/input/keyconfig.h"
+#include "libs/input/sdl/keynames.h"
+#include "libs/input/sdl/vcontrol.h"
+#include "libs/reslib.h"
+#include "libs/time/timelib.h"
+#include "options.h"
 
 static constexpr auto Kbdbufsize {1 << 8};
 static int kbdhead = 0, kbdtail = 0;

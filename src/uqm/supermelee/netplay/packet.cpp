@@ -16,16 +16,15 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "netplay.h"
 #include "packet.h"
-
-#include "uqmversion.h"
-
-#include "packethandlers.h"
 
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "netplay.h"
+#include "packethandlers.h"
+#include "uqmversion.h"
 
 
 namespace uqm

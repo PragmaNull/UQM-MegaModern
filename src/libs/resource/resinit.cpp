@@ -16,20 +16,19 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include <cstdint>
+#include <fmt/format.h>
+
+#include "core/log/log.h"
 #include "core/stl/stl.h"
 #include "core/stl/vector.h"
-
-#include "resintrn.h"
-#include "options.h"
-#include <cstdint>
-#include "core/log/log.h"
-#include "libs/file/textfile.h"
-
-#include <fmt/format.h>
 #include "core/string/StringUtils.h"
+#include "libs/file/textfile.h"
 #include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/vidlib.h"
+#include "options.h"
+#include "resintrn.h"
 // XXX: we should not include anything from uqm/ inside libs/
 #include "uqm/coderes.h"
 

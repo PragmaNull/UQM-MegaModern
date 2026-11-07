@@ -18,22 +18,22 @@
 
 #include "ship.h"
 
+#include "battle.h"
 #include "build.h"
 #include "collide.h"
 #include "colors.h"
 #include "globdata.h"
-#include "status.h"
 #include "hyper.h"
-#include "tactrans.h"
-#include "pickship.h"
 #include "init.h"
-#include "battle.h"
-#include "supermelee/pickmele.h"
+#include "pickship.h"
 #include "races.h"
 #include "setup.h"
 #include "sounds.h"
-#include "util.h"
+#include "status.h"
+#include "supermelee/pickmele.h"
+#include "tactrans.h"
 #include "uqm/random/UQMRandom.h"
+#include "util.h"
 
 
 namespace uqm

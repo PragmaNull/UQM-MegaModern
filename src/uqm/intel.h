@@ -21,13 +21,13 @@
 #define UQM_INTEL_H
 
 
-#include "uqm/inteldefs.h"
-#include "options/OptionDefs.h"
 #include "battlecontrols.h"
 #include "controls.h"
 #include "element.h"
+#include "options/OptionDefs.h"
 #include "races.h"
 #include "setup.h"
+#include "uqm/inteldefs.h"
 
 namespace uqm
 {

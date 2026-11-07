@@ -14,22 +14,24 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "port.h"
 #include <string.h>
+
+#include "port.h"
 // for memcpy()
 
+#include <cstdint>
 #include <SDL3/SDL.h>
-#include "sdl_common.h"
+
+#include "core/log/log.h"
+#include "libs/graphics/cmap.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
-#include "libs/graphics/cmap.h"
-#include "core/log/log.h"
-#include "primitives.h"
-#include "palette.h"
-#include "sdlimage.h"
-#include "rotozoom.h"
 #include "options.h"
-#include <cstdint>
+#include "palette.h"
+#include "primitives.h"
+#include "rotozoom.h"
+#include "sdl_common.h"
+#include "sdlimage.h"
 
 typedef SDL_Surface* NativeCanvas;
 

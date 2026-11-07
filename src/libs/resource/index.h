@@ -21,8 +21,9 @@
 #define UQM_LIBS_RESOURCE_INDEX_H
 
 #include <stdio.h>
-#include "core/stl/string.h"
+
 #include "core/stl/map.h"
+#include "core/stl/string.h"
 #include "libs/reslib.h"
 
 

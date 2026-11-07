@@ -6,13 +6,13 @@
 #include <EASTL/ring_buffer.h>
 #else
 
-#include "core/stl/array.h"
 #include <cstddef>
+
+#include "core/stl/array.h"
+#include "core/stl/bit.h"
 #include "core/stl/iterator.h"
 #include "core/stl/stdexcept.h"
 #include "core/stl/stl.h"
-
-#include "core/stl/bit.h"
 
 namespace std
 {

@@ -24,10 +24,10 @@ struct PickMeleeState;
 
 } // namespace uqm
 
-#include "uqm/races.h"
-#include "uqm/battlecontrols.h"
-#include "meleesetup.h"
 #include "core/misc/bittricks.h"
+#include "meleesetup.h"
+#include "uqm/battlecontrols.h"
+#include "uqm/races.h"
 
 namespace uqm
 {
@@ -53,8 +53,8 @@ bool selectShipNetwork(NetworkInputContext* context, PickMeleeState* gms);
 #ifdef PICKMELE_INTERNAL
 
 #include "../flash.h"
-#include "libs/time/timelib.h"
 #include "../init.h"
+#include "libs/time/timelib.h"
 
 
 namespace uqm

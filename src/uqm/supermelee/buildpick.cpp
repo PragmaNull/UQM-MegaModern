@@ -16,14 +16,13 @@
 
 #include "buildpick.h"
 
-#include "core/string/StringUtils.h"
-
-#include "../controls.h"
 #include "../colors.h"
+#include "../controls.h"
 #include "../fmv.h"
 #include "../master.h"
 #include "../setup.h"
 #include "../sounds.h"
+#include "core/string/StringUtils.h"
 #include "libs/gfxlib.h"
 
 namespace uqm

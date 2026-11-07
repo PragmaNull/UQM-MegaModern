@@ -16,24 +16,23 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "menustat.h"
-
 #include "colors.h"
 #include "controls.h"
-#include "units.h"
-#include "options.h"
-#include "setup.h"
-#include "gamestr.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/time/timelib.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
-#include "util.h"
-#include "planets/planets.h"
-#include "shipcont.h"
-#include "nameref.h"
+#include "gamestr.h"
 #include "ifontres.h"
 #include "libs/graphics/drawable.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/time/timelib.h"
+#include "menustat.h"
+#include "nameref.h"
+#include "options.h"
+#include "planets/planets.h"
+#include "setup.h"
+#include "shipcont.h"
+#include "units.h"
+#include "util.h"
 
 namespace uqm
 {

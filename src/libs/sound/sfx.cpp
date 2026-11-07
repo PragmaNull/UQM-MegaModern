@@ -16,12 +16,12 @@
 
 #include <math.h>
 
-#include "options.h"
-#include "sound.h"
-#include "sndintrn.h"
+#include "core/log/log.h"
 #include "libs/io/Path.h"
 #include "libs/reslib.h"
-#include "core/log/log.h"
+#include "options.h"
+#include "sndintrn.h"
+#include "sound.h"
 #include "soundbank.h"
 
 static void CheckFinishedChannels(void);

@@ -20,13 +20,11 @@
 #ifndef UQM_LIBS_MATHLIB_H
 #define UQM_LIBS_MATHLIB_H
 
-#include "core/misc/bittricks.h"
-
-#include "core/stl/string.h"
-
 #include <cmath>
 #include <zlib.h>
 
+#include "core/misc/bittricks.h"
+#include "core/stl/string.h"
 #include "math/Random.h"
 
 // The integer square root of 'value', rounded down.

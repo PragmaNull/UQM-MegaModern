@@ -14,20 +14,23 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "sound.h"
-#include "sndintrn.h"
 #include "libs/sound/trackplayer.h"
-#include "trackint.h"
-#include "core/log/log.h"
-#include "options.h"
+
 #include <ctype.h>
+#include <memory.h>
 #include <stdlib.h>
 #include <string.h>
-#include <memory.h>
+
+#include "core/log/log.h"
 #include "core/stl/atomic.h"
+#include "options.h"
+#include "sndintrn.h"
+#include "sound.h"
+#include "trackint.h"
 // for uqm::globalFlags() & ReadSpeedMask
 #include "uqm/globdata.h"
 // for usingSpeech bool
+#include "libs/sound/stream.h"
 #include "uqm/setup.h"
 
 static int track_count;	  // total number of tracks

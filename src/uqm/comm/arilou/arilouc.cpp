@@ -16,14 +16,13 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "options.h"
 #include "../commall.h"
+#include "options.h"
 #include "resinst.h"
 #include "strings.h"
-
 #include "uqm/gameev.h"
-#include "uqm/races.h"
 #include "uqm/lua/UQMLua.h"
+#include "uqm/races.h"
 
 
 namespace uqm

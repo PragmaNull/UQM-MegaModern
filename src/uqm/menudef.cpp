@@ -1,14 +1,13 @@
 // Setup menu layout and text, read from the menu definition file.
 #include "menudef.h"
 
-#include "core/log/log.h"
-#include "core/string/StringUtils.h"
-#include "options/Setting.h"
-
+#include <cmath>
 #include <fmt/format.h>
 #include <yyjson.h>
 
-#include <cmath>
+#include "core/log/log.h"
+#include "core/string/StringUtils.h"
+#include "options/Setting.h"
 
 
 namespace uqm

@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_ILWRATH_RESINST_H
 #define UQM_COMM_ILWRATH_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring IlwrathColorMap {"comm.ilwrath.colortable"};

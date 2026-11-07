@@ -16,16 +16,15 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "port.h"
-
-#include "netplay.h"
 #include "netinput.h"
 
+#include <stdlib.h>
+
+#include "core/log/log.h"
+#include "netplay.h"
+#include "port.h"
 #include "uqm/inteldefs.h" // for PlayerControlFlags
 #include "uqm/setup.h"	   // for PlayerControl
-#include "core/log/log.h"
-
-#include <stdlib.h>
 
 
 namespace uqm

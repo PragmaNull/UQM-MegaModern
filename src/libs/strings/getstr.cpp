@@ -16,15 +16,16 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "options.h"
-#include "strintrn.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/reslib.h"
+#include <fmt/format.h>
+
 #include "core/log/log.h"
 #include "core/stl/optional.h"
-#include "libs/file/textfile.h"
-#include <fmt/format.h>
 #include "libs/file/json.h"
+#include "libs/file/textfile.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/reslib.h"
+#include "options.h"
+#include "strintrn.h"
 
 
 static constexpr int c_stringTableVersion {1};

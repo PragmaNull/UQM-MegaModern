@@ -5,6 +5,7 @@
 #define UQM_SESSION_GAMECLOCK_H
 
 #include <cstdint>
+
 #include "core/stl/optional.h"
 #include "core/stl/vector.h"
 #include "uqm/clock.h"

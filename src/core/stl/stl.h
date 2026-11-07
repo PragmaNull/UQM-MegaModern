@@ -13,9 +13,9 @@ namespace uqgsl = gsl_lite;
 #ifndef USING_EASTL
 
 #include <algorithm>
-#include <type_traits>
 #include <numeric>
 #include <span>
+#include <type_traits>
 
 // The standard library, plus aliases that the project adds in its own headers.
 namespace uqstl

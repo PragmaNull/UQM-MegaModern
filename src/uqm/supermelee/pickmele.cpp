@@ -19,8 +19,8 @@
 #define PICKMELE_INTERNAL
 #include "pickmele.h"
 
-#include "../battlecontrols.h"
 #include "../battle.h"
+#include "../battlecontrols.h"
 #include "../build.h"
 #include "../controls.h"
 #include "../flash.h"
@@ -37,8 +37,8 @@
 #include "../races.h"
 #include "../setup.h"
 #include "../sounds.h"
-#include "libs/callback/async.h"
 #include "core/log/log.h"
+#include "libs/callback/async.h"
 #include "libs/mathlib.h"
 #include "uqm/random/UQMRandom.h"
 

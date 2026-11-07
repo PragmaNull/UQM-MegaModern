@@ -16,24 +16,25 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "build.h"
-#include "colors.h"
-#include "controls.h"
-#include "starmap.h"
-#include "comm.h"
-#include "gamestr.h"
-#include "save.h"
 #include "starbase.h"
-#include "sis.h"
-#include "nameref.h"
-#include "settings.h"
-#include "setup.h"
-#include "sounds.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/time/timelib.h"
-#include "planets/planets.h"
+
 #include <math.h>
 
+#include "build.h"
+#include "colors.h"
+#include "comm.h"
+#include "controls.h"
+#include "gamestr.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/time/timelib.h"
+#include "nameref.h"
+#include "planets/planets.h"
+#include "save.h"
+#include "settings.h"
+#include "setup.h"
+#include "sis.h"
+#include "sounds.h"
+#include "starmap.h"
 #include "util.h"
 
 namespace uqm

@@ -91,9 +91,9 @@
  *   overlap; artifacts would occur.
  */
 
+#include "core/stl/vector.h"
 #include "libs/gfxlib.h"
 #include "libs/time/timelib.h"
-#include "core/stl/vector.h"
 
 namespace uqm
 {

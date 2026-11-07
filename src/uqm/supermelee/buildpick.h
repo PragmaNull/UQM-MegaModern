@@ -3,8 +3,9 @@
 #define UQM_SUPERMELEE_BUILDPICK_H
 
 #include <cstdint>
-#include "melee.h"
+
 #include "../races.h"
+#include "melee.h"
 
 namespace uqm
 {

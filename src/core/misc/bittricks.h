@@ -4,11 +4,11 @@
 #ifndef UQM_CORE_MISC_BITTRICKS_H
 #define UQM_CORE_MISC_BITTRICKS_H
 
-#include "core/stl/stl.h"
+#include <cstdint>
 
 #include "core/stl/bit.h"
 #include "core/stl/concepts.h"
-#include <cstdint>
+#include "core/stl/stl.h"
 
 namespace uqm
 {

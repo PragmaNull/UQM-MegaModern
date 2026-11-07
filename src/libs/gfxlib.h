@@ -22,12 +22,13 @@
 #ifndef UQM_LIBS_GFXLIB_H
 #define UQM_LIBS_GFXLIB_H
 
-#include "core/types/enum.h"
 #include <fmt/base.h>
-#include "port.h"
-#include "core/misc/bittricks.h"
-#include "libs/time/timelib.h"
 #include <math.h>
+
+#include "core/misc/bittricks.h"
+#include "core/types/enum.h"
+#include "libs/time/timelib.h"
+#include "port.h"
 
 struct Color
 {

@@ -16,32 +16,33 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "core/stl/filesystem.h"
+#include "sdl_common.h"
+
 #include <fmt/chrono.h>
 #include <fmt/format.h>
-#include "core/stl/atomic.h"
 
-#include "libs/graphics/gfx_defs.h"
-#include "sdl_common.h"
-#include "pure.h"
-#include "primitives.h"
-#include "options.h"
-#include "uqmversion.h"
 #include "core/platform/platform.h"
+#include "core/stl/atomic.h"
+#include "core/stl/filesystem.h"
 #include "core/string/StringUtils.h"
-#include "libs/graphics/drawcmd.h"
-#include "libs/graphics/dcqueue.h"
 #include "libs/graphics/cmap.h"
+#include "libs/graphics/dcqueue.h"
+#include "libs/graphics/drawcmd.h"
+#include "libs/graphics/gfx_defs.h"
 #include "libs/input/sdl/input.h"
+#include "options.h"
+#include "primitives.h"
+#include "pure.h"
+#include "uqmversion.h"
 // for ProcessInputEvent()
-#include "libs/graphics/bbox.h"
-#include "port.h"
-#include "core/log/log.h"
-#include "libs/vidlib.h"
-#include "uqm/units.h"
-#include "uqm/globdata.h"
-
 #include <time.h>
+
+#include "core/log/log.h"
+#include "libs/graphics/bbox.h"
+#include "libs/vidlib.h"
+#include "port.h"
+#include "uqm/globdata.h"
+#include "uqm/units.h"
 
 SDL_Surface* SDL_Screen;
 SDL_Surface* TransitionScreen;

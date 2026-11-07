@@ -19,8 +19,8 @@
 #define UQM_SHIP_H
 
 #include "core/misc/bittricks.h"
-#include "races.h"
 #include "element.h"
+#include "races.h"
 
 namespace uqm
 {

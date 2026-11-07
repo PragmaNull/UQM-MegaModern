@@ -16,10 +16,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "primitives.h"
+
+#include <cmath>
+
 #include "core/types/enum.h"
 #include "sdl_common.h"
-#include "primitives.h"
-#include <cmath>
 
 
 // Pixel drawing routines

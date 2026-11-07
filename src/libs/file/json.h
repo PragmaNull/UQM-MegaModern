@@ -4,16 +4,16 @@
 #ifndef UQM_LIBS_FILE_JSON_H
 #define UQM_LIBS_FILE_JSON_H
 
-#include "core/stl/stl.h"
-#include "core/stl/limits.h"
-#include "core/stl/memory.h"
-#include "core/stl/optional.h"
-#include "core/stl/string.h"
-#include "core/stl/vector.h"
-
 #include <cstdint>
 #include <magic_enum/magic_enum.hpp>
 #include <yyjson.h>
+
+#include "core/stl/limits.h"
+#include "core/stl/memory.h"
+#include "core/stl/optional.h"
+#include "core/stl/stl.h"
+#include "core/stl/string.h"
+#include "core/stl/vector.h"
 
 namespace uqm
 {

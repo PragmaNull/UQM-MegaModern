@@ -14,25 +14,24 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "port.h"
-#include "core/string/StringUtils.h"
-#include "libs/graphics/drawcmd.h"
-#include "libs/graphics/drawable.h"
-#include "libs/graphics/context.h"
 #include "libs/graphics/dcqueue.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/graphics/bbox.h"
-#include "libs/time/timelib.h"
+
 #include "core/log/log.h"
-#include "options.h"
-#include "libs/graphics/font.h"
-#include "uqm/setup.h"
-
-#include "core/thread/Mutex.h"
-
 #include "core/stl/chrono.h"
 #include "core/stl/condition_variable.h"
 #include "core/stl/thread.h"
+#include "core/string/StringUtils.h"
+#include "core/thread/Mutex.h"
+#include "libs/graphics/bbox.h"
+#include "libs/graphics/context.h"
+#include "libs/graphics/drawable.h"
+#include "libs/graphics/drawcmd.h"
+#include "libs/graphics/font.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/time/timelib.h"
+#include "options.h"
+#include "port.h"
+#include "uqm/setup.h"
 
 namespace
 {

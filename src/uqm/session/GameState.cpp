@@ -1,6 +1,7 @@
 // The state of one game, as a save file holds it.
 
 #include "GameState.h"
+
 #include "core/log/log.h"
 
 

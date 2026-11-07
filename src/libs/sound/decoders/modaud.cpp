@@ -17,19 +17,20 @@
 /* MikMod decoder (.mod adapter)
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include "port.h"
-#include <cstdint>
-#include "decoder.h"
-#include "core/misc/bittricks.h"
-#include "libs/reslib.h"
-#include "libs/sound/audiocore.h"
-#include "core/log/log.h"
 #include "modaud.h"
 
+#include <cstdint>
+#include <errno.h>
 #include <mikmod.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "core/log/log.h"
+#include "core/misc/bittricks.h"
+#include "decoder.h"
+#include "libs/reslib.h"
+#include "libs/sound/audiocore.h"
+#include "port.h"
 
 
 const static char* moda_GetName(void);

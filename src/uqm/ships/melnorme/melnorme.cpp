@@ -16,16 +16,17 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "../ship.h"
 #include "melnorme.h"
-#include "resinst.h"
+
 #include "../../setup.h"
 #include "../../setupmenu.h"
-#include "uqm/globdata.h"
+#include "../ship.h"
 #include "libs/mathlib.h"
-#include "uqm/tactrans.h" // Kruzen: for sounds on April Fools
+#include "resinst.h"
 #include "uqm/battle.h"
+#include "uqm/globdata.h"
 #include "uqm/random/UQMRandom.h"
+#include "uqm/tactrans.h" // Kruzen: for sounds on April Fools
 
 namespace uqm
 {

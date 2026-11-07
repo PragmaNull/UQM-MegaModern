@@ -2,12 +2,12 @@
 // Based on the uio zip code, Copyright (C) 2003 Serge van den Boom, GPL version 2.
 #include "libs/io/standard/ZipSource.h"
 
+#include <zlib.h>
+
 #include "core/log/log.h"
 #include "core/stl/array.h"
-#include "libs/io/Path.h"
-
 #include "core/stl/chrono.h"
-#include <zlib.h>
+#include "libs/io/Path.h"
 
 namespace uqm::io::standard
 {

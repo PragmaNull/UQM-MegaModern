@@ -18,8 +18,8 @@
 #ifndef UQM_UTIL_H
 #define UQM_UTIL_H
 
-#include "core/stl/stl.h"
 #include "core/misc/bittricks.h"
+#include "core/stl/stl.h"
 #include "libs/gfxlib.h"
 #include "setupmenu.h"
 

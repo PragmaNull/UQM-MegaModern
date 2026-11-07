@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_HUMAN_HUMAN_H
 #define UQM_SHIPS_HUMAN_HUMAN_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_human(void);

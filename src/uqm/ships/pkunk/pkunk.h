@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_PKUNK_PKUNK_H
 #define UQM_SHIPS_PKUNK_PKUNK_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_pkunk(void);

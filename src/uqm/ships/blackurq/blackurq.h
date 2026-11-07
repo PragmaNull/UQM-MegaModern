@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_BLACKURQ_BLACKURQ_H
 #define UQM_SHIPS_BLACKURQ_BLACKURQ_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_black_urquan(void);

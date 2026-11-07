@@ -19,8 +19,8 @@
 #define UQM_PROCESS_H
 
 #include "core/misc/bittricks.h"
-#include "libs/gfxlib.h"
 #include "element.h"
+#include "libs/gfxlib.h"
 
 namespace uqm
 {

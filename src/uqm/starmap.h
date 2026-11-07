@@ -20,8 +20,8 @@
 
 #include "core/misc/bittricks.h"
 #include "planets/planets.h"
-#include "uqm/session/GameState.h"
 #include "uqm/random/UQMRandom.h"
+#include "uqm/session/GameState.h"
 
 namespace uqm
 {

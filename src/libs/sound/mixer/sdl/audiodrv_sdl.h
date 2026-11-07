@@ -21,10 +21,11 @@
 #ifndef UQM_LIBS_SOUND_MIXER_SDL_AUDIODRV_SDL_H
 #define UQM_LIBS_SOUND_MIXER_SDL_AUDIODRV_SDL_H
 
-#include "port.h"
-#include "libs/sound/sound.h"
-#include "libs/sound/mixer/mixer.h"
 #include <SDL3/SDL.h>
+
+#include "libs/sound/mixer/mixer.h"
+#include "libs/sound/sound.h"
+#include "port.h"
 
 /* General */
 int32_t mixSDL_Init(audio_Driver* driver, int32_t flags);

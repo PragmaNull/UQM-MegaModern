@@ -20,8 +20,8 @@
 #ifndef UQM_LIBS_CALLBACK_ALARM_H
 #define UQM_LIBS_CALLBACK_ALARM_H
 
-#include "port.h"
 #include "core/stl/chrono.h"
+#include "port.h"
 
 // Time since the game clock started.
 using AlarmTime = uqstl::chrono::milliseconds;

@@ -18,28 +18,28 @@
 
 #include "../build.h"
 #include "../colors.h"
-#include "../gendef.h"
-#include "../starmap.h"
+#include "../controls.h"
 #include "../encount.h"
 #include "../gamestr.h"
-#include "../controls.h"
+#include "../gendef.h"
 #include "../save.h"
 #include "../settings.h"
-#include "../shipcont.h"
 #include "../setup.h"
-#include "../state.h"
+#include "../shipcont.h"
 #include "../sis.h"
+#include "../starmap.h"
+#include "../state.h"
 // for ClearSISRect()
 #include "../grpinfo.h"
+#include "../hyper.h"
 #include "../sounds.h"
 #include "../util.h"
-#include "../hyper.h"
 // for SaveSisHyperState()
 #include "planets.h"
 // for SaveSolarSysLocation() and tests
-#include "libs/strlib.h"
 #include "../../options.h"
 #include "libs/graphics/gfx_common.h"
+#include "libs/strlib.h"
 
 namespace uqm
 {

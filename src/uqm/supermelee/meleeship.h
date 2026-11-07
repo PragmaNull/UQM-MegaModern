@@ -2,8 +2,9 @@
 #ifndef UQM_SUPERMELEE_MELEESHIP_H
 #define UQM_SUPERMELEE_MELEESHIP_H
 
-#include "core/types/enum.h"
 #include <cstdint>
+
+#include "core/types/enum.h"
 
 namespace uqm
 {

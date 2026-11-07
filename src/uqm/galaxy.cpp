@@ -18,19 +18,19 @@
 
 /* background starfield - used to generate agalaxy.asm */
 
+#include "core/log/log.h"
+#include "core/misc/bittricks.h"
 #include "element.h"
 #include "globdata.h"
+#include "igfxres.h"
 #include "init.h"
-#include "process.h"
-#include "units.h"
-#include "options.h"
-#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/mathlib.h"
-#include "core/log/log.h"
-#include "igfxres.h"
 #include "nameref.h"
+#include "options.h"
+#include "process.h"
+#include "units.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

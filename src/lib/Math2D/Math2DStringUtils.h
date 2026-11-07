@@ -3,8 +3,8 @@
 #define UQM_LIB_MATH2D_MATH2DSTRINGUTILS_H
 
 #include <fmt/format.h>
-#include "core/stl/istream.h"
 
+#include "core/stl/istream.h"
 #include "core/stl/stl.h"
 #include "core/string/StringUtils.h"
 #include "lib/Math2D/Math2D.h"

@@ -22,10 +22,11 @@
 #ifndef UQM_LIBS_SOUND_MIXER_MIXERINT_H
 #define UQM_LIBS_SOUND_MIXER_MIXERINT_H
 
-#include "core/types/enum.h"
-#include "core/stl/stl.h"
-#include "port.h"
 #include <cstdint>
+
+#include "core/stl/stl.h"
+#include "core/types/enum.h"
+#include "port.h"
 
 /*************************************************
  *  Internals

@@ -20,8 +20,9 @@
 #ifndef UQM_LIBS_INPUT_SDL_INPUT_H
 #define UQM_LIBS_INPUT_SDL_INPUT_H
 
-#include "port.h"
 #include <SDL3/SDL.h>
+
+#include "port.h"
 
 extern void ProcessInputEvent(const SDL_Event* Event);
 

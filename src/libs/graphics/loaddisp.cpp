@@ -16,9 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/log/log.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/drawable.h"
-#include "core/log/log.h"
 
 
 // Reads a piece of screen into a passed FrameRef or a newly created one

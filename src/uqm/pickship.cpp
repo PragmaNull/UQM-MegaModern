@@ -18,20 +18,20 @@
 
 #include "pickship.h"
 
+#include "battle.h"
 #include "build.h"
 #include "colors.h"
 #include "controls.h"
-#include "menustat.h"
-#include "supermelee/pickmele.h"
 #include "encount.h"
-#include "battle.h"
+#include "libs/mathlib.h"
+#include "menustat.h"
+#include "nameref.h"
 #include "races.h"
 #include "resinst.h"
-#include "nameref.h"
 #include "settings.h"
 #include "setup.h"
 #include "sounds.h"
-#include "libs/mathlib.h"
+#include "supermelee/pickmele.h"
 #include "util.h"
 
 namespace uqm

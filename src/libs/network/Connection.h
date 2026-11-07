@@ -4,12 +4,12 @@
 #ifndef UQM_LIBS_NETWORK_CONNECTION_H
 #define UQM_LIBS_NETWORK_CONNECTION_H
 
+#include <cstddef>
+
 #include "core/stl/functional.h"
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
 #include "core/stl/system_error.h"
-
-#include <cstddef>
 
 namespace uqm::net
 {

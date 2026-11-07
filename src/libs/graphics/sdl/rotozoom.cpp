@@ -9,11 +9,13 @@
 
 */
 
+#include "rotozoom.h"
+
+#include <cmath>
 #include <stdlib.h>
 #include <string.h>
-#include <cmath>
+
 #include "sdl_common.h"
-#include "rotozoom.h"
 
 
 /* 

@@ -17,6 +17,10 @@
 
 #include "UQMLua.h"
 
+#include <cassert>
+#include <cstring>
+#include <fmt/format.h>
+
 #include "core/log/log.h"
 #include "core/stl/array.h"
 #include "core/stl/vector.h"
@@ -27,10 +31,6 @@
 #include "uqm/lua/luafuncs/logfuncs.h"
 #include "uqm/lua/luafuncs/statefuncs.h"
 #include "uqm/resinst.h"
-
-#include <cassert>
-#include <cstring>
-#include <fmt/format.h>
 
 
 namespace uqm

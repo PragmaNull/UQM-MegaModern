@@ -16,12 +16,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include <math.h>
+
+#include "../init.h"
 #include "../units.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/context.h"
-#include "../init.h"
-#include <math.h>
-
 #include "planets.h"
 
 namespace uqm

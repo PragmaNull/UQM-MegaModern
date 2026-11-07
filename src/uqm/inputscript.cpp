@@ -1,9 +1,9 @@
 // Scripted menu input, read from a text file, for testing the game without a keyboard.
 #include "inputscript.h"
 
-#include "core/string/StringUtils.h"
-
 #include <fmt/format.h>
+
+#include "core/string/StringUtils.h"
 
 
 namespace uqm

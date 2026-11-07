@@ -22,10 +22,9 @@
 #define UQM_LIBS_SOUND_MIXER_NOSOUND_AUDIODRV_NOSOUND_H
 
 #include "config.h"
-#include "libs/sound/sound.h"
-#include "libs/sound/mixer/mixer.h"
-
 #include "core/stl/thread.h"
+#include "libs/sound/mixer/mixer.h"
+#include "libs/sound/sound.h"
 
 
 /* Playback task */

@@ -16,15 +16,17 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "../ship.h"
 #include "urquan.h"
-#include "resinst.h"
+
+#include <stdlib.h>
+
 #include "../../intel.h"
-#include "uqm/globdata.h"
 #include "../../setup.h"
 #include "../../setupmenu.h"
+#include "../ship.h"
+#include "resinst.h"
 #include "uqm/colors.h"
-#include <stdlib.h>
+#include "uqm/globdata.h"
 
 namespace uqm
 {

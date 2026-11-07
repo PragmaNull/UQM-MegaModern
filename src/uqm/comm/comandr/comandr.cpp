@@ -19,16 +19,16 @@
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
-#include "uqm/units.h"
 #include "uqm/setup.h"
 #include "uqm/sis.h"
+#include "uqm/units.h"
 // for DeltaSISGauges(), DrawLanders()
 #include "libs/graphics/gfx_common.h"
-#include "uqm/lua/UQMLua.h"
-#include "uqm/settings.h"
-#include "uqm/nameref.h"
 #include "libs/math/Random.h"
+#include "uqm/lua/UQMLua.h"
+#include "uqm/nameref.h"
 #include "uqm/random/UQMRandom.h"
+#include "uqm/settings.h"
 
 namespace uqm
 {

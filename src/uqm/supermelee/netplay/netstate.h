@@ -20,9 +20,10 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_NETSTATE_H
 #define UQM_SUPERMELEE_NETPLAY_NETSTATE_H
 
+#include <cstdint>
+
 #include "core/types/enum.h"
 #include "port.h"
-#include <cstdint>
 
 namespace uqm
 {

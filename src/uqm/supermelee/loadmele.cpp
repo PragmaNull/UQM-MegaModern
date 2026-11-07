@@ -19,20 +19,19 @@
 // This file handles loading of teams, but the UI and the actual loading.
 
 #define MELEESETUP_INTERNAL
-#include "melee.h"
-
 #include "../controls.h"
 #include "../gameopt.h"
 #include "../gamestr.h"
 #include "../globdata.h"
 #include "../master.h"
-#include "meleesetup.h"
 #include "../save.h"
 #include "../setup.h"
 #include "../sounds.h"
-#include "options.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
+#include "melee.h"
+#include "meleesetup.h"
+#include "options.h"
 
 
 namespace uqm

@@ -15,16 +15,16 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pure.h"
-#include "libs/graphics/bbox.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
+#include "gpushaders.h"
+#include "libs/graphics/bbox.h"
+#include "libs/graphics/imgui/imguilayer.h"
+#include "options.h"
+#include "png2sdl.h"
+#include "pure.h"
 #include "scalers.h"
 #include "uqmversion.h"
-#include "png2sdl.h"
-#include "options.h"
-#include "gpushaders.h"
-#include "libs/graphics/imgui/imguilayer.h"
 
 
 namespace tfb

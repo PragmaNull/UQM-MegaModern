@@ -16,9 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "core/log/log.h"
 #include "gfxintrn.h"
 #include "options.h"
-#include "core/log/log.h"
 
 static void GetCelFileData(const char* pathname, RESOURCE_DATA* resdata)
 {

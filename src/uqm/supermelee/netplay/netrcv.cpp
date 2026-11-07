@@ -17,18 +17,17 @@
  */
 
 #define NETCONNECTION_INTERNAL
-#include "netplay.h"
-#include "port.h"
-
-#include "netconnection.h"
 #include "netrcv.h"
-#include "packet.h"
 
 #include <cstdint>
+#include <string.h>
+
 #include "core/log/log.h"
 #include "core/platform/platform.h"
-
-#include <string.h>
+#include "netconnection.h"
+#include "netplay.h"
+#include "packet.h"
+#include "port.h"
 
 
 namespace uqm

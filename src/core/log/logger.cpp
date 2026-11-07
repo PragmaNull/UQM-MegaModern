@@ -1,13 +1,12 @@
 #include "logger.h"
 
 #include <spdlog/async.h>
-
 #include <spdlog/sinks/basic_file_sink.h>
-#include "spdlog/sinks/stdout_color_sinks.h"
 
 #include "core/log/BacktraceCaptureSink.h"
-#include "core/stl/stl.h"
 #include "core/stl/ring_buffer.h"
+#include "core/stl/stl.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace uqm
 {

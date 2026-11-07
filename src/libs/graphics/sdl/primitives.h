@@ -20,6 +20,10 @@
 #ifndef UQM_LIBS_GRAPHICS_SDL_PRIMITIVES_H
 #define UQM_LIBS_GRAPHICS_SDL_PRIMITIVES_H
 
+#include <SDL3/SDL.h>
+
+#include "libs/gfxlib.h"
+
 /* Function types for the pixel functions */
 
 typedef Uint32 (*GetPixelFn)(SDL_Surface*, int x, int y);

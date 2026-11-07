@@ -1,10 +1,8 @@
 // Reads the alignment and padding markers ("|n|" and ":n:") at the start of display strings.
-#include "libs/strlib.h"
-
 #include "core/log/log.h"
-#include "uqm/units.h"
-
 #include "core/stl/charconv.h"
+#include "libs/strlib.h"
+#include "uqm/units.h"
 
 namespace
 {

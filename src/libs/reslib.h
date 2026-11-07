@@ -22,9 +22,9 @@
 
 //#include <stdio.h>
 #include "core/misc/bittricks.h"
-#include "port.h"
 #include "libs/io/FileSystem.h"
 #include "libs/resource/resindex.h"
+#include "port.h"
 
 struct ResourceIndexDesc;
 using ResourceIndex = ResourceIndexDesc*;
@@ -97,8 +97,8 @@ void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, cons
 bool ConvertLegacyResourceIndex(const uqm::io::Directory& dir, const char* oldName, const char* newName);
 
 
-#include "libs/strlib.h"
 #include "libs/gfxlib.h"
+#include "libs/strlib.h"
 
 namespace uqm
 {

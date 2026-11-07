@@ -21,18 +21,17 @@
  * much.
  */
 
-#include "core/types/enum.h"
 #include "dummy.h"
 
+#include <ctype.h>
+#include <stdlib.h>
+
 #include "coderes.h"
+#include "core/log/log.h"
+#include "core/misc/bittricks.h"
+#include "core/types/enum.h"
 #include "globdata.h"
 #include "races.h"
-
-#include "core/misc/bittricks.h"
-#include "core/log/log.h"
-
-#include <stdlib.h>
-#include <ctype.h>
 
 
 namespace uqm

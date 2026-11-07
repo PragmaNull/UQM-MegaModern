@@ -18,10 +18,10 @@
 #ifndef UQM_COMM_COMMALL_H
 #define UQM_COMM_COMMALL_H
 
+#include "libs/reslib.h"
 #include "options.h"
 #include "uqm/colors.h"
 #include "uqm/comm.h"
 #include "uqm/commglue.h"
-#include "libs/reslib.h"
 
 #endif // UQM_COMM_COMMALL_H

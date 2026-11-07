@@ -20,12 +20,12 @@
 #ifndef UQM_RESINST_H
 #define UQM_RESINST_H
 
-#include "ikey_con.h"
-#include "igfxres.h"
 #include "ifontres.h"
-#include "istrtab.h"
-#include "isndres.h"
+#include "igfxres.h"
+#include "ikey_con.h"
 #include "imusicre.h"
 #include "iscriptres.h"
+#include "isndres.h"
+#include "istrtab.h"
 
 #endif // UQM_RESINST_H

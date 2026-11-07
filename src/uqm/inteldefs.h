@@ -3,6 +3,7 @@
 #define UQM_INTELDEFS_H
 
 #include <cstdint>
+
 #include "core/types/enum.h"
 #include "uqm/units.h"
 

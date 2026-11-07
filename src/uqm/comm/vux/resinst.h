@@ -6,6 +6,8 @@
 #ifndef UQM_COMM_VUX_RESINST_H
 #define UQM_COMM_VUX_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring VuxColorMap {"comm.vux.colortable"};

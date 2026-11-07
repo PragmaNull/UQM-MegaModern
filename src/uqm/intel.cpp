@@ -18,14 +18,14 @@
 
 #include "intel.h"
 
+#include <stdio.h>
+
 #include "battlecontrols.h"
 #include "controls.h"
-#include "globdata.h"
-#include "setup.h"
-#include "options.h"
 #include "core/log/log.h"
-
-#include <stdio.h>
+#include "globdata.h"
+#include "options.h"
+#include "setup.h"
 
 
 namespace uqm

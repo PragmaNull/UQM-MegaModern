@@ -18,12 +18,12 @@
 #ifndef UQM_SIS_H
 #define UQM_SIS_H
 
-#include "core/types/enum.h"
 #include "core/misc/bittricks.h"
+#include "core/types/enum.h"
 #include "libs/gfxlib.h"
+#include "options/OptionDefs.h"
 #include "planets/elemdata.h" // for NUM_ELEMENT_CATEGORIES
 #include "units.h"			  // for RESOLUTION_FACTOR
-#include "options/OptionDefs.h"
 
 
 namespace uqm

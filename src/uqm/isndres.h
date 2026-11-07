@@ -6,6 +6,8 @@
 #ifndef UQM_ISNDRES_H
 #define UQM_ISNDRES_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring GameSoundsRes {"sounds.battle"};

@@ -17,21 +17,22 @@
  */
 
 #include "ipdisp.h"
+
 #include "build.h"
 #include "collide.h"
 #include "controls.h"
-#include "globdata.h"
-#include "init.h"
-#include "races.h"
-#include "process.h"
-#include "grpinfo.h"
 #include "encount.h"
+#include "globdata.h"
+#include "grpinfo.h"
+#include "init.h"
 #include "planets/solarsys.h"
+#include "process.h"
+#include "races.h"
 // for EncounterGroup, EncounterRace
 #include "libs/mathlib.h"
 #include "nameref.h"
-#include "ships/slylandr/resinst.h"
 #include "setup.h"
+#include "ships/slylandr/resinst.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

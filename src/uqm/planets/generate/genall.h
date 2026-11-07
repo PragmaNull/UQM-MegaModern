@@ -18,10 +18,11 @@
 #ifndef UQM_PLANETS_GENERATE_GENALL_H
 #define UQM_PLANETS_GENERATE_GENALL_H
 
-#include "gendefault.h"
 #include <cstdint>
+
 #include "../generate.h"
 #include "core/misc/bittricks.h"
+#include "gendefault.h"
 
 namespace uqm
 {

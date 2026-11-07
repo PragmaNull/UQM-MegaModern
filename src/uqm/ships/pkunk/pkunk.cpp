@@ -16,17 +16,17 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "../ship.h"
 #include "pkunk.h"
-#include "resinst.h"
 
-#include "uqm/globdata.h"
-#include "uqm/tactrans.h"
-#include "libs/mathlib.h"
 #include "../../settings.h"
-#include "uqm/build.h"	 // for fwiffo
+#include "../ship.h"
+#include "libs/mathlib.h"
+#include "resinst.h"
+#include "uqm/build.h" // for fwiffo
+#include "uqm/globdata.h"
 #include "uqm/nameref.h" // for fwiffo
 #include "uqm/random/UQMRandom.h"
+#include "uqm/tactrans.h"
 
 namespace uqm
 {

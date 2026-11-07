@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_SYREEN_SYREEN_H
 #define UQM_SHIPS_SYREEN_SYREEN_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_syreen(void);

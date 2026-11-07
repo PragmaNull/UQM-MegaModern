@@ -17,33 +17,34 @@
  */
 
 #include <stdlib.h>
+
+#include "battlecontrols.h"
 #include "controls.h"
 #include "core/log/log.h"
-#include "uqm/inputscript.h"
+#include "core/stl/atomic.h"
 #include "core/stl/chrono.h"
-#include "libs/file/textfile.h"
 #include "core/stl/mutex.h"
-#include "battlecontrols.h"
 #include "init.h"
 #include "intel.h"
-#include "core/stl/atomic.h"
+#include "libs/file/textfile.h"
+#include "uqm/inputscript.h"
 // For computer_intelligence
 #ifdef NETPLAY
 #include "supermelee/netplay/netmelee.h"
 #endif
-#include "settings.h"
-#include "sounds.h"
-#include "tactrans.h"
-#include "uqmdebug.h"
 #include "libs/callback/async.h"
+#include "libs/graphics/gfx_common.h"
 #include "libs/inplib.h"
-#include "libs/time/timelib.h"
 #include "libs/input/sdl/vcontrol.h"
+#include "libs/time/timelib.h"
+#include "save.h"
+#include "settings.h"
 #include "setup.h"
 #include "setupmenu.h"
-#include "save.h"
+#include "sounds.h"
 #include "starcon.h"
-#include "libs/graphics/gfx_common.h"
+#include "tactrans.h"
+#include "uqmdebug.h"
 
 namespace uqm
 {

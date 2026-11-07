@@ -31,9 +31,9 @@ struct NetworkInputContext;
 } // namespace uqm
 
 #include "controls.h"
-#include "supermelee/pickmele.h"
-#include "races.h"
 #include "core/misc/bittricks.h"
+#include "races.h"
+#include "supermelee/pickmele.h"
 
 namespace uqm
 {

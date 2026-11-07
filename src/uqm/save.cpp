@@ -16,33 +16,33 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <assert.h>
-
 #include "save.h"
+
+#include <assert.h>
 
 #include "build.h"
 #include "controls.h"
-#include "starmap.h"
 #include "encount.h"
 #include "gamestr.h"
 #include "globdata.h"
+#include "grpintrn.h"
+#include "hyper.h"
 #include "options.h"
 #include "races.h"
-#include "shipcont.h"
 #include "setup.h"
+#include "shipcont.h"
+#include "starmap.h"
 #include "state.h"
-#include "grpintrn.h"
 #include "util.h"
-#include "hyper.h"
 // for SaveSisHyperState()
 #include "planets/planets.h"
 // for SaveSolarSysLocation() and tests
-#include "libs/inplib.h"
-#include "core/log/log.h"
-#include "colors.h"
-#include "libs/file/textfile.h"
-
 #include <yyjson.h>
+
+#include "colors.h"
+#include "core/log/log.h"
+#include "libs/file/textfile.h"
+#include "libs/inplib.h"
 
 namespace uqm
 {

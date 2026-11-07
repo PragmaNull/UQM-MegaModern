@@ -4,8 +4,8 @@
 #ifndef UQM_LIBS_FILE_PATHS_H
 #define UQM_LIBS_FILE_PATHS_H
 
-#include "core/stl/stl.h"
 #include "core/stl/optional.h"
+#include "core/stl/stl.h"
 #include "core/stl/string.h"
 
 namespace uqm

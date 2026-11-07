@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_UMGAH_RESINST_H
 #define UQM_SHIPS_UMGAH_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring ConeBigMaskAnim {"ship.umgah.graphics.cone.large"};

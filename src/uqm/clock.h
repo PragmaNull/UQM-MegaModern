@@ -20,8 +20,8 @@
 #ifndef UQM_CLOCK_H
 #define UQM_CLOCK_H
 
-#include "libs/time/timelib.h"
 #include "displist.h"
+#include "libs/time/timelib.h"
 
 namespace uqm
 {

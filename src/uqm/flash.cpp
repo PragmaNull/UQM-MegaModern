@@ -36,11 +36,10 @@
 #define FLASH_INTERNAL
 #include "flash.h"
 
-#include "core/log/log.h"
-#include "libs/time/timelib.h"
-
 #include "colors.h"
+#include "core/log/log.h"
 #include "globdata.h"
+#include "libs/time/timelib.h"
 #include "sis.h"
 #include "util.h"
 

@@ -18,6 +18,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
 #include "core/string/Utf8.h"
 
 namespace uqm

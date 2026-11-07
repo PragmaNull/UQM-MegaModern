@@ -18,11 +18,12 @@
 #ifndef UQM_LIBS_INPUT_SDL_VCONTROL_H
 #define UQM_LIBS_INPUT_SDL_VCONTROL_H
 
+#include <SDL3/SDL.h>
+
+#include "core/stl/atomic.h"
+#include "core/stl/stl.h"
 #include "core/types/enum.h"
 #include "port.h"
-#include <SDL3/SDL.h>
-#include "core/stl/stl.h"
-#include "core/stl/atomic.h"
 
 typedef SDL_Keycode sdl_key_t;
 

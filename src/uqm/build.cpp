@@ -17,20 +17,22 @@
  */
 
 #include "build.h"
-#include "options.h"
-#include "races.h"
-#include "master.h"
-#include "sis.h"
-#include "setup.h"
-#include "core/string/StringUtils.h"
+
+#include <stdlib.h>
+
 #include "core/misc/bittricks.h"
+#include "core/string/StringUtils.h"
+#include "gendef.h"
 #include "libs/mathlib.h"
+#include "master.h"
+#include "options.h"
 #include "planets/planets.h"
+#include "races.h"
+#include "save.h"
+#include "setup.h"
+#include "sis.h"
 #include "starbase.h"
 #include "starmap.h"
-#include "gendef.h"
-#include "save.h"
-#include <stdlib.h>
 #include "uqm/random/UQMRandom.h"
 
 

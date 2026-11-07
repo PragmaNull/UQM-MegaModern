@@ -1,13 +1,12 @@
 // UTF-8 decoding, encoding, validation, case conversion and Windows wide-string conversion.
 #include "Utf8.h"
 
-#include "core/log/log.h"
-
-#include <utf8proc.h>
-
-#include "core/stl/stl.h"
 #include <cctype>
 #include <cstring>
+#include <utf8proc.h>
+
+#include "core/log/log.h"
+#include "core/stl/stl.h"
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN

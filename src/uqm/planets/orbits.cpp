@@ -16,15 +16,16 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "core/types/enum.h"
-#include "planets.h"
-#include "../starmap.h"
-#include "core/misc/bittricks.h"
-#include "libs/mathlib.h"
-#include "core/log/log.h"
-#include "../clock.h"
 #include <math.h>
 #include <stdlib.h>
+
+#include "../clock.h"
+#include "../starmap.h"
+#include "core/log/log.h"
+#include "core/misc/bittricks.h"
+#include "core/types/enum.h"
+#include "libs/mathlib.h"
+#include "planets.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

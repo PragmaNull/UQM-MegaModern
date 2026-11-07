@@ -19,31 +19,31 @@
 #include "sis.h"
 
 #include "colors.h"
+#include "menustat.h"
 #include "races.h"
 #include "starmap.h"
 #include "units.h"
-#include "menustat.h"
 // for DrawMenuStateStrings()
+#include "battle.h"
 #include "gamestr.h"
 #include "options.h"
-#include "battle.h"
 // For BattleFrameRateTicks
-#include "element.h"
-#include "setup.h"
-#include "state.h"
-#include "flash.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/time/timelib.h"
-#include "libs/callback/alarm.h"
+#include <math.h>
+#include <stdio.h>
+
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
 #include "core/string/Utf8.h"
-#include "hyper.h"
+#include "element.h"
+#include "flash.h"
 #include "gameopt.h"
-#include <math.h>
+#include "hyper.h"
+#include "libs/callback/alarm.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/time/timelib.h"
+#include "setup.h"
+#include "state.h"
 #include "uqm/util.h"
-
-#include <stdio.h>
 
 namespace uqm
 {

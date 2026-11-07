@@ -3,8 +3,9 @@
 #include "gamewindow.h"
 
 #include <cfloat>
-#include <imgui.h>
 #include <fmt/format.h>
+#include <imgui.h>
+
 #include "core/string/StringUtils.h"
 #include "libs/graphics/imgui/toolwindows.h"
 #include "uqm/clock.h"

@@ -17,17 +17,18 @@
 /* Mixer for low-level sound output drivers
  */
 
-#include "core/stl/stl.h"
+#include "mixer.h"
+
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
 
-#include "mixer.h"
-#include "mixerint.h"
-#include "core/misc/FatalExit.h"
-#include "libs/time/timelib.h"
-#include "core/thread/Mutex.h"
 #include "core/log/log.h"
+#include "core/misc/FatalExit.h"
+#include "core/stl/stl.h"
+#include "core/thread/Mutex.h"
+#include "libs/time/timelib.h"
+#include "mixerint.h"
 
 static uint32_t mixer_initialized = 0;
 static uint32_t mixer_format;

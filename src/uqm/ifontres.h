@@ -6,6 +6,8 @@
 #ifndef UQM_IFONTRES_H
 #define UQM_IFONTRES_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring LanderFontRes {"font.lander"};

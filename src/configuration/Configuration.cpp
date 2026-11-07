@@ -1,13 +1,13 @@
 #include "Configuration.h"
 
-#include "options.h"
-#include "options/options.h"
+#include <cstring>
+
 #include "core/log/log.h"
 #include "libs/file/textfile.h"
 #include "libs/reslib.h"
+#include "options.h"
+#include "options/options.h"
 #include "uqm/controls.h"
-
-#include <cstring>
 
 namespace uqm
 {

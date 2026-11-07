@@ -4,10 +4,9 @@
 #ifndef UQM_LIBS_IO_STANDARD_MOUNTTABLE_H
 #define UQM_LIBS_IO_STANDARD_MOUNTTABLE_H
 
+#include "core/stl/mutex.h"
 #include "libs/io/standard/FileSystem.h"
 #include "libs/io/standard/MountSource.h"
-
-#include "core/stl/mutex.h"
 
 namespace uqm::io::standard
 {

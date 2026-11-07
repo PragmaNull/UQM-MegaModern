@@ -17,12 +17,12 @@
  */
 
 /* ----------------------------- INCLUDES ---------------------------- */
-#include "core/types/enum.h"
-#include "planets.h"
-#include "uqm/starmap.h"
-#include "uqm/gendef.h"
-#include "libs/mathlib.h"
 #include "core/log/log.h"
+#include "core/types/enum.h"
+#include "libs/mathlib.h"
+#include "planets.h"
+#include "uqm/gendef.h"
+#include "uqm/starmap.h"
 
 namespace uqm
 {

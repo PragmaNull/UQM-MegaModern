@@ -17,16 +17,17 @@
  */
 
 #include <stdlib.h>
+
 #include "gameev.h"
 #include "globdata.h"
 #include "sis.h"
 // for DrawStatusMessage()
-#include "setup.h"
-#include "core/misc/bittricks.h"
-#include "libs/gfxlib.h"
-#include "core/thread/Mutex.h"
 #include "core/log/log.h"
+#include "core/misc/bittricks.h"
+#include "core/thread/Mutex.h"
+#include "libs/gfxlib.h"
 #include "options.h"
+#include "setup.h"
 
 namespace uqm
 {

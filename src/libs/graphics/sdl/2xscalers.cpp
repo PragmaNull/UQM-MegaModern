@@ -14,11 +14,13 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "libs/graphics/sdl/sdl_common.h"
-#include <cstdint>
-#include "scalers.h"
-#include "scaleint.h"
 #include "2xscalers.h"
+
+#include <cstdint>
+
+#include "libs/graphics/sdl/sdl_common.h"
+#include "scaleint.h"
+#include "scalers.h"
 
 
 // Scaler function lookup table

@@ -20,14 +20,13 @@
 #ifndef UQM_LIBS_STRLIB_H
 #define UQM_LIBS_STRLIB_H
 
-#include "core/misc/bittricks.h"
-#include "port.h"
-#include "libs/io/FileSystem.h"
-#include "core/string/Utf8.h"
-
 #include <stddef.h>
 
+#include "core/misc/bittricks.h"
+#include "core/string/Utf8.h"
+#include "libs/io/FileSystem.h"
 #include "libs/strings/StringTable.h"
+#include "port.h"
 
 
 /* This has to go here because reslib requires the above typedefs. */

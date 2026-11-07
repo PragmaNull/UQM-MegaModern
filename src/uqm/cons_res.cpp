@@ -16,13 +16,13 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "cons_res.h"
+
 #include <stdio.h>
 
 #include "core/string/StringUtils.h"
-
-#include "cons_res.h"
-#include "resinst.h"
 #include "nameref.h"
+#include "resinst.h"
 #include "setup.h"
 #include "units.h"
 // for NumViews

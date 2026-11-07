@@ -19,11 +19,11 @@
 #define NETCONNECTION_INTERNAL
 #include "ready.h"
 
+#include <assert.h>
 #include <cstdint>
+
 #include "../netmisc.h"
 #include "../packetsenders.h"
-
-#include <assert.h>
 
 namespace uqm
 {

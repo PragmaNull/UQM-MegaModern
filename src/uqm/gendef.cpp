@@ -17,6 +17,7 @@
  */
 
 #include "gendef.h"
+
 #include "planets/generate.h"
 #include "planets/generate/genall.h"
 

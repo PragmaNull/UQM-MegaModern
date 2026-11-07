@@ -18,9 +18,9 @@
 
 #include "state.h"
 
-#include "starmap.h"
-#include "globdata.h"
 #include "core/log/log.h"
+#include "globdata.h"
+#include "starmap.h"
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif

@@ -2,11 +2,11 @@
 #ifndef UQM_CORE_PLATFORM_PLATFORM_H
 #define UQM_CORE_PLATFORM_PLATFORM_H
 
-#include "core/stl/stl.h"
-#include "core/stl/memory.h"
-
 #include <cstdio>
 #include <ctime>
+
+#include "core/stl/memory.h"
+#include "core/stl/stl.h"
 
 namespace uqm
 {

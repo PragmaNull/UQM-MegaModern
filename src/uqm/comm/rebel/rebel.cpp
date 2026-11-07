@@ -19,9 +19,8 @@
 #include "../commall.h"
 #include "../yehat/resinst.h"
 #include "strings.h"
-
-#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
+#include "uqm/lua/UQMLua.h"
 
 
 namespace uqm

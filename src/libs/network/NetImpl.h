@@ -5,9 +5,10 @@
 #define UQM_LIBS_NETWORK_NETIMPL_H
 
 #include <asio.hpp>
+
 #include "Connection.h"
-#include "NetContext.h"
 #include "core/stl/vector.h"
+#include "NetContext.h"
 
 #ifdef _WIN32
 #ifndef NOMINMAX

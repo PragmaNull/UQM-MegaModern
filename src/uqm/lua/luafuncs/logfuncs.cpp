@@ -16,8 +16,9 @@
 
 #define LUAUQM_INTERNAL
 #include "logfuncs.h"
-#include "uqm/lua/UQMLua.h"
+
 #include "core/log/log.h"
+#include "uqm/lua/UQMLua.h"
 
 namespace uqm
 {

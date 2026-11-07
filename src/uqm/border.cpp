@@ -17,13 +17,13 @@
  */
 
 
-#include "libs/gfxlib.h"
 #include "colors.h"
+#include "libs/gfxlib.h"
+#include "menustat.h"
 #include "setup.h"
 #include "sis.h"
 #include "units.h"
 #include "util.h"
-#include "menustat.h"
 
 
 namespace uqm

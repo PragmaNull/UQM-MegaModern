@@ -18,10 +18,10 @@
 #ifndef UQM_BATTLE_H
 #define UQM_BATTLE_H
 
-#include "options.h"
 #include "core/misc/bittricks.h"
-#include "libs/time/timelib.h"
 #include "init.h"
+#include "libs/time/timelib.h"
+#include "options.h"
 
 namespace uqm
 {

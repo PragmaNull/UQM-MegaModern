@@ -19,18 +19,16 @@
 #include "port.h"
 
 #define NETCONNECTION_INTERNAL
-#include "netplay.h"
-#include "packethandlers.h"
-
+#include "../../controls.h"
+#include "core/log/log.h"
 #include "netinput.h"
 #include "netmisc.h"
+#include "netplay.h"
+#include "packethandlers.h"
 #include "packetsenders.h"
 #include "proto/npconfirm.h"
 #include "proto/ready.h"
 #include "proto/reset.h"
-#include "core/log/log.h"
-
-#include "../../controls.h"
 // for BattleInputState
 #include "../../init.h"
 // for NumPlayers

@@ -20,10 +20,10 @@
 
 #include "battlecontrols.h"
 #include "controls.h"
-#include "init.h"
 #include "element.h"
-#include "ship.h"
+#include "init.h"
 #include "process.h"
+#include "ship.h"
 #include "tactrans.h"
 // for flee_preprocess()
 #include "intel.h"
@@ -34,19 +34,19 @@
 #endif
 #include "supermelee/netplay/notifyall.h"
 #endif
-#include "supermelee/pickmele.h"
-#include "resinst.h"
-#include "nameref.h"
-#include "setup.h"
-#include "settings.h"
-#include "sounds.h"
+#include "core/log/log.h"
+#include "globdata.h"
+#include "hyper.h"
 #include "libs/callback/async.h"
 #include "libs/graphics/gfx_common.h"
-#include "core/log/log.h"
-#include "libs/mathlib.h"
-#include "globdata.h"
 #include "libs/input/sdl/vcontrol.h"
-#include "hyper.h"
+#include "libs/mathlib.h"
+#include "nameref.h"
+#include "resinst.h"
+#include "settings.h"
+#include "setup.h"
+#include "sounds.h"
+#include "supermelee/pickmele.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

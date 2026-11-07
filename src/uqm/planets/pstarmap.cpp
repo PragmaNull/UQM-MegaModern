@@ -16,45 +16,45 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "core/types/enum.h"
-#include "scan.h"
 #include "../colors.h"
 #include "../controls.h"
-#include "../menustat.h"
-#include "../starmap.h"
-#include "../races.h"
 #include "../gameopt.h"
 #include "../gamestr.h"
 #include "../gendef.h"
 #include "../globdata.h"
-#include "../shipcont.h"
-#include "../units.h"
 #include "../hyper.h"
+#include "../menustat.h"
+#include "../races.h"
+#include "../shipcont.h"
 #include "../sis.h"
+#include "../starmap.h"
+#include "../units.h"
+#include "core/types/enum.h"
+#include "scan.h"
 // for DrawHyperCoords(), DrawStatusMessage()
+#include "../init.h"
 #include "../settings.h"
 #include "../setup.h"
 #include "../sounds.h"
 #include "../state.h"
-#include "../init.h"
 #include "../uqmdebug.h"
-#include "options.h"
-#include "core/string/StringUtils.h"
-#include "libs/inplib.h"
-#include "libs/strlib.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/mathlib.h"
 #include "../util.h"
+#include "core/string/StringUtils.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/inplib.h"
+#include "libs/mathlib.h"
+#include "libs/strlib.h"
+#include "options.h"
 // For get_fuel_to_sol()
-#include <stdlib.h>
 #include <ctype.h>
+#include <stdlib.h>
 // For isdigit()
 #include <math.h> // sqrt()
 
 #include "../build.h"
 // For StartSphereTracking()
-#include "uqm/setupmenu.h"
 #include "uqm/random/UQMRandom.h"
+#include "uqm/setupmenu.h"
 
 namespace uqm
 {

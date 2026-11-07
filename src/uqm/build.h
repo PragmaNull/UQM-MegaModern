@@ -20,9 +20,9 @@
 #ifndef UQM_BUILD_H
 #define UQM_BUILD_H
 
-#include "races.h"
-#include "displist.h"
 #include "core/misc/bittricks.h"
+#include "displist.h"
+#include "races.h"
 #include "starmap.h"
 #include "uqm/random/UQMRandom.h"
 

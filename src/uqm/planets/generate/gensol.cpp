@@ -16,20 +16,21 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "genall.h"
+#include <math.h>
+
+#include "../../build.h"
+#include "../../encount.h"
+#include "../../gamestr.h"
+#include "../../globdata.h"
+#include "../../grpinfo.h"
+#include "../../nameref.h"
+#include "../../setup.h"
+#include "../../sounds.h"
+#include "../../state.h"
 #include "../lander.h"
 #include "../lifeform.h"
 #include "../planets.h"
-#include "../../build.h"
-#include "../../encount.h"
-#include "../../globdata.h"
-#include "../../gamestr.h"
-#include "../../grpinfo.h"
-#include "../../nameref.h"
-#include "../../sounds.h"
-#include "../../state.h"
-#include "../../setup.h"
-#include <math.h>
+#include "genall.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

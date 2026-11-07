@@ -21,8 +21,9 @@
 #define UQM_LIBS_GRAPHICS_DRAWABLE_H
 
 #include <stdio.h>
-#include "tfb_draw.h"
+
 #include "core/stl/vector.h"
+#include "tfb_draw.h"
 
 constexpr auto ValidPrimType(auto pt) { return ((pt) < PrimitiveType::Count); }
 

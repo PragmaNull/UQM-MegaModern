@@ -19,10 +19,9 @@
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
-
-#include "uqm/lua/UQMLua.h"
-#include "uqm/build.h"
 #include "uqm/battle.h"
+#include "uqm/build.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/sounds.h"
 
 namespace uqm

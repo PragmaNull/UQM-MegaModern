@@ -4,10 +4,10 @@
 #ifndef UQM_RANDOM_GAMESEED_H
 #define UQM_RANDOM_GAMESEED_H
 
+#include <cstdint>
+
 #include "libs/math/randomdefs.h"
 #include "options/OptionDefs.h"
-
-#include <cstdint>
 
 
 namespace uqm

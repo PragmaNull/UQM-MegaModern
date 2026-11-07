@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_DRUUGE_ICODE_H
 #define UQM_SHIPS_DRUUGE_ICODE_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring DruugeCode {"ship.druuge.code"};

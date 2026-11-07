@@ -19,7 +19,6 @@
 #define UQM_DUMMY_H
 
 #include "races.h"
-
 #include "ships/androsyn/androsyn.h"
 #include "ships/arilou/arilou.h"
 #include "ships/blackurq/blackurq.h"
@@ -28,12 +27,15 @@
 #include "ships/druuge/druuge.h"
 #include "ships/human/human.h"
 #include "ships/ilwrath/ilwrath.h"
+#include "ships/lastbat/lastbat.h"
 #include "ships/melnorme/melnorme.h"
 #include "ships/mmrnmhrm/mmrnmhrm.h"
 #include "ships/mycon/mycon.h"
 #include "ships/orz/orz.h"
 #include "ships/pkunk/pkunk.h"
+#include "ships/probe/probe.h"
 #include "ships/shofixti/shofixti.h"
+#include "ships/sis_ship/sis_ship.h"
 #include "ships/slylandr/slylandr.h"
 #include "ships/spathi/spathi.h"
 #include "ships/supox/supox.h"
@@ -45,8 +47,5 @@
 #include "ships/vux/vux.h"
 #include "ships/yehat/yehat.h"
 #include "ships/zoqfot/zoqfot.h"
-#include "ships/lastbat/lastbat.h"
-#include "ships/sis_ship/sis_ship.h"
-#include "ships/probe/probe.h"
 
 #endif // UQM_DUMMY_H

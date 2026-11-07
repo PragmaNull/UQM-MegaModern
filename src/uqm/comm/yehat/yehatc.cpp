@@ -17,14 +17,12 @@
  */
 
 #include "../commall.h"
+#include "libs/mathlib.h"
 #include "resinst.h"
 #include "strings.h"
-
-#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/gameev.h"
-#include "libs/mathlib.h"
-
+#include "uqm/lua/UQMLua.h"
 #include "uqm/planets/generate/gendefault.h"
 #include "uqm/random/UQMRandom.h"
 

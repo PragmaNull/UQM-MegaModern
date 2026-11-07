@@ -20,12 +20,12 @@
 #ifndef UQM_LIBS_GRAPHICS_SDL_SDL_COMMON_H
 #define UQM_LIBS_GRAPHICS_SDL_SDL_COMMON_H
 
-#include "port.h"
 #include <SDL3/SDL.h>
 
 #include "../gfxintrn.h"
-#include "libs/graphics/tfb_draw.h"
 #include "libs/graphics/gfx_common.h"
+#include "libs/graphics/tfb_draw.h"
+#include "port.h"
 
 // The Graphics Backend vtable
 namespace tfb

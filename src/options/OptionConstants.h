@@ -2,9 +2,9 @@
 #ifndef UQM_OPTIONS_OPTIONCONSTANTS_H
 #define UQM_OPTIONS_OPTIONCONSTANTS_H
 
-#include "options/OptionTypes.h"
-#include "libs/sound/audiocore.h"
 #include "libs/graphics/gfx_common.h"
+#include "libs/sound/audiocore.h"
+#include "options/OptionTypes.h"
 
 namespace uqm
 {

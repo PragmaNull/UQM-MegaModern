@@ -14,10 +14,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "port.h"
+#include "keynames.h"
+
 #include <SDL3/SDL.h>
 #include <string.h>
-#include "keynames.h"
+
+#include "port.h"
 
 /* This code is adapted from the code in SDL_keysym.h.  Though this
  * would almost certainly be fast if we were to use a direct char *

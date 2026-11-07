@@ -3,8 +3,8 @@
 #define UQM_OPTIONS_OPTIONTYPES_H
 
 #include "core/stl/stl.h"
-#include "core/types/enum.h"
 #include "core/string/StringUtils.h"
+#include "core/types/enum.h"
 #include "options/OptionDefs.h"
 
 namespace uqm

@@ -6,6 +6,8 @@
 #ifndef UQM_SHIPS_HUMAN_RESINST_H
 #define UQM_SHIPS_HUMAN_RESINST_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring HumanBigMaskPmapAnim {"ship.earthling.graphics.human.large"};

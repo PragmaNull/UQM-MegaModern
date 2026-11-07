@@ -20,11 +20,10 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_NETRCV_H
 #define UQM_SUPERMELEE_NETPLAY_NETRCV_H
 
-#include "netconnection.h"
+#include <cstddef>
 
 #include "core/stl/optional.h"
-
-#include <cstddef>
+#include "netconnection.h"
 
 namespace uqm
 {

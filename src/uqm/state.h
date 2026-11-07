@@ -20,13 +20,14 @@
 #ifndef UQM_STATE_H
 #define UQM_STATE_H
 
-#include "core/types/enum.h"
-#include "port.h"
+#include <assert.h>
+#include <cstdint>
+
 #include "core/misc/bittricks.h"
 #include "core/stl/array.h"
 #include "core/stl/vector.h"
-#include <assert.h>
-#include <cstdint>
+#include "core/types/enum.h"
+#include "port.h"
 
 namespace uqm
 {

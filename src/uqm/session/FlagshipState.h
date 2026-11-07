@@ -5,6 +5,7 @@
 #define UQM_SESSION_FLAGSHIPSTATE_H
 
 #include <cstdint>
+
 #include "libs/gfxlib.h"
 #include "uqm/velocity.h"
 

@@ -18,13 +18,13 @@
 
 #include "element.h"
 #include "init.h"
+#include "intel.h"
 #include "races.h"
 #include "ship.h"
-#include "status.h"
 #include "sounds.h"
-#include "weapon.h"
-#include "intel.h"
+#include "status.h"
 #include "uqm/random/UQMRandom.h"
+#include "weapon.h"
 
 namespace uqm
 {

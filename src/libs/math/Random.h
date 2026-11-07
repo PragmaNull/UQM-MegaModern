@@ -23,9 +23,9 @@
 #ifndef UQM_LIBS_MATH_RANDOM_H
 #define UQM_LIBS_MATH_RANDOM_H
 
-#include "libs/math/randomdefs.h"
-
 #include <cstdint>
+
+#include "libs/math/randomdefs.h"
 
 namespace uqm
 {

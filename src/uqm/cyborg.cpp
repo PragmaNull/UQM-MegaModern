@@ -16,16 +16,16 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "colors.h"
 #include "collide.h"
+#include "colors.h"
+#include "core/log/log.h"
 #include "element.h"
-#include "ship.h"
 #include "globdata.h"
 #include "intel.h"
-#include "setup.h"
-#include "units.h"
 #include "libs/mathlib.h"
-#include "core/log/log.h"
+#include "setup.h"
+#include "ship.h"
+#include "units.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

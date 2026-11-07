@@ -17,9 +17,11 @@
  */
 
 #include "libs/graphics/gfx_common.h"
+
+#include <SDL3/SDL.h>
+
 #include "libs/graphics/drawcmd.h"
 #include "libs/time/timelib.h"
-#include <SDL3/SDL.h>
 
 int fs_height = 0;
 int fs_width = 0;

@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_THRADD_THRADD_H
 #define UQM_SHIPS_THRADD_THRADD_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_thraddash(void);

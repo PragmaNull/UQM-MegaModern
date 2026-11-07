@@ -28,9 +28,9 @@ struct melee_load_state;
 
 } // namespace uqm
 
+#include "core/stl/vector.h"
 #include "melee.h"
 #include "meleesetup.h"
-#include "core/stl/vector.h"
 
 namespace uqm
 {

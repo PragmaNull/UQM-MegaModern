@@ -17,21 +17,22 @@
  */
 
 #include "fmv.h"
+
+#include "build.h"
 #include "controls.h"
+#include "gameopt.h"
 #include "hyper.h"
-#include "options.h"
-#include "master.h"
-#include "resinst.h"
-#include "nameref.h"
-#include "settings.h"
-#include "setup.h"
-#include "libs/vidlib.h"
+#include "init.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/inplib.h"
 #include "libs/sound/sound.h"
-#include "init.h"
-#include "gameopt.h"
-#include "build.h"
+#include "libs/vidlib.h"
+#include "master.h"
+#include "nameref.h"
+#include "options.h"
+#include "resinst.h"
+#include "settings.h"
+#include "setup.h"
 
 namespace uqm
 {

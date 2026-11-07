@@ -16,9 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "genall.h"
-#include "../lander.h"
-#include "../planets.h"
 #include "../../build.h"
 #include "../../comm.h"
 #include "../../gendef.h"
@@ -27,6 +24,9 @@
 #include "../../sounds.h"
 #include "../../starmap.h"
 #include "../../state.h"
+#include "../lander.h"
+#include "../planets.h"
+#include "genall.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

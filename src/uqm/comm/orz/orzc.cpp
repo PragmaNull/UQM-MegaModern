@@ -16,13 +16,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "../../nameref.h"
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
-
-#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
-#include "../../nameref.h"
+#include "uqm/lua/UQMLua.h"
 //JMS_GFX: For LoadGraphic()
 
 #include "uqm/setup.h"

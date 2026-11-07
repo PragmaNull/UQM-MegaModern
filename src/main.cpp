@@ -16,10 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include <SDL3/SDL_main.h>
 #include <stdlib.h>
 
 #include "UQMGame.h"
-#include <SDL3/SDL_main.h>
 
 int main(int argc, char* argv[])
 {

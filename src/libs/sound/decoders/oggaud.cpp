@@ -17,14 +17,15 @@
 /* Ogg Vorbis decoder (.ogg adapter)
  */
 
+#include <cstdint>
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <errno.h>
+
 #include "core/log/log.h"
-#include "port.h"
-#include <cstdint>
-#include "libs/reslib.h"
 #include "decoder.h"
+#include "libs/reslib.h"
+#include "port.h"
 #ifdef OVCODEC_TREMOR
 #include <tremor/ivorbiscodec.h>
 #include <tremor/ivorbisfile.h>

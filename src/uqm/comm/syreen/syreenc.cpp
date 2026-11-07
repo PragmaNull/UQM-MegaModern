@@ -19,9 +19,9 @@
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
+#include "uqm/build.h"
 #include "uqm/gameev.h"
 #include "uqm/lua/UQMLua.h"
-#include "uqm/build.h"
 #include "uqm/setup.h"
 
 

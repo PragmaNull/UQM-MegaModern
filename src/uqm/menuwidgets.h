@@ -4,14 +4,13 @@
 #ifndef UQM_MENUWIDGETS_H
 #define UQM_MENUWIDGETS_H
 
+#include "core/stl/functional.h"
+#include "core/stl/map.h"
+#include "core/stl/memory.h"
 #include "core/stl/stl.h"
 #include "core/stl/vector.h"
 #include "libs/graphics/widgets.h"
 #include "uqm/menudef.h"
-
-#include "core/stl/functional.h"
-#include "core/stl/map.h"
-#include "core/stl/memory.h"
 
 
 namespace uqm

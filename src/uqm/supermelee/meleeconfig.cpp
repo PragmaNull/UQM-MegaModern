@@ -1,13 +1,12 @@
 // Converts SuperMelee sides and teams to and from the melee.json format.
 #include "meleeconfig.h"
 
-#include "core/log/log.h"
-#include "core/string/StringUtils.h"
-
-#include <yyjson.h>
-
 #include <cctype>
 #include <cstdlib>
+#include <yyjson.h>
+
+#include "core/log/log.h"
+#include "core/string/StringUtils.h"
 
 
 namespace uqm

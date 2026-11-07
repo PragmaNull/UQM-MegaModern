@@ -19,13 +19,15 @@
  * Status: fully functional
  */
 
-#include "video.h"
 #include "dukvid.h"
+
 #include <stdio.h>
 #include <string.h>
+
 #include "core/misc/bittricks.h"
-#include "uqm/units.h"
 #include "core/string/StringUtils.h"
+#include "uqm/units.h"
+#include "video.h"
 
 
 const static char* dukv_GetName(void);

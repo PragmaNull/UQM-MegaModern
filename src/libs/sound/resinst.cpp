@@ -16,8 +16,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "sound.h"
 #include "sndintrn.h"
+#include "sound.h"
 
 static void GetSoundBankFileData(const char* pathname, RESOURCE_DATA* resdata)
 {

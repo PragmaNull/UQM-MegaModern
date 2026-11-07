@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_ANDROSYN_ANDROSYN_H
 #define UQM_SHIPS_ANDROSYN_ANDROSYN_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_androsynth(void);

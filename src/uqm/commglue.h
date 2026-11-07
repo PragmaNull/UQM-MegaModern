@@ -23,9 +23,9 @@
 
 #include "core/types/enum.h"
 #include "globdata.h"
-#include "resinst.h"
-#include "libs/sound/trackplayer.h"
 #include "libs/callback/callback.h"
+#include "libs/sound/trackplayer.h"
+#include "resinst.h"
 
 namespace uqm
 {

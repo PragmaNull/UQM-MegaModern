@@ -5,14 +5,13 @@
 #define UQM_LIBS_NETWORK_CONNECTOR_H
 
 #include "Connection.h"
-#include "NetContext.h"
-
 #include "core/stl/chrono.h"
 #include "core/stl/functional.h"
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
 #include "core/stl/system_error.h"
+#include "NetContext.h"
 
 namespace uqm::net
 {

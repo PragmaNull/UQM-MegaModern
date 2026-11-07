@@ -4,12 +4,12 @@
 #ifndef UQM_LIBS_IO_TYPES_H
 #define UQM_LIBS_IO_TYPES_H
 
-#include "core/stl/stl.h"
+#include <cstdint>
+
 #include "core/stl/expected.h"
+#include "core/stl/stl.h"
 #include "core/stl/system_error.h"
 #include "core/types/enum.h"
-
-#include <cstdint>
 
 namespace uqm::io
 {

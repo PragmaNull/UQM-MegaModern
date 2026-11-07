@@ -20,9 +20,8 @@
 #ifndef UQM_LIBS_GRAPHICS_DRAWCMD_H
 #define UQM_LIBS_GRAPHICS_DRAWCMD_H
 
-#include "libs/graphics/tfb_draw.h"
-
 #include "core/stl/semaphore.h"
+#include "libs/graphics/tfb_draw.h"
 
 enum class DrawCommandType
 {

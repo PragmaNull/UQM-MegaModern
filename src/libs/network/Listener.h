@@ -4,14 +4,13 @@
 #ifndef UQM_LIBS_NETWORK_LISTENER_H
 #define UQM_LIBS_NETWORK_LISTENER_H
 
-#include "Connection.h"
-#include "NetContext.h"
+#include <cstdint>
 
+#include "Connection.h"
 #include "core/stl/functional.h"
 #include "core/stl/memory.h"
 #include "core/stl/system_error.h"
-
-#include <cstdint>
+#include "NetContext.h"
 
 namespace uqm::net
 {

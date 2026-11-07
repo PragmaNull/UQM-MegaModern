@@ -20,13 +20,12 @@
 #ifndef UQM_CONTROLS_H
 #define UQM_CONTROLS_H
 
-#include "core/types/enum.h"
-#include "core/stl/atomic.h"
-
 #include "core/misc/bittricks.h"
-#include "libs/strlib.h"
-#include "libs/sndlib.h"
+#include "core/stl/atomic.h"
 #include "core/stl/vector.h"
+#include "core/types/enum.h"
+#include "libs/sndlib.h"
+#include "libs/strlib.h"
 #include "libs/time/timelib.h"
 
 namespace uqm

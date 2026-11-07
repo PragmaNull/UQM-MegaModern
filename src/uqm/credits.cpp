@@ -16,26 +16,25 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "credits.h"
+
 #include <math.h>
 
-#include "credits.h"
+#include "colors.h"
+#include "comm.h"
+#include "controls.h"
+#include "core/log/log.h"
+#include "core/string/StringUtils.h"
 #include "creditsfile.h"
 #include "libs/file/textfile.h"
-#include "core/log/log.h"
-
-#include "core/string/StringUtils.h"
-
-#include "controls.h"
-#include "colors.h"
+#include "libs/graphics/drawable.h"
+#include "nameref.h"
 #include "options.h"
 #include "oscill.h"
-#include "comm.h"
 #include "resinst.h"
-#include "nameref.h"
 #include "settings.h"
-#include "sounds.h"
 #include "setup.h"
-#include "libs/graphics/drawable.h"
+#include "sounds.h"
 
 namespace uqm
 {

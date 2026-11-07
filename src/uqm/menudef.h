@@ -4,12 +4,11 @@
 #ifndef UQM_MENUDEF_H
 #define UQM_MENUDEF_H
 
+#include "core/stl/map.h"
+#include "core/stl/optional.h"
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
-#include "core/stl/map.h"
 #include "core/stl/vector.h"
-
-#include "core/stl/optional.h"
 
 
 namespace uqm

@@ -16,18 +16,18 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "libs/reslib.h"
-#include "gamestr.h"
-#include "init.h"
 #include "element.h"
+#include "gamestr.h"
 #include "hyper.h"
-#include "planets/lander.h"
-#include "starcon.h"
-#include "setup.h"
-#include "planets/solarsys.h"
-#include "sounds.h"
+#include "init.h"
+#include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/vidlib.h"
+#include "planets/lander.h"
+#include "planets/solarsys.h"
+#include "setup.h"
+#include "sounds.h"
+#include "starcon.h"
 
 
 namespace uqm

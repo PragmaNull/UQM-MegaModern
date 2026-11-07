@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_SPATHI_SPATHI_H
 #define UQM_SHIPS_SPATHI_SPATHI_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_spathi(void);

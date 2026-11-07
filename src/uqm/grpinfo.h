@@ -18,11 +18,11 @@
 #ifndef UQM_GRPINFO_H
 #define UQM_GRPINFO_H
 
-#include "core/types/enum.h"
-#include "port.h"
 #include "core/misc/bittricks.h"
+#include "core/types/enum.h"
 #include "displist.h"
 #include "libs/gfxlib.h"
+#include "port.h"
 // for GfxPoint
 #include <assert.h>
 

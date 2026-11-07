@@ -18,8 +18,8 @@
 
 #include "settings.h"
 
-#include "globdata.h"
 #include "core/misc/bittricks.h"
+#include "globdata.h"
 #include "setup.h"
 
 

@@ -1,11 +1,10 @@
 // Converts key binding templates to and from the keys.json format.
 #include "keyconfig.h"
 
-#include "core/log/log.h"
-
+#include <cstdlib>
 #include <yyjson.h>
 
-#include <cstdlib>
+#include "core/log/log.h"
 
 namespace uqm
 {

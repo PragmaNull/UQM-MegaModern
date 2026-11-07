@@ -15,13 +15,14 @@
  */
 
 #include "vidplayer.h"
-#include "options.h"
-#include "vidintrn.h"
+
+#include "core/log/log.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
-#include "core/log/log.h"
 #include "libs/sndlib.h"
+#include "options.h"
 #include "uqm/units.h"
+#include "vidintrn.h"
 
 // video callbacks
 static void vp_BeginFrame(tfb::VideoDecoder*);

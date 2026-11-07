@@ -17,12 +17,11 @@
 #include <stdlib.h>
 
 #define LUAUQM_INTERNAL
-#include "statefuncs.h"
-#include "uqm/lua/UQMLua.h"
 #include "core/log/log.h"
-
+#include "statefuncs.h"
 #include "uqm/build.h"
 #include "uqm/globdata.h"
+#include "uqm/lua/UQMLua.h"
 
 
 namespace uqm

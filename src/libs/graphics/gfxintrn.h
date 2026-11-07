@@ -23,10 +23,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "libs/gfxlib.h"
-#include "libs/reslib.h"
 #include "context.h"
 #include "drawable.h"
 #include "font.h"
+#include "libs/gfxlib.h"
+#include "libs/reslib.h"
 
 #endif // UQM_LIBS_GRAPHICS_GFXINTRN_H

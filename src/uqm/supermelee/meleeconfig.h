@@ -4,13 +4,12 @@
 #ifndef UQM_SUPERMELEE_MELEECONFIG_H
 #define UQM_SUPERMELEE_MELEECONFIG_H
 
+#include "core/stl/optional.h"
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
 #include "uqm/inteldefs.h"
 #include "uqm/supermelee/meleeship.h"
-
-#include "core/stl/optional.h"
 
 
 namespace uqm

@@ -20,9 +20,9 @@
 // changes.
 
 #define NETCONNECTION_INTERNAL
-#include "netplay.h"
 #include "notify.h"
 
+#include "netplay.h"
 #include "packetsenders.h"
 
 

@@ -3,12 +3,13 @@
 #include "settingswindow.h"
 
 #include <imgui.h>
-#include "options.h"
+
+#include "configuration/Configuration.h"
 #include "core/log/log.h"
 #include "core/stl/set.h"
 #include "core/string/StringUtils.h"
-#include "configuration/Configuration.h"
 #include "libs/graphics/imgui/toolwindows.h"
+#include "options.h"
 #include "uqm/imgui/gamethread.h"
 #include "uqm/menudef.h"
 #include "uqm/setupsettings.h"

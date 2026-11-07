@@ -20,13 +20,13 @@
 #ifndef UQM_LIBS_GRAPHICS_TFB_DRAW_H
 #define UQM_LIBS_GRAPHICS_TFB_DRAW_H
 
-#include "core/types/enum.h"
-#include "libs/time/timelib.h"
-#include "core/thread/Mutex.h"
 #include "core/stl/array.h"
 #include "core/stl/optional.h"
-#include "libs/graphics/gfx_common.h"
+#include "core/thread/Mutex.h"
+#include "core/types/enum.h"
 #include "libs/graphics/cmap.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/time/timelib.h"
 
 
 namespace tfb

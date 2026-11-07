@@ -21,9 +21,10 @@
 #define UQM_OPTIONS_NETOPTIONS_H
 
 #ifdef NETPLAY
-#include <stddef.h>
-#include "core/stl/vector.h"
 #include <cstdint>
+#include <stddef.h>
+
+#include "core/stl/vector.h"
 
 namespace CLI
 {

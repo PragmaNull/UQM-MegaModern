@@ -21,8 +21,8 @@
 #define UQM_LIBS_VIDLIB_H
 
 #include "core/misc/bittricks.h"
-#include "libs/sndlib.h"
 #include "libs/reslib.h"
+#include "libs/sndlib.h"
 
 enum class VideoType
 {

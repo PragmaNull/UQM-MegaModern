@@ -16,18 +16,18 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "planets.h"
+#include <math.h>
+#include <SDL3/SDL.h>
+
 #include "../colors.h"
 #include "../setup.h"
-#include "libs/graphics/gfx_common.h"
-#include "libs/graphics/drawable.h"
-#include "libs/mathlib.h"
-#include "scan.h"
-#include "options.h"
 #include "core/log/log.h"
-#include <math.h>
-
-#include <SDL3/SDL.h>
+#include "libs/graphics/drawable.h"
+#include "libs/graphics/gfx_common.h"
+#include "libs/mathlib.h"
+#include "options.h"
+#include "planets.h"
+#include "scan.h"
 #include "uqm/random/UQMRandom.h"
 
 namespace uqm

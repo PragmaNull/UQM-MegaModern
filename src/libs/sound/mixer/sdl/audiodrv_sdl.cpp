@@ -18,10 +18,13 @@
  */
 
 #include "audiodrv_sdl.h"
+
+#include <stdlib.h>
+
 #include "../../sndintrn.h"
 #include "core/log/log.h"
-#include <stdlib.h>
 #include "core/stl/vector.h"
+#include "libs/sound/stream.h"
 
 
 static SDL_AudioStream* stream {};

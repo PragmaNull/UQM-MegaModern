@@ -2,10 +2,11 @@
 #ifndef UQM_CORE_TYPES_ENUM_H
 #define UQM_CORE_TYPES_ENUM_H
 
-#include "core/stl/concepts.h"
 #include <compare>
 #include <cstdint>
 #include <utility>
+
+#include "core/stl/concepts.h"
 #include "core/stl/stl.h"
 
 #ifdef WITH_MAGIC_ENUM

@@ -19,11 +19,11 @@
 #define UQM_COMM_H
 
 #include "commglue.h"
-#include "globdata.h"
-#include "units.h"
-#include "setup.h"
 #include "core/misc/bittricks.h"
+#include "globdata.h"
 #include "libs/gfxlib.h"
+#include "setup.h"
+#include "units.h"
 
 #ifdef COMM_INTERNAL
 #include "commanim.h"

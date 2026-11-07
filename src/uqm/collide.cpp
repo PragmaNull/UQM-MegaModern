@@ -17,11 +17,12 @@
  */
 
 #include "collide.h"
+
+#include "core/log/log.h"
 #include "element.h"
+#include "libs/mathlib.h"
 #include "races.h"
 #include "units.h"
-#include "libs/mathlib.h"
-#include "core/log/log.h"
 
 
 namespace uqm

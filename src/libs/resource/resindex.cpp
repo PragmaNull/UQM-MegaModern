@@ -1,14 +1,13 @@
 // Reads resource index files: the JSON files that give the type and the data of each resource.
 #include "resindex.h"
 
+#include <cstdlib>
+
 #include "core/log/log.h"
 #include "core/stl/charconv.h"
 #include "core/stl/ranges.h"
 #include "core/string/StringUtils.h"
-
 #include "libs/file/json.h"
-
-#include <cstdlib>
 
 const char* resourceString(const ResourceArg& arg)
 {

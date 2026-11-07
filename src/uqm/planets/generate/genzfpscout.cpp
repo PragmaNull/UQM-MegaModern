@@ -16,10 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "genall.h"
 #include "../../build.h"
 #include "../../grpinfo.h"
 #include "../../state.h"
+#include "genall.h"
 
 
 namespace uqm

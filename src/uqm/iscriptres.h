@@ -6,6 +6,8 @@
 #ifndef UQM_ISCRIPTRES_H
 #define UQM_ISCRIPTRES_H
 
+#include "core/stl/stl.h"
+
 namespace uqm
 {
 inline constexpr uqgsl::czstring EventScriptRes {"event.script"};

@@ -21,11 +21,12 @@
 #define UQM_LIBS_STRINGS_STRINTRN_H
 
 #include <stdio.h>
+
 #include "core/stl/map.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
-#include "libs/strlib.h"
 #include "libs/reslib.h"
+#include "libs/strlib.h"
 
 // Copies 'len' bytes of 'value' into the entry. A length of 0 empties the entry.
 void SetStringTableEntry(uqm::StringTable* strtab, int index, const void* value, int len);

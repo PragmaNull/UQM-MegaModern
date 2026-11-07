@@ -21,9 +21,9 @@
 #define UQM_MENUSTAT_H
 
 #include "core/types/enum.h"
+#include "flash.h"
 #include "libs/gfxlib.h"
 #include "libs/sndlib.h"
-#include "flash.h"
 
 namespace uqm
 {

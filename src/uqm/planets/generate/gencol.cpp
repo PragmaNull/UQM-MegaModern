@@ -16,13 +16,13 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "genall.h"
-#include "../planets.h"
 #include "../../build.h"
+#include "../../gamestr.h"
 #include "../../globdata.h"
 #include "../../grpinfo.h"
 #include "../../state.h"
-#include "../../gamestr.h"
+#include "../planets.h"
+#include "genall.h"
 #include "uqm/random/UQMRandom.h"
 
 

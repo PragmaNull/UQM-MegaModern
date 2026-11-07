@@ -4,12 +4,11 @@
 #ifndef UQM_LIBS_FILE_TEXTFILE_H
 #define UQM_LIBS_FILE_TEXTFILE_H
 
+#include "core/stl/optional.h"
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
 #include "libs/io/FileSystem.h"
-
-#include "core/stl/optional.h"
 
 namespace uqm
 {

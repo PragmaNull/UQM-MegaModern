@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_ZOQFOT_ZOQFOT_H
 #define UQM_SHIPS_ZOQFOT_ZOQFOT_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_zoqfotpik(void);

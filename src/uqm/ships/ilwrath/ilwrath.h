@@ -18,6 +18,8 @@
 #ifndef UQM_SHIPS_ILWRATH_ILWRATH_H
 #define UQM_SHIPS_ILWRATH_ILWRATH_H
 
+#include "uqm/races.h"
+
 namespace uqm
 {
 RaceDesc* init_ilwrath(void);

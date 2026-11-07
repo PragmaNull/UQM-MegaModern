@@ -18,15 +18,14 @@
 
 #include <math.h>
 
-#include "options.h"
-#include "gfxintrn.h"
-#include "tfb_prim.h"
 #include "core/log/log.h"
-#include "uqm/units.h"
-#include "uqm/sounds.h"
+#include "gfxintrn.h"
+#include "options.h"
+#include "tfb_prim.h"
 #include "uqm/controls.h"
-
 #include "uqm/setup.h"
+#include "uqm/sounds.h"
+#include "uqm/units.h"
 
 static inline tfb::Char* getCharFrame(FontDesc* fontPtr, uqm::UniChar ch);
 

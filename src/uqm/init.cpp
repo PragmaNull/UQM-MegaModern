@@ -16,22 +16,23 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "init.h"
+
 #include "build.h"
 #include "colors.h"
 #include "cons_res.h"
-#include "races.h"
 #include "element.h"
-#include "tactrans.h"
-#include "process.h"
-#include "globdata.h"
 #include "encount.h"
+#include "globdata.h"
 #include "hyper.h"
-#include "init.h"
 #include "libs/reslib.h"
-#include "nameref.h"
-#include "setup.h"
-#include "units.h"
 #include "master.h"
+#include "nameref.h"
+#include "process.h"
+#include "races.h"
+#include "setup.h"
+#include "tactrans.h"
+#include "units.h"
 
 
 namespace uqm

@@ -4,10 +4,11 @@
 #ifndef UQM_LIBS_GRAPHICS_SDL_GPUSHADERS_H
 #define UQM_LIBS_GRAPHICS_SDL_GPUSHADERS_H
 
-#include <SDL3/SDL.h>
 #include <cstdint>
-#include "core/stl/stl.h"
+#include <SDL3/SDL.h>
+
 #include "core/stl/memory.h"
+#include "core/stl/stl.h"
 #include "libs/graphics/gfx_defs.h"
 
 namespace uqm
