@@ -29,7 +29,6 @@
 #include "libs/time/timelib.h"
 #include <math.h>
 
-typedef struct Color Color;
 struct Color
 {
 	uint8_t r;

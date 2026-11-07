@@ -22,8 +22,8 @@
 
 namespace uqm
 {
-typedef struct ChecksumEntry ChecksumEntry;
-typedef struct ChecksumBuffer ChecksumBuffer;
+struct ChecksumEntry;
+struct ChecksumBuffer;
 
 } // namespace uqm
 

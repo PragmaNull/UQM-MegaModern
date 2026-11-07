@@ -61,7 +61,6 @@ static constexpr auto PlanetSideRate {c_gameSecond / 42};
 
 
 // This is a derived type from InputStateDesc.
-typedef struct LanderInputState LanderInputState;
 struct LanderInputState
 {
 	// Fields required by DoInput()

@@ -20,12 +20,12 @@
 
 namespace uqm
 {
-typedef struct BattleInputHandlers BattleInputHandlers;
-typedef struct InputContext InputContext;
-typedef struct ComputerInputContext ComputerInputContext;
-typedef struct HumanInputContext HumanInputContext;
+struct BattleInputHandlers;
+struct InputContext;
+struct ComputerInputContext;
+struct HumanInputContext;
 #ifdef NETPLAY
-typedef struct NetworkInputContext NetworkInputContext;
+struct NetworkInputContext;
 #endif /* NETPLAY */
 
 } // namespace uqm

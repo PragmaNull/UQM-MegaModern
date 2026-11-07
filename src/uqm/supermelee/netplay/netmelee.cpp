@@ -527,7 +527,6 @@ bool localReadyConnections(NetConnection_ReadyCallback readyCallback,
 
 static constexpr auto NetworkPollDelay {GameTicksPerSecond / 24};
 
-typedef struct NegotiateReadyState NegotiateReadyState;
 struct NegotiateReadyState
 {
 	// Common fields of InputStateDesc, from which this structure
@@ -621,7 +620,6 @@ bool negotiateReadyConnections(bool notifyRemote, NetState nextState)
 	return numDisconnected == 0;
 }
 
-typedef struct WaitReadyState WaitReadyState;
 struct WaitReadyState
 {
 	// Common fields of InputStateDesc, from which this structure
@@ -681,7 +679,6 @@ bool waitReady(NetConnection* conn)
 
 ////////////////////////////////////////////////////////////////////////////
 
-typedef struct WaitResetState WaitResetState;
 struct WaitResetState
 {
 	// Common fields of InputStateDesc, from which this structure

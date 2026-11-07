@@ -20,7 +20,7 @@
 
 namespace uqm
 {
-typedef struct GenerateFunctions GenerateFunctions;
+struct GenerateFunctions;
 
 } // namespace uqm
 

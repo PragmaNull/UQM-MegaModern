@@ -22,7 +22,7 @@
 
 namespace uqm
 {
-typedef struct PacketQueue PacketQueue;
+struct PacketQueue;
 
 } // namespace uqm
 
@@ -33,7 +33,6 @@ typedef struct PacketQueue PacketQueue;
 
 namespace uqm
 {
-typedef struct PacketQueueLink PacketQueueLink;
 struct PacketQueueLink
 {
 	PacketQueueLink* next;

@@ -26,10 +26,10 @@ namespace uqm
 {
 // for NETPLAY_STATISTICS
 
-typedef struct NetConnection NetConnection;
-typedef struct NetConnectionError NetConnectionError;
+struct NetConnection;
+struct NetConnectionError;
 #ifdef NETPLAY_STATISTICS
-typedef struct NetStatistics NetStatistics;
+struct NetStatistics;
 #endif
 
 typedef void (*NetConnection_ConnectCallback)(NetConnection* nd);

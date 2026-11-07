@@ -20,8 +20,8 @@
 
 namespace uqm
 {
-typedef struct MeleeTeam MeleeTeam;
-typedef struct MeleeSetup MeleeSetup;
+struct MeleeTeam;
+struct MeleeSetup;
 
 #ifdef MELEESETUP_INTERNAL
 #define MELEETEAM_INTERNAL

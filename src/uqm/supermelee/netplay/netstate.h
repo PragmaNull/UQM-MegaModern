@@ -25,7 +25,7 @@
 
 namespace uqm
 {
-typedef struct NetConnectionStateData NetConnectionStateData;
+struct NetConnectionStateData;
 
 // State of a NetConnection.
 enum class NetState

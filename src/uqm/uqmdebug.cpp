@@ -240,7 +240,7 @@ static void dumpPlanetCallback(const SystemPlanet* planet, void* arg);
 static void dumpMoonCallback(const SystemPlanet* moon, void* arg);
 static void dumpWorld(FILE* out, const SystemPlanet* world);
 
-typedef struct TallyResourcesArg TallyResourcesArg;
+struct TallyResourcesArg;
 static void tallySystemPreCallback(const StarDesc* star, const SolarSystemState* system, void* arg);
 static void tallySystemPostCallback(const StarDesc* star, const SolarSystemState* system, void* arg);
 static void tallyPlanetCallback(const SystemPlanet* planet, void* arg);

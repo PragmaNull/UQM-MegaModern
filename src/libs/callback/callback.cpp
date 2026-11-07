@@ -25,7 +25,7 @@
 
 #include "core/thread/Mutex.h"
 
-typedef struct CallbackLink CallbackLink;
+struct CallbackLink;
 
 #define CALLBACK_INTERNAL
 #include "callback.h"

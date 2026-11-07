@@ -110,7 +110,7 @@ enum class FlashState
 };
 consteval bool isArithmeticEnum(FlashState) { return true; }
 
-typedef struct FlashContext FlashContext;
+struct FlashContext;
 
 #ifdef FLASH_INTERNAL
 enum class FlashType

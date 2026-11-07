@@ -35,7 +35,6 @@ struct SoundChunk
 	struct SoundChunk* next;
 };
 
-struct SoundChunk;
 } // namespace tfb
 
 tfb::SoundChunk* create_SoundChunk(tfb::SoundDecoder* decoder, float start_time);

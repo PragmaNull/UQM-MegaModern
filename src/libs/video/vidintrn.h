@@ -32,8 +32,6 @@ struct LegacyVideoDesc
 	uint32_t loop;
 };
 
-struct LegacyVideoDesc;
-
 struct legacy_video_ref
 {
 	VideoRef vidref;

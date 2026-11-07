@@ -22,7 +22,7 @@
 
 namespace uqm
 {
-typedef struct crc_State crc_State;
+struct crc_State;
 
 } // namespace uqm
 

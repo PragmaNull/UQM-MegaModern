@@ -20,15 +20,15 @@
 #ifndef UQM_LIBS_RESOURCE_INDEX_H
 #define UQM_LIBS_RESOURCE_INDEX_H
 
-typedef struct resource_handlers ResourceHandlers;
-typedef struct resource_desc ResourceDesc;
+struct ResourceHandlers;
+struct ResourceDesc;
 
 #include <stdio.h>
 #include "core/stl/string.h"
 #include "core/stl/map.h"
 #include "libs/reslib.h"
 
-struct resource_handlers
+struct ResourceHandlers
 {
 	const char* resType;
 	// One of loadFun and textLoadFun is set.
@@ -37,7 +37,7 @@ struct resource_handlers
 	ResourceFreeFun* freeFun;
 };
 
-struct resource_desc
+struct ResourceDesc
 {
 	RESOURCE res_id;
 	// STRING values point into it.

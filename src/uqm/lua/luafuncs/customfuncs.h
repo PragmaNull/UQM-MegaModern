@@ -20,7 +20,7 @@
 
 namespace uqm
 {
-typedef struct luaUqm_custom_Function luaUqm_custom_Function;
+struct luaUqm_custom_Function;
 
 } // namespace uqm
 

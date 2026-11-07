@@ -40,7 +40,7 @@ inline constexpr auto FadeNoIntensity {0};
 inline constexpr auto FadeNormalIntensity {255};
 inline constexpr auto FadeFullIntensity {510};
 
-typedef struct NativePalette NativePalette;
+struct NativePalette;
 
 namespace tfb
 {

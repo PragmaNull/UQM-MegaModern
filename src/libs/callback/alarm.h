@@ -26,7 +26,6 @@
 // Time since the game clock started.
 using AlarmTime = uqstl::chrono::milliseconds;
 
-typedef struct Alarm Alarm;
 typedef void* AlarmCallbackArg;
 typedef void (*AlarmCallback)(AlarmCallbackArg arg);
 

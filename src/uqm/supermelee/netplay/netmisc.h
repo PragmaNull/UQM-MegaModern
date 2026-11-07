@@ -22,7 +22,7 @@
 
 namespace uqm
 {
-typedef struct BattleStateData BattleStateData;
+struct BattleStateData;
 
 } // namespace uqm
 

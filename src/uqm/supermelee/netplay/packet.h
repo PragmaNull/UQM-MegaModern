@@ -25,7 +25,7 @@
 
 namespace uqm
 {
-typedef struct Packet Packet;
+struct Packet;
 
 enum class PacketType
 {

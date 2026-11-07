@@ -158,7 +158,7 @@ consteval bool isFlagEnum(MixerFlags) { return true; }
 typedef intptr_t mixer_Object;
 typedef intptr_t mixer_IntVal;
 
-typedef struct _mixer_Source mixer_Source;
+struct mixer_Source;
 
 struct mixer_Buffer
 {
@@ -183,7 +183,7 @@ struct mixer_Buffer
 
 inline constexpr auto mixer_bufMagic {0x4258494DU}; /* MIXB in LSB */
 
-struct _mixer_Source
+struct mixer_Source
 {
 	uint32_t magic;
 	bool locked;
