@@ -56,8 +56,8 @@ static ConversationData commander_desc =
 		},
 		CommanderConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				/* Blink */
 				1,					  /* StartIndex */
@@ -69,7 +69,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond * 8, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Running light */
 				10,						  /* StartIndex */
 				30,						  /* NumFrames */
@@ -80,7 +80,7 @@ static ConversationData commander_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				/* SD "rave party" */
 				1, /* StartIndex */
 				3, /* NumFrames */
@@ -92,7 +92,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond / 15, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				/* HdResolutionFactor static distortion */
 				40, /* StartIndex */
 				16, /* NumFrames */
@@ -104,7 +104,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond / 4, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -139,8 +139,8 @@ static ConversationData commander_desc =
 static AnimFilterSet commander_filters =
 	{
 		2, /* Number of filters */
-		{
-								  /* Filter array */
+		{{
+			/* Filter array */
 			{
 				0,					   /* Color index */
 				1,					   /* Opacity index */
@@ -148,15 +148,14 @@ static AnimFilterSet commander_filters =
 				DrawKind::Multiply,	   /* DrawKind*/
 				FilterFlags::Disabled, /* Flags */
 			},
-								  {
+			{
 				2,						 /* Color index */
 				3,						 /* Opacity index */
 				56,						 /* Frame index */
 				DrawKind::Overlay,		 /* DrawKind*/
 				FilterFlags::TurnOffOft, /* Flags */
 			},
-								  }
-};
+		}}};
 
 static void RaveParty(void)
 {

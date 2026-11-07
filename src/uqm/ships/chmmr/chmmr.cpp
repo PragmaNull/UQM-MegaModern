@@ -193,7 +193,7 @@ static void laser_death(Element* ElementPtr)
 				ShipPtr->current.location.y
 				+ Sine(angle, magnitude);
 			IonSpotsPtr->current.image.farray =
-				StarShipPtr->RaceDescPtr->ship_data.weapon;
+				StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 			IonSpotsPtr->current.image.frame = SetAbsFrameIndex(
 				StarShipPtr->RaceDescPtr->ship_data.weapon[0],
 				AngleToFacing(FullCircle) << 1);
@@ -217,13 +217,12 @@ static uint16_t initialize_megawatt_laser(Element* ShipPtr, ElementHandle LaserA
 	GfxRect r;
 	Starship* StarShipPtr {};
 	LaserDesc LaserBlock;
-	const static Color cycle_array[] =
-		{
-			BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
-			BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
-			BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B),
-			BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
-		};
+	const static uqstl::array<Color, 4> cycle_array {
+		BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
+		BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
+		BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B),
+		BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
+	};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	LaserBlock.face = StarShipPtr->ShipFacing;
@@ -311,7 +310,7 @@ static void chmmr_postprocess(Element* ElementPtr)
 
 			MuzzleFlashPtr->current = ElementPtr->next;
 			MuzzleFlashPtr->current.image.farray =
-				StarShipPtr->RaceDescPtr->ship_data.weapon;
+				StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 			MuzzleFlashPtr->current.image.frame = SetAbsFrameIndex(
 				StarShipPtr->RaceDescPtr->ship_data.weapon[0],
 				StarShipPtr->ShipFacing + AngleToFacing(FullCircle));
@@ -352,22 +351,20 @@ static void chmmr_postprocess(Element* ElementPtr)
 				uint16_t angle {};
 				uint16_t magnitude {};
 				Starship* EnemyStarShipPtr {};
-				const static int16_t shadow_offs[] =
-					{
-						DisplayToWorld(8),
-						DisplayToWorld(8 + 9),
-						DisplayToWorld(8 + 9 + 11),
-						DisplayToWorld(8 + 9 + 11 + 14),
-						DisplayToWorld(8 + 9 + 11 + 14 + 18),
-					};
-				const static Color color_tab[] =
-					{
-						BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53),
-						BuildColor(MakeRgb15(0x00, 0x00, 0x0E), 0x54),
-						BuildColor(MakeRgb15(0x00, 0x00, 0x0C), 0x55),
-						BuildColor(MakeRgb15(0x00, 0x00, 0x09), 0x56),
-						BuildColor(MakeRgb15(0x00, 0x00, 0x07), 0x57),
-					};
+				const static uqstl::array<int16_t, 5> shadow_offs {
+					DisplayToWorld(8),
+					DisplayToWorld(8 + 9),
+					DisplayToWorld(8 + 9 + 11),
+					DisplayToWorld(8 + 9 + 11 + 14),
+					DisplayToWorld(8 + 9 + 11 + 14 + 18),
+				};
+				const static uqstl::array<Color, 5> color_tab {
+					BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53),
+					BuildColor(MakeRgb15(0x00, 0x00, 0x0E), 0x54),
+					BuildColor(MakeRgb15(0x00, 0x00, 0x0C), 0x55),
+					BuildColor(MakeRgb15(0x00, 0x00, 0x09), 0x56),
+					BuildColor(MakeRgb15(0x00, 0x00, 0x07), 0x57),
+				};
 				uint32_t max_speed {};
 
 				// calculate tractor beam effect
@@ -696,7 +693,7 @@ static void spawn_satellites(Element* ElementPtr)
 				SattPtr->current.location.y = ElementPtr->next.location.y
 											+ Sine(angle, SatelliteOffset());
 				SattPtr->current.image.farray =
-					StarShipPtr->RaceDescPtr->ship_data.special;
+					StarShipPtr->RaceDescPtr->ship_data.special.data();
 				SattPtr->current.image.frame = SetAbsFrameIndex(
 					StarShipPtr->RaceDescPtr->ship_data.special[0],
 					(uint16_t)uqm::random().next() & 0x07);

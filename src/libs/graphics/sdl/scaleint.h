@@ -67,15 +67,15 @@ enum RgbYuvIndex
 	YUV_XFORM_V = 2
 };
 
-const extern int YUV_matrix[3][3];
+const extern uqstl::array<uqstl::array<int, 3>, 3> YUV_matrix;
 
 // pre-computed transformations for 8 bits per channel
-extern int RGB_to_YUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 256];
-extern int16_t dRGB_to_dYUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 512];
+extern uqstl::array<uqstl::array<uqstl::array<int, 256>, 3>, 3> RGB_to_YUV;
+extern uqstl::array<uqstl::array<uqstl::array<int16_t, 512>, 3>, 3> dRGB_to_dYUV;
 
 using YuvVector = Uint32;
 // pre-computed transformations for RGB555
-extern YuvVector RGB15_to_YUV[0x8000];
+extern uqstl::array<YuvVector, 0x8000> RGB15_to_YUV;
 
 
 // Platform+Scaler function lookups

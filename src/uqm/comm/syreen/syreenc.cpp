@@ -51,8 +51,8 @@ static ConversationData syreen_desc =
 		},
 		SyreenConversationPhrases, /* PlayerPhrases */
 		15, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				5,						/* StartIndex */
 				2,						/* NumFrames */
@@ -63,7 +63,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				7,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -73,7 +73,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				9,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -83,7 +83,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				11,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -93,7 +93,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				13,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -103,7 +103,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				15,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -113,7 +113,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 12),				/* BlockMask */
 			},
-								{
+			{
 				17,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -123,7 +123,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				19,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -133,7 +133,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 13),
 			},
-								{
+			{
 				21,						/* StartIndex */
 				6,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -143,7 +143,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				27,					  /* StartIndex */
 				4,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -153,7 +153,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 14),				/* BlockMask */
 			},
-								{
+			{
 				31,						  /* StartIndex */
 				6,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -163,7 +163,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				37,						/* StartIndex */
 				4,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -173,7 +173,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond / 15, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				41,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -183,7 +183,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 5),				/* BlockMask */
 			},
-								{
+			{
 				44, /* StartIndex */
 				4,	/* NumFrames */
 				AnimationFlags::Yoyo
@@ -194,7 +194,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond,	  /* RestartRate */
 				(1 << 7) | (1 << 14), /* BlockMask */
 			},
-								{
+			{
 				48, /* StartIndex */
 				3,	/* NumFrames */
 				AnimationFlags::Yoyo
@@ -205,7 +205,7 @@ static ConversationData syreen_desc =
 				GameTicksPerSecond,	  /* RestartRate */
 				(1 << 9) | (1 << 13), /* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -636,7 +636,7 @@ static void SyreenShuttle(ResponseRef R)
 static void NormalSyreen(ResponseRef R)
 {
 	uint8_t i {};
-	SyreenPhrase pStr[4];
+	uqstl::array<SyreenPhrase, 4> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = SyreenPhrase::NullPhrase;
@@ -903,9 +903,9 @@ static void PlanAmbush(ResponseRef R)
 		if (SyreenPtr)
 		{
 			SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
-			SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, *PlotId::Home);
+			SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map.data(), *PlotId::Home);
 			StartSphereTracking(RaceId::Syreen);
-			const GfxPoint loc = SeedFleetLocation(SyreenPtr, plot_map,
+			const GfxPoint loc = SeedFleetLocation(SyreenPtr, plot_map.data(),
 												   *PlotId::MyconTrap);
 			SetRaceDest(*RaceId::Syreen, loc.x, loc.y, 15, (uint8_t)~0);
 		}

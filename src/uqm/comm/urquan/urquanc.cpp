@@ -47,8 +47,8 @@ static ConversationData urquan_desc =
 		},
 		UrquanConversationPhrases, /* PlayerPhrases */
 		9, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				7,						  /* StartIndex */
 				6,						  /* NumFrames */
@@ -59,7 +59,7 @@ static ConversationData urquan_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				13,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -69,7 +69,7 @@ static ConversationData urquan_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				16,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -79,7 +79,7 @@ static ConversationData urquan_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				19,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -89,7 +89,7 @@ static ConversationData urquan_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				22,						  /* StartIndex */
 				7,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -99,7 +99,7 @@ static ConversationData urquan_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				29,						  /* StartIndex */
 				7,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -109,7 +109,7 @@ static ConversationData urquan_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				36,						  /* StartIndex */
 				8,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -119,7 +119,7 @@ static ConversationData urquan_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				44,													 /* StartIndex */
 				5,													 /* NumFrames */
 				AnimationFlags::Circular | AnimationFlags::Disabled, /* AnimFlags */
@@ -129,7 +129,7 @@ static ConversationData urquan_desc =
 				GameTicksPerSecond * 5, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				49,													 /* StartIndex */
 				1,													 /* NumFrames */
 				AnimationFlags::Circular | AnimationFlags::Disabled, /* AnimFlags */
@@ -139,7 +139,7 @@ static ConversationData urquan_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			1,					  /* StartIndex */

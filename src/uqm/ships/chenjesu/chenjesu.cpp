@@ -149,7 +149,7 @@ static void crystal_postprocess(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	MissileBlock.cx = ElementPtr->next.location.x;
 	MissileBlock.cy = ElementPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.index = 1;
 	MissileBlock.sender = ElementPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;
@@ -391,7 +391,7 @@ static void spawn_doggy(Element* ElementPtr)
 											+ Cosine(angle, DisplayToWorld(ChenjesuOffset() + DoggyOffset()));
 		DoggyElementPtr->current.location.y = ElementPtr->next.location.y
 											+ Sine(angle, DisplayToWorld(ChenjesuOffset() + DoggyOffset()));
-		DoggyElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+		DoggyElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 		DoggyElementPtr->current.image.frame = StarShipPtr->RaceDescPtr->ship_data.special[0];
 
 		SetVelocityVector(&DoggyElementPtr->velocity,
@@ -413,7 +413,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 {
 	Starship* StarShipPtr {};
 
-	static uint32_t old_dist[NumSides] = {(uint32_t)~0, (uint32_t)~0};
+	static uqstl::array<uint32_t, NumSides> old_dist {(uint32_t)~0, (uint32_t)~0};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~StatusFlags::Special;
@@ -464,7 +464,7 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 			LockElement(h, &CrystalPtr);
 			hNext = GetPredElement(CrystalPtr);
 			if (!(testFlag(CrystalPtr->state_flags, ElementFlags::Nonsolid))
-				&& CrystalPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.weapon
+				&& CrystalPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.weapon.data()
 				&& CrystalPtr->preprocess_func
 				&& CrystalPtr->life_span > 0
 				&& elementsOfSamePlayer(CrystalPtr, ShipPtr))
@@ -551,13 +551,13 @@ static void chenjesu_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 				if (IsHd())
 				{
 					Element Ship;
-					ElementHandle Weapon[6];
+					uqstl::array<ElementHandle, 6> Weapon;
 					Element* EPtr {};
 					Starship* StarShipPtr2 {};
 
 					Ship = *ShipPtr;
 					GetElementStarShip(&Ship, &StarShipPtr2);
-					const uint16_t num_weapons {(*StarShipPtr->RaceDescPtr->init_weapon_func)(ShipPtr, Weapon)};
+					const uint16_t num_weapons {(*StarShipPtr->RaceDescPtr->init_weapon_func)(ShipPtr, Weapon.data())};
 					(void)num_weapons;
 					ElementHandle* WeaponPtr {&Weapon[0]};
 
@@ -611,7 +611,7 @@ static uint16_t initialize_crystal(Element* ShipPtr, ElementHandle CrystalArray[
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;

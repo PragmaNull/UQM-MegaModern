@@ -47,8 +47,8 @@ static ConversationData blackurq_desc =
 		},
 		BlackurqConversationPhrases, /* PlayerPhrases */
 		9, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				7,						  /* StartIndex */
 				6,						  /* NumFrames */
@@ -59,7 +59,7 @@ static ConversationData blackurq_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				13,						  /* StartIndex */
 				7,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -69,7 +69,7 @@ static ConversationData blackurq_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				// New eye animation
 				42,						  /* StartIndex */
 				7,						  /* NumFrames */
@@ -80,7 +80,7 @@ static ConversationData blackurq_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				20,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -90,7 +90,7 @@ static ConversationData blackurq_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				23,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -100,7 +100,7 @@ static ConversationData blackurq_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				26,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -110,7 +110,7 @@ static ConversationData blackurq_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				29,						/* StartIndex */
 				4,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -120,7 +120,7 @@ static ConversationData blackurq_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				// "Left" extremity
 				33,														/* StartIndex */
 				5,														/* NumFrames */
@@ -131,7 +131,7 @@ static ConversationData blackurq_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				// "Right" extremeity
 				38,						  /* StartIndex */
 				4,						  /* NumFrames */
@@ -142,7 +142,7 @@ static ConversationData blackurq_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			1,					  /* StartIndex */

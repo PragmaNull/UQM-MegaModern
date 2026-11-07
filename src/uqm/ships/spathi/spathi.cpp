@@ -165,7 +165,7 @@ static void spawn_butt_missile(Element* ShipPtr)
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	ButtMissileBlock.cx = ShipPtr->next.location.x;
 	ButtMissileBlock.cy = ShipPtr->next.location.y;
-	ButtMissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+	ButtMissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 	ButtMissileBlock.face = ButtMissileBlock.index =
 		NormalizeFacing(StarShipPtr->ShipFacing
 						+ AngleToFacing(HalfCircle));
@@ -256,7 +256,7 @@ static uint16_t initialize_standard_missile(Element* ShipPtr, ElementHandle Miss
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;

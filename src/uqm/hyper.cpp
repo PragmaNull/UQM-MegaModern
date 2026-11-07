@@ -54,8 +54,8 @@ static auto Xoffs() { return ((RadarScanWidth() + (UnitScreenWidth() << 2)) >> 1
 static auto Yoffs() { return ((RadarScanHeight() + (UnitScreenHeight() << 2)) >> 1); }
 static auto AnimatedHyperspace() { return (IsHd() && uqm::UQMOptions::read().hyperStars); }
 
-static FrameRef hyperstars[3];
-static ColorMapRef hypercmaps[2];
+static uqstl::array<FrameRef, 3> hyperstars;
+static uqstl::array<ColorMapRef, 2> hypercmaps;
 static uint8_t fuel_ticks;
 static uint16_t hyper_dx, hyper_dy, hyper_extra;
 
@@ -75,7 +75,7 @@ consteval bool isArithmeticEnum(HyperMenuItem) { return true; }
 static inline int16_t RaceHyperSpeed(RaceId Index)
 {
 	static int seedStamp = -1;
-	const int defaultMap[] {
+	const uqstl::array<int, 26> defaultMap {
 		LogToHyper(ResScale(40)), /* ARILOU_SHIP */
 		LogToHyper(ResScale(27)), /* CHMMR_SHIP */
 		LogToHyper(ResScale(24)), /* HUMAN_SHIP */
@@ -105,7 +105,7 @@ static inline int16_t RaceHyperSpeed(RaceId Index)
 
 	};
 	const uint16_t numRaces = uqstl::size(defaultMap);
-	static int16_t speedMap[numRaces] = {0}; // set urquan drone to 0.
+	static uqstl::array<int16_t, numRaces> speedMap {}; // set urquan drone to 0.
 	int x {};
 	if (!uqm::currentSeed().ships && (seedStamp != -1 || speedMap[0] == 0))
 	{
@@ -152,7 +152,7 @@ decorate_vortex (Element *ElementPtr)
 {
 	EncounterHandle hEncounter, hNextEncounter;
 	FrameRef f = nullptr;
-	static FrameRef vortex_ships[NUM_AVAILABLE_RACES];
+	static uqstl::array<FrameRef, NUM_AVAILABLE_RACES> vortex_ships;
 
 	// The Element is still spawning, nothing to do yet
 	if (ElementPtr->death_func)
@@ -1926,7 +1926,7 @@ void SeedUniverse(void)
 	portalCounter = uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER);
 	if (portalCounter || arilouSpaceCounter)
 	{
-		StarDesc SD[2];
+		uqstl::array<StarDesc, 2> SD;
 		// This array is filled with the StarDesc's of
 		// QuasiSpace portals that need to be taken into account.
 		// i is set to the number of active portals (max 2).

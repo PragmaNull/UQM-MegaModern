@@ -51,7 +51,7 @@ void SCALE_(TriScanFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	const int slen = sp / bpp;
 	const int dlen = dp / bpp;
 	// for clarity purposes, the 'pixels' array here is transposed
-	Uint32 pixels[3][3];
+	uqstl::array<uqstl::array<Uint32, 3>, 3> pixels;
 	const Uint32* src_p = (Uint32*)src->pixels;
 	Uint32* dst_p = (Uint32*)dst->pixels;
 

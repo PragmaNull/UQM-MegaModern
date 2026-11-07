@@ -52,53 +52,65 @@ static int luaUqm_state_prop_get(lua_State* luaState);
 static int luaUqm_state_prop_set(lua_State* luaState);
 static int luaUqm_state_misc_alignText(lua_State* luaState);
 
-const static luaL_Reg stateClockFuncs[] = {
-	{"getDate", luaUqm_state_clock_getDate},
-	{nullptr,	  nullptr					 },
+const static uqstl::array<luaL_Reg, 2> stateClockFuncs {
+	{
+		{"getDate", luaUqm_state_clock_getDate},
+		{nullptr, nullptr},
+	 }
 };
 
-const static luaL_Reg stateEscortFuncs[] = {
-	{"addShips",	 luaUqm_state_escort_addShips	 },
-	{"canAddShips", luaUqm_state_escort_canAddShips},
-	{"removeShips", luaUqm_state_escort_removeShips},
-	{"shipCount",	  luaUqm_state_escort_shipCount  },
-	{"totalValue",  luaUqm_state_escort_totalValue },
-	{nullptr,		  nullptr						},
+const static uqstl::array<luaL_Reg, 6> stateEscortFuncs {
+	{
+		{"addShips", luaUqm_state_escort_addShips},
+		{"canAddShips", luaUqm_state_escort_canAddShips},
+		{"removeShips", luaUqm_state_escort_removeShips},
+		{"shipCount", luaUqm_state_escort_shipCount},
+		{"totalValue", luaUqm_state_escort_totalValue},
+		{nullptr, nullptr},
+	 }
 };
 
-const static luaL_Reg statePropFuncs[] = {
-	{"get",	luaUqm_state_prop_get},
-	{"set",	luaUqm_state_prop_set},
-	{nullptr, nullptr				 },
+const static uqstl::array<luaL_Reg, 3> statePropFuncs {
+	{
+		{"get", luaUqm_state_prop_get},
+		{"set", luaUqm_state_prop_set},
+		{nullptr, nullptr},
+	 }
 };
 
-const static luaL_Reg stateRaceFuncs[] = {
-	{"isAlive",	luaUqm_state_race_isAlive	 },
-	{"isAllied",	 luaUqm_state_race_isAllied },
-	{"isKnown",	luaUqm_state_race_isKnown	 },
-	{"setAlive",	 luaUqm_state_race_setAlive },
-	{"setAllied", luaUqm_state_race_setAllied},
-	{"setKnown",	 luaUqm_state_race_setKnown },
-	{nullptr,	  nullptr					 },
+const static uqstl::array<luaL_Reg, 7> stateRaceFuncs {
+	{
+		{"isAlive", luaUqm_state_race_isAlive},
+		{"isAllied", luaUqm_state_race_isAllied},
+		{"isKnown", luaUqm_state_race_isKnown},
+		{"setAlive", luaUqm_state_race_setAlive},
+		{"setAllied", luaUqm_state_race_setAllied},
+		{"setKnown", luaUqm_state_race_setKnown},
+		{nullptr, nullptr},
+	 }
 };
 
-const static luaL_Reg stateSisFuncs[] = {
-	{"addCrew",		luaUqm_state_sis_addCrew		},
-	{"addFuel",		luaUqm_state_sis_addFuel		},
-	{"addLanders",	   luaUqm_state_sis_addLanders	  },
-	{"addResUnits",	luaUqm_state_sis_addResUnits	},
-	{"getCaptainName", luaUqm_state_sis_getCaptainName},
-	{"getCrew",		luaUqm_state_sis_getCrew		},
-	{"getFuel",		luaUqm_state_sis_getFuel		},
-	{"getLanders",	   luaUqm_state_sis_getLanders	  },
-	{"getResUnits",	luaUqm_state_sis_getResUnits	},
-	{"getShipName",	luaUqm_state_sis_getShipName	},
-	{nullptr,		  nullptr						},
+const static uqstl::array<luaL_Reg, 11> stateSisFuncs {
+	{
+		{"addCrew", luaUqm_state_sis_addCrew},
+		{"addFuel", luaUqm_state_sis_addFuel},
+		{"addLanders", luaUqm_state_sis_addLanders},
+		{"addResUnits", luaUqm_state_sis_addResUnits},
+		{"getCaptainName", luaUqm_state_sis_getCaptainName},
+		{"getCrew", luaUqm_state_sis_getCrew},
+		{"getFuel", luaUqm_state_sis_getFuel},
+		{"getLanders", luaUqm_state_sis_getLanders},
+		{"getResUnits", luaUqm_state_sis_getResUnits},
+		{"getShipName", luaUqm_state_sis_getShipName},
+		{nullptr, nullptr},
+	 }
 };
 
-const static luaL_Reg stateMiscFuncs[] = {
-	{"alignText", luaUqm_state_misc_alignText},
-	{nullptr,	  nullptr					 },
+const static uqstl::array<luaL_Reg, 2> stateMiscFuncs {
+	{
+		{"alignText", luaUqm_state_misc_alignText},
+		{nullptr, nullptr},
+	 }
 };
 
 int luaUqm_state_open(lua_State* luaState)
@@ -106,22 +118,22 @@ int luaUqm_state_open(lua_State* luaState)
 	// Create a table on the stack with space reserved for five fields.
 	lua_createtable(luaState, 0, 5);
 
-	luaL_newlib(luaState, stateClockFuncs);
+	newLuaLib(luaState, stateClockFuncs);
 	lua_setfield(luaState, -2, "clock");
 
-	luaL_newlib(luaState, stateEscortFuncs);
+	newLuaLib(luaState, stateEscortFuncs);
 	lua_setfield(luaState, -2, "escort");
 
-	luaL_newlib(luaState, statePropFuncs);
+	newLuaLib(luaState, statePropFuncs);
 	lua_setfield(luaState, -2, "prop");
 
-	luaL_newlib(luaState, stateRaceFuncs);
+	newLuaLib(luaState, stateRaceFuncs);
 	lua_setfield(luaState, -2, "race");
 
-	luaL_newlib(luaState, stateSisFuncs);
+	newLuaLib(luaState, stateSisFuncs);
 	lua_setfield(luaState, -2, "sis");
 
-	luaL_newlib(luaState, stateMiscFuncs);
+	newLuaLib(luaState, stateMiscFuncs);
 	lua_setfield(luaState, -2, "misc");
 
 	return 1;

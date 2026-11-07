@@ -49,7 +49,7 @@ struct NetStateData
 {
 	const char* name;
 };
-extern NetStateData netStateData[];
+extern uqstl::array<NetStateData, 10> netStateData;
 
 typedef void (*NetConnectionStateData_ReleaseFunction)(
 	NetConnectionStateData* stateData);

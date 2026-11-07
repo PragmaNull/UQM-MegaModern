@@ -180,7 +180,7 @@ static uint16_t initialize_spit(Element* ShipPtr, ElementHandle SpitArray[])
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
@@ -243,7 +243,7 @@ static void spawn_tongue(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	TongueBlock.cx = ElementPtr->next.location.x;
 	TongueBlock.cy = ElementPtr->next.location.y;
-	TongueBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+	TongueBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 	TongueBlock.face = TongueBlock.index = StarShipPtr->ShipFacing;
 	TongueBlock.sender = ElementPtr->playerNr;
 	TongueBlock.flags = ElementFlags::IgnoreSimilar;

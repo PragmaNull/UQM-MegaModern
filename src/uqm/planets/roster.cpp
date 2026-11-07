@@ -47,7 +47,7 @@ struct RosterState
 	// Ship icon positions split into (lower half) left and right (upper)
 	// and sorted in the Y coord. These are used for navigation around the
 	// escort positions.
-	GfxPoint shipPos[MaxBuiltShips];
+	uqstl::array<GfxPoint, MaxBuiltShips> shipPos;
 	uint16_t count;
 	// Number of ships
 
@@ -160,7 +160,7 @@ static ShipFragment* LockSupportShip(RosterState* rosterState, ShipFragmentHandl
 	// Lookup the current escort's location in the unsorted points list
 	// to find the original escort index
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q),
-		pship_pos = ship_pos;
+		pship_pos = ship_pos.data();
 		 hStarShip; hStarShip = hNextShip, ++pship_pos)
 	{
 		ShipFragment* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
@@ -346,7 +346,7 @@ static bool DoModifyRoster(MenuState* pMS)
 	}
 	else
 	{
-		const GfxPoint* pship_pos = rosterState->shipPos;
+		const GfxPoint* pship_pos = rosterState->shipPos.data();
 		const uint16_t top_right = (rosterState->count + 1) >> 1;
 
 		uint16_t NewState {pMS->CurState};
@@ -467,8 +467,8 @@ bool RosterMenu(void)
 
 	// Get the escort positions we will use and sort on X then Y
 	assert(sizeof(rosterState.shipPos) == sizeof(ship_pos));
-	memcpy(rosterState.shipPos, ship_pos, sizeof(ship_pos));
-	uqstl::sort(rosterState.shipPos, rosterState.shipPos + rosterState.count, [](const GfxPoint& a, const GfxPoint& b) {
+	memcpy(rosterState.shipPos.data(), ship_pos.data(), sizeof(ship_pos));
+	uqstl::sort(rosterState.shipPos.data(), rosterState.shipPos.data() + rosterState.count, [](const GfxPoint& a, const GfxPoint& b) {
 		// Ships on the left in the lower half, and ordered on Y
 		return a.x != b.x ? a.x < b.x : a.y < b.y;
 	});

@@ -325,7 +325,7 @@ static uint16_t initialize_pump_up(Element* ShipPtr, ElementHandle PumpUpArray[]
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
@@ -364,17 +364,16 @@ static uint16_t initialize_pump_up(Element* ShipPtr, ElementHandle PumpUpArray[]
 
 static void confuse_preprocess_april(Element* ElementPtr)
 {
-	const static Color colorTable[] =
-		{
-			BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x7a),
-			BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
-			BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x7a),
-			BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0x7a),
-			BuildColor(MakeRgb15(0x00, 0x1F, 0x15), 0x7a),
-			BuildColor(MakeRgb15(0x00, 0x15, 0x1F), 0x7a),
-			BuildColor(MakeRgb15(0x00, 0x00, 0x1F), 0x7a),
-			BuildColor(MakeRgb15(0x15, 0x00, 0x1F), 0x7a),
-		};
+	const static uqstl::array<Color, 8> colorTable {
+		BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x7a),
+		BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
+		BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x7a),
+		BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0x7a),
+		BuildColor(MakeRgb15(0x00, 0x1F, 0x15), 0x7a),
+		BuildColor(MakeRgb15(0x00, 0x15, 0x1F), 0x7a),
+		BuildColor(MakeRgb15(0x00, 0x00, 0x1F), 0x7a),
+		BuildColor(MakeRgb15(0x15, 0x00, 0x1F), 0x7a),
+	};
 	const size_t colorTabCount = std::size(colorTable);
 
 	if (!(testFlag(ElementPtr->state_flags, ElementFlags::Nonsolid)))
@@ -539,7 +538,7 @@ static void confusion_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		{
 			LockElement(hConfusionElement, &ConfusionPtr);
 			if (elementsOfSamePlayer(ConfusionPtr, ElementPtr0)
-				&& ConfusionPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special
+				&& ConfusionPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special.data()
 				&& (testFlag(ConfusionPtr->state_flags, ElementFlags::Nonsolid)))
 			{
 				UnlockElement(hConfusionElement);
@@ -608,7 +607,7 @@ static uint16_t initialize_confusion(Element* ShipPtr, ElementHandle ConfusionAr
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	ConfusionBlock.cx = ShipPtr->next.location.x;
 	ConfusionBlock.cy = ShipPtr->next.location.y;
-	ConfusionBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+	ConfusionBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 	ConfusionBlock.index = 0;
 	ConfusionBlock.face = StarShipPtr->ShipFacing;
 	ConfusionBlock.sender = ShipPtr->playerNr;
@@ -643,7 +642,7 @@ static uint16_t initialize_test_pump_up(Element* ShipPtr, ElementHandle PumpUpAr
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;

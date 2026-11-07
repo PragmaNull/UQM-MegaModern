@@ -20,7 +20,7 @@ namespace
 struct GammaUniforms
 {
 	float inverseGamma;
-	float padding[3];
+	uqstl::array<float, 3> padding;
 };
 
 } // namespace

@@ -238,7 +238,7 @@ static ElementHandle spawn_comet(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	MissileBlock.cx = ElementPtr->next.location.x;
 	MissileBlock.cy = ElementPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = 0;
 	MissileBlock.index = 24;
 	MissileBlock.sender = ElementPtr->playerNr;
@@ -775,7 +775,7 @@ static void samatra_postprocess(Element* ElementPtr)
 
 			MissileBlock.cx = ElementPtr->next.location.x;
 			MissileBlock.cy = ElementPtr->next.location.y;
-			MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+			MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 			MissileBlock.face = 0;
 			MissileBlock.index = 0;
 			MissileBlock.sender = ElementPtr->playerNr;
@@ -821,31 +821,33 @@ static void samatra_preprocess(Element* ElementPtr)
 	}
 	else
 	{
-		GfxPoint offs_orig[8] =
+		uqstl::array<GfxPoint, 8> offs_orig {
 			{
 				{-127 - 9, -53 + 18},
-				{-38 - 9,  -88 + 18},
-				{44 - 9,	 -85 + 18},
-				{127 - 9,  -60 + 18},
-				{124 - 9,  28 + 18 },
-				{73 - 9,	 61 + 18 },
-				{-87 - 9,  58 + 18 },
-				{-136 - 9, 29 + 18 },
-		};
+				{-38 - 9, -88 + 18},
+				{44 - 9, -85 + 18},
+				{127 - 9, -60 + 18},
+				{124 - 9, 28 + 18},
+				{73 - 9, 61 + 18},
+				{-87 - 9, 58 + 18},
+				{-136 - 9, 29 + 18},
+			 }
+		 };
 
-		GfxPoint offs_hd[] =
+		uqstl::array<GfxPoint, 8> offs_hd {
 			{
 				{-544 + 44, -140 - 16},
 				{-188 + 38, -280 - 20},
-				{140 + 34,  -268 - 16},
-				{472 + 36,  -168 - 20},
-				{460 + 32,  184 - 20 },
-				{256 + 44,  316 - 24 },
-				{-384 + 44, 304 - 12 },
-				{-580 + 32, 188 - 24 },
-		};
+				{140 + 34, -268 - 16},
+				{472 + 36, -168 - 20},
+				{460 + 32, 184 - 20},
+				{256 + 44, 316 - 24},
+				{-384 + 44, 304 - 12},
+				{-580 + 32, 188 - 24},
+			 }
+		 };
 
-		const GfxPoint* offs {chooseIfHd<GfxPoint*>(offs_orig, offs_hd)};
+		const GfxPoint* offs {chooseIfHd<GfxPoint*>(offs_orig.data(), offs_hd.data())};
 
 		for (StarShipPtr->RaceDescPtr->characteristics.max_thrust = 0;
 			 StarShipPtr->RaceDescPtr->characteristics.max_thrust < MaxGenerators;
@@ -874,7 +876,7 @@ static void samatra_preprocess(Element* ElementPtr)
 					 + DisplayToWorld((offs[StarShipPtr->RaceDescPtr->characteristics.max_thrust].y)))
 					& ~((ScaledOne << MaxVisReduction) - 1);
 				GeneratorPtr->current.image.farray =
-					StarShipPtr->RaceDescPtr->ship_data.special;
+					StarShipPtr->RaceDescPtr->ship_data.special.data();
 				GeneratorPtr->current.image.frame =
 					SetAbsFrameIndex(
 						StarShipPtr->RaceDescPtr->ship_data.special[0],
@@ -908,7 +910,7 @@ static void samatra_preprocess(Element* ElementPtr)
 				TurretPtr->current.location.x = LogSpaceWidth() >> 1;
 				TurretPtr->current.location.y = LogSpaceHeight() >> 1;
 				TurretPtr->current.image.farray =
-					StarShipPtr->RaceDescPtr->ship_data.ship;
+					StarShipPtr->RaceDescPtr->ship_data.ship.data();
 				TurretPtr->current.image.frame =
 					SetAbsFrameIndex(
 						StarShipPtr->RaceDescPtr->ship_data.ship[0], 1);
@@ -941,7 +943,7 @@ static void samatra_preprocess(Element* ElementPtr)
 				GatePtr->current.location.x = LogSpaceWidth() >> 1;
 				GatePtr->current.location.y = LogSpaceHeight() >> 1;
 				GatePtr->current.image.farray =
-					StarShipPtr->RaceDescPtr->ship_data.ship;
+					StarShipPtr->RaceDescPtr->ship_data.ship.data();
 				GatePtr->current.image.frame =
 					SetAbsFrameIndex(
 						StarShipPtr->RaceDescPtr->ship_data.ship[0], 11);

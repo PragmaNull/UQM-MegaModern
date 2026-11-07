@@ -46,7 +46,7 @@ namespace uqm
 #ifdef MELEETEAM_INTERNAL
 struct MeleeTeam
 {
-	MeleeShip ships[MeleeFleetSize];
+	uqstl::array<MeleeShip, MeleeFleetSize> ships;
 	char name[MaxTeamChars + 1 + 24];
 	/* The +1 is for the terminating \0; the +24 is in case some
 			 * default name in starcon.txt is unknowingly mangled. */
@@ -59,14 +59,14 @@ struct MeleeTeam
 #ifdef MELEESETUP_INTERNAL
 struct MeleeSetup
 {
-	MeleeTeam teams[NumSides];
-	uint16_t fleetValue[NumSides];
+	uqstl::array<MeleeTeam, NumSides> teams;
+	uqstl::array<uint16_t, NumSides> fleetValue;
 #ifdef NETPLAY
-	MeleeTeam sentTeams[NumSides];
+	uqstl::array<MeleeTeam, NumSides> sentTeams;
 	// The last sent (parts of) teams.
 	// Used in the Update protocol. See doc/devel/netplay/protocol
 	// XXX: this may actually be deallocated when the battle starts.
-	bool haveSentTeamName[NumSides];
+	uqstl::array<bool, NumSides> haveSentTeamName;
 	// Whether we have sent a team name this 'turn'.
 	// Used in the Update protocol. See doc/devel/netplay/protocol
 	// (also for the term 'turn').

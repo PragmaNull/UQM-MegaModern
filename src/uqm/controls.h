@@ -27,6 +27,7 @@
 #include "libs/sndlib.h"
 #include "libs/strlib.h"
 #include "libs/time/timelib.h"
+#include "uqm/init.h"
 
 namespace uqm
 {
@@ -116,14 +117,14 @@ static constexpr const char* toString(ControlTemplate val)
 // The input that the main thread writes while the game thread reads it.
 struct ImmediateKeyState
 {
-	uqstl::atomic<int> key[uqstl::to_underlying(ControlTemplate::NUM)][*BattleKey::NumKeys];
-	uqstl::atomic<int> menu[*MenuKey::NumMenuKeys];
+	uqstl::array<uqstl::array<uqstl::atomic<int>, *BattleKey::NumKeys>, uqstl::to_underlying(ControlTemplate::NUM)> key;
+	uqstl::array<uqstl::atomic<int>, *MenuKey::NumMenuKeys> menu;
 };
 
 struct ControllerInputState
 {
-	int key[uqstl::to_underlying(ControlTemplate::NUM)][*BattleKey::NumKeys];
-	int menu[*MenuKey::NumMenuKeys];
+	uqstl::array<uqstl::array<int, *BattleKey::NumKeys>, uqstl::to_underlying(ControlTemplate::NUM)> key;
+	uqstl::array<int, *MenuKey::NumMenuKeys> menu;
 
 	ControllerInputState& operator=(const ImmediateKeyState& rhs)
 	{
@@ -164,7 +165,7 @@ BattleInputState PulsedInputToBattleInput(uint16_t player);
 extern ControllerInputState CurrentInputState;
 extern ControllerInputState PulsedInputState;
 extern ImmediateKeyState ImmediateInputState;
-extern ControlTemplate PlayerControlTemplates[];
+extern uqstl::array<ControlTemplate, NumPlayers> PlayerControlTemplates;
 extern bool WarpFromMenu;
 
 void UpdateInputState(void);

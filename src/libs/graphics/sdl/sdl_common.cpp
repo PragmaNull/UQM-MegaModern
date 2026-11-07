@@ -47,7 +47,7 @@
 SDL_Surface* SDL_Screen;
 SDL_Surface* TransitionScreen;
 
-SDL_Surface* SDL_Screens[*ScreenBuffer::Count];
+uqstl::array<SDL_Surface*, *ScreenBuffer::Count> SDL_Screens;
 SDL_Surface* SDL_Screen_fps;
 bool SDL_Screen_fps_changed {};
 

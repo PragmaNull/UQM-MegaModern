@@ -28,7 +28,7 @@
 
 namespace uqm
 {
-static ResourceName code_resources[] = {
+static uqstl::array<ResourceName, 29> code_resources {
 	NullResource,
 	ArilouCode,
 	ChmmrCode,
@@ -59,14 +59,14 @@ static ResourceName code_resources[] = {
 	SamatraCode,
 	UrquanDroneCode};
 
-SpeciesId ship[] = {SpeciesId::Chmmr, SpeciesId::Orz, SpeciesId::Utwig, SpeciesId::Yehat,						   // Capital
-					SpeciesId::Mycon, SpeciesId::UrQuan, SpeciesId::KohrAh, SpeciesId::Chenjesu,				   // Capital
-					SpeciesId::Arilou, SpeciesId::Pkunk, SpeciesId::Spathi, SpeciesId::Supox, SpeciesId::Melnorme, // Escort
-					SpeciesId::Druuge, SpeciesId::Slylandro, SpeciesId::Androsynth, SpeciesId::Mmrnmhrm,		   // Escort
-					SpeciesId::Earthling, SpeciesId::Shofixti, SpeciesId::Thraddash, SpeciesId::Vux,			   // Scout
-					SpeciesId::Ilwrath, SpeciesId::Umgah, SpeciesId::Zoqfotpik, SpeciesId::Syreen};				   // Scout
+uqstl::array<SpeciesId, 25> ship {SpeciesId::Chmmr, SpeciesId::Orz, SpeciesId::Utwig, SpeciesId::Yehat,							 // Capital
+								  SpeciesId::Mycon, SpeciesId::UrQuan, SpeciesId::KohrAh, SpeciesId::Chenjesu,					 // Capital
+								  SpeciesId::Arilou, SpeciesId::Pkunk, SpeciesId::Spathi, SpeciesId::Supox, SpeciesId::Melnorme, // Escort
+								  SpeciesId::Druuge, SpeciesId::Slylandro, SpeciesId::Androsynth, SpeciesId::Mmrnmhrm,			 // Escort
+								  SpeciesId::Earthling, SpeciesId::Shofixti, SpeciesId::Thraddash, SpeciesId::Vux,				 // Scout
+								  SpeciesId::Ilwrath, SpeciesId::Umgah, SpeciesId::Zoqfotpik, SpeciesId::Syreen};				 // Scout
 
-SpeciesId* capital = ship;
+SpeciesId* capital = ship.data();
 static constexpr auto NumCapitals {8};
 SpeciesId* escort = &(ship[NumCapitals]);
 static constexpr auto NumEscorts {9};
@@ -137,8 +137,8 @@ SpeciesId SeedShip(SpeciesId SpeciesID, bool loadWindow)
 {
 	static int seedStamp = -1;
 	static int sisStamp = -1;
-	static SpeciesId shipMap[NumShips];
-	static SpeciesId shipWindowMap[NumShips];
+	static uqstl::array<SpeciesId, NumShips> shipMap;
+	static uqstl::array<SpeciesId, NumShips> shipWindowMap;
 	SpeciesId target;
 	uint16_t index = NumShips;
 
@@ -153,11 +153,11 @@ SpeciesId SeedShip(SpeciesId SpeciesID, bool loadWindow)
 #endif
 	if (seedStamp != uqm::currentSeed().value)
 	{
-		SeedShipMap(shipMap, seedStamp = uqm::currentSeed().value);
+		SeedShipMap(shipMap.data(), seedStamp = uqm::currentSeed().value);
 	}
 	if (sisStamp != uqm::gameState().sis().Seed && loadWindow)
 	{
-		SeedShipMap(shipWindowMap, sisStamp = uqm::gameState().sis().Seed);
+		SeedShipMap(shipWindowMap.data(), sisStamp = uqm::gameState().sis().Seed);
 	}
 
 	target = SpeciesID;
@@ -269,7 +269,7 @@ RaceDesc* load_ship(SpeciesId SpeciesID, bool LoadBattleData)
 	if (LoadBattleData)
 	{
 		ShipResources* RawPtr = &RDPtr->ship_data;
-		if (!load_animation(RawPtr->ship,
+		if (!load_animation(RawPtr->ship.data(),
 							RawPtr->ship_rsc[0],
 							RawPtr->ship_rsc[1],
 							RawPtr->ship_rsc[2]))
@@ -279,7 +279,7 @@ RaceDesc* load_ship(SpeciesId SpeciesID, bool LoadBattleData)
 
 		if (RawPtr->weapon_rsc[0] != NullResource)
 		{
-			if (!load_animation(RawPtr->weapon,
+			if (!load_animation(RawPtr->weapon.data(),
 								RawPtr->weapon_rsc[0],
 								RawPtr->weapon_rsc[1],
 								RawPtr->weapon_rsc[2]))
@@ -290,7 +290,7 @@ RaceDesc* load_ship(SpeciesId SpeciesID, bool LoadBattleData)
 
 		if (RawPtr->special_rsc[0] != NullResource)
 		{
-			if (!load_animation(RawPtr->special,
+			if (!load_animation(RawPtr->special.data(),
 								RawPtr->special_rsc[0],
 								RawPtr->special_rsc[1],
 								RawPtr->special_rsc[2]))
@@ -357,9 +357,9 @@ void free_ship(RaceDesc* raceDescPtr, bool FreeIconData,
 	{
 		ShipResources* shipData = &raceDescPtr->ship_data;
 
-		free_image(shipData->special);
-		free_image(shipData->weapon);
-		free_image(shipData->ship);
+		free_image(shipData->special.data());
+		free_image(shipData->weapon.data());
+		free_image(shipData->ship.data());
 
 		DestroyDrawable(
 			ReleaseDrawable(shipData->captain_control.background));

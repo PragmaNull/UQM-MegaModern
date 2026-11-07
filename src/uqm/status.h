@@ -24,6 +24,7 @@
 #include "globdata.h"
 #include "options/options.h"
 #include "races.h"
+#include "uqm/init.h"
 
 namespace uqm
 {
@@ -54,7 +55,7 @@ inline auto TinyTextHeight() { return ResScale(9); }
 inline auto BattleCrewX() { return ResScale(8); }
 inline auto BattleCrewY() { return (ResScale(64) - SafeY()); }
 
-extern int16_t status_y_offsets[];
+extern uqstl::array<int16_t, NumPlayers> status_y_offsets;
 
 extern void InitStatusOffsets(void);
 

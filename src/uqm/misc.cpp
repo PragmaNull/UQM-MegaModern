@@ -36,7 +36,7 @@ void spawn_planet(void)
 	if (hPlanetElement)
 	{
 		Element* PlanetElementPtr {};
-		extern FrameRef planet[];
+		extern uqstl::array<FrameRef, NumViews> planet;
 
 		LockElement(hPlanetElement, &PlanetElementPtr);
 		PlanetElementPtr->playerNr = NeutralPlayerNum;
@@ -60,7 +60,7 @@ void spawn_planet(void)
 		else
 		{
 			SetPrimType(&DisplayArray[PlanetElementPtr->PrimIndex], PrimitiveType::Stamp);
-			PlanetElementPtr->current.image.farray = planet;
+			PlanetElementPtr->current.image.farray = planet.data();
 			PlanetElementPtr->current.image.frame =
 				PlanetElementPtr->current.image.farray[0];
 			PlanetElementPtr->collision_func = collision;
@@ -96,7 +96,7 @@ void spawn_planet(void)
 	}
 }
 
-extern FrameRef asteroid[];
+extern uqstl::array<FrameRef, NumViews> asteroid;
 
 static void spawn_rubble(Element* AsteroidElementPtr)
 {
@@ -112,7 +112,7 @@ static void spawn_rubble(Element* AsteroidElementPtr)
 		RubbleElementPtr->life_span = 5;
 		RubbleElementPtr->turn_wait = RubbleElementPtr->next_turn = 0;
 		SetPrimType(&DisplayArray[RubbleElementPtr->PrimIndex], PrimitiveType::Stamp);
-		RubbleElementPtr->current.image.farray = asteroid;
+		RubbleElementPtr->current.image.farray = asteroid.data();
 
 
 		if (!IsHd())
@@ -228,7 +228,7 @@ void spawn_asteroid(Element* ElementPtr)
 			SetVelocityVector(&AsteroidElementPtr->velocity, magnitude,
 							  facing);
 		}
-		AsteroidElementPtr->current.image.farray = asteroid;
+		AsteroidElementPtr->current.image.farray = asteroid.data();
 		AsteroidElementPtr->current.image.frame =
 			SetAbsFrameIndex(asteroid[0],
 							 NormalizeFacing(uqm::random().next()));
@@ -427,7 +427,7 @@ void AbandonShip(Element* ShipPtr, Element* TargetPtr,
 		{
 			SetPrimType(&DisplayArray[CrewPtr->PrimIndex], PrimitiveType::StampFill);
 			CrewPtr->current.image.frame = SetAbsFrameIndex(stars_misc[0], 0);
-			CrewPtr->current.image.farray = stars_misc;
+			CrewPtr->current.image.farray = stars_misc.data();
 		}
 		SetPrimColor(&DisplayArray[CrewPtr->PrimIndex],
 					 BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02));

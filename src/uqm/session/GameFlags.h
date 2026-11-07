@@ -34,11 +34,11 @@ struct GameFlagInfo
 	}
 };
 
-inline constexpr GameFlagInfo c_gameFlags[] {
+inline constexpr auto c_gameFlags {uqstl::to_array<GameFlagInfo>({
 #define UQM_GAME_FLAG(name, bits) {#name, bits},
 #include "uqm/session/GameFlags.inc"
 #undef UQM_GAME_FLAG
-};
+})};
 
 inline constexpr size_t c_gameFlagCount {uqstl::size(c_gameFlags)};
 

@@ -85,7 +85,7 @@ struct NumberSpeechDesc
 	// slots for each digit in numbers
 	// teens is exception
 	// 0-9, 10-19, ..20-90, ..100-900, etc.
-	SpeechDigit Digits[MaxSpeechDigits];
+	uqstl::array<SpeechDigit, MaxSpeechDigits> Digits;
 };
 using NumberSpeechRef = const NumberSpeechDesc*;
 
@@ -158,7 +158,7 @@ struct ConversationData
 	ResourceName ConversationPhrasesRes;
 
 	uint16_t NumAnimations;
-	AnimationDesc AlienAmbientArray[MaxAnimations];
+	uqstl::array<AnimationDesc, MaxAnimations> AlienAmbientArray;
 
 	// Transition animation to/from talking state;
 	// the first frame is neutral (sort of like YoyoAnim)

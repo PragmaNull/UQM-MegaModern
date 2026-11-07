@@ -44,7 +44,7 @@ void SCALE_(BilinearFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	const int bpp = fmt->bytes_per_pixel;
 	const int len = pitch / bpp;
 	const int dlen = dp / bpp;
-	Uint32 p[4]; // influential pixels array
+	uqstl::array<Uint32, 4> p; // influential pixels array
 	Uint32* srow0 = (Uint32*)src->pixels;
 	Uint32* dst_p = (Uint32*)dst->pixels;
 

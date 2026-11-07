@@ -28,7 +28,7 @@
 
 namespace uqm
 {
-InputContext* PlayerInput[NumPlayers];
+uqstl::array<InputContext*, NumPlayers> PlayerInput;
 
 template <typename Context>
 static void InputContext_delete(InputContext* context)

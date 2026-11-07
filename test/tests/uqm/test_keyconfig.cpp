@@ -9,7 +9,7 @@ namespace uqm
 namespace
 {
 
-constexpr uqgsl::czstring c_controls[] {"up", "down", "weapon"};
+constexpr uqstl::array<uqgsl::czstring, 3> c_controls {"up", "down", "weapon"};
 
 KeyTemplate makeTemplate(uqstl::string name, uqstl::vector<uqstl::vector<uqstl::string>> bindings)
 {

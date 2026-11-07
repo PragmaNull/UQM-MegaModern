@@ -35,7 +35,7 @@ struct ColorTransformControl
 	TimePeriod Ticks;
 	TimeCount StartTime;
 	TimeCount EndTime;
-	Color OldCMap[NumberOfPlutvals];
+	uqstl::array<Color, NumberOfPlutvals> OldCMap;
 };
 
 static constexpr auto MaxXforms {16};
@@ -451,7 +451,7 @@ bool XFormColorMap_step(void)
 
 				newmap = clone_colormap(curmap, index);
 
-				const Color* oldClr {control->OldCMap};
+				const Color* oldClr {control->OldCMap.data()};
 				const uint8_t* newClr {(uint8_t*)control->CMapPtr + 2};
 
 				const int frac {static_cast<int>((control->Ticks.count() - TicksLeft) * XformScale / control->Ticks.count())};
@@ -560,7 +560,7 @@ static TimeCount XFormPLUT(ColorMapPtr colorMapPtr, TimePeriod TimeInterval)
 			uqm::log::warn("BUG: XFormPLUT(): no current map");
 			return TimeCount {};
 		}
-		GetColorMapColors(control->OldCMap, map);
+		GetColorMapColors(control->OldCMap.data(), map);
 	}
 
 	control->CMapIndex = index;

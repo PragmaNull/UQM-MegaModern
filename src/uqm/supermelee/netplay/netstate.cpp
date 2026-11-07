@@ -28,17 +28,19 @@ namespace uqm
 	{                                  \
 		/* .name = */ #stateName,      \
 	}
-NetStateData netStateData[] = {
-	DEFINE_NETSTATEDATA(unconnected),
-	DEFINE_NETSTATEDATA(connecting),
-	DEFINE_NETSTATEDATA(init),
-	DEFINE_NETSTATEDATA(inSetup),
-	DEFINE_NETSTATEDATA(preBattle),
-	DEFINE_NETSTATEDATA(interBattle),
-	DEFINE_NETSTATEDATA(selectShip),
-	DEFINE_NETSTATEDATA(inBattle),
-	DEFINE_NETSTATEDATA(endingBattle),
-	DEFINE_NETSTATEDATA(endingBattle2),
+uqstl::array<NetStateData, 10> netStateData {
+	{
+		DEFINE_NETSTATEDATA(unconnected),
+		DEFINE_NETSTATEDATA(connecting),
+		DEFINE_NETSTATEDATA(init),
+		DEFINE_NETSTATEDATA(inSetup),
+		DEFINE_NETSTATEDATA(preBattle),
+		DEFINE_NETSTATEDATA(interBattle),
+		DEFINE_NETSTATEDATA(selectShip),
+		DEFINE_NETSTATEDATA(inBattle),
+		DEFINE_NETSTATEDATA(endingBattle),
+		DEFINE_NETSTATEDATA(endingBattle2),
+	 }
 };
 
 void NetConnectionStateData_release(NetConnectionStateData* stateData)

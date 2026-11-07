@@ -74,7 +74,7 @@ static constexpr auto MaxCreditFrames {32};
 // Circular text frame buffer for scrolling
 // Text frames are generated as needed, and when a text frame scrolls
 // of the screen, it is destroyed
-static CreditTextFrame textFrames[MaxCreditFrames];
+static uqstl::array<CreditTextFrame, MaxCreditFrames> textFrames;
 // Index of first active frame in the circular buffer (the first frame
 // is the one on top)
 static int firstFrame;
@@ -92,12 +92,13 @@ struct FontSizeDef
 	FontRef font;
 };
 
-static FontSizeDef CreditsFont[] =
+static uqstl::array<FontSizeDef, 4> CreditsFont {
 	{
 		{13, Pt13aaFontRes, 0},
 		{17, Pt17aaFontRes, 0},
 		{45, Pt45aaFontRes, 0},
-		{0,	0,			   0},
+		{0, 0, 0},
+	 }
 };
 
 
@@ -119,7 +120,7 @@ static FrameRef Credits_RenderTextFrame(GfxContextRef TempContext, int* istr, in
 {
 	FrameRef f {};
 	FrameRef OldFrame {};
-	GfxText TextLines[uqm::c_creditsMaxLines];
+	uqstl::array<GfxText, uqm::c_creditsMaxLines> TextLines;
 	int i {};
 	const FontSizeDef* fdef {};
 	int16_t leading {};
@@ -130,7 +131,7 @@ static FrameRef Credits_RenderTextFrame(GfxContextRef TempContext, int* istr, in
 		TextAlign align;
 		int16_t basex;
 	};
-	col_format_t colfmt[uqm::c_creditsMaxColumns];
+	uqstl::array<col_format_t, uqm::c_creditsMaxColumns> colfmt;
 
 	const auto blockCount {static_cast<int>(CreditsBlocks.size())};
 	if (*istr < 0 || *istr >= blockCount)
@@ -179,7 +180,7 @@ static FrameRef Credits_RenderTextFrame(GfxContextRef TempContext, int* istr, in
 	}
 
 	// find the right font
-	for (fdef = CreditsFont; fdef->size && block.size > fdef->size; ++fdef)
+	for (fdef = CreditsFont.data(); fdef->size && block.size > fdef->size; ++fdef)
 		;
 	if (!fdef->size)
 	{
@@ -226,7 +227,7 @@ static FrameRef Credits_RenderTextFrame(GfxContextRef TempContext, int* istr, in
 	for (i = 0; i < cnt; ++i)
 	{
 		// baseline contains coords in row/col quantities
-		const col_format_t* fmt = colfmt + TextLines[i].baseline.x;
+		const col_format_t* fmt = colfmt.data() + TextLines[i].baseline.x;
 
 		TextLines[i].align = fmt->align;
 		TextLines[i].baseline.x = fmt->basex;
@@ -240,7 +241,7 @@ static FrameRef Credits_RenderTextFrame(GfxContextRef TempContext, int* istr, in
 	SetContextForeGroundColor(ForeColor);
 	for (i = 0; i < cnt; ++i)
 	{
-		font_DrawText(TextLines + i);
+		font_DrawText(TextLines.data() + i);
 	}
 
 	SetContextFGFrame(OldFrame);
@@ -291,7 +292,7 @@ static void InitCredits(void)
 {
 	GfxRect ctxRect;
 
-	memset(textFrames, 0, sizeof textFrames);
+	memset(textFrames.data(), 0, sizeof textFrames);
 
 	LocalContext = CreateContext("Credits.LocalContext");
 	DrawContext = CreateContext("Credits.DrawContext");
@@ -542,7 +543,7 @@ static bool LoadCredits(void)
 	CreditsBlocks = uqstl::move(*blocks);
 	CreditsBack = CaptureDrawable(LoadGraphic(CreditsBackAnimRes));
 	// load fonts
-	for (FontSizeDef* fdef {CreditsFont}; fdef->size; ++fdef)
+	for (FontSizeDef* fdef {CreditsFont.data()}; fdef->size; ++fdef)
 	{
 		fdef->font = LoadFont(fdef->res);
 	}
@@ -558,7 +559,7 @@ static void FreeCredits(void)
 	CreditsBack = nullptr;
 
 	// free fonts
-	for (FontSizeDef* fdef {CreditsFont}; fdef->size; ++fdef)
+	for (FontSizeDef* fdef {CreditsFont.data()}; fdef->size; ++fdef)
 	{
 		DestroyFont(fdef->font);
 		fdef->font = nullptr;
@@ -569,23 +570,22 @@ static constexpr auto NumOuttakes {15};
 
 static void OutTakes(void)
 {
-	const static Conversation outtake_list[NumOuttakes] =
-		{
-			Conversation::Zoqfotpik,
-			Conversation::TalkingPet,
-			Conversation::Orz,
-			Conversation::Utwig,
-			Conversation::Thradd,
-			Conversation::Supox,
-			Conversation::Syreen,
-			Conversation::Shofixti,
-			Conversation::Pkunk,
-			Conversation::Yehat,
-			Conversation::Druuge,
-			Conversation::Urquan,
-			Conversation::Vux,
-			Conversation::Blackurq,
-			Conversation::Arilou};
+	const static uqstl::array<Conversation, NumOuttakes> outtake_list {
+		Conversation::Zoqfotpik,
+		Conversation::TalkingPet,
+		Conversation::Orz,
+		Conversation::Utwig,
+		Conversation::Thradd,
+		Conversation::Supox,
+		Conversation::Syreen,
+		Conversation::Shofixti,
+		Conversation::Pkunk,
+		Conversation::Yehat,
+		Conversation::Druuge,
+		Conversation::Urquan,
+		Conversation::Vux,
+		Conversation::Blackurq,
+		Conversation::Arilou};
 
 	const bool oldsubtitles = uqm::UQMOptions::read().subtitles.value;
 	int i = 0;

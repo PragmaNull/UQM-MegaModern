@@ -47,7 +47,7 @@
 namespace uqm
 {
 ActivityWord LastActivity;
-PlayerControlFlags PlayerControl[NumPlayers] {};
+uqstl::array<PlayerControlFlags, NumPlayers> PlayerControl {};
 
 // XXX: These declarations should really go to the file they belong to.
 ResourceIndex hResIndex;
@@ -67,7 +67,7 @@ FontRef LabelFont;
 FontRef SlabFont;
 FontRef SquareFont;
 FontRef PlayMenuFont;
-Queue race_q[NumPlayers];
+uqstl::array<Queue, NumPlayers> race_q;
 FrameRef ActivityFrame;
 FrameRef StatusFrame;
 FrameRef SubmenuFrame;

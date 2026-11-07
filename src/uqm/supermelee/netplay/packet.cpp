@@ -35,25 +35,27 @@ namespace uqm
 		/* .handler = */ (PacketHandler)PacketHandler_##name, \
 		/* .name = */ #name,                                  \
 	}
-PacketTypeData packetTypeData[*PacketType::Count] = {
-	DEFINE_PACKETDATA(Init),
-	DEFINE_PACKETDATA(Ping),
-	DEFINE_PACKETDATA(Ack),
-	DEFINE_PACKETDATA(Ready),
-	DEFINE_PACKETDATA(Fleet),
-	DEFINE_PACKETDATA(TeamName),
-	DEFINE_PACKETDATA(Handshake0),
-	DEFINE_PACKETDATA(Handshake1),
-	DEFINE_PACKETDATA(HandshakeCancel),
-	DEFINE_PACKETDATA(HandshakeCancelAck),
-	DEFINE_PACKETDATA(SeedRandom),
-	DEFINE_PACKETDATA(InputDelay),
-	DEFINE_PACKETDATA(SelectShip),
-	DEFINE_PACKETDATA(BattleInput),
-	DEFINE_PACKETDATA(FrameCount),
-	DEFINE_PACKETDATA(Checksum),
-	DEFINE_PACKETDATA(Abort),
-	DEFINE_PACKETDATA(Reset),
+uqstl::array<PacketTypeData, *PacketType::Count> packetTypeData {
+	{
+		DEFINE_PACKETDATA(Init),
+		DEFINE_PACKETDATA(Ping),
+		DEFINE_PACKETDATA(Ack),
+		DEFINE_PACKETDATA(Ready),
+		DEFINE_PACKETDATA(Fleet),
+		DEFINE_PACKETDATA(TeamName),
+		DEFINE_PACKETDATA(Handshake0),
+		DEFINE_PACKETDATA(Handshake1),
+		DEFINE_PACKETDATA(HandshakeCancel),
+		DEFINE_PACKETDATA(HandshakeCancelAck),
+		DEFINE_PACKETDATA(SeedRandom),
+		DEFINE_PACKETDATA(InputDelay),
+		DEFINE_PACKETDATA(SelectShip),
+		DEFINE_PACKETDATA(BattleInput),
+		DEFINE_PACKETDATA(FrameCount),
+		DEFINE_PACKETDATA(Checksum),
+		DEFINE_PACKETDATA(Abort),
+		DEFINE_PACKETDATA(Reset),
+	 }
 };
 
 static inline void* Packet_alloc(size_t size)

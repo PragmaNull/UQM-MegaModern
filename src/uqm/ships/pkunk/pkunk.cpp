@@ -196,7 +196,7 @@ static uint16_t initialize_bug_missile(Element* ShipPtr, ElementHandle MissileAr
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;
@@ -307,7 +307,7 @@ static void new_pkunk(Element* ElementPtr)
 	ElementPtr->life_span = NormalLife;
 
 	StarShipPtr->ShipFacing = NormalizeFacing(uqm::random().next());
-	ElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.ship;
+	ElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.ship.data();
 	ElementPtr->current.image.frame = SetAbsFrameIndex(
 		StarShipPtr->RaceDescPtr->ship_data.ship[0],
 		StarShipPtr->ShipFacing);
@@ -378,21 +378,20 @@ static void intercept_pkunk_death(Element* ElementPtr)
 
 static void spawn_phoenix_trail(Element* ElementPtr)
 {
-	const static Color colorTable[] =
-		{
-			BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
-			BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7b),
-			BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
-			BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7d),
-			BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7e),
-			BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7f),
-			BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x2a),
-			BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2b),
-			BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2c),
-			BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
-			BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2e),
-			BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2f),
-		};
+	const static uqstl::array<Color, 12> colorTable {
+		BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
+		BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7b),
+		BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
+		BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7d),
+		BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7e),
+		BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7f),
+		BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x2a),
+		BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2b),
+		BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2c),
+		BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
+		BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2e),
+		BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2f),
+	};
 	const size_t colorTableCount = std::size(colorTable);
 
 	ElementPtr->colorCycleIndex++;

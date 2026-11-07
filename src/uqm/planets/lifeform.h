@@ -69,7 +69,7 @@ struct LifeformDesc
 	uint8_t Attributes, ValueAndHitPoints;
 };
 
-extern LifeformDesc CreatureData[];
+extern uqstl::array<LifeformDesc, 26> CreatureData;
 
 } // namespace uqm
 

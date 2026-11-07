@@ -27,7 +27,7 @@
 namespace uqm
 {
 static TimeCount LastTime;
-static AnimSequence Sequences[MaxAnimations + 2];
+static uqstl::array<AnimSequence, MaxAnimations + 2> Sequences;
 // 2 extra for Talk and Transition animations
 static uint32_t ActiveMask;
 // Bit mask of all animations that are currently active.
@@ -369,15 +369,15 @@ void InitCommAnimations(void)
 	// talk animations have to be drawn last (so we add them first)
 	TotalSequences = 0;
 	// Transition animation last
-	Transit = Sequences + TotalSequences;
+	Transit = Sequences.data() + TotalSequences;
 	SetupTalkSequence(Transit, &TransitDesc);
 	++TotalSequences;
 	// Talk animation second last
-	Talk = Sequences + TotalSequences;
+	Talk = Sequences.data() + TotalSequences;
 	SetupTalkSequence(Talk, &TalkDesc);
 	++TotalSequences;
 	FirstAmbient = TotalSequences;
-	SetupAmbientSequences(Sequences + FirstAmbient, CommData.NumAnimations);
+	SetupAmbientSequences(Sequences.data() + FirstAmbient, CommData.NumAnimations);
 	TotalSequences += CommData.NumAnimations;
 
 	LastTime = GetTimeCounter();
@@ -415,7 +415,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 
 		// Process ambient animations
 		uint32_t NextActiveMask {ActiveMask};
-		AnimSequence* pSeq {Sequences + FirstAmbient};
+		AnimSequence* pSeq {Sequences.data() + FirstAmbient};
 		for (i = 0; i < CommData.NumAnimations; ++i, ++pSeq)
 		{
 			const AnimationDesc* ADPtr = pSeq->ADPtr;
@@ -547,10 +547,10 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 
 			// Colormap animations are processed separately
 			// from picture anims (see XFormColorMap_step)
-			ProcessColormapAnims(Sequences + FirstAmbient,
+			ProcessColormapAnims(Sequences.data() + FirstAmbient,
 								 CommData.NumAnimations);
 
-			Change = DrawAlienFrame(Sequences, TotalSequences, FullRedraw);
+			Change = DrawAlienFrame(Sequences.data(), TotalSequences, FullRedraw);
 			if (FullRedraw)
 			{
 				Change = true;
@@ -560,7 +560,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 		UnbatchGraphics();
 
 		// Post-process ambient animations
-		pSeq = Sequences + FirstAmbient;
+		pSeq = Sequences.data() + FirstAmbient;
 		for (i = 0; i < CommData.NumAnimations; ++i, ++pSeq)
 		{
 			AnimationDesc* ADPtr = pSeq->ADPtr;

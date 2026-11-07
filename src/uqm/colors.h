@@ -178,7 +178,7 @@ inline constexpr auto StatusMessageBackgroundColor {BuildColor(MakeRgb15(0x00, 0
 //	== Scavenge screen ==
 
 // Scavenge screen text color tab
-inline constexpr Color ScavengeTextColorTable[] {
+inline constexpr uqstl::array<Color, 7> ScavengeTextColorTable {
 	BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x1D),
 	BuildColor(MakeRgb15(0x09, 0x09, 0x09), 0x1E),
 	BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F),
@@ -189,7 +189,7 @@ inline constexpr Color ScavengeTextColorTable[] {
 };
 
 // Scavenge screen ship fading
-inline constexpr Color ScavengeScreenColorTable[] {
+inline constexpr uqstl::array<Color, 10> ScavengeScreenColorTable {
 	BuildColor(MakeRgb15(0x07, 0x00, 0x00), 0x2F),
 	BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D),
 	BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
@@ -205,7 +205,7 @@ inline constexpr Color ScavengeScreenColorTable[] {
 //	== Misc tables ==
 
 // Pulsating color of the string "AUTO-PILOT"
-inline constexpr Color AutopilotColorCycleTable[] {
+inline constexpr uqstl::array<Color, 7> AutopilotColorCycleTable {
 	BuildColor(MakeRgb15(0x0A, 0x14, 0x18), 0x5B),
 	BuildColor(MakeRgb15(0x06, 0x10, 0x16), 0x5C),
 	BuildColor(MakeRgb15(0x03, 0x0E, 0x14), 0x5D),
@@ -216,7 +216,7 @@ inline constexpr Color AutopilotColorCycleTable[] {
 };
 
 // Pulsating color of the text cursor
-inline constexpr Color CursorColorCycleTable[] {
+inline constexpr uqstl::array<Color, 12> CursorColorCycleTable {
 	BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00),
 	BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00),
 	BuildColor(MakeRgb15(0x16, 0x0A, 0x1F), 0x5C),
@@ -232,7 +232,7 @@ inline constexpr Color CursorColorCycleTable[] {
 };
 
 // Pulsating color of the PC Menu Rectangle
-inline constexpr Color PcRectColorCycleTable[] {
+inline constexpr uqstl::array<Color, 8> PcRectColorCycleTable {
 	BuildColorRgba(0x24, 0x00, 0x45, 0xFF),
 	BuildColorRgba(0x38, 0x00, 0x65, 0xFF),
 	BuildColorRgba(0x4D, 0x00, 0x8A, 0xFF),
@@ -244,7 +244,7 @@ inline constexpr Color PcRectColorCycleTable[] {
 };
 
 // Pulsating color of selected ship
-inline constexpr Color ShipSelectColorCycleTable[] {
+inline constexpr uqstl::array<Color, 6> ShipSelectColorCycleTable {
 	BuildColorRgba(0xFF, 0xFF, 0xFF, 0xFF),
 	BuildColorRgba(0xAA, 0xAA, 0xAA, 0xFF),
 	BuildColorRgba(0x55, 0x55, 0x55, 0xFF),
@@ -254,7 +254,7 @@ inline constexpr Color ShipSelectColorCycleTable[] {
 };
 
 // Dark Mode FG text Color
-inline constexpr Color DarkmodeFgTable[] {
+inline constexpr uqstl::array<Color, 16> DarkmodeFgTable {
 	BuildColorRgba(0x00, 0xFF, 0x10, 0x00),
 	BuildColorRgba(0x00, 0xFF, 0x20, 0x00),
 	BuildColorRgba(0x00, 0xFF, 0x30, 0x00),
@@ -274,7 +274,7 @@ inline constexpr Color DarkmodeFgTable[] {
 };
 
 // Dark Mode FG text Color
-inline constexpr Color DarkmodeBgTable[] {
+inline constexpr uqstl::array<Color, 16> DarkmodeBgTable {
 	BuildColorRgba(0xE0, 0x9A, 0x14, 0x00),
 	BuildColorRgba(0xD2, 0x87, 0x14, 0x00),
 	BuildColorRgba(0xC4, 0x7E, 0x14, 0x00),
@@ -295,7 +295,7 @@ inline constexpr Color DarkmodeBgTable[] {
 
 // Colors for the fuel in the fuel tanks as they are filled up,
 // when viewed from the shipyard.
-inline constexpr Color FuelColorTable[] {
+inline constexpr uqstl::array<Color, 11> FuelColorTable {
 	BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D),
 	BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C),
 	BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
@@ -311,7 +311,7 @@ inline constexpr Color FuelColorTable[] {
 
 // Colors for the crew in the crew pods as they are filled up,
 // when viewed from the shipyard, when using PC fonts.
-inline constexpr Color PcCrewColorTable[] {
+inline constexpr uqstl::array<Color, 10> PcCrewColorTable {
 	BuildColor(MakeRgb15(0x0A, 0x1E, 0x09), 0x65),
 	BuildColor(MakeRgb15(0x00, 0x1E, 0x00), 0x65),
 	BuildColor(MakeRgb15(0x00, 0x1B, 0x00), 0x65),
@@ -330,7 +330,7 @@ inline constexpr auto ThreedoCrewColor {BuildColor(MakeRgb15(0x05, 0x10, 0x05), 
 
 // Colors for the minerals in the storage bays as they are filled up,
 // when viewed from the shipyard.
-inline constexpr Color StorageBayColorTable[] {
+inline constexpr uqstl::array<Color, 10> StorageBayColorTable {
 	BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F),
 	BuildColor(MakeRgb15(0x1C, 0x1C, 0x1C), 0x11),
 	BuildColor(MakeRgb15(0x18, 0x18, 0x18), 0x13),
@@ -363,7 +363,7 @@ inline constexpr auto HalfCrewColor {BuildColor(MakeRgb15(0x16, 0x16, 0x00), 0x0
 inline constexpr auto LowCrewColor {BuildColor(MakeRgb15(0x16, 0x00, 0x00), 0x01)};
 
 // Colors for the Lander damage cycle
-inline constexpr Color LanderDamageColorTable[] {
+inline constexpr uqstl::array<Color, 7> LanderDamageColorTable {
 	BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F),
 	BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2A),
 	BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7E),
@@ -374,7 +374,7 @@ inline constexpr Color LanderDamageColorTable[] {
 };
 
 // Colors for the lightning color cycle
-inline constexpr Color LightningColorTable[] {
+inline constexpr uqstl::array<Color, 8> LightningColorTable {
 	BuildColor(MakeRgb15(0x11, 0x11, 0x11), 0x18),
 	BuildColor(MakeRgb15(0x13, 0x13, 0x13), 0x17),
 	BuildColor(MakeRgb15(0x15, 0x15, 0x15), 0x15),
@@ -508,7 +508,7 @@ inline constexpr auto EmptySlotStroke3Color {BuildColorRgba(0x1F, 0x00, 0x1F, 0x
 inline constexpr auto EmptySlotStroke2Color {BuildColorRgba(0x3E, 0x00, 0x3E, 0xFF)};
 inline constexpr auto EmptySlotStroke1Color {BuildColorRgba(0x5D, 0x00, 0x5D, 0xFF)};
 
-inline constexpr Color CargoColorTable[] {
+inline constexpr uqstl::array<Color, 9> CargoColorTable {
 	BuildColor(MakeRgb15(0x02, 0x0E, 0x13), 0x00),
 	BuildColor(MakeRgb15(0x19, 0x00, 0x00), 0x00),
 	BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x00),

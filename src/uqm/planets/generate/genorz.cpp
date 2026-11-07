@@ -111,7 +111,7 @@ static bool GenerateOrz_generatePlanets(SolarSystemState* solarSys)
 			}
 
 			FillOrbits(solarSys, pSunDesc->NumPlanets,
-					   solarSys->PlanetDesc, false);
+					   solarSys->PlanetDesc.data(), false);
 
 			if (uqm::isStarSeed())
 			{

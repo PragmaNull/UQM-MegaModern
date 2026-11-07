@@ -106,11 +106,10 @@ struct Point3D
 	double x, y, z;
 };
 
-const static Color tintColors[] =
-	{
-		ScanMineralTintColor,
-		ScanEnergyTintColor,
-		ScanBiologicalTintColor,
+const static uqstl::array<Color, 3> tintColors {
+	ScanMineralTintColor,
+	ScanEnergyTintColor,
+	ScanBiologicalTintColor,
 };
 
 uint8_t clip_channel(int c)
@@ -382,7 +381,7 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 	int16_t base {};
 	int16_t d {};
 	GfxPoint pt;
-	Primitive BatchArray[NumBatchPoints];
+	uqstl::array<Primitive, NumBatchPoints> BatchArray;
 	const int8_t* pSrc {};
 	GfxPoint oldOrigin;
 	GfxRect ClipRect;
@@ -419,7 +418,7 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 	}
 
 	const PlanetColorTranslation* xlatDesc {(const PlanetColorTranslation*)pSolarSysState->XlatPtr};
-	level_tab = (const int16_t*)xlatDesc->level_tab;
+	level_tab = (const int16_t*)xlatDesc->level_tab.data();
 
 	while (num_frames > 0)
 	{
@@ -465,7 +464,7 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 
 					if (--i == 0)
 					{ // flush the batch and start the next one
-						DrawBatch(BatchArray, 0, BatchFlags::None);
+						DrawBatch(BatchArray.data(), 0, BatchFlags::None);
 						i = NumBatchPoints;
 						pBatch = &BatchArray[i];
 					}
@@ -475,7 +474,7 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 
 		if (i < NumBatchPoints)
 		{
-			DrawBatch(BatchArray, i, BatchFlags::None);
+			DrawBatch(BatchArray.data(), i, BatchFlags::None);
 		}
 	}
 	SetContextClipRect(&ClipRect);
@@ -517,7 +516,7 @@ static void RenderTopography(FrameRef DstFrame, int8_t* pTopoData, int w, int h,
 	}
 
 	const PlanetColorTranslation* xlatDesc {(const PlanetColorTranslation*)pSolarSysState->XlatPtr};
-	xlat_tab = (const uint8_t*)xlatDesc->xlat_tab;
+	xlat_tab = (const uint8_t*)xlatDesc->xlat_tab.data();
 
 	if (scanColors == nullptr)
 	{
@@ -718,7 +717,7 @@ static void create_aa_points(MapPoint3D* ppt, double x, double y, uint16_t heigh
 	double d2 {NAN};
 	double d3 {NAN};
 	double d4 {NAN};
-	double m[4];
+	uqstl::array<double, 4> m;
 	const uint16_t spherespanx = height;
 
 	if (x < 0)
@@ -1100,7 +1099,7 @@ void Draw3DOShield(GfxStamp ShieldFrame)
 	static uint8_t cr;
 	static bool flip;
 	DrawMode oldmode;
-	const uint8_t factor[6] = {0xFF, 0xE6, 0xC5, 0xA4, 0x83, 0x62};
+	const uqstl::array<uint8_t, 6> factor {0xFF, 0xE6, 0xC5, 0xA4, 0x83, 0x62};
 
 	if (factor[i] == 0x62)
 	{
@@ -1277,7 +1276,7 @@ void RenderPlanetSphere(PlanetOrbit* Orbit, FrameRef MaskFrame, int offset,
 			}
 			else
 			{ // fractional pixel -- blend from 4
-				Color p[4];
+				uqstl::array<Color, 4> p;
 				int lvsum {};
 
 				// compute 'ideal' pixel
@@ -1287,9 +1286,9 @@ void RenderPlanetSphere(PlanetOrbit* Orbit, FrameRef MaskFrame, int offset,
 										 width, spherespanx);
 				}
 
-				c.r = get_avg_channel(p, ppt->m, 0);
-				c.g = get_avg_channel(p, ppt->m, 1);
-				c.b = get_avg_channel(p, ppt->m, 2);
+				c.r = get_avg_channel(p.data(), ppt->m.data(), 0);
+				c.g = get_avg_channel(p.data(), ppt->m.data(), 1);
+				c.b = get_avg_channel(p.data(), ppt->m.data(), 2);
 
 				// compute 'ideal' light variance
 				for (i = 0, lvsum = 0; i < 4; i++)
@@ -1753,7 +1752,7 @@ static void MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 					   uint16_t height)
 {
 	uint16_t i {};
-	GfxRect storm_r[MaxStorms];
+	uqstl::array<GfxRect, MaxStorms> storm_r;
 	GfxRect* pstorm_r {};
 
 	pstorm_r = &storm_r[i = storm_count];
@@ -1972,8 +1971,8 @@ static void MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GfxRect* pRect,
 static void ValidateMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 {
 	uint8_t state {};
-	uint8_t pixel_count[2];
-	uint8_t lb[2];
+	uqstl::array<uint8_t, 2> pixel_count;
+	uqstl::array<uint8_t, 2> lb;
 	uint32_t i {};
 
 	i = width - 1;
@@ -2187,7 +2186,7 @@ static void TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 	const int h = MapHeight();
 	const int spitch = ScaledMapWidth();
 	const int dpitch = ScaledMapWidth() * 4;
-	int elev[5][5];
+	uqstl::array<uqstl::array<int, 5>, 5> elev;
 	const static struct line_def_t
 	{
 		int x0, y0, x1, y1;
@@ -2476,7 +2475,7 @@ static void GenerateLightMap(int8_t* pTopo, int w, int h)
 {
 	int x {};
 	int y {};
-	elev_block_t vblocks[LmapBlocks];
+	uqstl::array<elev_block_t, LmapBlocks> vblocks;
 	// we use a running block average to reduce the amount of work
 	// where a block is a vertical line of map points
 	int8_t* elev {};
@@ -2542,7 +2541,7 @@ static void GenerateLightMap(int8_t* pTopo, int w, int h)
 		for (i = -LmapMaxDist; i < LmapMaxDist; ++i)
 		{
 			// blocks wrap around on both sides
-			pblk = vblocks + ((i + LmapBlocks) % LmapBlocks);
+			pblk = vblocks.data() + ((i + LmapBlocks) % LmapBlocks);
 
 			get_vblock_avg(pblk, pTopo, i, y, w, h);
 		}
@@ -2556,7 +2555,7 @@ static void GenerateLightMap(int8_t* pTopo, int w, int h)
 			max = -127;
 
 			// prepare next block as we move along x
-			pblk = vblocks + ((x + LmapMaxDist) % LmapBlocks);
+			pblk = vblocks.data() + ((x + LmapMaxDist) % LmapBlocks);
 			get_vblock_avg(pblk, pTopo, x + LmapMaxDist, y, w, h);
 
 			// compute the min, max and weighted avg of blocks
@@ -2565,7 +2564,7 @@ static void GenerateLightMap(int8_t* pTopo, int w, int h)
 				const int delta = abs(i - x);
 				int weight = 255; // full weight
 
-				pblk = vblocks + ((i + LmapBlocks) % LmapBlocks);
+				pblk = vblocks.data() + ((i + LmapBlocks) % LmapBlocks);
 
 				if (delta >= LmapWeightThres)
 				{ // too far -- progressively reduced weight

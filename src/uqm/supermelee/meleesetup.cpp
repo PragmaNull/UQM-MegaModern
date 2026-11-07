@@ -147,7 +147,7 @@ void MeleeTeam_setShip(MeleeTeam* team, FleetShipIndex slotNr, MeleeShip ship)
 
 const MeleeShip* MeleeTeam_getFleet(const MeleeTeam* team)
 {
-	return team->ships;
+	return team->ships.data();
 }
 
 const char* MeleeTeam_getTeamName(const MeleeTeam* team)

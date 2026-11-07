@@ -51,8 +51,8 @@ static ConversationData arilou_desc =
 		},
 		ArilouConversationPhrases, /* PlayerPhrases */
 		20, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				4,											/* StartIndex */
 				9,											/* NumFrames */
@@ -60,37 +60,37 @@ static ConversationData arilou_desc =
 				GameTicksPerSecond / 30, 0,					/* FrameRate */
 				GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 1) | (1L << 16)},
-								{13,										 /* StartIndex */
+			{13,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 0) | (1L << 16)},
-								{22,										 /* StartIndex */
+			{22,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1L << 16)},
-								{31,										 /* StartIndex */
+			{31,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 4)},
-								{40,										 /* StartIndex */
+			{40,										 /* StartIndex */
 			 10,										 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 3)},
-								{50,										 /* StartIndex */
+			{50,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 7)},
-								{
+			{
 				59,						  /* StartIndex */
 				8,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -100,25 +100,25 @@ static ConversationData arilou_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{67,										 /* StartIndex */
+			{67,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 5)},
-								{76,										 /* StartIndex */
+			{76,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 9)},
-								{85,										 /* StartIndex */
+			{85,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 8)},
-								{
+			{
 				94,						  /* StartIndex */
 				9,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -128,13 +128,13 @@ static ConversationData arilou_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{103,										 /* StartIndex */
+			{103,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 13)},
-								{
+			{
 				112,					  /* StartIndex */
 				9,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -144,31 +144,31 @@ static ConversationData arilou_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{121,										 /* StartIndex */
+			{121,										 /* StartIndex */
 			 8,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 11)},
-								{129,										 /* StartIndex */
+			{129,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1L << 15)},
-								{138,										 /* StartIndex */
+			{138,										 /* StartIndex */
 			 8,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 14)},
-								{146,										 /* StartIndex */
+			{146,										 /* StartIndex */
 			 9,											 /* NumFrames */
 			 AnimationFlags::Circular,					 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 0) | (1 << 1) | (1 << 2)},
-								{
+			{
 				/* Hands moving (right up) */
 				155,													/* StartIndex */
 				2,														/* NumFrames */
@@ -179,7 +179,7 @@ static ConversationData arilou_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 19),				/* BlockMask */
 			},
-								{
+			{
 				/* Hands moving (left up) */
 				157,													/* StartIndex */
 				2,														/* NumFrames */
@@ -190,7 +190,7 @@ static ConversationData arilou_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 19),				/* BlockMask */
 			},
-								{
+			{
 				/* Stars flashing next to the head */
 				159,					  /* StartIndex */
 				4,						  /* NumFrames */
@@ -201,7 +201,7 @@ static ConversationData arilou_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 17) | (1 << 18),	/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -270,7 +270,7 @@ static void ExitConversation(ResponseRef R)
 static void ArilouHome(ResponseRef R)
 {
 	uint8_t i {};
-	ArilouPhrase pStr[4];
+	uqstl::array<ArilouPhrase, 4> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = ArilouPhrase::NullPhrase;

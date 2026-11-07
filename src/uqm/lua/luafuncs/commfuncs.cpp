@@ -44,7 +44,7 @@
 
 namespace uqm
 {
-extern RobotPhrase RoboTrack[];
+extern uqstl::array<RobotPhrase, NumRoboTracks> RoboTrack;
 const static char npcPhraseCallbackRegistryKey[] =
 	"uqm_comm_npcPhraseCallback";
 // Key in the registry storing the callback function for
@@ -70,22 +70,24 @@ static int luaUqm_comm_getConstellation(lua_State* luaState);
 static int luaUqm_comm_getColor(lua_State* luaState);
 static int luaUqm_comm_swapIfSeeded(lua_State* luaState);
 
-const static luaL_Reg commFuncs[] = {
-	{"addResponse",		luaUqm_comm_addResponse	   },
-	{"disablePhrase",	  luaUqm_comm_disablePhrase	   },
-	{"doNpcPhrase",		luaUqm_comm_doNpcPhrase	   },
-	{"getPhrase",		  luaUqm_comm_getPhrase		   },
-	{"getSegue",			 luaUqm_comm_getSegue		 },
-	{"isInOuttakes",		 luaUqm_comm_isInOuttakes	 },
-	{"isPhraseEnabled",	luaUqm_comm_isPhraseEnabled  },
-	{"setSegue",			 luaUqm_comm_setSegue		 },
-	{"setCustomBaseline", luaUqm_comm_setCustomBaseline},
-	{"getPoint",			 luaUqm_comm_getPoint		 },
-	{"getStarName",		luaUqm_comm_getStarName	   },
-	{"getConstellation",	 luaUqm_comm_getConstellation },
-	{"getColor",			 luaUqm_comm_getColor		 },
-	{"swapIfSeeded",		 luaUqm_comm_swapIfSeeded	 },
-	{nullptr,			  nullptr					  },
+const static uqstl::array<luaL_Reg, 15> commFuncs {
+	{
+		{"addResponse", luaUqm_comm_addResponse},
+		{"disablePhrase", luaUqm_comm_disablePhrase},
+		{"doNpcPhrase", luaUqm_comm_doNpcPhrase},
+		{"getPhrase", luaUqm_comm_getPhrase},
+		{"getSegue", luaUqm_comm_getSegue},
+		{"isInOuttakes", luaUqm_comm_isInOuttakes},
+		{"isPhraseEnabled", luaUqm_comm_isPhraseEnabled},
+		{"setSegue", luaUqm_comm_setSegue},
+		{"setCustomBaseline", luaUqm_comm_setCustomBaseline},
+		{"getPoint", luaUqm_comm_getPoint},
+		{"getStarName", luaUqm_comm_getStarName},
+		{"getConstellation", luaUqm_comm_getConstellation},
+		{"getColor", luaUqm_comm_getColor},
+		{"swapIfSeeded", luaUqm_comm_swapIfSeeded},
+		{nullptr, nullptr},
+	 }
 };
 
 constexpr uqstl::array SegueEnum {
@@ -97,7 +99,7 @@ constexpr uqstl::array SegueEnum {
 
 int luaUqm_comm_open(lua_State* luaState)
 {
-	luaL_newlib(luaState, commFuncs);
+	newLuaLib(luaState, commFuncs);
 
 	uqm::UQMLua::makeEnum(luaState, SegueEnum);
 	// [-2] -> table commTable
@@ -379,13 +381,12 @@ static int luaUqm_comm_isInOuttakes(lua_State* luaState)
 // [4] -> string alignment
 static int luaUqm_comm_setCustomBaseline(lua_State* luaState)
 {
-	const static char* const textAlign[] =
-		{"ALIGN_LEFT", "ALIGN_CENTER", "ALIGN_RIGHT", nullptr};
+	static uqstl::array<const char* const, 4> textAlign {"ALIGN_LEFT", "ALIGN_CENTER", "ALIGN_RIGHT", nullptr};
 	const lua_Integer lineNumber = luaL_checkinteger(luaState, 1);
 	const lua_Integer baselineX = luaL_checkinteger(luaState, 2);
 	const lua_Integer baselineY = luaL_checkinteger(luaState, 3);
 	const int alignment =
-		luaL_checkoption(luaState, 4, "ALIGN_LEFT", textAlign);
+		luaL_checkoption(luaState, 4, "ALIGN_LEFT", textAlign.data());
 
 	SetCustomBaseLine(lineNumber, GfxPoint {(int16_t)baselineX, (int16_t)baselineY},
 					  (TextAlign)alignment);
@@ -523,7 +524,7 @@ static int luaUqm_comm_getConstellation(lua_State* luaState)
 		return 1;
 	}
 	char dialog[256];
-	const StarDesc* SDPtr = FindNearestConstellation(star_array, plot_map[plot_id].star_pt);
+	const StarDesc* SDPtr = FindNearestConstellation(star_array.data(), plot_map[plot_id].star_pt);
 	fmt::format_to_sz_n(dialog, "{}",
 						GameString(SDPtr->Postfix));
 	CheckCase(prime_text, dialog);

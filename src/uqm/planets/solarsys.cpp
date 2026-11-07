@@ -127,7 +127,7 @@ static FrameRef SolarSysFrame;
 static GfxRect scaleRect;
 // system zooms in when the flagship enters this rect
 
-static uint16_t PBodySize[7] = {0, 3, 4, 7, 11, 15, 29};
+static uqstl::array<uint16_t, 7> PBodySize {0, 3, 4, 7, 11, 15, 29};
 // Planet sizes primary used for textured planets
 // There are actually only 6 sizes, but 0 is reached
 // only for WORLD_TYPE_SPECIAL and '!= 0' check prevents
@@ -188,12 +188,12 @@ GfxPoint planetOuterLocation(uint16_t planetI)
 
 bool worldIsPlanet(const SolarSystemState* solarSys, const SystemPlanet* world)
 {
-	return world->pPrevDesc == solarSys->SunDesc;
+	return world->pPrevDesc == solarSys->SunDesc.data();
 }
 
 bool worldIsMoon(const SolarSystemState* solarSys, const SystemPlanet* world)
 {
-	return world->pPrevDesc != solarSys->SunDesc;
+	return world->pPrevDesc != solarSys->SunDesc.data();
 }
 
 // Returns the planet index of the world. If the world is a moon, then
@@ -203,14 +203,14 @@ uint16_t planetIndex(const SolarSystemState* solarSys, const SystemPlanet* world
 	const SystemPlanet* planet = worldIsPlanet(solarSys, world) ?
 									 world :
 									 world->pPrevDesc;
-	return planet - solarSys->PlanetDesc;
+	return planet - solarSys->PlanetDesc.data();
 }
 
 char moonLetter(const SolarSystemState* solarSys, const SystemPlanet* moon)
 {
 	assert(!worldIsPlanet(solarSys, moon));
 	int i = -1;
-	while (moon - solarSys->MoonDesc >= 0)
+	while (moon - solarSys->MoonDesc.data() >= 0)
 	{
 		if (moon->data_index != PlanetType::HierarchyStarbase && moon->data_index != PlanetType::DestroyedStarbase && moon->data_index != PlanetType::PrecursorStarbase)
 		{
@@ -224,7 +224,7 @@ char moonLetter(const SolarSystemState* solarSys, const SystemPlanet* moon)
 uint16_t moonIndex(const SolarSystemState* solarSys, const SystemPlanet* moon)
 {
 	assert(!worldIsPlanet(solarSys, moon));
-	return moon - solarSys->MoonDesc;
+	return moon - solarSys->MoonDesc.data();
 }
 
 // Test whether 'world' is the planetI-th planet, and if moonI is not
@@ -279,9 +279,9 @@ bool playerInPlanetOrbit(void)
 bool playerInInnerSystem(void)
 {
 	assert(playerInSolarSystem());
-	assert(pSolarSysState->pBaseDesc == pSolarSysState->PlanetDesc
-		   || pSolarSysState->pBaseDesc == pSolarSysState->MoonDesc);
-	return pSolarSysState->pBaseDesc != pSolarSysState->PlanetDesc;
+	assert(pSolarSysState->pBaseDesc == pSolarSysState->PlanetDesc.data()
+		   || pSolarSysState->pBaseDesc == pSolarSysState->MoonDesc.data());
+	return pSolarSysState->pBaseDesc != pSolarSysState->PlanetDesc.data();
 }
 
 static void GenerateTexturedMoons(SolarSystemState* system, SystemPlanet* planet)
@@ -542,7 +542,7 @@ void LoadIPData(void)
 static void sortPlanetPositions(void)
 {
 	uint16_t i {};
-	int16_t sort_array[MaxPlanets + 1];
+	uqstl::array<int16_t, MaxPlanets + 1> sort_array;
 
 	// When this part is done, sort_array will contain the indices to
 	// all planets, sorted on their y position.
@@ -551,7 +551,7 @@ static void sortPlanetPositions(void)
 	// Very ugly stuff, but it's correct.
 
 	// Initialise sort_array.
-	memset(sort_array, 0, sizeof(sort_array));
+	memset(sort_array.data(), 0, sizeof(sort_array));
 
 	for (i = 0; i <= pSolarSysState->SunDesc[0].NumPlanets; ++i)
 	{
@@ -644,7 +644,7 @@ static void GenerateTexturedPlanets(void)
 	SystemPlanet* pCurDesc {};
 	SystemPlanet* previousOrbitalDesc {pSolarSysState->pOrbitalDesc};
 
-	for (i = 0, pCurDesc = pSolarSysState->PlanetDesc;
+	for (i = 0, pCurDesc = pSolarSysState->PlanetDesc.data();
 		 i < pSolarSysState->SunDesc[0].NumPlanets; ++i, ++pCurDesc)
 	{
 		ResourceName maskanim = nullptr;
@@ -730,14 +730,13 @@ static SystemPlanet* LoadSolarSys(void)
 {
 	uint16_t i {};
 	SystemPlanet* orbital = nullptr;
-	Color temp_color_array[NumTempRanges] =
-		{
-			BuildColor(MakeRgb15(0x00, 0x00, 0x0E), 0x54),
-			BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62),
-			BuildColor(MakeRgb15(0x00, 0x0B, 0x00), 0x6D),
-			BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D),
-			BuildColor(MakeRgb15(0x0F, 0x08, 0x00), 0x75),
-		};
+	uqstl::array<Color, NumTempRanges> temp_color_array {
+		BuildColor(MakeRgb15(0x00, 0x00, 0x0E), 0x54),
+		BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62),
+		BuildColor(MakeRgb15(0x00, 0x0B, 0x00), 0x6D),
+		BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D),
+		BuildColor(MakeRgb15(0x0F, 0x08, 0x00), 0x75),
+	};
 
 	if (NebulaFrame)
 	{
@@ -771,7 +770,7 @@ static SystemPlanet* LoadSolarSys(void)
 		uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(0));
 	}
 
-	for (i = 0, pCurDesc = pSolarSysState->PlanetDesc;
+	for (i = 0, pCurDesc = pSolarSysState->PlanetDesc.data();
 		 i < MaxPlanets; ++i, ++pCurDesc)
 	{
 		pCurDesc->pPrevDesc = &pSolarSysState->SunDesc[0];
@@ -801,7 +800,7 @@ static SystemPlanet* LoadSolarSys(void)
 
 	if (!uqm::flagship().ipPlanet)
 	{ // Outer system
-		pSolarSysState->pBaseDesc = pSolarSysState->PlanetDesc;
+		pSolarSysState->pBaseDesc = pSolarSysState->PlanetDesc.data();
 		pSolarSysState->pOrbitalDesc = nullptr;
 	}
 	else
@@ -813,7 +812,7 @@ static SystemPlanet* LoadSolarSys(void)
 		i = uqm::flagship().ipPlanet - 1;
 		pSolarSysState->pOrbitalDesc = &pSolarSysState->PlanetDesc[i];
 		GenerateMoons(pSolarSysState, pSolarSysState->pOrbitalDesc);
-		pSolarSysState->pBaseDesc = pSolarSysState->MoonDesc;
+		pSolarSysState->pBaseDesc = pSolarSysState->MoonDesc.data();
 
 		uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_LANDING, static_cast<uint32_t>(0));
 	}
@@ -892,7 +891,7 @@ static void FreeSolarSys(void)
 	if (uqm::UQMOptions::read().texturedPlanets)
 	{
 		// BW: clean up data generated for textured IP planets
-		for (i = 0, pCurDesc = pSolarSysState->PlanetDesc;
+		for (i = 0, pCurDesc = pSolarSysState->PlanetDesc.data();
 			 i < pSolarSysState->SunDesc[0].NumPlanets; ++i, ++pCurDesc)
 		{
 			DestroyOrbitStruct(&pCurDesc->orbit, PlanetDiameter);
@@ -919,7 +918,7 @@ static void FreeSolarSys(void)
 				numMoons = pSolarSysState->pOrbitalDesc->NumPlanets;
 			}
 
-			for (i = 0, pCurDesc = pSolarSysState->MoonDesc;
+			for (i = 0, pCurDesc = pSolarSysState->MoonDesc.data();
 				 i < numMoons; ++i, ++pCurDesc)
 			{
 				if (!(pCurDesc->data_index & *PlanetType::WorldTypeSpecial))
@@ -940,7 +939,7 @@ static void FreeSolarSys(void)
 		// the main frame and stored separately therefore they aren't
 		// destroyed with OrbitFrame
 		// also reset all planet offsets
-		for (i = 0, pCurDesc = pSolarSysState->PlanetDesc;
+		for (i = 0, pCurDesc = pSolarSysState->PlanetDesc.data();
 			 i < pSolarSysState->SunDesc[0].NumPlanets; ++i, ++pCurDesc)
 		{
 			if (isPC(uqm::UQMOptions::read().planetStyle))
@@ -964,7 +963,7 @@ static void FreeSolarSys(void)
 				numMoons = pSolarSysState->pOrbitalDesc->NumPlanets;
 			}
 
-			for (i = 0, pCurDesc = pSolarSysState->MoonDesc;
+			for (i = 0, pCurDesc = pSolarSysState->MoonDesc.data();
 				 i < numMoons; ++i, ++pCurDesc)
 			{
 				if (!(pCurDesc->data_index & *PlanetType::WorldTypeSpecial) && isPC(uqm::UQMOptions::read().planetStyle))
@@ -1007,7 +1006,7 @@ static SystemPlanet* CheckIntersect(void)
 	// Check collisions with the system center object
 	// This may be the planet in inner view, or the sun
 	SystemPlanet* pCurDesc {pSolarSysState->pBaseDesc->pPrevDesc};
-	PlanetOffset = pCurDesc - pSolarSysState->PlanetDesc + 1;
+	PlanetOffset = pCurDesc - pSolarSysState->PlanetDesc.data() + 1;
 	MoonOffset = 1; // the planet itself
 
 	ShipIntersect.IntersectStamp.origin = uqm::flagship().shipStamp.origin;
@@ -1030,7 +1029,7 @@ static SystemPlanet* CheckIntersect(void)
 	// Start with no collisions
 	NewWaitPlanet = 0;
 
-	if (pCurDesc != pSolarSysState->SunDesc /* can't intersect with sun */
+	if (pCurDesc != pSolarSysState->SunDesc.data() /* can't intersect with sun */
 		&& DrawablesIntersect(&ShipIntersect,
 							  &PlanetIntersect, MaxTimeValue))
 	{
@@ -1063,12 +1062,12 @@ static SystemPlanet* CheckIntersect(void)
 		PlanetIntersect.EndPoint = PlanetIntersect.IntersectStamp.origin;
 		if (playerInInnerSystem())
 		{
-			PlanetOffset = pCurDesc->pPrevDesc - pSolarSysState->PlanetDesc;
-			MoonOffset = pCurDesc - pSolarSysState->MoonDesc + 2;
+			PlanetOffset = pCurDesc->pPrevDesc - pSolarSysState->PlanetDesc.data();
+			MoonOffset = pCurDesc - pSolarSysState->MoonDesc.data() + 2;
 		}
 		else
 		{
-			PlanetOffset = pCurDesc - pSolarSysState->PlanetDesc;
+			PlanetOffset = pCurDesc - pSolarSysState->PlanetDesc.data();
 			MoonOffset = 0;
 		}
 		++PlanetOffset;
@@ -1609,7 +1608,7 @@ static void enterInnerSystem(SystemPlanet* planet)
 		GenerateTexturedMoons(pSolarSysState, planet);
 	}
 
-	pSolarSysState->pBaseDesc = pSolarSysState->MoonDesc;
+	pSolarSysState->pBaseDesc = pSolarSysState->MoonDesc.data();
 	pSolarSysState->pOrbitalDesc = planet;
 }
 
@@ -1619,11 +1618,11 @@ static void leaveInnerSystem(SystemPlanet* planet)
 	uint16_t i {};
 	SystemPlanet* pMoonDesc {};
 
-	pSolarSysState->pBaseDesc = pSolarSysState->PlanetDesc;
+	pSolarSysState->pBaseDesc = pSolarSysState->PlanetDesc.data();
 	pSolarSysState->pOrbitalDesc = nullptr;
 
 	outerPlanetWait = uqm::makeWord(
-		planet - pSolarSysState->PlanetDesc + 1, 0);
+		planet - pSolarSysState->PlanetDesc.data() + 1, 0);
 	// BW: planet may have moved while we were into Inner System
 	ValidateOrbit(planet, DisplayFactor(),
 				  ResScale(DisplayFactorUs() / 4),
@@ -1638,7 +1637,7 @@ static void leaveInnerSystem(SystemPlanet* planet)
 
 	if (uqm::UQMOptions::read().texturedPlanets)
 	{ // BW: clean up data generated for textured IP moons
-		for (i = 0, pMoonDesc = pSolarSysState->MoonDesc;
+		for (i = 0, pMoonDesc = pSolarSysState->MoonDesc.data();
 			 i < planet->NumPlanets; ++i, ++pMoonDesc)
 		{
 			if (!(pMoonDesc->data_index & *PlanetType::WorldTypeSpecial))
@@ -1655,7 +1654,7 @@ static void leaveInnerSystem(SystemPlanet* planet)
 	} // End clean up
 	else if (isPC(uqm::UQMOptions::read().planetStyle))
 	{
-		for (i = 0, pMoonDesc = pSolarSysState->MoonDesc;
+		for (i = 0, pMoonDesc = pSolarSysState->MoonDesc.data();
 			 i < planet->NumPlanets; ++i, ++pMoonDesc)
 		{
 			if (!(pMoonDesc->data_index & *PlanetType::WorldTypeSpecial))
@@ -1906,7 +1905,7 @@ void RotatePlanets(bool IsInnerSystem)
 	uint16_t i {};
 
 	// Do not try to rotate planets that haven't been generated yet.
-	if (!pSolarSysState->PlanetDesc->orbit.lpTopoData)
+	if (!pSolarSysState->PlanetDesc[0].orbit.lpTopoData)
 	{
 		return;
 	}
@@ -2500,7 +2499,7 @@ static void DrawInnerPlanets(SystemPlanet* planet)
 		DrawTexturedBody(planet, s);
 
 		// Draw the moon images
-		for (i = planet->NumPlanets, moon = pSolarSysState->MoonDesc;
+		for (i = planet->NumPlanets, moon = pSolarSysState->MoonDesc.data();
 			 i; --i, ++moon)
 		{
 			if (moon->data_index & *PlanetType::WorldTypeSpecial)
@@ -2531,7 +2530,7 @@ static void DrawInnerPlanets(SystemPlanet* planet)
 		DrawStamp(&s);
 
 		// Draw the moon images
-		for (i = planet->NumPlanets, moon = pSolarSysState->MoonDesc;
+		for (i = planet->NumPlanets, moon = pSolarSysState->MoonDesc.data();
 			 i; --i, ++moon)
 		{
 			if (!(moon->data_index & *PlanetType::WorldTypeSpecial))
@@ -2593,7 +2592,7 @@ static void DrawSystem(int16_t radius, bool IsInnerSystem)
 	if (uqm::UQMOptions::read().texturedPlanets)
 	{
 		// BW: This to test if we have already rendered
-		if (!pSolarSysState->PlanetDesc->orbit.lpTopoData)
+		if (!pSolarSysState->PlanetDesc[0].orbit.lpTopoData)
 		{
 			GenerateTexturedPlanets();
 		}

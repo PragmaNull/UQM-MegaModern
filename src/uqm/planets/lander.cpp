@@ -71,86 +71,87 @@ struct LanderInputState
 	// Frame rate control
 };
 
-FrameRef LanderFrame[8];
+uqstl::array<FrameRef, 8> LanderFrame;
 uint8_t LanderUpgradesFlag;
 static SoundBankRef LanderSounds;
 MusicRef LanderMusic;
 static GfxContextRef PCLanderContext;
-static MusicRef OrbitMusic[NumOrbitThemes];
+static uqstl::array<MusicRef, NumOrbitThemes> OrbitMusic;
 
-LifeformDesc CreatureData[] =
+uqstl::array<LifeformDesc, 26> CreatureData {
 	{
-		{SpeedMotionless | DangerHarmless,							   uqm::makeByte(1, 1) },
+		{SpeedMotionless | DangerHarmless, uqm::makeByte(1, 1)},
 		// Roto-Dendron
-		{SpeedMotionless | DangerHarmless,							   uqm::makeByte(6, 1) },
+		{SpeedMotionless | DangerHarmless, uqm::makeByte(6, 1)},
 		// Macrocillia
-		{SpeedMotionless | DangerWeak,								   uqm::makeByte(3, 1) },
+		{SpeedMotionless | DangerWeak, uqm::makeByte(3, 1)},
 		// Splort Wort
-		{SpeedMotionless | DangerNormal,								 uqm::makeByte(5, 3) },
+		{SpeedMotionless | DangerNormal, uqm::makeByte(5, 3)},
 		// Whackin' Bush
-		{SpeedMotionless | DangerHarmless,							   uqm::makeByte(2, 10)},
+		{SpeedMotionless | DangerHarmless, uqm::makeByte(2, 10)},
 		// Slot Machine Tree
 		{BehaviorUnpredictable | SpeedSlow | DangerHarmless,
-		 uqm::makeByte(1,																2) },
+		 uqm::makeByte(1, 2)},
 		// Neon Worm
 		{BehaviorFlee | AwarenessMedium | SpeedSlow | DangerHarmless,
-		 uqm::makeByte(8,																5) },
+		 uqm::makeByte(8, 5)},
 		// Stiletto Urchin
 		{BehaviorHunt | AwarenessLow | SpeedSlow | DangerWeak,
-		 uqm::makeByte(2,																2) },
+		 uqm::makeByte(2, 2)},
 		// Deluxe Blob
 		{BehaviorUnpredictable | SpeedSlow | DangerNormal,
-		 uqm::makeByte(3,																8) },
+		 uqm::makeByte(3, 8)},
 		// Glowing Medusa
 		{BehaviorHunt | AwarenessMedium | SpeedSlow | DangerMonstrous,
-		 uqm::makeByte(10,															   15)},
+		 uqm::makeByte(10, 15)},
 		// Carousel Beast
 		{BehaviorHunt | AwarenessMedium | SpeedMedium | DangerWeak,
-		 uqm::makeByte(3,																3) },
+		 uqm::makeByte(3, 3)},
 		// Mysterious Bees
 		{BehaviorFlee | AwarenessMedium | SpeedMedium | DangerHarmless,
-		 uqm::makeByte(2,																1) },
+		 uqm::makeByte(2, 1)},
 		// Hopping Blobby
 		{BehaviorUnpredictable | SpeedMedium | DangerWeak,
-		 uqm::makeByte(2,																2) },
+		 uqm::makeByte(2, 2)},
 		// Blood Monkey
 		{BehaviorHunt | AwarenessHigh | SpeedMedium | DangerNormal,
-		 uqm::makeByte(4,																6) },
+		 uqm::makeByte(4, 6)},
 		// Yompin Yiminy
 		{BehaviorUnpredictable | SpeedMedium | DangerMonstrous,
-		 uqm::makeByte(9,																12)},
+		 uqm::makeByte(9, 12)},
 		// Amorphous Trandicula
 		{BehaviorHunt | AwarenessHigh | SpeedFast | DangerWeak,
-		 uqm::makeByte(3,																1) },
+		 uqm::makeByte(3, 1)},
 		// Crazy Weasel
 		{BehaviorFlee | AwarenessHigh | SpeedFast | DangerHarmless,
-		 uqm::makeByte(1,																1) },
+		 uqm::makeByte(1, 1)},
 		// Merry Whumpet
 		{BehaviorHunt | AwarenessLow | SpeedFast | DangerNormal,
-		 uqm::makeByte(7,																8) },
+		 uqm::makeByte(7, 8)},
 		// Fungal Squid
 		{BehaviorFlee | AwarenessHigh | SpeedFast | DangerWeak,
-		 uqm::makeByte(15,															   2) },
+		 uqm::makeByte(15, 2)},
 		// Penguin Cyclops
 		{BehaviorFlee | AwarenessLow | SpeedFast | DangerWeak,
-		 uqm::makeByte(1,																1) },
+		 uqm::makeByte(1, 1)},
 		// Chicken
-		{BehaviorUnpredictable | SpeedSlow | DangerWeak,				 uqm::makeByte(6, 2) },
+		{BehaviorUnpredictable | SpeedSlow | DangerWeak, uqm::makeByte(6, 2)},
 		// Bubble Vine
 		{BehaviorFlee | AwarenessHigh | SpeedSlow | DangerWeak,
-		 uqm::makeByte(4,																2) },
+		 uqm::makeByte(4, 2)},
 		// Bug-Eyed Bait
-		{SpeedMotionless | DangerWeak,								   uqm::makeByte(8, 5) },
+		{SpeedMotionless | DangerWeak, uqm::makeByte(8, 5)},
 		// Goo Burger
 
-		{SpeedMotionless | DangerMonstrous,								uqm::makeByte(1, 1) },
+		{SpeedMotionless | DangerMonstrous, uqm::makeByte(1, 1)},
 		// Evil One
 		{BehaviorUnpredictable | SpeedSlow | DangerHarmless,
-		 uqm::makeByte(1,																1) }, // ? was 0, 1
+		 uqm::makeByte(1, 1)}, // ? was 0, 1
 							   // Brainbox Bulldozers
 		{BehaviorHunt | AwarenessHigh | SpeedFast | DangerMonstrous,
-		 uqm::makeByte(15,															   15)},
+		 uqm::makeByte(15, 15)},
 		// Zex's Beauty
+	}
 };
 
 extern PrimLinks DisplayLinks;
@@ -1086,9 +1087,8 @@ static void CheckObjectCollision(uint16_t index)
 					else if (scan == ScanType::Biological
 							 && ElementPtr->hit_points)
 					{
-						const uint8_t danger_vals[] =
-							{
-								0, 6, 13, 26};
+						const uqstl::array<uint8_t, 4> danger_vals {
+							0, 6, 13, 26};
 						const int creatureIndex = ElementPtr->mass_points
 												& ~CreatureAware;
 						const int dangerLevel =
@@ -1568,7 +1568,7 @@ static void ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 
 	BuildObjectList();
 
-	DrawBatch(DisplayArray, DisplayLinks, BatchFlags::None);
+	DrawBatch(DisplayArray.data(), DisplayLinks, BatchFlags::None);
 
 	// Draw the lander while is still alive and keep drawing for a few
 	// frames while it is exploding
@@ -2598,11 +2598,11 @@ static void LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 	const auto DistanceCovered = [&] {
 		return (MapSurface.height / 2 + ResScale(10));
 	};
-	int landingOfs[MaxOffsets];
+	uqstl::array<int, MaxOffsets> landingOfs;
 	int start {};
 	int end {};
 	int index {};
-	int landingOfsHD[MaxOffsetsHd];
+	uqstl::array<int, MaxOffsetsHd> landingOfsHD;
 
 	// Produce smooth acceleration deltas from a simple 1..x progression
 	int delta {0};
@@ -2697,8 +2697,7 @@ bool KillLanderCrewSeq(uint16_t numKilled, TimePeriod period)
 // but the code still works with them that way.
 unsigned GetThermalHazardRating(int temp)
 {
-	const static int tempBreakpoints[] =
-		{50, 100, 150, 250, 350, 550, 800};
+	const static uqstl::array<int, 7> tempBreakpoints {50, 100, 150, 250, 350, 550, 800};
 	const size_t numBreakpoints = std::size(tempBreakpoints);
 
 	for (unsigned i {0}; i < numBreakpoints; ++i)
@@ -2716,9 +2715,9 @@ unsigned GetThermalHazardRating(int temp)
 // being generated.
 static uint8_t GetHazardChance(int hazardType, unsigned HazardRating)
 {
-	uint8_t TectonicsChanceTab[] = {0, 0, 1 * 3, 2 * 3, 4 * 3, 8 * 3, 16 * 3, 32 * 3};
-	uint8_t WeatherChanceTab[] = {0, 0, 1 * 3, 2 * 3, 3 * 3, 6 * 3, 12 * 3, 24 * 3};
-	const uint8_t FireChanceTab[] = {0, 0, 1 * 3, 2 * 3, 4 * 3, 12 * 3, 24 * 3, 48 * 3};
+	uqstl::array<uint8_t, 8> TectonicsChanceTab {0, 0, 1 * 3, 2 * 3, 4 * 3, 8 * 3, 16 * 3, 32 * 3};
+	uqstl::array<uint8_t, 8> WeatherChanceTab {0, 0, 1 * 3, 2 * 3, 3 * 3, 6 * 3, 12 * 3, 24 * 3};
+	const uqstl::array<uint8_t, 8> FireChanceTab {0, 0, 1 * 3, 2 * 3, 4 * 3, 12 * 3, 24 * 3, 48 * 3};
 
 	if (IsExtended())
 	{

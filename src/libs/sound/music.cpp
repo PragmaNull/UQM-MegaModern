@@ -29,7 +29,7 @@
 
 static MusicRef curMusicRef;
 static MusicRef curSpeechRef;
-static MusicPosition resumeMusicArray[PATH_MAX];
+static uqstl::array<MusicPosition, PATH_MAX> resumeMusicArray;
 
 void PLRPlaySong(MusicRef musicRef, bool Continuous, uint8_t Priority)
 {

@@ -50,8 +50,8 @@ static ConversationData pkunk_desc =
 		},
 		PkunkConversationPhrases, /* PlayerPhrases */
 		3, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				3, /* StartIndex */
 				4, /* NumFrames */
@@ -63,7 +63,7 @@ static ConversationData pkunk_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				7, /* StartIndex */
 				4, /* NumFrames */
 				AnimationFlags::Yoyo
@@ -74,7 +74,7 @@ static ConversationData pkunk_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 2),				/* BlockMask */
 			},
-								{
+			{
 				11, /* StartIndex */
 				3,	/* NumFrames */
 				AnimationFlags::Yoyo
@@ -85,7 +85,7 @@ static ConversationData pkunk_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 1),				/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */

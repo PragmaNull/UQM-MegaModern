@@ -42,14 +42,14 @@ namespace uqm
 // there.  "starmap_array" should never be altered and referenced as little
 // as possible.
 //StarDesc *star_array;
-StarDesc star_array[NumSolarSystems + NumHyperVortices + 3] {};
+uqstl::array<StarDesc, NumSolarSystems + NumHyperVortices + 3> star_array {};
 //StarDesc star_array[NumSolarSystems + NumHyperVortices + 3] =
 //		{[0 ... (NumSolarSystems + NumHyperVortices + 2)] =
 //		{{~0, ~0}, 0, 0, 0, 0}};
 const GfxPoint* constel_array;
 // JSD Give my own starseed
 uqstl::optional<uqm::UQMRandom> StarGenRNG {};
-PortalLocation portal_map[NumHyperVortices + 1] {};
+uqstl::array<PortalLocation, NumHyperVortices + 1> portal_map {};
 //PortalLocation portal_map[NumHyperVortices+1] =
 //		{[0 ... (NumHyperVortices)] = {{0, 0}, {0, 0}, nullptr}};
 
@@ -65,7 +65,7 @@ StarDesc* FindStar(StarDesc* LastSDPtr, GfxPoint* puniverse, int16_t xbounds,
 
 	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
-		BaseSDPtr = star_array;
+		BaseSDPtr = star_array.data();
 		hi = NumSolarSystems - 1;
 	}
 	else
@@ -220,7 +220,7 @@ StarDesc* FindNearestConstellation(StarDesc* starmap, GfxPoint p)
 // distances are set.
 // The COORDS are initialized with {~0, ~0}, the rest 0.
 // Plot ID 0 (ARILOU_DEFINED) is ARILOU_HYPERSPACE_PORTAL location.
-PlotLocation plot_map[*PlotId::NumPlots] = {};
+uqstl::array<PlotLocation, *PlotId::NumPlots> plot_map {};
 //PlotLocation plot_map[NUM_PLOTS] = {[0 ... (NUM_PLOTS - 1)] =
 //		{{~0, ~0}, nullptr, {[0 ... (NUM_PLOTS - 1)] = 0}}};
 
@@ -234,56 +234,55 @@ static constexpr auto MinVortex {150};	// The min distance between vorticies in 
 // These are called Hyperspace Vortices (Vortex) when in Quasispace,
 // and Quasispace Portals when in Hyperspace (all of these are exit only)
 // The recurring 2-way Portal/Vortex is ARILOU_DEFINED plot loc and 5000x5000
-PortalLocation portalmap_array[NumHyperVortices + 1] =
-	{
-		{{4091, 7748},
-		 {(-12 * VortexScale) + 5000, (-21 * VortexScale) + 5000},
-		 nullptr},
-		{{3184, 4906},
-		 {(1 * VortexScale) + 5000, (-20 * VortexScale) + 5000},
-		 nullptr},
-		{{9211, 6104},
-		 {(-16 * VortexScale) + 5000, (-18 * VortexScale) + 5000},
-		 nullptr},
-		{{5673, 1207},
-		 {(8 * VortexScale) + 5000, (-17 * VortexScale) + 5000},
-		 nullptr},
-		{{1910, 926},
-		 {(3 * VortexScale) + 5000, (-13 * VortexScale) + 5000},
-		 nullptr},
-		{{8607, 151},
-		 {(-21 * VortexScale) + 5000, (-4 * VortexScale) + 5000},
-		 nullptr},
-		{{50, 1647},
-		 {(-4 * VortexScale) + 5000, (-4 * VortexScale) + 5000},
-		 nullptr},
-		{{6117, 4131},
-		 {(-12 * VortexScale) + 5000, (-2 * VortexScale) + 5000},
-		 nullptr},
-		{{5658, 9712},
-		 {(-26 * VortexScale) + 5000, (2 * VortexScale) + 5000},
-		 nullptr},
-		{{2302, 3988},
-		 {(-17 * VortexScale) + 5000, (7 * VortexScale) + 5000},
-		 nullptr},
-		{{112, 9409},
-		 {(10 * VortexScale) + 5000, (7 * VortexScale) + 5000},
-		 nullptr},
-		{{7752, 8906},
-		 {(15 * VortexScale) + 5000, (14 * VortexScale) + 5000},
-		 nullptr},
-		{{368, 6332},
-		 {(22 * VortexScale) + 5000, (16 * VortexScale) + 5000},
-		 nullptr},
-		{{9735, 3153},
-		 {(-6 * VortexScale) + 5000, (19 * VortexScale) + 5000},
-		 nullptr},
-		{{5850, 6213},
-		 {(10 * VortexScale) + 5000, (20 * VortexScale) + 5000},
-		 nullptr},
-		{{0, 0},
-		 {ArilouHomeX, ArilouHomeY},
-		 nullptr}
+uqstl::array<PortalLocation, NumHyperVortices + 1> portalmap_array {
+	{{{4091, 7748},
+	  {(-12 * VortexScale) + 5000, (-21 * VortexScale) + 5000},
+	  nullptr},
+	 {{3184, 4906},
+	  {(1 * VortexScale) + 5000, (-20 * VortexScale) + 5000},
+	  nullptr},
+	 {{9211, 6104},
+	  {(-16 * VortexScale) + 5000, (-18 * VortexScale) + 5000},
+	  nullptr},
+	 {{5673, 1207},
+	  {(8 * VortexScale) + 5000, (-17 * VortexScale) + 5000},
+	  nullptr},
+	 {{1910, 926},
+	  {(3 * VortexScale) + 5000, (-13 * VortexScale) + 5000},
+	  nullptr},
+	 {{8607, 151},
+	  {(-21 * VortexScale) + 5000, (-4 * VortexScale) + 5000},
+	  nullptr},
+	 {{50, 1647},
+	  {(-4 * VortexScale) + 5000, (-4 * VortexScale) + 5000},
+	  nullptr},
+	 {{6117, 4131},
+	  {(-12 * VortexScale) + 5000, (-2 * VortexScale) + 5000},
+	  nullptr},
+	 {{5658, 9712},
+	  {(-26 * VortexScale) + 5000, (2 * VortexScale) + 5000},
+	  nullptr},
+	 {{2302, 3988},
+	  {(-17 * VortexScale) + 5000, (7 * VortexScale) + 5000},
+	  nullptr},
+	 {{112, 9409},
+	  {(10 * VortexScale) + 5000, (7 * VortexScale) + 5000},
+	  nullptr},
+	 {{7752, 8906},
+	  {(15 * VortexScale) + 5000, (14 * VortexScale) + 5000},
+	  nullptr},
+	 {{368, 6332},
+	  {(22 * VortexScale) + 5000, (16 * VortexScale) + 5000},
+	  nullptr},
+	 {{9735, 3153},
+	  {(-6 * VortexScale) + 5000, (19 * VortexScale) + 5000},
+	  nullptr},
+	 {{5850, 6213},
+	  {(10 * VortexScale) + 5000, (20 * VortexScale) + 5000},
+	  nullptr},
+	 {{0, 0},
+	  {ArilouHomeX, ArilouHomeY},
+	  nullptr}}
 };
 
 // Reset the given starmap to the default static starmap array
@@ -370,7 +369,7 @@ constexpr auto& PlotWeight(auto* plot, const auto& id) { return (plot[id].dist_s
 // This is purely for debugging purposes - print out the plot name by ID
 void print_plot_id(uint16_t plot_id)
 {
-	const static char* const plot_name[] = {
+	static uqstl::array<const char* const, 70> plot_name {
 		"ARILOU_DEFINED", "SOL_DEFINED", "SHOFIXTI_DEFINED",
 		"MAIDENS_DEFINED", "START_COLONY_DEFINED", "SPATHI_DEFINED",
 		"ZOQFOT_DEFINED", "MELNORME0_DEFINED", "MELNORME1_DEFINED",
@@ -648,33 +647,33 @@ void InitPlot(PlotLocation* plotmap)
 	// Set up buffers around anyone with a zone of influence during the war
 	// or after the war where homeworlds inside the zone wouldn't make sense
 	// Orz are skipped, Androsynth takes care of them.
-	const uint16_t home_map[23][2] = {
-		{*PlotId::Arilou,	  300 },
-		{*PlotId::Sol,		   700 },
-		{*PlotId::Yehat,		 700 },
-		{*PlotId::Shofixti,	700 },
-		{*PlotId::Chmmr,		 700 },
-		{*PlotId::Syreen,	  700 },
-		{*PlotId::EggCase0,	700 },
-		{*PlotId::MotherArk,	 700 },
+	const uqstl::array<uqstl::array<uint16_t, 2>, 23> home_map {
+		{{*PlotId::Arilou, 300},
+		 {*PlotId::Sol, 700},
+		 {*PlotId::Yehat, 700},
+		 {*PlotId::Shofixti, 700},
+		 {*PlotId::Chmmr, 700},
+		 {*PlotId::Syreen, 700},
+		 {*PlotId::EggCase0, 700},
+		 {*PlotId::MotherArk, 700},
 
-		{*PlotId::Druuge,	  1300},
-		{*PlotId::Pkunk,		 700 },
-		{*PlotId::Utwig,		 700 },
-		{*PlotId::Supox,		 300 },
-		{*PlotId::Zoqfot,	  700 },
-		{*PlotId::Burvixese,	 300 },
-		{*PlotId::StartColony, 300 },
+		 {*PlotId::Druuge, 1300},
+		 {*PlotId::Pkunk, 700},
+		 {*PlotId::Utwig, 700},
+		 {*PlotId::Supox, 300},
+		 {*PlotId::Zoqfot, 700},
+		 {*PlotId::Burvixese, 300},
+		 {*PlotId::StartColony, 300},
 
-		{*PlotId::Samatra,	   3000},
-		{*PlotId::Androsynth,  1000},
-		{*PlotId::Ilwrath,	   1000},
-		{*PlotId::Mycon,		 1000},
-		{*PlotId::Spathi,	  1000},
-		{*PlotId::Thradd,	  1000},
-		{*PlotId::Vux,		   1000},
-		{*PlotId::TalkingPet,  1000}
-	   };
+		 {*PlotId::Samatra, 3000},
+		 {*PlotId::Androsynth, 1000},
+		 {*PlotId::Ilwrath, 1000},
+		 {*PlotId::Mycon, 1000},
+		 {*PlotId::Spathi, 1000},
+		 {*PlotId::Thradd, 1000},
+		 {*PlotId::Vux, 1000},
+		 {*PlotId::TalkingPet, 1000}}
+	 };
 	// Total 8 + 7 + 8 currently 23 homeworlds
 	// Set the homeworlds apart first (can be overwritten later)
 	for (uint16_t i {0}; i < 22; i++)
@@ -1038,8 +1037,8 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 
 		if (StarType(star->Type) == StellarSize::Dwarf && star_color == StarBodyColor::Red)
 		{
-			const uint8_t color_array[] = {*StarBodyColor::Blue, *StarBodyColor::Green, *StarBodyColor::Orange,
-										   *StarBodyColor::White, *StarBodyColor::Yellow};
+			const uqstl::array<uint8_t, 5> color_array {*StarBodyColor::Blue, *StarBodyColor::Green, *StarBodyColor::Orange,
+														*StarBodyColor::White, *StarBodyColor::Yellow};
 
 			star->Type = MakeStar(
 				StarType(star->Type), color_array[rand_val % 5],
@@ -1049,7 +1048,7 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 				 && (star_color == StarBodyColor::Blue || star_color == StarBodyColor::Green
 					 || star_color == StarBodyColor::White))
 		{
-			const uint8_t color_array[] = {*StarBodyColor::Orange, *StarBodyColor::Red, *StarBodyColor::Yellow};
+			const uqstl::array<uint8_t, 3> color_array {*StarBodyColor::Orange, *StarBodyColor::Red, *StarBodyColor::Yellow};
 
 			star->Type = MakeStar(
 				StarType(star->Type), color_array[rand_val % 3],
@@ -1298,7 +1297,7 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 	uint16_t return_id {};
 	// timelimit is in deciseconds, if loading 60 seconds, if new 2 seconds
 #ifdef DEBUG_STARSEED_TRACE_Z
-	bool tried[NumSolarSystems] = {false};
+	uqstl::array<bool, NumSolarSystems> tried {false};
 	//bool tried[NumSolarSystems] = {[0 ... NumSolarSystems - 1] = false};
 	for (i = 0; i < NumSolarSystems; i++)
 	{
@@ -1628,7 +1627,7 @@ void DefaultQuasispace(PortalLocation* portalmap)
 	{
 		portalmap[i].star_pt = portalmap_array[i].star_pt;
 		portalmap[i].quasi_pt = portalmap_array[i].quasi_pt;
-		portalmap[i].nearest_star = FindNearestConstellation((StarDesc*)StarmapArray, portalmap[i].star_pt);
+		portalmap[i].nearest_star = FindNearestConstellation(const_cast<StarDesc*>(StarmapArray.data()), portalmap[i].star_pt);
 		if (!portalmap[i].nearest_star)
 		{
 			fmt::print(stderr, "BAD Quasi Portal %c at %05.1f : %05.1f, {}",
@@ -1728,7 +1727,7 @@ bool SeedQuasispace(PortalLocation* portalmap, PlotLocation* plotmap,
 				continue;
 			}
 			// Find the nearest constellation name to assign to this portal
-			portalmap[i].nearest_star = FindNearestConstellation(star_array, portalmap[i].star_pt);
+			portalmap[i].nearest_star = FindNearestConstellation(star_array.data(), portalmap[i].star_pt);
 			if (!portalmap[i].nearest_star)
 			{
 				fmt::print(stderr, "BAD Quasi Portal %c at %05.1f : %05.1f, {}",
@@ -1809,78 +1808,80 @@ struct PlotIdMap
 };
 
 // The PlotIdMap is sorted **by name** for the binary search function.
-static constexpr PlotIdMap plotIdMap[] = {
-	{"algolites",		  *PlotId::Algolites		}, // Algol [IV]
-	{"androsynth",		   *PlotId::Androsynth		  }, // Eta Vulpeculae
-	{"aqua helix",		   *PlotId::AquaHelix		 }, // Zeta Draconis
-	{"arilou",			   *PlotId::Arilou			  }, // 43.8 : 637.2
-	{"bomb",			   *PlotId::Bomb			  }, // Zeta Hyades [VI-B]
-	{"burvixese",		  *PlotId::Burvixese		}, // Arcturus [I]
-	{"chmmr",			  *PlotId::Chmmr			}, // Procyon
-	{"destroyed starbase", *PlotId::DestroyedStarbase},
-	{"druuge",			   *PlotId::Druuge			  }, // Zeta Persei [I]
-	{"egg case 0",		   *PlotId::EggCase0			}, // Beta Copernicus [I]
-	{"egg case 1",		   *PlotId::EggCase1			},
-	{"egg case 2",		   *PlotId::EggCase2			},
-	{"excavation site",	*PlotId::ExcavationSite   }, // ALPHA LALANDE I
-	{"ilwrath",			*PlotId::Ilwrath			}, // .. / .. / 022.9, 366.6
-	{"kohrah 0",			 *PlotId::Kohrah0			 },
-	{"kohrah 1",			 *PlotId::Kohrah1			 },
-	{"kohrah 2",			 *PlotId::Kohrah2			 },
-	{"maidens",			*PlotId::Maidens			}, // Alpha Cerenkov [I]
-	{"melnorme 0",		   *PlotId::Melnorme0		 },
-	{"melnorme 1",		   *PlotId::Melnorme1		 }, // Alpha Centauri (SOL)
-	{"melnorme 2",		   *PlotId::Melnorme2		 },
-	{"melnorme 3",		   *PlotId::Melnorme3		 },
-	{"melnorme 4",		   *PlotId::Melnorme4		 },
-	{"melnorme 5",		   *PlotId::Melnorme5		 },
-	{"melnorme 6",		   *PlotId::Melnorme6		 },
-	{"melnorme 7",		   *PlotId::Melnorme7		 }, // Alpha Apodis (Thraddash)
-	{"melnorme 8",		   *PlotId::Melnorme8		 },
-	{"mother ark",		   *PlotId::MotherArk		 }, //Delta Virginis (not said)
-	{"mycon",			  *PlotId::Mycon			}, // Brahe / 629.1, 220.8
-	{"mycon trap",		   *PlotId::MyconTrap		 }, // Organon [1] [I]
-	{"orz",				*PlotId::Orz				}, // Gamma Vulpeculae
-	{"pkunk",			  *PlotId::Pkunk			}, // Gamma Krueger [I]
-	{"rainbow 0",		  *PlotId::Rainbow0		   }, // Zeta Sextantis (Yehat)
-	{"rainbow 1",		  *PlotId::Rainbow1		   }, //
-	{"rainbow 2",		  *PlotId::Rainbow2		   }, //
-	{"rainbow 3",		  *PlotId::Rainbow3		   }, //
-	{"rainbow 4",		  *PlotId::Rainbow4		   }, // Slylandro (blue pair)
-	{"rainbow 5",		  *PlotId::Rainbow5		   }, // Epsilon Draconis (Thradd)
-	{"rainbow 6",		  *PlotId::Rainbow6		   },
-	{"rainbow 7",		  *PlotId::Rainbow7		   }, // Beta Leporis (Supox)
-	{"rainbow 8",		  *PlotId::Rainbow8		   },
-	{"rainbow 9",		  *PlotId::Rainbow9		   }, // GIANT rbw (Groombridge)
-										// Thraddash / Slylandro.
-	{"samatra",			*PlotId::Samatra			}, // Delta Crateris
-	{"ship vault",		   *PlotId::ShipVault		 }, // Epsilon Camelopardalis
-	{"shofixti",			 *PlotId::Shofixti		  }, // Delta Gorno
-	{"slylandro",		  *PlotId::Slylandro		}, // Beta Corvi
-	{"sol",				*PlotId::Sol				},
-	{"spathi",			   *PlotId::Spathi			  }, // Epsilon Gruis
-	{"spathi monument",	*PlotId::SpathiMonument   }, // Beta Herculis
-	{"start colony",		 *PlotId::StartColony		 }, // Vela
-	{"sun device",		   *PlotId::SunDevice		 }, // Beta Brahe
-	{"supox",			  *PlotId::Supox			},
-	{"syreen",			   *PlotId::Syreen			  }, // Betelgeuse
-	{"taalo protector",	*PlotId::TaaloProtector   }, // Delta Vulpeculae
-	{"talking pet",		*PlotId::TalkingPet	   }, // Beta Orionis
-	{"thraddash",		  *PlotId::Thradd			 }, // Delta Draconis
-	{"urquan 0",			 *PlotId::Urquan0			 },
-	{"urquan 1",			 *PlotId::Urquan1			 },
-	{"urquan 2",			 *PlotId::Urquan2			 },
-	{"urquan wreck",		 *PlotId::UrquanWreck		 }, // Alpha Pavonis
-	{"utwig",			  *PlotId::Utwig			}, // Aquarii [constellation]
-	{"vux",				*PlotId::Vux				}, // Luyten [star group]
-	{"vux beast",		  *PlotId::VuxBeast		   }, // Delta Lyncis [I]
-	{"yehat",			  *PlotId::Yehat			}, // .. / Serpentis
-	{"zoq colony 0",		 *PlotId::ZoqColony0		},
-	{"zoq colony 1",		 *PlotId::ZoqColony1		},
-	{"zoq colony 2",		 *PlotId::ZoqColony2		},
-	{"zoq colony 3",		 *PlotId::ZoqColony3		},
-	{"zoq scout",		  *PlotId::ZoqScout		   }, // Rigel
-	{"zoqfot",			   *PlotId::Zoqfot			  }  // Alpha Tucanae
+static constexpr uqstl::array<PlotIdMap, 70> plotIdMap {
+	{
+		{"algolites", *PlotId::Algolites},	 // Algol [IV]
+		{"androsynth", *PlotId::Androsynth}, // Eta Vulpeculae
+		{"aqua helix", *PlotId::AquaHelix},	 // Zeta Draconis
+		{"arilou", *PlotId::Arilou},		 // 43.8 : 637.2
+		{"bomb", *PlotId::Bomb},			 // Zeta Hyades [VI-B]
+		{"burvixese", *PlotId::Burvixese},	 // Arcturus [I]
+		{"chmmr", *PlotId::Chmmr},			 // Procyon
+		{"destroyed starbase", *PlotId::DestroyedStarbase},
+		{"druuge", *PlotId::Druuge},	   // Zeta Persei [I]
+		{"egg case 0", *PlotId::EggCase0}, // Beta Copernicus [I]
+		{"egg case 1", *PlotId::EggCase1},
+		{"egg case 2", *PlotId::EggCase2},
+		{"excavation site", *PlotId::ExcavationSite}, // ALPHA LALANDE I
+		{"ilwrath", *PlotId::Ilwrath},				  // .. / .. / 022.9, 366.6
+		{"kohrah 0", *PlotId::Kohrah0},
+		{"kohrah 1", *PlotId::Kohrah1},
+		{"kohrah 2", *PlotId::Kohrah2},
+		{"maidens", *PlotId::Maidens}, // Alpha Cerenkov [I]
+		{"melnorme 0", *PlotId::Melnorme0},
+		{"melnorme 1", *PlotId::Melnorme1}, // Alpha Centauri (SOL)
+		{"melnorme 2", *PlotId::Melnorme2},
+		{"melnorme 3", *PlotId::Melnorme3},
+		{"melnorme 4", *PlotId::Melnorme4},
+		{"melnorme 5", *PlotId::Melnorme5},
+		{"melnorme 6", *PlotId::Melnorme6},
+		{"melnorme 7", *PlotId::Melnorme7}, // Alpha Apodis (Thraddash)
+		{"melnorme 8", *PlotId::Melnorme8},
+		{"mother ark", *PlotId::MotherArk}, //Delta Virginis (not said)
+		{"mycon", *PlotId::Mycon},			// Brahe / 629.1, 220.8
+		{"mycon trap", *PlotId::MyconTrap}, // Organon [1] [I]
+		{"orz", *PlotId::Orz},				// Gamma Vulpeculae
+		{"pkunk", *PlotId::Pkunk},			// Gamma Krueger [I]
+		{"rainbow 0", *PlotId::Rainbow0},	// Zeta Sextantis (Yehat)
+		{"rainbow 1", *PlotId::Rainbow1},	//
+		{"rainbow 2", *PlotId::Rainbow2},	//
+		{"rainbow 3", *PlotId::Rainbow3},	//
+		{"rainbow 4", *PlotId::Rainbow4},	// Slylandro (blue pair)
+		{"rainbow 5", *PlotId::Rainbow5},	// Epsilon Draconis (Thradd)
+		{"rainbow 6", *PlotId::Rainbow6},
+		{"rainbow 7", *PlotId::Rainbow7}, // Beta Leporis (Supox)
+		{"rainbow 8", *PlotId::Rainbow8},
+		{"rainbow 9", *PlotId::Rainbow9},	// GIANT rbw (Groombridge)
+											// Thraddash / Slylandro.
+		{"samatra", *PlotId::Samatra},		// Delta Crateris
+		{"ship vault", *PlotId::ShipVault}, // Epsilon Camelopardalis
+		{"shofixti", *PlotId::Shofixti},	// Delta Gorno
+		{"slylandro", *PlotId::Slylandro},	// Beta Corvi
+		{"sol", *PlotId::Sol},
+		{"spathi", *PlotId::Spathi},				  // Epsilon Gruis
+		{"spathi monument", *PlotId::SpathiMonument}, // Beta Herculis
+		{"start colony", *PlotId::StartColony},		  // Vela
+		{"sun device", *PlotId::SunDevice},			  // Beta Brahe
+		{"supox", *PlotId::Supox},
+		{"syreen", *PlotId::Syreen},				  // Betelgeuse
+		{"taalo protector", *PlotId::TaaloProtector}, // Delta Vulpeculae
+		{"talking pet", *PlotId::TalkingPet},		  // Beta Orionis
+		{"thraddash", *PlotId::Thradd},				  // Delta Draconis
+		{"urquan 0", *PlotId::Urquan0},
+		{"urquan 1", *PlotId::Urquan1},
+		{"urquan 2", *PlotId::Urquan2},
+		{"urquan wreck", *PlotId::UrquanWreck}, // Alpha Pavonis
+		{"utwig", *PlotId::Utwig},				// Aquarii [constellation]
+		{"vux", *PlotId::Vux},					// Luyten [star group]
+		{"vux beast", *PlotId::VuxBeast},		// Delta Lyncis [I]
+		{"yehat", *PlotId::Yehat},				// .. / Serpentis
+		{"zoq colony 0", *PlotId::ZoqColony0},
+		{"zoq colony 1", *PlotId::ZoqColony1},
+		{"zoq colony 2", *PlotId::ZoqColony2},
+		{"zoq colony 3", *PlotId::ZoqColony3},
+		{"zoq scout", *PlotId::ZoqScout}, // Rigel
+		{"zoqfot", *PlotId::Zoqfot}		  // Alpha Tucanae
+	}
 }; // Currently 70 total (correct number)
 
 static int PlotIdCompare(const void* id1, const void* id2)
@@ -1898,7 +1899,7 @@ uint16_t PlotIdStrToIndex(const char* plotIdStr)
 	fmt::print(stderr, "START PlotIdStrToIndex {}.\n", plotIdStr);
 #endif
 	PlotIdMap key = {/* .idStr = */ plotIdStr, /* .id = */ std::numeric_limits<uint16_t>::max()};
-	const PlotIdMap* found = (PlotIdMap*)bsearch(&key, plotIdMap, std::size(plotIdMap),
+	const PlotIdMap* found = (PlotIdMap*)bsearch(&key, plotIdMap.data(), plotIdMap.size(),
 												 sizeof plotIdMap[0], PlotIdCompare);
 	if (found == nullptr)
 	{

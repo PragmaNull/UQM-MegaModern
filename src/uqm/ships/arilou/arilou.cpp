@@ -178,9 +178,9 @@ static void arilou_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCon
 
 			GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 			if (((testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::SeekingWeapon))
-				 && lpEvalDesc->ObjectPtr->next.image.farray == EnemyStarShipPtr->RaceDescPtr->ship_data.weapon)
+				 && lpEvalDesc->ObjectPtr->next.image.farray == EnemyStarShipPtr->RaceDescPtr->ship_data.weapon.data())
 				|| ((testFlag(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags, ShipFlags::SeekingSpecial))
-					&& lpEvalDesc->ObjectPtr->next.image.farray == EnemyStarShipPtr->RaceDescPtr->ship_data.special))
+					&& lpEvalDesc->ObjectPtr->next.image.farray == EnemyStarShipPtr->RaceDescPtr->ship_data.special.data()))
 			{
 				IsTrackingWeapon = true;
 			}
@@ -231,7 +231,7 @@ static void arilou_preprocess(Element* ElementPtr)
 			ElementPtr->life_span = HyperLife;
 
 			ElementPtr->next.image.farray =
-				StarShipPtr->RaceDescPtr->ship_data.special;
+				StarShipPtr->RaceDescPtr->ship_data.special.data();
 			ElementPtr->next.image.frame =
 				StarShipPtr->RaceDescPtr->ship_data.special[0];
 
@@ -243,7 +243,7 @@ static void arilou_preprocess(Element* ElementPtr)
 				StarShipPtr->RaceDescPtr->characteristics.special_wait;
 		}
 	}
-	else if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
+	else if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special.data())
 	{
 		uint16_t life_span {};
 
@@ -263,7 +263,7 @@ static void arilou_preprocess(Element* ElementPtr)
 			ElementPtr->state_flags |= ElementFlags::Appearing;
 			ElementPtr->current.image.farray =
 				ElementPtr->next.image.farray =
-					StarShipPtr->RaceDescPtr->ship_data.ship;
+					StarShipPtr->RaceDescPtr->ship_data.ship.data();
 			ElementPtr->current.image.frame =
 				ElementPtr->next.image.frame =
 					SetAbsFrameIndex(StarShipPtr->RaceDescPtr->ship_data.ship[0],

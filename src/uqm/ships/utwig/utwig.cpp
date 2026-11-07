@@ -135,7 +135,7 @@ static uint16_t initialize_lance(Element* ShipPtr, ElementHandle WeaponArray[])
 	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;
@@ -346,21 +346,20 @@ static void utwig_preprocess(Element* ElementPtr)
 		 * The current behaviour is the same as the old behavior,
 		 * but I am not sure that the old behavior was intended. - SvdB
 		 */
-		const static Color colorTable[] =
-			{
-				BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
-				//BuildColor (MakeRgb15 (0x1F, 0x11, 0x00), 0x7b),
-				BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
-				//BuildColor (MakeRgb15 (0x1F, 0x0A, 0x00), 0x7d),
-				BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7e),
-				//BuildColor (MakeRgb15 (0x1F, 0x03, 0x00), 0x7f),
-				BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x2a),
-				//BuildColor (MakeRgb15 (0x1B, 0x00, 0x00), 0x2b),
-				BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2c),
-				BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
-				BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2e),
-				//BuildColor (MakeRgb15 (0x0B, 0x00, 0x00), 0x2f),
-			};
+		const static uqstl::array<Color, 7> colorTable {
+			BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
+			//BuildColor (MakeRgb15 (0x1F, 0x11, 0x00), 0x7b),
+			BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
+			//BuildColor (MakeRgb15 (0x1F, 0x0A, 0x00), 0x7d),
+			BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7e),
+			//BuildColor (MakeRgb15 (0x1F, 0x03, 0x00), 0x7f),
+			BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x2a),
+			//BuildColor (MakeRgb15 (0x1B, 0x00, 0x00), 0x2b),
+			BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2c),
+			BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
+			BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2e),
+			//BuildColor (MakeRgb15 (0x0B, 0x00, 0x00), 0x2f),
+		};
 		const size_t colorTableCount = std::size(colorTable);
 
 		if (StarShipPtr->weapon_counter == 0)

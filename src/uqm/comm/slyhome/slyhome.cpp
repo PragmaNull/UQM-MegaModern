@@ -50,8 +50,8 @@ static ConversationData slylandro_desc =
 		},
 		SlylandroConversationPhrases, /* PlayerPhrases */
 		13, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				0,																				/* StartIndex */
 				5,																				/* NumFrames */
@@ -62,7 +62,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 5 / 8, /* RestartRate */
 				0,							/* BlockMask */
 			},
-								{
+			{
 				1,					  /* StartIndex */
 				5,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -72,7 +72,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				6,					  /* StartIndex */
 				5,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -82,7 +82,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				11,					  /* StartIndex */
 				5,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -92,7 +92,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				16,					  /* StartIndex */
 				6,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -102,7 +102,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				22,						  /* StartIndex */
 				8,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -112,7 +112,7 @@ static ConversationData slylandro_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				30,						  /* StartIndex */
 				9,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -122,7 +122,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 8) | (1 << 9),	/* BlockMask */
 			},
-								{
+			{
 				39,						  /* StartIndex */
 				4,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -132,7 +132,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				43,						  /* StartIndex */
 				5,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -142,7 +142,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 6),				/* BlockMask */
 			},
-								{
+			{
 				48,						  /* StartIndex */
 				6,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -152,7 +152,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 6),				/* BlockMask */
 			},
-								{
+			{
 				54,						  /* StartIndex */
 				6,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -162,7 +162,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 12),				/* BlockMask */
 			},
-								{
+			{
 				60,						  /* StartIndex */
 				7,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -172,7 +172,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 12),				/* BlockMask */
 			},
-								{
+			{
 				67,						  /* StartIndex */
 				8,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -182,7 +182,7 @@ static ConversationData slylandro_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 10) | (1 << 11),	/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc - empty */
 			0,					  /* StartIndex */
@@ -471,7 +471,7 @@ static void ProbeInfo(ResponseRef R);
 
 static void ProbeFunction(ResponseRef R)
 {
-	SlylandroHomePhrase pStr[2];
+	uqstl::array<SlylandroHomePhrase, 2> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = SlylandroHomePhrase::NullPhrase;
@@ -611,7 +611,7 @@ static void ProbeInfo(ResponseRef R)
 {
 	uint8_t i {};
 	uint8_t InfoLeft {};
-	SlylandroHomePhrase pStr[3];
+	uqstl::array<SlylandroHomePhrase, 3> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = SlylandroHomePhrase::NullPhrase;
@@ -734,7 +734,7 @@ static void ProbeInfo(ResponseRef R)
 static void HomeWorld(ResponseRef R)
 {
 	uint8_t i {};
-	SlylandroHomePhrase pStr[3];
+	uqstl::array<SlylandroHomePhrase, 3> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = SlylandroHomePhrase::NullPhrase;

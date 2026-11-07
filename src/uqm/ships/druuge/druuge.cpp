@@ -172,7 +172,7 @@ static uint16_t initialize_cannon(Element* ShipPtr, ElementHandle CannonArray[])
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = MissileBlock.face;
 	MissileBlock.sender = ShipPtr->playerNr;

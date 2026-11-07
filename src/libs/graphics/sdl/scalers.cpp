@@ -42,32 +42,30 @@ typedef enum
 // to get the YUV vector
 #if 0
 // original table -- not used
-const int YUV_matrix[3][3] =
-{
+const uqstl::array<uqstl::array<int, 3>, 3> YUV_matrix {{
 	/*         Y        U        V    */
 	/* R */ {0.2989, -0.1687,  0.5000},
 	/* G */ {0.5867, -0.3312, -0.4183},
 	/* B */ {0.1144,  0.5000, -0.0816}
-};
+}};
 #else
 // scaled up by a 2^14 factor, with Y doubled
-const int YUV_matrix[3][3] =
-	{
-		/*         Y      U      V    */
-		/* R */ {9794,  -2764, 8192 },
-		/* G */
-		{19224, -5428, -6853},
-		/* B */
-		{3749,  8192,	 -1339}
+const uqstl::array<uqstl::array<int, 3>, 3> YUV_matrix {
+	{/*         Y      U      V    */
+	 /* R */ {9794, -2764, 8192},
+	 /* G */
+	 {19224, -5428, -6853},
+	 /* B */
+	 {3749, 8192, -1339}}
 };
 #endif
 
 // pre-computed transformations for 8 bits per channel
-int RGB_to_YUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 256];
-int16_t dRGB_to_dYUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 512];
+uqstl::array<uqstl::array<uqstl::array<int, 256>, 3>, 3> RGB_to_YUV;
+uqstl::array<uqstl::array<uqstl::array<int16_t, 512>, 3>, 3> dRGB_to_dYUV;
 
 // pre-computed transformations for RGB555
-YuvVector RGB15_to_YUV[0x8000];
+uqstl::array<YuvVector, 0x8000> RGB15_to_YUV;
 
 Scale_PlatType_t Scale_Platform = SCALEPLAT_NULL;
 

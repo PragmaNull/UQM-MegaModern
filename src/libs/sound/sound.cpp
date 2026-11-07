@@ -27,7 +27,7 @@ int musicVolume = NormalVolume;
 float musicVolumeScale;
 float sfxVolumeScale;
 float speechVolumeScale;
-tfb::SoundSource soundSource[NumSoundsources];
+uqstl::array<tfb::SoundSource, NumSoundsources> soundSource;
 
 
 void StopSound(void)

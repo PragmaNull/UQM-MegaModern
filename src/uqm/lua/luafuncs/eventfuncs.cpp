@@ -31,17 +31,19 @@ static int luaUqm_event_addRelative(lua_State* luaState);
 static int luaUqm_event_register(lua_State* luaState);
 static int luaUqm_event_unregister(lua_State* luaState);
 
-const static luaL_Reg eventFuncs[] = {
-	{"addAbsolute", luaUqm_event_addAbsolute},
-	{"addRelative", luaUqm_event_addRelative},
-	{"register",	 luaUqm_event_register	  },
-	{"unregister",  luaUqm_event_unregister },
-	{nullptr,		  nullptr				 },
+const static uqstl::array<luaL_Reg, 5> eventFuncs {
+	{
+		{"addAbsolute", luaUqm_event_addAbsolute},
+		{"addRelative", luaUqm_event_addRelative},
+		{"register", luaUqm_event_register},
+		{"unregister", luaUqm_event_unregister},
+		{nullptr, nullptr},
+	 }
 };
 
 int luaUqm_event_open(lua_State* luaState)
 {
-	luaL_newlib(luaState, eventFuncs);
+	newLuaLib(luaState, eventFuncs);
 
 	return 1;
 }

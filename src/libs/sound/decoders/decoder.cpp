@@ -120,16 +120,17 @@ struct RegSoundDecoder
 	const SoundDecoderFuncs* funcs;
 };
 } // namespace tfb
-static tfb::RegSoundDecoder sd_decoders[MaxRegDecoders + 1] =
+static uqstl::array<tfb::RegSoundDecoder, MaxRegDecoders + 1> sd_decoders {
 	{
-		{true,  true,	 "wav",	&wava_DecoderVtbl},
-		{true,  true,	 "mod",	&moda_DecoderVtbl},
+		{true, true, "wav", &wava_DecoderVtbl},
+		{true, true, "mod", &moda_DecoderVtbl},
 #ifndef OVCODEC_NONE
-		{true,  true,	 "ogg",	&ova_DecoderVtbl },
-#endif  /* OVCODEC_NONE */
-		{true,  true,	 "duk",	&duka_DecoderVtbl},
-		{true,  true,	 "aif",	&aifa_DecoderVtbl},
-		{false, false, nullptr, nullptr		   }, // null term
+		{true, true, "ogg", &ova_DecoderVtbl},
+#endif /* OVCODEC_NONE */
+		{true, true, "duk", &duka_DecoderVtbl},
+		{true, true, "aif", &aifa_DecoderVtbl},
+		{false, false, nullptr, nullptr}, // null term
+	}
 };
 
 static tfb::DecoderFormats decoder_formats;
@@ -178,7 +179,7 @@ int32_t SoundDecoder_Init(AudioFlags flags, tfb::DecoderFormats* formats)
 	decoder_formats = *formats;
 
 	// init built-in decoders
-	for (const tfb::RegSoundDecoder* info {sd_decoders}; info->ext; info++)
+	for (const tfb::RegSoundDecoder* info {sd_decoders.data()}; info->ext; info++)
 	{
 		if (!info->funcs->InitModule(flags, &decoder_formats))
 		{
@@ -198,7 +199,7 @@ void SoundDecoder_Uninit(void)
 {
 	// uninit all decoders
 	// and unregister loaded decoders
-	for (tfb::RegSoundDecoder* info {sd_decoders}; info->used; info++)
+	for (tfb::RegSoundDecoder* info {sd_decoders.data()}; info->used; info++)
 	{
 		if (info->ext) // check if present
 		{
@@ -231,7 +232,7 @@ tfb::RegSoundDecoder* SoundDecoder_Register(const char* fileext, tfb::SoundDecod
 	}
 
 	// check if extension already registered
-	for (info = sd_decoders; info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
+	for (info = sd_decoders.data(); info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
 		 ++info)
 	{
 		// and pick up an empty slot (where available)
@@ -241,7 +242,7 @@ tfb::RegSoundDecoder* SoundDecoder_Register(const char* fileext, tfb::SoundDecod
 		}
 	}
 
-	if (info >= sd_decoders + MaxRegDecoders)
+	if (info >= sd_decoders.data() + MaxRegDecoders)
 	{
 		uqm::log::warn("SoundDecoder_Register(): Decoders limit reached");
 		return nullptr;
@@ -279,7 +280,7 @@ tfb::RegSoundDecoder* SoundDecoder_Register(const char* fileext, tfb::SoundDecod
 
 void SoundDecoder_Unregister(tfb::RegSoundDecoder* regdec)
 {
-	if (regdec < sd_decoders || regdec >= sd_decoders + MaxRegDecoders || !regdec->ext || !regdec->funcs)
+	if (regdec < sd_decoders.data() || regdec >= sd_decoders.data() + MaxRegDecoders || !regdec->ext || !regdec->funcs)
 	{
 		uqm::log::warn("SoundDecoder_Unregister(): "
 					   "Invalid or expired decoder passed");
@@ -295,7 +296,7 @@ const tfb::SoundDecoderFuncs* SoundDecoder_Lookup(const char* fileext)
 {
 	const tfb::RegSoundDecoder* info {};
 
-	for (info = sd_decoders; info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
+	for (info = sd_decoders.data(); info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
 		 ++info)
 		;
 	return info->ext ? info->funcs : nullptr;
@@ -318,7 +319,7 @@ tfb::SoundDecoder* SoundDecoder_Load(const uqm::io::Directory& dir, const char* 
 	}
 	++pext;
 
-	for (info = sd_decoders; info->used && (!info->ext || strcmp(info->ext, pext) != 0);
+	for (info = sd_decoders.data(); info->used && (!info->ext || strcmp(info->ext, pext) != 0);
 		 ++info)
 		;
 	if (!info->ext)

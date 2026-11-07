@@ -331,7 +331,7 @@ bool GetContextFontDispWidth(int16_t* pwidth)
 
 bool TextRect(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta)
 {
-	uint8_t char_delta_array[MaxDeltas];
+	uqstl::array<uint8_t, MaxDeltas> char_delta_array;
 
 	FontRef FontPtr {_CurFontPtr};
 	if (FontPtr != 0 && lpText->CharCount != 0)
@@ -349,7 +349,7 @@ bool TextRect(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta)
 		 */
 		if (pdelta == 0)
 		{
-			pdelta = char_delta_array;
+			pdelta = char_delta_array.data();
 			if (num_chars > MaxDeltas)
 			{
 				num_chars = MaxDeltas;
@@ -685,7 +685,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, Fr
 bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap,
 				 uqm::UniChar key, FontRef AltFontPtr)
 {
-	uint8_t char_delta_array[MaxDeltas];
+	uqstl::array<uint8_t, MaxDeltas> char_delta_array;
 
 	FontRef FontPtr {_CurFontPtr};
 	if (FontPtr != 0 && lpText->CharCount != 0)
@@ -703,7 +703,7 @@ bool TextRectAlt(GfxText* lpText, GfxRect* pRect, uint8_t* pdelta, uint8_t swap,
 		 */
 		if (pdelta == 0)
 		{
-			pdelta = char_delta_array;
+			pdelta = char_delta_array.data();
 			if (num_chars > MaxDeltas)
 			{
 				num_chars = MaxDeltas;

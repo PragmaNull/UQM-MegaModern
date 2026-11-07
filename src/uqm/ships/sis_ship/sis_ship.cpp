@@ -174,7 +174,7 @@ struct FlagshipBattleData
 {
 	uint16_t num_trackers;
 	uint16_t num_blasters;
-	MissileDesc MissileBlock[6];
+	uqstl::array<MissileDesc, 6> MissileBlock;
 };
 
 static void InitWeaponSlots(RaceDesc* RaceDescPtr,
@@ -449,17 +449,16 @@ static void spawn_point_defense(Element* ElementPtr)
 		ElementHandle hNextObject {};
 		Element* ShipPtr {};
 		Color LaserColor;
-		const static Color ColorRange[] =
-			{
-				BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
-				BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7E),
-				BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D),
-				BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7C),
-				BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B),
-				BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A),
-				BuildColor(MakeRgb15(0x1F, 0x18, 0x00), 0x79),
-				BuildColor(MakeRgb15(0x1F, 0x1C, 0x00), 0x78),
-			};
+		const static uqstl::array<Color, 8> ColorRange {
+			BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
+			BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7E),
+			BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D),
+			BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7C),
+			BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B),
+			BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A),
+			BuildColor(MakeRgb15(0x1F, 0x18, 0x00), 0x79),
+			BuildColor(MakeRgb15(0x1F, 0x1C, 0x00), 0x78),
+		};
 
 		bool PaidFor {false};
 
@@ -666,7 +665,7 @@ static uint16_t initialize_blasters(Element* ShipPtr, ElementHandle BlasterArray
 
 		MissileBlock.cx = ShipPtr->next.location.x;
 		MissileBlock.cy = ShipPtr->next.location.y;
-		MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+		MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 		MissileBlock.sender = ShipPtr->playerNr;
 		MissileBlock.face = NormalizeFacing(StarShipPtr->ShipFacing
 											+ MissileBlock.face);
@@ -765,7 +764,7 @@ static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 static void InitWeaponSlots(RaceDesc* RaceDescPtr, const ModuleType* ModuleSlots)
 {
 	FlagshipBattleData* SisData = GetCustomShipData(RaceDescPtr);
-	MissileDesc* lpMB = SisData->MissileBlock;
+	MissileDesc* lpMB = SisData->MissileBlock.data();
 
 	SisData->num_blasters = 0;
 	for (uint16_t i {0}; i < NumModuleSlots; ++i)
@@ -1017,10 +1016,10 @@ RaceDesc* init_sis(void)
 	}
 
 	SetCustomShipData(&new_sis_desc, &empty_data);
-	InitModuleSlots(&new_sis_desc, uqm::gameState().sis().ModuleSlots);
-	InitWeaponSlots(&new_sis_desc, uqm::gameState().sis().ModuleSlots);
-	InitDriveSlots(&new_sis_desc, uqm::gameState().sis().DriveSlots);
-	InitJetSlots(&new_sis_desc, uqm::gameState().sis().JetSlots);
+	InitModuleSlots(&new_sis_desc, uqm::gameState().sis().ModuleSlots.data());
+	InitWeaponSlots(&new_sis_desc, uqm::gameState().sis().ModuleSlots.data());
+	InitDriveSlots(&new_sis_desc, uqm::gameState().sis().DriveSlots.data());
+	InitJetSlots(&new_sis_desc, uqm::gameState().sis().JetSlots.data());
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee)
 	{

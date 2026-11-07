@@ -23,7 +23,7 @@ using DocPtr = uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)>;
 
 constexpr size_t c_maxReportedDifferences {50};
 // Values that the save takes from the settings of the running game, not from the game state.
-constexpr uqstl::string_view c_ignoredPaths[] {"/summary/res_factor"};
+constexpr uqstl::array<uqstl::string_view, 1> c_ignoredPaths {"/summary/res_factor"};
 
 [[nodiscard]] DocPtr readJson(uqstl::string_view text)
 {

@@ -45,7 +45,7 @@ extern tfb::GraphicsBackend* graphics_backend;
 extern SDL_Surface* SDL_Screen;
 extern SDL_Surface* TransitionScreen;
 
-extern SDL_Surface* SDL_Screens[*ScreenBuffer::Count];
+extern uqstl::array<SDL_Surface*, *ScreenBuffer::Count> SDL_Screens;
 extern SDL_Surface* SDL_Screen_fps;
 // True when SDL_Screen_fps changed after the last upload to its texture.
 extern bool SDL_Screen_fps_changed;

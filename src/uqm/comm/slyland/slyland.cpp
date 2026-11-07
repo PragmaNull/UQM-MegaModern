@@ -29,93 +29,88 @@
 
 namespace uqm
 {
-static uint16_t probe_digit_names[] =
-	{
-		*SlylandroPhrase::EnumerateZero,
-		*SlylandroPhrase::EnumerateOne,
-		*SlylandroPhrase::EnumerateTwo,
-		*SlylandroPhrase::EnumerateThree,
-		*SlylandroPhrase::EnumerateFour,
-		*SlylandroPhrase::EnumerateFive,
-		*SlylandroPhrase::EnumerateSix,
-		*SlylandroPhrase::EnumerateSeven,
-		*SlylandroPhrase::EnumerateEight,
-		*SlylandroPhrase::EnumerateNine,
+static uqstl::array<uint16_t, 10> probe_digit_names {
+	*SlylandroPhrase::EnumerateZero,
+	*SlylandroPhrase::EnumerateOne,
+	*SlylandroPhrase::EnumerateTwo,
+	*SlylandroPhrase::EnumerateThree,
+	*SlylandroPhrase::EnumerateFour,
+	*SlylandroPhrase::EnumerateFive,
+	*SlylandroPhrase::EnumerateSix,
+	*SlylandroPhrase::EnumerateSeven,
+	*SlylandroPhrase::EnumerateEight,
+	*SlylandroPhrase::EnumerateNine,
 };
 
-static uint16_t probe_teen_names[] =
-	{
-		*SlylandroPhrase::EnumerateTen,
-		*SlylandroPhrase::EnumerateEleven,
-		*SlylandroPhrase::EnumerateTwelve,
-		*SlylandroPhrase::EnumerateThirteen,
-		*SlylandroPhrase::EnumerateFourteen,
-		*SlylandroPhrase::EnumerateFifteen,
-		*SlylandroPhrase::EnumerateSixteen,
-		*SlylandroPhrase::EnumerateSeventeen,
-		*SlylandroPhrase::EnumerateEighteen,
-		*SlylandroPhrase::EnumerateNineteen,
+static uqstl::array<uint16_t, 10> probe_teen_names {
+	*SlylandroPhrase::EnumerateTen,
+	*SlylandroPhrase::EnumerateEleven,
+	*SlylandroPhrase::EnumerateTwelve,
+	*SlylandroPhrase::EnumerateThirteen,
+	*SlylandroPhrase::EnumerateFourteen,
+	*SlylandroPhrase::EnumerateFifteen,
+	*SlylandroPhrase::EnumerateSixteen,
+	*SlylandroPhrase::EnumerateSeventeen,
+	*SlylandroPhrase::EnumerateEighteen,
+	*SlylandroPhrase::EnumerateNineteen,
 };
 
-static uint16_t probe_tens_names[] =
-	{
-		0, /* invalid */
-		0, /* skip digit */
-		*SlylandroPhrase::EnumerateTwenty,
-		*SlylandroPhrase::EnumerateThirty,
-		*SlylandroPhrase::EnumerateFourty,
-		*SlylandroPhrase::EnumerateFifty,
-		*SlylandroPhrase::EnumerateSixty,
-		*SlylandroPhrase::EnumerateSeventy,
-		*SlylandroPhrase::EnumerateEighty,
-		*SlylandroPhrase::EnumerateNinety,
+static uqstl::array<uint16_t, 10> probe_tens_names {
+	0, /* invalid */
+	0, /* skip digit */
+	*SlylandroPhrase::EnumerateTwenty,
+	*SlylandroPhrase::EnumerateThirty,
+	*SlylandroPhrase::EnumerateFourty,
+	*SlylandroPhrase::EnumerateFifty,
+	*SlylandroPhrase::EnumerateSixty,
+	*SlylandroPhrase::EnumerateSeventy,
+	*SlylandroPhrase::EnumerateEighty,
+	*SlylandroPhrase::EnumerateNinety,
 };
 
 const static NumberSpeechDesc probe_numbers_english =
 	{
 		5, /* NumDigits */
-		{
-						  {
-				/* 1000-999999 */
-				1000,								/* Divider */
-				0,									/* Subtrahend */
-				nullptr,							/* StrDigits - recurse */
-				nullptr,							/* Names - not used */
-				*SlylandroPhrase::EnumerateThousand /* CommonIndex */
-			},
-						  {
-				/* 100-999 */
-				100,							   /* Divider */
-				0,								   /* Subtrahend */
-				probe_digit_names,				   /* StrDigits */
-				nullptr,						   /* Names - not used */
-				*SlylandroPhrase::EnumerateHundred /* CommonIndex */
-			},
-						  {
-				/* 20-99 */
-				10,				  /* Divider */
-				0,				  /* Subtrahend */
-				probe_tens_names, /* StrDigits */
-				nullptr,		  /* Names - not used */
-				0				  /* CommonIndex - not used */
-			},
-						  {
-				/* 10-19 */
-				1,				  /* Divider */
-				10,				  /* Subtrahend */
-				probe_teen_names, /* StrDigits */
-				nullptr,		  /* Names - not used */
-				0				  /* CommonIndex - not used */
-			},
-						  {
-				/* 0-9 */
-				1,				   /* Divider */
-				0,				   /* Subtrahend */
-				probe_digit_names, /* StrDigits */
-				nullptr,		   /* Names - not used */
-				0				   /* CommonIndex - not used */
-			}}
-};
+		{{{
+			  /* 1000-999999 */
+			  1000,								  /* Divider */
+			  0,								  /* Subtrahend */
+			  nullptr,							  /* StrDigits - recurse */
+			  nullptr,							  /* Names - not used */
+			  *SlylandroPhrase::EnumerateThousand /* CommonIndex */
+		  },
+		  {
+			  /* 100-999 */
+			  100,								 /* Divider */
+			  0,								 /* Subtrahend */
+			  probe_digit_names.data(),			 /* StrDigits */
+			  nullptr,							 /* Names - not used */
+			  *SlylandroPhrase::EnumerateHundred /* CommonIndex */
+		  },
+		  {
+			  /* 20-99 */
+			  10,					   /* Divider */
+			  0,					   /* Subtrahend */
+			  probe_tens_names.data(), /* StrDigits */
+			  nullptr,				   /* Names - not used */
+			  0						   /* CommonIndex - not used */
+		  },
+		  {
+			  /* 10-19 */
+			  1,					   /* Divider */
+			  10,					   /* Subtrahend */
+			  probe_teen_names.data(), /* StrDigits */
+			  nullptr,				   /* Names - not used */
+			  0						   /* CommonIndex - not used */
+		  },
+		  {
+			  /* 0-9 */
+			  1,						/* Divider */
+			  0,						/* Subtrahend */
+			  probe_digit_names.data(), /* StrDigits */
+			  nullptr,					/* Names - not used */
+			  0							/* CommonIndex - not used */
+		  }}}};
 
 static ConversationData slylandro_desc =
 	{
@@ -141,8 +136,8 @@ static ConversationData slylandro_desc =
 		},
 		SlylandConversationPhrases, /* PlayerPhrases */
 		6, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				1,							/* StartIndex */
 				9,							/* NumFrames */
@@ -151,7 +146,7 @@ static ConversationData slylandro_desc =
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 3)					/* BlockMask */
 			},
-								{
+			{
 				10,							/* StartIndex */
 				8,							/* NumFrames */
 				AnimationFlags::Circular,	/* AnimFlags */
@@ -159,7 +154,7 @@ static ConversationData slylandro_desc =
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 4)					/* BlockMask */
 			},
-								{
+			{
 				18,							/* StartIndex */
 				8,							/* NumFrames */
 				AnimationFlags::Circular,	/* AnimFlags */
@@ -167,7 +162,7 @@ static ConversationData slylandro_desc =
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 5)					/* BlockMask */
 			},
-								{
+			{
 				26,							/* StartIndex */
 				8,							/* NumFrames */
 				AnimationFlags::Circular,	/* AnimFlags */
@@ -175,7 +170,7 @@ static ConversationData slylandro_desc =
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 0)					/* BlockMask */
 			},
-								{
+			{
 				34,							/* StartIndex */
 				8,							/* NumFrames */
 				AnimationFlags::Circular,	/* AnimFlags */
@@ -183,7 +178,7 @@ static ConversationData slylandro_desc =
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 1)					/* BlockMask */
 			},
-								{
+			{
 				42,							/* StartIndex */
 				9,							/* NumFrames */
 				AnimationFlags::Circular,	/* AnimFlags */
@@ -191,7 +186,7 @@ static ConversationData slylandro_desc =
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 2)					/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc - empty */
 			0,					  /* StartIndex */
@@ -224,25 +219,24 @@ static ConversationData slylandro_desc =
 };
 
 
-static uint32_t random_ramble[] =
-	{
-		1,
-		15,
-		48,
-		312,
-		7,
-		4000,
-		668,
-		46,
-		4,
-		8,
-		15,
-		16,
-		23,
-		42,
-		998,
-		80556,
-		1337};
+static uqstl::array<uint32_t, 17> random_ramble {
+	1,
+	15,
+	48,
+	312,
+	7,
+	4000,
+	668,
+	46,
+	4,
+	8,
+	15,
+	16,
+	23,
+	42,
+	998,
+	80556,
+	1337};
 
 
 static SlylandroPhrase threat,

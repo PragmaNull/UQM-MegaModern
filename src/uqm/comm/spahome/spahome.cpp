@@ -50,8 +50,8 @@ static ConversationData spahome_desc =
 		},
 		SpathiHomeConversationPhrases, /* PlayerPhrases */
 		14, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				1,						  /* StartIndex */
 				3,						  /* NumFrames */
@@ -62,7 +62,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				4,						  /* StartIndex */
 				5,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -72,7 +72,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				9,						  /* StartIndex */
 				4,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -82,7 +82,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 10) | (1 << 11),	/* BlockMask */
 			},
-								{
+			{
 				13,							/* StartIndex */
 				6,							/* NumFrames */
 				AnimationFlags::Circular,	/* AnimFlags */
@@ -90,7 +90,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond / 20, 0, /* RestartRate */
 				(1 << 4) | (1 << 5)			/* BlockMask */
 			},
-								{
+			{
 				19,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -100,7 +100,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 3) | (1 << 5),	/* BlockMask */
 			},
-								{
+			{
 				22,					  /* StartIndex */
 				4,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -111,7 +111,7 @@ static ConversationData spahome_desc =
 				(1 << 3) | (1 << 4)
 					| (1 << 10), /* BlockMask */
 			},
-								{
+			{
 				26,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -121,7 +121,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 10),				/* BlockMask */
 			},
-								{
+			{
 				29,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -131,7 +131,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				32,						  /* StartIndex */
 				7,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -141,7 +141,7 @@ static ConversationData spahome_desc =
 				0,					  /* RestartRate */
 				(1 << 9) | (1 << 10), /* BlockMask */
 			},
-								{
+			{
 				39,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -151,7 +151,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 8) | (1 << 10),	/* BlockMask */
 			},
-								{
+			{
 				42,					  /* StartIndex */
 				4,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -163,7 +163,7 @@ static ConversationData spahome_desc =
 					| (1 << 6) | (1 << 2)
 					| (1 << 11) | (1 << 5), /* BlockMask */
 			},
-								{
+			{
 				46,					  /* StartIndex */
 				4,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -173,7 +173,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				(1 << 2) | (1 << 10),	 /* BlockMask */
 			},
-								{
+			{
 				50,						  /* StartIndex */
 				6,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -183,7 +183,7 @@ static ConversationData spahome_desc =
 				0,		   /* RestartRate */
 				(1 << 13), /* BlockMask */
 			},
-								{
+			{
 				56,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -193,7 +193,7 @@ static ConversationData spahome_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 12),				/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc - empty */
 			0,					  /* StartIndex */

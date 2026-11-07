@@ -164,7 +164,7 @@ struct AiffSoundDecoder
 	uint32_t data_size;
 	uint32_t max_pcm;
 	uint32_t cur_pcm;
-	int32_t prev_val[c_maxAiffChannels];
+	uqstl::array<int32_t, c_maxAiffChannels> prev_val;
 };
 } // namespace tfb
 
@@ -363,7 +363,7 @@ static bool aifa_Open(tfb::SoundDecoder* This, const uqm::io::Directory& dir, co
 	aifa->max_pcm = 0;
 	aifa->data_ofs = 0;
 	memset(&aifa->fmtHdr, 0, sizeof(aifa->fmtHdr));
-	memset(aifa->prev_val, 0, sizeof(aifa->prev_val));
+	memset(aifa->prev_val.data(), 0, sizeof(aifa->prev_val));
 
 	// read wave header
 	if (!aifa_readFileHeader(aifa, &fileHdr))
@@ -594,7 +594,7 @@ static int aifa_DecodeSDX2(tfb::AiffSoundDecoder* aifa, void* buf, int32_t bufsi
 
 	for (uint32_t left {dec_pcm}; left > 0; --left)
 	{
-		int32_t* prev = aifa->prev_val;
+		int32_t* prev = aifa->prev_val.data();
 		for (int i {aifa->fmtHdr.channels}; i > 0; --i, ++prev, ++src, ++dst)
 		{
 			int32_t v = (*src * abs(*src)) << 1;
@@ -633,7 +633,7 @@ static uint32_t aifa_Seek(tfb::SoundDecoder* This, uint32_t pcm_pos)
 
 	// reset previous values for SDX2 on seek ops
 	// the delta will recover faster with reset
-	memset(aifa->prev_val, 0, sizeof(aifa->prev_val));
+	memset(aifa->prev_val.data(), 0, sizeof(aifa->prev_val));
 
 	return pcm_pos;
 }

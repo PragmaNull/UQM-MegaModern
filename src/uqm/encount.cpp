@@ -331,7 +331,7 @@ uint16_t InitEncounter(void)
 	uint16_t i {};
 	GfxStamp s;
 	GfxText t;
-	extern FrameRef planet[];
+	extern uqstl::array<FrameRef, NumViews> planet;
 
 
 	SetContext(SpaceContext);
@@ -401,19 +401,20 @@ uint16_t InitEncounter(void)
 	{
 		ShipFragmentHandle hStarShip {};
 		ShipFragmentHandle hNextShip {};
-		const GfxPoint display_pt[] =
+		const uqstl::array<GfxPoint, 10> display_pt {
 			{
-				{10,	 51 },
-				{-10, 51 },
-				{33,	 40 },
-				{-33, 40 },
-				{49,	 18 },
-				{-49, 18 },
-				{52,	 -6 },
-				{-52, -6 },
-				{44,	 -27},
+				{10, 51},
+				{-10, 51},
+				{33, 40},
+				{-33, 40},
+				{49, 18},
+				{-49, 18},
+				{52, -6},
+				{-52, -6},
+				{44, -27},
 				{-44, -27},
-		};
+			 }
+		 };
 		constexpr auto NumDisplayPts {std::size(display_pt)};
 
 		for (hStarShip = GetHeadLink(&uqm::gameState().game().npc_built_ship_q), i = 0;
@@ -954,15 +955,14 @@ uint16_t UninitEncounter(void)
 			FleetInfoHandle hEncounter {};
 			FleetInfo* EncounterPtr {};
 			bool isBanned = false;
-			const uint8_t bannedShip[7] =
-				{
-					*RaceId::Pkunk,
-					*RaceId::Shofixti,
-					*RaceId::Thraddash,
-					*RaceId::Yehat,
-					*RaceId::Melnorme,
-					*RaceId::Ilwrath,
-					*RaceId::Slylandro};
+			const uqstl::array<uint8_t, 7> bannedShip {
+				*RaceId::Pkunk,
+				*RaceId::Shofixti,
+				*RaceId::Thraddash,
+				*RaceId::Yehat,
+				*RaceId::Melnorme,
+				*RaceId::Ilwrath,
+				*RaceId::Slylandro};
 
 			for (uint8_t j {0}; j < std::size(bannedShip); j++)
 			{

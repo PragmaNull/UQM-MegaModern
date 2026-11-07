@@ -28,7 +28,7 @@ inline constexpr auto NumPlayers {2};
 inline constexpr auto NumSides {2};
 
 extern FrameRef stars_in_space;
-extern FrameRef stars_misc[NumViews];
+extern uqstl::array<FrameRef, NumViews> stars_misc;
 extern FrameRef scenery;
 
 extern bool InitSpace(void);

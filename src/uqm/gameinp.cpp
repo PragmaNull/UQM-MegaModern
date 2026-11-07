@@ -61,12 +61,12 @@ struct InputStateDesc
 template <typename T>
 struct MenuAnnotations
 {
-	T key[uqstl::to_underlying(ControlTemplate::NUM)][*BattleKey::NumKeys];
-	T menu[*MenuKey::NumMenuKeys];
+	uqstl::array<uqstl::array<T, *BattleKey::NumKeys>, uqstl::to_underlying(ControlTemplate::NUM)> key;
+	uqstl::array<T, *MenuKey::NumMenuKeys> menu;
 };
 
 
-ControlTemplate PlayerControlTemplates[NumPlayers];
+uqstl::array<ControlTemplate, NumPlayers> PlayerControlTemplates;
 ControllerInputState CurrentInputState, PulsedInputState;
 static ControllerInputState CachedInputState, OldInputState;
 static MenuAnnotations<TimePeriod> RepeatDelays;
@@ -645,13 +645,13 @@ static BattleInputState ControlInputToBattleInput(const int* keyState)
 BattleInputState CurrentInputToBattleInput(uint16_t player)
 {
 	return ControlInputToBattleInput(
-		CurrentInputState.key[static_cast<int>(PlayerControlTemplates[player])]);
+		CurrentInputState.key[static_cast<int>(PlayerControlTemplates[player])].data());
 }
 
 BattleInputState PulsedInputToBattleInput(uint16_t player)
 {
 	return ControlInputToBattleInput(
-		PulsedInputState.key[static_cast<int>(PlayerControlTemplates[player])]);
+		PulsedInputState.key[static_cast<int>(PlayerControlTemplates[player])].data());
 }
 
 bool AnyButtonPress(bool CheckSpecial)

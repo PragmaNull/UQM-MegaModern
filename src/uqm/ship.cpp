@@ -346,9 +346,9 @@ void ship_postprocess(Element* ElementPtr)
 			 && DeltaEnergy(ElementPtr,
 							-RDPtr->characteristics.weapon_energy_cost))
 	{
-		ElementHandle Weapon[6];
+		uqstl::array<ElementHandle, 6> Weapon;
 
-		uint16_t num_weapons {(*RDPtr->init_weapon_func)(ElementPtr, Weapon)};
+		uint16_t num_weapons {(*RDPtr->init_weapon_func)(ElementPtr, Weapon.data())};
 
 		if (num_weapons)
 		{
@@ -500,7 +500,7 @@ static bool spawn_ship(Starship* StarShipPtr)
 		ShipElementPtr->colorCycleIndex = 0;
 
 		SetPrimType(&DisplayArray[ShipElementPtr->PrimIndex], PrimitiveType::Stamp);
-		ShipElementPtr->current.image.farray = RDPtr->ship_data.ship;
+		ShipElementPtr->current.image.farray = RDPtr->ship_data.ship.data();
 
 		if (ShipElementPtr->playerNr == NpcPlayerNum
 			&& uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
@@ -622,9 +622,9 @@ bool GetInitialStarShips(void)
 {
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee)
 	{
-		StarshipHandle ships[NumPlayers];
+		uqstl::array<StarshipHandle, NumPlayers> ships;
 
-		if (!GetInitialMeleeStarShips(ships))
+		if (!GetInitialMeleeStarShips(ships.data()))
 		{
 			return false;
 		}

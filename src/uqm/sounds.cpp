@@ -26,15 +26,15 @@ SoundBankRef GameSounds;
 
 static constexpr auto MaxSounds {8};
 static uint8_t num_sounds = 0;
-static SoundRef sound_buf[MaxSounds];
-static Element* sound_posobj[MaxSounds];
+static uqstl::array<SoundRef, MaxSounds> sound_buf;
+static uqstl::array<Element*, MaxSounds> sound_posobj;
 
 void PlaySound(SoundRef S, SoundPosition Pos, Element* PositionalObject,
 			   uint8_t Priority)
 {
 	uint8_t chan {};
-	static uint8_t lru_channel[NumFxChannels] = {0, 1, 2, 3};
-	static SoundRef channel[NumFxChannels] = {0, 0, 0, 0}; // NOLINT(misc-const-correctness)
+	static uqstl::array<uint8_t, NumFxChannels> lru_channel {0, 1, 2, 3};
+	static uqstl::array<SoundRef, NumFxChannels> channel {0, 0, 0, 0}; // NOLINT(misc-const-correctness)
 
 	if (S == 0)
 	{
@@ -90,8 +90,8 @@ void PlayMenuSound(MenuSoundEffect S)
 
 void SuppressSounds(void)
 {
-	memset(sound_buf, 0, sizeof(sound_buf));
-	memset(sound_posobj, 0, sizeof(sound_posobj));
+	memset(sound_buf.data(), 0, sizeof(sound_buf));
+	memset(sound_posobj.data(), 0, sizeof(sound_posobj));
 	num_sounds = MaxSounds;
 }
 
@@ -169,8 +169,8 @@ void FlushSounds(void)
 {
 	if (num_sounds > 0)
 	{
-		const SoundRef* pSound {sound_buf};
-		Element* const* pSoundPosObj {sound_posobj};
+		const SoundRef* pSound {sound_buf.data()};
+		Element* const* pSoundPosObj {sound_posobj.data()};
 		do
 		{
 			const SoundPosition pos = CalcSoundPosition(*pSoundPosObj);

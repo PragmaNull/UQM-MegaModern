@@ -51,19 +51,20 @@ void SCALE_(BiAdaptAdvFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	const int slen = sp / bpp;
 	const int dlen = dp / bpp;
 	// for clarity purposes, the 'pixels' array here is transposed
-	Uint32 pixels[4][4];
-	static int resolve_coord[][2] =
+	uqstl::array<uqstl::array<Uint32, 4>, 4> pixels;
+	static uqstl::array<uqstl::array<int, 2>, 9> resolve_coord {
 		{
-			{0,	-1 },
-			{1,	-1 },
-			{2,	0	 },
-			{2,	1	 },
-			{1,	2	 },
-			{0,	2	 },
-			{-1,	 1  },
-			{-1,	 0  },
-			{100, 100}  // term
-	};
+			{0, -1},
+			{1, -1},
+			{2, 0},
+			{2, 1},
+			{1, 2},
+			{0, 2},
+			{-1, 1},
+			{-1, 0},
+			{100, 100} // term
+		}
+	 };
 	Uint32* src_p = (Uint32*)src->pixels;
 	Uint32* dst_p = (Uint32*)dst->pixels;
 
@@ -476,7 +477,7 @@ void SCALE_(BiAdaptAdvFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 				// examine 8 pixels surrounding the current quad
 
 				cl = cr = 2;
-				for (const int* coord {resolve_coord[0]}; *coord < 100; coord += 2)
+				for (const int* coord {resolve_coord[0].data()}; *coord < 100; coord += 2)
 				{
 					clr = PIX(coord[0], coord[1]);
 

@@ -793,7 +793,7 @@ static void UninitPreBuilt(MeleeState* pMS)
 
 static void InitLoadView(MeleeState* pMS)
 {
-	MeleeTeam** view = pMS->load.view;
+	MeleeTeam** view = pMS->load.view.data();
 
 	for (size_t viewI {0}; viewI < LoadTeamViewSize; viewI++)
 	{
@@ -803,7 +803,7 @@ static void InitLoadView(MeleeState* pMS)
 
 static void UninitLoadView(MeleeState* pMS)
 {
-	MeleeTeam* const* view = pMS->load.view;
+	MeleeTeam* const* view = pMS->load.view.data();
 
 	for (size_t viewI {0}; viewI < LoadTeamViewSize; viewI++)
 	{

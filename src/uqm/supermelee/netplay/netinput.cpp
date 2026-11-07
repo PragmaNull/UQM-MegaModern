@@ -29,7 +29,7 @@
 
 namespace uqm
 {
-static BattleInputBuffer battleInputBuffers[NumPlayers];
+static uqstl::array<BattleInputBuffer, NumPlayers> battleInputBuffers;
 static size_t BattleInput_inputDelay;
 
 // Call before initBattleInputBuffers()

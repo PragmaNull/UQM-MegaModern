@@ -57,8 +57,8 @@ static ConversationData chmmr_desc =
 		},
 		ChmmrConversationPhrases, /* PlayerPhrases */
 		6, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				12,						  /* StartIndex */
 				5,						  /* NumFrames */
@@ -69,7 +69,7 @@ static ConversationData chmmr_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				17,						  /* StartIndex */
 				5,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -79,7 +79,7 @@ static ConversationData chmmr_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				22,						  /* StartIndex */
 				5,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -89,7 +89,7 @@ static ConversationData chmmr_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				27,					  /* StartIndex */
 				20,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -99,7 +99,7 @@ static ConversationData chmmr_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				47,					  /* StartIndex */
 				14,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -109,7 +109,7 @@ static ConversationData chmmr_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				61,					  /* StartIndex */
 				24,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -119,7 +119,7 @@ static ConversationData chmmr_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -154,8 +154,8 @@ static ConversationData chmmr_desc =
 static AnimFilterSet chmmr_filters =
 	{
 		3, /* Number of filters */
-		{
-								  /* Filter array */
+		{{
+			/* Filter array */
 			{
 				1,					 /* Color index */
 				1,					 /* Opacity index */
@@ -163,22 +163,21 @@ static AnimFilterSet chmmr_filters =
 				DrawKind::Grayscale, /* DrawKind*/
 				FilterFlags::None,	 /* Flags */
 			},
-								  {
+			{
 				0,				   /* Color index */
 				3,				   /* Opacity index */
 				-1,				   /* Frame index */
 				DrawKind::Overlay, /* DrawKind*/
 				FilterFlags::None, /* Flags */
 			},
-								  {
+			{
 				0,				   /* Color index */
 				2,				   /* Opacity index */
 				-1,				   /* Frame index */
 				DrawKind::Alpha,   /* DrawKind*/
 				FilterFlags::None, /* Flags */
 			},
-								  }
-};
+		}}};
 
 static constexpr auto EarthIndex {2}; /* earth is 3rd planet --> 3 - 1 = 2 */
 
@@ -746,7 +745,7 @@ static void Intro(void)
 				{
 					ChmmrPtr->actual_strength =
 						986 / SphereRadiusIncrement * 2;
-					ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map,
+					ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map.data(),
 													  *PlotId::Home);
 					StartSphereTracking(RaceId::Chmmr);
 				}

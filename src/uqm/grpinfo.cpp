@@ -45,7 +45,7 @@ void ReadGroupHeader(GameStateFile* fp, BattleGroupHeader* pGH)
 	sread_8(fp, nullptr); /* padding */
 	sread_16(fp, &pGH->star_index);
 	sread_16(fp, &pGH->year_index);
-	sread_a32(fp, pGH->GroupOffset, NumSavedBattleGroups + 1);
+	sread_a32(fp, pGH->GroupOffset.data(), NumSavedBattleGroups + 1);
 }
 
 void WriteGroupHeader(GameStateFile* fp, const BattleGroupHeader* pGH)
@@ -56,7 +56,7 @@ void WriteGroupHeader(GameStateFile* fp, const BattleGroupHeader* pGH)
 	swrite_8(fp, 0); /* padding */
 	swrite_16(fp, pGH->star_index);
 	swrite_16(fp, pGH->year_index);
-	swrite_a32(fp, pGH->GroupOffset, NumSavedBattleGroups + 1);
+	swrite_a32(fp, pGH->GroupOffset.data(), NumSavedBattleGroups + 1);
 }
 
 void ReadShipFragment(GameStateFile* fp, ShipFragment* FragPtr)
@@ -198,7 +198,7 @@ IpGroupHandle BuildGroup(Queue* pDstQueue, uint8_t race_id)
 	return hGroup;
 }
 
-static constexpr uint8_t HomeworldLoc[] {
+static constexpr uqstl::array<uint8_t, 26> HomeworldLoc {
 	0,				  /* ARILOU_SHIP */
 	*PlotId::Chmmr,	  /* CHMMR_SHIP */
 	0,				  /* HUMAN_SHIP */
@@ -236,8 +236,8 @@ void BuildGroups(void)
 	FleetInfoHandle hFleet {};
 	FleetInfoHandle hNextFleet {};
 
-	auto HomeWorld {uqstl::to_array(HomeworldLoc)};
-	auto EncounterPercent {uqstl::to_array(RaceInterplanetaryPercent)};
+	auto HomeWorld {HomeworldLoc};
+	auto EncounterPercent {RaceInterplanetaryPercent};
 
 	EncounterPercent[*RaceId::Slylandro] *= uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER);
 
@@ -398,8 +398,8 @@ void findRaceSOI(void)
 	const auto& RaceHasMusic {RaceMusicBool};
 	const auto& HomeWorld {HomeworldLoc};
 	uint8_t WhichHomeWorld {*SpeciesId::None};
-	uint8_t SpeciesArr[MaxOverlap] = {*SpeciesId::None};
-	uint16_t RadiusArr[MaxOverlap] = {0};
+	uqstl::array<uint8_t, MaxOverlap> SpeciesArr {*SpeciesId::None};
+	uqstl::array<uint16_t, MaxOverlap> RadiusArr {};
 
 	if (!SpaceMusicOK)
 	{
@@ -679,7 +679,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 		month_index = GH.month_index;
 		year_index = GH.year_index;
 		if (offset == GroupsRandom
-			&& (GH.star_index != (uint16_t)(CurStarDescPtr() - star_array)
+			&& (GH.star_index != (uint16_t)(CurStarDescPtr() - star_array.data())
 				|| !ValidateEvent(EventType::Absolute, &month_index, &day_index,
 								  &year_index)))
 		{
@@ -1011,7 +1011,7 @@ uint32_t PutGroupInfo(uint32_t offset, uint8_t which_group)
 		GH.month_index = (uint8_t)month_index;
 		GH.year_index = year_index;
 	}
-	GH.star_index = CurStarDescPtr() - star_array;
+	GH.star_index = CurStarDescPtr() - star_array.data();
 
 #ifdef DEBUG_GROUPS
 	uqm::log::debug("PutGroupInfo({}): {} out of {} -- {}/{}/{}",

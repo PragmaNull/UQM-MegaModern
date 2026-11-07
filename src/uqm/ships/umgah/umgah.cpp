@@ -332,7 +332,7 @@ static uint16_t initialize_cone(Element* ShipPtr, ElementHandle ConeArray[])
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;

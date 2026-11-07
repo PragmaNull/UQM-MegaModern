@@ -14,8 +14,8 @@ namespace uqm
 struct GameData
 {
 	uint8_t CrewCost, FuelCost;
-	uint8_t ModuleCost[*ModuleType::NumModules];
-	uint8_t ElementWorth[*MineralCategory::NumElementCategories];
+	uqstl::array<uint8_t, *ModuleType::NumModules> ModuleCost;
+	uqstl::array<uint8_t, *MineralCategory::NumElementCategories> ElementWorth;
 
 	uint32_t BattleGroupRef;
 	uqm::LinkQueue avail_race_q;

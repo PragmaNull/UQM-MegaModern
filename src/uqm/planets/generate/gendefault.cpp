@@ -92,14 +92,14 @@ bool GenerateDefault_uninitNpcs(SolarSystemState* solarSys)
 
 bool GenerateDefault_generatePlanets(SolarSystemState* solarSys)
 {
-	FillOrbits(solarSys, (uint8_t)~0, solarSys->PlanetDesc, false);
+	FillOrbits(solarSys, (uint8_t)~0, solarSys->PlanetDesc.data(), false);
 	GeneratePlanets(solarSys);
 	return true;
 }
 
 bool GenerateDefault_generateMoons(SolarSystemState* solarSys, SystemPlanet* planet)
 {
-	FillOrbits(solarSys, planet->NumPlanets, solarSys->MoonDesc, false);
+	FillOrbits(solarSys, planet->NumPlanets, solarSys->MoonDesc.data(), false);
 	return true;
 }
 
@@ -404,7 +404,7 @@ void GenerateGasGiantRanged(SolarSystemState* solarSys)
 
 uint8_t GenerateCrystalWorld(void)
 {
-	const int crystalArray[] = {
+	const uqstl::array<int, 3> crystalArray {
 		*PlanetType::Sapphire,
 		*PlanetType::Emerald,
 		*PlanetType::Ruby};
@@ -413,7 +413,7 @@ uint8_t GenerateCrystalWorld(void)
 
 uint8_t GenerateDesolateWorld(void)
 {
-	const int desolateArray[] = {
+	const uqstl::array<int, 3> desolateArray {
 		*PlanetType::Dust,
 		*PlanetType::Crimson,
 		*PlanetType::Urea};
@@ -422,7 +422,7 @@ uint8_t GenerateDesolateWorld(void)
 
 uint8_t GenerateHabitableWorld(void)
 {
-	const int habitableArray[] = {
+	const uqstl::array<int, 4> habitableArray {
 		*PlanetType::Primordial,
 		*PlanetType::Water,
 		*PlanetType::Telluric,

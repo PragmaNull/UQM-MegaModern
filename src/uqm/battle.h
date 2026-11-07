@@ -43,7 +43,7 @@ struct BattleState
 	BattleFrameCallback* frame_cb;
 };
 
-extern uint8_t battle_counter[NumSides];
+extern uqstl::array<uint8_t, NumSides> battle_counter;
 extern bool instantVictory;
 #if defined(NETPLAY)
 extern BattleFrameCounter battleFrameCount;

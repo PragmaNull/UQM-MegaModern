@@ -235,7 +235,7 @@ static bool DoPopup(struct PopupState* self)
 void DoPopupWindow(const char* msg)
 {
 	stringbank* bank = StringBank_Create();
-	const char* lines[30];
+	uqstl::array<uqgsl::czstring, 30> lines;
 	WidgetLabel label;
 	GfxStamp s;
 	GfxRect oldRect;
@@ -258,8 +258,8 @@ void DoPopupWindow(const char* msg)
 	label.draw = Widget_DrawLabel;
 	label.height = Widget_HeightLabel;
 	label.width = Widget_WidthFullScreen;
-	label.line_count = SplitString(msg, '\n', 30, lines, bank);
-	label.lines = lines;
+	label.line_count = SplitString(msg, '\n', 30, lines.data(), bank);
+	label.lines = lines.data();
 
 	const bool FlashPaused {PauseFlash()};
 

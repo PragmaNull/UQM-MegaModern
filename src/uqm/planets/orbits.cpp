@@ -44,426 +44,420 @@ consteval bool isArithmeticEnum(PlanetChance) { return true; }
 
 static uint8_t BlueDistribution(uint8_t which_world)
 {
-	const PlanetChance PlanetDistribution[*PlanetType::NumberOfPlanetTypes] =
-		{
-			PlanetChance::Always, /* OOLITE_WORLD */
-			PlanetChance::Always, /* YTTRIC_WORLD */
-			PlanetChance::Always, /* QUASI_DEGENERATE_WORLD */
-			PlanetChance::Always, /* LANTHANIDE_WORLD */
-			PlanetChance::Always, /* TREASURE_WORLD */
-			PlanetChance::Always, /* UREA_WORLD */
-			PlanetChance::Always, /* METAL_WORLD */
-			PlanetChance::Always, /* RADIOACTIVE_WORLD */
-			PlanetChance::Always, /* OPALESCENT_WORLD */
-			PlanetChance::Always, /* CYANIC_WORLD */
-			PlanetChance::Always, /* ACID_WORLD */
-			PlanetChance::Always, /* ALKALI_WORLD */
-			PlanetChance::Always, /* HALIDE_WORLD */
-			PlanetChance::Always, /* GREEN_WORLD */
-			PlanetChance::Always, /* COPPER_WORLD */
-			PlanetChance::Always, /* CARBIDE_WORLD */
-			PlanetChance::Always, /* ULTRAMARINE_WORLD */
-			PlanetChance::Always, /* NOBLE_WORLD */
-			PlanetChance::Always, /* AZURE_WORLD */
-			PlanetChance::Never,  /* CHONDRITE_WORLD */
-			PlanetChance::Never,  /* PURPLE_WORLD */
-			PlanetChance::Never,  /* SUPER_DENSE_WORLD */
-			PlanetChance::Never,  /* PELLUCID_WORLD */
-			PlanetChance::Never,  /* DUST_WORLD */
-			PlanetChance::Never,  /* CRIMSON_WORLD */
-			PlanetChance::Never,  /* CIMMERIAN_WORLD */
-			PlanetChance::Never,  /* INFRARED_WORLD */
-			PlanetChance::Always, /* SELENIC_WORLD */
-			PlanetChance::Always, /* AURIC_WORLD */
+	const uqstl::array<PlanetChance, *PlanetType::NumberOfPlanetTypes> PlanetDistribution {
+		PlanetChance::Always, /* OOLITE_WORLD */
+		PlanetChance::Always, /* YTTRIC_WORLD */
+		PlanetChance::Always, /* QUASI_DEGENERATE_WORLD */
+		PlanetChance::Always, /* LANTHANIDE_WORLD */
+		PlanetChance::Always, /* TREASURE_WORLD */
+		PlanetChance::Always, /* UREA_WORLD */
+		PlanetChance::Always, /* METAL_WORLD */
+		PlanetChance::Always, /* RADIOACTIVE_WORLD */
+		PlanetChance::Always, /* OPALESCENT_WORLD */
+		PlanetChance::Always, /* CYANIC_WORLD */
+		PlanetChance::Always, /* ACID_WORLD */
+		PlanetChance::Always, /* ALKALI_WORLD */
+		PlanetChance::Always, /* HALIDE_WORLD */
+		PlanetChance::Always, /* GREEN_WORLD */
+		PlanetChance::Always, /* COPPER_WORLD */
+		PlanetChance::Always, /* CARBIDE_WORLD */
+		PlanetChance::Always, /* ULTRAMARINE_WORLD */
+		PlanetChance::Always, /* NOBLE_WORLD */
+		PlanetChance::Always, /* AZURE_WORLD */
+		PlanetChance::Never,  /* CHONDRITE_WORLD */
+		PlanetChance::Never,  /* PURPLE_WORLD */
+		PlanetChance::Never,  /* SUPER_DENSE_WORLD */
+		PlanetChance::Never,  /* PELLUCID_WORLD */
+		PlanetChance::Never,  /* DUST_WORLD */
+		PlanetChance::Never,  /* CRIMSON_WORLD */
+		PlanetChance::Never,  /* CIMMERIAN_WORLD */
+		PlanetChance::Never,  /* INFRARED_WORLD */
+		PlanetChance::Always, /* SELENIC_WORLD */
+		PlanetChance::Always, /* AURIC_WORLD */
 
-			PlanetChance::Always, /* FLUORESCENT_WORLD */
-			PlanetChance::Always, /* ULTRAVIOLET_WORLD */
-			PlanetChance::Always, /* PLUTONIC_WORLD */
-			PlanetChance::Never,  /* RAINBOW_WORLD */
-			PlanetChance::Never,  /* SHATTERED_WORLD */
-			PlanetChance::Always, /* SAPPHIRE_WORLD */
-			PlanetChance::Always, /* ORGANIC_WORLD */
-			PlanetChance::Always, /* XENOLITHIC_WORLD */
-			PlanetChance::Always, /* REDUX_WORLD */
-			PlanetChance::Always, /* PRIMORDIAL_WORLD */
-			PlanetChance::Never,  /* EMERALD_WORLD */
-			PlanetChance::Always, /* CHLORINE_WORLD */
-			PlanetChance::Always, /* MAGNETIC_WORLD */
-			PlanetChance::Always, /* WATER_WORLD */
-			PlanetChance::Always, /* TELLURIC_WORLD */
-			PlanetChance::Never,  /* HYDROCARBON_WORLD */
-			PlanetChance::Never,  /* IODINE_WORLD */
-			PlanetChance::Never,  /* VINYLOGOUS_WORLD */
-			PlanetChance::Never,  /* RUBY_WORLD */
-			PlanetChance::Never,  /* MAGMA_WORLD */
-			PlanetChance::Never,  /* MAROON_WORLD */
-			//PLANET_NEVER,  /* DIAMOND_WORLD */
+		PlanetChance::Always, /* FLUORESCENT_WORLD */
+		PlanetChance::Always, /* ULTRAVIOLET_WORLD */
+		PlanetChance::Always, /* PLUTONIC_WORLD */
+		PlanetChance::Never,  /* RAINBOW_WORLD */
+		PlanetChance::Never,  /* SHATTERED_WORLD */
+		PlanetChance::Always, /* SAPPHIRE_WORLD */
+		PlanetChance::Always, /* ORGANIC_WORLD */
+		PlanetChance::Always, /* XENOLITHIC_WORLD */
+		PlanetChance::Always, /* REDUX_WORLD */
+		PlanetChance::Always, /* PRIMORDIAL_WORLD */
+		PlanetChance::Never,  /* EMERALD_WORLD */
+		PlanetChance::Always, /* CHLORINE_WORLD */
+		PlanetChance::Always, /* MAGNETIC_WORLD */
+		PlanetChance::Always, /* WATER_WORLD */
+		PlanetChance::Always, /* TELLURIC_WORLD */
+		PlanetChance::Never,  /* HYDROCARBON_WORLD */
+		PlanetChance::Never,  /* IODINE_WORLD */
+		PlanetChance::Never,  /* VINYLOGOUS_WORLD */
+		PlanetChance::Never,  /* RUBY_WORLD */
+		PlanetChance::Never,  /* MAGMA_WORLD */
+		PlanetChance::Never,  /* MAROON_WORLD */
+		//PLANET_NEVER,  /* DIAMOND_WORLD */
 
-			PlanetChance::Always, /* BLU_GAS_GIANT */
-			PlanetChance::Always, /* CYA_GAS_GIANT */
-			PlanetChance::Always, /* GRN_GAS_GIANT */
-			PlanetChance::Always, /* GRY_GAS_GIANT */
-			PlanetChance::Always, /* ORA_GAS_GIANT */
-			PlanetChance::Always, /* PUR_GAS_GIANT */
-			PlanetChance::Always, /* RED_GAS_GIANT */
-			PlanetChance::Always, /* VIO_GAS_GIANT */
-			PlanetChance::Always, /* YEL_GAS_GIANT */
-		};
+		PlanetChance::Always, /* BLU_GAS_GIANT */
+		PlanetChance::Always, /* CYA_GAS_GIANT */
+		PlanetChance::Always, /* GRN_GAS_GIANT */
+		PlanetChance::Always, /* GRY_GAS_GIANT */
+		PlanetChance::Always, /* ORA_GAS_GIANT */
+		PlanetChance::Always, /* PUR_GAS_GIANT */
+		PlanetChance::Always, /* RED_GAS_GIANT */
+		PlanetChance::Always, /* VIO_GAS_GIANT */
+		PlanetChance::Always, /* YEL_GAS_GIANT */
+	};
 
 	return *(PlanetDistribution[which_world]);
 }
 
 static uint8_t GreenDistribution(uint8_t which_world)
 {
-	const PlanetChance PlanetDistribution[*PlanetType::NumberOfPlanetTypes] =
-		{
-			PlanetChance::Never,  /* OOLITE_WORLD */
-			PlanetChance::Never,  /* YTTRIC_WORLD */
-			PlanetChance::Always, /* QUASI_DEGENERATE_WORLD */
-			PlanetChance::Always, /* LANTHANIDE_WORLD */
-			PlanetChance::Always, /* TREASURE_WORLD */
-			PlanetChance::Always, /* UREA_WORLD */
-			PlanetChance::Always, /* METAL_WORLD */
-			PlanetChance::Always, /* RADIOACTIVE_WORLD */
-			PlanetChance::Always, /* OPALESCENT_WORLD */
-			PlanetChance::Always, /* CYANIC_WORLD */
-			PlanetChance::Always, /* ACID_WORLD */
-			PlanetChance::Always, /* ALKALI_WORLD */
-			PlanetChance::Always, /* HALIDE_WORLD */
-			PlanetChance::Always, /* GREEN_WORLD */
-			PlanetChance::Always, /* COPPER_WORLD */
-			PlanetChance::Always, /* CARBIDE_WORLD */
-			PlanetChance::Always, /* ULTRAMARINE_WORLD */
-			PlanetChance::Always, /* NOBLE_WORLD */
-			PlanetChance::Always, /* AZURE_WORLD */
-			PlanetChance::Always, /* CHONDRITE_WORLD */
-			PlanetChance::Always, /* PURPLE_WORLD */
-			PlanetChance::Always, /* SUPER_DENSE_WORLD */
-			PlanetChance::Always, /* PELLUCID_WORLD */
-			PlanetChance::Never,  /* DUST_WORLD */
-			PlanetChance::Never,  /* CRIMSON_WORLD */
-			PlanetChance::Never,  /* CIMMERIAN_WORLD */
-			PlanetChance::Never,  /* INFRARED_WORLD */
-			PlanetChance::Always, /* SELENIC_WORLD */
-			PlanetChance::Always, /* AURIC_WORLD */
+	const uqstl::array<PlanetChance, *PlanetType::NumberOfPlanetTypes> PlanetDistribution {
+		PlanetChance::Never,  /* OOLITE_WORLD */
+		PlanetChance::Never,  /* YTTRIC_WORLD */
+		PlanetChance::Always, /* QUASI_DEGENERATE_WORLD */
+		PlanetChance::Always, /* LANTHANIDE_WORLD */
+		PlanetChance::Always, /* TREASURE_WORLD */
+		PlanetChance::Always, /* UREA_WORLD */
+		PlanetChance::Always, /* METAL_WORLD */
+		PlanetChance::Always, /* RADIOACTIVE_WORLD */
+		PlanetChance::Always, /* OPALESCENT_WORLD */
+		PlanetChance::Always, /* CYANIC_WORLD */
+		PlanetChance::Always, /* ACID_WORLD */
+		PlanetChance::Always, /* ALKALI_WORLD */
+		PlanetChance::Always, /* HALIDE_WORLD */
+		PlanetChance::Always, /* GREEN_WORLD */
+		PlanetChance::Always, /* COPPER_WORLD */
+		PlanetChance::Always, /* CARBIDE_WORLD */
+		PlanetChance::Always, /* ULTRAMARINE_WORLD */
+		PlanetChance::Always, /* NOBLE_WORLD */
+		PlanetChance::Always, /* AZURE_WORLD */
+		PlanetChance::Always, /* CHONDRITE_WORLD */
+		PlanetChance::Always, /* PURPLE_WORLD */
+		PlanetChance::Always, /* SUPER_DENSE_WORLD */
+		PlanetChance::Always, /* PELLUCID_WORLD */
+		PlanetChance::Never,  /* DUST_WORLD */
+		PlanetChance::Never,  /* CRIMSON_WORLD */
+		PlanetChance::Never,  /* CIMMERIAN_WORLD */
+		PlanetChance::Never,  /* INFRARED_WORLD */
+		PlanetChance::Always, /* SELENIC_WORLD */
+		PlanetChance::Always, /* AURIC_WORLD */
 
-			PlanetChance::Always, /* FLUORESCENT_WORLD */
-			PlanetChance::Always, /* ULTRAVIOLET_WORLD */
-			PlanetChance::Always, /* PLUTONIC_WORLD */
-			PlanetChance::Never,  /* RAINBOW_WORLD */
-			PlanetChance::Never,  /* SHATTERED_WORLD */
-			PlanetChance::Never,  /* SAPPHIRE_WORLD */
-			PlanetChance::Always, /* ORGANIC_WORLD */
-			PlanetChance::Always, /* XENOLITHIC_WORLD */
-			PlanetChance::Always, /* REDUX_WORLD */
-			PlanetChance::Always, /* PRIMORDIAL_WORLD */
-			PlanetChance::Always, /* EMERALD_WORLD */
-			PlanetChance::Always, /* CHLORINE_WORLD */
-			PlanetChance::Always, /* MAGNETIC_WORLD */
-			PlanetChance::Always, /* WATER_WORLD */
-			PlanetChance::Always, /* TELLURIC_WORLD */
-			PlanetChance::Always, /* HYDROCARBON_WORLD */
-			PlanetChance::Always, /* IODINE_WORLD */
-			PlanetChance::Never,  /* VINYLOGOUS_WORLD */
-			PlanetChance::Never,  /* RUBY_WORLD */
-			PlanetChance::Never,  /* MAGMA_WORLD */
-			PlanetChance::Never,  /* MAROON_WORLD */
-			//PLANET_NEVER,  /* DIAMOND_WORLD */
+		PlanetChance::Always, /* FLUORESCENT_WORLD */
+		PlanetChance::Always, /* ULTRAVIOLET_WORLD */
+		PlanetChance::Always, /* PLUTONIC_WORLD */
+		PlanetChance::Never,  /* RAINBOW_WORLD */
+		PlanetChance::Never,  /* SHATTERED_WORLD */
+		PlanetChance::Never,  /* SAPPHIRE_WORLD */
+		PlanetChance::Always, /* ORGANIC_WORLD */
+		PlanetChance::Always, /* XENOLITHIC_WORLD */
+		PlanetChance::Always, /* REDUX_WORLD */
+		PlanetChance::Always, /* PRIMORDIAL_WORLD */
+		PlanetChance::Always, /* EMERALD_WORLD */
+		PlanetChance::Always, /* CHLORINE_WORLD */
+		PlanetChance::Always, /* MAGNETIC_WORLD */
+		PlanetChance::Always, /* WATER_WORLD */
+		PlanetChance::Always, /* TELLURIC_WORLD */
+		PlanetChance::Always, /* HYDROCARBON_WORLD */
+		PlanetChance::Always, /* IODINE_WORLD */
+		PlanetChance::Never,  /* VINYLOGOUS_WORLD */
+		PlanetChance::Never,  /* RUBY_WORLD */
+		PlanetChance::Never,  /* MAGMA_WORLD */
+		PlanetChance::Never,  /* MAROON_WORLD */
+		//PLANET_NEVER,  /* DIAMOND_WORLD */
 
-			PlanetChance::Always, /* BLU_GAS_GIANT */
-			PlanetChance::Always, /* CYA_GAS_GIANT */
-			PlanetChance::Always, /* GRN_GAS_GIANT */
-			PlanetChance::Always, /* GRY_GAS_GIANT */
-			PlanetChance::Always, /* ORA_GAS_GIANT */
-			PlanetChance::Always, /* PUR_GAS_GIANT */
-			PlanetChance::Always, /* RED_GAS_GIANT */
-			PlanetChance::Always, /* VIO_GAS_GIANT */
-			PlanetChance::Always, /* YEL_GAS_GIANT */
-		};
+		PlanetChance::Always, /* BLU_GAS_GIANT */
+		PlanetChance::Always, /* CYA_GAS_GIANT */
+		PlanetChance::Always, /* GRN_GAS_GIANT */
+		PlanetChance::Always, /* GRY_GAS_GIANT */
+		PlanetChance::Always, /* ORA_GAS_GIANT */
+		PlanetChance::Always, /* PUR_GAS_GIANT */
+		PlanetChance::Always, /* RED_GAS_GIANT */
+		PlanetChance::Always, /* VIO_GAS_GIANT */
+		PlanetChance::Always, /* YEL_GAS_GIANT */
+	};
 
 	return *(PlanetDistribution[which_world]);
 }
 
 static uint8_t OrangeDistribution(uint8_t which_world)
 {
-	const PlanetChance PlanetDistribution[*PlanetType::NumberOfPlanetTypes] =
-		{
-			PlanetChance::Never,  /* OOLITE_WORLD */
-			PlanetChance::Never,  /* YTTRIC_WORLD */
-			PlanetChance::Never,  /* QUASI_DEGENERATE_WORLD */
-			PlanetChance::Never,  /* LANTHANIDE_WORLD */
-			PlanetChance::Never,  /* TREASURE_WORLD */
-			PlanetChance::Always, /* UREA_WORLD */
-			PlanetChance::Never,  /* METAL_WORLD */
-			PlanetChance::Always, /* RADIOACTIVE_WORLD */
-			PlanetChance::Never,  /* OPALESCENT_WORLD */
-			PlanetChance::Never,  /* CYANIC_WORLD */
-			PlanetChance::Always, /* ACID_WORLD */
-			PlanetChance::Always, /* ALKALI_WORLD */
-			PlanetChance::Always, /* HALIDE_WORLD */
-			PlanetChance::Always, /* GREEN_WORLD */
-			PlanetChance::Always, /* COPPER_WORLD */
-			PlanetChance::Always, /* CARBIDE_WORLD */
-			PlanetChance::Always, /* ULTRAMARINE_WORLD */
-			PlanetChance::Always, /* NOBLE_WORLD */
-			PlanetChance::Always, /* AZURE_WORLD */
-			PlanetChance::Always, /* CHONDRITE_WORLD */
-			PlanetChance::Always, /* PURPLE_WORLD */
-			PlanetChance::Always, /* SUPER_DENSE_WORLD */
-			PlanetChance::Always, /* PELLUCID_WORLD */
-			PlanetChance::Always, /* DUST_WORLD */
-			PlanetChance::Always, /* CRIMSON_WORLD */
-			PlanetChance::Always, /* CIMMERIAN_WORLD */
-			PlanetChance::Always, /* INFRARED_WORLD */
-			PlanetChance::Always, /* SELENIC_WORLD */
-			PlanetChance::Never,  /* AURIC_WORLD */
+	const uqstl::array<PlanetChance, *PlanetType::NumberOfPlanetTypes> PlanetDistribution {
+		PlanetChance::Never,  /* OOLITE_WORLD */
+		PlanetChance::Never,  /* YTTRIC_WORLD */
+		PlanetChance::Never,  /* QUASI_DEGENERATE_WORLD */
+		PlanetChance::Never,  /* LANTHANIDE_WORLD */
+		PlanetChance::Never,  /* TREASURE_WORLD */
+		PlanetChance::Always, /* UREA_WORLD */
+		PlanetChance::Never,  /* METAL_WORLD */
+		PlanetChance::Always, /* RADIOACTIVE_WORLD */
+		PlanetChance::Never,  /* OPALESCENT_WORLD */
+		PlanetChance::Never,  /* CYANIC_WORLD */
+		PlanetChance::Always, /* ACID_WORLD */
+		PlanetChance::Always, /* ALKALI_WORLD */
+		PlanetChance::Always, /* HALIDE_WORLD */
+		PlanetChance::Always, /* GREEN_WORLD */
+		PlanetChance::Always, /* COPPER_WORLD */
+		PlanetChance::Always, /* CARBIDE_WORLD */
+		PlanetChance::Always, /* ULTRAMARINE_WORLD */
+		PlanetChance::Always, /* NOBLE_WORLD */
+		PlanetChance::Always, /* AZURE_WORLD */
+		PlanetChance::Always, /* CHONDRITE_WORLD */
+		PlanetChance::Always, /* PURPLE_WORLD */
+		PlanetChance::Always, /* SUPER_DENSE_WORLD */
+		PlanetChance::Always, /* PELLUCID_WORLD */
+		PlanetChance::Always, /* DUST_WORLD */
+		PlanetChance::Always, /* CRIMSON_WORLD */
+		PlanetChance::Always, /* CIMMERIAN_WORLD */
+		PlanetChance::Always, /* INFRARED_WORLD */
+		PlanetChance::Always, /* SELENIC_WORLD */
+		PlanetChance::Never,  /* AURIC_WORLD */
 
-			PlanetChance::Never,  /* FLUORESCENT_WORLD */
-			PlanetChance::Never,  /* ULTRAVIOLET_WORLD */
-			PlanetChance::Never,  /* PLUTONIC_WORLD */
-			PlanetChance::Never,  /* RAINBOW_WORLD */
-			PlanetChance::Never,  /* SHATTERED_WORLD */
-			PlanetChance::Never,  /* SAPPHIRE_WORLD */
-			PlanetChance::Never,  /* ORGANIC_WORLD */
-			PlanetChance::Never,  /* XENOLITHIC_WORLD */
-			PlanetChance::Never,  /* REDUX_WORLD */
-			PlanetChance::Never,  /* PRIMORDIAL_WORLD */
-			PlanetChance::Never,  /* EMERALD_WORLD */
-			PlanetChance::Always, /* CHLORINE_WORLD */
-			PlanetChance::Always, /* MAGNETIC_WORLD */
-			PlanetChance::Always, /* WATER_WORLD */
-			PlanetChance::Always, /* TELLURIC_WORLD */
-			PlanetChance::Always, /* HYDROCARBON_WORLD */
-			PlanetChance::Always, /* IODINE_WORLD */
-			PlanetChance::Always, /* VINYLOGOUS_WORLD */
-			PlanetChance::Never,  /* RUBY_WORLD */
-			PlanetChance::Always, /* MAGMA_WORLD */
-			PlanetChance::Always, /* MAROON_WORLD */
-			//PLANET_ALWAYS, /* DIAMOND_WORLD */
+		PlanetChance::Never,  /* FLUORESCENT_WORLD */
+		PlanetChance::Never,  /* ULTRAVIOLET_WORLD */
+		PlanetChance::Never,  /* PLUTONIC_WORLD */
+		PlanetChance::Never,  /* RAINBOW_WORLD */
+		PlanetChance::Never,  /* SHATTERED_WORLD */
+		PlanetChance::Never,  /* SAPPHIRE_WORLD */
+		PlanetChance::Never,  /* ORGANIC_WORLD */
+		PlanetChance::Never,  /* XENOLITHIC_WORLD */
+		PlanetChance::Never,  /* REDUX_WORLD */
+		PlanetChance::Never,  /* PRIMORDIAL_WORLD */
+		PlanetChance::Never,  /* EMERALD_WORLD */
+		PlanetChance::Always, /* CHLORINE_WORLD */
+		PlanetChance::Always, /* MAGNETIC_WORLD */
+		PlanetChance::Always, /* WATER_WORLD */
+		PlanetChance::Always, /* TELLURIC_WORLD */
+		PlanetChance::Always, /* HYDROCARBON_WORLD */
+		PlanetChance::Always, /* IODINE_WORLD */
+		PlanetChance::Always, /* VINYLOGOUS_WORLD */
+		PlanetChance::Never,  /* RUBY_WORLD */
+		PlanetChance::Always, /* MAGMA_WORLD */
+		PlanetChance::Always, /* MAROON_WORLD */
+		//PLANET_ALWAYS, /* DIAMOND_WORLD */
 
-			PlanetChance::Always, /* BLU_GAS_GIANT */
-			PlanetChance::Always, /* CYA_GAS_GIANT */
-			PlanetChance::Always, /* GRN_GAS_GIANT */
-			PlanetChance::Always, /* GRY_GAS_GIANT */
-			PlanetChance::Always, /* ORA_GAS_GIANT */
-			PlanetChance::Always, /* PUR_GAS_GIANT */
-			PlanetChance::Always, /* RED_GAS_GIANT */
-			PlanetChance::Always, /* VIO_GAS_GIANT */
-			PlanetChance::Always, /* YEL_GAS_GIANT */
-		};
+		PlanetChance::Always, /* BLU_GAS_GIANT */
+		PlanetChance::Always, /* CYA_GAS_GIANT */
+		PlanetChance::Always, /* GRN_GAS_GIANT */
+		PlanetChance::Always, /* GRY_GAS_GIANT */
+		PlanetChance::Always, /* ORA_GAS_GIANT */
+		PlanetChance::Always, /* PUR_GAS_GIANT */
+		PlanetChance::Always, /* RED_GAS_GIANT */
+		PlanetChance::Always, /* VIO_GAS_GIANT */
+		PlanetChance::Always, /* YEL_GAS_GIANT */
+	};
 
 	return *(PlanetDistribution[which_world]);
 }
 
 static uint8_t RedDistribution(uint8_t which_world)
 {
-	const PlanetChance PlanetDistribution[*PlanetType::NumberOfPlanetTypes] =
-		{
-			PlanetChance::Never,  /* OOLITE_WORLD */
-			PlanetChance::Never,  /* YTTRIC_WORLD */
-			PlanetChance::Never,  /* QUASI_DEGENERATE_WORLD */
-			PlanetChance::Never,  /* LANTHANIDE_WORLD */
-			PlanetChance::Never,  /* TREASURE_WORLD */
-			PlanetChance::Always, /* UREA_WORLD */
-			PlanetChance::Always, /* METAL_WORLD */
-			PlanetChance::Never,  /* RADIOACTIVE_WORLD */
-			PlanetChance::Never,  /* OPALESCENT_WORLD */
-			PlanetChance::Never,  /* CYANIC_WORLD */
-			PlanetChance::Never,  /* ACID_WORLD */
-			PlanetChance::Never,  /* ALKALI_WORLD */
-			PlanetChance::Never,  /* HALIDE_WORLD */
-			PlanetChance::Never,  /* GREEN_WORLD */
-			PlanetChance::Never,  /* COPPER_WORLD */
-			PlanetChance::Never,  /* CARBIDE_WORLD */
-			PlanetChance::Always, /* ULTRAMARINE_WORLD */
-			PlanetChance::Always, /* NOBLE_WORLD */
-			PlanetChance::Always, /* AZURE_WORLD */
-			PlanetChance::Always, /* CHONDRITE_WORLD */
-			PlanetChance::Always, /* PURPLE_WORLD */
-			PlanetChance::Always, /* SUPER_DENSE_WORLD */
-			PlanetChance::Always, /* PELLUCID_WORLD */
-			PlanetChance::Always, /* DUST_WORLD */
-			PlanetChance::Always, /* CRIMSON_WORLD */
-			PlanetChance::Always, /* CIMMERIAN_WORLD */
-			PlanetChance::Always, /* INFRARED_WORLD */
-			PlanetChance::Always, /* SELENIC_WORLD */
-			PlanetChance::Never,  /* AURIC_WORLD */
+	const uqstl::array<PlanetChance, *PlanetType::NumberOfPlanetTypes> PlanetDistribution {
+		PlanetChance::Never,  /* OOLITE_WORLD */
+		PlanetChance::Never,  /* YTTRIC_WORLD */
+		PlanetChance::Never,  /* QUASI_DEGENERATE_WORLD */
+		PlanetChance::Never,  /* LANTHANIDE_WORLD */
+		PlanetChance::Never,  /* TREASURE_WORLD */
+		PlanetChance::Always, /* UREA_WORLD */
+		PlanetChance::Always, /* METAL_WORLD */
+		PlanetChance::Never,  /* RADIOACTIVE_WORLD */
+		PlanetChance::Never,  /* OPALESCENT_WORLD */
+		PlanetChance::Never,  /* CYANIC_WORLD */
+		PlanetChance::Never,  /* ACID_WORLD */
+		PlanetChance::Never,  /* ALKALI_WORLD */
+		PlanetChance::Never,  /* HALIDE_WORLD */
+		PlanetChance::Never,  /* GREEN_WORLD */
+		PlanetChance::Never,  /* COPPER_WORLD */
+		PlanetChance::Never,  /* CARBIDE_WORLD */
+		PlanetChance::Always, /* ULTRAMARINE_WORLD */
+		PlanetChance::Always, /* NOBLE_WORLD */
+		PlanetChance::Always, /* AZURE_WORLD */
+		PlanetChance::Always, /* CHONDRITE_WORLD */
+		PlanetChance::Always, /* PURPLE_WORLD */
+		PlanetChance::Always, /* SUPER_DENSE_WORLD */
+		PlanetChance::Always, /* PELLUCID_WORLD */
+		PlanetChance::Always, /* DUST_WORLD */
+		PlanetChance::Always, /* CRIMSON_WORLD */
+		PlanetChance::Always, /* CIMMERIAN_WORLD */
+		PlanetChance::Always, /* INFRARED_WORLD */
+		PlanetChance::Always, /* SELENIC_WORLD */
+		PlanetChance::Never,  /* AURIC_WORLD */
 
-			PlanetChance::Never,  /* FLUORESCENT_WORLD */
-			PlanetChance::Never,  /* ULTRAVIOLET_WORLD */
-			PlanetChance::Never,  /* PLUTONIC_WORLD */
-			PlanetChance::Never,  /* RAINBOW_WORLD */
-			PlanetChance::Never,  /* SHATTERED_WORLD */
-			PlanetChance::Never,  /* SAPPHIRE_WORLD */
-			PlanetChance::Never,  /* ORGANIC_WORLD */
-			PlanetChance::Never,  /* XENOLITHIC_WORLD */
-			PlanetChance::Never,  /* REDUX_WORLD */
-			PlanetChance::Never,  /* PRIMORDIAL_WORLD */
-			PlanetChance::Never,  /* EMERALD_WORLD */
-			PlanetChance::Never,  /* CHLORINE_WORLD */
-			PlanetChance::Always, /* MAGNETIC_WORLD */
-			PlanetChance::Always, /* WATER_WORLD */
-			PlanetChance::Always, /* TELLURIC_WORLD */
-			PlanetChance::Always, /* HYDROCARBON_WORLD */
-			PlanetChance::Always, /* IODINE_WORLD */
-			PlanetChance::Always, /* VINYLOGOUS_WORLD */
-			PlanetChance::Always, /* RUBY_WORLD */
-			PlanetChance::Always, /* MAGMA_WORLD */
-			PlanetChance::Always, /* MAROON_WORLD */
-			//PLANET_ALWAYS, /* DIAMOND_WORLD */
+		PlanetChance::Never,  /* FLUORESCENT_WORLD */
+		PlanetChance::Never,  /* ULTRAVIOLET_WORLD */
+		PlanetChance::Never,  /* PLUTONIC_WORLD */
+		PlanetChance::Never,  /* RAINBOW_WORLD */
+		PlanetChance::Never,  /* SHATTERED_WORLD */
+		PlanetChance::Never,  /* SAPPHIRE_WORLD */
+		PlanetChance::Never,  /* ORGANIC_WORLD */
+		PlanetChance::Never,  /* XENOLITHIC_WORLD */
+		PlanetChance::Never,  /* REDUX_WORLD */
+		PlanetChance::Never,  /* PRIMORDIAL_WORLD */
+		PlanetChance::Never,  /* EMERALD_WORLD */
+		PlanetChance::Never,  /* CHLORINE_WORLD */
+		PlanetChance::Always, /* MAGNETIC_WORLD */
+		PlanetChance::Always, /* WATER_WORLD */
+		PlanetChance::Always, /* TELLURIC_WORLD */
+		PlanetChance::Always, /* HYDROCARBON_WORLD */
+		PlanetChance::Always, /* IODINE_WORLD */
+		PlanetChance::Always, /* VINYLOGOUS_WORLD */
+		PlanetChance::Always, /* RUBY_WORLD */
+		PlanetChance::Always, /* MAGMA_WORLD */
+		PlanetChance::Always, /* MAROON_WORLD */
+		//PLANET_ALWAYS, /* DIAMOND_WORLD */
 
-			PlanetChance::Always, /* BLU_GAS_GIANT */
-			PlanetChance::Always, /* CYA_GAS_GIANT */
-			PlanetChance::Always, /* GRN_GAS_GIANT */
-			PlanetChance::Always, /* GRY_GAS_GIANT */
-			PlanetChance::Always, /* ORA_GAS_GIANT */
-			PlanetChance::Always, /* PUR_GAS_GIANT */
-			PlanetChance::Always, /* RED_GAS_GIANT */
-			PlanetChance::Always, /* VIO_GAS_GIANT */
-			PlanetChance::Always, /* YEL_GAS_GIANT */
-		};
+		PlanetChance::Always, /* BLU_GAS_GIANT */
+		PlanetChance::Always, /* CYA_GAS_GIANT */
+		PlanetChance::Always, /* GRN_GAS_GIANT */
+		PlanetChance::Always, /* GRY_GAS_GIANT */
+		PlanetChance::Always, /* ORA_GAS_GIANT */
+		PlanetChance::Always, /* PUR_GAS_GIANT */
+		PlanetChance::Always, /* RED_GAS_GIANT */
+		PlanetChance::Always, /* VIO_GAS_GIANT */
+		PlanetChance::Always, /* YEL_GAS_GIANT */
+	};
 
 	return *(PlanetDistribution[which_world]);
 }
 
 static uint8_t WhiteDistribution(uint8_t which_world)
 {
-	const PlanetChance PlanetDistribution[*PlanetType::NumberOfPlanetTypes] =
-		{
-			PlanetChance::Always, /* OOLITE_WORLD */
-			PlanetChance::Always, /* YTTRIC_WORLD */
-			PlanetChance::Always, /* QUASI_DEGENERATE_WORLD */
-			PlanetChance::Always, /* LANTHANIDE_WORLD */
-			PlanetChance::Always, /* TREASURE_WORLD */
-			PlanetChance::Always, /* UREA_WORLD */
-			PlanetChance::Always, /* METAL_WORLD */
-			PlanetChance::Always, /* RADIOACTIVE_WORLD */
-			PlanetChance::Always, /* OPALESCENT_WORLD */
-			PlanetChance::Always, /* CYANIC_WORLD */
-			PlanetChance::Always, /* ACID_WORLD */
-			PlanetChance::Always, /* ALKALI_WORLD */
-			PlanetChance::Always, /* HALIDE_WORLD */
-			PlanetChance::Never,  /* GREEN_WORLD */
-			PlanetChance::Never,  /* COPPER_WORLD */
-			PlanetChance::Never,  /* CARBIDE_WORLD */
-			PlanetChance::Never,  /* ULTRAMARINE_WORLD */
-			PlanetChance::Never,  /* NOBLE_WORLD */
-			PlanetChance::Never,  /* AZURE_WORLD */
-			PlanetChance::Never,  /* CHONDRITE_WORLD */
-			PlanetChance::Never,  /* PURPLE_WORLD */
-			PlanetChance::Never,  /* SUPER_DENSE_WORLD */
-			PlanetChance::Never,  /* PELLUCID_WORLD */
-			PlanetChance::Never,  /* DUST_WORLD */
-			PlanetChance::Never,  /* CRIMSON_WORLD */
-			PlanetChance::Never,  /* CIMMERIAN_WORLD */
-			PlanetChance::Never,  /* INFRARED_WORLD */
-			PlanetChance::Always, /* SELENIC_WORLD */
-			PlanetChance::Always, /* AURIC_WORLD */
+	const uqstl::array<PlanetChance, *PlanetType::NumberOfPlanetTypes> PlanetDistribution {
+		PlanetChance::Always, /* OOLITE_WORLD */
+		PlanetChance::Always, /* YTTRIC_WORLD */
+		PlanetChance::Always, /* QUASI_DEGENERATE_WORLD */
+		PlanetChance::Always, /* LANTHANIDE_WORLD */
+		PlanetChance::Always, /* TREASURE_WORLD */
+		PlanetChance::Always, /* UREA_WORLD */
+		PlanetChance::Always, /* METAL_WORLD */
+		PlanetChance::Always, /* RADIOACTIVE_WORLD */
+		PlanetChance::Always, /* OPALESCENT_WORLD */
+		PlanetChance::Always, /* CYANIC_WORLD */
+		PlanetChance::Always, /* ACID_WORLD */
+		PlanetChance::Always, /* ALKALI_WORLD */
+		PlanetChance::Always, /* HALIDE_WORLD */
+		PlanetChance::Never,  /* GREEN_WORLD */
+		PlanetChance::Never,  /* COPPER_WORLD */
+		PlanetChance::Never,  /* CARBIDE_WORLD */
+		PlanetChance::Never,  /* ULTRAMARINE_WORLD */
+		PlanetChance::Never,  /* NOBLE_WORLD */
+		PlanetChance::Never,  /* AZURE_WORLD */
+		PlanetChance::Never,  /* CHONDRITE_WORLD */
+		PlanetChance::Never,  /* PURPLE_WORLD */
+		PlanetChance::Never,  /* SUPER_DENSE_WORLD */
+		PlanetChance::Never,  /* PELLUCID_WORLD */
+		PlanetChance::Never,  /* DUST_WORLD */
+		PlanetChance::Never,  /* CRIMSON_WORLD */
+		PlanetChance::Never,  /* CIMMERIAN_WORLD */
+		PlanetChance::Never,  /* INFRARED_WORLD */
+		PlanetChance::Always, /* SELENIC_WORLD */
+		PlanetChance::Always, /* AURIC_WORLD */
 
-			PlanetChance::Always, /* FLUORESCENT_WORLD */
-			PlanetChance::Always, /* ULTRAVIOLET_WORLD */
-			PlanetChance::Always, /* PLUTONIC_WORLD */
-			PlanetChance::Never,  /* RAINBOW_WORLD */
-			PlanetChance::Never,  /* SHATTERED_WORLD */
-			PlanetChance::Always, /* SAPPHIRE_WORLD */
-			PlanetChance::Always, /* ORGANIC_WORLD */
-			PlanetChance::Always, /* XENOLITHIC_WORLD */
-			PlanetChance::Always, /* REDUX_WORLD */
-			PlanetChance::Always, /* PRIMORDIAL_WORLD */
-			PlanetChance::Always, /* EMERALD_WORLD */
-			PlanetChance::Never,  /* CHLORINE_WORLD */
-			PlanetChance::Never,  /* MAGNETIC_WORLD */
-			PlanetChance::Never,  /* WATER_WORLD */
-			PlanetChance::Never,  /* TELLURIC_WORLD */
-			PlanetChance::Never,  /* HYDROCARBON_WORLD */
-			PlanetChance::Never,  /* IODINE_WORLD */
-			PlanetChance::Always, /* VINYLOGOUS_WORLD */
-			PlanetChance::Always, /* RUBY_WORLD */
-			PlanetChance::Never,  /* MAGMA_WORLD */
-			PlanetChance::Never,  /* MAROON_WORLD */
-			//PLANET_NEVER,  /* DIAMOND_WORLD */
+		PlanetChance::Always, /* FLUORESCENT_WORLD */
+		PlanetChance::Always, /* ULTRAVIOLET_WORLD */
+		PlanetChance::Always, /* PLUTONIC_WORLD */
+		PlanetChance::Never,  /* RAINBOW_WORLD */
+		PlanetChance::Never,  /* SHATTERED_WORLD */
+		PlanetChance::Always, /* SAPPHIRE_WORLD */
+		PlanetChance::Always, /* ORGANIC_WORLD */
+		PlanetChance::Always, /* XENOLITHIC_WORLD */
+		PlanetChance::Always, /* REDUX_WORLD */
+		PlanetChance::Always, /* PRIMORDIAL_WORLD */
+		PlanetChance::Always, /* EMERALD_WORLD */
+		PlanetChance::Never,  /* CHLORINE_WORLD */
+		PlanetChance::Never,  /* MAGNETIC_WORLD */
+		PlanetChance::Never,  /* WATER_WORLD */
+		PlanetChance::Never,  /* TELLURIC_WORLD */
+		PlanetChance::Never,  /* HYDROCARBON_WORLD */
+		PlanetChance::Never,  /* IODINE_WORLD */
+		PlanetChance::Always, /* VINYLOGOUS_WORLD */
+		PlanetChance::Always, /* RUBY_WORLD */
+		PlanetChance::Never,  /* MAGMA_WORLD */
+		PlanetChance::Never,  /* MAROON_WORLD */
+		//PLANET_NEVER,  /* DIAMOND_WORLD */
 
-			PlanetChance::Always, /* BLU_GAS_GIANT */
-			PlanetChance::Always, /* CYA_GAS_GIANT */
-			PlanetChance::Always, /* GRN_GAS_GIANT */
-			PlanetChance::Always, /* GRY_GAS_GIANT */
-			PlanetChance::Always, /* ORA_GAS_GIANT */
-			PlanetChance::Always, /* PUR_GAS_GIANT */
-			PlanetChance::Always, /* RED_GAS_GIANT */
-			PlanetChance::Always, /* VIO_GAS_GIANT */
-			PlanetChance::Always, /* YEL_GAS_GIANT */
-		};
+		PlanetChance::Always, /* BLU_GAS_GIANT */
+		PlanetChance::Always, /* CYA_GAS_GIANT */
+		PlanetChance::Always, /* GRN_GAS_GIANT */
+		PlanetChance::Always, /* GRY_GAS_GIANT */
+		PlanetChance::Always, /* ORA_GAS_GIANT */
+		PlanetChance::Always, /* PUR_GAS_GIANT */
+		PlanetChance::Always, /* RED_GAS_GIANT */
+		PlanetChance::Always, /* VIO_GAS_GIANT */
+		PlanetChance::Always, /* YEL_GAS_GIANT */
+	};
 
 	return *(PlanetDistribution[which_world]);
 }
 
 static uint8_t YellowDistribution(uint8_t which_world)
 {
-	const PlanetChance PlanetDistribution[*PlanetType::NumberOfPlanetTypes] =
-		{
-			PlanetChance::Never,  /* OOLITE_WORLD */
-			PlanetChance::Never,  /* YTTRIC_WORLD */
-			PlanetChance::Never,  /* QUASI_DEGENERATE_WORLD */
-			PlanetChance::Never,  /* LANTHANIDE_WORLD */
-			PlanetChance::Always, /* TREASURE_WORLD */
-			PlanetChance::Always, /* UREA_WORLD */
-			PlanetChance::Always, /* METAL_WORLD */
-			PlanetChance::Always, /* RADIOACTIVE_WORLD */
-			PlanetChance::Always, /* OPALESCENT_WORLD */
-			PlanetChance::Always, /* CYANIC_WORLD */
-			PlanetChance::Always, /* ACID_WORLD */
-			PlanetChance::Always, /* ALKALI_WORLD */
-			PlanetChance::Always, /* HALIDE_WORLD */
-			PlanetChance::Always, /* GREEN_WORLD */
-			PlanetChance::Always, /* COPPER_WORLD */
-			PlanetChance::Always, /* CARBIDE_WORLD */
-			PlanetChance::Always, /* ULTRAMARINE_WORLD */
-			PlanetChance::Always, /* NOBLE_WORLD */
-			PlanetChance::Always, /* AZURE_WORLD */
-			PlanetChance::Always, /* CHONDRITE_WORLD */
-			PlanetChance::Always, /* PURPLE_WORLD */
-			PlanetChance::Always, /* SUPER_DENSE_WORLD */
-			PlanetChance::Always, /* PELLUCID_WORLD */
-			PlanetChance::Always, /* DUST_WORLD */
-			PlanetChance::Always, /* CRIMSON_WORLD */
-			PlanetChance::Always, /* CIMMERIAN_WORLD */
-			PlanetChance::Always, /* INFRARED_WORLD */
-			PlanetChance::Always, /* SELENIC_WORLD */
-			PlanetChance::Always, /* AURIC_WORLD */
+	const uqstl::array<PlanetChance, *PlanetType::NumberOfPlanetTypes> PlanetDistribution {
+		PlanetChance::Never,  /* OOLITE_WORLD */
+		PlanetChance::Never,  /* YTTRIC_WORLD */
+		PlanetChance::Never,  /* QUASI_DEGENERATE_WORLD */
+		PlanetChance::Never,  /* LANTHANIDE_WORLD */
+		PlanetChance::Always, /* TREASURE_WORLD */
+		PlanetChance::Always, /* UREA_WORLD */
+		PlanetChance::Always, /* METAL_WORLD */
+		PlanetChance::Always, /* RADIOACTIVE_WORLD */
+		PlanetChance::Always, /* OPALESCENT_WORLD */
+		PlanetChance::Always, /* CYANIC_WORLD */
+		PlanetChance::Always, /* ACID_WORLD */
+		PlanetChance::Always, /* ALKALI_WORLD */
+		PlanetChance::Always, /* HALIDE_WORLD */
+		PlanetChance::Always, /* GREEN_WORLD */
+		PlanetChance::Always, /* COPPER_WORLD */
+		PlanetChance::Always, /* CARBIDE_WORLD */
+		PlanetChance::Always, /* ULTRAMARINE_WORLD */
+		PlanetChance::Always, /* NOBLE_WORLD */
+		PlanetChance::Always, /* AZURE_WORLD */
+		PlanetChance::Always, /* CHONDRITE_WORLD */
+		PlanetChance::Always, /* PURPLE_WORLD */
+		PlanetChance::Always, /* SUPER_DENSE_WORLD */
+		PlanetChance::Always, /* PELLUCID_WORLD */
+		PlanetChance::Always, /* DUST_WORLD */
+		PlanetChance::Always, /* CRIMSON_WORLD */
+		PlanetChance::Always, /* CIMMERIAN_WORLD */
+		PlanetChance::Always, /* INFRARED_WORLD */
+		PlanetChance::Always, /* SELENIC_WORLD */
+		PlanetChance::Always, /* AURIC_WORLD */
 
-			PlanetChance::Never,  /* FLUORESCENT_WORLD */
-			PlanetChance::Never,  /* ULTRAVIOLET_WORLD */
-			PlanetChance::Never,  /* PLUTONIC_WORLD */
-			PlanetChance::Never,  /* RAINBOW_WORLD */
-			PlanetChance::Never,  /* SHATTERED_WORLD */
-			PlanetChance::Never,  /* SAPPHIRE_WORLD */
-			PlanetChance::Always, /* ORGANIC_WORLD */
-			PlanetChance::Always, /* XENOLITHIC_WORLD */
-			PlanetChance::Always, /* REDUX_WORLD */
-			PlanetChance::Always, /* PRIMORDIAL_WORLD */
-			PlanetChance::Never,  /* EMERALD_WORLD */
-			PlanetChance::Always, /* CHLORINE_WORLD */
-			PlanetChance::Always, /* MAGNETIC_WORLD */
-			PlanetChance::Always, /* WATER_WORLD */
-			PlanetChance::Always, /* TELLURIC_WORLD */
-			PlanetChance::Always, /* HYDROCARBON_WORLD */
-			PlanetChance::Always, /* IODINE_WORLD */
-			PlanetChance::Always, /* VINYLOGOUS_WORLD */
-			PlanetChance::Never,  /* RUBY_WORLD */
-			PlanetChance::Always, /* MAGMA_WORLD */
-			PlanetChance::Always, /* MAROON_WORLD */
-			//PLANET_ALWAYS, /* DIAMOND_WORLD */
+		PlanetChance::Never,  /* FLUORESCENT_WORLD */
+		PlanetChance::Never,  /* ULTRAVIOLET_WORLD */
+		PlanetChance::Never,  /* PLUTONIC_WORLD */
+		PlanetChance::Never,  /* RAINBOW_WORLD */
+		PlanetChance::Never,  /* SHATTERED_WORLD */
+		PlanetChance::Never,  /* SAPPHIRE_WORLD */
+		PlanetChance::Always, /* ORGANIC_WORLD */
+		PlanetChance::Always, /* XENOLITHIC_WORLD */
+		PlanetChance::Always, /* REDUX_WORLD */
+		PlanetChance::Always, /* PRIMORDIAL_WORLD */
+		PlanetChance::Never,  /* EMERALD_WORLD */
+		PlanetChance::Always, /* CHLORINE_WORLD */
+		PlanetChance::Always, /* MAGNETIC_WORLD */
+		PlanetChance::Always, /* WATER_WORLD */
+		PlanetChance::Always, /* TELLURIC_WORLD */
+		PlanetChance::Always, /* HYDROCARBON_WORLD */
+		PlanetChance::Always, /* IODINE_WORLD */
+		PlanetChance::Always, /* VINYLOGOUS_WORLD */
+		PlanetChance::Never,  /* RUBY_WORLD */
+		PlanetChance::Always, /* MAGMA_WORLD */
+		PlanetChance::Always, /* MAROON_WORLD */
+		//PLANET_ALWAYS, /* DIAMOND_WORLD */
 
-			PlanetChance::Always, /* BLU_GAS_GIANT */
-			PlanetChance::Always, /* CYA_GAS_GIANT */
-			PlanetChance::Always, /* GRN_GAS_GIANT */
-			PlanetChance::Always, /* GRY_GAS_GIANT */
-			PlanetChance::Always, /* ORA_GAS_GIANT */
-			PlanetChance::Always, /* PUR_GAS_GIANT */
-			PlanetChance::Always, /* RED_GAS_GIANT */
-			PlanetChance::Always, /* VIO_GAS_GIANT */
-			PlanetChance::Always, /* YEL_GAS_GIANT */
-		};
+		PlanetChance::Always, /* BLU_GAS_GIANT */
+		PlanetChance::Always, /* CYA_GAS_GIANT */
+		PlanetChance::Always, /* GRN_GAS_GIANT */
+		PlanetChance::Always, /* GRY_GAS_GIANT */
+		PlanetChance::Always, /* ORA_GAS_GIANT */
+		PlanetChance::Always, /* PUR_GAS_GIANT */
+		PlanetChance::Always, /* RED_GAS_GIANT */
+		PlanetChance::Always, /* VIO_GAS_GIANT */
+		PlanetChance::Always, /* YEL_GAS_GIANT */
+	};
 
 	return *(PlanetDistribution[which_world]);
 }
@@ -528,7 +522,7 @@ void FillOrbits(SolarSystemState* system, uint8_t NumPlanets,
 	if (NumPlanets == NumplanetsPdesc)
 	{ // To shorten the redundancy of the function in repeated areas.
 		NumPlanets = system->SunDesc[0].NumPlanets;
-		pBaseDesc = system->PlanetDesc;
+		pBaseDesc = system->PlanetDesc.data();
 	}
 
 	SystemPlanet* pPD {pBaseDesc};
@@ -555,7 +549,7 @@ void FillOrbits(SolarSystemState* system, uint8_t NumPlanets,
 					scolor[StarColor(CurStarDescPtr()->Type)],
 					stype[StarType(CurStarDescPtr()->Type)]);
 #endif /* DEBUG_ORBITS */
-	const bool GeneratingMoons {(bool)(pBaseDesc == system->MoonDesc)};
+	const bool GeneratingMoons {(bool)(pBaseDesc == system->MoonDesc.data())};
 	const bool GasGiant = pPD && pPD->pPrevDesc && (pPD->pPrevDesc->data_index & ~*PlanetType::PlanetShielded) >= PlanetType::FirstGasGiant;
 	if (GeneratingMoons)
 	{
@@ -712,22 +706,26 @@ RelocatePlanet:
 
 uint8_t PickClosestHabitable(SolarSystemState* solarSys)
 {
-	const int16_t hRangesD[*StarBodyColor::Count][2] = {
-		{860,  1790}, // blue
-		{540,  1150}, // green
-		{140,  280 }, // orange
-		{0,	0	 }, // red
-		{1240, 2560}, // white
-		{320,  640 }  // yellow
-	};
-	const int16_t hRangesG[*StarBodyColor::Count][2] = {
-		{0,	0	 }, // blue
-		{0,	0	 }, // green
-		{3410, 7120}, // orange
-		{860,  1800}, // red
-		{0,	0	 }, // white
-		{7630, 7936}  // yellow
-	};
+	const uqstl::array<uqstl::array<int16_t, 2>, *StarBodyColor::Count> hRangesD {
+		{
+			{860, 1790},  // blue
+			{540, 1150},  // green
+			{140, 280},	  // orange
+			{0, 0},		  // red
+			{1240, 2560}, // white
+			{320, 640}	  // yellow
+		}
+	 };
+	const uqstl::array<uqstl::array<int16_t, 2>, *StarBodyColor::Count> hRangesG {
+		{
+			{0, 0},		  // blue
+			{0, 0},		  // green
+			{3410, 7120}, // orange
+			{860, 1800},  // red
+			{0, 0},		  // white
+			{7630, 7936}  // yellow
+		}
+	 };
 	uint8_t i {};
 	int16_t hRangeMin = 0;
 	int16_t hRangeMax = 0;
@@ -737,7 +735,7 @@ uint8_t PickClosestHabitable(SolarSystemState* solarSys)
 	const uint32_t rand = SysGenRNG->seed();
 
 	uint8_t numPlanets {solarSys->SunDesc[0].NumPlanets};
-	SystemPlanet* pPD {solarSys->PlanetDesc};
+	SystemPlanet* pPD {solarSys->PlanetDesc.data()};
 
 	const StarBodyColor starColor {StarColor(CurStarDescPtr()->Type)};
 	const StellarSize starType {StarType(CurStarDescPtr()->Type)};
@@ -829,20 +827,22 @@ uint8_t PickClosestHabitable(SolarSystemState* solarSys)
 
 bool CheckForHabitable(SolarSystemState* solarSys)
 {
-	const int16_t HabitableRanges[*StarBodyColor::Count][2] = {
-		{853,  1790}, // blue
-		{544,  1151}, // green
-		{139,  287 }, // orange
-		{68,	 68  }, // red
-		{1231, 2569}, // white
-		{312,  778 }  // yellow
-	};
+	const uqstl::array<uqstl::array<int16_t, 2>, *StarBodyColor::Count> HabitableRanges {
+		{
+			{853, 1790},  // blue
+			{544, 1151},  // green
+			{139, 287},	  // orange
+			{68, 68},	  // red
+			{1231, 2569}, // white
+			{312, 778}	  // yellow
+		}
+	 };
 
 	int16_t i {};
 	const uint8_t planetByte = solarSys->SunDesc[0].PlanetByte;
 	const uint8_t numPlanets = solarSys->SunDesc[0].NumPlanets;
 	int16_t newRadius {}; // , radiusDiff;
-	uint32_t planetRadii[MaxGenPlanets];
+	uqstl::array<uint32_t, MaxGenPlanets> planetRadii;
 	// static int16_t diffCheck, min_radius;
 
 	StarBodyColor starColor {StarColor(CurStarDescPtr()->Type)};
@@ -853,7 +853,7 @@ bool CheckForHabitable(SolarSystemState* solarSys)
 		starColor = StarBodyColor::Orange;
 	}
 
-	SystemPlanet* pPD {solarSys->PlanetDesc};
+	SystemPlanet* pPD {solarSys->PlanetDesc.data()};
 	const int16_t oldRadius {pPD[planetByte].radius};
 
 	const int16_t habitableRangeMin {HabitableRanges[*starColor][0]};

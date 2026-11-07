@@ -37,7 +37,7 @@
 
 static constexpr auto Kbdbufsize {1 << 8};
 static int kbdhead = 0, kbdtail = 0;
-static uqm::UniChar kbdbuf[Kbdbufsize];
+static uqstl::array<uqm::UniChar, Kbdbufsize> kbdbuf;
 static uqm::UniChar lastchar;
 
 static bool set_character_mode = false;
@@ -54,7 +54,7 @@ static bool InputInitialized = false;
 
 static bool in_character_mode = false;
 
-const static char* menu_res_names[] = {
+static uqstl::array<uqgsl::czstring, 29> menu_res_names {
 	"pause",
 	"exit",
 	"abort",
@@ -85,7 +85,7 @@ const static char* menu_res_names[] = {
 	"debug_4",
 	nullptr};
 
-const static char* flight_res_names[] = {
+static uqstl::array<uqgsl::czstring, 9> flight_res_names {
 	"up",
 	"down",
 	"left",
@@ -123,7 +123,7 @@ static constexpr const char* c_keyConfigFile {"keys.json"};
 
 static uqstl::span<const uqgsl::czstring> flightControlNames()
 {
-	return {flight_res_names, static_cast<size_t>(num_flight)};
+	return {flight_res_names.data(), static_cast<size_t>(num_flight)};
 }
 
 // Loads the user key configuration into the "keys." resources.
@@ -515,17 +515,15 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 {
 	VControlGesture* g = ControlPtr(templat, control, index);
 
-	const uqgsl::czstring xbx_buttons[SDL_GAMEPAD_BUTTON_COUNT] =
-		{
-			"A", "B", "X", "Y", "Back", "Guide", "Start",
-			"LStick", "RStick", "LShoulder", "RShoulder",
-			"DUp", "DDown", "DLeft", "DRight", "Misc"};
+	const uqstl::array<uqgsl::czstring, SDL_GAMEPAD_BUTTON_COUNT> xbx_buttons {
+		"A", "B", "X", "Y", "Back", "Guide", "Start",
+		"LStick", "RStick", "LShoulder", "RShoulder",
+		"DUp", "DDown", "DLeft", "DRight", "Misc"};
 
-	const uqgsl::czstring ds4_buttons[SDL_GAMEPAD_BUTTON_COUNT] =
-		{
-			StrCross, StrCircle, StrSquare, StrTriangle,
-			"Share", "PS", "Options", "L3", "R3", "L1", "R1",
-			"DUp", "DDown", "DLeft", "DRight", "TouchPad"};
+	const uqstl::array<uqgsl::czstring, SDL_GAMEPAD_BUTTON_COUNT> ds4_buttons {
+		StrCross, StrCircle, StrSquare, StrTriangle,
+		"Share", "PS", "Options", "L3", "R3", "L1", "R1",
+		"DUp", "DDown", "DLeft", "DRight", "TouchPad"};
 
 	const char xbx_axes[SDL_GAMEPAD_AXIS_COUNT][16] =
 		{

@@ -78,8 +78,8 @@ static WidgetLabel pressToEdit {};
 static uqstl::vector<const char*> pressToEditLines {};
 static WidgetSlider gammaSlider {};
 static WidgetTextEntry layoutName {};
-static WidgetControlEntry controlentries[*BattleKey::NumKeys] {};
-static constexpr const char* c_controlNames[*BattleKey::NumKeys] {"up", "down", "left", "right", "weapon", "special", "escape", "thrust"};
+static uqstl::array<WidgetControlEntry, *BattleKey::NumKeys> controlentries {};
+static constexpr uqstl::array<uqgsl::czstring, *BattleKey::NumKeys> c_controlNames {"up", "down", "left", "right", "weapon", "special", "escape", "thrust"};
 
 // The control template that the Edit Controls menu shows.
 static int editTemplate {};

@@ -55,8 +55,8 @@ static ConversationData orz_desc =
 		},
 		OrzConversationPhrases, /* PlayerPhrases */
 		13, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				4,						  /* StartIndex */
 				6,						  /* NumFrames */
@@ -67,7 +67,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				10,						  /* StartIndex */
 				5,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -77,7 +77,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				15,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -87,7 +87,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				17,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -97,7 +97,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				20,					  /* StartIndex */
 				2,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -107,7 +107,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 7),				/* BlockMask */
 			},
-								{
+			{
 				22,						  /* StartIndex */
 				8,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -117,7 +117,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 6),				/* BlockMask */
 			},
-								{
+			{
 				30,						  /* StartIndex */
 				3,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -127,7 +127,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 5),				/* BlockMask */
 			},
-								{
+			{
 				33,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -137,7 +137,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 4),				/* BlockMask */
 			},
-								{
+			{
 				36,						  /* StartIndex */
 				25,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -147,7 +147,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				61,						  /* StartIndex */
 				15,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -157,7 +157,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				76,						  /* StartIndex */
 				17,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -167,7 +167,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 12),				/* BlockMask */
 			},
-								{
+			{
 				93,						  /* StartIndex */
 				25,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -177,7 +177,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				118,					  /* StartIndex */
 				11,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -187,7 +187,7 @@ static ConversationData orz_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 10),				/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -582,7 +582,7 @@ static void OfferAlliance(ResponseRef R)
 
 static void OrzNeutral(ResponseRef R)
 {
-	OrzPhrase pStr[3];
+	uqstl::array<OrzPhrase, 3> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = OrzPhrase::NullPhrase;

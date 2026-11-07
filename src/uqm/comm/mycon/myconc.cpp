@@ -52,8 +52,8 @@ static ConversationData mycon_desc =
 		},
 		MyconConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				12,						  /* StartIndex */
 				10,						  /* NumFrames */
@@ -64,7 +64,7 @@ static ConversationData mycon_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								//	{// It was 2 differtent animations that blocks each other
+			//	{// It was 2 differtent animations that blocks each other
 			//	 // but after the commit BlockMask algorithm was changed
 			//	 // https://sourceforge.net/p/sc2/uqm/ci/5be8df3e5f4a957fa1ee63851e7e064731aadb20/
 			//   // and these animations completely cancel each other.
@@ -87,7 +87,7 @@ static ConversationData mycon_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				28,						  /* StartIndex */
 				5,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -97,7 +97,7 @@ static ConversationData mycon_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				33,					  /* StartIndex */
 				4,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -107,7 +107,7 @@ static ConversationData mycon_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */

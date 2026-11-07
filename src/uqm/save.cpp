@@ -436,7 +436,7 @@ static void PrepareSummary(SaveSummaryData* SummPtr, const char* name)
 		}
 	}
 
-	SummPtr->NumDevices = InventoryDevices(SummPtr->DeviceList,
+	SummPtr->NumDevices = InventoryDevices(SummPtr->DeviceList.data(),
 										   MaxExclusiveDevices);
 
 	SummPtr->Flags = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS)
@@ -463,7 +463,7 @@ static void SaveProblemMessage(GfxStamp* MsgStamp)
 	  };
 	uint16_t i {};
 	GfxText t;
-	const char* ppStr[MaxMsgLines];
+	uqstl::array<uqgsl::czstring, MaxMsgLines> ppStr;
 
 	// TODO: This should probably just use DoPopupWindow()
 

@@ -169,7 +169,7 @@ static bool GenerateShofixti_generatePlanets(SolarSystemState* solarSys)
 			}
 		}
 
-		FillOrbits(solarSys, NumPlanets, solarSys->PlanetDesc, true);
+		FillOrbits(solarSys, NumPlanets, solarSys->PlanetDesc.data(), true);
 	}
 	else
 	{

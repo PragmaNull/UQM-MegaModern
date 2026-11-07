@@ -39,7 +39,7 @@ protected:
 	}
 
 	Element m_testElement {};
-	PlayerControlFlags m_playerControl[NumPlayers] {};
+	uqstl::array<PlayerControlFlags, NumPlayers> m_playerControl {};
 	GodModeFlags m_godModes {};
 };
 

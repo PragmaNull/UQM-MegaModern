@@ -146,7 +146,7 @@ static uint16_t initialize_standard_missile(Element* ShipPtr, ElementHandle Miss
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;
@@ -251,7 +251,7 @@ static void destruct_preprocess(Element* ElementPtr)
 			SetPrimColor(&DisplayArray[DestructPtr->PrimIndex],
 						 BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 			DestructPtr->current.image.farray =
-				StarShipPtr->RaceDescPtr->ship_data.special;
+				StarShipPtr->RaceDescPtr->ship_data.special.data();
 			DestructPtr->current.image.frame =
 				StarShipPtr->RaceDescPtr->ship_data.special[0];
 			DestructPtr->life_span = GetFrameCount(

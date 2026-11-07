@@ -108,8 +108,8 @@ void SCALE_(HqFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 
 	int prevline {};
 	int nextline {};
-	Uint32 pix[10];
-	Uint32 yuv[10];
+	uqstl::array<Uint32, 10> pix;
+	uqstl::array<Uint32, 10> yuv;
 	//   +----+----+----+
 	//   |    |    |    |
 	//   | p1 | p2 | p3 |

@@ -63,8 +63,8 @@ static ConversationData zoqfot_desc =
 		},
 		ZoqfotpikConversationPhrases, /* PlayerPhrases */
 		3, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				/* Eye blink */
 				1,					 /* StartIndex */
@@ -77,7 +77,7 @@ static ConversationData zoqfot_desc =
 				GameTicksPerSecond * 10, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				/* Blow smoke */
 				5,						  /* StartIndex */
 				5,						  /* NumFrames */
@@ -88,7 +88,7 @@ static ConversationData zoqfot_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				/* Gulp */
 				10,						  /* StartIndex */
 				8,						  /* NumFrames */
@@ -99,7 +99,7 @@ static ConversationData zoqfot_desc =
 				GameTicksPerSecond * 10, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc - Move Eye */
 			FotToZoq,			  /* StartIndex */

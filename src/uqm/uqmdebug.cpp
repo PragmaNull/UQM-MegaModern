@@ -756,11 +756,11 @@ void showSpheres(bool Animated)
 			&uqm::gameState().game().avail_race_q, hChmmr);
 
 		SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
-		SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, *PlotId::Home);
+		SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map.data(), *PlotId::Home);
 		StartSphereTracking(RaceId::Syreen);
 
 		ChmmrPtr->actual_strength = 986 / SphereRadiusIncrement * 2;
-		ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map, *PlotId::Home);
+		ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map.data(), *PlotId::Home);
 		StartSphereTracking(RaceId::Chmmr);
 
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);

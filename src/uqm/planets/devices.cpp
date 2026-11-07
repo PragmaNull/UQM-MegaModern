@@ -80,7 +80,7 @@ enum class DeviceStatus
 
 struct DevicesMenuState
 {
-	uint8_t list[*Device::NumDevices];
+	uqstl::array<uint8_t, *Device::NumDevices> list;
 	// List of all devices player has
 	uint16_t count;
 	// Number of devices in the list
@@ -733,7 +733,7 @@ bool DevicesMenu(void)
 
 	memset(&DevicesState, 0, sizeof DevicesState);
 
-	DevicesState.count = InventoryDevices(DevicesState.list, *Device::NumDevices);
+	DevicesState.count = InventoryDevices(DevicesState.list.data(), *Device::NumDevices);
 	if (!DevicesState.count)
 	{
 		return false;

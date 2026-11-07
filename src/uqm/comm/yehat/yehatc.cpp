@@ -53,8 +53,8 @@ static ConversationData yehat_desc =
 		},
 		YehatConversationPhrases, /* PlayerPhrases */
 		15, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				/* right hand-wing tapping keyboard; front guy */
 				4, /* StartIndex */
@@ -67,7 +67,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond / 2, /* RestartRate */
 				(1 << 6) | (1 << 7),
 			},
-								{
+			{
 				/* left hand-wing tapping keyboard; front guy */
 				7, /* StartIndex */
 				3, /* NumFrames */
@@ -79,7 +79,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond / 2, /* RestartRate */
 				(1 << 6) | (1 << 7),
 			},
-								{
+			{
 				10,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -89,7 +89,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 4) | (1 << 14),
 			},
-								{
+			{
 				13,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -99,7 +99,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 5),
 			},
-								{
+			{
 				16,					  /* StartIndex */
 				5,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -109,7 +109,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 2) | (1 << 14),
 			},
-								{
+			{
 				21,					  /* StartIndex */
 				5,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -119,7 +119,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 3),
 			},
-								{
+			{
 				/* right arm-wing rising; front guy */
 				26,													/* StartIndex */
 				2,													/* NumFrames */
@@ -130,7 +130,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 0) | (1 << 1),
 			},
-								{
+			{
 				/* left arm-wing rising; front guy */
 				28,													/* StartIndex */
 				2,													/* NumFrames */
@@ -141,7 +141,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 0) | (1 << 1),
 			},
-								{
+			{
 				30,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -151,7 +151,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				33,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -161,7 +161,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				36,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -171,7 +171,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				39,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -181,7 +181,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				42,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -191,7 +191,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				45,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -201,7 +201,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				48,													/* StartIndex */
 				4,													/* NumFrames */
 				AnimationFlags::Yoyo | AnimationFlags::WaitTalking, /* AnimFlags */
@@ -211,7 +211,7 @@ static ConversationData yehat_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 2) | (1 << 4),
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc - empty */
 			0,					  /* StartIndex */
@@ -476,7 +476,7 @@ static void YehatHome(ResponseRef R)
 static void YehatSpace(ResponseRef R)
 {
 	uint8_t i {};
-	YehatPhrase pStr[3];
+	uqstl::array<YehatPhrase, 3> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = YehatPhrase::NullPhrase;

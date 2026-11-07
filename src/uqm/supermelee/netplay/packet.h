@@ -96,7 +96,7 @@ struct PacketTypeData
 	const char* name;
 };
 
-extern PacketTypeData packetTypeData[];
+extern uqstl::array<PacketTypeData, *PacketType::Count> packetTypeData;
 
 } // namespace uqm
 

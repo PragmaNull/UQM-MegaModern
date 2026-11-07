@@ -70,11 +70,11 @@ namespace tfb
 struct DuckVideoHeader
 {
 	uint32_t version;
-	uint32_t scrn_x_ofs; // horz screen offset in pixels
-	uint32_t scrn_y_ofs; // vert screen offset in pixels
-	uint16_t wb, hb;	 // width + height in blocks
-	int16_t lumas[8];	 // future luminance deltas
-	int16_t chromas[8];	 // future chrominance deltas
+	uint32_t scrn_x_ofs;			  // horz screen offset in pixels
+	uint32_t scrn_y_ofs;			  // vert screen offset in pixels
+	uint16_t wb, hb;				  // width + height in blocks
+	uqstl::array<int16_t, 8> lumas;	  // future luminance deltas
+	uqstl::array<int16_t, 8> chromas; // future chrominance deltas
 };
 } // namespace tfb
 
@@ -85,8 +85,8 @@ namespace tfb
 {
 struct DuckVideoDeltas
 {
-	int32_t lumas[NumVectors][NumVecItems];
-	int32_t chromas[NumVectors][NumVecItems];
+	uqstl::array<uqstl::array<int32_t, NumVecItems>, NumVectors> lumas;
+	uqstl::array<uqstl::array<int32_t, NumVecItems>, NumVectors> chromas;
 };
 } // namespace tfb
 
@@ -140,7 +140,7 @@ static void dukv_DecodeFrame(uint8_t* src_p, uint32_t* dst_p, uint32_t wb, uint3
 	{
 		int32_t corr {};
 		int32_t delta {};
-		int32_t pix[4];
+		uqstl::array<int32_t, 4> pix;
 
 		d_p0 = dst_p + y * w * 2;
 		d_p1 = d_p0 + w;
@@ -440,8 +440,8 @@ static void dukv_InitDeltas(tfb::DuckVideoDecoder* dukv, uint8_t* vectors,
 	for (int i {0}; i < NumVectors; ++i)
 	{
 		uint8_t* vector = vectors + i * NumVecItems;
-		dukv_DecodeVector(vector, pl, false, dukv->d.lumas[i]);
-		dukv_DecodeVector(vector, pc, true, dukv->d.chromas[i]);
+		dukv_DecodeVector(vector, pl, false, dukv->d.lumas[i].data());
+		dukv_DecodeVector(vector, pc, true, dukv->d.chromas[i].data());
 	}
 }
 
@@ -634,8 +634,8 @@ static void dukv_Term(tfb::VideoDecoder* This)
 static bool dukv_Open(tfb::VideoDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
 	tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*)This;
-	int32_t lumas[8];
-	int32_t chromas[8];
+	uqstl::array<int32_t, 8> lumas;
+	uqstl::array<int32_t, 8> chromas;
 	uqstl::vector<uint8_t> vectors(NumVecItems * NumVectors);
 
 	dukv->basename = filename;
@@ -646,7 +646,7 @@ static bool dukv_Open(tfb::VideoDecoder* This, const uqm::io::Directory& dir, co
 
 	if (!dukv_OpenStream(dukv, dir)
 		|| !dukv_ReadFrames(dukv, dir)
-		|| !dukv_ReadHeader(dukv, dir, lumas, chromas)
+		|| !dukv_ReadHeader(dukv, dir, lumas.data(), chromas.data())
 		|| !dukv_ReadVectors(dukv, dir, vectors.data()))
 	{
 		dukv_Close(This);
@@ -654,7 +654,7 @@ static bool dukv_Open(tfb::VideoDecoder* This, const uqm::io::Directory& dir, co
 		return false;
 	}
 
-	dukv_InitDeltas(dukv, vectors.data(), lumas, chromas);
+	dukv_InitDeltas(dukv, vectors.data(), lumas.data(), chromas.data());
 
 	This->length = (float)dukv->cframes / DuckGeneralFps;
 	This->frame_count = dukv->cframes;
@@ -682,7 +682,7 @@ static void dukv_Close(tfb::VideoDecoder* This)
 static int dukv_DecodeNext(tfb::VideoDecoder* This)
 {
 	tfb::DuckVideoDecoder* dukv = (tfb::DuckVideoDecoder*)This;
-	uint32_t fh[2];
+	uqstl::array<uint32_t, 2> fh;
 
 	if (!dukv->stream || dukv->iframe >= dukv->cframes)
 	{

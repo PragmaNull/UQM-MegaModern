@@ -35,7 +35,7 @@
 
 namespace uqm
 {
-RobotPhrase RoboTrack[NumRoboTracks];
+uqstl::array<RobotPhrase, NumRoboTracks> RoboTrack;
 
 static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack);
 
@@ -72,7 +72,7 @@ const char* ScanInterpolation(const char* start)
 // Will the chunk between [end - start] require robot voicing?
 bool RoboInterpolation(const char* start, const char* end)
 {
-	static constexpr const char* RoboPhrases[] = {
+	static constexpr uqstl::array<uqgsl::czstring, 5> RoboPhrases {
 		"getPoint",
 		"getStarName",
 		"getConstellation",
@@ -289,7 +289,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 			// which we will MultiSplice into the main track.
 			//char *tracks[NumRoboTracks + 1] =
 			//{ [0 ... NumRoboTracks] = nullptr };
-			const char* tracks[NumRoboTracks + 1] = {nullptr}; // NOLINT(misc-const-correctness)
+			uqstl::array<uqgsl::czstring, NumRoboTracks + 1> tracks {nullptr}; // NOLINT(misc-const-correctness)
 			char subClips[NumRoboTracks][MaxClipname] {};
 			for (i = 0; i < NumRoboTracks && RoboTrack[i] != RobotPhrase::NullPhrase; i++)
 			{
@@ -323,7 +323,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 #ifdef DEBUG_STARSEED
 			fmt::print(stderr, "Splice Multitrack string <<{}>>.\n", str_buf);
 #endif
-			SpliceMultiTrack(tracks, str_buf);
+			SpliceMultiTrack(tracks.data(), str_buf);
 			for (i = 0; i < NumRoboTracks && RoboTrack[i] != RobotPhrase::NullPhrase; i++)
 			{
 				tracks[i] = nullptr;
@@ -351,8 +351,8 @@ void NPCPhrase_splice(int index)
 	}
 	else
 	{ // Splicing in some voice
-		const char* const tracks[] = {pClip, nullptr};
-		SpliceMultiTrack(tracks, pStr);
+		uqstl::array<const char* const, 2> tracks {pClip, nullptr};
+		SpliceMultiTrack(tracks.data(), pStr);
 	}
 }
 
@@ -383,7 +383,7 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 	NumberSpeechRef speech = CommData.AlienNumberSpeech;
 	int queued = 0;
 	int toplevel = 0;
-	const char* TrackNames[MaxNumberTracks];
+	uqstl::array<uqgsl::czstring, MaxNumberTracks> TrackNames;
 	char numbuf[60] {};
 	const SpeechDigit* dig = nullptr;
 
@@ -400,12 +400,12 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 			fmt = "{}";
 		}
 		fmt::format_to_n(numbuf, sizeof(numbuf) - 1, fmt::runtime(fmt), number);
-		ptrack = TrackNames;
+		ptrack = TrackNames.data();
 	}
 
 	for (uint16_t i {0}; i < speech->NumDigits; ++i)
 	{
-		dig = speech->Digits + i;
+		dig = speech->Digits.data() + i;
 		int quot {number / dig->Divider};
 
 		if (quot == 0)
@@ -468,7 +468,7 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 		}
 		*ptrack++ = nullptr; // term
 
-		SpliceMultiTrack(TrackNames, numbuf);
+		SpliceMultiTrack(TrackNames.data(), numbuf);
 	}
 
 	return queued;

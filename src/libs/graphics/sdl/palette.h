@@ -27,7 +27,7 @@
 
 struct NativePalette
 {
-	SDL_Color colors[NumberOfPlutvals];
+	uqstl::array<SDL_Color, NumberOfPlutvals> colors;
 };
 
 static inline Color NativeToColor(SDL_Color native)

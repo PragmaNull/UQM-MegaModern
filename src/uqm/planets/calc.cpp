@@ -456,19 +456,23 @@ void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr, SystemPlanet* pPlanetDesc)
 
 #ifdef DEBUG_PLANET_CALC
 	{
-		uint8_t ColorClass[6][8] = {
-			"Red",
-			"Orange",
-			"Yellow",
-			"Green",
-			"Blue",
-			"White",
-		};
-		uint8_t SizeName[3][12] = {
-			"Dwarf",
-			"Giant",
-			"Supergiant",
-		};
+		uqstl::array<uqstl::array<uint8_t, 8>, 6> ColorClass {
+			{
+				"Red",
+				"Orange",
+				"Yellow",
+				"Green",
+				"Blue",
+				"White",
+			 }
+		 };
+		uqstl::array<uqstl::array<uint8_t, 12>, 3> SizeName {
+			{
+				"Dwarf",
+				"Giant",
+				"Supergiant",
+			 }
+		 };
 
 		uqm::log::debug("{} {}",
 						ColorClass[SysInfoPtr->StarIntensity],
@@ -484,7 +488,7 @@ void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr, SystemPlanet* pPlanetDesc)
 		SysInfoPtr->PlanetInfo.PlanDataPtr =
 			&PlanData[pPlanetDesc->data_index & ~*PlanetType::PlanetShielded];
 
-		if (pPlanetDesc->pPrevDesc == pSolarSysState->SunDesc)
+		if (pPlanetDesc->pPrevDesc == pSolarSysState->SunDesc.data())
 		{
 			radius = pPlanetDesc->radius;
 		}

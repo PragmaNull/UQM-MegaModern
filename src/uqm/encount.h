@@ -73,7 +73,7 @@ struct Encounter
 	// See Encounter.flags above
 	GfxPoint loc_pt;
 
-	BriefShipInfo ShipList[MaxHyperShips];
+	uqstl::array<BriefShipInfo, MaxHyperShips> ShipList;
 	// Only the crew_level member is currently used
 
 	int32_t log_x, log_y;

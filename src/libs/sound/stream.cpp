@@ -668,25 +668,24 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	constexpr auto DefPageMax {28000};
 	constexpr auto AgcPageCount {16};
 	static int page_sum = DefPageMax * AgcPageCount;
-	static int pages[AgcPageCount] =
-		{
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-			DefPageMax,
-		};
+	static uqstl::array<int, AgcPageCount> pages {
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+		DefPageMax,
+	};
 	static int page_head;
 	constexpr auto AgcFrameCount {8};
 	static int frame_sum;

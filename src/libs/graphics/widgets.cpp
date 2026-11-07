@@ -460,7 +460,7 @@ void Widget_DrawChoice(Widget* _self, int x, int y)
 				{ // Available option (Orange)
 					SetContextForeGroundColor(canbe);
 				}
-				Widget_DrawToolTips(3, self->options[i].tooltip);
+				Widget_DrawToolTips(3, self->options[i].tooltip.data());
 				t.pStr = self->options[i].optname;
 				font_DrawText(&t); // Draw only 1 option name at a time
 
@@ -544,7 +544,7 @@ void Widget_DrawButton(Widget* _self, int x, int y)
 	t.pStr = self->name;
 	if (widget_focus == _self)
 	{
-		Widget_DrawToolTips(3, self->tooltip);
+		Widget_DrawToolTips(3, self->tooltip.data());
 		oldtext = SetContextForeGroundColor(selected);
 	}
 	else
@@ -656,7 +656,7 @@ void Widget_DrawSlider(Widget* _self, int x, int y)
 	t.pStr = self->category;
 	if (widget_focus == _self)
 	{
-		Widget_DrawToolTips(3, self->tooltip);
+		Widget_DrawToolTips(3, self->tooltip.data());
 		oldtext = SetContextForeGroundColor(selected);
 	}
 	else
@@ -754,7 +754,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 	t.pStr = self->category;
 	if (widget_focus == _self)
 	{
-		Widget_DrawToolTips(3, self->tooltip);
+		Widget_DrawToolTips(3, self->tooltip.data());
 		oldtext = SetContextForeGroundColor(selected);
 	}
 	else
@@ -791,7 +791,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 	{ // editing state
 		uint16_t i {};
 		GfxRect text_r;
-		uint8_t char_deltas[WidgetTextentryWidth];
+		uqstl::array<uint8_t, WidgetTextentryWidth> char_deltas;
 		GfxRect r;
 		int16_t leading {};
 
@@ -809,7 +809,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 		r.extent.width = CanvasWidth - r.corner.x - uqm::ResScale(10);
 		r.extent.height = leading - uqm::ResScale(1);
 
-		TextRect(&t, &text_r, char_deltas);
+		TextRect(&t, &text_r, char_deltas.data());
 #if 0
 		// XXX: this should potentially be used in ChangeCallback
 		if ((text_r.extent.width + 2) >= r.extent.width)
@@ -825,7 +825,7 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 		DrawFilledRectangle(&r);
 
 		// calculate the cursor position and draw it
-		const uint8_t* pchar_deltas {char_deltas};
+		const uint8_t* pchar_deltas {char_deltas.data()};
 		for (i = self->cursor_pos; i > 0; --i)
 		{
 			r.corner.x += (int16_t)*pchar_deltas++;

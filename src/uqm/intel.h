@@ -52,7 +52,7 @@ extern void Avoid(Element* ShipPtr, ObjectEvaluation* EvalDescPtr);
 extern bool TurnShip(Element* ShipPtr, uint16_t angle);
 extern bool ThrustShip(Element* ShipPtr, uint16_t angle);
 
-extern PlayerControlFlags PlayerControl[];
+extern uqstl::array<PlayerControlFlags, NumPlayers> PlayerControl;
 
 static inline bool antiCheatImpl(const Element* Element, const bool swapPlayers, const uqm::GodModeFlags testFlags, uqstl::span<PlayerControlFlags> playerControl, const uqm::GodModeFlags godModeData)
 {
@@ -83,7 +83,7 @@ static inline bool antiCheatImpl(const Element* Element, const bool swapPlayers,
 
 static inline bool antiCheat(Element* ElementPtr, bool SwapBool, uqm::GodModeFlags godModeType)
 {
-	return antiCheatImpl(ElementPtr, SwapBool, godModeType, {PlayerControl, NumPlayers}, uqm::UQMOptions::read().optGodModes);
+	return antiCheatImpl(ElementPtr, SwapBool, godModeType, PlayerControl, uqm::UQMOptions::read().optGodModes);
 }
 
 static inline bool antiCheatAltImpl(const uqm::GodModeFlags testFlags, const uqstl::span<PlayerControlFlags> playerControl, const uqm::GodModeFlags godModeData)
@@ -106,7 +106,7 @@ static inline bool antiCheatAltImpl(const uqm::GodModeFlags testFlags, const uqs
 
 static inline bool antiCheatAlt(uqm::GodModeFlags godModeFlags)
 {
-	return antiCheatAltImpl(godModeFlags, {PlayerControl, NumPlayers}, uqm::UQMOptions::read().optGodModes);
+	return antiCheatAltImpl(godModeFlags, PlayerControl, uqm::UQMOptions::read().optGodModes);
 }
 
 static inline bool isNetwork(void)

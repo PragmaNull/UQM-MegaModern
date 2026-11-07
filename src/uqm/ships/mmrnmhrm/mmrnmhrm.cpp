@@ -244,7 +244,7 @@ static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 				&lpEvalDesc->ObjectPtr->velocity);
 		}
 
-		if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship)
+		if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship.data())
 		{
 			if (lpEvalDesc->which_turn > 8)
 			{
@@ -287,7 +287,7 @@ static void mmrnmhrm_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfC
 		}
 	}
 
-	if (ShipPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
+	if (ShipPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special.data())
 	{
 		if (!(testFlag(StarShipPtr->ship_input_state, StatusFlags::Special))
 			&& lpEvalDesc->ObjectPtr)
@@ -326,7 +326,7 @@ static uint16_t initialize_dual_weapons(Element* ShipPtr, ElementHandle WeaponAr
 	cx = ShipPtr->next.location.x + Cosine(angle, CenterOffs());
 	cy = ShipPtr->next.location.y + Sine(angle, CenterOffs());
 
-	if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship)
+	if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship.data())
 	{
 		int16_t ex {};
 		int16_t ey {};
@@ -371,7 +371,7 @@ static uint16_t initialize_dual_weapons(Element* ShipPtr, ElementHandle WeaponAr
 		MissileDesc TorpBlock;
 		Element* TorpPtr {};
 
-		TorpBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+		TorpBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 		TorpBlock.sender = ShipPtr->playerNr;
 		TorpBlock.flags = ElementFlags::IgnoreSimilar;
 		TorpBlock.pixoffs = 0;
@@ -440,7 +440,7 @@ static void mmrnmhrm_postprocess(Element* ElementPtr)
 		StarShipPtr->RaceDescPtr->characteristics = tempShipData;
 		StarShipPtr->RaceDescPtr->cyborg_control.ManeuverabilityIndex = 0;
 
-		if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
+		if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special.data())
 		{
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = ResScale(LongRangeWeapon - 1);
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~ShipFlags::ImmediateWeapon;
@@ -481,15 +481,15 @@ static void mmrnmhrm_preprocess(Element* ElementPtr)
 			if (DeltaEnergy(ElementPtr,
 							-StarShipPtr->RaceDescPtr->characteristics.special_energy_cost))
 			{
-				if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship)
+				if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship.data())
 				{
 					ElementPtr->next.image.farray =
-						StarShipPtr->RaceDescPtr->ship_data.special;
+						StarShipPtr->RaceDescPtr->ship_data.special.data();
 				}
 				else
 				{
 					ElementPtr->next.image.farray =
-						StarShipPtr->RaceDescPtr->ship_data.ship;
+						StarShipPtr->RaceDescPtr->ship_data.ship.data();
 				}
 				ElementPtr->next.image.frame =
 					SetEquFrameIndex(ElementPtr->next.image.farray[0],

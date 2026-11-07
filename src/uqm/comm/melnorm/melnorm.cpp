@@ -40,90 +40,85 @@
 
 namespace uqm
 {
-static uint16_t melnorme_digit_names[] =
-	{
-		*MelnormePhrase::EnumerateZero,
-		*MelnormePhrase::EnumerateOne,
-		*MelnormePhrase::EnumerateTwo,
-		*MelnormePhrase::EnumerateThree,
-		*MelnormePhrase::EnumerateFour,
-		*MelnormePhrase::EnumerateFive,
-		*MelnormePhrase::EnumerateSix,
-		*MelnormePhrase::EnumerateSeven,
-		*MelnormePhrase::EnumerateEight,
-		*MelnormePhrase::EnumerateNine};
+static uqstl::array<uint16_t, 10> melnorme_digit_names {
+	*MelnormePhrase::EnumerateZero,
+	*MelnormePhrase::EnumerateOne,
+	*MelnormePhrase::EnumerateTwo,
+	*MelnormePhrase::EnumerateThree,
+	*MelnormePhrase::EnumerateFour,
+	*MelnormePhrase::EnumerateFive,
+	*MelnormePhrase::EnumerateSix,
+	*MelnormePhrase::EnumerateSeven,
+	*MelnormePhrase::EnumerateEight,
+	*MelnormePhrase::EnumerateNine};
 
-static uint16_t melnorme_teen_names[] =
-	{
-		*MelnormePhrase::EnumerateTen,
-		*MelnormePhrase::EnumerateEleven,
-		*MelnormePhrase::EnumerateTwelve,
-		*MelnormePhrase::EnumerateThirteen,
-		*MelnormePhrase::EnumerateFourteen,
-		*MelnormePhrase::EnumerateFifteen,
-		*MelnormePhrase::EnumerateSixteen,
-		*MelnormePhrase::EnumerateSeventeen,
-		*MelnormePhrase::EnumerateEighteen,
-		*MelnormePhrase::EnumerateNineteen};
+static uqstl::array<uint16_t, 10> melnorme_teen_names {
+	*MelnormePhrase::EnumerateTen,
+	*MelnormePhrase::EnumerateEleven,
+	*MelnormePhrase::EnumerateTwelve,
+	*MelnormePhrase::EnumerateThirteen,
+	*MelnormePhrase::EnumerateFourteen,
+	*MelnormePhrase::EnumerateFifteen,
+	*MelnormePhrase::EnumerateSixteen,
+	*MelnormePhrase::EnumerateSeventeen,
+	*MelnormePhrase::EnumerateEighteen,
+	*MelnormePhrase::EnumerateNineteen};
 
-static uint16_t melnorme_tens_names[] =
-	{
-		0, /* invalid */
-		0, /* skip digit */
-		*MelnormePhrase::EnumerateTwenty,
-		*MelnormePhrase::EnumerateThirty,
-		*MelnormePhrase::EnumerateFourty,
-		*MelnormePhrase::EnumerateFifty,
-		*MelnormePhrase::EnumerateSixty,
-		*MelnormePhrase::EnumerateSeventy,
-		*MelnormePhrase::EnumerateEighty,
-		*MelnormePhrase::EnumerateNinety};
+static uqstl::array<uint16_t, 10> melnorme_tens_names {
+	0, /* invalid */
+	0, /* skip digit */
+	*MelnormePhrase::EnumerateTwenty,
+	*MelnormePhrase::EnumerateThirty,
+	*MelnormePhrase::EnumerateFourty,
+	*MelnormePhrase::EnumerateFifty,
+	*MelnormePhrase::EnumerateSixty,
+	*MelnormePhrase::EnumerateSeventy,
+	*MelnormePhrase::EnumerateEighty,
+	*MelnormePhrase::EnumerateNinety};
 
 const static NumberSpeechDesc melnorme_numbers_english =
 	{
 		5, /* NumDigits */
-		{
-						  {
-				/* 1000-999999 */
-				1000,							   /* Divider */
-				0,								   /* Subtrahend */
-				nullptr,						   /* StrDigits - recurse */
-				nullptr,						   /* Names - not used */
-				*MelnormePhrase::EnumerateThousand /* CommonIndex */
-			},
-						  {
-				/* 100-999 */
-				100,							  /* Divider */
-				0,								  /* Subtrahend */
-				melnorme_digit_names,			  /* StrDigits */
-				nullptr,						  /* Names - not used */
-				*MelnormePhrase::EnumerateHundred /* CommonIndex */
-			},
-						  {
-				/* 20-99 */
-				10,					 /* Divider */
-				0,					 /* Subtrahend */
-				melnorme_tens_names, /* StrDigits */
-				nullptr,			 /* Names - not used */
-				0					 /* CommonIndex - not used */
-			},
-						  {
-				/* 10-19 */
-				1,					 /* Divider */
-				10,					 /* Subtrahend */
-				melnorme_teen_names, /* StrDigits */
-				nullptr,			 /* Names - not used */
-				0					 /* CommonIndex - not used */
-			},
-						  {
-				/* 0-9 */
-				1,					  /* Divider */
-				0,					  /* Subtrahend */
-				melnorme_digit_names, /* StrDigits */
-				nullptr,			  /* Names - not used */
-				0					  /* CommonIndex - not used */
-			}}
-};
+		{{{
+			  /* 1000-999999 */
+			  1000,								 /* Divider */
+			  0,								 /* Subtrahend */
+			  nullptr,							 /* StrDigits - recurse */
+			  nullptr,							 /* Names - not used */
+			  *MelnormePhrase::EnumerateThousand /* CommonIndex */
+		  },
+		  {
+			  /* 100-999 */
+			  100,								/* Divider */
+			  0,								/* Subtrahend */
+			  melnorme_digit_names.data(),		/* StrDigits */
+			  nullptr,							/* Names - not used */
+			  *MelnormePhrase::EnumerateHundred /* CommonIndex */
+		  },
+		  {
+			  /* 20-99 */
+			  10,						  /* Divider */
+			  0,						  /* Subtrahend */
+			  melnorme_tens_names.data(), /* StrDigits */
+			  nullptr,					  /* Names - not used */
+			  0							  /* CommonIndex - not used */
+		  },
+		  {
+			  /* 10-19 */
+			  1,						  /* Divider */
+			  10,						  /* Subtrahend */
+			  melnorme_teen_names.data(), /* StrDigits */
+			  nullptr,					  /* Names - not used */
+			  0							  /* CommonIndex - not used */
+		  },
+		  {
+			  /* 0-9 */
+			  1,						   /* Divider */
+			  0,						   /* Subtrahend */
+			  melnorme_digit_names.data(), /* StrDigits */
+			  nullptr,					   /* Names - not used */
+			  0							   /* CommonIndex - not used */
+		  }}}};
 static ConversationData melnorme_desc =
 	{
 		Conversation::Melnorme, /* AlienConv */
@@ -148,8 +143,8 @@ static ConversationData melnorme_desc =
 		},
 		MelnormeConversationPhrases, /* PlayerPhrases */
 		5, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				6,					  /* StartIndex */
 				5,					  /* NumFrames */
@@ -160,7 +155,7 @@ static ConversationData melnorme_desc =
 				GameTicksPerSecond * 4, /* RestartRate */
 				(1 << 1),				/* BlockMask */
 			},
-								{
+			{
 				11,					  /* StartIndex */
 				9,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -170,7 +165,7 @@ static ConversationData melnorme_desc =
 				GameTicksPerSecond * 4, /* RestartRate */
 				(1 << 0),				/* BlockMask */
 			},
-								{
+			{
 				20,					  /* StartIndex */
 				2,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -180,7 +175,7 @@ static ConversationData melnorme_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				22,					  /* StartIndex */
 				2,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -190,7 +185,7 @@ static ConversationData melnorme_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Flagship picture */
 				24,													 /* StartIndex */
 				1,													 /* NumFrames */
@@ -201,7 +196,7 @@ static ConversationData melnorme_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -284,22 +279,23 @@ struct TechData
 // A table of the available technologies.
 // This should really be an associative map of TechIds to tech data records,
 // but implementing that would be excessive.
-const static TechData tech_data_table[] =
+const static uqstl::array<TechData, 13> tech_data_table {
 	{
 		// Tech ID                      Tech Type,               Supplemental info
-		{TechId::ModuleBlaster,			TechType::Module,		  *ModuleType::BlasterWeapon,							  4000},
-		{TechId::LanderSpeed,			  TechType::State,		   static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SPEED), 1	},
-		{TechId::ModuleAntimissile,		TechType::Module,		  *ModuleType::AntimissileDefense,						   4000},
-		{TechId::LanderShieldBio,		  TechType::LanderShield, *LanderEvent::BiologicalDisaster,						-1  },
-		{TechId::LanderCargo,			  TechType::State,		   static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_CARGO), 1	},
-		{TechId::ModuleBigfueltank,		TechType::Module,		  *ModuleType::HigheffFuelsys,							   1000},
-		{TechId::LanderRapidfire,		  TechType::State,		   static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SHOT),  1   },
-		{TechId::LanderShieldQuake,		TechType::LanderShield, *LanderEvent::EarthquakeDisaster,						  -1	},
-		{TechId::ModuleTracking,		 TechType::Module,	   *ModuleType::TrackingSystem,							5000},
-		{TechId::LanderShieldLightning, TechType::LanderShield, *LanderEvent::LightningDisaster,						 -1  },
-		{TechId::LanderShieldHeat,	   TechType::LanderShield, *LanderEvent::LavaspotDisaster,						   -1	 },
-		{TechId::ModuleCannon,		   TechType::Module,		 *ModuleType::CannonWeapon,								6000},
-		{TechId::ModuleFurnace,			TechType::Module,		  *ModuleType::ShivaFurnace,								 4000},
+		{TechId::ModuleBlaster, TechType::Module, *ModuleType::BlasterWeapon, 4000},
+		{TechId::LanderSpeed, TechType::State, static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SPEED), 1},
+		{TechId::ModuleAntimissile, TechType::Module, *ModuleType::AntimissileDefense, 4000},
+		{TechId::LanderShieldBio, TechType::LanderShield, *LanderEvent::BiologicalDisaster, -1},
+		{TechId::LanderCargo, TechType::State, static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_CARGO), 1},
+		{TechId::ModuleBigfueltank, TechType::Module, *ModuleType::HigheffFuelsys, 1000},
+		{TechId::LanderRapidfire, TechType::State, static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SHOT), 1},
+		{TechId::LanderShieldQuake, TechType::LanderShield, *LanderEvent::EarthquakeDisaster, -1},
+		{TechId::ModuleTracking, TechType::Module, *ModuleType::TrackingSystem, 5000},
+		{TechId::LanderShieldLightning, TechType::LanderShield, *LanderEvent::LightningDisaster, -1},
+		{TechId::LanderShieldHeat, TechType::LanderShield, *LanderEvent::LavaspotDisaster, -1},
+		{TechId::ModuleCannon, TechType::Module, *ModuleType::CannonWeapon, 6000},
+		{TechId::ModuleFurnace, TechType::Module, *ModuleType::ShivaFurnace, 4000},
+	 }
 };
 const size_t NUM_TECHNOLOGIES = std::size(tech_data_table);
 
@@ -394,65 +390,60 @@ static int countTech(void)
 // Many of the conversation lines in strings.h fall into groups
 // of sequential responses.  These structures allow those
 // responses to be interated through.
-const static MelnormePhrase ok_buy_event_lines[] =
-	{
-		MelnormePhrase::OkBuyEvent1, MelnormePhrase::OkBuyEvent2, MelnormePhrase::OkBuyEvent3, MelnormePhrase::OkBuyEvent4,
-		MelnormePhrase::OkBuyEvent5, MelnormePhrase::OkBuyEvent6, MelnormePhrase::OkBuyEvent7, MelnormePhrase::OkBuyEvent8};
+const static uqstl::array<MelnormePhrase, 8> ok_buy_event_lines {
+	MelnormePhrase::OkBuyEvent1, MelnormePhrase::OkBuyEvent2, MelnormePhrase::OkBuyEvent3, MelnormePhrase::OkBuyEvent4,
+	MelnormePhrase::OkBuyEvent5, MelnormePhrase::OkBuyEvent6, MelnormePhrase::OkBuyEvent7, MelnormePhrase::OkBuyEvent8};
 const size_t NUM_EVENT_ITEMS = std::size(ok_buy_event_lines);
 
-const static MelnormePhrase ok_buy_alien_race_lines[] =
-	{
-		MelnormePhrase::OkBuyAlienRace1, MelnormePhrase::OkBuyAlienRace2, MelnormePhrase::OkBuyAlienRace3,
-		MelnormePhrase::OkBuyAlienRace4, MelnormePhrase::OkBuyAlienRace5, MelnormePhrase::OkBuyAlienRace6,
-		MelnormePhrase::OkBuyAlienRace7, MelnormePhrase::OkBuyAlienRace8, MelnormePhrase::OkBuyAlienRace9,
-		MelnormePhrase::OkBuyAlienRace10, MelnormePhrase::OkBuyAlienRace11, MelnormePhrase::OkBuyAlienRace12,
-		MelnormePhrase::OkBuyAlienRace13, MelnormePhrase::OkBuyAlienRace14, MelnormePhrase::OkBuyAlienRace15,
-		MelnormePhrase::OkBuyAlienRace16};
+const static uqstl::array<MelnormePhrase, 16> ok_buy_alien_race_lines {
+	MelnormePhrase::OkBuyAlienRace1, MelnormePhrase::OkBuyAlienRace2, MelnormePhrase::OkBuyAlienRace3,
+	MelnormePhrase::OkBuyAlienRace4, MelnormePhrase::OkBuyAlienRace5, MelnormePhrase::OkBuyAlienRace6,
+	MelnormePhrase::OkBuyAlienRace7, MelnormePhrase::OkBuyAlienRace8, MelnormePhrase::OkBuyAlienRace9,
+	MelnormePhrase::OkBuyAlienRace10, MelnormePhrase::OkBuyAlienRace11, MelnormePhrase::OkBuyAlienRace12,
+	MelnormePhrase::OkBuyAlienRace13, MelnormePhrase::OkBuyAlienRace14, MelnormePhrase::OkBuyAlienRace15,
+	MelnormePhrase::OkBuyAlienRace16};
 const size_t NUM_ALIEN_RACE_ITEMS = std::size(ok_buy_alien_race_lines);
 
-const static MelnormePhrase ok_buy_history_lines[] =
-	{
-		MelnormePhrase::OkBuyHistory1, MelnormePhrase::OkBuyHistory2, MelnormePhrase::OkBuyHistory3,
-		MelnormePhrase::OkBuyHistory4, MelnormePhrase::OkBuyHistory5, MelnormePhrase::OkBuyHistory6,
-		MelnormePhrase::OkBuyHistory7, MelnormePhrase::OkBuyHistory8, MelnormePhrase::OkBuyHistory9};
+const static uqstl::array<MelnormePhrase, 9> ok_buy_history_lines {
+	MelnormePhrase::OkBuyHistory1, MelnormePhrase::OkBuyHistory2, MelnormePhrase::OkBuyHistory3,
+	MelnormePhrase::OkBuyHistory4, MelnormePhrase::OkBuyHistory5, MelnormePhrase::OkBuyHistory6,
+	MelnormePhrase::OkBuyHistory7, MelnormePhrase::OkBuyHistory8, MelnormePhrase::OkBuyHistory9};
 const size_t NUM_HISTORY_ITEMS = std::size(ok_buy_history_lines);
 
-const static MelnormePhrase hello_and_down_to_business_lines[] =
-	{
-		MelnormePhrase::HelloAndDownToBusiness1, MelnormePhrase::HelloAndDownToBusiness2,
-		MelnormePhrase::HelloAndDownToBusiness3, MelnormePhrase::HelloAndDownToBusiness4,
-		MelnormePhrase::HelloAndDownToBusiness5, MelnormePhrase::HelloAndDownToBusiness6,
-		MelnormePhrase::HelloAndDownToBusiness7, MelnormePhrase::HelloAndDownToBusiness8,
-		MelnormePhrase::HelloAndDownToBusiness9, MelnormePhrase::HelloAndDownToBusiness10};
+const static uqstl::array<MelnormePhrase, 10> hello_and_down_to_business_lines {
+	MelnormePhrase::HelloAndDownToBusiness1, MelnormePhrase::HelloAndDownToBusiness2,
+	MelnormePhrase::HelloAndDownToBusiness3, MelnormePhrase::HelloAndDownToBusiness4,
+	MelnormePhrase::HelloAndDownToBusiness5, MelnormePhrase::HelloAndDownToBusiness6,
+	MelnormePhrase::HelloAndDownToBusiness7, MelnormePhrase::HelloAndDownToBusiness8,
+	MelnormePhrase::HelloAndDownToBusiness9, MelnormePhrase::HelloAndDownToBusiness10};
 const size_t NUM_HELLO_LINES = std::size(hello_and_down_to_business_lines);
 
-const static MelnormePhrase rescue_lines[] =
-	{
-		MelnormePhrase::RescueExplanation, MelnormePhrase::RescueAgain1, MelnormePhrase::RescueAgain2,
-		MelnormePhrase::RescueAgain3, MelnormePhrase::RescueAgain4, MelnormePhrase::RescueAgain5};
+const static uqstl::array<MelnormePhrase, 6> rescue_lines {
+	MelnormePhrase::RescueExplanation, MelnormePhrase::RescueAgain1, MelnormePhrase::RescueAgain2,
+	MelnormePhrase::RescueAgain3, MelnormePhrase::RescueAgain4, MelnormePhrase::RescueAgain5};
 const size_t NUM_RESCUE_LINES = std::size(rescue_lines);
 
 // How many lines are available in the given array?
 static size_t
 GetNumLines(const MelnormePhrase array[])
 {
-	if (array == ok_buy_event_lines)
+	if (array == ok_buy_event_lines.data())
 	{
 		return NUM_EVENT_ITEMS;
 	}
-	else if (array == ok_buy_alien_race_lines)
+	else if (array == ok_buy_alien_race_lines.data())
 	{
 		return NUM_ALIEN_RACE_ITEMS;
 	}
-	else if (array == ok_buy_history_lines)
+	else if (array == ok_buy_history_lines.data())
 	{
 		return NUM_HISTORY_ITEMS;
 	}
-	else if (array == hello_and_down_to_business_lines)
+	else if (array == hello_and_down_to_business_lines.data())
 	{
 		return NUM_HELLO_LINES;
 	}
-	else if (array == rescue_lines)
+	else if (array == rescue_lines.data())
 	{
 		return NUM_RESCUE_LINES;
 	}
@@ -485,21 +476,22 @@ struct TechSaleData
 // Unless Hard Mode is enabled.
 static constexpr auto Techprice {75 * BioCreditValueDefault};
 
-TechSaleData tech_sale_catalog[] =
+uqstl::array<TechSaleData, 13> tech_sale_catalog {
 	{
-		{TechId::ModuleBlaster,			Techprice, MelnormePhrase::NewTech1,	 MelnormePhrase::OkBuyNewTech1 },
-		{TechId::LanderSpeed,			  Techprice, MelnormePhrase::NewTech2,  MelnormePhrase::OkBuyNewTech2 },
-		{TechId::ModuleAntimissile,		Techprice, MelnormePhrase::NewTech3,	 MelnormePhrase::OkBuyNewTech3 },
-		{TechId::LanderShieldBio,		  Techprice, MelnormePhrase::NewTech4,  MelnormePhrase::OkBuyNewTech4 },
-		{TechId::LanderCargo,			  Techprice, MelnormePhrase::NewTech5,  MelnormePhrase::OkBuyNewTech5 },
-		{TechId::ModuleBigfueltank,		Techprice, MelnormePhrase::NewTech6,	 MelnormePhrase::OkBuyNewTech6 },
-		{TechId::LanderRapidfire,		  Techprice, MelnormePhrase::NewTech7,  MelnormePhrase::OkBuyNewTech7 },
-		{TechId::LanderShieldQuake,		Techprice, MelnormePhrase::NewTech8,	 MelnormePhrase::OkBuyNewTech8 },
-		{TechId::ModuleTracking,		 Techprice, MelnormePhrase::NewTech9,  MelnormePhrase::OkBuyNewTech9 },
+		{TechId::ModuleBlaster, Techprice, MelnormePhrase::NewTech1, MelnormePhrase::OkBuyNewTech1},
+		{TechId::LanderSpeed, Techprice, MelnormePhrase::NewTech2, MelnormePhrase::OkBuyNewTech2},
+		{TechId::ModuleAntimissile, Techprice, MelnormePhrase::NewTech3, MelnormePhrase::OkBuyNewTech3},
+		{TechId::LanderShieldBio, Techprice, MelnormePhrase::NewTech4, MelnormePhrase::OkBuyNewTech4},
+		{TechId::LanderCargo, Techprice, MelnormePhrase::NewTech5, MelnormePhrase::OkBuyNewTech5},
+		{TechId::ModuleBigfueltank, Techprice, MelnormePhrase::NewTech6, MelnormePhrase::OkBuyNewTech6},
+		{TechId::LanderRapidfire, Techprice, MelnormePhrase::NewTech7, MelnormePhrase::OkBuyNewTech7},
+		{TechId::LanderShieldQuake, Techprice, MelnormePhrase::NewTech8, MelnormePhrase::OkBuyNewTech8},
+		{TechId::ModuleTracking, Techprice, MelnormePhrase::NewTech9, MelnormePhrase::OkBuyNewTech9},
 		{TechId::LanderShieldLightning, Techprice, MelnormePhrase::NewTech10, MelnormePhrase::OkBuyNewTech10},
-		{TechId::LanderShieldHeat,	   Techprice, MelnormePhrase::NewTech11, MelnormePhrase::OkBuyNewTech11},
-		{TechId::ModuleCannon,		   Techprice, MelnormePhrase::NewTech12, MelnormePhrase::OkBuyNewTech12},
-		{TechId::ModuleFurnace,			Techprice, MelnormePhrase::NewTech13, MelnormePhrase::OkBuyNewTech13},
+		{TechId::LanderShieldHeat, Techprice, MelnormePhrase::NewTech11, MelnormePhrase::OkBuyNewTech11},
+		{TechId::ModuleCannon, Techprice, MelnormePhrase::NewTech12, MelnormePhrase::OkBuyNewTech12},
+		{TechId::ModuleFurnace, Techprice, MelnormePhrase::NewTech13, MelnormePhrase::OkBuyNewTech13},
+	 }
 };
 const size_t NUM_TECH_ITEMS = std::size(tech_sale_catalog);
 
@@ -738,7 +730,7 @@ static bool StripShip(uint16_t fuel_required)
 		uint8_t beg_mod {};
 		uint8_t end_mod {};
 		uint16_t worth {};
-		uint8_t module_count[*ModuleType::BombModule0];
+		uqstl::array<uint8_t, *ModuleType::BombModule0> module_count;
 
 		// Bug #567
 		// In order to offer the same deal each time if it is refused, we seed
@@ -1055,7 +1047,7 @@ static bool DeltaCredit(int16_t delta_credit)
 static void CurrentEvents(void)
 {
 	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_EVENTS_INFO_STACK);
-	const MelnormePhrase phraseId {GetLineSafe(ok_buy_event_lines, stack)};
+	const MelnormePhrase phraseId {GetLineSafe(ok_buy_event_lines.data(), stack)};
 	switch (phraseId)
 	{
 		case MelnormePhrase::OkBuyEvent1:
@@ -1074,7 +1066,7 @@ static void CurrentEvents(void)
 static void AlienRaces(void)
 {
 	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK);
-	const MelnormePhrase phraseId {GetLineSafe(ok_buy_alien_race_lines, stack)};
+	const MelnormePhrase phraseId {GetLineSafe(ok_buy_alien_race_lines.data(), stack)};
 	// Two pieces of alien knowledge trigger state changes.
 	switch (phraseId)
 	{
@@ -1122,7 +1114,7 @@ static void AlienRaces(void)
 static void History(void)
 {
 	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK);
-	const MelnormePhrase phraseId {GetLineSafe(ok_buy_history_lines, stack)};
+	const MelnormePhrase phraseId {GetLineSafe(ok_buy_history_lines.data(), stack)};
 	NPCPhrase(phraseId);
 	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK, static_cast<uint32_t>(stack + 1));
 }
@@ -1649,7 +1641,7 @@ static void NatureOfConversation(ResponseRef R)
 	if (R == 0)
 	{
 		uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK2) - 5;
-		NPCPhrase(GetLineSafe(hello_and_down_to_business_lines, stack));
+		NPCPhrase(GetLineSafe(hello_and_down_to_business_lines.data(), stack));
 		if (stack < (NUM_HELLO_LINES - 1))
 		{
 			++stack;
@@ -1736,7 +1728,7 @@ static void NatureOfConversation(ResponseRef R)
 		else
 		{
 			uint8_t num_rescues = uqm::gameState().flag(uqm::GameFlag::MELNORME_RESCUE_COUNT);
-			NPCPhrase(GetLineSafe(rescue_lines, num_rescues));
+			NPCPhrase(GetLineSafe(rescue_lines.data(), num_rescues));
 
 			if (num_rescues < NUM_RESCUE_LINES - 1)
 			{

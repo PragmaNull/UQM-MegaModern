@@ -40,10 +40,11 @@ struct RegVideoDecoder
 	const VideoDecoderFuncs* funcs;
 };
 } // namespace tfb
-static tfb::RegVideoDecoder vd_decoders[MaxRegDecoders + 1] =
+static uqstl::array<tfb::RegVideoDecoder, MaxRegDecoders + 1> vd_decoders {
 	{
-		{true,  true,	 "duk",	&dukv_DecoderVtbl},
-		{false, false, nullptr, nullptr		   }, // null term
+		{true, true, "duk", &dukv_DecoderVtbl},
+		{false, false, nullptr, nullptr}, // null term
+	}
 };
 
 static void vd_computeMasks(uint32_t mask, uint32_t* shift, uint32_t* loss);
@@ -90,7 +91,7 @@ bool VideoDecoder_Init(int flags, int depth, uint32_t Rmask, uint32_t Gmask,
 	// END: adapted from SDL
 
 	// init built-in decoders
-	for (const tfb::RegVideoDecoder* info {vd_decoders}; info->ext; info++)
+	for (const tfb::RegVideoDecoder* info {vd_decoders.data()}; info->ext; info++)
 	{
 		if (!info->funcs->InitModule(flags))
 		{
@@ -110,7 +111,7 @@ void VideoDecoder_Uninit(void)
 {
 	// uninit all decoders
 	// and unregister loaded decoders
-	for (tfb::RegVideoDecoder* info {vd_decoders}; info->used; info++)
+	for (tfb::RegVideoDecoder* info {vd_decoders.data()}; info->used; info++)
 	{
 		if (info->ext) // check if present
 		{
@@ -145,7 +146,7 @@ tfb::RegVideoDecoder* VideoDecoder_Register(const char* fileext, tfb::VideoDecod
 	}
 
 	// check if extension already registered
-	for (info = vd_decoders; info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
+	for (info = vd_decoders.data(); info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
 		 ++info)
 	{
 		// and pick up an empty slot (where available)
@@ -155,7 +156,7 @@ tfb::RegVideoDecoder* VideoDecoder_Register(const char* fileext, tfb::VideoDecod
 		}
 	}
 
-	if (info >= vd_decoders + MaxRegDecoders)
+	if (info >= vd_decoders.data() + MaxRegDecoders)
 	{
 		uqm::log::warn("VideoDecoder_Register(): Decoders limit reached");
 		return nullptr;
@@ -193,7 +194,7 @@ tfb::RegVideoDecoder* VideoDecoder_Register(const char* fileext, tfb::VideoDecod
 
 void VideoDecoder_Unregister(tfb::RegVideoDecoder* regdec)
 {
-	if (regdec < vd_decoders || regdec >= vd_decoders + MaxRegDecoders || !regdec->ext || !regdec->funcs)
+	if (regdec < vd_decoders.data() || regdec >= vd_decoders.data() + MaxRegDecoders || !regdec->ext || !regdec->funcs)
 	{
 		uqm::log::warn("VideoDecoder_Unregister(): "
 					   "Invalid or expired decoder passed");
@@ -209,7 +210,7 @@ const tfb::VideoDecoderFuncs* VideoDecoder_Lookup(const char* fileext)
 {
 	const tfb::RegVideoDecoder* info {};
 
-	for (info = vd_decoders; info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
+	for (info = vd_decoders.data(); info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
 		 ++info)
 		;
 	return info->ext ? info->funcs : nullptr;
@@ -233,7 +234,7 @@ tfb::VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir, const char* 
 	}
 	++pext;
 
-	for (info = vd_decoders; info->used && (!info->ext || strcmp(info->ext, pext) != 0);
+	for (info = vd_decoders.data(); info->used && (!info->ext || strcmp(info->ext, pext) != 0);
 		 ++info)
 		;
 	if (!info->ext)

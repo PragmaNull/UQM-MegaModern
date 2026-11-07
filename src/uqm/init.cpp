@@ -38,11 +38,11 @@
 namespace uqm
 {
 FrameRef stars_in_space;
-FrameRef stars_misc[NumViews];
+uqstl::array<FrameRef, NumViews> stars_misc;
 FrameRef scenery;
-FrameRef asteroid[NumViews];
-FrameRef blast[NumViews];
-FrameRef explosion[NumViews];
+uqstl::array<FrameRef, NumViews> asteroid;
+uqstl::array<FrameRef, NumViews> blast;
+uqstl::array<FrameRef, NumViews> explosion;
 
 
 bool load_animation(FrameRef* pixarray, ResourceName big_res, ResourceName med_res, ResourceName sml_res)
@@ -82,7 +82,7 @@ bool load_animation(FrameRef* pixarray, ResourceName big_res, ResourceName med_r
 bool free_image(FrameRef* pixarray)
 {
 	uint16_t j {};
-	void* already_freed[NumViews];
+	uqstl::array<void*, NumViews> already_freed;
 
 	bool retval {true};
 	for (uint16_t i {0}; i < NumViews; ++i)
@@ -138,7 +138,7 @@ bool InitSpace(void)
 
 		if (IsHd())
 		{
-			if (!load_animation(stars_misc,
+			if (!load_animation(stars_misc.data(),
 								StarmiskBigMaskPmapAnimRes,
 								StarmiskMedMaskPmapAnimRes,
 								StarmiskSmlMaskPmapAnimRes))
@@ -147,7 +147,7 @@ bool InitSpace(void)
 			}
 		}
 
-		if (!load_animation(explosion,
+		if (!load_animation(explosion.data(),
 							BoomBigMaskPmapAnimRes,
 							BoomMedMaskPmapAnimRes,
 							BoomSmlMaskPmapAnimRes))
@@ -155,7 +155,7 @@ bool InitSpace(void)
 			return false;
 		}
 
-		if (!load_animation(blast,
+		if (!load_animation(blast.data(),
 							BlastBigMaskPmapAnimRes,
 							BlastMedMaskPmapAnimRes,
 							BlastSmlMaskPmapAnimRes))
@@ -163,7 +163,7 @@ bool InitSpace(void)
 			return false;
 		}
 
-		if (!load_animation(asteroid,
+		if (!load_animation(asteroid.data(),
 							AsteroidBigMaskPmapAnimRes,
 							AsteroidMedMaskPmapAnimRes,
 							AsteroidSmlMaskPmapAnimRes))
@@ -179,11 +179,11 @@ void UninitSpace(void)
 {
 	if (space_ini_cnt && --space_ini_cnt == 0)
 	{
-		free_image(blast);
-		free_image(explosion);
-		free_image(asteroid);
+		free_image(blast.data());
+		free_image(explosion.data());
+		free_image(asteroid.data());
 
-		free_image(stars_misc);
+		free_image(stars_misc.data());
 
 		DestroyDrawable(ReleaseDrawable(stars_in_space));
 		stars_in_space = 0;
@@ -313,7 +313,7 @@ void UninitShips(void)
 	int i {};
 	ElementHandle hElement {};
 	ElementHandle hNextElement {};
-	Starship* SPtr[NumPlayers];
+	uqstl::array<Starship*, NumPlayers> SPtr;
 
 	StopSound();
 

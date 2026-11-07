@@ -243,7 +243,7 @@ static void ZapToUrquanEncounter(void)
 		FleetInfo* UmgahPtr =
 			LockFleetInfo(&uqm::gameState().game().avail_race_q, hUmgah);
 
-		EncounterPtr->loc_pt = SeedFleetLocation(UmgahPtr, plot_map, *PlotId::Samatra);
+		EncounterPtr->loc_pt = SeedFleetLocation(UmgahPtr, plot_map.data(), *PlotId::Samatra);
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hUmgah);
 
 		EncounterPtr->log_x = UniverseToLogx(EncounterPtr->loc_pt.x);

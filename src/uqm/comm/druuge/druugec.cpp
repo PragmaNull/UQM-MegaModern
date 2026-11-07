@@ -53,8 +53,8 @@ static ConversationData druuge_desc =
 		},
 		DruugeConversationPhrases, /* PlayerPhrases */
 		11, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 
 			{
 				// Biggest flame
@@ -67,7 +67,7 @@ static ConversationData druuge_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				// Flame on the right
 				9,						  /* StartIndex */
 				4,						  /* NumFrames */
@@ -78,7 +78,7 @@ static ConversationData druuge_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				// Smallest flame (behind the biggest flame)
 				13,						  /* StartIndex */
 				6,						  /* NumFrames */
@@ -89,7 +89,7 @@ static ConversationData druuge_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				// Flashing eyes
 				19,						  /* StartIndex */
 				3,						  /* NumFrames */
@@ -100,7 +100,7 @@ static ConversationData druuge_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				22,						/* StartIndex */
 				3,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -110,7 +110,7 @@ static ConversationData druuge_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				25,						/* StartIndex */
 				3,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -120,7 +120,7 @@ static ConversationData druuge_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				28,						/* StartIndex */
 				3,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -130,7 +130,7 @@ static ConversationData druuge_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				31,						  /* StartIndex */
 				2,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -140,7 +140,7 @@ static ConversationData druuge_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				33,														/* StartIndex */
 				7,														/* NumFrames */
 				AnimationFlags::Circular | AnimationFlags::WaitTalking, /* AnimFlags */
@@ -150,7 +150,7 @@ static ConversationData druuge_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				40,						  /* StartIndex */
 				4,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -160,7 +160,7 @@ static ConversationData druuge_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				44,						  /* StartIndex */
 				4,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -170,7 +170,7 @@ static ConversationData druuge_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */

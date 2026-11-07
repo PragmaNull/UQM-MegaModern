@@ -83,7 +83,7 @@ struct WidgetMenuScreen
 struct ChoiceOption
 {
 	const char* optname;
-	const char* tooltip[3];
+	uqstl::array<uqgsl::czstring, 3> tooltip;
 };
 
 struct WidgetChoice
@@ -112,7 +112,7 @@ struct WidgetButton
 	int (*height)(struct Widget* self);
 	int (*width)(struct Widget* self);
 	const char* name;
-	const char* tooltip[3];
+	uqstl::array<uqgsl::czstring, 3> tooltip;
 };
 
 struct WidgetLabel
@@ -141,7 +141,7 @@ struct WidgetSlider
 	int min, max, step;
 	int value;
 	const char* category;
-	const char* tooltip[3];
+	uqstl::array<uqgsl::czstring, 3> tooltip;
 	void (*onChange)(struct WidgetSlider* self);
 };
 
@@ -187,7 +187,7 @@ struct WidgetTextEntry
 	int maxlen;
 	TextEntryWidgetState state;
 	int cursor_pos;
-	const char* tooltip[3];
+	uqstl::array<uqgsl::czstring, 3> tooltip;
 };
 
 struct WidgetControlEntry

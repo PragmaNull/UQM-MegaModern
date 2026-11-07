@@ -368,7 +368,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	InitColorMaps();
 	init_communication();
 	// initAudio (snddriver, soundflags);
-	TFB_SetInputVectors(ImmediateInputState.menu, *MenuKey::NumMenuKeys,
+	TFB_SetInputVectors(ImmediateInputState.menu.data(), *MenuKey::NumMenuKeys,
 						&ImmediateInputState.key[0][0], *BattleKey::NumKeys,
 						uqstl::to_underlying(ControlTemplate::NUM));
 	TFB_InitInput(InputDriver::Sdl, 0);

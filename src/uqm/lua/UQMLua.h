@@ -22,6 +22,7 @@
 #include <cstdio>
 #include <lua.hpp>
 
+#include "core/stl/array.h"
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
 #include "core/stl/stl.h"
@@ -121,6 +122,15 @@ private:
 
 // The Lua support of the running game.
 [[nodiscard]] UQMLua& lua();
+
+// Pushes a new table with the functions of a luaL_Reg list that ends with {nullptr, nullptr}.
+template <size_t N>
+void newLuaLib(lua_State* luaState, const uqstl::array<luaL_Reg, N>& funcs)
+{
+	luaL_checkversion(luaState);
+	lua_createtable(luaState, 0, static_cast<int>(N - 1));
+	luaL_setfuncs(luaState, funcs.data(), 0);
+}
 
 } // namespace uqm
 

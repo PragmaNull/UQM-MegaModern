@@ -186,7 +186,7 @@ inline constexpr auto MaxDisplayElements {150};
 
 inline constexpr auto MaxDisplayPrims {330};
 extern uint16_t DisplayFreeList;
-extern Primitive DisplayArray[MaxDisplayPrims];
+extern uqstl::array<Primitive, MaxDisplayPrims> DisplayArray;
 
 inline uint16_t AllocDisplayPrim()
 {

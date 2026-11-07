@@ -53,9 +53,8 @@ static constexpr auto HangarShipsRow3do {4};
 static constexpr auto HangarY3do {64};
 static constexpr auto HangarDy3do {44};
 
-const int16_t hangar_x_coords_3do[HangarShipsRow3do] =
-	{
-		19, 60, 116, 157};
+const uqstl::array<int16_t, HangarShipsRow3do> hangar_x_coords_3do {
+	19, 60, 116, 157};
 
 // modified PC 6x2 hangar layout
 static constexpr auto HangarShipsRowDos {6};
@@ -67,15 +66,13 @@ static auto HangarDy() { return ResScale(SafeBool(DosBool(84, 76), HangarDy3do))
 // The X positions of the hangar bay doors for each resolution mode.
 // Calculated from the right edge of the left grey border bar on the
 // screen.
-const int16_t hangar_x_coords_uqm[HangarShipsRowDos] =
-	{
-		0, 38, 76, 131, 169, 207};
+const uqstl::array<int16_t, HangarShipsRowDos> hangar_x_coords_uqm {
+	0, 38, 76, 131, 169, 207};
 
-const int16_t hangar_x_coords_dos[HangarShipsRowDos] =
-	{
-		0, 38, 76, 133, 171, 209};
+const uqstl::array<int16_t, HangarShipsRowDos> hangar_x_coords_dos {
+	0, 38, 76, 133, 171, 209};
 
-int16_t hangar_x_coords[HangarShipsRowDos];
+uqstl::array<int16_t, HangarShipsRowDos> hangar_x_coords;
 
 static constexpr auto HangarShips {12};
 static auto HangarShipsRow() { return SafeBool(HangarShipsRowDos, HangarShipsRow3do); }
@@ -135,7 +132,7 @@ struct ShipyardShipsState
 {
 	uint16_t count;	   // Number of buildable ships in the list
 	uint16_t topIndex; // Index of the top ship displayed
-	ShipStatsEntry ShipStats[*RaceId::NumBuildableShips + MaxStowedShips];
+	uqstl::array<ShipStatsEntry, *RaceId::NumBuildableShips + MaxStowedShips> ShipStats;
 };
 
 ShipyardShipsState ShipState;

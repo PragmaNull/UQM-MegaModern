@@ -119,7 +119,7 @@ void DrawToolTips(MenuState* pMS, int answer)
 {
 	GfxText t;
 	stringbank* bank = StringBank_Create();
-	const char* lines[30];
+	uqstl::array<uqgsl::czstring, 30> lines;
 	GfxRect r;
 	GfxStamp s;
 
@@ -138,7 +138,7 @@ void DrawToolTips(MenuState* pMS, int answer)
 	SetContextForeGroundColor(BlackColor);
 
 	t.pStr = GameString(GameStringBase::MainmenuString + 66 + answer);
-	const int line_count {SplitString(t.pStr, '\n', 30, lines, bank)};
+	const int line_count {SplitString(t.pStr, '\n', 30, lines.data(), bank)};
 
 	t.baseline.x = r.corner.x
 				 + ResScale(ResDescale(r.extent.width) >> 1);
@@ -313,7 +313,7 @@ static bool DoDiffChooser(MenuState* pMS)
 static auto MainTextX() { return (CanvasWidth >> 1); }
 static auto MainTextY() { return (ResScale(42) - DosNumScl(20)); }
 
-FrameRef TextCache[5];
+uqstl::array<FrameRef, 5> TextCache;
 
 static void InitPulseText(void)
 {
@@ -949,9 +949,9 @@ bool StartGame(void)
 		{
 			star_array[i] = StarmapArray[i];
 		}
-		Elements = ElementsArray;
-		PlanData = PlanetsArray;
-		constel_array = (const GfxPoint*)ConstellationsArray;
+		Elements = ElementsArray.data();
+		PlanData = PlanetsArray.data();
+		constel_array = ConstellationsArray.data();
 	}
 	PlayerControl[0] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
 	PlayerControl[1] = PlayerControlFlags::Cyborg | PlayerControlFlags::Psytron | PlayerControlFlags::DifficultyAwesome;

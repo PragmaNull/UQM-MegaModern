@@ -36,7 +36,7 @@
 typedef SDL_Surface* NativeCanvas;
 
 // uint8_t x uint8_t weight (mult >> 8) table
-static Uint8 btable[256][256];
+static uqstl::array<uqstl::array<Uint8, 256>, 256> btable;
 
 void TFB_DrawCanvas_Initialize(void)
 {
@@ -240,7 +240,7 @@ void TFB_DrawCanvas_Image(tfb::Image* img, int x, int y, int scale,
 	// only set the new palette if it changed
 	if (NormalPal && cmap && img->colormap_version != cmap->version)
 	{
-		TFB_SetColors((SDL_Surface*)img->NormalImg, cmap->palette->colors, 0, 256);
+		TFB_SetColors((SDL_Surface*)img->NormalImg, cmap->palette->colors.data(), 0, 256);
 	}
 
 	if (scale != 0 && scale != GscaleIdentity)
@@ -253,7 +253,7 @@ void TFB_DrawCanvas_Image(tfb::Image* img, int x, int y, int scale,
 				if (TFB_DrawCanvas_IsPaletted(img->MipmapImg)
 					&& cmap && img->colormap_version != cmap->version)
 				{
-					TFB_SetColors((SDL_Surface*)img->MipmapImg, cmap->palette->colors, 0, 256);
+					TFB_SetColors((SDL_Surface*)img->MipmapImg, cmap->palette->colors.data(), 0, 256);
 				}
 			}
 			else
@@ -522,7 +522,7 @@ void TFB_DrawCanvas_FilledImage(tfb::Image* img, int x, int y, int scale,
 
 		// TODO: generate a 32bpp filled image?
 
-		SDL_Color colors[256];
+		uqstl::array<SDL_Color, 256> colors;
 
 		colors[0] = ColorToNative(color);
 		for (i = 1; i < palette->ncolors; i++)
@@ -530,7 +530,7 @@ void TFB_DrawCanvas_FilledImage(tfb::Image* img, int x, int y, int scale,
 			colors[i] = colors[0];
 		}
 
-		TFB_SetColors(surf, colors, 0, palette->ncolors);
+		TFB_SetColors(surf, colors.data(), 0, palette->ncolors);
 		// reflect the change in *actual* image palette
 		img->colormap_version--;
 	}
@@ -794,7 +794,7 @@ void TFB_DrawCanvas_MaskImage(tfb::Image* img, DrawMode mode, tfb::Canvas target
 		{
 			tfb::ColorMap* cmap = nullptr;
 			cmap = TFB_GetColorMap(img->colormap_index);
-			TFB_SetColors((SDL_Surface*)img->NormalImg, cmap->palette->colors, 0, 256);
+			TFB_SetColors((SDL_Surface*)img->NormalImg, cmap->palette->colors.data(), 0, 256);
 			TFB_ReturnColorMap(cmap);
 		}
 
@@ -1077,14 +1077,14 @@ bool TFB_DrawCanvas_IsPaletted(tfb::Canvas canvas)
 
 void TFB_DrawCanvas_SetPalette(tfb::Canvas target, Color palette[256])
 {
-	SDL_Color colors[256];
+	uqstl::array<SDL_Color, 256> colors;
 
 	for (int i {0}; i < 256; ++i)
 	{
 		colors[i] = ColorToNative(palette[i]);
 	}
 
-	TFB_SetColors((SDL_Surface*)target, colors, 0, 256);
+	TFB_SetColors((SDL_Surface*)target, colors.data(), 0, 256);
 }
 
 int TFB_DrawCanvas_GetTransparentIndex(tfb::Canvas canvas)
@@ -1381,7 +1381,7 @@ void TFB_DrawCanvas_Rescale_Nearest(tfb::Canvas src_canvas, tfb::Canvas dst_canv
 typedef union
 {
 	Uint32 value;
-	Uint8 chan[4];
+	uqstl::array<Uint8, 4> chan;
 	struct
 	{
 		Uint8 r, g, b, a;
@@ -1644,8 +1644,8 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 		// retrieve the fractional portions of y
 		const Uint8 v0 = (sy0 >> 8) & 0xff;
 		const Uint8 v1 = (sy1 >> 8) & 0xff;
-		Uint8 w0[4];
-		Uint8 w1[4]; // pixel weight vectors
+		uqstl::array<Uint8, 4> w0;
+		uqstl::array<Uint8, 4> w1; // pixel weight vectors
 
 		for (x = 0, sx0 = ssx0, sx1 = ssx1;
 			 x < w;
@@ -1662,8 +1662,8 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 			// the ideal pixel (4) is somewhere between these four
 			// and is calculated from these using weight vector (w)
 			// with a dot product
-			pixel_t p0[5];
-			pixel_t p1[5];
+			uqstl::array<pixel_t, 5> p0;
+			uqstl::array<pixel_t, 5> p1;
 
 			w0[0] = btable[255 - u0][255 - v0];
 			w0[1] = btable[u0][255 - v0];
@@ -1723,8 +1723,8 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 											  px1 + 1, py1 + 1);
 			}
 
-			p0[4].c.a = dot_product_8_4(p0, 3, w0);
-			p1[4].c.a = dot_product_8_4(p1, 3, w1);
+			p0[4].c.a = dot_product_8_4(p0.data(), 3, w0.data());
+			p1[4].c.a = dot_product_8_4(p1.data(), 3, w1.data());
 
 			Uint8 res_a {blend_ratio_2(p0[4].c.a, p1[4].c.a, ratio)};
 
@@ -1734,13 +1734,13 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 			}
 			else if (!dst_has_alpha)
 			{ // RGB surface handling
-				p0[4].c.r = dot_product_8_4(p0, 0, w0);
-				p0[4].c.g = dot_product_8_4(p0, 1, w0);
-				p0[4].c.b = dot_product_8_4(p0, 2, w0);
+				p0[4].c.r = dot_product_8_4(p0.data(), 0, w0.data());
+				p0[4].c.g = dot_product_8_4(p0.data(), 1, w0.data());
+				p0[4].c.b = dot_product_8_4(p0.data(), 2, w0.data());
 
-				p1[4].c.r = dot_product_8_4(p1, 0, w1);
-				p1[4].c.g = dot_product_8_4(p1, 1, w1);
-				p1[4].c.b = dot_product_8_4(p1, 2, w1);
+				p1[4].c.r = dot_product_8_4(p1.data(), 0, w1.data());
+				p1[4].c.g = dot_product_8_4(p1.data(), 1, w1.data());
+				p1[4].c.b = dot_product_8_4(p1.data(), 2, w1.data());
 
 				p0[4].c.r = blend_ratio_2(p0[4].c.r, p1[4].c.r, ratio);
 				p0[4].c.g = blend_ratio_2(p0[4].c.g, p1[4].c.g, ratio);
@@ -1768,9 +1768,9 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 						}
 					}
 
-					p0[4].c.r = weight_product_8_4(p0, 0, w0);
-					p0[4].c.g = weight_product_8_4(p0, 1, w0);
-					p0[4].c.b = weight_product_8_4(p0, 2, w0);
+					p0[4].c.r = weight_product_8_4(p0.data(), 0, w0.data());
+					p0[4].c.g = weight_product_8_4(p0.data(), 1, w0.data());
+					p0[4].c.b = weight_product_8_4(p0.data(), 2, w0.data());
 				}
 				if (p1[4].c.a != 0)
 				{
@@ -1782,9 +1782,9 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 						}
 					}
 
-					p1[4].c.r = weight_product_8_4(p1, 0, w1);
-					p1[4].c.g = weight_product_8_4(p1, 1, w1);
-					p1[4].c.b = weight_product_8_4(p1, 2, w1);
+					p1[4].c.r = weight_product_8_4(p1.data(), 0, w1.data());
+					p1[4].c.g = weight_product_8_4(p1.data(), 1, w1.data());
+					p1[4].c.b = weight_product_8_4(p1.data(), 2, w1.data());
 				}
 
 				if (p0[4].c.a != 0 && p1[4].c.a != 0)
@@ -1917,7 +1917,7 @@ void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_can
 		Uint8* src_a = (Uint8*)src->pixels + py * slen;
 		// retrieve the fractional portions of y
 		const Uint8 v = (sy >> 8) & 0xff;
-		Uint8 weight[4]; // pixel weight vectors
+		uqstl::array<Uint8, 4> weight; // pixel weight vectors
 
 		for (x = 0, sx = ssx; x < w; ++x, ++dst_p, sx += fsx)
 		{
@@ -1930,7 +1930,7 @@ void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_can
 			// the ideal pixel (4) is somewhere between these four
 			// and is calculated from these using weight vector (weight)
 			// with a dot product
-			pixel_t p[5];
+			uqstl::array<pixel_t, 5> p;
 
 			weight[0] = btable[255 - u][255 - v];
 			weight[1] = btable[u][255 - v];
@@ -1960,7 +1960,7 @@ void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_can
 				p[3].value = scale_get_pixel(src, mk, ck, px + 1, py + 1);
 			}
 
-			p[4].c.a = dot_product_8_4(p, 3, weight);
+			p[4].c.a = dot_product_8_4(p.data(), 3, weight.data());
 
 			if (p[4].c.a <= alpha_threshold)
 			{
@@ -1968,9 +1968,9 @@ void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_can
 			}
 			else if (!dst_has_alpha)
 			{ // RGB surface handling
-				p[4].c.r = dot_product_8_4(p, 0, weight);
-				p[4].c.g = dot_product_8_4(p, 1, weight);
-				p[4].c.b = dot_product_8_4(p, 2, weight);
+				p[4].c.r = dot_product_8_4(p.data(), 0, weight.data());
+				p[4].c.g = dot_product_8_4(p.data(), 1, weight.data());
+				p[4].c.b = dot_product_8_4(p.data(), 2, weight.data());
 
 				// TODO: we should handle alpha-blending here, but we do
 				//   not know the destination color for blending!
@@ -1992,9 +1992,9 @@ void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_can
 					}
 				}
 
-				p[4].c.r = weight_product_8_4(p, 0, weight);
-				p[4].c.g = weight_product_8_4(p, 1, weight);
-				p[4].c.b = weight_product_8_4(p, 2, weight);
+				p[4].c.r = weight_product_8_4(p.data(), 0, weight.data());
+				p[4].c.g = weight_product_8_4(p.data(), 1, weight.data());
+				p[4].c.b = weight_product_8_4(p.data(), 2, weight.data());
 
 				// error-correct alpha to fully opaque to remove
 				// the often unwanted and unnecessary blending

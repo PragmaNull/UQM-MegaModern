@@ -181,37 +181,39 @@ struct RaceIdMap
 };
 
 // We would eventually want to unhardcode this.
-static RaceIdMap raceIdMap[] = {
-	// Sorted on the name, for the binary search.
-	{/* .idStr = */ "androsynth",  /* .id = */ RaceId::Androsynth },
-	{/* .idStr = */ "arilou",	  /* .id = */ RaceId::Arilou		},
-	{/* .idStr = */ "chenjesu",	/* .id = */ RaceId::Chenjesu	},
-	{/* .idStr = */ "chmmr",		 /* .id = */ RaceId::Chmmr	  },
-	{/* .idStr = */ "druuge",	  /* .id = */ RaceId::Druuge		},
-	{/* .idStr = */ "human",		 /* .id = */ RaceId::Human	  },
-	{/* .idStr = */ "ilwrath",	   /* .id = */ RaceId::Ilwrath	  },
-	{/* .idStr = */ "kohrah",	  /* .id = */ RaceId::BlackUrquan},
-	{/* .idStr = */ "melnorme",	/* .id = */ RaceId::Melnorme	},
-	{/* .idStr = */ "mmrnmhrm",	/* .id = */ RaceId::Mmrnmhrm	},
-	{/* .idStr = */ "mycon",		 /* .id = */ RaceId::Mycon	  },
-	{/* .idStr = */ "orz",		   /* .id = */ RaceId::Orz		  },
-	{/* .idStr = */ "pkunk",		 /* .id = */ RaceId::Pkunk	  },
-	{/* .idStr = */ "samatra",	   /* .id = */ RaceId::Samatra	  },
-	{/* .idStr = */ "shofixti",	/* .id = */ RaceId::Shofixti	},
-	{/* .idStr = */ "slylandro",	 /* .id = */ RaceId::Slylandro  },
-	{/* .idStr = */ "spathi",	  /* .id = */ RaceId::Spathi		},
-	{/* .idStr = */ "supox",		 /* .id = */ RaceId::Supox	  },
-	{/* .idStr = */ "syreen",	  /* .id = */ RaceId::Syreen		},
-	{/* .idStr = */ "thraddash",	 /* .id = */ RaceId::Thraddash  },
-	{/* .idStr = */ "umgah",		 /* .id = */ RaceId::Umgah	  },
-	{/* .idStr = */ "urquandrone", /* .id = */ RaceId::UrquanDrone},
-	{/* .idStr = */ "urquan",	  /* .id = */ RaceId::Urquan		},
-	{/* .idStr = */ "utwig",		 /* .id = */ RaceId::Utwig	  },
-	{/* .idStr = */ "vux",		   /* .id = */ RaceId::Vux		  },
-	{/* .idStr = */ "yehat",		 /* .id = */ RaceId::Yehat	  },
-	{/* .idStr = */ "yehatrebel",  /* .id = */ RaceId::YehatRebel },
-	{/* .idStr = */ "zoqfotpik",	 /* .id = */ RaceId::Zoqfotpik  },
-	// Same as URQUAN_DRONE_SHIP
+static uqstl::array<RaceIdMap, 28> raceIdMap {
+	{
+		// Sorted on the name, for the binary search.
+		{/* .idStr = */ "androsynth", /* .id = */ RaceId::Androsynth},
+		{/* .idStr = */ "arilou", /* .id = */ RaceId::Arilou},
+		{/* .idStr = */ "chenjesu", /* .id = */ RaceId::Chenjesu},
+		{/* .idStr = */ "chmmr", /* .id = */ RaceId::Chmmr},
+		{/* .idStr = */ "druuge", /* .id = */ RaceId::Druuge},
+		{/* .idStr = */ "human", /* .id = */ RaceId::Human},
+		{/* .idStr = */ "ilwrath", /* .id = */ RaceId::Ilwrath},
+		{/* .idStr = */ "kohrah", /* .id = */ RaceId::BlackUrquan},
+		{/* .idStr = */ "melnorme", /* .id = */ RaceId::Melnorme},
+		{/* .idStr = */ "mmrnmhrm", /* .id = */ RaceId::Mmrnmhrm},
+		{/* .idStr = */ "mycon", /* .id = */ RaceId::Mycon},
+		{/* .idStr = */ "orz", /* .id = */ RaceId::Orz},
+		{/* .idStr = */ "pkunk", /* .id = */ RaceId::Pkunk},
+		{/* .idStr = */ "samatra", /* .id = */ RaceId::Samatra},
+		{/* .idStr = */ "shofixti", /* .id = */ RaceId::Shofixti},
+		{/* .idStr = */ "slylandro", /* .id = */ RaceId::Slylandro},
+		{/* .idStr = */ "spathi", /* .id = */ RaceId::Spathi},
+		{/* .idStr = */ "supox", /* .id = */ RaceId::Supox},
+		{/* .idStr = */ "syreen", /* .id = */ RaceId::Syreen},
+		{/* .idStr = */ "thraddash", /* .id = */ RaceId::Thraddash},
+		{/* .idStr = */ "umgah", /* .id = */ RaceId::Umgah},
+		{/* .idStr = */ "urquandrone", /* .id = */ RaceId::UrquanDrone},
+		{/* .idStr = */ "urquan", /* .id = */ RaceId::Urquan},
+		{/* .idStr = */ "utwig", /* .id = */ RaceId::Utwig},
+		{/* .idStr = */ "vux", /* .id = */ RaceId::Vux},
+		{/* .idStr = */ "yehat", /* .id = */ RaceId::Yehat},
+		{/* .idStr = */ "yehatrebel", /* .id = */ RaceId::YehatRebel},
+		{/* .idStr = */ "zoqfotpik", /* .id = */ RaceId::Zoqfotpik},
+		// Same as URQUAN_DRONE_SHIP
+	}
 };
 
 static int RaceIdCompare(const void* id1, const void* id2)
@@ -222,7 +224,7 @@ static int RaceIdCompare(const void* id1, const void* id2)
 RaceId RaceIdStrToIndex(const char* raceIdStr)
 {
 	RaceIdMap key = {/* .idStr = */ raceIdStr, /* .id = */ (RaceId)-1};
-	const RaceIdMap* found = (RaceIdMap*)bsearch(&key, raceIdMap,
+	const RaceIdMap* found = (RaceIdMap*)bsearch(&key, raceIdMap.data(),
 												 std::size(raceIdMap),
 												 sizeof raceIdMap[0], RaceIdCompare);
 
@@ -1119,12 +1121,11 @@ uint16_t Jitter(uint16_t str, uint16_t rand_val)
 
 void JitDebug(FleetInfo* FleetPtr, uint16_t rand_val_x, uint16_t rand_val_y)
 {
-	const static char* const fleet_name[] =
-		{"ERROR", "Arilou", "CHMMR", "Earthling", "Orz", "Pkunk",
-		 "Shofixti", "Spathi", "Supox", "Thraddash", "Utwig", "VUX",
-		 "Yehat", "Melnorme", "Druuge", "Ilwrath", "Mycon", "Slylandro",
-		 "Umgah", "Ur Quan", "ZoqFotPik", "Syreen", "Kohr Ah",
-		 "Androsynth", "Chenjesu", "Mmrnmhrm"};
+	static uqstl::array<const char* const, 26> fleet_name {"ERROR", "Arilou", "CHMMR", "Earthling", "Orz", "Pkunk",
+														   "Shofixti", "Spathi", "Supox", "Thraddash", "Utwig", "VUX",
+														   "Yehat", "Melnorme", "Druuge", "Ilwrath", "Mycon", "Slylandro",
+														   "Umgah", "Ur Quan", "ZoqFotPik", "Syreen", "Kohr Ah",
+														   "Androsynth", "Chenjesu", "Mmrnmhrm"};
 	const uint16_t str = (FleetPtr->actual_strength > 0 ?
 							  FleetPtr->actual_strength :
 							  WarEraStrength(FleetPtr->SpeciesID));

@@ -227,7 +227,7 @@ static void spawn_limpets(Element* ElementPtr)
 	MissileDesc MissileBlock;
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 	MissileBlock.face = StarShipPtr->ShipFacing + HalfCircle;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ElementPtr->playerNr;

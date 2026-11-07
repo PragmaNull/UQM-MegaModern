@@ -212,7 +212,7 @@ struct AnimFilterSet
 {
 	uint8_t NumFilters;
 
-	AnimFilter FilterArray[MaxFilters];
+	uqstl::array<AnimFilter, MaxFilters> FilterArray;
 };
 
 extern AnimFilterSet FilterData;

@@ -195,7 +195,7 @@ ElementHandle weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 			int16_t blast_offs {};
 			uint16_t num_blast_frames {};
 			Element* BlastElementPtr {};
-			extern FrameRef blast[];
+			extern uqstl::array<FrameRef, NumViews> blast;
 
 			PutElement(hBlastElement);
 			LockElement(hBlastElement, &BlastElementPtr);
@@ -224,7 +224,7 @@ ElementHandle weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 			if (num_blast_frames <= AngleToFacing(FullCircle))
 			{
 				BlastElementPtr->life_span = 2;
-				BlastElementPtr->current.image.farray = blast;
+				BlastElementPtr->current.image.farray = blast.data();
 				BlastElementPtr->current.image.frame =
 					SetAbsFrameIndex(blast[0], blast_index);
 			}

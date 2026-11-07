@@ -54,11 +54,11 @@ namespace uqm
 // for EraseRadar()
 
 
-uint8_t battle_counter[NumSides];
+uqstl::array<uint8_t, NumSides> battle_counter;
 // The number of ships still available for battle to each side.
 // A ship that has warped out is no longer available.
 bool instantVictory;
-size_t battleInputOrder[NumSides];
+uqstl::array<size_t, NumSides> battleInputOrder;
 // Indices of the sides in the order their input is processed.
 // Network sides are last so that the sides will never be waiting
 // on eachother, and games with a 0 frame delay are theoretically

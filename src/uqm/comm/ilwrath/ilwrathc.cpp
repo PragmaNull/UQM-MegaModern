@@ -51,8 +51,8 @@ static ConversationData ilwrath_desc =
 		},
 		IlwrathConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				6,						  /* StartIndex */
 				5,						  /* NumFrames */
@@ -63,7 +63,7 @@ static ConversationData ilwrath_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				11,						  /* StartIndex */
 				5,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -73,7 +73,7 @@ static ConversationData ilwrath_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				16,						  /* StartIndex */
 				5,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -83,7 +83,7 @@ static ConversationData ilwrath_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				21,						  /* StartIndex */
 				6,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -93,7 +93,7 @@ static ConversationData ilwrath_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */

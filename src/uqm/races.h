@@ -218,16 +218,16 @@ struct FleetStatus
 
 struct ShipResources
 {
-	ResourceName ship_rsc[NumViews];
-	ResourceName weapon_rsc[NumViews];
-	ResourceName special_rsc[NumViews];
+	uqstl::array<ResourceName, NumViews> ship_rsc;
+	uqstl::array<ResourceName, NumViews> weapon_rsc;
+	uqstl::array<ResourceName, NumViews> special_rsc;
 	CaptainGraphics captain_control;
 	ResourceName victory_ditty_rsc;
 	ResourceName ship_sounds_rsc;
 
-	FrameRef ship[NumViews];
-	FrameRef weapon[NumViews];
-	FrameRef special[NumViews];
+	uqstl::array<FrameRef, NumViews> ship;
+	uqstl::array<FrameRef, NumViews> weapon;
+	uqstl::array<FrameRef, NumViews> special;
 	MusicRef victory_ditty;
 	SoundBankRef ship_sounds;
 	// The index in ship_sounds of the sound of the primary weapon.
@@ -461,11 +461,11 @@ enum class RaceId
 };
 consteval bool isArithmeticEnum(RaceId) { return true; }
 
-inline constexpr Color RaceColors[] {
+inline constexpr uqstl::array<Color, 1> RaceColors {
 	BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53), /* ARILOU_SHIP */
 };
 
-inline constexpr uint16_t RaceShipForComm[] {
+inline constexpr uqstl::array<uint16_t, 30> RaceShipForComm {
 	*RaceId::Arilou,	  /* ARILOU_CONVERSATION */
 	*RaceId::Chmmr,		  /* CHMMR_CONVERSATION */
 	*RaceId::Human,		  /* COMMANDER_CONVERSATION */
@@ -499,7 +499,7 @@ inline constexpr uint16_t RaceShipForComm[] {
 };
 
 constexpr auto LogToIp(const auto& s) { return ((s) << 1); }
-inline constexpr int16_t RaceIpSpeed[] {
+inline constexpr uqstl::array<int16_t, 27> RaceIpSpeed {
 	LogToIp(40), /* ARILOU_SHIP */
 	LogToIp(27), /* CHMMR_SHIP */
 	LogToIp(24), /* HUMAN_SHIP */
@@ -530,7 +530,7 @@ inline constexpr int16_t RaceIpSpeed[] {
 };
 
 constexpr auto LogToHyper(const auto& s) { return (WorldToVelocity(s) >> 1); }
-inline constexpr uint16_t RaceHyperspacePercent[] {
+inline constexpr uqstl::array<uint16_t, 27> RaceHyperspacePercent {
 	20, /* ARILOU_SHIP */
 	0,	/* CHMMR_SHIP */
 	0,	/* HUMAN_SHIP */
@@ -560,7 +560,7 @@ inline constexpr uint16_t RaceHyperspacePercent[] {
 	0,	/* URQUAN_DRONE_SHIP */
 };
 
-inline constexpr uint8_t RaceInterplanetaryPercent[] {
+inline constexpr uqstl::array<uint8_t, 27> RaceInterplanetaryPercent {
 	2,	/* ARILOU_SHIP */
 	0,	/* CHMMR_SHIP */
 	0,	/* HUMAN_SHIP */
@@ -590,7 +590,7 @@ inline constexpr uint8_t RaceInterplanetaryPercent[] {
 	0,	/* URQUAN_DRONE_SHIP */
 };
 
-inline constexpr uint8_t RaceMusicBool[] {
+inline constexpr uqstl::array<uint8_t, 27> RaceMusicBool {
 	1, /* ARILOU_SHIP */
 	1, /* CHMMR_SHIP */
 	0, /* HUMAN_SHIP */
@@ -623,7 +623,7 @@ inline constexpr uint8_t RaceMusicBool[] {
 // How many ships will an Encounter consist of.
 // The first number specifies the minimum, the second the maximum.
 // The chance is 50% for each ship past the minimum to be present.
-inline constexpr uint8_t RaceEncounterMakeup[] {
+inline constexpr uqstl::array<uint8_t, 26> RaceEncounterMakeup {
 	uqm::makeByte(1, 5), /* ARILOU_SHIP */
 	0,					 /* CHMMR_SHIP */
 	0,					 /* HUMAN_SHIP */

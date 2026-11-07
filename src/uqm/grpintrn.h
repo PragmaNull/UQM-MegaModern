@@ -32,7 +32,7 @@ struct BattleGroupHeader
 	//   by going to HSpace and stay there till such time)
 	// star_index is the index of a star this group header
 	//   applies to; ~0 means uninited
-	uint32_t GroupOffset[NumSavedBattleGroups + 1];
+	uqstl::array<uint32_t, NumSavedBattleGroups + 1> GroupOffset;
 	// Absolute offsets of group definitions in a state file
 	// Group 0 is a list of groups present in solarsys
 	//    (RandgrpinfoFile only)

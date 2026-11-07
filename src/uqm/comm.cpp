@@ -102,7 +102,7 @@ struct CommEncounterState
 	uint8_t num_responses;
 	uint8_t cur_response;
 	uint8_t top_response;
-	ResponseEntry response_list[MaxResponses];
+	uqstl::array<ResponseEntry, MaxResponses> response_list;
 
 	char phrase_buf[1024];
 };
@@ -808,7 +808,7 @@ void UpdateDuty(bool talk)
 	UpdateSpeechGraphics();
 }
 
-GfxRect DarkModeRect[6];
+uqstl::array<GfxRect, 6> DarkModeRect;
 
 void InitUIRects(bool state)
 {
@@ -2166,7 +2166,7 @@ uint16_t InitCommunication(Conversation which_comm)
 	return (status);
 }
 
-static constexpr Conversation RaceConversations[] {
+static constexpr uqstl::array<Conversation, 27> RaceConversations {
 	Conversation::Arilou,	   /* ARILOU_SHIP */
 	Conversation::Chmmr,	   /* CHMMR_SHIP */
 	Conversation::Invalid,	   /* HUMAN_SHIP */

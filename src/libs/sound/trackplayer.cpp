@@ -398,7 +398,7 @@ void SpliceMultiTrack(const char* const TrackNames[], const char* TrackText)
 {
 	constexpr auto MaxMultiTracks {20};
 	constexpr auto MaxMultiBuffers {100};
-	tfb::SoundDecoder* track_decs[MaxMultiTracks + 1];
+	uqstl::array<tfb::SoundDecoder*, MaxMultiTracks + 1> track_decs;
 	int tracks {};
 
 	if (!TrackText)
@@ -458,8 +458,8 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 	static char last_track_name[128] = "";
 	static unsigned long dec_offset = 0;
 	constexpr auto MaxPages {50};
-	uqstl::string pages[MaxPages];
-	int32_t time_stamps[MaxPages];
+	uqstl::array<uqstl::string, MaxPages> pages;
+	uqstl::array<int32_t, MaxPages> time_stamps;
 	int num_pages {};
 	int page {};
 
@@ -485,7 +485,7 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 			return;
 		}
 
-		num_pages = SplitSubPages(TrackText, pages, time_stamps, MaxPages);
+		num_pages = SplitSubPages(TrackText, pages.data(), time_stamps.data(), MaxPages);
 		if (num_pages == 0)
 		{
 			uqm::log::warn("SpliceTrack(): Failed to parse subtitles");
@@ -536,7 +536,7 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 
 		uqm::utf8StringCopy(last_track_name, sizeof(last_track_name), TrackName);
 
-		num_pages = SplitSubPages(TrackText, pages, time_stamps, MaxPages);
+		num_pages = SplitSubPages(TrackText, pages.data(), time_stamps.data(), MaxPages);
 		if (num_pages == 0)
 		{
 			uqm::log::warn("SpliceTrack(): Failed to parse sutitles");
@@ -559,7 +559,7 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 
 		if (TimeStamp)
 		{
-			num_timestamps = GetTimeStamps(TimeStamp, time_stamps) + 1;
+			num_timestamps = GetTimeStamps(TimeStamp, time_stamps.data()) + 1;
 			if (num_timestamps < num_pages)
 			{
 				uqm::log::warn("SpliceTrack(): number of timestamps"

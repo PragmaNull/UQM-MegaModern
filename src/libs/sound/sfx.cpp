@@ -104,7 +104,7 @@ void UpdateSoundPosition(uint16_t channel, SoundPosition pos)
 {
 	const float ATTENUATION = 160.0f;
 	const float MIN_DISTANCE = 0.5f;
-	float fpos[3];
+	uqstl::array<float, 3> fpos;
 
 	if (pos.positional)
 	{
@@ -122,7 +122,7 @@ void UpdateSoundPosition(uint16_t channel, SoundPosition pos)
 			fpos[2] *= scale;
 		}
 
-		audio_Sourcefv(soundSource[channel].handle, AudioEnum::Position, fpos);
+		audio_Sourcefv(soundSource[channel].handle, AudioEnum::Position, fpos.data());
 		//log_add (log_Debug, "UpdateSoundPosition(): channel {}, pos {} {}, posobj {:x}",
 		//		channel, pos.x, pos.y, (unsigned int)soundSource[channel].positional_object);
 	}
@@ -130,7 +130,7 @@ void UpdateSoundPosition(uint16_t channel, SoundPosition pos)
 	{
 		fpos[0] = fpos[1] = 0.0f;
 		fpos[2] = -1.0f;
-		audio_Sourcefv(soundSource[channel].handle, AudioEnum::Position, fpos);
+		audio_Sourcefv(soundSource[channel].handle, AudioEnum::Position, fpos.data());
 	}
 }
 

@@ -45,8 +45,8 @@ struct SaveSummaryData
 	uint16_t year_index;
 	uint8_t MCreditLo, MCreditHi;
 	uint8_t NumShips, NumDevices;
-	uint8_t ShipList[MaxBuiltShips];
-	uint8_t DeviceList[MaxExclusiveDevices];
+	uqstl::array<uint8_t, MaxBuiltShips> ShipList;
+	uqstl::array<uint8_t, MaxExclusiveDevices> DeviceList;
 	char SaveName[SaveNameSize];
 	uint8_t res_factor;
 };

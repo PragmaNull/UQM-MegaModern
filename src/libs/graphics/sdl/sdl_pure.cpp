@@ -40,7 +40,7 @@ struct SdlScreenInfo
 };
 } // namespace tfb
 
-static tfb::SdlScreenInfo ScreenTextures[*ScreenBuffer::Count];
+static uqstl::array<tfb::SdlScreenInfo, *ScreenBuffer::Count> ScreenTextures;
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;

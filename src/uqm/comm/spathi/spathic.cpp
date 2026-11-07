@@ -49,8 +49,8 @@ static ConversationData spathi_desc =
 		},
 		SpathiConversationPhrases, /* PlayerPhrases */
 		8, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				1,						  /* StartIndex */
 				6,						  /* NumFrames */
@@ -61,7 +61,7 @@ static ConversationData spathi_desc =
 				GameTicksPerSecond, /* RestartRate */
 				(1 << 1),			/* BlockMask */
 			},
-								{
+			{
 				7,						  /* StartIndex */
 				9,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -71,7 +71,7 @@ static ConversationData spathi_desc =
 				0,		  /* RestartRate */
 				(1 << 0), /* BlockMask */
 			},
-								{
+			{
 				16,						  /* StartIndex */
 				4,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -81,13 +81,13 @@ static ConversationData spathi_desc =
 				GameTicksPerSecond / 15, /* RestartRate */
 				(1 << 4),				 /* BlockMask */
 			},
-								{20,											   /* StartIndex */
+			{20,											   /* StartIndex */
 			 4,												   /* NumFrames */
 			 AnimationFlags::Yoyo,							   /* AnimFlags */
 			 GameTicksPerSecond / 15, GameTicksPerSecond / 15, /* FrameRate */
 			 GameTicksPerSecond / 15, GameTicksPerSecond / 15, /* FrameRate */
 			 (1 << 5)},
-								{
+			{
 				24,					  /* StartIndex */
 				5,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -99,7 +99,7 @@ static ConversationData spathi_desc =
 			},
 
 
-								{
+			{
 				34,					  /* StartIndex */
 				4,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -109,7 +109,7 @@ static ConversationData spathi_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 3),				/* BlockMask */
 			},
-								{
+			{
 				38,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -119,7 +119,7 @@ static ConversationData spathi_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				41,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -129,7 +129,7 @@ static ConversationData spathi_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -646,7 +646,7 @@ static void SpathiNeutral(ResponseRef R);
 
 static void SpathiBefriend(ResponseRef R)
 {
-	SpathiPhrase pStr[2];
+	uqstl::array<SpathiPhrase, 2> pStr;
 
 	uint8_t InfoLeft {false};
 	uint8_t LastStack {0};

@@ -204,8 +204,8 @@ inline constexpr auto NumberOfGasGiants {PlanetType::LastGasGiant - PlanetType::
 //   cast to this struct.
 struct PlanetColorTranslation
 {
-	const int16_t level_tab[3];
-	const uint8_t xlat_tab[256];
+	const uqstl::array<int16_t, 3> level_tab;
+	const uqstl::array<uint8_t, 256> xlat_tab;
 };
 
 struct ElementDeposit
@@ -248,7 +248,7 @@ struct PlanetFrame
 			 * bits 4-7: atmosphere, one of LIGHT, MEDIUM, HEAVY, or
 			 *           (no define for this) super thick.
 			 */
-	ElementDeposit UsefulElements[NumUsefulElements];
+	uqstl::array<ElementDeposit, NumUsefulElements> UsefulElements;
 	/* Minerals on the planet */
 
 	ResourceName CMapInstance;
@@ -279,8 +279,8 @@ struct PlanetData
 
 	const PlanetFrame* PlanDataPtr;
 
-	uint32_t ScanSeed[*ScanType::Count];
-	uint32_t ScanRetrieveMask[*ScanType::Count];
+	uqstl::array<uint32_t, *ScanType::Count> ScanSeed;
+	uqstl::array<uint32_t, *ScanType::Count> ScanRetrieveMask;
 
 	// JMS: This stores the amount of partially scavenged minerals.
 	//
@@ -290,7 +290,7 @@ struct PlanetData
 	// There can be max uint32_t = 32 mineral deposits on the planet, thus the 32.
 	//
 	// This can be later made to support also partially scavenged biodata.
-	uint8_t PartiallyScavengedList[*ScanType::Count][32];
+	uqstl::array<uqstl::array<uint8_t, 32>, *ScanType::Count> PartiallyScavengedList;
 
 	uqm::StringTablePtr DiscoveryStrings {};
 	size_t DiscoveryIndex {};

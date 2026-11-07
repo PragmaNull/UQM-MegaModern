@@ -321,7 +321,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 	int16_t B {};
 	int64_t TwoAsquared {};
 	int64_t dy {};
-	Primitive prim[NumQuads];
+	uqstl::array<Primitive, NumQuads> prim;
 	LargePoint p0;
 	LargePoint p1;
 	const bool use_pointprim = (!scaled && num_off_pixels <= 1);
@@ -423,7 +423,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 				if (quad_visible & FullVisibility)
 				{
-					DrawBatch(prim, StartPrim, BatchFlags::None);
+					DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 				}
 				else
 				{
@@ -481,7 +481,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 					if (render > 0)
 					{
-						DrawBatch(prim, StartPrim, BatchFlags::None);
+						DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 					}
 				}
 				off = num_off_pixels;
@@ -513,7 +513,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 				if (quad_visible & FullVisibility)
 				{
-					DrawBatch(prim, StartPrim, BatchFlags::None);
+					DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 				}
 				else
 				{
@@ -571,7 +571,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 					if (render > 0)
 					{
-						DrawBatch(prim, StartPrim, BatchFlags::None);
+						DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 					}
 				}
 				off = num_off_pixels;
@@ -606,7 +606,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 				if (quad_visible & FullVisibility)
 				{
-					DrawBatch(prim, StartPrim, BatchFlags::None);
+					DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 				}
 				else
 				{
@@ -664,7 +664,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 					if (render > 0)
 					{
-						DrawBatch(prim, StartPrim, BatchFlags::None);
+						DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 					}
 				}
 				off = num_off_pixels;
@@ -696,7 +696,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 				if (quad_visible & FullVisibility)
 				{
-					DrawBatch(prim, StartPrim, BatchFlags::None);
+					DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 				}
 				else
 				{
@@ -754,7 +754,7 @@ void DrawOval(LargeRect* pRect, uint8_t num_off_pixels, bool scaled)
 
 					if (render > 0)
 					{
-						DrawBatch(prim, StartPrim, BatchFlags::None);
+						DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 					}
 				}
 				off = num_off_pixels;
@@ -783,7 +783,7 @@ void DrawFilledOval(LargeRect* pRect)
 	int16_t B {};
 	int64_t TwoAsquared {};
 	int64_t dy {};
-	Primitive prim[NumQuads >> 1];
+	uqstl::array<Primitive, (((NumQuads >> 1)))> prim;
 	GfxPoint first;
 	GfxPoint second;
 	LargePoint p0;
@@ -890,7 +890,7 @@ void DrawFilledOval(LargeRect* pRect)
 
 			if (lines_r > 0)
 			{
-				DrawBatch(prim, StartPrim, BatchFlags::None);
+				DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 			}
 
 			--y;
@@ -939,7 +939,7 @@ void DrawFilledOval(LargeRect* pRect)
 
 		if (lines_r > 0)
 		{
-			DrawBatch(prim, StartPrim, BatchFlags::None);
+			DrawBatch(prim.data(), StartPrim, BatchFlags::None);
 		}
 
 		if (d < 0)

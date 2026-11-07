@@ -87,7 +87,7 @@ struct DuckSoundDecoder
 	uint32_t cbdata;
 	uint32_t dataofs;
 	// decoder stuff
-	int32_t predictors[2];
+	uqstl::array<int32_t, 2> predictors;
 };
 } // namespace tfb
 
@@ -103,7 +103,7 @@ struct DukAud_AudSubframe
 	uint16_t magic; // always 0xf77f
 	uint16_t numsamples;
 	uint16_t tag;
-	uint16_t indices[2]; // initial indices for channels
+	uqstl::array<uint16_t, 2> indices; // initial indices for channels
 };
 
 const static tfb::DecoderFormats* duka_formats = nullptr;
@@ -143,7 +143,7 @@ static int32_t duka_readAudFrameHeader(tfb::DuckSoundDecoder* duka, uint32_t ifr
 
 // This table is from one of the files that came with the original 3do source
 // It's slightly different from the data used by MPlayer.
-static int adpcm_step[89] = {
+static uqstl::array<int, 89> adpcm_step {
 	0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xF,
 	0x10, 0x12, 0x13, 0x15, 0x17, 0x1A, 0x1C, 0x1F,
 	0x22, 0x26, 0x29, 0x2E, 0x32, 0x37, 0x3D, 0x43,
@@ -165,7 +165,7 @@ static int adpcm_step[89] = {
 
 #if 0
 // pertinent tables for IMA ADPCM
-static int adpcm_step[89] = {
+static uqstl::array<int, 89> adpcm_step {
 		7, 8, 9, 10, 11, 12, 13, 14, 16, 17,
 		19, 21, 23, 25, 28, 31, 34, 37, 41, 45,
 		50, 55, 60, 66, 73, 80, 88, 97, 107, 118,
@@ -178,15 +178,15 @@ static int adpcm_step[89] = {
 		};
 #endif
 
-static int adpcm_index[16] = {
+static uqstl::array<int, 16> adpcm_index {
 	-1, -1, -1, -1, 2, 4, 6, 8,
 	-1, -1, -1, -1, 2, 4, 6, 8};
 
 static void decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 						   int32_t* predictors, uint16_t* indices)
 {
-	int32_t step[2];
-	int32_t index[2];
+	uqstl::array<int32_t, 2> step;
+	uqstl::array<int32_t, 2> index;
 	int32_t diff {};
 	int sign {};
 	int32_t delta {};
@@ -256,7 +256,7 @@ static int32_t duka_decodeFrame(tfb::DuckSoundDecoder* duka, DukAud_AudSubframe*
 	}
 
 	decode_nibbles(output, header->numsamples * 2, duka->channels,
-				   duka->predictors, header->indices);
+				   duka->predictors.data(), header->indices.data());
 
 	duka->cbdata += outputsize;
 

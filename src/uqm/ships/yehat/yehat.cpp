@@ -133,7 +133,7 @@ static uint16_t initialize_standard_missiles(Element* ShipPtr, ElementHandle Mis
 	MissileDesc MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;
@@ -329,7 +329,7 @@ static void yehat_preprocess(Element* ElementPtr)
 			 && --ElementPtr->life_span == NormalLife)
 			|| (ElementPtr->life_span == NormalLife
 				&& ElementPtr->next.image.farray
-					   == StarShipPtr->RaceDescPtr->ship_data.special))
+					   == StarShipPtr->RaceDescPtr->ship_data.special.data()))
 		{
 #ifdef NEVER
 			SetPrimType(
@@ -337,7 +337,7 @@ static void yehat_preprocess(Element* ElementPtr)
 				PrimitiveType::Stamp);
 #endif /* NEVER */
 
-			ElementPtr->next.image.farray = StarShipPtr->RaceDescPtr->ship_data.ship;
+			ElementPtr->next.image.farray = StarShipPtr->RaceDescPtr->ship_data.ship.data();
 			ElementPtr->next.image.frame =
 				SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.ship[0],
 								 ElementPtr->next.image.frame);
@@ -355,7 +355,7 @@ static void yehat_preprocess(Element* ElementPtr)
 			{
 				ElementPtr->life_span = ShieldLife + NormalLife;
 
-				ElementPtr->next.image.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+				ElementPtr->next.image.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 				ElementPtr->next.image.frame =
 					SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.special[0],
 									 ElementPtr->next.image.frame);

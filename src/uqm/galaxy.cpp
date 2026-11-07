@@ -45,7 +45,7 @@ static constexpr auto SmlStarCount {90};
 static constexpr auto NumStars {BigStarCount + MedStarCount + SmlStarCount};
 
 LargePoint SpaceOrg;
-static LargePoint log_star_array[NumStars];
+static uqstl::array<LargePoint, NumStars> log_star_array;
 static uint16_t num_sceneries;
 
 static constexpr auto NumStarPlanes {3};
@@ -59,7 +59,7 @@ struct StarPlaneBlock
 	LargePoint* plast_star;
 };
 
-StarPlaneBlock StarBlock[NumStarPlanes] =
+uqstl::array<StarPlaneBlock, NumStarPlanes> StarBlock {
 	{
 		{
 			0,
@@ -67,21 +67,22 @@ StarPlaneBlock StarBlock[NumStarPlanes] =
 			&log_star_array[0],
 			nullptr,
 			nullptr,
-		 },
+		},
 		{
 			0,
 			MedStarCount,
 			&log_star_array[BigStarCount],
 			nullptr,
 			nullptr,
-		 },
+		},
 		{
 			0,
 			SmlStarCount,
 			&log_star_array[BigStarCount + MedStarCount],
 			nullptr,
 			nullptr,
-		 },
+		},
+	 }
 };
 
 static void SortStarBlock(StarPlaneBlock* pStarBlock)
@@ -255,7 +256,7 @@ void InitGalaxy(void)
 	PrimLinks Links {uqm::makeDword(EndOfList, EndOfList)};
 	uint16_t factor {OneShift + MaxReduction + (BackgroundShift - 3)};
 	num_sceneries = 0;
-	for (i = 0, ppt = log_star_array; i < NumStars; ++i, ++ppt)
+	for (i = 0, ppt = log_star_array.data(); i < NumStars; ++i, ++ppt)
 	{
 		uint16_t p {};
 
@@ -358,12 +359,11 @@ static bool CmpMovePoints(const GfxPoint* pt1, const LargePoint* pt2, int32_t dx
 void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 {
 	Primitive* pprim {};
-	const static uint16_t star_counts[] =
-		{
-			BigStarCount,
-			MedStarCount,
-			SmlStarCount};
-	const static uint16_t star_frame_ofs[] = {32 + 26, 26, 0};
+	const static uqstl::array<uint16_t, 3> star_counts {
+		BigStarCount,
+		MedStarCount,
+		SmlStarCount};
+	const static uqstl::array<uint16_t, 3> star_frame_ofs {32 + 26, 26, 0};
 	const bool meleeScaleModeIsStep {uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == tfb::ScaleMode::Step};
 
 	if (view_state != ViewState::Stable)
@@ -380,7 +380,7 @@ void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 		{
 			if (inHQSpace())
 			{
-				for (iss = 0, pprim = DisplayArray; iss < 2; ++iss)
+				for (iss = 0, pprim = DisplayArray.data(); iss < 2; ++iss)
 				{
 					for (i = star_counts[iss]; i > 0; --i, ++pprim)
 					{
@@ -398,8 +398,8 @@ void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 			}
 			else
 			{
-				uint8_t star_object[2];
-				FrameRef star_frame[3];
+				uqstl::array<uint8_t, 2> star_object;
+				uqstl::array<FrameRef, 3> star_frame;
 
 				if (meleeScaleModeIsStep)
 				{
@@ -480,7 +480,7 @@ void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 						}
 					}
 				}
-				for (iss = 0, pprim = DisplayArray; iss < 2; ++iss)
+				for (iss = 0, pprim = DisplayArray.data(); iss < 2; ++iss)
 				{
 					for (i = star_counts[iss]; i > (num_sceneries & iss); --i, ++pprim)
 					{
@@ -498,7 +498,7 @@ void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 
 		if (inHQSpace())
 		{
-			for (i = BigStarCount + MedStarCount, pprim = DisplayArray;
+			for (i = BigStarCount + MedStarCount, pprim = DisplayArray.data();
 				 i > 0; --i, ++pprim)
 			{
 				uint16_t base_index {};
@@ -548,8 +548,8 @@ void MoveGalaxy(ViewState view_state, int32_t dx, int32_t dy)
 			}
 		}
 
-		ppt = log_star_array;
-		for (iss = 0, pprim = DisplayArray, wrap_around = LogSpaceWidth();
+		ppt = log_star_array.data();
+		for (iss = 0, pprim = DisplayArray.data(), wrap_around = LogSpaceWidth();
 			 iss < 3 && (view_state == ViewState::Change || CmpMovePoints(&pprim->Object.Point, ppt, dx, dy, reduction));
 			 ++iss, wrap_around <<= 1, dx <<= 1, dy <<= 1)
 		{

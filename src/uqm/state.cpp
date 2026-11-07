@@ -257,17 +257,17 @@ void GetPlanetInfo(void)
 		uint16_t moon_index {};
 		uint32_t offset {};
 
-		const uint16_t star_index {(uint16_t)(CurStarDescPtr() - star_array)};
+		const uint16_t star_index {(uint16_t)(CurStarDescPtr() - star_array.data())};
 		planet_index = (uint16_t)(pSolarSysState->pBaseDesc->pPrevDesc
-								  - pSolarSysState->PlanetDesc);
-		if (pSolarSysState->pOrbitalDesc->pPrevDesc == pSolarSysState->SunDesc)
+								  - pSolarSysState->PlanetDesc.data());
+		if (pSolarSysState->pOrbitalDesc->pPrevDesc == pSolarSysState->SunDesc.data())
 		{
 			moon_index = 0;
 		}
 		else
 		{
 			moon_index = (uint16_t)(pSolarSysState->pOrbitalDesc
-									- pSolarSysState->MoonDesc + 1);
+									- pSolarSysState->MoonDesc.data() + 1);
 		}
 
 		SeekStateFile(fp, star_index * OffsetSize, SEEK_SET);
@@ -285,7 +285,7 @@ void GetPlanetInfo(void)
 			offset += moon_index * ScanRecordSize;
 
 			SeekStateFile(fp, offset, SEEK_SET);
-			sread_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask,
+			sread_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask.data(),
 					  *ScanType::Count);
 
 			{
@@ -318,17 +318,17 @@ void PutPlanetInfo(void)
 		uint16_t moon_index {};
 		uint32_t offset {};
 
-		const uint16_t star_index {(uint16_t)(CurStarDescPtr() - star_array)};
+		const uint16_t star_index {(uint16_t)(CurStarDescPtr() - star_array.data())};
 		planet_index = (uint16_t)(pSolarSysState->pBaseDesc->pPrevDesc
-								  - pSolarSysState->PlanetDesc);
-		if (pSolarSysState->pOrbitalDesc->pPrevDesc == pSolarSysState->SunDesc)
+								  - pSolarSysState->PlanetDesc.data());
+		if (pSolarSysState->pOrbitalDesc->pPrevDesc == pSolarSysState->SunDesc.data())
 		{
 			moon_index = 0;
 		}
 		else
 		{
 			moon_index = (uint16_t)(pSolarSysState->pOrbitalDesc
-									- pSolarSysState->MoonDesc + 1);
+									- pSolarSysState->MoonDesc.data() + 1);
 		}
 
 		SeekStateFile(fp, star_index * OffsetSize, SEEK_SET);
@@ -336,15 +336,14 @@ void PutPlanetInfo(void)
 
 		if (offset == 0)
 		{ // Scan record not present yet -- init it
-			uint32_t ScanRetrieveMask[*ScanType::Count] =
-				{
-					0,
-					0,
-					0,
-				};
+			uqstl::array<uint32_t, *ScanType::Count> ScanRetrieveMask {
+				0,
+				0,
+				0,
+			};
 
 			// JMS: Init also the partially scavenged mineral deposit values.
-			uint8_t PartiallyScavengedList[*ScanType::Count][32];
+			uqstl::array<uqstl::array<uint8_t, 32>, *ScanType::Count> PartiallyScavengedList;
 			for (l = *ScanType::Mineral; l < ScanType::Count; l++)
 			{
 				for (k = 0; k < 32; k++)
@@ -365,7 +364,7 @@ void PutPlanetInfo(void)
 			{
 				const uint8_t* ar = &(PartiallyScavengedList[0][0]);
 
-				swrite_a32(fp, ScanRetrieveMask, *ScanType::Count);
+				swrite_a32(fp, ScanRetrieveMask.data(), *ScanType::Count);
 
 				// JMS: Also init with zeroes the list of partially scavenged mineral amounts.
 				for (l = *ScanType::Mineral; l < ScanType::Count; l++)
@@ -381,7 +380,7 @@ void PutPlanetInfo(void)
 				{
 					const uint8_t* ar = &(PartiallyScavengedList[0][0]);
 
-					swrite_a32(fp, ScanRetrieveMask, *ScanType::Count);
+					swrite_a32(fp, ScanRetrieveMask.data(), *ScanType::Count);
 
 					// JMS: Ditto for the moons.
 					for (l = *ScanType::Mineral; l < ScanType::Count; l++)
@@ -407,7 +406,7 @@ void PutPlanetInfo(void)
 		SeekStateFile(fp, offset, SEEK_SET);
 
 		// Store which mineral deposits we have already retrieved.
-		swrite_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask,
+		swrite_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask.data(),
 				   *ScanType::Count);
 
 		{

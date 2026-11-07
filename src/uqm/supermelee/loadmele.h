@@ -43,7 +43,7 @@ struct melee_load_state
 	uqstl::vector<uint16_t> entryIndices;
 	uint16_t numIndices;
 
-	MeleeTeam* view[LoadTeamViewSize];
+	uqstl::array<MeleeTeam*, LoadTeamViewSize> view;
 	uint16_t top;
 	// Index of the first entry for the view.
 	uint16_t bot;

@@ -67,9 +67,9 @@ struct NetConnectionError
 struct NetStatistics
 {
 	size_t packetsReceived;
-	size_t packetTypeReceived[*PacketType::Count];
+	uqstl::array<size_t, *PacketType::Count> packetTypeReceived;
 	size_t packetsSent;
-	size_t packetTypeSent[*PacketType::Count];
+	uqstl::array<size_t, *PacketType::Count> packetTypeSent;
 };
 #endif
 

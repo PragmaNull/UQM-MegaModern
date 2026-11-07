@@ -37,7 +37,7 @@ uint16_t PlotIntercept(Element* ElementPtr0, Element* ElementPtr1,
 {
 	int32_t time_y_0 {};
 	int32_t time_y_1 {};
-	LargePoint dst[2];
+	uqstl::array<LargePoint, 2> dst;
 	GfxRect r0 = {
 		{0, 0},
 		{0, 0}
@@ -399,7 +399,7 @@ bool ship_weapons(Element* ShipPtr, Element* OtherPtr, uint16_t margin_of_error)
 	uint16_t n {};
 	uint16_t num_weapons {};
 	Element Ship;
-	ElementHandle Weapon[6];
+	uqstl::array<ElementHandle, 6> Weapon;
 	Starship* StarShipPtr {};
 
 	if (ObjectCloaked(OtherPtr))
@@ -418,7 +418,7 @@ bool ship_weapons(Element* ShipPtr, Element* OtherPtr, uint16_t margin_of_error)
 
 	GetElementStarShip(&Ship, &StarShipPtr);
 	num_weapons =
-		(*StarShipPtr->RaceDescPtr->init_weapon_func)(&Ship, Weapon);
+		(*StarShipPtr->RaceDescPtr->init_weapon_func)(&Ship, Weapon.data());
 
 	if ((n = num_weapons))
 	{
@@ -1146,7 +1146,7 @@ BattleInputState tactical_intelligence(ComputerInputContext* context, Starship* 
 	ElementHandle hElement {};
 	ElementHandle hNextElement {};
 	uint16_t ConcernCounter {};
-	ObjectEvaluation ObjectsOfConcern[10];
+	uqstl::array<ObjectEvaluation, 10> ObjectsOfConcern;
 	bool UltraManeuverable {};
 	Starship* EnemyStarShipPtr {};
 	RaceDesc* EnemyRDPtr {};
@@ -1370,9 +1370,9 @@ BattleInputState tactical_intelligence(ComputerInputContext* context, Starship* 
 				GetElementStarShip(ed.ObjectPtr, &EnemyStarShipPtr);
 				EnemyRDPtr = EnemyStarShipPtr->RaceDescPtr;
 				if (((testFlag(EnemyRDPtr->ship_info.ship_flags, ShipFlags::SeekingWeapon))
-					 && ed.ObjectPtr->next.image.farray != EnemyRDPtr->ship_data.special)
+					 && ed.ObjectPtr->next.image.farray != EnemyRDPtr->ship_data.special.data())
 					|| ((testFlag(EnemyRDPtr->ship_info.ship_flags, ShipFlags::SeekingSpecial))
-						&& ed.ObjectPtr->next.image.farray == EnemyRDPtr->ship_data.special))
+						&& ed.ObjectPtr->next.image.farray == EnemyRDPtr->ship_data.special.data()))
 				{
 					if ((!(testFlag(ed.ObjectPtr->state_flags, (ElementFlags::FiniteLife | ElementFlags::CrewObject)))
 						 && RDPtr->characteristics.max_thrust > DisplayToWorld(ResScale(8)))
@@ -1455,7 +1455,7 @@ BattleInputState tactical_intelligence(ComputerInputContext* context, Starship* 
 		UnlockElement(hElement);
 	}
 
-	RDPtr->cyborg_control.intelligence_func(&Ship, ObjectsOfConcern,
+	RDPtr->cyborg_control.intelligence_func(&Ship, ObjectsOfConcern.data(),
 											ConcernCounter);
 #ifdef DEBUG_CYBORG
 	StarShipPtr->ship_input_state &= ~StatusFlags::Special;

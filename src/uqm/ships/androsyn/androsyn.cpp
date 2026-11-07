@@ -246,7 +246,7 @@ static uint16_t initialize_bubble(Element* ShipPtr, ElementHandle BubbleArray[])
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
@@ -281,7 +281,7 @@ static void androsynth_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsO
 
 	ObjectEvaluation* lpEvalDesc {&ObjectsOfConcern[*IntelObjectIndex::EnemyWeapon]};
 	/* in blazer form */
-	if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
+	if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special.data())
 	{
 		ObjectsOfConcern[*IntelObjectIndex::CrewObject].ObjectPtr = 0;
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == MovementState::Entice)
@@ -386,7 +386,7 @@ static void androsynth_postprocess(Element* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	/* take care of blazer effect */
-	if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
+	if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special.data())
 	{
 		if ((testFlag(StarShipPtr->cur_status_flags, StatusFlags::AndrosynCometToggle))
 			|| StarShipPtr->RaceDescPtr->ship_info.energy_level == 0)
@@ -450,7 +450,7 @@ static void androsynth_preprocess(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
 	cur_status_flags = StarShipPtr->cur_status_flags;
-	if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship)
+	if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship.data())
 	{
 		if (testFlag(cur_status_flags, StatusFlags::Special))
 		{
@@ -463,7 +463,7 @@ static void androsynth_preprocess(Element* ElementPtr)
 				cur_status_flags &= ~StatusFlags::Weapon;
 
 				ElementPtr->next.image.farray =
-					StarShipPtr->RaceDescPtr->ship_data.special;
+					StarShipPtr->RaceDescPtr->ship_data.special.data();
 				ElementPtr->next.image.frame =
 					SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.special[0],
 									 ElementPtr->next.image.frame);
@@ -498,7 +498,7 @@ static void androsynth_preprocess(Element* ElementPtr)
 			ElementPtr->collision_func =
 				GetCustomShipData(StarShipPtr->RaceDescPtr)->collision_func;
 			ElementPtr->next.image.farray =
-				StarShipPtr->RaceDescPtr->ship_data.ship;
+				StarShipPtr->RaceDescPtr->ship_data.ship.data();
 			ElementPtr->next.image.frame =
 				SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.ship[0],
 								 ElementPtr->next.image.frame);

@@ -1298,18 +1298,16 @@ static void ScanPlanet(uint16_t scanType)
 	uint16_t startScan {};
 	uint16_t endScan {};
 	GfxRect r;
-	const static Color textColors[] =
-		{
-			ScanMineralTextColor,
-			ScanEnergyTextColor,
-			ScanBiologicalTextColor,
-		};
-	const static Color tintColors[] =
-		{
-			ScanMineralTintColor,
-			ScanEnergyTintColor,
-			ScanBiologicalTintColor,
-		};
+	const static uqstl::array<Color, 3> textColors {
+		ScanMineralTextColor,
+		ScanEnergyTextColor,
+		ScanBiologicalTextColor,
+	};
+	const static uqstl::array<Color, 3> tintColors {
+		ScanMineralTintColor,
+		ScanEnergyTintColor,
+		ScanBiologicalTintColor,
+	};
 
 	if (scanType == *ScanMenuItem::AutoScan)
 	{
@@ -1731,7 +1729,7 @@ static void generateBioNode(SolarSystemState* system, Element* NodeElementPtr,
 
 void GeneratePlanetSide(void)
 {
-	uint8_t life_init_tab[MaxLifeVariation];
+	uqstl::array<uint8_t, MaxLifeVariation> life_init_tab;
 	// life_init_tab is filled with the creature types of already
 	// selected creatures. If an entry is 0, none has been selected
 	// yet, otherwise, it is 1 more than the creature type.
@@ -1742,7 +1740,7 @@ void GeneratePlanetSide(void)
 		return;
 	}
 
-	memset(life_init_tab, 0, sizeof life_init_tab);
+	memset(life_init_tab.data(), 0, sizeof life_init_tab);
 
 	for (ScanType scan {ScanType::Biological}; scan >= ScanType::Mineral; --scan)
 	{
@@ -1818,7 +1816,7 @@ void GeneratePlanetSide(void)
 				else /* (scan == BIOLOGICAL_SCAN) */
 				{
 					generateBioNode(pSolarSysState, NodeElementPtr,
-									life_init_tab, info.type);
+									life_init_tab.data(), info.type);
 				}
 			}
 

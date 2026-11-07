@@ -158,13 +158,13 @@ int getStringFromChar(uqstl::span<char> out, UniChar ch)
 		return 0;
 	}
 
-	utf8proc_uint8_t encoded[4] {};
-	const auto length {static_cast<int>(utf8proc_encode_char(codepoint, encoded))};
+	uqstl::array<utf8proc_uint8_t, 4> encoded {};
+	const auto length {static_cast<int>(utf8proc_encode_char(codepoint, encoded.data()))};
 	if (static_cast<size_t>(length) > out.size())
 	{
 		return -length;
 	}
-	uqstl::copy_n(reinterpret_cast<const char*>(encoded), length, out.begin());
+	uqstl::copy_n(reinterpret_cast<const char*>(encoded.data()), length, out.begin());
 	return length;
 }
 
@@ -239,9 +239,9 @@ uqstl::string toUpperUtf8(uqstl::string_view str)
 			continue;
 		}
 
-		utf8proc_uint8_t encoded[4] {};
-		const utf8proc_ssize_t encodedLength {utf8proc_encode_char(utf8proc_toupper(codepoint), encoded)};
-		result.append(reinterpret_cast<const char*>(encoded), static_cast<size_t>(encodedLength));
+		uqstl::array<utf8proc_uint8_t, 4> encoded {};
+		const utf8proc_ssize_t encodedLength {utf8proc_encode_char(utf8proc_toupper(codepoint), encoded.data())};
+		result.append(reinterpret_cast<const char*>(encoded.data()), static_cast<size_t>(encodedLength));
 
 		ptr += length;
 		remaining -= length;

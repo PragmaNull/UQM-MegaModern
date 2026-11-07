@@ -59,7 +59,7 @@ static int yehat_rebel_event(int arg);
 static int slylandro_ramp_up(int arg);
 static int slylandro_ramp_down(int arg);
 
-const static char* eventNames[] = {
+static uqstl::array<uqgsl::czstring, 18> eventNames {
 	"ARILOU_ENTRANCE_EVENT",
 	"ARILOU_EXIT_EVENT",
 	"HYPERSPACE_ENCOUNTER_EVENT",
@@ -84,29 +84,29 @@ void initEventSystem(void)
 	// Register functions which can be called from Lua through
 	// 'custom.<functionName>'. Right now, these are the event functions
 	// which have not been converted to Lua yet.
-	const static luaUqm_custom_Function eventFuncs[] = {
-		{"arilou_entrance_event",		  arilou_entrance_event	   },
-		{"arilou_exit_event",			  arilou_exit_event		   },
-		{"hyperspace_encounter_event",  hyperspace_encounter_event },
-		{"kohr_ah_victorious_event",	 kohr_ah_victorious_event	 },
-		{"advance_pkunk_mission",		  advance_pkunk_mission	   },
-		{"advance_thradd_mission",	   advance_thradd_mission	 },
-		{"zoqfot_distress_event",		  zoqfot_distress_event	   },
-		{"zoqfot_death_event",		   zoqfot_death_event		 },
-		{"shofixti_return_event",		  shofixti_return_event	   },
-		{"advance_utwig_supox_mission", advance_utwig_supox_mission},
-		{"kohr_ah_genocide_event",	   kohr_ah_genocide_event	 },
-		{"spathi_shield_event",			spathi_shield_event		   },
-		{"advance_ilwrath_mission",		advance_ilwrath_mission	   },
-		{"advance_mycon_mission",		  advance_mycon_mission	   },
-		{"arilou_umgah_check",		   arilou_umgah_check		 },
-		{"yehat_rebel_event",			  yehat_rebel_event		   },
-		{"slylandro_ramp_up",			  slylandro_ramp_up		   },
-		{"slylandro_ramp_down",			slylandro_ramp_down		   },
-		{nullptr,					   nullptr					 }
-	  };
+	const static uqstl::array<luaUqm_custom_Function, 19> eventFuncs {
+		{{"arilou_entrance_event", arilou_entrance_event},
+		 {"arilou_exit_event", arilou_exit_event},
+		 {"hyperspace_encounter_event", hyperspace_encounter_event},
+		 {"kohr_ah_victorious_event", kohr_ah_victorious_event},
+		 {"advance_pkunk_mission", advance_pkunk_mission},
+		 {"advance_thradd_mission", advance_thradd_mission},
+		 {"zoqfot_distress_event", zoqfot_distress_event},
+		 {"zoqfot_death_event", zoqfot_death_event},
+		 {"shofixti_return_event", shofixti_return_event},
+		 {"advance_utwig_supox_mission", advance_utwig_supox_mission},
+		 {"kohr_ah_genocide_event", kohr_ah_genocide_event},
+		 {"spathi_shield_event", spathi_shield_event},
+		 {"advance_ilwrath_mission", advance_ilwrath_mission},
+		 {"advance_mycon_mission", advance_mycon_mission},
+		 {"arilou_umgah_check", arilou_umgah_check},
+		 {"yehat_rebel_event", yehat_rebel_event},
+		 {"slylandro_ramp_up", slylandro_ramp_up},
+		 {"slylandro_ramp_down", slylandro_ramp_down},
+		 {nullptr, nullptr}}
+	};
 
-	uqm::lua().beginEvents(eventFuncs, EventScriptRes);
+	uqm::lua().beginEvents(eventFuncs.data(), EventScriptRes);
 }
 
 void uninitEventSystem(void)
@@ -297,8 +297,8 @@ static int advance_pkunk_mission(int arg)
 	FleetInfoHandle hPkunk {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Pkunk)};
 	FleetInfo* PkunkPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hPkunk)};
 
-	const GfxPoint yehat = SeedFleetLocation(PkunkPtr, plot_map, *PlotId::Yehat);
-	const GfxPoint pkunk = SeedFleetLocation(PkunkPtr, plot_map, 0);
+	const GfxPoint yehat = SeedFleetLocation(PkunkPtr, plot_map.data(), *PlotId::Yehat);
+	const GfxPoint pkunk = SeedFleetLocation(PkunkPtr, plot_map.data(), 0);
 
 	if (PkunkPtr->actual_strength)
 	{
@@ -372,11 +372,11 @@ static int advance_thradd_mission(int arg)
 
 		if (MissionState < 2)
 		{ /* attacking */
-			loc = SeedFleetLocation(ThraddPtr, plot_map, *PlotId::Samatra);
+			loc = SeedFleetLocation(ThraddPtr, plot_map.data(), *PlotId::Samatra);
 		}
 		else
 		{ /* returning */
-			loc = SeedFleetLocation(ThraddPtr, plot_map, 0);
+			loc = SeedFleetLocation(ThraddPtr, plot_map.data(), 0);
 		}
 
 		if (MissionState == 1)
@@ -469,7 +469,7 @@ static int shofixti_return_event(int arg)
 	if (IsExtended())
 	{
 		ShofixtiPtr->actual_strength = 150 / SphereRadiusIncrement * 2;
-		ShofixtiPtr->loc = SeedFleetLocation(ShofixtiPtr, plot_map, *PlotId::Home);
+		ShofixtiPtr->loc = SeedFleetLocation(ShofixtiPtr, plot_map.data(), *PlotId::Home);
 		StartSphereTracking(RaceId::Shofixti);
 		ShofixtiPtr->growth = 1;
 		ShofixtiPtr->growth_fract = 0;
@@ -545,14 +545,14 @@ static int advance_utwig_supox_mission(int arg)
 			if (MissionState == 0)
 			{
 				// Set utwig and supox to their samatra attack point
-				utwig = SeedFleetLocation(UtwigPtr, plot_map, *PlotId::Samatra);
-				supox = SeedFleetLocation(SupoxPtr, plot_map, *PlotId::Samatra);
+				utwig = SeedFleetLocation(UtwigPtr, plot_map.data(), *PlotId::Samatra);
+				supox = SeedFleetLocation(SupoxPtr, plot_map.data(), *PlotId::Samatra);
 			}
 			else
 			{
 				// Send utwig and supox home
-				utwig = SeedFleetLocation(UtwigPtr, plot_map, 0);
-				supox = SeedFleetLocation(SupoxPtr, plot_map, 0);
+				utwig = SeedFleetLocation(UtwigPtr, plot_map.data(), 0);
+				supox = SeedFleetLocation(SupoxPtr, plot_map.data(), 0);
 
 				UtwigPtr->growth = 0;
 				UtwigPtr->growth_fract = 0;
@@ -747,8 +747,8 @@ static int advance_ilwrath_mission(int arg)
 	FleetInfo* IlwrathPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hIlwrath)};
 	FleetInfoHandle hThradd {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Thraddash)};
 	FleetInfo* ThraddPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd)};
-	const GfxPoint thradd_home = SeedFleetLocation(ThraddPtr, plot_map, 0);
-	const GfxPoint conflict = SeedFleetLocation(IlwrathPtr, plot_map, *PlotId::Thradd);
+	const GfxPoint thradd_home = SeedFleetLocation(ThraddPtr, plot_map.data(), 0);
+	const GfxPoint conflict = SeedFleetLocation(IlwrathPtr, plot_map.data(), *PlotId::Thradd);
 	if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 	{
 		IlwrathPtr->actual_strength = 0;
@@ -847,8 +847,8 @@ static int advance_mycon_mission(int arg)
 	FleetInfoHandle hMycon {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Mycon)};
 	FleetInfo* MyconPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hMycon)};
 
-	const GfxPoint home = SeedFleetLocation(MyconPtr, plot_map, 0);
-	const GfxPoint trap = SeedFleetLocation(MyconPtr, plot_map, *PlotId::MyconTrap);
+	const GfxPoint home = SeedFleetLocation(MyconPtr, plot_map.data(), 0);
+	const GfxPoint trap = SeedFleetLocation(MyconPtr, plot_map.data(), *PlotId::MyconTrap);
 
 	if (MyconPtr->actual_strength)
 	{
@@ -867,7 +867,7 @@ static int advance_mycon_mission(int arg)
 				FleetInfo* SyreenPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen)};
 				if (SyreenPtr)
 				{
-					const GfxPoint syra = SeedFleetLocation(SyreenPtr, plot_map, 0);
+					const GfxPoint syra = SeedFleetLocation(SyreenPtr, plot_map.data(), 0);
 					SetRaceDest(*RaceId::Syreen, syra.x, syra.y, 30, (uint8_t)~0);
 					SyreenPtr->growth = 0;
 					SyreenPtr->growth_fract = 0;
@@ -932,7 +932,7 @@ static int yehat_rebel_event(int arg)
 	FleetInfo* RoyalistPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hRoyalist)};
 	RoyalistPtr->actual_strength = RoyalistPtr->actual_strength * 2 / 3;
 	RebelPtr->actual_strength = RoyalistPtr->actual_strength;
-	RebelPtr->loc = SeedFleetLocation(RebelPtr, plot_map, *PlotId::Yehat);
+	RebelPtr->loc = SeedFleetLocation(RebelPtr, plot_map.data(), *PlotId::Yehat);
 	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hRoyalist);
 	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hRebel);
 	StartSphereTracking(RaceId::YehatRebel);

@@ -46,7 +46,7 @@ struct keybinding
 
 struct keypool
 {
-	keybinding pool[PoolChunkSize];
+	uqstl::array<keybinding, PoolChunkSize> pool;
 	int remaining;
 	struct keypool* next;
 };

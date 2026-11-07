@@ -159,7 +159,7 @@ static uint16_t initialize_turret_missile(Element* ShipPtr, ElementHandle Missil
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 
 	LockElement(GetSuccElement(ShipPtr), &TurretPtr);
 	if (TurretPtr->turn_wait == 0
@@ -207,7 +207,7 @@ static uint16_t initialize_turret_missile(Element* ShipPtr, ElementHandle Missil
 
 static uint8_t count_marines(Starship* StarShipPtr, bool FindSpot)
 {
-	uint8_t id_use[MaxMarines];
+	uqstl::array<uint8_t, MaxMarines> id_use;
 	ElementHandle hElement {};
 	ElementHandle hNextElement {};
 
@@ -224,7 +224,7 @@ static uint8_t count_marines(Starship* StarShipPtr, bool FindSpot)
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetPredElement(ElementPtr);
-		if (ElementPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special
+		if (ElementPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special.data()
 			&& ElementPtr->life_span
 			&& !(testFlag(ElementPtr->state_flags, (ElementFlags::FiniteLife | ElementFlags::Disappearing))))
 		{
@@ -347,22 +347,21 @@ static void ion_preprocess(Element* ElementPtr)
 	 * entries. It then used some if statements to skip over these.
 	 * The current behaviour is the same as the old behavior.
 	 */
-	const static Color colorTable[] =
-		{
-			BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
-			//BuildColor (MakeRgb15 (0x1F, 0x11, 0x00), 0x7b),
-			BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
-			//BuildColor (MakeRgb15 (0x1F, 0x0A, 0x00), 0x7d),
-			//BuildColor (MakeRgb15 (0x1F, 0x07, 0x00), 0x7e),
-			BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7f),
+	const static uqstl::array<Color, 5> colorTable {
+		BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
+		//BuildColor (MakeRgb15 (0x1F, 0x11, 0x00), 0x7b),
+		BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
+		//BuildColor (MakeRgb15 (0x1F, 0x0A, 0x00), 0x7d),
+		//BuildColor (MakeRgb15 (0x1F, 0x07, 0x00), 0x7e),
+		BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7f),
 
-			//BuildColor (MakeRgb15 (0x1F, 0x00, 0x00), 0x2a),
-			BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2b),
-			//BuildColor (MakeRgb15 (0x17, 0x00, 0x00), 0x2c),
-			BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
-			//BuildColor (MakeRgb15 (0x0F, 0x00, 0x00), 0x2e),
-			//BuildColor (MakeRgb15 (0x0B, 0x00, 0x00), 0x2f),
-		};
+		//BuildColor (MakeRgb15 (0x1F, 0x00, 0x00), 0x2a),
+		BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2b),
+		//BuildColor (MakeRgb15 (0x17, 0x00, 0x00), 0x2c),
+		BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
+		//BuildColor (MakeRgb15 (0x0F, 0x00, 0x00), 0x2e),
+		//BuildColor (MakeRgb15 (0x0B, 0x00, 0x00), 0x2f),
+	};
 	const size_t colorTabCount = std::size(colorTable);
 
 	ElementPtr->colorCycleIndex++;
@@ -966,7 +965,7 @@ static void turret_postprocess(Element* ElementPtr)
 							+ Sine(facing,
 								   DisplayToWorld(TurretOffset()));
 						TurretEffectPtr->current.image.farray =
-							StarShipPtr->RaceDescPtr->ship_data.special;
+							StarShipPtr->RaceDescPtr->ship_data.special.data();
 						TurretEffectPtr->current.image.frame =
 							SetAbsFrameIndex(
 								StarShipPtr->RaceDescPtr->ship_data.special[0],
@@ -1024,7 +1023,7 @@ static void turret_postprocess(Element* ElementPtr)
 					ShipPtr->current.location.y
 					- Sine(facing, DisplayToWorld(TurretOffset() << ((resolutionFactor + 1) / 2)));
 				SpaceMarinePtr->current.image.farray =
-					StarShipPtr->RaceDescPtr->ship_data.special;
+					StarShipPtr->RaceDescPtr->ship_data.special.data();
 				SpaceMarinePtr->current.image.frame = SetAbsFrameIndex(
 					StarShipPtr->RaceDescPtr->ship_data.special[0], 20);
 
@@ -1092,7 +1091,7 @@ static void orz_preprocess(Element* ElementPtr)
 			TurretPtr->state_flags = ElementFlags::FiniteLife | ElementFlags::Nonsolid | ElementFlags::IgnoreSimilar;
 			TurretPtr->life_span = 1;
 			TurretPtr->current.image.farray =
-				StarShipPtr->RaceDescPtr->ship_data.special;
+				StarShipPtr->RaceDescPtr->ship_data.special.data();
 			TurretPtr->current.image.frame = SetAbsFrameIndex(
 				StarShipPtr->RaceDescPtr->ship_data.special[0],
 				StarShipPtr->ShipFacing);

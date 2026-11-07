@@ -81,6 +81,6 @@ struct SoundSource
 };
 } // namespace tfb
 
-extern tfb::SoundSource soundSource[];
+extern uqstl::array<tfb::SoundSource, NumSoundsources> soundSource;
 
 #endif // UQM_LIBS_SOUND_SNDINTRN_H

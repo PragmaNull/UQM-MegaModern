@@ -50,8 +50,8 @@ static ConversationData utwig_desc =
 		},
 		UtwigConversationPhrases, /* PlayerPhrases */
 		16, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				4,					  /* StartIndex */
 				3,					  /* NumFrames */
@@ -62,7 +62,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				7,					  /* StartIndex */
 				4,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -72,7 +72,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 2),				/* BlockMask */
 			},
-								{
+			{
 				11, /* StartIndex */
 				2,	/* NumFrames */
 				AnimationFlags::Yoyo
@@ -83,7 +83,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 1),				/* BlockMask */
 			},
-								{
+			{
 				13,						  /* StartIndex */
 				5,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -93,7 +93,7 @@ static ConversationData utwig_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				18,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -103,7 +103,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				20,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -113,7 +113,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				22,						/* StartIndex */
 				3,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -123,7 +123,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				25,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -133,7 +133,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				27,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -143,7 +143,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				30,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -153,7 +153,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				32,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -163,7 +163,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				34,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -173,7 +173,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				36,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -183,7 +183,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				38,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -193,7 +193,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				40,						/* StartIndex */
 				2,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -203,7 +203,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				42,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -213,7 +213,7 @@ static ConversationData utwig_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -569,7 +569,7 @@ static void AfterKohrAh(ResponseRef R)
 static void NeutralUtwig(ResponseRef R)
 {
 	uint8_t i {};
-	UtwigPhrase pStr[4];
+	uqstl::array<UtwigPhrase, 4> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = UtwigPhrase::NullPhrase;
@@ -705,7 +705,7 @@ static void NeutralUtwig(ResponseRef R)
 
 static void BombWorld(ResponseRef R)
 {
-	UtwigPhrase pStr[2];
+	uqstl::array<UtwigPhrase, 2> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = UtwigPhrase::NullPhrase;

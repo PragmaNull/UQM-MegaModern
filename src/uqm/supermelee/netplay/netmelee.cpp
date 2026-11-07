@@ -45,7 +45,7 @@ namespace uqm
 ////////////////////////////////////////////////////////////////////////////
 
 
-NetConnection* netConnections[NumPlayers];
+uqstl::array<NetConnection*, NumPlayers> netConnections;
 size_t numNetConnections;
 
 void addNetConnection(NetConnection* conn, int playerNr)

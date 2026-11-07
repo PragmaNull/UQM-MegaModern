@@ -163,7 +163,7 @@ void LoadFleetInfo(void)
 						  &MasterPtr->Fleet);
 			UnlockMasterShip(&master_q, hMasterShip);
 			// If the game is seeded, move the fleet to starting position
-			SeedFleet(FleetPtr, plot_map);
+			SeedFleet(FleetPtr, plot_map.data());
 			// Rebel special case
 			if (i == RaceId::YehatRebel)
 			{
@@ -489,7 +489,7 @@ void SeedDEBUG()
 	const uqm::GameSeed save {uqm::currentSeed()};
 	uqm::GameSeed sample {save};
 	//uint16_t histogram[100] = {[0 ... 99] = 0};
-	uint16_t histogram[100] = {0};
+	uqstl::array<uint16_t, 100> histogram {};
 	uint16_t decisec {};
 	clock_t start_clock {};
 	bool myRNG = false;
@@ -510,11 +510,11 @@ void SeedDEBUG()
 		uqm::gameState().setSeed(sample);
 		start_clock = clock();
 		fmt::print(stderr, "\n\n\nStarting seed {}... ", uqm::currentSeed().value);
-		InitPlot(plot_map);
+		InitPlot(plot_map.data());
 		fmt::print(stderr, "seeding stars {}... ", uqm::currentSeed().value);
-		SeedStarmap(star_array);
+		SeedStarmap(star_array.data());
 		fmt::print(stderr, "seeding plots {}... ", uqm::currentSeed().value);
-		if (SeedPlot(plot_map, star_array) < PlotId::NumPlots)
+		if (SeedPlot(plot_map.data(), star_array.data()) < PlotId::NumPlots)
 		{
 			fmt::print(stderr, "Failed to seed {}. ", uqm::currentSeed().value);
 			decisec = 98;
@@ -561,7 +561,7 @@ bool InitStarseed(bool newgame)
 	SeedDEBUG();
 	fmt::print(stderr, "CurrentActivity {}\n", uqm::currentActivity());
 #endif
-	DefaultStarmap(star_array);
+	DefaultStarmap(star_array.data());
 	if (!StarGenRNG)
 	{
 #ifdef DEBUG_STARSEED
@@ -574,8 +574,8 @@ bool InitStarseed(bool newgame)
 	{
 		// Here we will split off, provide default plotmap, return
 		// This makes it easier to integrate seemlessly old vs new
-		DefaultPlot(plot_map, star_array);
-		DefaultQuasispace(portal_map);
+		DefaultPlot(plot_map.data(), star_array.data());
+		DefaultQuasispace(portal_map.data());
 		// Done with StarGenRNG for now; will create later if moving fleets
 		StarGenRNG.reset();
 		return true;
@@ -585,31 +585,31 @@ bool InitStarseed(bool newgame)
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Setting MQR shuffle.\n");
 #endif
-		DefaultPlot(plot_map, star_array);
-		InitMelnormeRainbow(plot_map);
+		DefaultPlot(plot_map.data(), star_array.data());
+		InitMelnormeRainbow(plot_map.data());
 	}
 	else // optSeedType == OPTVAL_STAR
 	{
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Setting full plot shuffle.\n");
 #endif
-		InitPlot(plot_map);
+		InitPlot(plot_map.data());
 	}
 	fmt::print(stderr, "Starting map generation using seed {}.\n",
 			   uqm::currentSeed().value);
-	SeedStarmap(star_array);
+	SeedStarmap(star_array.data());
 	if (uqm::currentActivity() || !newgame)
 	{
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "*+*+* LOADING *+*+*\n");
 #endif
-		if (SeedPlot(plot_map, star_array) != PlotId::NumPlots)
+		if (SeedPlot(plot_map.data(), star_array.data()) != PlotId::NumPlots)
 		{
 			fmt::print(stderr, "Seed Plot Failed.\n");
 			StarGenRNG.reset();
 			return false;
 		}
-		if (!SeedQuasispace(portal_map, plot_map, star_array))
+		if (!SeedQuasispace(portal_map.data(), plot_map.data(), star_array.data()))
 		{
 			fmt::print(stderr, "Seed Quasisapce Failed.\n");
 			StarGenRNG.reset();
@@ -625,13 +625,13 @@ bool InitStarseed(bool newgame)
 		// if it fails to seed the plot we need to roll the starmap too
 		// otherwise load game will not be correct, it will have other
 		// seed's stars and this seed's plot.  Boo.
-		while (SeedPlot(plot_map, star_array) != PlotId::NumPlots && i < 100)
+		while (SeedPlot(plot_map.data(), star_array.data()) != PlotId::NumPlots && i < 100)
 		{
 			fmt::print(stderr, "Seed {} failed ({}).\n", uqm::currentSeed().value, ++i);
 			uqm::GameSeed nextSeed {uqm::currentSeed()};
 			++nextSeed.value;
 			uqm::gameState().setSeed(nextSeed);
-			SeedStarmap(star_array);
+			SeedStarmap(star_array.data());
 		}
 		if (i >= 100)
 		{
@@ -639,7 +639,7 @@ bool InitStarseed(bool newgame)
 			StarGenRNG.reset();
 			return false;
 		}
-		if (!SeedQuasispace(portal_map, plot_map, star_array))
+		if (!SeedQuasispace(portal_map.data(), plot_map.data(), star_array.data()))
 		{
 			fmt::print(stderr, "Seed Quasisapce Failed.\n");
 			StarGenRNG.reset();

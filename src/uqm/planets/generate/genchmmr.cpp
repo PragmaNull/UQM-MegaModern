@@ -88,7 +88,7 @@ static bool GenerateChmmr_generatePlanets(SolarSystemState* solarSys)
 					(RandVal % (MaxGenPlanets - PByte) + PByte);
 
 				FillOrbits(solarSys, pSunDesc->NumPlanets,
-						   solarSys->PlanetDesc, false);
+						   solarSys->PlanetDesc.data(), false);
 				GeneratePlanets(solarSys);
 			}
 			else

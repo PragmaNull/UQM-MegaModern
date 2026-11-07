@@ -54,7 +54,7 @@ enum class OutfitMenuItem
 };
 consteval bool isArithmeticEnum(OutfitMenuItem) { return true; }
 
-GfxPoint lander_pos[MaxLanders];
+uqstl::array<GfxPoint, MaxLanders> lander_pos;
 FontRef ModuleFont;
 
 static void InitializeDOSLanderPos(void)
@@ -95,7 +95,7 @@ static constexpr auto MaxVisModules {5};
 
 struct ModulesMenuState
 {
-	uint8_t list[*ModuleType::NumPurchaseModules];
+	uqstl::array<uint8_t, *ModuleType::NumPurchaseModules> list;
 	// List of all modules player has
 	uint16_t count;
 	// Number of modules in the list
@@ -1439,7 +1439,7 @@ ExitOutfit:
 				if (DosMenu())
 				{
 					memset(&ModuleState, 0, sizeof ModuleState);
-					ModuleState.count = InventoryModules(ModuleState.list,
+					ModuleState.count = InventoryModules(ModuleState.list.data(),
 														 *ModuleType::NumPurchaseModules);
 				}
 

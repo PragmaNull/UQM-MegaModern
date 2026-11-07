@@ -911,12 +911,12 @@ bool GetInitialMeleeStarShips(StarshipHandle* result)
 bool GetNextMeleeStarShip(uint16_t which_player, StarshipHandle* result)
 {
 	uint16_t playerMask {};
-	StarshipHandle ships[NumPlayers];
+	uqstl::array<StarshipHandle, NumPlayers> ships;
 
 	DrawPickMeleeFrame(which_player);
 
 	playerMask = 1 << which_player;
-	const bool ok {GetMeleeStarShips(playerMask, ships)};
+	const bool ok {GetMeleeStarShips(playerMask, ships.data())};
 	if (ok)
 	{
 		*result = ships[which_player];

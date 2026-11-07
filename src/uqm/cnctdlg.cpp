@@ -52,11 +52,11 @@ struct ConnectDialogState
 static void DrawConnectDialog(void);
 
 static WidgetMenuScreen menu;
-static WidgetButton buttons[3];
+static uqstl::array<WidgetButton, 3> buttons;
 static WidgetSlider slider;
-static WidgetTextEntry texts[2];
+static uqstl::array<WidgetTextEntry, 2> texts;
 
-static Widget* menu_widgets[] = {
+static uqstl::array<Widget*, 6> menu_widgets {
 	(Widget*)&buttons[1],
 	(Widget*)&texts[0],
 	(Widget*)&buttons[0],
@@ -231,7 +231,7 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 	{ // editing state
 		uint16_t i {};
 		GfxRect text_r;
-		uint8_t char_deltas[WidgetTextentryWidth];
+		uqstl::array<uint8_t, WidgetTextentryWidth> char_deltas;
 		GfxRect r;
 		int16_t leading {};
 
@@ -249,7 +249,7 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 		r.extent.width = McdWidth() - r.corner.x - ResScale(10);
 		r.extent.height = leading - ResScale(1);
 
-		TextRect(&t, &text_r, char_deltas);
+		TextRect(&t, &text_r, char_deltas.data());
 #if 0
 		// XXX: this should potentially be used in ChangeCallback
 		if ((text_r.extent.width + 2) >= r.extent.width)
@@ -265,7 +265,7 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 		DrawFilledRectangle(&r);
 
 		// calculate the cursor position and draw it
-		const uint8_t* pchar_deltas {char_deltas};
+		const uint8_t* pchar_deltas {char_deltas.data()};
 		for (i = self->cursor_pos; i > 0; --i)
 		{
 			r.corner.x += (int16_t)*pchar_deltas++;
@@ -482,7 +482,7 @@ static void CreateWidgets(void)
 	menu.height = Widget_HeightFullScreen;
 	menu.width = Widget_WidthFullScreen;
 	menu.num_children = 6;
-	menu.child = menu_widgets;
+	menu.child = menu_widgets.data();
 	menu.handleEvent = Widget_HandleEventMenuScreen;
 
 	auto& netplayOptions {uqm::UQMOptions::getInstance().getNetplayOptions()};

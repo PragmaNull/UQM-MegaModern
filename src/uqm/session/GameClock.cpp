@@ -19,7 +19,7 @@ constexpr uint8_t c_startDay {17};
 // 'month' is 1 for January.
 [[nodiscard]] uint8_t daysInMonth(uint16_t month, uint16_t year)
 {
-	static constexpr uint8_t c_daysInMonth[12] {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	static constexpr uqstl::array<uint8_t, 12> c_daysInMonth {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	if (month == 2 && isLeapYear(year))
 	{
 		return 29;

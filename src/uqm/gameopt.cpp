@@ -313,9 +313,9 @@ static bool DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 	else
 	{ // editing state
 		GfxRect text_r;
-		uint8_t char_deltas[SisNameSize];
+		uqstl::array<uint8_t, SisNameSize> char_deltas;
 
-		TextRect(&lf, &text_r, char_deltas);
+		TextRect(&lf, &text_r, char_deltas.data());
 
 		if ((text_r.extent.width + ResScale(2)) >= r.extent.width)
 		{ // the text does not fit the input box size and so
@@ -332,7 +332,7 @@ static bool DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 			DrawBorder(BorderFrameIndex::SisStatRepair);
 		}
 
-		const uint8_t* pchar_deltas {char_deltas};
+		const uint8_t* pchar_deltas {char_deltas.data()};
 		for (uint16_t i {CursorPos}; i > 0; --i)
 		{
 			text_r.corner.x += *pchar_deltas++;
@@ -547,9 +547,9 @@ static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, ui
 	{ // editing state
 		uint16_t FullCursorPos {};
 		GfxRect text_r;
-		uint8_t char_deltas[256];
+		uqstl::array<uint8_t, 256> char_deltas;
 
-		TextRect(&lf, &text_r, char_deltas);
+		TextRect(&lf, &text_r, char_deltas.data());
 		if ((text_r.extent.width + ResScale(2)) >= r.extent.width)
 		{ // the text does not fit the input box size and so
 			// will not fit when displayed later
@@ -562,7 +562,7 @@ static bool DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, ui
 		SetContextForeGroundColor(BackGround);
 		DrawFilledRectangle(&r);
 
-		const uint8_t* pchar_deltas {char_deltas};
+		const uint8_t* pchar_deltas {char_deltas.data()};
 
 		FullCursorPos = CursorPos + (uint16_t)uqm::utf8StringCount(dateStr);
 		for (uint16_t i {FullCursorPos}; i > 0; --i)
@@ -831,7 +831,7 @@ void SettingsMenu(bool NameFlagship)
 
 struct PickGameState
 {
-	SaveSummaryData summary[MaxSavedGames];
+	uqstl::array<SaveSummaryData, MaxSavedGames> summary;
 	bool saving;
 	// true when saving, false when loading
 	bool success;
@@ -1358,7 +1358,7 @@ static void DrawNoLimit(void)
 
 static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 {
-	SaveSummaryData* pSD = pickState->summary + gameIndex;
+	SaveSummaryData* pSD = pickState->summary.data() + gameIndex;
 	GfxRect r;
 	GfxStamp s;
 
@@ -1846,7 +1846,7 @@ static bool DoPickGame(MenuState* pMS)
 
 static bool SaveLoadGame(PickGameState* pickState, uint16_t gameIndex, bool* canceled_by_user)
 {
-	SaveSummaryData* desc = pickState->summary + gameIndex;
+	SaveSummaryData* desc = pickState->summary.data() + gameIndex;
 	GfxStamp saveStamp;
 	bool success {};
 	GfxRect r;
@@ -1915,7 +1915,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 	// Deactivate any background drawing, like planet rotation
 	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
 
-	LoadGameDescriptions(pickState.summary);
+	LoadGameDescriptions(pickState.summary.data());
 
 	GfxContextRef OldContext {SetContext(SpaceContext)};
 	// Save the current state of the screen for later restoration
@@ -1982,7 +1982,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 		// TODO: Shouldn't we have a Problem() equivalent for Load too?
 
 		// reload and redraw everything
-		LoadGameDescriptions(pickState.summary);
+		LoadGameDescriptions(pickState.summary.data());
 		RedrawPickDisplay(&pickState, menuState.CurState);
 	}
 
@@ -1995,7 +1995,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 
 	if (pickState.success)
 	{
-		SaveSummaryData* pSD = pickState.summary + menuState.CurState;
+		SaveSummaryData* pSD = pickState.summary.data() + menuState.CurState;
 
 		uqm::log::info(saving ? "Saving > " : "Loading > ");
 		uqm::log::info("Name: {}", pSD->SaveName);

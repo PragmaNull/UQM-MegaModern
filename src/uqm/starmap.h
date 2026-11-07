@@ -33,19 +33,19 @@ inline constexpr auto NumHyperVortices {15};
 inline StarDesc*& CurStarDescPtr() { return uqm::gameState().currentStar(); }
 // star_array is now a static buffer we will copy the starmap_array into, and
 // then manipulate from there, so that original starmap is never altered.
-extern StarDesc star_array[];
+extern uqstl::array<StarDesc, NumSolarSystems + NumHyperVortices + 3> star_array;
 const extern GfxPoint* constel_array;
 
 // Global plot_map stores star_pt (coords) used while seeding into starmap
 // Once seeded the plot_map will contain StarDesc pointers to the
 // star locations on the starmap as well.
-extern PlotLocation plot_map[*PlotId::NumPlots];
+extern uqstl::array<PlotLocation, *PlotId::NumPlots> plot_map;
 
 // Global portal_map stores "star_pt" coords to each portal's exit,
 // as well as "quasi_pt" coords in quasispace, and the StarDesc of
 // the "closest constellation" for naming purposes.
 // Also Arilou homeworld but this is still mostly hardcoded.
-extern PortalLocation portal_map[NumHyperVortices + 1];
+extern uqstl::array<PortalLocation, NumHyperVortices + 1> portal_map;
 
 // A globally available seed for seeding the starmap and the plots it contains.
 extern uqstl::optional<uqm::UQMRandom> StarGenRNG;

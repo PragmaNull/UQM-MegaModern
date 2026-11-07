@@ -60,8 +60,8 @@ bool optLoadGame;
 uqm::SeedType optSeedType;
 bool optMaskOfDeceit;
 bool optNoClassic;
-uqm::CheatAction optDeviceArray[28];
-uqm::CheatAction optUpgradeArray[NumUpgrades];
+uqstl::array<uqm::CheatAction, 28> optDeviceArray;
+uqstl::array<uqm::CheatAction, NumUpgrades> optUpgradeArray;
 namespace
 {
 // The game file system. The members are destroyed in reverse order: the directories, the mounts, then the file system.
@@ -105,7 +105,7 @@ uqstl::vector<uint32_t> g_addonList {};
 
 namespace uqm
 {
-InputTemplate input_templates[6];
+uqstl::array<InputTemplate, 6> input_templates;
 
 uqm::io::FileSystem& gameFileSystem()
 {
@@ -207,12 +207,12 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 		}
 
 		// Try the default content locations.
-		const char* locs[] = {
+		uqstl::array<uqgsl::czstring, 3> locs {
 			Contentdir,					 /* defined in config.h */
 			expandedContentDir->c_str(), /* expanded Contentdir */
 			"content",
 		};
-		loc = findFileInDirs(locs, std::size(locs), testFile);
+		loc = findFileInDirs(locs.data(), std::size(locs), testFile);
 
 #ifdef __APPLE__
 		/* On OSX, if the content can't be found in any of the static
@@ -221,7 +221,7 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 		if (loc == nullptr)
 		{
 			bundleContentDir = (uqstl::filesystem::path {execFile}.parent_path() / "../Resources/content").generic_string();
-			const char* bundleDirs[] {bundleContentDir.c_str()};
+			uqstl::array<uqgsl::czstring, 1> bundleDirs {bundleContentDir.c_str()};
 			loc = findFileInDirs(bundleDirs, 1, testFile);
 		}
 #endif

@@ -49,8 +49,8 @@ static ConversationData umgah_desc =
 		},
 		UmgahConversationPhrases, /* PlayerPhrases */
 		16, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				5,					  /* StartIndex */
 				3,					  /* NumFrames */
@@ -61,7 +61,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 5),
 			},
-								{
+			{
 				8,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -71,7 +71,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 6),
 			},
-								{
+			{
 				11,					  /* StartIndex */
 				2,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -81,7 +81,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 7),
 			},
-								{
+			{
 				13,					  /* StartIndex */
 				2,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -91,7 +91,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 8),
 			},
-								{
+			{
 				15,					  /* StartIndex */
 				2,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -101,7 +101,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 9),
 			},
-								{
+			{
 				17,						  /* StartIndex */
 				3,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -111,7 +111,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 0),
 			},
-								{
+			{
 				20,						  /* StartIndex */
 				3,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -121,7 +121,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 1),
 			},
-								{
+			{
 				23,						  /* StartIndex */
 				2,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -131,7 +131,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 2),
 			},
-								{
+			{
 				25,						  /* StartIndex */
 				2,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -141,7 +141,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 3),
 			},
-								{
+			{
 				27,						  /* StartIndex */
 				2,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -151,7 +151,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 4),
 			},
-								{
+			{
 				29,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -161,7 +161,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				32,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -171,7 +171,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				35,					  /* StartIndex */
 				5,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -181,7 +181,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				40,					  /* StartIndex */
 				6,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -191,7 +191,7 @@ static ConversationData umgah_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				46,						  /* StartIndex */
 				2,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -201,7 +201,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 15),				/* BlockMask */
 			},
-								{
+			{
 				48,						  /* StartIndex */
 				2,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -211,7 +211,7 @@ static ConversationData umgah_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 14),				/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -348,7 +348,7 @@ static void Zombies(ResponseRef R)
 	}
 	else
 	{
-		UmgahPhrase pStr[4];
+		uqstl::array<UmgahPhrase, 4> pStr;
 
 		uint8_t LastStack {0};
 		pStr[0] = pStr[1] = pStr[2] = pStr[3] = UmgahPhrase::NullPhrase;

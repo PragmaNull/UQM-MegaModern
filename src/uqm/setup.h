@@ -24,6 +24,7 @@
 #include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/time/timelib.h"
+#include "uqm/init.h"
 #include "uqm/inteldefs.h"
 
 namespace uqm
@@ -64,7 +65,7 @@ extern FontRef SlabFont;
 extern FontRef SquareFont;
 extern FontRef PlayMenuFont;
 
-extern Queue race_q[];
+extern uqstl::array<Queue, NumPlayers> race_q;
 /* Array of lists of ships involved in a battle, one queue per side;
 		 * queue Element is Starship */
 
@@ -83,7 +84,7 @@ extern bool classicPackPresent;
 
 extern ActivityWord LastActivity;
 
-extern PlayerControlFlags PlayerControl[];
+extern uqstl::array<PlayerControlFlags, NumPlayers> PlayerControl;
 
 extern bool usingSpeech;
 // Actual speech presence indicator which decouples reality from

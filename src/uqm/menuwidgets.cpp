@@ -61,7 +61,7 @@ void showText(WidgetTextEntry& widget, const SettingBase& setting)
 	widget.value[length] = '\0';
 }
 
-void fillTooltip(const char* (&tooltip)[3], const uqstl::vector<uqstl::string>& lines)
+void fillTooltip(uqstl::array<uqgsl::czstring, 3>& tooltip, const uqstl::vector<uqstl::string>& lines)
 {
 	for (size_t line {0}; line < 3; ++line)
 	{

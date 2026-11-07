@@ -288,7 +288,7 @@ static uint16_t initialize_horn(Element* ShipPtr, ElementHandle HornArray[])
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;
@@ -358,7 +358,7 @@ static void thraddash_preprocess(Element* ElementPtr)
 
 			MissileBlock.cx = ElementPtr->next.location.x;
 			MissileBlock.cy = ElementPtr->next.location.y;
-			MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+			MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 			MissileBlock.face = 0;
 			MissileBlock.index = GetFrameCount(
 									 StarShipPtr->RaceDescPtr->ship_data.special[0])

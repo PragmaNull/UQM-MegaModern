@@ -122,9 +122,9 @@ void textDisabledWrapped(const char* text)
 
 [[nodiscard]] uqstl::string activityText(ActivityWord activity)
 {
-	static constexpr const char* c_names[] {"Super Melee or menu", "Last battle", "Encounter", "HyperSpace",
-											"Interplanetary", "Won last battle", "QuasiSpace", "Planet orbit",
-											"Starbase"};
+	static constexpr uqstl::array<uqgsl::czstring, 9> c_names {"Super Melee or menu", "Last battle", "Encounter", "HyperSpace",
+															   "Interplanetary", "Won last battle", "QuasiSpace", "Planet orbit",
+															   "Starbase"};
 	const uint8_t low {lowByte(activity)};
 	uqstl::string text {low < uqstl::size(c_names) ? c_names[low] : fmt::format("{}", low)};
 	if (activity & ActivityFlag::StartEncounter)

@@ -125,11 +125,13 @@ inline constexpr auto UqmSisScreenHeight {227};
 inline constexpr auto HdmodSisScreenWidth {1074};
 inline constexpr auto HdmodSisScreenHeight {924};
 
-inline constexpr GfxExtent SisScreenDimensions[] {
-	{DosSisScreenWidth,		DosSisScreenHeight	  },
-	{ThreedoSisScreenWidth, ThreedoSisScreenHeight},
-	{UqmSisScreenWidth,		UqmSisScreenHeight	  },
-	{HdmodSisScreenWidth,	  HdmodSisScreenHeight  },
+inline constexpr uqstl::array<GfxExtent, 4> SisScreenDimensions {
+	{
+		{DosSisScreenWidth, DosSisScreenHeight},
+		{ThreedoSisScreenWidth, ThreedoSisScreenHeight},
+		{UqmSisScreenWidth, UqmSisScreenHeight},
+		{HdmodSisScreenWidth, HdmodSisScreenHeight},
+	 }
 };
 
 /* Radar. */
@@ -306,7 +308,7 @@ inline constexpr auto SinScale {1 << SinShift};
 constexpr auto FltAdjust(const auto& x) { return (int16_t)((x)*SinScale); }
 
 
-extern int32_t sinetab[];
+extern uqstl::array<int32_t, 64> sinetab;
 constexpr auto Sinval(const auto& a) { return sinetab[NormalizeAngle(a)]; }
 
 constexpr auto Sine(const auto& a, const auto& m) { return ((int32_t)((((long)Sinval(a)) * (long)(m)) >> SinShift)); }

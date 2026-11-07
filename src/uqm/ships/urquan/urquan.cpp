@@ -147,7 +147,7 @@ static uint16_t initialize_fusion(Element* ShipPtr, ElementHandle FusionArray[])
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;
@@ -540,7 +540,7 @@ static void spawn_fighters(Element* ElementPtr)
 		FighterElementPtr->current.location.x -= VelocityToWorld(sx);
 		FighterElementPtr->current.location.y -= VelocityToWorld(sy);
 
-		FighterElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+		FighterElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 		FighterElementPtr->current.image.frame =
 			SetAbsFrameIndex(StarShipPtr->RaceDescPtr->ship_data.special[0],
 							 fighter_facing);

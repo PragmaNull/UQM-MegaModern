@@ -132,35 +132,39 @@ inline constexpr auto MaxStowedShips {200}; // Limited to a byte
 											/* Maximum number of ships banked at the starbase */
 inline constexpr auto MaxLanders {10};
 
-inline constexpr GfxPoint SupportShipPts[MaxBuiltShips] {
-	{3 + 0,	30 + (2 * 16)},
-	{3 + 42, 30 + (2 * 16)},
-	{3 + 0,	30 + (3 * 16)},
-	{3 + 42, 30 + (3 * 16)},
-	{3 + 0,	30 + (1 * 16)},
-	{3 + 42, 30 + (1 * 16)},
-	{3 + 0,	30 + (4 * 16)},
-	{3 + 42, 30 + (4 * 16)},
-	{3 + 0,	30 + (0 * 16)},
-	{3 + 42, 30 + (0 * 16)},
-	{3 + 0,	30 + (5 * 16)},
-	{3 + 42, 30 + (5 * 16)},
+inline constexpr uqstl::array<GfxPoint, MaxBuiltShips> SupportShipPts {
+	{
+		{3 + 0, 30 + (2 * 16)},
+		{3 + 42, 30 + (2 * 16)},
+		{3 + 0, 30 + (3 * 16)},
+		{3 + 42, 30 + (3 * 16)},
+		{3 + 0, 30 + (1 * 16)},
+		{3 + 42, 30 + (1 * 16)},
+		{3 + 0, 30 + (4 * 16)},
+		{3 + 42, 30 + (4 * 16)},
+		{3 + 0, 30 + (0 * 16)},
+		{3 + 42, 30 + (0 * 16)},
+		{3 + 0, 30 + (5 * 16)},
+		{3 + 42, 30 + (5 * 16)},
+	 }
 };
 
 inline constexpr auto LanderDosX {206};
 inline constexpr auto LanderDosY {59};
 
-inline constexpr GfxPoint LanderDosPts[MaxLanders] {
-	{LanderDosX,		 LanderDosY	   },
-	{LanderDosX + 14, LanderDosY - 6 },
-	{LanderDosX + 14, LanderDosY + 9 },
-	{LanderDosX,		 LanderDosY - 15},
-	{LanderDosX,		 LanderDosY + 15},
-	{LanderDosX - 14, LanderDosY - 9 },
-	{LanderDosX - 14, LanderDosY + 6 },
-	{LanderDosX + 14, LanderDosY - 21},
-	{LanderDosX + 14, LanderDosY + 24},
-	{LanderDosX - 28, LanderDosY - 3 },
+inline constexpr uqstl::array<GfxPoint, MaxLanders> LanderDosPts {
+	{
+		{LanderDosX, LanderDosY},
+		{LanderDosX + 14, LanderDosY - 6},
+		{LanderDosX + 14, LanderDosY + 9},
+		{LanderDosX, LanderDosY - 15},
+		{LanderDosX, LanderDosY + 15},
+		{LanderDosX - 14, LanderDosY - 9},
+		{LanderDosX - 14, LanderDosY + 6},
+		{LanderDosX + 14, LanderDosY - 21},
+		{LanderDosX + 14, LanderDosY + 24},
+		{LanderDosX - 28, LanderDosY - 3},
+	 }
 };
 
 inline constexpr auto SisNameSize {32};
@@ -177,13 +181,13 @@ struct FlagshipData
 	// Set to (uint16_t) ~0 to indicate game over.
 	uint16_t TotalElementMass, TotalBioMass;
 
-	ModuleType ModuleSlots[NumModuleSlots];
-	ModuleType DriveSlots[NumDriveSlots];
-	ModuleType JetSlots[NumJetSlots];
+	uqstl::array<ModuleType, NumModuleSlots> ModuleSlots;
+	uqstl::array<ModuleType, NumDriveSlots> DriveSlots;
+	uqstl::array<ModuleType, NumJetSlots> JetSlots;
 
 	uint8_t NumLanders;
 
-	uint16_t ElementAmounts[*MineralCategory::NumElementCategories];
+	uqstl::array<uint16_t, *MineralCategory::NumElementCategories> ElementAmounts;
 
 	char ShipName[SisNameSize];
 	char CommanderName[SisNameSize];

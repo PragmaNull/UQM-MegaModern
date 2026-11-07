@@ -49,8 +49,8 @@ static ConversationData supox_desc =
 		},
 		SupoxConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				4, /* StartIndex */
 				5, /* NumFrames */
@@ -62,7 +62,7 @@ static ConversationData supox_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				9,						  /* StartIndex */
 				10,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -72,7 +72,7 @@ static ConversationData supox_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				19,						  /* StartIndex */
 				10,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -82,7 +82,7 @@ static ConversationData supox_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				29,						  /* StartIndex */
 				13,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -92,7 +92,7 @@ static ConversationData supox_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -374,7 +374,7 @@ static void NeutralSupox(ResponseRef R)
 {
 	uint8_t i {};
 	uint8_t NumVisits {};
-	SupoxPhrase pStr[3];
+	uqstl::array<SupoxPhrase, 3> pStr;
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = SupoxPhrase::NullPhrase;

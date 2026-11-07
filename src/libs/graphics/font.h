@@ -55,7 +55,7 @@ struct FontDesc
 	GfxExtent disp;
 	uint8_t CharSpace;
 	uint8_t KernAmount;
-	uint8_t KernTab[MaxUnicode];
+	uqstl::array<uint8_t, MaxUnicode> KernTab;
 	int8_t VertAlign;
 	bool HaveFntData;
 };

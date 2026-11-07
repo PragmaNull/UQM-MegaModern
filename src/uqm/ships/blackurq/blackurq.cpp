@@ -338,7 +338,7 @@ static uint16_t initialize_buzzsaw(Element* ShipPtr, ElementHandle SawArray[])
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	MissileBlock.cx = ShipPtr->next.location.x;
 	MissileBlock.cy = ShipPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon.data();
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
@@ -410,7 +410,7 @@ static void black_urquan_intelligence(Element* ShipPtr, ObjectEvaluation* Object
 			LockElement(h, &BuzzSawPtr);
 			hNext = GetSuccElement(BuzzSawPtr);
 			if (!(testFlag(BuzzSawPtr->state_flags, ElementFlags::Nonsolid))
-				&& BuzzSawPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.weapon
+				&& BuzzSawPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.weapon.data()
 				&& BuzzSawPtr->life_span > MissileLife * 3 / 4
 				&& elementsOfSamePlayer(BuzzSawPtr, ShipPtr))
 			{
@@ -501,7 +501,7 @@ static void spawn_gas_cloud(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	MissileBlock.cx = ElementPtr->next.location.x;
 	MissileBlock.cy = ElementPtr->next.location.y;
-	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
+	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special.data();
 	MissileBlock.index = 0;
 	MissileBlock.sender = ElementPtr->playerNr;
 	MissileBlock.flags = ElementFlags::IgnoreSimilar;

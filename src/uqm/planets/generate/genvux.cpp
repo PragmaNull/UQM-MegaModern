@@ -297,39 +297,36 @@ static uint16_t GenerateVux_generateLife(const SolarSystemState* solarSys,
 	if (CurStarDescPtr()->Index == PlotId::Maidens
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		const static int8_t life[] =
-			{
-				9, 9, 9, 9,		/* Carousel Beast */
-				14, 14, 14, 14, /* Amorphous Trandicula */
-				18, 18, 18, 18, /* Penguin Cyclops */
-				-1				/* term */
-			};
-		const static int8_t lifeEx[] =
-			{
-				9, 9, 9, 9, 9,		/* Carousel Beast */
-				18, 18, 18, 18, 18, /* Penguin Cyclops */
-				ZexBeauty,			/* VUX Beast */
-				-1					/* term */
-			};
+		const static uqstl::array<int8_t, 13> life {
+			9, 9, 9, 9,		/* Carousel Beast */
+			14, 14, 14, 14, /* Amorphous Trandicula */
+			18, 18, 18, 18, /* Penguin Cyclops */
+			-1				/* term */
+		};
+		const static uqstl::array<int8_t, 12> lifeEx {
+			9, 9, 9, 9, 9,		/* Carousel Beast */
+			18, 18, 18, 18, 18, /* Penguin Cyclops */
+			ZexBeauty,			/* VUX Beast */
+			-1					/* term */
+		};
 
 		return GeneratePresetLife(
-			&solarSys->SysInfo, IsExtended() ? lifeEx : life,
+			&solarSys->SysInfo, IsExtended() ? lifeEx.data() : life.data(),
 			whichNode, info);
 	}
 
 	if (CurStarDescPtr()->Index == PlotId::VuxBeast
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		const static int8_t life[] =
-			{
-				ZexBeauty,	   /* VUX Beast */
-							   // Must be the first node, see pickupLife() below
-				3, 3, 3, 3, 3, /* Whackin' Bush */
-				8, 8, 8, 8, 8, /* Glowing Medusa */
-				-1			   /* term */
-			};
+		const static uqstl::array<int8_t, 12> life {
+			ZexBeauty,	   /* VUX Beast */
+						   // Must be the first node, see pickupLife() below
+			3, 3, 3, 3, 3, /* Whackin' Bush */
+			8, 8, 8, 8, 8, /* Glowing Medusa */
+			-1			   /* term */
+		};
 		return GeneratePresetLife(
-			&solarSys->SysInfo, life, whichNode, info);
+			&solarSys->SysInfo, life.data(), whichNode, info);
 	}
 
 	return GenerateDefault_generateLife(solarSys, world, whichNode, info);

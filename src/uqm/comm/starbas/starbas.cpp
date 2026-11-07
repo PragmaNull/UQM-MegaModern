@@ -65,8 +65,8 @@ static ConversationData commander_desc =
 		},
 		StarbaseConversationPhrases, /* PlayerPhrases */
 		10, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				/* Blink */
 				1,					  /* StartIndex */
@@ -78,7 +78,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond * 8, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Running light */
 				10,						  /* StartIndex */
 				30,						  /* NumFrames */
@@ -89,7 +89,7 @@ static ConversationData commander_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				/* Arc welder 0 */
 				40,						  /* StartIndex */
 				7,						  /* NumFrames */
@@ -100,7 +100,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond * 8, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Arc welder 1 */
 				47,						  /* StartIndex */
 				8,						  /* NumFrames */
@@ -111,7 +111,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond * 8, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Arc welder 2 */
 				55,						  /* StartIndex */
 				6,						  /* NumFrames */
@@ -122,7 +122,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond * 8, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Arc welder 3 */
 				61,						  /* StartIndex */
 				6,						  /* NumFrames */
@@ -133,7 +133,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond * 8, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Arc welder 4 */
 				67,						  /* StartIndex */
 				7,						  /* NumFrames */
@@ -144,7 +144,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond * 8, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Arc welder 5 */
 				74,						  /* StartIndex */
 				11,						  /* NumFrames */
@@ -155,7 +155,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond * 8, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Arc welder 6 */
 				85,						  /* StartIndex */
 				10,						  /* NumFrames */
@@ -166,7 +166,7 @@ static ConversationData commander_desc =
 				GameTicksPerSecond * 8, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				/* Flagship picture */
 				95,					  /* StartIndex */
 				1,					  /* NumFrames */
@@ -177,7 +177,7 @@ static ConversationData commander_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */
@@ -755,7 +755,7 @@ static void AncientHistory(ResponseRef R)
 
 static void TellHistory(ResponseRef R)
 {
-	StarbasePhrase pstack[3];
+	uqstl::array<StarbasePhrase, 3> pstack;
 
 	if (PlayerSaid(R, StarbasePhrase::History))
 	{
@@ -1119,7 +1119,7 @@ static void AnalyzeCondition(void)
 
 static void TellMission(ResponseRef R)
 {
-	StarbasePhrase pstack[4];
+	uqstl::array<StarbasePhrase, 4> pstack;
 
 	if (PlayerSaid(R, StarbasePhrase::OurMission))
 	{
@@ -1229,7 +1229,7 @@ static void TellMission(ResponseRef R)
 
 static void TellStarBase(ResponseRef R)
 {
-	StarbasePhrase pstack[4];
+	uqstl::array<StarbasePhrase, 4> pstack;
 
 	if (PlayerSaid(R, StarbasePhrase::StarbaseFunctions))
 	{
@@ -1658,21 +1658,20 @@ static bool DiscussDevices(bool TalkAbout)
 static bool CheckTiming(uint16_t month_index, uint16_t day_index)
 {
 	uint16_t mi {};
-	const uint8_t days_in_month[12] =
-		{
-			31,
-			28,
-			31,
-			30,
-			31,
-			30,
-			31,
-			31,
-			30,
-			31,
-			30,
-			31,
-		};
+	const uqstl::array<uint8_t, 12> days_in_month {
+		31,
+		28,
+		31,
+		30,
+		31,
+		30,
+		31,
+		31,
+		30,
+		31,
+		30,
+		31,
+	};
 
 	mi = uqm::gameState().flag(uqm::GameFlag::STARBASE_MONTH);
 	uint16_t year_index {StartYear};
@@ -2097,8 +2096,8 @@ static void SellMinerals(ResponseRef R)
 	}
 	else
 	{
-		uint16_t amount[*MineralCategory::NumElementCategories];
-		uint16_t Ru[*MineralCategory::NumElementCategories];
+		uqstl::array<uint16_t, *MineralCategory::NumElementCategories> amount;
+		uqstl::array<uint16_t, *MineralCategory::NumElementCategories> Ru;
 		uint16_t seg = 0;
 		uint16_t count = 0;
 

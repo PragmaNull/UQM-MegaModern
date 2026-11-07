@@ -249,7 +249,7 @@ SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
 	/* Load the palette, if any */
 	if (SDL_GetSurfacePalette(surface))
 	{
-		SDL_Color palette[256];
+		uqstl::array<SDL_Color, 256> palette;
 		int png_num_palette {};
 		png_colorp png_palette {};
 		png_get_PLTE(png_ptr, info_ptr, &png_palette, &png_num_palette);
@@ -272,7 +272,7 @@ SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
 				palette[i].r = png_palette[i].red;
 			}
 		}
-		SDL_SetPaletteColors(SDL_GetSurfacePalette(surface), palette,
+		SDL_SetPaletteColors(SDL_GetSurfacePalette(surface), palette.data(),
 							 0, png_num_palette);
 	}
 

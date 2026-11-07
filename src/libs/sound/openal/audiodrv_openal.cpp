@@ -31,10 +31,10 @@
 
 ALCcontext* alcContext = nullptr;
 ALCdevice* alcDevice = nullptr;
-ALfloat defaultPos[] = {0.0f, 0.0f, -1.0f};
-ALfloat listenerPos[] = {0.0f, 0.0f, 0.0f};
-ALfloat listenerVel[] = {0.0f, 0.0f, 0.0f};
-ALfloat listenerOri[] = {0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f};
+uqstl::array<ALfloat, 3> defaultPos {0.0f, 0.0f, -1.0f};
+uqstl::array<ALfloat, 3> listenerPos {0.0f, 0.0f, 0.0f};
+uqstl::array<ALfloat, 3> listenerVel {0.0f, 0.0f, 0.0f};
+uqstl::array<ALfloat, 6> listenerOri {0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f};
 
 const static audio_Driver openAL_Driver =
 	{
@@ -186,19 +186,19 @@ int32_t openAL_Init(audio_Driver* driver, AudioFlags flags)
 	}
 	uqm::log::info("Sound decoders initialized.");
 
-	alListenerfv(AL_POSITION, listenerPos);
-	alListenerfv(AL_VELOCITY, listenerVel);
-	alListenerfv(AL_ORIENTATION, listenerOri);
+	alListenerfv(AL_POSITION, listenerPos.data());
+	alListenerfv(AL_VELOCITY, listenerVel.data());
+	alListenerfv(AL_ORIENTATION, listenerOri.data());
 
 	for (int i {0}; i < NumSoundsources; ++i)
 	{
-		float zero[3] = {0.0f, 0.0f, 0.0f};
+		uqstl::array<float, 3> zero {0.0f, 0.0f, 0.0f};
 
 		audio_GenSources(1, &soundSource[i].handle);
 		alSourcei(soundSource[i].handle, AL_LOOPING, AL_FALSE);
-		alSourcefv(soundSource[i].handle, AL_POSITION, defaultPos);
-		alSourcefv(soundSource[i].handle, AL_VELOCITY, zero);
-		alSourcefv(soundSource[i].handle, AL_DIRECTION, zero);
+		alSourcefv(soundSource[i].handle, AL_POSITION, defaultPos.data());
+		alSourcefv(soundSource[i].handle, AL_VELOCITY, zero.data());
+		alSourcefv(soundSource[i].handle, AL_DIRECTION, zero.data());
 	}
 
 	if (InitStreamDecoder())

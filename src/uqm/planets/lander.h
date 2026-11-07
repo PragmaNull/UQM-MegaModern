@@ -39,8 +39,8 @@ inline constexpr auto NumTextFrames {32};
 struct LanderNodeData
 {
 	uint8_t NumNodesGrabbed;
-	uint8_t NodeType[32];
-	uint16_t NodeAmounts[32];
+	uqstl::array<uint8_t, 32> NodeType;
+	uqstl::array<uint16_t, 32> NodeAmounts;
 };
 
 // XXX: This is a private type now. Move it to lander.c?
@@ -54,13 +54,13 @@ struct PlanetsideDesc
 	uint16_t ElementLevel;
 	uint16_t MaxElementLevel;
 	uint16_t BiologicalLevel;
-	uint16_t ElementAmounts[*MineralCategory::NumElementCategories];
+	uqstl::array<uint16_t, *MineralCategory::NumElementCategories> ElementAmounts;
 
 	uint16_t NumFrames;
 	char AmountBuf[40];
-	GfxText MineralText[3];
+	uqstl::array<GfxText, 3> MineralText;
 
-	Color ColorCycle[NumTextFrames >> 1];
+	uqstl::array<Color, (((NumTextFrames >> 1)))> ColorCycle;
 
 	uint8_t TectonicsChance;
 	uint8_t WeatherChance;

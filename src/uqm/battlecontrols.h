@@ -82,7 +82,7 @@ HumanInputContext* HumanInputContext_new(uint16_t playerNr);
 NetworkInputContext* NetworkInputContext_new(uint16_t playerNr);
 #endif /* NETPLAY */
 
-extern InputContext* PlayerInput[];
+extern uqstl::array<InputContext*, NumPlayers> PlayerInput;
 
 
 BattleInputState frameInputHuman(HumanInputContext* context,

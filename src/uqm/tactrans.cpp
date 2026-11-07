@@ -582,7 +582,7 @@ static void explosion_preprocess(Element* ShipPtr)
 			uint16_t angle {};
 			uint16_t dist {};
 			Element* ElementPtr {};
-			extern FrameRef explosion[];
+			extern uqstl::array<FrameRef, NumViews> explosion;
 
 			PutElement(hElement);
 			LockElement(hElement, &ElementPtr);
@@ -590,7 +590,7 @@ static void explosion_preprocess(Element* ShipPtr)
 			ElementPtr->state_flags = ElementFlags::Appearing | ElementFlags::FiniteLife | ElementFlags::Nonsolid;
 			ElementPtr->life_span = 9;
 			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], PrimitiveType::Stamp);
-			ElementPtr->current.image.farray = explosion;
+			ElementPtr->current.image.farray = explosion.data();
 			ElementPtr->current.image.frame = explosion[0];
 			uint32_t rand_val {uqm::random().next()};
 			angle = uqm::lowByte(uqm::highWord(rand_val));
@@ -756,21 +756,20 @@ static constexpr auto StartIonColor {BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7
 // ship shadow (when warping in/out).
 static void cycle_ion_trail(Element* ElementPtr)
 {
-	const static Color colorTab[] =
-		{
-			BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
-			BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7b),
-			BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
-			BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7d),
-			BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7e),
-			BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7f),
-			BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x2a),
-			BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2b),
-			BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2c),
-			BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
-			BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2e),
-			BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2f),
-		};
+	const static uqstl::array<Color, 12> colorTab {
+		BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
+		BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7b),
+		BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
+		BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7d),
+		BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7e),
+		BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7f),
+		BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x2a),
+		BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2b),
+		BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2c),
+		BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
+		BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2e),
+		BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2f),
+	};
 	const size_t colorTabCount = std::size(colorTab);
 
 	assert(!(testFlag(ElementPtr->state_flags, ElementFlags::PlayerShip)));
@@ -828,7 +827,7 @@ void spawn_ion_trail(Element* ElementPtr, int16_t x_offset, int16_t y_offset)
 		{
 			SetPrimType(&DisplayArray[IonElementPtr->PrimIndex], PrimitiveType::StampFill);
 			IonElementPtr->current.image.frame = SetAbsFrameIndex(stars_misc[0], 1);
-			IonElementPtr->current.image.farray = stars_misc;
+			IonElementPtr->current.image.farray = stars_misc.data();
 			IonElementPtr->next.image.frame = IonElementPtr->current.image.frame;
 			IonElementPtr->next.image.farray = IonElementPtr->current.image.farray;
 		}
@@ -975,29 +974,28 @@ void flee_preprocess(Element* ElementPtr)
 
 	if (--ElementPtr->turn_wait == 0)
 	{
-		const static Color colorTab[] =
-			{
-				BuildColor(MakeRgb15(0x0A, 0x00, 0x00), 0x2E),
-				BuildColor(MakeRgb15(0x0E, 0x00, 0x00), 0x2D),
-				BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C),
-				BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
-				BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2A),
-				BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x29),
-				BuildColor(MakeRgb15(0x1F, 0x04, 0x04), 0x28),
-				BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x27),
-				BuildColor(MakeRgb15(0x1F, 0x0F, 0x0F), 0x26),
-				BuildColor(MakeRgb15(0x1F, 0x13, 0x13), 0x25),
-				BuildColor(MakeRgb15(0x1F, 0x19, 0x19), 0x24),
-				BuildColor(MakeRgb15(0x1F, 0x13, 0x13), 0x25),
-				BuildColor(MakeRgb15(0x1F, 0x0F, 0x0F), 0x26),
-				BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x27),
-				BuildColor(MakeRgb15(0x1F, 0x04, 0x04), 0x28),
-				BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x29),
-				BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2A),
-				BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
-				BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C),
-				BuildColor(MakeRgb15(0x0E, 0x00, 0x00), 0x2D),
-			};
+		const static uqstl::array<Color, 20> colorTab {
+			BuildColor(MakeRgb15(0x0A, 0x00, 0x00), 0x2E),
+			BuildColor(MakeRgb15(0x0E, 0x00, 0x00), 0x2D),
+			BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C),
+			BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
+			BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2A),
+			BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x29),
+			BuildColor(MakeRgb15(0x1F, 0x04, 0x04), 0x28),
+			BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x27),
+			BuildColor(MakeRgb15(0x1F, 0x0F, 0x0F), 0x26),
+			BuildColor(MakeRgb15(0x1F, 0x13, 0x13), 0x25),
+			BuildColor(MakeRgb15(0x1F, 0x19, 0x19), 0x24),
+			BuildColor(MakeRgb15(0x1F, 0x13, 0x13), 0x25),
+			BuildColor(MakeRgb15(0x1F, 0x0F, 0x0F), 0x26),
+			BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x27),
+			BuildColor(MakeRgb15(0x1F, 0x04, 0x04), 0x28),
+			BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x29),
+			BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2A),
+			BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
+			BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C),
+			BuildColor(MakeRgb15(0x0E, 0x00, 0x00), 0x2D),
+		};
 		const size_t colorTabCount = std::size(colorTab);
 
 		ElementPtr->colorCycleIndex++;

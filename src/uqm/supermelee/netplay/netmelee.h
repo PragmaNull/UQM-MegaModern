@@ -31,12 +31,13 @@
 #include "../../controls.h"
 // for BattleInputState
 #include "../../races.h"
+#include "uqm/init.h"
 
 namespace uqm
 {
 // for Starship
 
-extern struct NetConnection* netConnections[];
+extern uqstl::array<NetConnection*, NumPlayers> netConnections;
 
 
 void addNetConnection(NetConnection* conn, int playerNr);

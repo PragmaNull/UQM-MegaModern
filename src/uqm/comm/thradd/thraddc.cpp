@@ -51,8 +51,8 @@ static ConversationData thradd_desc =
 		},
 		ThraddConversationPhrases, /* PlayerPhrases */
 		8, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				8,						/* StartIndex */
 				4,						/* NumFrames */
@@ -63,7 +63,7 @@ static ConversationData thradd_desc =
 				GameTicksPerSecond / 15, /* RestartRate */
 				(1 << 4),				 /* BlockMask */
 			},
-								{
+			{
 				12,						  /* StartIndex */
 				9,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -73,7 +73,7 @@ static ConversationData thradd_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				21,						/* StartIndex */
 				6,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -83,7 +83,7 @@ static ConversationData thradd_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				27,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -93,7 +93,7 @@ static ConversationData thradd_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 4),				/* BlockMask */
 			},
-								{
+			{
 				30, /* StartIndex */
 				12, /* NumFrames */
 				AnimationFlags::Circular
@@ -104,7 +104,7 @@ static ConversationData thradd_desc =
 				GameTicksPerSecond, /* RestartRate */
 				(1 << 0) | (1 << 3) | (1 << 5),
 			},
-								{
+			{
 				42,					  /* StartIndex */
 				5,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -114,7 +114,7 @@ static ConversationData thradd_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 4) | (1 << 6),	/* BlockMask */
 			},
-								{
+			{
 				47,					  /* StartIndex */
 				5,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -124,7 +124,7 @@ static ConversationData thradd_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 5),				/* BlockMask */
 			},
-								{
+			{
 				52,						/* StartIndex */
 				4,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -134,7 +134,7 @@ static ConversationData thradd_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */

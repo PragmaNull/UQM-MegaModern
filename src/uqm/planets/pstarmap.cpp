@@ -433,7 +433,7 @@ static void GetSphereRect(FleetInfo* FleetPtr, GfxRect* pRect, GfxRect* pRepairR
 static void GetWarEraSphereRect(FleetInfo* FleetPtr, GfxRect* pRect, GfxRect* pRepairRect)
 {
 	const long diameter = (long)(WarEraStrength(FleetPtr->SpeciesID) * SphereRadiusIncrement);
-	const GfxPoint loc = SeedFleetLocation(FleetPtr, plot_map, *PlotId::WarEra);
+	const GfxPoint loc = SeedFleetLocation(FleetPtr, plot_map.data(), *PlotId::WarEra);
 
 	pRect->extent.width = UniverseToDispx(diameter)
 						- UniverseToDispx(0);
@@ -520,7 +520,7 @@ constexpr auto MathRound(const auto& X) { return ((X) + ((int)((X) + 0.5) > (X) 
 
 GfxPoint GetPointOfEllipse(double a, double b, double radian)
 {
-	const double t[2] = {a * cos(radian), b * sin(radian)};
+	const uqstl::array<double, 2> t {a * cos(radian), b * sin(radian)};
 	return GfxPoint {(int16_t)MathRound(t[0]), (int16_t)MathRound(t[1])};
 }
 
@@ -531,8 +531,8 @@ GfxPoint ShiftPoint(GfxPoint p, GfxPoint s)
 
 GfxPoint RotatePoint(GfxPoint p, GfxPoint Pivot, double radian)
 {
-	const double d[2] = {static_cast<double>(p.x - Pivot.x), static_cast<double>(p.y - Pivot.y)};
-	const double cosine[2] = {cos(radian), sin(radian)};
+	const uqstl::array<double, 2> d {static_cast<double>(p.x - Pivot.x), static_cast<double>(p.y - Pivot.y)};
+	const uqstl::array<double, 2> cosine {cos(radian), sin(radian)};
 	const double x = Pivot.x + (d[0] * cosine[0] - d[1] * cosine[1]);
 	const double y = Pivot.y + (d[0] * cosine[1] + d[1] * cosine[0]);
 
@@ -542,11 +542,11 @@ GfxPoint RotatePoint(GfxPoint p, GfxPoint Pivot, double radian)
 // Kruzen: Merged together with overflow check. Functions above are redundant
 GfxPoint CalcEllipsePoint(double a, double b, double rad_one, double rad_two, GfxPoint Pivot)
 {
-	const double q[2] = {a * cos(rad_one), b * sin(rad_one)};
-	const double w[2] = {MathRound(q[0]) + Pivot.x, MathRound(q[1]) + Pivot.y};
+	const uqstl::array<double, 2> q {a * cos(rad_one), b * sin(rad_one)};
+	const uqstl::array<double, 2> w {MathRound(q[0]) + Pivot.x, MathRound(q[1]) + Pivot.y};
 
-	const double d[2] = {w[0] - Pivot.x, w[1] - Pivot.y};
-	const double cosine[2] = {cos(rad_two), sin(rad_two)};
+	const uqstl::array<double, 2> d {w[0] - Pivot.x, w[1] - Pivot.y};
+	const uqstl::array<double, 2> cosine {cos(rad_two), sin(rad_two)};
 	double x = Pivot.x + (d[0] * cosine[0] - d[1] * cosine[1]);
 	double y = Pivot.y + (d[0] * cosine[1] + d[1] * cosine[0]);
 
@@ -1005,7 +1005,7 @@ bool isStarMarked(const int star_index, const char* marker_state)
 
 	if (star_index == InternalStarIndex)
 	{
-		starIndex = (uint16_t)(CurStarDescPtr() - star_array);
+		starIndex = (uint16_t)(CurStarDescPtr() - star_array.data());
 	}
 
 	const uint32_t starData {DGetGameState(markerBuf(starIndex, marker_state))};
@@ -1019,7 +1019,7 @@ void setStarMarked(const int star_index, const char* marker_state)
 
 	if (starIndex == InternalStarIndex)
 	{
-		starIndex = (uint16_t)(CurStarDescPtr() - star_array);
+		starIndex = (uint16_t)(CurStarDescPtr() - star_array.data());
 	}
 
 	uint32_t starData {DGetGameState(markerBuf(starIndex, marker_state))};
@@ -1105,35 +1105,34 @@ Color RaceColor(uint16_t index)
 	}
 	else if (uqm::UQMOptions::read().sphereColors == uqm::SphereOfInfluenceColors::Starseed)
 	{
-		static constexpr Color StarseedColors[] =
-			{
-				BuildColor(MakeRgb15(0x00, 0x00, 0x17), 0x00), // ARILOU_SHIP Bold blue
-				BuildColor(MakeRgb15(0x10, 0x15, 0x19), 0x00), // CHMMR_SHIP Pale blue-grey
-				BuildColor(MakeRgb15(0x09, 0x09, 0x1B), 0x00), // HUMAN_SHIP Blue
-				BuildColor(MakeRgb15(0x0D, 0x00, 0x05), 0x00), // ORZ_SHIP Plum
-				BuildColor(MakeRgb15(0x1C, 0x07, 0x19), 0x00), // PKUNK_SHIP Pinkunk
-				BuildColor(MakeRgb15(0x0A, 0x06, 0x00), 0x00), // SHOFIXTI_SHIP Marsupial brown
-				BuildColor(MakeRgb15(0x15, 0x12, 0x03), 0x00), // SPATHI_SHIP Mustard yellow
-				BuildColor(MakeRgb15(0x05, 0x14, 0x01), 0x00), // SUPOX_SHIP Leaf green
-				BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x00), // THRADDASH_SHIP Dark cyan
-				BuildColor(MakeRgb15(0x1A, 0x16, 0x12), 0x00), // UTWIG_SHIP Beige
-				BuildColor(MakeRgb15(0x06, 0x16, 0x0F), 0x00), // VUX_SHIP Very Ugly Aqua
-				BuildColor(MakeRgb15(0x0A, 0x00, 0x11), 0x00), // YEHAT_SHIP Royal purple
-				BuildColor(MakeRgb15(0x1A, 0x16, 0x08), 0x00), // MELNORME_SHIP Yellowish
-				BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x00), // DRUUGE_SHIP Crimson (tm)
-				BuildColor(MakeRgb15(0x0E, 0x00, 0x0E), 0x00), // ILWRATH_SHIP Purple
-				BuildColor(MakeRgb15(0x14, 0x00, 0x0C), 0x00), // MYCON_SHIP Fungal fuchsia
-				BuildColor(MakeRgb15(0x1D, 0x00, 0x07), 0x00), // SLYLANDRO_SHIP Red Alert
-				BuildColor(MakeRgb15(0x0B, 0x0C, 0x00), 0x00), // UMGAH_SHIP Olive
-				BuildColor(MakeRgb15(0x00, 0x08, 0x00), 0x00), // URQUAN_SHIP Dark Green
-				BuildColor(MakeRgb15(0x16, 0x0D, 0x00), 0x00), // ZOQFOTPIK_SHIP Orange
-				BuildColor(MakeRgb15(0x15, 0x07, 0x03), 0x00), // SYREEN_SHIP Slightly-orange red
-				BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x00), // BLACK_URQUAN_SHIP Dark grey
-				BuildColor(MakeRgb15(0x09, 0x00, 0x15), 0x00), // ANDROSYNTH_SHIP Violet
-				BuildColor(MakeRgb15(0x00, 0x15, 0x1C), 0x00), // CHENJESU_SHIP Cyan
-				BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x00), // MMRNMHRM_SHIP Silver
-				BuildColor(MakeRgb15(0x19, 0x10, 0x1F), 0x00), // YEHAT_REBEL_SHIP Lavender
-			};
+		static constexpr uqstl::array<Color, 26> StarseedColors {
+			BuildColor(MakeRgb15(0x00, 0x00, 0x17), 0x00), // ARILOU_SHIP Bold blue
+			BuildColor(MakeRgb15(0x10, 0x15, 0x19), 0x00), // CHMMR_SHIP Pale blue-grey
+			BuildColor(MakeRgb15(0x09, 0x09, 0x1B), 0x00), // HUMAN_SHIP Blue
+			BuildColor(MakeRgb15(0x0D, 0x00, 0x05), 0x00), // ORZ_SHIP Plum
+			BuildColor(MakeRgb15(0x1C, 0x07, 0x19), 0x00), // PKUNK_SHIP Pinkunk
+			BuildColor(MakeRgb15(0x0A, 0x06, 0x00), 0x00), // SHOFIXTI_SHIP Marsupial brown
+			BuildColor(MakeRgb15(0x15, 0x12, 0x03), 0x00), // SPATHI_SHIP Mustard yellow
+			BuildColor(MakeRgb15(0x05, 0x14, 0x01), 0x00), // SUPOX_SHIP Leaf green
+			BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x00), // THRADDASH_SHIP Dark cyan
+			BuildColor(MakeRgb15(0x1A, 0x16, 0x12), 0x00), // UTWIG_SHIP Beige
+			BuildColor(MakeRgb15(0x06, 0x16, 0x0F), 0x00), // VUX_SHIP Very Ugly Aqua
+			BuildColor(MakeRgb15(0x0A, 0x00, 0x11), 0x00), // YEHAT_SHIP Royal purple
+			BuildColor(MakeRgb15(0x1A, 0x16, 0x08), 0x00), // MELNORME_SHIP Yellowish
+			BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x00), // DRUUGE_SHIP Crimson (tm)
+			BuildColor(MakeRgb15(0x0E, 0x00, 0x0E), 0x00), // ILWRATH_SHIP Purple
+			BuildColor(MakeRgb15(0x14, 0x00, 0x0C), 0x00), // MYCON_SHIP Fungal fuchsia
+			BuildColor(MakeRgb15(0x1D, 0x00, 0x07), 0x00), // SLYLANDRO_SHIP Red Alert
+			BuildColor(MakeRgb15(0x0B, 0x0C, 0x00), 0x00), // UMGAH_SHIP Olive
+			BuildColor(MakeRgb15(0x00, 0x08, 0x00), 0x00), // URQUAN_SHIP Dark Green
+			BuildColor(MakeRgb15(0x16, 0x0D, 0x00), 0x00), // ZOQFOTPIK_SHIP Orange
+			BuildColor(MakeRgb15(0x15, 0x07, 0x03), 0x00), // SYREEN_SHIP Slightly-orange red
+			BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x00), // BLACK_URQUAN_SHIP Dark grey
+			BuildColor(MakeRgb15(0x09, 0x00, 0x15), 0x00), // ANDROSYNTH_SHIP Violet
+			BuildColor(MakeRgb15(0x00, 0x15, 0x1C), 0x00), // CHENJESU_SHIP Cyan
+			BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x00), // MMRNMHRM_SHIP Silver
+			BuildColor(MakeRgb15(0x19, 0x10, 0x1F), 0x00), // YEHAT_REBEL_SHIP Lavender
+		};
 
 		static constexpr uint16_t NumColors = uqstl::size(StarseedColors);
 
@@ -1280,7 +1279,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 		const uint16_t race_index = (race_update & 0x1F) - 1;
 		FleetInfoHandle hStarShip {};
 		FleetInfoHandle hNextShip {};
-		Nameplate nameplate[26];
+		uqstl::array<Nameplate, 26> nameplate;
 		uint8_t currMax = 0;
 
 		for (index = 0,
@@ -2155,7 +2154,7 @@ struct StarSearchState
 	int PrefixLen;
 	int ClusterLen;
 	int ClusterPos;
-	int SortedStars[NumSolarSystems];
+	uqstl::array<int, NumSolarSystems> SortedStars;
 };
 
 static bool starNameLess(int index1, int index2)
@@ -2171,7 +2170,7 @@ static bool starNameLess(int index1, int index2)
 
 static void SortStarsOnName(StarSearchState* pSS)
 {
-	int* const sorted {pSS->SortedStars};
+	int* const sorted {pSS->SortedStars.data()};
 	uqstl::iota(sorted, sorted + NumSolarSystems, 0);
 	uqstl::sort(sorted, sorted + NumSolarSystems, starNameLess);
 }
@@ -2261,7 +2260,7 @@ static int FindNextStarIndex(StarSearchState* pSS, int from, bool WithinClust)
 		dlen = uqm::utf8StringCount(ClusterName);
 		if (pSS->ClusterLen > dlen)
 		{ // no match, skip the rest of cluster
-			i = SkipStarCluster(pSS->SortedStars, i) - 1;
+			i = SkipStarCluster(pSS->SortedStars.data(), i) - 1;
 			continue;
 		}
 
@@ -2279,7 +2278,7 @@ static int FindNextStarIndex(StarSearchState* pSS, int from, bool WithinClust)
 
 		if (c < pSS->ClusterLen)
 		{ // no match here, skip the rest of cluster
-			i = SkipStarCluster(pSS->SortedStars, i) - 1;
+			i = SkipStarCluster(pSS->SortedStars.data(), i) - 1;
 			continue;
 		}
 
@@ -2305,7 +2304,7 @@ static int FindNextStarIndex(StarSearchState* pSS, int from, bool WithinClust)
 			}
 			else
 			{ // another star in the same cluster, skip cluster
-				i = SkipStarCluster(pSS->SortedStars, i) - 1;
+				i = SkipStarCluster(pSS->SortedStars.data(), i) - 1;
 				continue;
 			}
 		}

@@ -57,9 +57,11 @@ inline auto MapHeight() { return ResScale(Sc2MapHeight); }
 inline auto ScaledMapWidth() { return ResScale(((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
 inline auto UnscaledMapWidth() { return (((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
 
-inline constexpr GfxExtent MapDimensions[] {
-	{Sc2MapWidth,		  Sc2MapHeight},
-	{(UqmMapWidth - 1), UqmMapHeight},
+inline constexpr uqstl::array<GfxExtent, 2> MapDimensions {
+	{
+		{Sc2MapWidth, Sc2MapHeight},
+		{(UqmMapWidth - 1), UqmMapHeight},
+	 }
 };
 
 enum class LanderEvent
@@ -160,8 +162,8 @@ namespace uqm
 {
 struct MapPoint3D
 {
-	GfxPoint p[4];
-	uint32_t m[4];
+	uqstl::array<GfxPoint, 4> p;
+	uqstl::array<uint32_t, 4> m;
 };
 
 struct PlanetOrbit
@@ -284,12 +286,12 @@ struct SolarSystemState
 	// inner system. If set to (uint16_t)~0, all planet collisions are
 	// disabled until the flagship stops intersecting with all
 	// planets.
-	SystemPlanet SunDesc[MaxSuns];
-	SystemPlanet PlanetDesc[MaxPlanets];
+	uqstl::array<SystemPlanet, MaxSuns> SunDesc;
+	uqstl::array<SystemPlanet, MaxPlanets> PlanetDesc;
 	// Description of the planets in the system.
 	// Only defined after a call to (*genFuncs)->generatePlanets()
 	// and overwritten by subsequent calls.
-	SystemPlanet MoonDesc[MaxGenMoons];
+	uqstl::array<SystemPlanet, MaxGenMoons> MoonDesc;
 	// Description of the moons orbiting the planet pointed to
 	// by pBaseDesc.
 	// Only defined after a call to (*genFuncs)->generateMoons()
@@ -326,7 +328,7 @@ struct SolarSystemState
 	// Functions to call to fill in various parts of this
 	// structure. See generate.h, doc/devel/generate
 
-	FrameRef PlanetSideFrame[3 + MaxLifeVariation];
+	uqstl::array<FrameRef, 3 + MaxLifeVariation> PlanetSideFrame;
 	/* Frames for planet-side elements.
 			 * [0] = bio cannister
 			 * [1] = energy node (world-specific)
@@ -340,7 +342,7 @@ struct SolarSystemState
 	bool InOrbit;
 	// Set to true when player hits a world in an inner system
 	// Homeworld encounters count as 'in orbit'
-	FrameRef ScanFrame[*ScanType::Count];
+	uqstl::array<FrameRef, *ScanType::Count> ScanFrame;
 	// For PC scan, generated from TopoFrame
 };
 
@@ -357,7 +359,7 @@ struct PlotLocation
 {
 	GfxPoint star_pt;
 	StarDesc* star;
-	uint32_t dist_sq[*PlotId::NumPlots];
+	uqstl::array<uint32_t, *PlotId::NumPlots> dist_sq;
 };
 
 // PortalLocation aka PortalLocation.  The star_pt is the location in

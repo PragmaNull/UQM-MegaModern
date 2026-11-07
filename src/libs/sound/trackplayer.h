@@ -31,13 +31,12 @@ inline constexpr auto ModerateSpeed {16};
 inline constexpr auto Fast {24};
 inline constexpr auto VeryFast {32};
 
-static const uint8_t speed_array[] =
-	{
-		VerySlow,
-		Slow,
-		ModerateSpeed,
-		Fast,
-		VeryFast};
+static const uqstl::array<uint8_t, 5> speed_array {
+	VerySlow,
+	Slow,
+	ModerateSpeed,
+	Fast,
+	VeryFast};
 
 extern void PlayTrack(void);
 extern void StopTrack(void);

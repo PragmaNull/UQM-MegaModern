@@ -55,7 +55,7 @@ struct PresentationInputState
 	TimeCount TimeOut;
 	int TimeOutOnSkip;
 	const uqstl::vector<uqm::SlideCommand>* Commands;
-	FontRef Fonts[uqm::c_slideshowMaxFonts];
+	uqstl::array<FontRef, uqm::c_slideshowMaxFonts> Fonts;
 	FrameRef Frame;
 	MusicRef musicRef;
 	bool Batched;
@@ -71,7 +71,7 @@ struct PresentationInputState
 	bool TextTraced;
 	GfxRect clip_r;
 	GfxRect tfade_r;
-	GfxText TextLines[uqm::c_slideshowMaxFadeInLines];
+	uqstl::array<GfxText, uqm::c_slideshowMaxFadeInLines> TextLines;
 	uint16_t LinesCount;
 	char Buffer[512];
 	int MovieFrame;
@@ -433,32 +433,34 @@ struct IntroShip
 	uint16_t width;	   // The SD pixel width of the race name
 };
 
-const static IntroShip ship_map[] = {
-	{SpeciesId::Arilou,		"arilou",	  "ARILOULALEELAY", " SKIFF",		  2,	 123},
-	{SpeciesId::Chmmr,	   "chmmr",		"CHMMR",			 " AVATAR",		2,   50 },
-	{SpeciesId::Earthling,  "earthling",	"EARTHLING",		 " CRUISER",		 130, 79 },
-	{SpeciesId::Orz,		 "orz",		"ORZ",			   " NEMESIS",	   2,	  25 },
-	{SpeciesId::Pkunk,	   "pkunk",		"PKUNK",			 " FURY",		  2,	 43 },
-	{SpeciesId::Shofixti,	  "shofixti",	  "SHOFIXTI",		  " SCOUT",		4,   61 },
-	{SpeciesId::Spathi,		"spathi",	  "SPATHI",			" ELUDER",	   2,	  47 },
-	{SpeciesId::Supox,	   "supox",		"SUPOX",			 " BLADE",		   2,	  43 },
-	{SpeciesId::Thraddash,  "thraddash",	"THRADDASH",		 " TORCH",		   2,	  87 },
-	{SpeciesId::Utwig,	   "utwig",		"UTWIG",			 " JUGGER",		2,   43 },
-	{SpeciesId::Vux,		 "vux",		"VUX",			   " INTRUDER",		130, 28 },
-	{SpeciesId::Yehat,	   "yehat",		"YEHAT",			 " TERMINATOR",	130, 46 },
-	{SpeciesId::Melnorme,	  "melnorme",	  "MELNORME",		  " TRADER",		 2,	77 },
-	{SpeciesId::Druuge,		"druuge",	  "DRUUGE",			" MAULER",	   2,	  53 },
-	{SpeciesId::Ilwrath,	 "ilwrath",	"ILWRATH",		   " AVENGER",	   2,	  62 },
-	{SpeciesId::Mycon,	   "mycon",		"MYCON",			 " PODSHIP",		 127, 47 },
-	{SpeciesId::Slylandro,  "slylandro",	"SLYLANDRO",		 " PROBE",		   1,	  80 },
-	{SpeciesId::Umgah,	   "umgah",		"UMGAH",			 " DRONE",		   127, 50 },
-	{SpeciesId::UrQuan,		"urquan",	  "UR-QUAN",		 "\nDREADNAUGHT", 119, 66 },
-	{SpeciesId::Zoqfotpik,  "zoqfotpik",	"ZOQ-FOT-PIK",	   " STINGER",	   130, 92 },
-	{SpeciesId::Syreen,		"syreen",	  "SYREEN",			" PENETRATOR",   2,	  53 },
-	{SpeciesId::KohrAh,		"kohrah",	  "KOHR-AH",		 "",				 119, 64 },
-	{SpeciesId::Androsynth, "androsynth", "ANDROSYNTH",		" GUARDIAN",	 2,	94 },
-	{SpeciesId::Chenjesu,	  "chenjesu",	  "CHENJESU",		  "    BROODHOME", 1,	  71 },
-	{SpeciesId::Mmrnmhrm,	  "mmrnmhrm",	  "MMRNMHRM",		  " TRANSFORMER",  128, 84 },
+const static uqstl::array<IntroShip, 25> ship_map {
+	{
+		{SpeciesId::Arilou, "arilou", "ARILOULALEELAY", " SKIFF", 2, 123},
+		{SpeciesId::Chmmr, "chmmr", "CHMMR", " AVATAR", 2, 50},
+		{SpeciesId::Earthling, "earthling", "EARTHLING", " CRUISER", 130, 79},
+		{SpeciesId::Orz, "orz", "ORZ", " NEMESIS", 2, 25},
+		{SpeciesId::Pkunk, "pkunk", "PKUNK", " FURY", 2, 43},
+		{SpeciesId::Shofixti, "shofixti", "SHOFIXTI", " SCOUT", 4, 61},
+		{SpeciesId::Spathi, "spathi", "SPATHI", " ELUDER", 2, 47},
+		{SpeciesId::Supox, "supox", "SUPOX", " BLADE", 2, 43},
+		{SpeciesId::Thraddash, "thraddash", "THRADDASH", " TORCH", 2, 87},
+		{SpeciesId::Utwig, "utwig", "UTWIG", " JUGGER", 2, 43},
+		{SpeciesId::Vux, "vux", "VUX", " INTRUDER", 130, 28},
+		{SpeciesId::Yehat, "yehat", "YEHAT", " TERMINATOR", 130, 46},
+		{SpeciesId::Melnorme, "melnorme", "MELNORME", " TRADER", 2, 77},
+		{SpeciesId::Druuge, "druuge", "DRUUGE", " MAULER", 2, 53},
+		{SpeciesId::Ilwrath, "ilwrath", "ILWRATH", " AVENGER", 2, 62},
+		{SpeciesId::Mycon, "mycon", "MYCON", " PODSHIP", 127, 47},
+		{SpeciesId::Slylandro, "slylandro", "SLYLANDRO", " PROBE", 1, 80},
+		{SpeciesId::Umgah, "umgah", "UMGAH", " DRONE", 127, 50},
+		{SpeciesId::UrQuan, "urquan", "UR-QUAN", "\nDREADNAUGHT", 119, 66},
+		{SpeciesId::Zoqfotpik, "zoqfotpik", "ZOQ-FOT-PIK", " STINGER", 130, 92},
+		{SpeciesId::Syreen, "syreen", "SYREEN", " PENETRATOR", 2, 53},
+		{SpeciesId::KohrAh, "kohrah", "KOHR-AH", "", 119, 64},
+		{SpeciesId::Androsynth, "androsynth", "ANDROSYNTH", " GUARDIAN", 2, 94},
+		{SpeciesId::Chenjesu, "chenjesu", "CHENJESU", "    BROODHOME", 1, 71},
+		{SpeciesId::Mmrnmhrm, "mmrnmhrm", "MMRNMHRM", " TRANSFORMER", 128, 84},
+	 }
 };
 
 static constexpr uint16_t NumShips {static_cast<uint16_t>(uqstl::size(ship_map))};
@@ -1054,7 +1056,7 @@ static bool DoPresentation(void* pIS)
 
 					for (i = 0; i < pPIS->LinesCount; ++i)
 					{
-						DrawTextEffect(pPIS->TextLines + i, pPIS->TextFadeColor,
+						DrawTextEffect(pPIS->TextLines.data() + i, pPIS->TextFadeColor,
 									   pPIS->TextFadeColor, pPIS->TextTraced);
 					}
 
@@ -1063,7 +1065,7 @@ static bool DoPresentation(void* pIS)
 					BatchGraphics();
 					for (i = 0; i < pPIS->LinesCount; ++i)
 					{
-						DrawTextEffect(pPIS->TextLines + i, pPIS->TextColor,
+						DrawTextEffect(pPIS->TextLines.data() + i, pPIS->TextColor,
 									   pPIS->TextBackColor, pPIS->TextTraced);
 					}
 					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &pPIS->tfade_r);
@@ -1081,7 +1083,7 @@ static bool DoPresentation(void* pIS)
 					BatchGraphics();
 					for (i = 0; i < pPIS->LinesCount; ++i)
 					{
-						DrawTextEffect(pPIS->TextLines + i, pPIS->TextFadeColor,
+						DrawTextEffect(pPIS->TextLines.data() + i, pPIS->TextFadeColor,
 									   pPIS->TextFadeColor, pPIS->TextTraced);
 					}
 					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &pPIS->tfade_r);

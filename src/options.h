@@ -62,8 +62,8 @@ enum class CheatAction : uint8_t
 
 inline constexpr auto NumUpgrades {13};
 
-extern uqm::CheatAction optDeviceArray[28];
-extern uqm::CheatAction optUpgradeArray[NumUpgrades];
+extern uqstl::array<uqm::CheatAction, 28> optDeviceArray;
+extern uqstl::array<uqm::CheatAction, NumUpgrades> optUpgradeArray;
 
 
 extern char baseContentPath[PATH_MAX];
@@ -100,7 +100,7 @@ struct InputTemplate
 	 * can actually ditch much of VControl. */
 };
 
-extern InputTemplate input_templates[6];
+extern uqstl::array<InputTemplate, 6> input_templates;
 
 void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirName, uqgsl::czstring execFile);
 // Returns the expanded config dir path, or an empty string if the path is not valid.

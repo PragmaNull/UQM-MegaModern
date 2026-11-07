@@ -1012,9 +1012,9 @@ static bool DrawTeamString(MeleeState* pMS, uint16_t side, uint16_t HiLiteState,
 	else
 	{ // editing state
 		GfxRect text_r;
-		uint8_t char_deltas[MaxTeamChars];
+		uqstl::array<uint8_t, MaxTeamChars> char_deltas;
 
-		TextRect(&lfText, &text_r, char_deltas);
+		TextRect(&lfText, &text_r, char_deltas.data());
 #if 0
 		if ((text_r.extent.width + ResScale (2)) >= r.extent.width)
 		{	// the text does not fit the input box size and so
@@ -1030,7 +1030,7 @@ static bool DrawTeamString(MeleeState* pMS, uint16_t side, uint16_t HiLiteState,
 		DrawFilledRectangle(&text_r);
 
 		// calculate the cursor position and draw it
-		const uint8_t* pchar_deltas {char_deltas};
+		const uint8_t* pchar_deltas {char_deltas.data()};
 		for (uint16_t i {pMS->CurIndex}; i > 0; --i)
 		{
 			text_r.corner.x += (int16_t)*pchar_deltas++;

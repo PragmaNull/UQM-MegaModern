@@ -41,7 +41,7 @@ namespace uqm
 //#define DEBUG_PROCESS
 
 uint16_t DisplayFreeList;
-Primitive DisplayArray[MaxDisplayPrims];
+uqstl::array<Primitive, MaxDisplayPrims> DisplayArray;
 extern LargePoint SpaceOrg;
 
 uint16_t zoom_out = 1 << ZoomShift;
@@ -1144,7 +1144,7 @@ void RedrawQueue(bool clear)
 				SetGraphicScale(scale);
 			}
 
-			DrawBatch(DisplayArray, DisplayLinks, BatchFlags::None); //BatchBuildPage);
+			DrawBatch(DisplayArray.data(), DisplayLinks, BatchFlags::None); //BatchBuildPage);
 			SetGraphicScale(0);
 		}
 

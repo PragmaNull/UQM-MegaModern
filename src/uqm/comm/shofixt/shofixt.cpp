@@ -50,8 +50,8 @@ static ConversationData shofixti_desc =
 		},
 		ShofixtiConversationPhrases, /* PlayerPhrases */
 		11, /* NumAnimations */
-		{
-								/* AlienAmbientArray (ambient animations) */
+		{{
+			/* AlienAmbientArray (ambient animations) */
 			{
 				5,						  /* StartIndex */
 				15,						  /* NumFrames */
@@ -62,7 +62,7 @@ static ConversationData shofixti_desc =
 				0, /* RestartRate */
 				0, /* BlockMask */
 			},
-								{
+			{
 				20,						/* StartIndex */
 				3,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -72,7 +72,7 @@ static ConversationData shofixti_desc =
 				(GameTicksPerSecond >> 1) * 3, /* RestartRate */
 				0,							   /* BlockMask */
 			},
-								{
+			{
 				23,						/* StartIndex */
 				3,						/* NumFrames */
 				AnimationFlags::Random, /* AnimFlags */
@@ -82,7 +82,7 @@ static ConversationData shofixti_desc =
 				(GameTicksPerSecond >> 1) * 3, /* RestartRate */
 				0,							   /* BlockMask */
 			},
-								{
+			{
 				26,					  /* StartIndex */
 				3,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -92,7 +92,7 @@ static ConversationData shofixti_desc =
 				GameTicksPerSecond * 3, /* RestartRate */
 				0,						/* BlockMask */
 			},
-								{
+			{
 				29,					  /* StartIndex */
 				4,					  /* NumFrames */
 				AnimationFlags::Yoyo, /* AnimFlags */
@@ -103,7 +103,7 @@ static ConversationData shofixti_desc =
 				0,						/* BlockMask */
 			},
 
-								{
+			{
 				33,						  /* StartIndex */
 				6,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -113,7 +113,7 @@ static ConversationData shofixti_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				39,						  /* StartIndex */
 				7,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -123,7 +123,7 @@ static ConversationData shofixti_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				(1 << 7),				 /* BlockMask */
 			},
-								{
+			{
 				46,						  /* StartIndex */
 				6,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -133,7 +133,7 @@ static ConversationData shofixti_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				(1 << 6),				 /* BlockMask */
 			},
-								{
+			{
 				52,						  /* StartIndex */
 				4,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -143,7 +143,7 @@ static ConversationData shofixti_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				0,						 /* BlockMask */
 			},
-								{
+			{
 				56,						  /* StartIndex */
 				7,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -153,7 +153,7 @@ static ConversationData shofixti_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				(1 << 10),				 /* BlockMask */
 			},
-								{
+			{
 				63,						  /* StartIndex */
 				6,						  /* NumFrames */
 				AnimationFlags::Circular, /* AnimFlags */
@@ -163,7 +163,7 @@ static ConversationData shofixti_desc =
 				GameTicksPerSecond / 30, /* RestartRate */
 				(1 << 9),				 /* BlockMask */
 			},
-								},
+		}},
 		{
 								/* AlienTransitionDesc */
 			0,					  /* StartIndex */

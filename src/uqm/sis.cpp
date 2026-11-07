@@ -218,7 +218,7 @@ void DrawSaveInfo(FlagshipData SisState)
 	{
 		if (SisState.Nomad != uqm::NomadMode::Off)
 		{
-			const static char* const NomadModeSuffix[] {"", "-", "+"};
+			static uqstl::array<const char* const, 3> NomadModeSuffix {"", "-", "+"};
 
 			fmt::format_to_sz_n(TempNom, "{}{}",
 								GameString(GameStringBase::MainmenuString + 60),
@@ -362,13 +362,13 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		GfxRect text_r;
 		// XXX: 128 is currently safe, but it would be better to specify
 		//   the size to TextRect()
-		uint8_t char_deltas[128];
+		uqstl::array<uint8_t, 128> char_deltas;
 		const uint8_t* pchar_deltas {};
 
 		t.baseline.x = ResScale(3);
 		t.align = TextAlign::Left;
 
-		TextRect(&t, &text_r, char_deltas);
+		TextRect(&t, &text_r, char_deltas.data());
 #if 0
 		if (text_r.extent.width + t.baseline.x + ResScale (2)
 				>= r.extent.width)
@@ -389,7 +389,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		{ // calc and draw the cursor
 			GfxRect cur_r = text_r;
 
-			pchar_deltas = char_deltas;
+			pchar_deltas = char_deltas.data();
 			for (i = CurPos; i > 0; --i)
 			{
 				cur_r.corner.x += (int16_t)*pchar_deltas++;
@@ -466,7 +466,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 
 			// print extra chars
 			SetContextForeGroundColor(SisMessageExtraTextColor);
-			for (i = ExPos, pchar_deltas = char_deltas; i > 0; --i)
+			for (i = ExPos, pchar_deltas = char_deltas.data(); i > 0; --i)
 			{
 				t.baseline.x += (int16_t)*pchar_deltas++;
 			}
@@ -1277,7 +1277,7 @@ static void DrawSupportShips(void)
 	const auto& ship_pos {SupportShipPts};
 
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q),
-		pship_pos = ship_pos;
+		pship_pos = ship_pos.data();
 		 hStarShip; hStarShip = hNextShip, ++pship_pos)
 	{
 		GfxStamp s;
@@ -2133,9 +2133,8 @@ void DrawFuelInFTanks(bool isOutfit)
 static constexpr auto MaxNumRects {5}; // 5 flashing rects at once should be enough
 static constexpr auto NumRects {1};
 
-static FlashContext* flashContext[MaxNumRects] =
-	{nullptr, nullptr, nullptr, nullptr, nullptr};
-static GfxRect flash_rect[MaxNumRects];
+static uqstl::array<FlashContext*, MaxNumRects> flashContext {nullptr, nullptr, nullptr, nullptr, nullptr};
+static uqstl::array<GfxRect, MaxNumRects> flash_rect;
 static Alarm* flashAlarm = nullptr;
 static bool flashPaused = false;
 static uint8_t count_r = NumRects;

@@ -28,18 +28,20 @@ static int luaUqm_log_fatal(lua_State* luaState);
 static int luaUqm_log_info(lua_State* luaState);
 static int luaUqm_log_warn(lua_State* luaState);
 
-static const luaL_Reg logFuncs[] = {
-	{"debug", luaUqm_log_debug},
-	{"error", luaUqm_log_error},
-	{"fatal", luaUqm_log_fatal},
-	{"info",	 luaUqm_log_info },
-	{"warn",	 luaUqm_log_warn },
-	{nullptr, nullptr		 },
+static const uqstl::array<luaL_Reg, 6> logFuncs {
+	{
+		{"debug", luaUqm_log_debug},
+		{"error", luaUqm_log_error},
+		{"fatal", luaUqm_log_fatal},
+		{"info", luaUqm_log_info},
+		{"warn", luaUqm_log_warn},
+		{nullptr, nullptr},
+	 }
 };
 
 int luaUqm_log_open(lua_State* luaState)
 {
-	luaL_newlib(luaState, logFuncs);
+	newLuaLib(luaState, logFuncs);
 	return 1;
 }
 

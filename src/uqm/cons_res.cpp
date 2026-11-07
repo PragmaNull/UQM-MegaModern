@@ -32,7 +32,7 @@ namespace uqm
 {
 // for NUMBER_OF_PLANET_TYPES, PLANET_SHIELDED
 
-const static char* planet_types[] = {
+static uqstl::array<uqgsl::czstring, 59> planet_types {
 	"oolite", "yttric", "quasidegenerate", "lanthanide", "treasure",
 	"urea", "metal", "radioactive", "opalescent", "cyanic",
 	"acid", "alkali", "halide", "green", "copper",
@@ -46,10 +46,10 @@ const static char* planet_types[] = {
 	"bluegas", "cyangas", "greengas", "greygas", "orangegas",
 	"purplegas", "redgas", "violetgas", "yellowgas"};
 
-const static char* planet_sizes[] = {
+static uqstl::array<uqgsl::czstring, 3> planet_sizes {
 	"large", "medium", "small"};
 
-FrameRef planet[NumViews];
+uqstl::array<FrameRef, NumViews> planet;
 static char buffer[80] {};
 
 void load_gravity_well(uint8_t selector)
