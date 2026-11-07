@@ -605,7 +605,7 @@ static void Flash_makeFrame(FlashContext* context, FrameRef dest, int numer, int
 
 	Flash_blendFraction(context, numer, denom, &blendedNumer, &blendedDenom);
 
-	GfxContextRef oldGfxContext {SetContext(workGfxContext)};
+	const ContextScope contextScope {workGfxContext};
 	SetContextFGFrame(dest);
 
 	switch (context->type)
@@ -668,8 +668,6 @@ static void Flash_makeFrame(FlashContext* context, FrameRef dest, int numer, int
 				break;
 			}
 	}
-
-	SetContext(oldGfxContext);
 }
 
 // Prepare an entry in the cache.

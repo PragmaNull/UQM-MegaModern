@@ -1294,7 +1294,7 @@ void TFB_DrawCanvas_Rescale_Nearest(tfb::Canvas src_canvas, tfb::Canvas dst_canv
 	ssy = 0x6000;
 
 	const uqm::SurfaceLock srcLock {src};
-	SDL_LockSurface(dst);
+	const uqm::SurfaceLock dstLock {dst};
 
 	if (SDL_GetPixelFormatDetails(src->format)->bytes_per_pixel == 1 && SDL_GetPixelFormatDetails(dst->format)->bytes_per_pixel == 1)
 	{
@@ -1364,7 +1364,6 @@ void TFB_DrawCanvas_Rescale_Nearest(tfb::Canvas src_canvas, tfb::Canvas dst_canv
 		uqm::log::warn("Tried to deal with unknown BPP: {} -> {}",
 					   SDL_GetPixelFormatDetails(src->format)->bits_per_pixel, SDL_GetPixelFormatDetails(dst->format)->bits_per_pixel);
 	}
-	SDL_UnlockSurface(dst);
 }
 
 typedef union
@@ -1618,8 +1617,8 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 	}
 
 	const uqm::SurfaceLock srcLock {src};
-	SDL_LockSurface(dst);
-	SDL_LockSurface(mm);
+	const uqm::SurfaceLock dstLock {dst};
+	const uqm::SurfaceLock mmLock {mm};
 
 	for (y = 0, sy0 = ssy0, sy1 = ssy1;
 		 y < h;
@@ -1799,9 +1798,6 @@ void TFB_DrawCanvas_Rescale_Trilinear(tfb::Canvas src_canvas, tfb::Canvas src_mi
 			}
 		}
 	}
-
-	SDL_UnlockSurface(mm);
-	SDL_UnlockSurface(dst);
 }
 
 void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_canvas,
@@ -1896,7 +1892,7 @@ void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_can
 	}
 
 	const uqm::SurfaceLock srcLock {src};
-	SDL_LockSurface(dst);
+	const uqm::SurfaceLock dstLock {dst};
 
 	for (y = 0, sy = ssy; y < h; ++y, sy += fsy)
 	{
@@ -1996,8 +1992,6 @@ void TFB_DrawCanvas_Rescale_Bilinear(tfb::Canvas src_canvas, tfb::Canvas dst_can
 			}
 		}
 	}
-
-	SDL_UnlockSurface(dst);
 }
 
 void TFB_DrawCanvas_Lock(tfb::Canvas canvas)
@@ -2177,8 +2171,8 @@ bool TFB_DrawCanvas_Intersect(tfb::Canvas canvas1, GfxPoint c1org,
 	Uint32 s2mask {};
 	GetPixelFn getpixel1 {}, getpixel2 {};
 
-	SDL_LockSurface(surf1);
-	SDL_LockSurface(surf2);
+	const uqm::SurfaceLock surf1Lock {surf1};
+	const uqm::SurfaceLock surf2Lock {surf2};
 
 	getpixel1 = getpixel_for(surf1);
 	getpixel2 = getpixel_for(surf2);
@@ -2231,9 +2225,6 @@ bool TFB_DrawCanvas_Intersect(tfb::Canvas canvas1, GfxPoint c1org,
 			}
 		}
 	}
-
-	SDL_UnlockSurface(surf2);
-	SDL_UnlockSurface(surf1);
 
 	return ret;
 }

@@ -506,7 +506,7 @@ static void SaveProblemMessage(GfxStamp* MsgStamp)
 
 	*MsgStamp = SaveContextFrame(&r);
 
-	BatchGraphics();
+	const BatchScope batch {};
 	DrawStarConBox(&r, ResScale(2), ShadowboxMediumColor,
 				   ShadowboxDarkColor, true, DkgrayColor, true, Transparent);
 	SetContextForeGroundColor(
@@ -523,7 +523,6 @@ static void SaveProblemMessage(GfxStamp* MsgStamp)
 		font_DrawText(&t);
 		t.baseline.y += 11;
 	}
-	UnbatchGraphics();
 }
 
 void SaveProblem(void)

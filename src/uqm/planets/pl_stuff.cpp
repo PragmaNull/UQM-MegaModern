@@ -566,7 +566,7 @@ void DrawPlanet(int tintY, Color tintColor)
 	s.origin.x = 0;
 	s.origin.y = 0;
 
-	BatchGraphics();
+	const BatchScope batch {};
 	if (sameColor(tintColor, BlackColor))
 	{ // no tint -- just draw the surface
 		s.frame = pSolarSysState->TopoFrame;
@@ -634,7 +634,6 @@ void DrawPlanet(int tintY, Color tintColor)
 			}
 		}
 	}
-	UnbatchGraphics();
 }
 
 } // namespace uqm

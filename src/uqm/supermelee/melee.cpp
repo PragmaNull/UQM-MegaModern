@@ -441,7 +441,6 @@ static void DrawTeamPickerText(GfxStamp stamp)
 	GfxRect text_r;
 	GfxPoint pt;
 	GfxText t;
-	Color OldColor;
 	uqstl::array<char, 256> buf;
 	GfxStamp s;
 	uint16_t i {};
@@ -458,8 +457,8 @@ static void DrawTeamPickerText(GfxStamp stamp)
 		}
 	}
 
-	FontRef OldFont {SetContextFont(LabelFont)};
-	OldColor = SetContextForeGroundColor(TeamPickTextColor);
+	const FontScope fontScope {LabelFont};
+	const ForegroundColorScope colorScope {TeamPickTextColor};
 
 	GetFrameRect(stamp.frame, &r);
 	GetContextFontLeading(&leading);
@@ -507,9 +506,6 @@ static void DrawTeamPickerText(GfxStamp stamp)
 		t.baseline.x = s.origin.x + r.extent.width + TpPadding();
 		t.CharCount = (uint16_t)~0;
 	}
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 static int WhichText(uint16_t which_icon)

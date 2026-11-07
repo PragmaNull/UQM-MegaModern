@@ -160,7 +160,7 @@ void font_DrawText_Fade(GfxText* lpText, FrameRef repair, bool* skip)
 void font_DrawTracedText(GfxText* pText, Color text, Color trace)
 {
 	// Preserve current foreground color for full correctness
-	const Color oldfg = SetContextForeGroundColor(trace);
+	const ForegroundColorScope colorScope {trace};
 	const uint8_t stroke = uqm::ResScale(1);
 	const GfxPoint t_baseline = pText->baseline;
 	GfxPoint offset;
@@ -184,7 +184,6 @@ void font_DrawTracedText(GfxText* pText, Color text, Color trace)
 
 	SetContextForeGroundColor(text);
 	font_DrawText(pText);
-	SetContextForeGroundColor(oldfg);
 }
 
 // Alt stuff to handle 2 fonts at once (for Orz)
@@ -214,7 +213,7 @@ void font_DrawTracedTextAlt(GfxText* pText, Color text, Color trace, FontRef Alt
 							uqm::UniChar key)
 {
 	// Preserve current foreground color for full correctness
-	const Color oldfg = SetContextForeGroundColor(trace);
+	const ForegroundColorScope colorScope {trace};
 	const uint8_t stroke = uqm::ResScale(1);
 	const GfxPoint t_baseline = pText->baseline;
 	GfxPoint offset;
@@ -239,7 +238,6 @@ void font_DrawTracedTextAlt(GfxText* pText, Color text, Color trace, FontRef Alt
 
 	SetContextForeGroundColor(text);
 	swap = font_DrawTextAlt(pText, swap, AltFontPtr, key);
-	SetContextForeGroundColor(oldfg);
 }
 
 void font_DrawShadowedText(GfxText* pText, ShadowAngle direction,

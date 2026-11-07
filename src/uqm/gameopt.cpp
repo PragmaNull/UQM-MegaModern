@@ -1116,7 +1116,6 @@ static void DrawEmptySlot(void)
 	GfxRect r;
 	GfxText t;
 	uqstl::array<char, 256> buf;
-	Color oldfg;
 	uint8_t stroke {};
 	GfxPoint offset;
 	GfxPoint t_baseline;
@@ -1141,7 +1140,7 @@ static void DrawEmptySlot(void)
 
 	t.align = TextAlign::Center;
 
-	oldfg = SetContextForeGroundColor(EmptySlotStroke3Color);
+	const ForegroundColorScope colorScope {EmptySlotStroke3Color};
 	t_baseline = t.baseline;
 
 	for (stroke = ResScale(3); stroke > 0; stroke -= ResScale(1))
@@ -1196,8 +1195,6 @@ static void DrawEmptySlot(void)
 	t.pStr = uqm::skipUTF8Chars(buf.data(), t.CharCount);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
-
-	SetContextForeGroundColor(oldfg);
 }
 
 static void DrawBombPodText(GfxStamp* s)
@@ -1276,7 +1273,6 @@ static void DrawNoLimit(void)
 {
 	GfxRect r;
 	GfxText t;
-	Color oldfg;
 	uint8_t stroke {};
 	GfxPoint offset;
 	GfxPoint t_baseline;
@@ -1289,7 +1285,7 @@ static void DrawNoLimit(void)
 	SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 
-	FontRef OldFont {SetContextFont(LabelFont)};
+	const FontScope fontScope {LabelFont};
 
 	GetContextFontLeading(&leading);
 
@@ -1300,7 +1296,7 @@ static void DrawNoLimit(void)
 	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 
-	oldfg = SetContextForeGroundColor(NoLimitStroke3Color);
+	const ForegroundColorScope colorScope {NoLimitStroke3Color};
 	t_baseline = t.baseline;
 
 	for (stroke = ResScale(3); stroke > 0; stroke -= ResScale(1))
@@ -1336,9 +1332,6 @@ static void DrawNoLimit(void)
 
 	SetContextForeGroundColor(NoLimitTextColor);
 	font_DrawText(&t);
-
-	SetContextForeGroundColor(oldfg);
-	SetContextFont(OldFont);
 }
 
 static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
