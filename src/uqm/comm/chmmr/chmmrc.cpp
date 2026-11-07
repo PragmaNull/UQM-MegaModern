@@ -34,7 +34,7 @@
 
 static ConversationData chmmr_desc =
 	{
-		CHMMR_CONVERSATION, /* AlienConv */
+		Conversation::Chmmr, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -203,7 +203,7 @@ static void ExitConversation(RESPONSE_REF R)
 
 		NPCPhrase(TAKE_2_WEEKS);
 
-		SetRaceAllied(CHMMR_SHIP, true);
+		SetRaceAllied(RaceId::Chmmr, true);
 
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_HOME_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(0));
@@ -220,15 +220,15 @@ static void ExitConversation(RESPONSE_REF R)
 		}
 
 		uqm::gameState().sis().NumLanders = 0;
-		uqm::gameState().game().ModuleCost[PLANET_LANDER] = 0;
+		uqm::gameState().game().ModuleCost[*ModuleType::PlanetLander] = 0;
 
 
 		/* transport player to Earth */
 		// JSD replace old method of teleport to SOL with new method
 		// GLOBAL_SIS (log_x) = UniverseToLogx (SOL_X);
 		// GLOBAL_SIS (log_y) = UniverseToLogy (SOL_Y);
-		uqm::gameState().sis().log_x = UniverseToLogx(plot_map[SOL_DEFINED].star_pt.x);
-		uqm::gameState().sis().log_y = UniverseToLogy(plot_map[SOL_DEFINED].star_pt.y);
+		uqm::gameState().sis().log_x = UniverseToLogx(plot_map[*PlotId::Sol].star_pt.x);
+		uqm::gameState().sis().log_y = UniverseToLogy(plot_map[*PlotId::Sol].star_pt.y);
 		uqm::flagship().shipFacing = 1;
 		/* At Earth or at Starbase */
 		uqm::flagship().ipPlanet = EarthIndex + 1;
@@ -242,14 +242,14 @@ static void ExitConversation(RESPONSE_REF R)
 			uqm::gameState().sis().FuelOnBoard = FuelReserve;
 			uqm::gameState().sis().CrewEnlisted = 0;
 			uqm::gameState().sis().TotalElementMass = 0;
-			uqm::gameState().game().ModuleCost[STORAGE_BAY] = 0; /* disable Storage Bay */
-			for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
+			uqm::gameState().game().ModuleCost[*ModuleType::StorageBay] = 0; /* disable Storage Bay */
+			for (i = 0; i < MineralCategory::NumElementCategories; ++i)
 			{
 				uqm::gameState().sis().ElementAmounts[i] = 0;
 			}
 			for (i = NumBombModules; i < NumModuleSlots; ++i)
 			{
-				uqm::gameState().sis().ModuleSlots[i] = EmptySlot + 2;
+				uqm::gameState().sis().ModuleSlots[i] = ModuleType::EmptyModuleSlot;
 			}
 
 			/* XXX : this should be unhardcoded eventually */
@@ -268,7 +268,7 @@ static void ExitConversation(RESPONSE_REF R)
 
 				/* find next unused slot */
 				for (; i > 0
-					   && uqm::gameState().sis().ModuleSlots[i] != EmptySlot + 2;
+					   && uqm::gameState().sis().ModuleSlots[i] != ModuleType::EmptyModuleSlot;
 					 --i)
 					;
 				if (i == 0)
@@ -277,7 +277,7 @@ static void ExitConversation(RESPONSE_REF R)
 				}
 				/* find next module to move */
 				for (m = i - 1; m >= 0
-								&& uqm::gameState().sis().ModuleSlots[m] == EmptySlot + 2;
+								&& uqm::gameState().sis().ModuleSlots[m] == ModuleType::EmptyModuleSlot;
 					 --m)
 					;
 				if (m < 0)
@@ -287,29 +287,29 @@ static void ExitConversation(RESPONSE_REF R)
 
 				/* move the module */
 				uqm::gameState().sis().ModuleSlots[i] = uqm::gameState().sis().ModuleSlots[m];
-				uqm::gameState().sis().ModuleSlots[m] = EmptySlot + 2;
+				uqm::gameState().sis().ModuleSlots[m] = ModuleType::EmptyModuleSlot;
 			}
 		}
 
 		/* install Chmmr-supplied modules */
 		for (i = 0; i < NumDriveSlots; ++i)
 		{
-			uqm::gameState().sis().DriveSlots[i] = FUSION_THRUSTER;
+			uqm::gameState().sis().DriveSlots[i] = ModuleType::FusionThruster;
 		}
 		for (i = 0; i < NumJetSlots; ++i)
 		{
-			uqm::gameState().sis().JetSlots[i] = TURNING_JETS;
+			uqm::gameState().sis().JetSlots[i] = ModuleType::TurningJets;
 		}
-		uqm::gameState().sis().ModuleSlots[0] = BOMB_MODULE_4;
-		uqm::gameState().sis().ModuleSlots[1] = BOMB_MODULE_5;
-		uqm::gameState().sis().ModuleSlots[2] = BOMB_MODULE_3;
-		uqm::gameState().sis().ModuleSlots[3] = BOMB_MODULE_1;
-		uqm::gameState().sis().ModuleSlots[4] = BOMB_MODULE_0;
-		uqm::gameState().sis().ModuleSlots[5] = BOMB_MODULE_1;
-		uqm::gameState().sis().ModuleSlots[6] = BOMB_MODULE_3;
-		uqm::gameState().sis().ModuleSlots[7] = BOMB_MODULE_4;
-		uqm::gameState().sis().ModuleSlots[8] = BOMB_MODULE_5;
-		uqm::gameState().sis().ModuleSlots[9] = BOMB_MODULE_2;
+		uqm::gameState().sis().ModuleSlots[0] = ModuleType::BombModule4;
+		uqm::gameState().sis().ModuleSlots[1] = ModuleType::BombModule5;
+		uqm::gameState().sis().ModuleSlots[2] = ModuleType::BombModule3;
+		uqm::gameState().sis().ModuleSlots[3] = ModuleType::BombModule1;
+		uqm::gameState().sis().ModuleSlots[4] = ModuleType::BombModule0;
+		uqm::gameState().sis().ModuleSlots[5] = ModuleType::BombModule1;
+		uqm::gameState().sis().ModuleSlots[6] = ModuleType::BombModule3;
+		uqm::gameState().sis().ModuleSlots[7] = ModuleType::BombModule4;
+		uqm::gameState().sis().ModuleSlots[8] = ModuleType::BombModule5;
+		uqm::gameState().sis().ModuleSlots[9] = ModuleType::BombModule2;
 	}
 	else if (PlayerSaid(R, perhaps_not_install))
 	{
@@ -335,7 +335,7 @@ static void NotReady(RESPONSE_REF R)
 	{
 		NPCPhrase(USE_OUR_SHIPS_BEFORE);
 
-		SetRaceAllied(CHMMR_SHIP, true);
+		SetRaceAllied(RaceId::Chmmr, true);
 	}
 	else if (PlayerSaid(R, where_weapon))
 	{
@@ -350,7 +350,7 @@ static void NotReady(RESPONSE_REF R)
 		DisablePhrase(where_distraction);
 	}
 
-	if (CheckAlliance(CHMMR_SHIP) != RaceAllegiance::Good)
+	if (CheckAlliance(RaceId::Chmmr) != RaceAllegiance::Good)
 	{
 		Response(tech_help, NotReady);
 	}
@@ -397,7 +397,7 @@ static void ImproveBomb(RESPONSE_REF R)
 	{
 		NPCPhrase(USE_OUR_SHIPS_AFTER);
 
-		SetRaceAllied(CHMMR_SHIP, true);
+		SetRaceAllied(RaceId::Chmmr, true);
 	}
 
 	if (PhraseEnabled(what_now))
@@ -412,7 +412,7 @@ static void ImproveBomb(RESPONSE_REF R)
 	{
 		Response(bummer_about_my_ship, ImproveBomb);
 	}
-	if (CheckAlliance(CHMMR_SHIP) != RaceAllegiance::Good)
+	if (CheckAlliance(RaceId::Chmmr) != RaceAllegiance::Good)
 	{
 		Response(other_assistance, ImproveBomb);
 	}
@@ -737,7 +737,7 @@ static void Intro(void)
 			if (IsExtended())
 			{
 				HFLEETINFO hChmmr = GetStarShipFromIndex(
-					&uqm::gameState().game().avail_race_q, CHMMR_SHIP);
+					&uqm::gameState().game().avail_race_q, *RaceId::Chmmr);
 				FleetInfo* ChmmrPtr = LockFleetInfo(
 					&uqm::gameState().game().avail_race_q, hChmmr);
 
@@ -746,15 +746,15 @@ static void Intro(void)
 					ChmmrPtr->actual_strength =
 						986 / SphereRadiusIncrement * 2;
 					ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map,
-													  HOME);
-					StartSphereTracking(CHMMR_SHIP);
+													  *PlotId::Home);
+					StartSphereTracking(RaceId::Chmmr);
 				}
 				UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hChmmr);
 			}
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-		SetHomeworldKnown(CHMMR_HOME);
+		SetHomeworldKnown(*HomeId::Chmmr);
 	}
 }
 

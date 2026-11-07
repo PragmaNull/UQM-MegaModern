@@ -79,7 +79,7 @@ Segue getSegue(void);
 extern RESPONSE_REF phraseIdStrToNum(const char* phraseId);
 extern const char* phraseIdNumToStr(RESPONSE_REF response);
 
-extern ConversationData* init_race(CONVERSATION comm_id);
+extern ConversationData* init_race(Conversation comm_id);
 
 extern ConversationData* init_arilou_comm(void);
 

@@ -57,7 +57,7 @@ float daysElapsed(void)
 
 static void processClockDayEvents(void)
 {
-	uint8_t funcIndex {};
+	GameEventId funcIndex {};
 	while (gameClock().takeDueEvent(funcIndex))
 	{
 		EventHandler(funcIndex);
@@ -66,7 +66,7 @@ static void processClockDayEvents(void)
 
 bool InitGameClock(void)
 {
-	if (!gameClock().start(NUM_EVENTS))
+	if (!gameClock().start(*GameEventId::NumEvents))
 	{
 		return (false);
 	}
@@ -129,7 +129,7 @@ bool ValidateEvent(EventType type, uint16_t* pmonth_index, uint16_t* pday_index,
 	return gameClock().resolveDate(type, *pmonth_index, *pday_index, *pyear_index);
 }
 
-HEVENT AddEvent(EventType type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index)
+HEVENT AddEvent(EventType type, uint16_t month_index, uint16_t day_index, uint16_t year_index, GameEventId func_index)
 {
 	if (type == EventType::Relative
 		&& month_index == 0
@@ -175,7 +175,7 @@ void MoveGameClockToNextEvent(bool skipHyperspaceEncounters)
 		}
 		// An event for today that was added after the events of today ran.
 		processClockDayEvents();
-		if (!skipHyperspaceEncounters || event->func_index != HYPERSPACE_ENCOUNTER_EVENT)
+		if (!skipHyperspaceEncounters || event->func_index != GameEventId::HyperspaceEncounterEvent)
 		{
 			return;
 		}

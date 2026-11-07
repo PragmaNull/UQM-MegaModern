@@ -135,7 +135,7 @@ int luaUqm_state_open(lua_State* luaState)
 static uint16_t testRaceId(lua_State* luaState, int argn)
 {
 	const char* raceIdStr = luaL_checkstring(luaState, argn);
-	const uint16_t raceId = RaceIdStrToIndex(raceIdStr);
+	const RaceId raceId {RaceIdStrToIndex(raceIdStr)};
 	if (raceId == (uint16_t)-1)
 	{
 		// TODO: print script file name.
@@ -155,7 +155,7 @@ static uint16_t testRaceId(lua_State* luaState, int argn)
 static uint16_t testShipId(lua_State* luaState, int argn)
 {
 	const char* shipIdStr = luaL_checkstring(luaState, argn);
-	const uint16_t shipId = ShipIdStrToIndex(shipIdStr);
+	const SpeciesId shipId {ShipIdStrToIndex(shipIdStr)};
 	if (shipId == (uint16_t)-1)
 	{
 		// TODO: print script file name.
@@ -213,7 +213,7 @@ static int luaUqm_state_escort_addShips(lua_State* luaState)
 
 	const auto count = luaL_checkinteger(luaState, 2);
 
-	const lua_Integer numAdded = AddEscortShips((RACE_ID)(shipId - 1), count);
+	const lua_Integer numAdded = AddEscortShips((RaceId)(shipId - 1), count);
 	lua_pushinteger(luaState, numAdded);
 	return 1;
 }
@@ -228,7 +228,7 @@ static int luaUqm_state_escort_canAddShips(lua_State* luaState)
 		return 1;
 	}
 
-	const int result {EscortFeasibilityStudy((RACE_ID)(shipId - 1))};
+	const int result {EscortFeasibilityStudy((RaceId)(shipId - 1))};
 	lua_pushinteger(luaState, result);
 	return 1;
 }
@@ -248,12 +248,12 @@ static int luaUqm_state_escort_removeShips(lua_State* luaState)
 
 	if (lua_isnil(luaState, 2))
 	{
-		numRemoved = RemoveEscortShips((RACE_ID)(shipId - 1));
+		numRemoved = RemoveEscortShips((RaceId)(shipId - 1));
 	}
 	else
 	{
 		const int count = static_cast<int>(luaL_checkinteger(luaState, 2));
-		numRemoved = RemoveSomeEscortShips((RACE_ID)(shipId - 1), count);
+		numRemoved = RemoveSomeEscortShips((RaceId)(shipId - 1), count);
 	}
 
 	lua_pushinteger(luaState, numRemoved);
@@ -270,7 +270,7 @@ static int luaUqm_state_escort_shipCount(lua_State* luaState)
 		return 1;
 	}
 
-	const int result {CountEscortShips((RACE_ID)(shipId - 1))};
+	const int result {CountEscortShips((RaceId)(shipId - 1))};
 	lua_pushinteger(luaState, result);
 	return 1;
 }
@@ -295,7 +295,7 @@ static int luaUqm_state_race_isAlive(lua_State* luaState)
 		return 1;
 	}
 
-	const bool result {(CheckAlliance((RACE_ID)raceId) != RaceAllegiance::Dead)};
+	const bool result {(CheckAlliance((RaceId)raceId) != RaceAllegiance::Dead)};
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -310,7 +310,7 @@ static int luaUqm_state_race_isAllied(lua_State* luaState)
 		return 1;
 	}
 
-	const bool result {(CheckAlliance((RACE_ID)raceId) == RaceAllegiance::Good)};
+	const bool result {(CheckAlliance((RaceId)raceId) == RaceAllegiance::Good)};
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -326,7 +326,7 @@ static int luaUqm_state_race_isKnown(lua_State* luaState)
 		return 1;
 	}
 
-	const bool result {CheckSphereTracking((RACE_ID)raceId)};
+	const bool result {CheckSphereTracking((RaceId)raceId)};
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -351,7 +351,7 @@ static int luaUqm_state_race_setAlive(lua_State* luaState)
 		return 1;
 	}
 
-	const bool result {KillRace((RACE_ID)raceId)};
+	const bool result {KillRace((RaceId)raceId)};
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -369,7 +369,7 @@ static int luaUqm_state_race_setAllied(lua_State* luaState)
 
 	const int flag {lua_toboolean(luaState, 2)};
 
-	const bool result {SetRaceAllied((RACE_ID)raceId, flag)};
+	const bool result {SetRaceAllied((RaceId)raceId, flag)};
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -394,7 +394,7 @@ static int luaUqm_state_race_setKnown(lua_State* luaState)
 		return 1;
 	}
 
-	const bool result {(StartSphereTracking((RACE_ID)raceId) != 0)};
+	const bool result {(StartSphereTracking((RaceId)raceId) != 0)};
 	lua_pushboolean(luaState, result);
 	return 1;
 }

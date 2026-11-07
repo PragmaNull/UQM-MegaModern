@@ -27,7 +27,7 @@
 
 static ConversationData spahome_desc =
 	{
-		SPATHI_CONVERSATION, /* AlienConv */
+		Conversation::Spathi, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -316,8 +316,8 @@ static void ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(DEPART_FOR_EARTH);
 
-		SetRaceAllied(SPATHI_SHIP, true);
-		AddEvent(EventType::Relative, 6, 0, 0, SPATHI_SHIELD_EVENT);
+		SetRaceAllied(RaceId::Spathi, true);
+		AddEvent(EventType::Relative, 6, 0, 0, GameEventId::SpathiShieldEvent);
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
 	}
@@ -930,7 +930,7 @@ static void SpathiCouncil(RESPONSE_REF R)
 		{
 			Response(spathi_on_pluto, SpathiCouncil);
 		}
-		else if (HaveEscortShip(SPATHI_SHIP))
+		else if (HaveEscortShip(RaceId::Spathi))
 		{
 			if (PhraseEnabled(hostage))
 			{
@@ -1027,7 +1027,7 @@ static void Intro(void)
 	{
 		SpathiAngry((RESPONSE_REF)0);
 	}
-	else if (CheckAlliance(SPATHI_SHIP) == RaceAllegiance::Good)
+	else if (CheckAlliance(RaceId::Spathi) == RaceAllegiance::Good)
 	{
 		CommData.AlienColorMapIndex = 1;
 

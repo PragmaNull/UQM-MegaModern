@@ -19,6 +19,7 @@
 #ifndef UQM_GLOBDATA_H_
 #define UQM_GLOBDATA_H_
 
+#include "core/types/enum.h"
 #include "options/OptionTypes.h"
 #include "options/options.h"
 #include "clock.h"
@@ -89,38 +90,40 @@ typedef uint32_t LDAS_FLAGS;
 
 
 // BW: had to move that from commglue.h to here because now ConversationData features it
-typedef enum
+enum class Conversation
 {
-	ARILOU_CONVERSATION,
-	CHMMR_CONVERSATION,
-	COMMANDER_CONVERSATION,
-	ORZ_CONVERSATION,
-	PKUNK_CONVERSATION,
-	SHOFIXTI_CONVERSATION,
-	SPATHI_CONVERSATION,
-	SUPOX_CONVERSATION,
-	THRADD_CONVERSATION,
-	UTWIG_CONVERSATION,
-	VUX_CONVERSATION,
-	YEHAT_CONVERSATION,
-	MELNORME_CONVERSATION,
-	DRUUGE_CONVERSATION,
-	ILWRATH_CONVERSATION,
-	MYCON_CONVERSATION,
-	SLYLANDRO_CONVERSATION,
-	UMGAH_CONVERSATION,
-	URQUAN_CONVERSATION,
-	ZOQFOTPIK_CONVERSATION,
-	SYREEN_CONVERSATION,
-	BLACKURQ_CONVERSATION,
-	TALKING_PET_CONVERSATION,
-	SLYLANDRO_HOME_CONVERSATION,
-	URQUAN_DRONE_CONVERSATION,
-	YEHAT_REBEL_CONVERSATION,
-	INVALID_CONVERSATION,
+	Arilou,
+	Chmmr,
+	Commander,
+	Orz,
+	Pkunk,
+	Shofixti,
+	Spathi,
+	Supox,
+	Thradd,
+	Utwig,
+	Vux,
+	Yehat,
+	Melnorme,
+	Druuge,
+	Ilwrath,
+	Mycon,
+	Slylandro,
+	Umgah,
+	Urquan,
+	Zoqfotpik,
+	Syreen,
+	Blackurq,
+	TalkingPet,
+	SlylandroHome,
+	UrquanDrone,
+	YehatRebel,
+	Invalid,
 
-	NUM_CONVERSATIONS,
-} CONVERSATION;
+	NumConversations,
+};
+template <>
+inline constexpr bool IsArithmeticEnum<Conversation> = true;
 
 struct AlienAltResources
 {
@@ -131,7 +134,7 @@ struct AlienAltResources
 
 struct ConversationData
 {
-	CONVERSATION AlienConv;
+	Conversation AlienConv;
 	void (*init_encounter_func)(void);
 	/* Called when entering communications */
 	void (*post_encounter_func)(void);
@@ -173,39 +176,41 @@ struct ConversationData
 	uint16_t AlienColorMapIndex;
 };
 
-enum
+enum class Device
 {
-	PORTAL_SPAWNER_DEVICE = 0,
-	TALKING_PET_DEVICE,
-	UTWIG_BOMB_DEVICE,
-	SUN_EFFICIENCY_DEVICE,
-	ROSY_SPHERE_DEVICE,
-	AQUA_HELIX_DEVICE,
-	CLEAR_SPINDLE_DEVICE,
-	ULTRON_0_DEVICE,
-	ULTRON_1_DEVICE,
-	ULTRON_2_DEVICE,
-	ULTRON_3_DEVICE,
-	MAIDENS_DEVICE,
-	UMGAH_HYPERWAVE_DEVICE,
-	BURVIX_HYPERWAVE_DEVICE,
-	DATA_PLATE_1_DEVICE,
-	DATA_PLATE_2_DEVICE,
-	DATA_PLATE_3_DEVICE,
-	TAALO_PROTECTOR_DEVICE,
-	EGG_CASING0_DEVICE,
-	EGG_CASING1_DEVICE,
-	EGG_CASING2_DEVICE,
-	SYREEN_SHUTTLE_DEVICE,
-	VUX_BEAST_DEVICE,
-	DESTRUCT_CODE_DEVICE,
-	URQUAN_WARP_DEVICE,
-	WIMBLIS_TRIDENT_DEVICE,
-	GLOWING_ROD_DEVICE,
-	LUNAR_BASE_DEVICE,
+	PortalSpawner = 0,
+	TalkingPet,
+	UtwigBomb,
+	SunEfficiency,
+	RosySphere,
+	AquaHelix,
+	ClearSpindle,
+	Ultron0,
+	Ultron1,
+	Ultron2,
+	Ultron3,
+	Maidens,
+	UmgahHyperwave,
+	BurvixHyperwave,
+	DataPlate1,
+	DataPlate2,
+	DataPlate3,
+	TaaloProtector,
+	EggCasing0,
+	EggCasing1,
+	EggCasing2,
+	SyreenShuttle,
+	VuxBeast,
+	DestructCode,
+	UrquanWarp,
+	WimblisTrident,
+	GlowingRod,
+	LunarBase,
 
-	NUM_DEVICES
+	NumDevices
 };
+template <>
+inline constexpr bool IsArithmeticEnum<Device> = true;
 
 inline auto YearsToKohrahVictory() { return (uqm::UQMOptions::read().deCleansing ? 100 : 4); }
 
@@ -221,31 +226,39 @@ inline constexpr auto MusicDisabled {(1 << 3)};
 inline constexpr auto SoundDisabled {(1 << 4)};
 inline constexpr auto CyborgEnabled {(1 << 5)};
 
-enum
+enum class ActivityKind : uint8_t
 {
-	SUPER_MELEE = 0, /* Is also used while in the main menu */
-	IN_LAST_BATTLE,
-	IN_ENCOUNTER,
-	IN_HYPERSPACE /* in HyperSpace or QuasiSpace */,
-	IN_INTERPLANETARY,
-	WON_LAST_BATTLE,
+	SuperMelee = 0, /* Is also used while in the main menu */
+	InLastBattle,
+	InEncounter,
+	InHyperspace /* in HyperSpace or QuasiSpace */,
+	InInterplanetary,
+	WonLastBattle,
 
 	/* The following three are only used when displaying save game
 	 * summaries */
-	IN_QUASISPACE,
-	IN_PLANET_ORBIT,
-	IN_STARBASE,
-
-	CHECK_PAUSE = uqm::makeWord(0, (1 << 0)),
-	IN_BATTLE = uqm::makeWord(0, (1 << 1)),
-	/* Is also set while in HyperSpace/QuasiSpace */
-	START_ENCOUNTER = uqm::makeWord(0, (1 << 2)),
-	START_INTERPLANETARY = uqm::makeWord(0, (1 << 3)),
-	CHECK_LOAD = uqm::makeWord(0, (1 << 4)),
-	CHECK_RESTART = uqm::makeWord(0, (1 << 5)),
-	CHECK_ABORT = uqm::makeWord(0, (1 << 6)),
+	InQuasispace,
+	InPlanetOrbit,
+	InStarbase,
 };
-typedef uint16_t ACTIVITY;
+template <>
+inline constexpr bool IsArithmeticEnum<ActivityKind> = true;
+
+// The high byte of an ACTIVITY value.
+enum class ActivityFlag : uint16_t
+{
+	CheckPause = uqm::makeWord(0, (1 << 0)),
+	InBattle = uqm::makeWord(0, (1 << 1)),
+	/* Is also set while in HyperSpace/QuasiSpace */
+	StartEncounter = uqm::makeWord(0, (1 << 2)),
+	StartInterplanetary = uqm::makeWord(0, (1 << 3)),
+	CheckLoad = uqm::makeWord(0, (1 << 4)),
+	CheckRestart = uqm::makeWord(0, (1 << 5)),
+	CheckAbort = uqm::makeWord(0, (1 << 6)),
+};
+template <>
+inline constexpr bool IsFlagEnum<ActivityFlag> = true;
+typedef uint16_t ACTIVITY; // TODO PramgaNull: use ActivityFlag
 
 #include "uqm/session/GameState.h"
 
@@ -253,6 +266,8 @@ namespace uqm
 {
 // What the game program does now, for example the main menu or HyperSpace. It stays between sessions.
 [[nodiscard]] ACTIVITY& currentActivity();
+// The ActivityKind in the low byte of an ACTIVITY value.
+[[nodiscard]] constexpr ActivityKind activityKind(ACTIVITY activity) { return static_cast<ActivityKind>(lowByte(activity)); }
 // The in-game options, with the bits of the glob_flags values above. They stay between sessions.
 [[nodiscard]] uint8_t& globalFlags();
 } // namespace uqm
@@ -264,25 +279,27 @@ inline constexpr auto MaxBattleGroups {32};
 /* DEFGRP enumeration. These identify scripted TrueSpace encounters
  * more consistently than offsets into the DefgrpinfoFile state
  * file. */
-enum
+enum class DefinedGroup
 {
-	DEFGRP_NONE,
-	DEFGRP_SHOFIXTI,
-	DEFGRP_ZOQFOT,
-	DEFGRP_MELNORME0,
-	DEFGRP_MELNORME1,
-	DEFGRP_MELNORME2,
-	DEFGRP_MELNORME3,
-	DEFGRP_MELNORME4,
-	DEFGRP_MELNORME5,
-	DEFGRP_MELNORME6,
-	DEFGRP_MELNORME7,
-	DEFGRP_MELNORME8,
-	DEFGRP_URQUAN_PROBE,
-	DEFGRP_COLONY,
-	DEFGRP_SAMATRA,
-	NUM_DEFGRPS
+	None,
+	Shofixti,
+	Zoqfot,
+	Melnorme0,
+	Melnorme1,
+	Melnorme2,
+	Melnorme3,
+	Melnorme4,
+	Melnorme5,
+	Melnorme6,
+	Melnorme7,
+	Melnorme8,
+	UrquanProbe,
+	Colony,
+	Samatra,
+	NumDefgrps
 };
+template <>
+inline constexpr bool IsArithmeticEnum<DefinedGroup> = true;
 
 //#define STATE_DEBUG
 

@@ -26,7 +26,7 @@
 
 static ConversationData spathi_desc =
 	{
-		SPATHI_CONVERSATION, /* AlienConv */
+		Conversation::Spathi, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -232,7 +232,7 @@ static void ExitConversation(RESPONSE_REF Response)
 	}
 	else if (PlayerSaid(Response, join_us))
 	{
-		if (EscortFeasibilityStudy(SPATHI_SHIP) == 0)
+		if (EscortFeasibilityStudy(RaceId::Spathi) == 0)
 		{
 			NPCPhrase(TOO_SCARY);
 		}
@@ -241,16 +241,16 @@ static void ExitConversation(RESPONSE_REF Response)
 			NPCPhrase(WILL_JOIN);
 
 			AlienTalkSegue((uint16_t)~0);
-			AddEscortShips(SPATHI_SHIP, 1);
+			AddEscortShips(RaceId::Spathi, 1);
 			/* Make the Eluder escort captained by Fwiffo alone */
-			SetEscortCrewComplement(SPATHI_SHIP, SpaCrew,
+			SetEscortCrewComplement(RaceId::Spathi, SpaCrew,
 									NameOffset + NumCaptainsNames);
 		}
 	}
 	else if (PlayerSaid(Response, join_us_nomad))
 	{
-		if ((EscortFeasibilityStudy(SPATHI_SHIP) == 0
-			 || CountEscortShips(SPATHI_SHIP) > 2))
+		if ((EscortFeasibilityStudy(RaceId::Spathi) == 0
+			 || CountEscortShips(RaceId::Spathi) > 2))
 		{
 			NPCPhrase(TOO_SCARY);
 		}
@@ -259,7 +259,7 @@ static void ExitConversation(RESPONSE_REF Response)
 			NPCPhrase(WILL_JOIN);
 
 			AlienTalkSegue((uint16_t)~0);
-			AddEscortShips(SPATHI_SHIP, 1);
+			AddEscortShips(RaceId::Spathi, 1);
 		}
 	}
 }
@@ -853,7 +853,7 @@ static void Intro(void)
 			uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_PASSWORD, static_cast<uint32_t>(0));
 			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
 		}
-		SetHomeworldKnown(SPATHI_HOME);
+		SetHomeworldKnown(*HomeId::Spathi);
 
 		Response(identify, SpathiMustGrovel);
 		Response(hi_there, SpathiOnPluto);
@@ -887,7 +887,7 @@ static void Intro(void)
 		Response(we_fight_again_space, ExitConversation);
 		Response(bye_angry_space, ExitConversation);
 	}
-	else if (CheckAlliance(SPATHI_SHIP) == RaceAllegiance::Good)
+	else if (CheckAlliance(RaceId::Spathi) == RaceAllegiance::Good)
 	{
 		SpathiAllies((RESPONSE_REF)0);
 	}
@@ -951,7 +951,7 @@ ConversationData* init_spathi_comm(void)
 
 	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1
 		|| uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER) == 3
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

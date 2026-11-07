@@ -130,24 +130,24 @@ void textDisabledWrapped(const char* text)
 											"Starbase"};
 	const uint8_t low {lowByte(activity)};
 	uqstl::string text {low < uqstl::size(c_names) ? c_names[low] : fmt::format("{}", low)};
-	if (activity & START_ENCOUNTER)
+	if (activity & ActivityFlag::StartEncounter)
 	{
 		text += ", start encounter";
 	}
-	if (activity & START_INTERPLANETARY)
+	if (activity & ActivityFlag::StartInterplanetary)
 	{
 		text += ", start interplanetary";
 	}
-	if (activity & IN_BATTLE)
+	if (activity & ActivityFlag::InBattle)
 	{
 		text += ", in battle";
 	}
 	return text;
 }
 
-[[nodiscard]] const char* eventText(uint8_t funcIndex)
+[[nodiscard]] const char* eventText(GameEventId funcIndex)
 {
-	const char* const name {eventIdNumToStr(funcIndex)};
+	const char* const name {eventIdNumToStr(*funcIndex)};
 	return name != nullptr ? name : "?";
 }
 

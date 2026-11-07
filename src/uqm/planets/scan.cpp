@@ -66,7 +66,7 @@ static FRAME eraseFrame;
 // The first three are from enum PlanetScanTypes in planets.h
 enum class ScanMenuItem
 {
-	ExitScan = NUM_SCAN_TYPES,
+	ExitScan = *ScanType::Count,
 	AutoScan,
 	DispatchShuttle,
 };
@@ -203,25 +203,25 @@ void GetPlanetTitle(uqstl::span<char> buf)
 	}
 
 	// Unnamed body, use world type
-	const int val {pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED};
-	if (val >= FIRST_GAS_GIANT)
+	const int val {pSolarSysState->pOrbitalDesc->data_index & ~*PlanetType::PlanetShielded};
+	if (val >= PlanetType::FirstGasGiant)
 	{
 		if (!IsExtended())
 		{
-			const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{}", GameString(SCAN_STRING_BASE + 4 + 51));
+			const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{}", GameString(GameStringBase::ScanString + 4 + 51));
 			*fmtResult.out = '\0';
 			// Gas Giant
 		}
-		else if (val <= NUMBER_OF_PLANET_TYPES)
+		else if (val <= PlanetType::NumberOfPlanetTypes)
 		{
-			const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{}", GameString(SCAN_STRING_BASE + 4 + 2 + val));
+			const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{}", GameString(GameStringBase::ScanString + 4 + 2 + val));
 			*fmtResult.out = '\0';
 			// "Color" Gas Giant
 		}
 	}
 	else
 	{
-		const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{} {}", GameString(SCAN_STRING_BASE + 4 + val), GameString(SCAN_STRING_BASE + 4 + 50));
+		const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{} {}", GameString(GameStringBase::ScanString + 4 + val), GameString(GameStringBase::ScanString + 4 + 50));
 		*fmtResult.out = '\0';
 		// World
 	}
@@ -239,17 +239,17 @@ static void HazardCase(uint8_t hazard)
 	const uint16_t Weather = pSolarSysState->SysInfo.PlanetInfo.Weather + 1;
 	const uint16_t Tectonics = pSolarSysState->SysInfo.PlanetInfo.Tectonics + 1;
 
-	switch (hazard)
+	switch (static_cast<LanderEvent>(hazard))
 	{
-		case LAVASPOT_DISASTER:
+		case LanderEvent::LavaspotDisaster:
 			HazardColor = PickHazardColor(Temperature > 1 && Temperature < 5,
 										  Temperature > 4);
 			break;
-		case LIGHTNING_DISASTER:
+		case LanderEvent::LightningDisaster:
 			HazardColor =
 				PickHazardColor(Weather > 2 && Weather < 5, Weather > 4);
 			break;
-		case EARTHQUAKE_DISASTER:
+		case LanderEvent::EarthquakeDisaster:
 			HazardColor = PickHazardColor(Tectonics > 2 && Tectonics < 6,
 										  Tectonics > 5);
 			break;
@@ -303,7 +303,7 @@ static void PrintCoarseScanPC(void)
 	};
 
 	const auto OrbitscanText {[&](auto a) {
-		return (GameString(ORBITSCAN_STRING_BASE + (a)));
+		return (GameString(GameStringBase::OrbitscanString + (a)));
 	}};
 
 	t.baseline.y = ScanBaselineYPc();
@@ -350,7 +350,7 @@ static void PrintCoarseScanPC(void)
 
 	if (uqm::UQMOptions::read().hazardColors) // Planet Temperature
 	{
-		HazardCase(LAVASPOT_DISASTER);
+		HazardCase(*LanderEvent::LavaspotDisaster);
 	}
 
 	PrintScanText(&t);
@@ -371,7 +371,7 @@ static void PrintCoarseScanPC(void)
 
 	if (uqm::UQMOptions::read().hazardColors) // Weather
 	{
-		HazardCase(LIGHTNING_DISASTER);
+		HazardCase(*LanderEvent::LightningDisaster);
 	}
 
 	PrintScanText(&t);
@@ -380,7 +380,7 @@ static void PrintCoarseScanPC(void)
 	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(10));
 	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Tectonics: "
 
-	if (Plansize(pSolarSysState->SysInfo.PlanetInfo.PlanDataPtr->Type) == GAS_GIANT)
+	if (Plansize(pSolarSysState->SysInfo.PlanetInfo.PlanDataPtr->Type) == PlanetSize::GasGiant)
 	{
 		uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(8)); // "None"
 	}
@@ -392,7 +392,7 @@ static void PrintCoarseScanPC(void)
 
 	if (uqm::UQMOptions::read().hazardColors) // Tectonics
 	{
-		HazardCase(EARTHQUAKE_DISASTER);
+		HazardCase(*LanderEvent::EarthquakeDisaster);
 	}
 
 	PrintScanText(&t);
@@ -537,7 +537,7 @@ static void PrintCoarseScan3DO(void)
 
 	if (uqm::UQMOptions::read().hazardColors) // Planet Temperature
 	{
-		HazardCase(LAVASPOT_DISASTER);
+		HazardCase(*LanderEvent::LavaspotDisaster);
 	}
 
 	PrintScanText(&t);
@@ -548,7 +548,7 @@ static void PrintCoarseScan3DO(void)
 
 	if (uqm::UQMOptions::read().hazardColors) // Weather
 	{
-		HazardCase(LIGHTNING_DISASTER);
+		HazardCase(*LanderEvent::LightningDisaster);
 	}
 
 	PrintScanText(&t);
@@ -557,13 +557,13 @@ static void PrintCoarseScan3DO(void)
 	fmt::format_to_sz_n(buf, "<{}>",
 						Plansize(
 							pSolarSysState->SysInfo.PlanetInfo.PlanDataPtr->Type)
-								== GAS_GIANT ?
+								== PlanetSize::GasGiant ?
 							0 :
 							(pSolarSysState->SysInfo.PlanetInfo.Tectonics + 1));
 
 	if (uqm::UQMOptions::read().hazardColors) // Tectonics
 	{
-		HazardCase(EARTHQUAKE_DISASTER);
+		HazardCase(*LanderEvent::EarthquakeDisaster);
 	}
 
 	PrintScanText(&t);
@@ -779,7 +779,7 @@ static void spawnFwiffo(void)
 	ReinitQueue(&uqm::gameState().game().ip_group_q);
 	assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-	hStarShip = CloneShipFragment(SPATHI_SHIP,
+	hStarShip = CloneShipFragment(RaceId::Spathi,
 								  &uqm::gameState().game().npc_built_ship_q, 1);
 	if (hStarShip)
 	{
@@ -818,7 +818,7 @@ static bool DispatchLander(void)
 	drawPlanetCursor(false);
 
 	PlanetSide(planetLoc);
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false;
 	}
@@ -828,8 +828,8 @@ static bool DispatchLander(void)
 		/* Create Fwiffo group and go into comm with it */
 		spawnFwiffo();
 
-		NextActivity |= CHECK_LOAD; /* fake a load game */
-		uqm::currentActivity() |= START_ENCOUNTER;
+		NextActivity |= ActivityFlag::CheckLoad; /* fake a load game */
+		uqm::currentActivity() |= ActivityFlag::StartEncounter;
 		SaveSolarSysLocation();
 
 		return false;
@@ -866,7 +866,7 @@ static bool DoPickPlanetSide(MenuState* pMS)
 	select = PulsedInputState.menu[*MenuKey::MenuSelect];
 	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		pickState->success = false;
 		return false;
@@ -987,7 +987,7 @@ static void drawLandingFuelUsage(uint16_t fuel)
 		old_status_message_mode = SetStatusMessageMode(StatMsgMode::Warning);
 	}
 
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{}{:1.1}", GameString(NAVIGATION_STRING_BASE + 5), (float)fuel / FuelTankScale);
+	fmt::format_to_n(buf, sizeof(buf) - 1, "{}{:1.1}", GameString(GameStringBase::NavigationString + 5), (float)fuel / FuelTankScale);
 	DrawStatusMessage(buf);
 
 	if (old_status_message_mode != StatMsgMode::Undefined)
@@ -1099,17 +1099,19 @@ static void DrawScannedStuff(uint16_t y, uint16_t scan)
 			// energy -- white --> red (contrasts with white)
 			// bio -- white --> violet (contrasts with green)
 			grad = 0xff - 0xff * dy / (NumFlashColors - 1);
-			switch (scan)
+			switch (static_cast<ScanType>(scan))
 			{
-				case MINERAL_SCAN:
+				case ScanType::Mineral:
 					c.r = grad;
 					break;
-				case ENERGY_SCAN:
+				case ScanType::Energy:
 					c.g = grad;
 					c.b = grad;
 					break;
-				case BIOLOGICAL_SCAN:
+				case ScanType::Biological:
 					c.g = grad;
+					break;
+				default:
 					break;
 			}
 
@@ -1151,7 +1153,7 @@ static void DrawPCScannedStuff(uint16_t scan)
 
 	while (hElement && !AnyButtonPress(true))
 	{
-		if ((uqm::currentActivity() & CHECK_ABORT))
+		if ((uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
 			return;
 		}
@@ -1233,20 +1235,22 @@ static void DrawPCScannedStuff(uint16_t scan)
 }
 
 uint16_t callGenerateForScanType(const SolarSystemState* solarSys,
-								 const SystemPlanet* world, uint16_t node, uint8_t scanType,
+								 const SystemPlanet* world, uint16_t node, ScanType scanType,
 								 SurfaceNode* info)
 {
 	switch (scanType)
 	{
-		case MINERAL_SCAN:
+		case ScanType::Mineral:
 			return (*solarSys->genFuncs->generateMinerals)(
 				solarSys, world, node, info);
-		case ENERGY_SCAN:
+		case ScanType::Energy:
 			return (*solarSys->genFuncs->generateEnergy)(
 				solarSys, world, node, info);
-		case BIOLOGICAL_SCAN:
+		case ScanType::Biological:
 			return (*solarSys->genFuncs->generateLife)(
 				solarSys, world, node, info);
+		default:
+			break;
 	}
 
 	assert(false);
@@ -1254,19 +1258,21 @@ uint16_t callGenerateForScanType(const SolarSystemState* solarSys,
 }
 
 bool callPickupForScanType(SolarSystemState* solarSys, SystemPlanet* world,
-						   uint16_t node, uint8_t scanType)
+						   uint16_t node, ScanType scanType)
 {
 	switch (scanType)
 	{
-		case MINERAL_SCAN:
+		case ScanType::Mineral:
 			return (*solarSys->genFuncs->pickupMinerals)(
 				solarSys, world, node);
-		case ENERGY_SCAN:
+		case ScanType::Energy:
 			return (*solarSys->genFuncs->pickupEnergy)(
 				solarSys, world, node);
-		case BIOLOGICAL_SCAN:
+		case ScanType::Biological:
 			return (*solarSys->genFuncs->pickupLife)(
 				solarSys, world, node);
+		default:
+			break;
 	}
 
 	assert(false);
@@ -1309,10 +1315,10 @@ static void ScanPlanet(uint16_t scanType)
 			ScanBiologicalTintColor,
 		};
 
-	if (scanType == ScanMenuItem::AutoScan)
+	if (scanType == *ScanMenuItem::AutoScan)
 	{
-		startScan = MINERAL_SCAN;
-		endScan = BIOLOGICAL_SCAN;
+		startScan = *ScanType::Mineral;
+		endScan = *ScanType::Biological;
 	}
 	else
 	{
@@ -1320,7 +1326,7 @@ static void ScanPlanet(uint16_t scanType)
 		endScan = scanType;
 	}
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return;
 	}
@@ -1342,7 +1348,7 @@ static void ScanPlanet(uint16_t scanType)
 		t.align = TextAlign::Center;
 		t.CharCount = (uint16_t)~0;
 
-		t.pStr = GameString(SCAN_STRING_BASE + scan);
+		t.pStr = GameString(GameStringBase::ScanString + scan);
 
 		SetContext(PlanetContext);
 		r.corner.x = 0;
@@ -1367,14 +1373,14 @@ static void ScanPlanet(uint16_t scanType)
 
 		FlushInput();
 
-		pSolarSysState->Orbit.scanType = scan;
+		pSolarSysState->Orbit.scanType = static_cast<ScanType>(scan);
 		RerenderPlanetSphere();
 
 		if (uqm::UQMOptions::read().scanStyle != uqm::EmulationMode::PC)
 		{
 			while (i < ScanLines())
 			{
-				if ((uqm::currentActivity() & CHECK_ABORT))
+				if ((uqm::currentActivity() & ActivityFlag::CheckAbort))
 				{
 					return;
 				}
@@ -1409,12 +1415,12 @@ static void ScanPlanet(uint16_t scanType)
 			DrawPCScanTint(scan);	  // palette-swap topo and Sphere map
 			DrawPCScannedStuff(scan); // PC-style node pop-in
 
-			if ((uqm::currentActivity() & CHECK_ABORT))
+			if ((uqm::currentActivity() & ActivityFlag::CheckAbort))
 			{
 				return;
 			}
 
-			if (scanType == ScanMenuItem::AutoScan)
+			if (scanType == *ScanMenuItem::AutoScan)
 			{ // delay between scans
 				TimeOut = GetTimeCounter() + c_gameSecond;
 				while (GetTimeCounter() < TimeOut
@@ -1446,14 +1452,14 @@ static void ScanPlanet(uint16_t scanType)
 	RepairBackRect(&r);
 
 	SetContext(ScanContext);
-	pSolarSysState->Orbit.scanType = NUM_SCAN_TYPES;
+	pSolarSysState->Orbit.scanType = ScanType::Count;
 
 	if (uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::PC || useDosSpheres)
 	{
 		RerenderPlanetSphere();
 	}
 
-	if (scanType == ScanMenuItem::AutoScan || uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::PC)
+	if (scanType == *ScanMenuItem::AutoScan || uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::PC)
 	{ // clear the last scan
 		DrawPlanet(0, BlackColor);
 		DrawDefaultPlanetSphere();
@@ -1471,7 +1477,7 @@ static bool DoScan(MenuState* pMS)
 	select = PulsedInputState.menu[*MenuKey::MenuSelect];
 	cancel = PulsedInputState.menu[*MenuKey::MenuCancel];
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false;
 	}
@@ -1484,7 +1490,7 @@ static bool DoScan(MenuState* pMS)
 	{
 		if (pMS->CurState == ScanMenuItem::DispatchShuttle)
 		{
-			if (pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED
+			if (pSolarSysState->pOrbitalDesc->data_index & *PlanetType::PlanetShielded
 				|| pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == GasGiantAtmosphere)
 			{ // cannot dispatch to shielded planets or gas giants
 				PlayMenuSound(MenuSoundEffect::Failure);
@@ -1515,7 +1521,7 @@ static bool DoScan(MenuState* pMS)
 		}
 
 		// Various scans
-		if (pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED)
+		if (pSolarSysState->pOrbitalDesc->data_index & *PlanetType::PlanetShielded)
 		{ // cannot scan shielded planets
 			PlayMenuSound(MenuSoundEffect::Failure);
 			return true;
@@ -1528,7 +1534,7 @@ static bool DoScan(MenuState* pMS)
 		}
 		DrawMenuStateStrings(MenuString::MinScan, pMS->CurState);
 	}
-	else if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC || (!(pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED) && pSolarSysState->SysInfo.PlanetInfo.AtmoDensity != GasGiantAtmosphere))
+	else if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC || (!(pSolarSysState->pOrbitalDesc->data_index & *PlanetType::PlanetShielded) && pSolarSysState->SysInfo.PlanetInfo.AtmoDensity != GasGiantAtmosphere))
 	{
 		DoMenuChooser(pMS, MenuString::MinScan);
 	}
@@ -1611,7 +1617,7 @@ void ScanSystem(void)
 
 	GetScanContext(nullptr);
 
-	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::Console3DO && ((pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED) || pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == GasGiantAtmosphere))
+	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::Console3DO && ((pSolarSysState->pOrbitalDesc->data_index & *PlanetType::PlanetShielded) || pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == GasGiantAtmosphere))
 	{
 		menuState.CurState = *ScanMenuItem::ExitScan;
 	}
@@ -1648,7 +1654,7 @@ void ScanSystem(void)
 	SetFlashRect(nullptr, false);
 
 	// cleanup scan graphics
-	if (!(uqm::currentActivity() & CHECK_ABORT))
+	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		BatchGraphics();
 		SetContext(ScanContext);
@@ -1735,20 +1741,20 @@ void GeneratePlanetSide(void)
 	// yet, otherwise, it is 1 more than the creature type.
 
 	InitDisplayList();
-	if (pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED)
+	if (pSolarSysState->pOrbitalDesc->data_index & *PlanetType::PlanetShielded)
 	{
 		return;
 	}
 
 	memset(life_init_tab, 0, sizeof life_init_tab);
 
-	for (int16_t scan {BIOLOGICAL_SCAN}; scan >= MINERAL_SCAN; --scan)
+	for (ScanType scan {ScanType::Biological}; scan >= ScanType::Mineral; --scan)
 	{
 		uint16_t num_nodes {};
 		FRAME f {};
 
 		f = SetAbsFrameIndex(MiscDataFrame,
-							 NumScandotTransitions * (scan - ENERGY_SCAN));
+							 NumScandotTransitions * (scan - ScanType::Energy));
 
 		num_nodes = callGenerateForScanType(pSolarSysState,
 											pSolarSysState->pOrbitalDesc, GenerateAll, scan, nullptr);
@@ -1776,21 +1782,21 @@ void GeneratePlanetSide(void)
 									pSolarSysState->pOrbitalDesc, num_nodes,
 									scan, &info);
 
-			NodeElementPtr->scan_node = uqm::makeWord(scan, num_nodes + 1);
+			NodeElementPtr->scan_node = uqm::makeWord(*scan, num_nodes + 1);
 			NodeElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 			NodeElementPtr->current.location.x = info.loc_pt.x;
 			NodeElementPtr->current.location.y = info.loc_pt.y;
 
 			SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex],
 						PrimitiveType::Stamp);
-			if (scan == MINERAL_SCAN)
+			if (scan == ScanType::Mineral)
 			{
 				NodeElementPtr->turn_wait = info.type;
 
 				// JMS: Partially scavenged energy blips won't return
 				// anymore to original size after leaving planet.
 				NodeElementPtr->mass_points = uqm::highByte(info.density)
-											- pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[scan][num_nodes];
+											- pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[*scan][num_nodes];
 
 				NodeElementPtr->current.image.frame = SetAbsFrameIndex(
 					MiscDataFrame, (NumScandotTransitions * 2)
@@ -1808,7 +1814,7 @@ void GeneratePlanetSide(void)
 					f, NumScandotTransitions - 1);
 				NodeElementPtr->turn_wait = uqm::makeByte(4, 4);
 				NodeElementPtr->preprocess_func = object_animation;
-				if (scan == ENERGY_SCAN)
+				if (scan == ScanType::Energy)
 				{
 					NodeElementPtr->mass_points = MaxScrounged();
 					DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame = pSolarSysState->PlanetSideFrame[1];
@@ -1831,16 +1837,16 @@ void GeneratePlanetSide(void)
 	}
 }
 
-bool isNodeRetrieved(PlanetData* planetInfo, uint8_t scanType, uint8_t nodeNr)
+bool isNodeRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t nodeNr)
 {
-	return (planetInfo->ScanRetrieveMask[scanType] & ((uint32_t)1 << nodeNr))
+	return (planetInfo->ScanRetrieveMask[*scanType] & ((uint32_t)1 << nodeNr))
 		!= 0;
 }
 
-uint16_t countNodesRetrieved(PlanetData* planetInfo, uint8_t scanType)
+uint16_t countNodesRetrieved(PlanetData* planetInfo, ScanType scanType)
 {
 	uint16_t count {};
-	uint32_t mask = planetInfo->ScanRetrieveMask[scanType];
+	uint32_t mask = planetInfo->ScanRetrieveMask[*scanType];
 
 	// count the number of bits set
 	// Caution: 'mask' must be unsigned
@@ -1854,12 +1860,12 @@ uint16_t countNodesRetrieved(PlanetData* planetInfo, uint8_t scanType)
 	return count;
 }
 
-void setNodeRetrieved(PlanetData* planetInfo, uint8_t scanType, uint8_t nodeNr)
+void setNodeRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t nodeNr)
 {
-	planetInfo->ScanRetrieveMask[scanType] |= ((uint32_t)1 << nodeNr);
+	planetInfo->ScanRetrieveMask[*scanType] |= ((uint32_t)1 << nodeNr);
 }
 
-void setNodeNotRetrieved(PlanetData* planetInfo, uint8_t scanType, uint8_t nodeNr)
+void setNodeNotRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t nodeNr)
 {
-	planetInfo->ScanRetrieveMask[scanType] &= ~((uint32_t)1 << nodeNr);
+	planetInfo->ScanRetrieveMask[*scanType] &= ~((uint32_t)1 << nodeNr);
 }

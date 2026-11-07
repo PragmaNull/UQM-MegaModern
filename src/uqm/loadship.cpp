@@ -57,23 +57,23 @@ static RESOURCE code_resources[] = {
 	SamatraCode,
 	UrquanDroneCode};
 
-SPECIES_ID ship[] = {CHMMR_ID, ORZ_ID, UTWIG_ID, YEHAT_ID,					// Capital
-					 MYCON_ID, UR_QUAN_ID, KOHR_AH_ID, CHENJESU_ID,			// Capital
-					 ARILOU_ID, PKUNK_ID, SPATHI_ID, SUPOX_ID, MELNORME_ID, // Escort
-					 DRUUGE_ID, SLYLANDRO_ID, ANDROSYNTH_ID, MMRNMHRM_ID,	// Escort
-					 EARTHLING_ID, SHOFIXTI_ID, THRADDASH_ID, VUX_ID,		// Scout
-					 ILWRATH_ID, UMGAH_ID, ZOQFOTPIK_ID, SYREEN_ID};		// Scout
+SpeciesId ship[] = {SpeciesId::Chmmr, SpeciesId::Orz, SpeciesId::Utwig, SpeciesId::Yehat,						   // Capital
+					SpeciesId::Mycon, SpeciesId::UrQuan, SpeciesId::KohrAh, SpeciesId::Chenjesu,				   // Capital
+					SpeciesId::Arilou, SpeciesId::Pkunk, SpeciesId::Spathi, SpeciesId::Supox, SpeciesId::Melnorme, // Escort
+					SpeciesId::Druuge, SpeciesId::Slylandro, SpeciesId::Androsynth, SpeciesId::Mmrnmhrm,		   // Escort
+					SpeciesId::Earthling, SpeciesId::Shofixti, SpeciesId::Thraddash, SpeciesId::Vux,			   // Scout
+					SpeciesId::Ilwrath, SpeciesId::Umgah, SpeciesId::Zoqfotpik, SpeciesId::Syreen};				   // Scout
 
-SPECIES_ID* capital = ship;
+SpeciesId* capital = ship;
 static constexpr auto NumCapitals {8};
-SPECIES_ID* escort = &(ship[NumCapitals]);
+SpeciesId* escort = &(ship[NumCapitals]);
 static constexpr auto NumEscorts {9};
-SPECIES_ID* scout = &(ship[NumCapitals + NumEscorts]);
+SpeciesId* scout = &(ship[NumCapitals + NumEscorts]);
 static constexpr auto NumScouts {8};
 static constexpr auto NumShips {(NumCapitals + NumEscorts + NumScouts)};
 
 // Returns the array index in ship array for a specific SpeciesID.
-static inline uint16_t ShipIndex(SPECIES_ID SpeciesID)
+static inline uint16_t ShipIndex(SpeciesId SpeciesID)
 {
 	for (uint16_t x = 0; x < NumShips; x++)
 	{
@@ -87,23 +87,23 @@ static inline uint16_t ShipIndex(SPECIES_ID SpeciesID)
 
 // Creates a ship map based on seed. We need up to two maps loaded
 // at once to be able to handle the load/save game preview window.
-static inline void SeedShipMap(SPECIES_ID* map, int seed)
+static inline void SeedShipMap(SpeciesId* map, int seed)
 {
 	uqm::PrimeRandom ShipGenRNG {};
 	uint16_t rand_val {};
-	SPECIES_ID* cMap = map;
-	SPECIES_ID* eMap = &(map[NumCapitals]);
-	SPECIES_ID* sMap = &(map[NumCapitals + NumEscorts]);
+	SpeciesId* cMap = map;
+	SpeciesId* eMap = &(map[NumCapitals]);
+	SpeciesId* sMap = &(map[NumCapitals + NumEscorts]);
 	uint16_t x = 0;
 	ShipGenRNG.reseed(seed);
 	for (x = 0; x < NumShips; x++)
 	{
-		map[x] = NUM_SPECIES_ID;
+		map[x] = SpeciesId::NumSpecies;
 	}
 	for (x = 0; x < NumCapitals; x++)
 	{
 		rand_val = ShipGenRNG.next() % NumCapitals;
-		while (cMap[rand_val] != NUM_SPECIES_ID)
+		while (cMap[rand_val] != SpeciesId::NumSpecies)
 		{
 			rand_val = (rand_val + 1) % NumCapitals;
 		}
@@ -112,7 +112,7 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 	for (x = 0; x < NumEscorts; x++)
 	{
 		rand_val = ShipGenRNG.next() % NumEscorts;
-		while (eMap[rand_val] != NUM_SPECIES_ID)
+		while (eMap[rand_val] != SpeciesId::NumSpecies)
 		{
 			rand_val = (rand_val + 1) % NumEscorts;
 		}
@@ -121,7 +121,7 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 	for (x = 0; x < NumScouts; x++)
 	{
 		rand_val = ShipGenRNG.next() % NumScouts;
-		while (sMap[rand_val] != NUM_SPECIES_ID)
+		while (sMap[rand_val] != SpeciesId::NumSpecies)
 		{
 			rand_val = (rand_val + 1) % NumScouts;
 		}
@@ -131,13 +131,13 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 
 // Uses a ship map to map species ID to another species ID.
 // When in load window, it uses two ship maps to fake a valid response.
-SPECIES_ID SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
+SpeciesId SeedShip(SpeciesId SpeciesID, bool loadWindow)
 {
 	static int seedStamp = -1;
 	static int sisStamp = -1;
-	static SPECIES_ID shipMap[NumShips];
-	static SPECIES_ID shipWindowMap[NumShips];
-	SPECIES_ID target;
+	static SpeciesId shipMap[NumShips];
+	static SpeciesId shipWindowMap[NumShips];
+	SpeciesId target;
 	uint16_t index = NumShips;
 
 #ifdef DEBUG_SHIPSEED
@@ -193,14 +193,14 @@ static void SwapStrings(uqm::StringTable* a, uqm::StringTable* b, size_t ia, siz
 	a->swap(ia, *b, ib);
 }
 
-RaceDesc* load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
+RaceDesc* load_ship(SpeciesId SpeciesID, bool LoadBattleData)
 {
 	RaceDesc* RDPtr = 0;
 	void* CodeRef {};
 	RaceDesc* RDPtrSwap = 0;
 	void* CodeRefSwap {};
 
-	if (SpeciesID >= NUM_SPECIES_ID)
+	if (SpeciesID >= SpeciesId::NumSpecies)
 	{
 		return nullptr;
 	}
@@ -212,12 +212,12 @@ RaceDesc* load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 			   uqm::currentSeed().ships ? "on" : "off");
 #endif
 	CodeRef = CaptureCodeRes(LoadCodeResInstance(
-								 code_resources[uqm::currentSeed().ships ?
-													SeedShip(SpeciesID, false) :
-													SpeciesID]),
+								 code_resources[*(uqm::currentSeed().ships ?
+													  SeedShip(SpeciesID, false) :
+													  SpeciesID)]),
 							 nullptr, (void**)(&RDPtr));
 	CodeRefSwap = CaptureCodeRes(LoadCodeResInstance(
-									 code_resources[SpeciesID]),
+									 code_resources[*SpeciesID]),
 								 nullptr, (void**)(&RDPtrSwap));
 
 	if (!CodeRef || !CodeRefSwap)

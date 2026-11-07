@@ -40,7 +40,7 @@ const extern GfxPoint* constel_array;
 // Global plot_map stores star_pt (coords) used while seeding into starmap
 // Once seeded the plot_map will contain StarDesc pointers to the
 // star locations on the starmap as well.
-extern PlotLocation plot_map[NUM_PLOTS];
+extern PlotLocation plot_map[*PlotId::NumPlots];
 
 // Global portal_map stores "star_pt" coords to each portal's exit,
 // as well as "quasi_pt" coords in quasispace, and the StarDesc of

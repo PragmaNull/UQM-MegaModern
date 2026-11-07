@@ -66,7 +66,7 @@ static bool GeneratePkunk_generatePlanets(SolarSystemState* solarSys)
 
 	if (uqm::isOriginalSeed())
 	{
-		pPlanet->data_index = WATER_WORLD;
+		pPlanet->data_index = *PlanetType::Water;
 		pPlanet->NumPlanets = 1;
 		pPlanet->radius = EarthRadius * 104L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
@@ -96,23 +96,23 @@ static bool GeneratePkunk_generateOrbital(SolarSystemState* solarSys, SystemPlan
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if (StartSphereTracking(PKUNK_SHIP))
+		if (StartSphereTracking(RaceId::Pkunk))
 		{
-			NotifyOthers(PKUNK_SHIP, IpnlAllClear);
+			NotifyOthers(*RaceId::Pkunk, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&uqm::gameState().game().ip_group_q);
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			CloneShipFragment(PKUNK_SHIP,
+			CloneShipFragment(RaceId::Pkunk,
 							  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 
-			uqm::currentActivity() |= START_INTERPLANETARY;
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
-			InitCommunication(PKUNK_CONVERSATION);
+			InitCommunication(Conversation::Pkunk);
 
-			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 			{
-				uqm::currentActivity() &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}

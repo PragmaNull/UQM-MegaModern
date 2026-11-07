@@ -57,39 +57,47 @@ inline constexpr auto IpShipTurnDecrement {2};
 
 inline constexpr auto BioCreditValueDefault {2};
 
-enum
+enum class ModuleType : uint8_t
 {
-	PLANET_LANDER = 0,
+	PlanetLander = 0,
 	/* thruster types */
-	FUSION_THRUSTER,
+	FusionThruster,
 	/* jet types */
-	TURNING_JETS,
+	TurningJets,
 	/* module types */
-	CREW_POD,
-	STORAGE_BAY,
-	FUEL_TANK,
-	HIGHEFF_FUELSYS,
-	DYNAMO_UNIT,
-	SHIVA_FURNACE,
-	GUN_WEAPON,
-	BLASTER_WEAPON,
-	CANNON_WEAPON,
-	TRACKING_SYSTEM,
-	ANTIMISSILE_DEFENSE,
+	CrewPod,
+	StorageBay,
+	FuelTank,
+	HigheffFuelsys,
+	DynamoUnit,
+	ShivaFurnace,
+	GunWeapon,
+	BlasterWeapon,
+	CannonWeapon,
+	TrackingSystem,
+	AntimissileDefense,
 
-	NUM_PURCHASE_MODULES,
+	NumPurchaseModules,
 
-	BOMB_MODULE_0 = NUM_PURCHASE_MODULES,
-	BOMB_MODULE_1,
-	BOMB_MODULE_2,
-	BOMB_MODULE_3,
-	BOMB_MODULE_4,
-	BOMB_MODULE_5,
+	BombModule0 = NumPurchaseModules,
+	BombModule1,
+	BombModule2,
+	BombModule3,
+	BombModule4,
+	BombModule5,
 
-	NUM_MODULES /* must be last entry */
+	NumModules, /* must be last module */
+
+	// The values of empty slots.
+	EmptyDriveSlot = NumModules,
+	EmptyJetSlot,
+	EmptyModuleSlot,
+	EmptyLanderSlot,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<ModuleType> = true;
 
-inline constexpr auto EmptySlot {NUM_MODULES};
+inline constexpr auto EmptySlot {ModuleType::NumModules};
 inline constexpr auto NumBombModules {10};
 
 inline auto SafePad() { return SafeNeg(3); }
@@ -162,13 +170,13 @@ struct FlagshipData
 	// Set to (uint16_t) ~0 to indicate game over.
 	uint16_t TotalElementMass, TotalBioMass;
 
-	uint8_t ModuleSlots[NumModuleSlots];
-	uint8_t DriveSlots[NumDriveSlots];
-	uint8_t JetSlots[NumJetSlots];
+	ModuleType ModuleSlots[NumModuleSlots];
+	ModuleType DriveSlots[NumDriveSlots];
+	ModuleType JetSlots[NumJetSlots];
 
 	uint8_t NumLanders;
 
-	uint16_t ElementAmounts[NUM_ELEMENT_CATEGORIES];
+	uint16_t ElementAmounts[*MineralCategory::NumElementCategories];
 
 	char ShipName[SisNameSize];
 	char CommanderName[SisNameSize];

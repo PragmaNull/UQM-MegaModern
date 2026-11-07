@@ -218,7 +218,7 @@ static int16_t add_text(int status, GfxText* pTextIn)
 		}
 
 		text_width = CommData.AlienTextWidth;
-		if (CommData.AlienConv == ORZ_CONVERSATION && uqm::UQMOptions::read().orzCompFont && CommData.AlienTalkDesc.AnimFlags & PauseTalking)
+		if (CommData.AlienConv == Conversation::Orz && uqm::UQMOptions::read().orzCompFont && CommData.AlienTalkDesc.AnimFlags & PauseTalking)
 		{
 			SetContextFont(ComputerFont); // Orz intro
 		}
@@ -357,7 +357,7 @@ static int16_t add_text(int status, GfxText* pTextIn)
 		else
 		{
 			// Alien speech
-			if (CommData.AlienConv == ORZ_CONVERSATION && uqm::UQMOptions::read().orzCompFont)
+			if (CommData.AlienConv == Conversation::Orz && uqm::UQMOptions::read().orzCompFont)
 			{
 				font_DrawTracedTextAlt(pText,
 									   CommData.AlienTextFColor,
@@ -567,7 +567,7 @@ static void DrawSISComWindow(void)
 {
 	GFXCONTEXT OldContext {};
 
-	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::WonLastBattle)
 	{
 		GfxRect r;
 
@@ -714,7 +714,7 @@ static void FeedbackPlayerPhrase(char* pStr)
 
 		if (!IsDarkMode)
 		{
-			ct.pStr = GameString(FEEDBACK_STRING_BASE);
+			ct.pStr = GameString(GameStringBase::FeedbackString);
 			// "(In response to your statement)"
 			SetContextForeGroundColor(CommResponseIntroTextColor);
 			font_DrawText(&ct);
@@ -938,13 +938,13 @@ static bool DoTalkSegue(TalkingState* pTS)
 	bool right = false;
 	uint16_t curTrack {};
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		pTS->ended = true;
 		return false;
 	}
 
-	if (uqm::UQMOptions::read().useSpeech || uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO || (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE))
+	if (uqm::UQMOptions::read().useSpeech || uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO || (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle))
 	{
 		if (PulsedInputState.menu[*MenuKey::MenuCancel])
 		{
@@ -1065,7 +1065,7 @@ static bool DoTalkSegue(TalkingState* pTS)
 
 					if (PulsedInputState.menu[*MenuKey::MenuCancel]
 						|| PulsedInputState.menu[*MenuKey::MenuRight]
-						|| (uqm::currentActivity() & CHECK_ABORT))
+						|| (uqm::currentActivity() & ActivityFlag::CheckAbort))
 					{
 						awake = true;
 					}
@@ -1171,7 +1171,7 @@ static bool TalkSegue(uint16_t wait_track)
 		setStopTalkingAnim();
 	}
 
-	if (!(uqm::currentActivity() & CHECK_ABORT))
+	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{ // Wait until the animation task stops "talking"
 		while (runningTalkingAnim())
 		{
@@ -1224,7 +1224,7 @@ static void CommIntroTransition(void)
 void AlienTalkSegue(uint16_t wait_track)
 {
 	// this skips any talk segues that follow an aborted one
-	if ((uqm::currentActivity() & CHECK_ABORT) || TalkingFinished)
+	if ((uqm::currentActivity() & ActivityFlag::CheckAbort) || TalkingFinished)
 	{
 		return;
 	}
@@ -1257,7 +1257,7 @@ void AlienTalkSegue(uint16_t wait_track)
 			}
 		}
 
-		LastActivity &= ~CHECK_LOAD;
+		LastActivity &= ~ActivityFlag::CheckLoad;
 	}
 
 	TalkingFinished = TalkSegue(wait_track);
@@ -1312,7 +1312,7 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 		pSS->Initialized = true;
 		DoInput(pSS, false);
 	}
-	else if (uqm::currentActivity() & CHECK_ABORT)
+	else if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false; // bail out
 	}
@@ -1376,7 +1376,7 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 			for (; row < MaxSummRows() && !getLineWithinWidth(&t, &next, r.extent.width, (uint16_t)~0);
 				 ++row)
 			{
-				if (CommData.AlienConv == ORZ_CONVERSATION)
+				if (CommData.AlienConv == Conversation::Orz)
 				{ // MB: nasty hack: remove '$'s from conversation for
 					// Orz
 					char my_copy[128] {};
@@ -1405,7 +1405,7 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 			}
 
 			// this subtitle fit completely
-			if (CommData.AlienConv == ORZ_CONVERSATION)
+			if (CommData.AlienConv == Conversation::Orz)
 			{ // MB: nasty hack: remove '$'s from conversation for Orz
 				char my_copy[128] {};
 
@@ -1430,10 +1430,10 @@ static bool DoConvSummary(ConversationSummaryState* pSS)
 			mt.baseline.y = t.baseline.y;
 			mt.align = TextAlign::Center;
 			fmt::format_to_sz_n(buffer, "{}{}{}", // "MORE"
-								StrMiddleDot, GameString(FEEDBACK_STRING_BASE + 1),
+								StrMiddleDot, GameString(GameStringBase::FeedbackString + 1),
 								StrMiddleDot);
 
-			if (CommData.AlienConv == ORZ_CONVERSATION)
+			if (CommData.AlienConv == Conversation::Orz)
 			{ // MB: nasty hack: remove '$'s from conversation for Orz
 				remove_char_from_string(buffer, '$');
 			}
@@ -1546,7 +1546,7 @@ static void PlayerResponseInput(CommEncounterState* pES)
 	{
 		SelectResponse(pES);
 	}
-	else if (PulsedInputState.menu[*MenuKey::MenuCancel] && uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE && !IsDarkMode)
+	else if (PulsedInputState.menu[*MenuKey::MenuCancel] && uqm::activityKind(uqm::currentActivity()) != ActivityKind::WonLastBattle && !IsDarkMode)
 	{
 		SelectConversationSummary(pES);
 	}
@@ -1557,7 +1557,7 @@ static void PlayerResponseInput(CommEncounterState* pES)
 		{
 			SelectReplay(pES);
 
-			if (!(uqm::currentActivity() & CHECK_ABORT))
+			if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 			{
 				RefreshResponses(pES);
 				FadeMusic(NormalVolume, c_gameSecond);
@@ -1619,7 +1619,7 @@ struct LastReplayState
 
 static bool DoLastReplay(LastReplayState* pLRS)
 {
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false;
 	}
@@ -1629,7 +1629,7 @@ static bool DoLastReplay(LastReplayState* pLRS)
 		return false; // timed out and done
 	}
 
-	if (PulsedInputState.menu[*MenuKey::MenuCancel] && uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
+	if (PulsedInputState.menu[*MenuKey::MenuCancel] && uqm::activityKind(uqm::currentActivity()) != ActivityKind::WonLastBattle)
 	{
 		FadeMusic(BackgroundVol(), c_gameSecond);
 		SelectConversationSummary(nullptr);
@@ -1665,7 +1665,7 @@ static bool DoCommunication(CommEncounterState* pES)
 		return true;
 	}
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		UninitOscilloscope();
 	}
@@ -1714,7 +1714,7 @@ void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
 {
 	CommEncounterState* pES = pCurInputState;
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return;
 	}
@@ -1891,7 +1891,7 @@ static void HailAlien(void)
 
 		SetTransitionSource(nullptr);
 		BatchGraphics();
-		if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 		{
 			// set the position of outtakes comm
 			CommWndRect.corner.x = ((CanvasWidth - CommWndRect.extent.width) / 2);
@@ -1915,9 +1915,9 @@ static void HailAlien(void)
 			if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
 				&& uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 			{ // Talking to allied Starbase
-				DrawSISMessage(GameString(STARBASE_STRING_BASE + 1));
+				DrawSISMessage(GameString(GameStringBase::StarbaseString + 1));
 				// "Starbase Commander"
-				DrawSISTitle(GameString(STARBASE_STRING_BASE + 0));
+				DrawSISTitle(GameString(GameStringBase::StarbaseString + 0));
 				// "Starbase"
 			}
 			else
@@ -1950,10 +1950,10 @@ static void HailAlien(void)
 	}
 
 
-	LastActivity |= CHECK_LOAD; /* prevent spurious input */
+	LastActivity |= ActivityFlag::CheckLoad; /* prevent spurious input */
 	(*CommData.init_encounter_func)();
 	DoInput(&ES, false);
-	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
 		(*CommData.post_encounter_func)();
 	}
@@ -1995,7 +1995,7 @@ void SetCommIntroMode(CommIntroMode newMode, TimePeriod howLong)
 	fadeTime = howLong;
 }
 
-uint16_t InitCommunication(CONVERSATION which_comm)
+uint16_t InitCommunication(Conversation which_comm)
 {
 	uint16_t status {};
 	const ConversationData* LocDataPtr {};
@@ -2008,12 +2008,12 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 #endif
 
 
-	if (LastActivity & CHECK_LOAD)
+	if (LastActivity & ActivityFlag::CheckLoad)
 	{
-		LastActivity &= ~CHECK_LOAD;
-		if (which_comm != COMMANDER_CONVERSATION)
+		LastActivity &= ~ActivityFlag::CheckLoad;
+		if (which_comm != Conversation::Commander)
 		{
-			if (uqm::lowByte(LastActivity) == 0)
+			if (uqm::activityKind(LastActivity) == 0)
 			{
 				DrawSISFrame();
 			}
@@ -2033,13 +2033,13 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 			}
 			else
 			{ // to fix moon suffix on load
-				if (pSolarSysState && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE
+				if (pSolarSysState && uqm::activityKind(uqm::currentActivity()) != ActivityKind::InLastBattle
 					&& worldIsMoon(pSolarSysState, pSolarSysState->pOrbitalDesc))
 				{
 					if (!(GetNamedPlanetaryBody()) && isPC(uqm::UQMOptions::read().whichFonts)
-						&& (pSolarSysState->pOrbitalDesc->data_index != HIERARCHY_STARBASE
-							&& pSolarSysState->pOrbitalDesc->data_index != DESTROYED_STARBASE
-							&& pSolarSysState->pOrbitalDesc->data_index != PRECURSOR_STARBASE))
+						&& (pSolarSysState->pOrbitalDesc->data_index != PlanetType::HierarchyStarbase
+							&& pSolarSysState->pOrbitalDesc->data_index != PlanetType::DestroyedStarbase
+							&& pSolarSysState->pOrbitalDesc->data_index != PlanetType::PrecursorStarbase))
 					{
 						fmt::format_to_sz_n((uqm::gameState().sis().PlanetName) + strlen(uqm::gameState().sis().PlanetName),
 											4, "-%c%c", 'A' + moonIndex(pSolarSysState, pSolarSysState->pOrbitalDesc), '\0');
@@ -2052,44 +2052,44 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 	}
 
 
-	if (which_comm == URQUAN_DRONE_CONVERSATION)
+	if (which_comm == Conversation::UrquanDrone)
 	{
-		status = URQUAN_DRONE_SHIP;
-		which_comm = URQUAN_CONVERSATION;
+		status = *RaceId::UrquanDrone;
+		which_comm = Conversation::Urquan;
 	}
 	else
 	{
-		if (which_comm == YEHAT_REBEL_CONVERSATION)
+		if (which_comm == Conversation::YehatRebel)
 		{
-			status = YEHAT_REBEL_SHIP;
-			which_comm = YEHAT_CONVERSATION;
+			status = *RaceId::YehatRebel;
+			which_comm = Conversation::Yehat;
 		}
 		else
 		{
 			const auto& commToShip {RaceShipForComm};
-			status = commToShip[which_comm];
-			if (status >= YEHAT_REBEL_SHIP)
+			status = commToShip[*which_comm];
+			if (status >= RaceId::YehatRebel)
 			{
 				/* conversation exception, set to self */
-				status = HUMAN_SHIP;
+				status = *RaceId::Human;
 			}
 		}
-		StartSphereTracking((RACE_ID)status);
+		StartSphereTracking((RaceId)status);
 
-		if (which_comm == ORZ_CONVERSATION
-			|| (which_comm == TALKING_PET_CONVERSATION
+		if (which_comm == Conversation::Orz
+			|| (which_comm == Conversation::TalkingPet
 				&& (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
-					|| uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE))
-			|| (which_comm != CHMMR_CONVERSATION
-				&& which_comm != SYREEN_CONVERSATION)) //&& CheckAlliance (status) == BAD_GUY))
+					|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle))
+			|| (which_comm != Conversation::Chmmr
+				&& which_comm != Conversation::Syreen)) //&& CheckAlliance (status) == BAD_GUY))
 		{
 			BuildBattle(NpcPlayerNum);
 		}
 	}
 
 	LocDataPtr = init_race(
-		status != YEHAT_REBEL_SHIP ? which_comm :
-									 YEHAT_REBEL_CONVERSATION);
+		status != RaceId::YehatRebel ? which_comm :
+									   Conversation::YehatRebel);
 	if (LocDataPtr)
 	{ // We make a copy here
 		CommData = *LocDataPtr;
@@ -2118,7 +2118,7 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 	}
 	else if (LocDataPtr)
 	{ // only when comm initied successfully
-		if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+		if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 		{
 			(*CommData.post_encounter_func)(); // process states
 		}
@@ -2127,12 +2127,12 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 	}
 
 	status = 0;
-	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
 		// The Sa-Matra battle is skipped when Cyborg is enabled.
 		// Most likely because the Cyborg is too dumb to know what
 		// to do in this battle.
-		if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
+		if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle
 			&& (uqm::globalFlags() & CyborgEnabled))
 		{
 			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
@@ -2164,34 +2164,34 @@ uint16_t InitCommunication(CONVERSATION which_comm)
 	return (status);
 }
 
-static constexpr CONVERSATION RaceConversations[] {
-	ARILOU_CONVERSATION,	   /* ARILOU_SHIP */
-	CHMMR_CONVERSATION,		   /* CHMMR_SHIP */
-	INVALID_CONVERSATION,	   /* HUMAN_SHIP */
-	ORZ_CONVERSATION,		   /* ORZ_SHIP */
-	PKUNK_CONVERSATION,		   /* PKUNK_SHIP */
-	SHOFIXTI_CONVERSATION,	   /* SHOFIXTI_SHIP */
-	SPATHI_CONVERSATION,	   /* SPATHI_SHIP */
-	SUPOX_CONVERSATION,		   /* SUPOX_SHIP */
-	THRADD_CONVERSATION,	   /* THRADDASH_SHIP */
-	UTWIG_CONVERSATION,		   /* UTWIG_SHIP */
-	VUX_CONVERSATION,		   /* VUX_SHIP */
-	YEHAT_CONVERSATION,		   /* YEHAT_SHIP */
-	MELNORME_CONVERSATION,	   /* MELNORME_SHIP */
-	DRUUGE_CONVERSATION,	   /* DRUUGE_SHIP */
-	ILWRATH_CONVERSATION,	   /* ILWRATH_SHIP */
-	MYCON_CONVERSATION,		   /* MYCON_SHIP */
-	SLYLANDRO_CONVERSATION,	   /* SLYLANDRO_SHIP */
-	UMGAH_CONVERSATION,		   /* UMGAH_SHIP */
-	URQUAN_CONVERSATION,	   /* URQUAN_SHIP */
-	ZOQFOTPIK_CONVERSATION,	   /* ZOQFOTPIK_SHIP */
-	INVALID_CONVERSATION,	   /* SYREEN_SHIP */
-	BLACKURQ_CONVERSATION,	   /* BLACK_URQUAN_SHIP */
-	INVALID_CONVERSATION,	   /* ANDROSYNTH_SHIP */
-	INVALID_CONVERSATION,	   /* CHENJESU_SHIP */
-	INVALID_CONVERSATION,	   /* MMRNMHRM_SHIP */
-	YEHAT_REBEL_CONVERSATION,  /* YEHAT_REBEL_SHIP */
-	URQUAN_DRONE_CONVERSATION, /* URQUAN_DRONE_SHIP */
+static constexpr Conversation RaceConversations[] {
+	Conversation::Arilou,	   /* ARILOU_SHIP */
+	Conversation::Chmmr,	   /* CHMMR_SHIP */
+	Conversation::Invalid,	   /* HUMAN_SHIP */
+	Conversation::Orz,		   /* ORZ_SHIP */
+	Conversation::Pkunk,	   /* PKUNK_SHIP */
+	Conversation::Shofixti,	   /* SHOFIXTI_SHIP */
+	Conversation::Spathi,	   /* SPATHI_SHIP */
+	Conversation::Supox,	   /* SUPOX_SHIP */
+	Conversation::Thradd,	   /* THRADDASH_SHIP */
+	Conversation::Utwig,	   /* UTWIG_SHIP */
+	Conversation::Vux,		   /* VUX_SHIP */
+	Conversation::Yehat,	   /* YEHAT_SHIP */
+	Conversation::Melnorme,	   /* MELNORME_SHIP */
+	Conversation::Druuge,	   /* DRUUGE_SHIP */
+	Conversation::Ilwrath,	   /* ILWRATH_SHIP */
+	Conversation::Mycon,	   /* MYCON_SHIP */
+	Conversation::Slylandro,   /* SLYLANDRO_SHIP */
+	Conversation::Umgah,	   /* UMGAH_SHIP */
+	Conversation::Urquan,	   /* URQUAN_SHIP */
+	Conversation::Zoqfotpik,   /* ZOQFOTPIK_SHIP */
+	Conversation::Invalid,	   /* SYREEN_SHIP */
+	Conversation::Blackurq,	   /* BLACK_URQUAN_SHIP */
+	Conversation::Invalid,	   /* ANDROSYNTH_SHIP */
+	Conversation::Invalid,	   /* CHENJESU_SHIP */
+	Conversation::Invalid,	   /* MMRNMHRM_SHIP */
+	Conversation::YehatRebel,  /* YEHAT_REBEL_SHIP */
+	Conversation::UrquanDrone, /* URQUAN_DRONE_SHIP */
 };
 
 void RaceCommunication(void)
@@ -2203,20 +2203,20 @@ void RaceCommunication(void)
 	HENCOUNTER hEncounter = 0;
 	const auto& RaceComm {RaceConversations};
 
-	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 	{
 		/* Going into talking pet conversation */
 		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
-		CloneShipFragment(SAMATRA_SHIP, &uqm::gameState().game().npc_built_ship_q, 0);
-		InitCommunication(TALKING_PET_CONVERSATION);
-		if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+		CloneShipFragment(RaceId::Samatra, &uqm::gameState().game().npc_built_ship_q, 0);
+		InitCommunication(Conversation::TalkingPet);
+		if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 			&& uqm::gameState().sis().CrewEnlisted != (uint16_t)~0)
 		{
-			uqm::currentActivity() = WON_LAST_BATTLE;
+			uqm::currentActivity() = *ActivityKind::WonLastBattle;
 		}
 		return;
 	}
-	else if (NextActivity & CHECK_LOAD)
+	else if (NextActivity & ActivityFlag::CheckLoad)
 	{
 		uint8_t ec {};
 
@@ -2224,29 +2224,29 @@ void RaceCommunication(void)
 
 		if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 		{
-			InitCommunication(SPATHI_CONVERSATION);
+			InitCommunication(Conversation::Spathi);
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == 0)
 		{
-			InitCommunication(TALKING_PET_CONVERSATION);
+			InitCommunication(Conversation::TalkingPet);
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & ((1 << 4) | (1 << 5)))
 		{
 			// Communicate with the Ilwrath using a Hyperwave Broadcaster.
-			InitCommunication(ILWRATH_CONVERSATION);
+			InitCommunication(Conversation::Ilwrath);
 		}
 		else
 		{
-			InitCommunication(CHMMR_CONVERSATION);
+			InitCommunication(Conversation::Chmmr);
 		}
 		if (uqm::gameState().sis().CrewEnlisted != (uint16_t)~0)
 		{
-			NextActivity = uqm::currentActivity() & ~START_ENCOUNTER;
-			if (uqm::lowByte(NextActivity) == IN_INTERPLANETARY)
+			NextActivity = uqm::currentActivity() & ~ActivityFlag::StartEncounter;
+			if (uqm::activityKind(NextActivity) == ActivityKind::InInterplanetary)
 			{
-				NextActivity |= START_INTERPLANETARY;
+				NextActivity |= ActivityFlag::StartInterplanetary;
 			}
-			uqm::currentActivity() |= CHECK_LOAD; /* fake a load game */
+			uqm::currentActivity() |= ActivityFlag::CheckLoad; /* fake a load game */
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::ESCAPE_COUNTER, static_cast<uint32_t>(ec));
@@ -2257,7 +2257,7 @@ void RaceCommunication(void)
 		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) >= 2)
 		{
-			InitCommunication(ARILOU_CONVERSATION);
+			InitCommunication(Conversation::Arilou);
 			return;
 		}
 		else
@@ -2272,7 +2272,7 @@ void RaceCommunication(void)
 
 			for (i = 0; i < EncounterPtr->num_ships; ++i)
 			{
-				CloneShipFragment((RACE_ID)EncounterPtr->race_id,
+				CloneShipFragment((RaceId)EncounterPtr->race_id,
 								  &uqm::gameState().game().npc_built_ship_q,
 								  EncounterPtr->ShipList[i].crew_level);
 			}
@@ -2293,20 +2293,20 @@ void RaceCommunication(void)
 
 	status = InitCommunication(RaceComm[i]);
 
-	if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+	if (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 	{
 		return;
 	}
 
-	if (i == CHMMR_SHIP)
+	if (i == RaceId::Chmmr)
 	{
 		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 	}
 
-	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InInterplanetary)
 	{
 		/* if used destruct code in interplanetary */
-		if (i == SLYLANDRO_SHIP && status == 0)
+		if (i == RaceId::Slylandro && status == 0)
 		{
 			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 		}

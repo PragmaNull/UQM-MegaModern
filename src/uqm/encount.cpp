@@ -59,7 +59,7 @@ static void DrawFadeText(const char* str1, const char* str2,
 static bool DoSelectAction(MenuState* pMS)
 {
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		pMS->CurState = *EncounterAction::Attack + 1;
 		return (false);
@@ -76,7 +76,7 @@ static bool DoSelectAction(MenuState* pMS)
 			case *EncounterAction::Hail:
 			case *EncounterAction::Attack:
 				DrawMenuStateStrings(MenuString::Converse, pMS->CurState);
-				if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+				if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 				{
 					pMS->CurState = *EncounterAction::Hail;
 				}
@@ -112,15 +112,15 @@ static Queue* GetShipFragQueueForPlayer(uint16_t playerNr)
 
 void SetBattlePlanet(void)
 {
-	uint8_t selector {(uint8_t)((uint16_t)uqm::random().next() % NUMBER_OF_PLANET_TYPES)};
+	uint8_t selector {(uint8_t)((uint16_t)uqm::random().next() % *PlanetType::NumberOfPlanetTypes)};
 
-	if (IsExtended() && (selector == RAINBOW_WORLD || selector == SHATTERED_WORLD))
+	if (IsExtended() && (selector == PlanetType::Rainbow || selector == PlanetType::Shattered))
 	{ // No rainbow or shattered worlds in hyperspace
-		if (selector == RAINBOW_WORLD)
+		if (selector == PlanetType::Rainbow)
 		{
 			selector--;
 		}
-		if (selector == SHATTERED_WORLD)
+		if (selector == PlanetType::Shattered)
 		{
 			selector++;
 		}
@@ -150,14 +150,14 @@ void BuildBattle(uint16_t which_player)
 	if (which_player != RpgPlayerNum)
 	{ // This function is called first for the NPC character
 		// and this is when a centerpiece is loaded
-		switch (uqm::lowByte(uqm::currentActivity()))
+		switch (uqm::activityKind(uqm::currentActivity()))
 		{
-			case IN_LAST_BATTLE:
-				load_gravity_well(SA_MATRA);
+			case ActivityKind::InLastBattle:
+				load_gravity_well(*PlanetType::SaMatra);
 				break;
-			case IN_HYPERSPACE:
+			case ActivityKind::InHyperspace:
 				{ // If somehow BATTLE_PLANET is invalid (maybe Core game load missalign)
-					if (uqm::gameState().flag(uqm::GameFlag::BATTLE_PLANET) > NUMBER_OF_PLANET_TYPES)
+					if (uqm::gameState().flag(uqm::GameFlag::BATTLE_PLANET) > PlanetType::NumberOfPlanetTypes)
 					{
 						SetBattlePlanet();
 					}
@@ -181,13 +181,13 @@ void BuildBattle(uint16_t which_player)
 																			  pSolarSysState, pSolarSysState->pOrbitalDesc)]
 													 .data_index;
 
-						if (selector == SA_MATRA)
+						if (selector == PlanetType::SaMatra)
 						{
 							uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 												sizeof(uqm::gameState().sis().PlanetName),
-												GameString(PLANET_NUMBER_BASE + 32));
+												GameString(GameStringBase::PlanetNumber + 32));
 							DrawSISTitle(
-								GameString(PLANET_NUMBER_BASE + 32));
+								GameString(GameStringBase::PlanetNumber + 32));
 						}
 
 						load_gravity_well(selector);
@@ -212,8 +212,8 @@ void BuildBattle(uint16_t which_player)
 		hNextShip = _GetSuccLink(FragPtr);
 
 		hBuiltShip = Build(&race_q[which_player],
-						   FragPtr->race_id == SAMATRA_SHIP ?
-							   SA_MATRA_ID :
+						   FragPtr->race_id == RaceId::Samatra ?
+							   SpeciesId::SaMatra :
 							   FragPtr->SpeciesID);
 		if (hBuiltShip)
 		{
@@ -242,7 +242,7 @@ void BuildBattle(uint16_t which_player)
 	}
 
 	if (which_player == RpgPlayerNum
-		&& (hBuiltShip = Build(&race_q[0], SIS_SHIP_ID)))
+		&& (hBuiltShip = Build(&race_q[0], SpeciesId::SisShip)))
 	{
 		BuiltShipPtr = LockStarShip(&race_q[0], hBuiltShip);
 		BuiltShipPtr->captains_name_index = 0;
@@ -360,12 +360,12 @@ uint16_t InitEncounter(void)
 		BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
 	if (inHQSpace())
 	{
-		t.pStr = GameString(ENCOUNTER_STRING_BASE + 0);
+		t.pStr = GameString(GameStringBase::EncounterString + 0);
 		// "ENCOUNTER IN"
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 		t.baseline.y += ResScale(12);
-		t.pStr = GameString(ENCOUNTER_STRING_BASE + 1);
+		t.pStr = GameString(GameStringBase::EncounterString + 1);
 		// "DEEP SPACE"
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
@@ -374,7 +374,7 @@ uint16_t InitEncounter(void)
 	{
 		char buf[256];
 
-		t.pStr = GameString(ENCOUNTER_STRING_BASE + 2);
+		t.pStr = GameString(GameStringBase::EncounterString + 2);
 		// "ENCOUNTER AT"
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
@@ -395,7 +395,7 @@ uint16_t InitEncounter(void)
 	s.frame = planet[0];
 	DrawStamp(&s);
 
-	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InLastBattle)
 	{
 		HSHIPFRAG hStarShip {};
 		HSHIPFRAG hNextShip {};
@@ -597,10 +597,10 @@ uint16_t UninitEncounter(void)
 
 	free_gravity_well();
 
-	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+	if ((uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0
-		|| uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		goto ExitUninitEncounter;
 	}
@@ -743,7 +743,7 @@ uint16_t UninitEncounter(void)
 								font_DrawText(&t);
 								t.baseline.y += ResScale(6);
 								t.pStr = GameString(
-									ENCOUNTER_STRING_BASE + 3);
+									GameStringBase::EncounterString + 3);
 								// "BATTLE GROUP"
 								t.CharCount = (uint16_t)~0;
 								font_DrawText(&t);
@@ -753,10 +753,10 @@ uint16_t UninitEncounter(void)
 								SetContextFont(MicroFont);
 
 								str1 = GameString(
-									ENCOUNTER_STRING_BASE + 4);
+									GameStringBase::EncounterString + 4);
 								// "Enemy Ships"
 								str2 = GameString(
-									ENCOUNTER_STRING_BASE + 5);
+									GameStringBase::EncounterString + 5);
 								// "Destroyed"
 
 								DrawFadeText(str1, str2, true, &scavenge_r);
@@ -777,11 +777,11 @@ uint16_t UninitEncounter(void)
 
 							/* collect bounty ResUnits */
 							j = ShipCost(EncounterRace) >> 3;
-							if (EncounterRace == SLYLANDRO_SHIP)
+							if (EncounterRace == RaceId::Slylandro)
 							{
 								j = 550;
 							}
-							if (EncounterRace == MELNORME_SHIP)
+							if (EncounterRace == RaceId::Melnorme)
 							{
 								j = j * 2;
 							}
@@ -840,7 +840,7 @@ uint16_t UninitEncounter(void)
 								TimeCount Time = GetTimeCounter();
 								for (j = 0; j < NumShipFades; ++j)
 								{
-									Sleepy = (bool)!AnyButtonPress(true) && !(uqm::currentActivity() & CHECK_ABORT);
+									Sleepy = (bool)!AnyButtonPress(true) && !(uqm::currentActivity() & ActivityFlag::CheckAbort);
 
 									if (IsHd())
 									{ // Back of the current ship
@@ -908,7 +908,7 @@ uint16_t UninitEncounter(void)
 					ClearRectBack(&r);
 
 					fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}", RecycleAmount,
-									 GameString(STATUS_STRING_BASE + 1)); // "RU"
+									 GameString(GameStringBase::StatusString + 1)); // "RU"
 					t.baseline.x = r.corner.x + (r.extent.width >> 1);
 					t.baseline.y = r.corner.y + ResScale(14);
 					t.align = TextAlign::Center;
@@ -919,9 +919,9 @@ uint16_t UninitEncounter(void)
 					font_DrawText(&t);
 
 
-					str1 = GameString(ENCOUNTER_STRING_BASE + 6);
+					str1 = GameString(GameStringBase::EncounterString + 6);
 					// "Debris"
-					str2 = GameString(ENCOUNTER_STRING_BASE + 7);
+					str2 = GameString(GameStringBase::EncounterString + 7);
 					// "Scavenged"
 
 					DrawFadeText(str1, str2, true, &scavenge_r);
@@ -936,7 +936,7 @@ uint16_t UninitEncounter(void)
 			DestroyPickFrame();
 		}
 
-		if (ships_killed && EncounterRace == THRADDASH_SHIP
+		if (ships_killed && EncounterRace == RaceId::Thraddash
 			&& !uqm::gameState().flag(uqm::GameFlag::THRADD_MANNER))
 		{
 			if ((ships_killed += uqm::gameState().flag(uqm::GameFlag::THRADDASH_BODY_COUNT)) > THRADDASH_BODY_THRESHOLD)
@@ -946,7 +946,7 @@ uint16_t UninitEncounter(void)
 			uqm::gameState().setFlag(uqm::GameFlag::THRADDASH_BODY_COUNT, static_cast<uint32_t>(ships_killed));
 		}
 
-		if (uqm::UQMOptions::read().slaughterMode && CheckSphereTracking((RACE_ID)EncounterRace)
+		if (uqm::UQMOptions::read().slaughterMode && CheckSphereTracking((RaceId)EncounterRace)
 			&& ships_killed)
 		{
 			HFLEETINFO hEncounter {};
@@ -954,13 +954,13 @@ uint16_t UninitEncounter(void)
 			bool isBanned = false;
 			const uint8_t bannedShip[7] =
 				{
-					PKUNK_SHIP,
-					SHOFIXTI_SHIP,
-					THRADDASH_SHIP,
-					YEHAT_SHIP,
-					MELNORME_SHIP,
-					ILWRATH_SHIP,
-					SLYLANDRO_SHIP};
+					*RaceId::Pkunk,
+					*RaceId::Shofixti,
+					*RaceId::Thraddash,
+					*RaceId::Yehat,
+					*RaceId::Melnorme,
+					*RaceId::Ilwrath,
+					*RaceId::Slylandro};
 
 			for (uint8_t j {0}; j < std::size(bannedShip); j++)
 			{
@@ -1013,13 +1013,13 @@ void EncounterBattle(void)
 	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 
 	const ACTIVITY OldActivity {uqm::currentActivity()};
-	if (uqm::lowByte(OldActivity) == IN_LAST_BATTLE)
+	if (uqm::activityKind(OldActivity) == ActivityKind::InLastBattle)
 	{
-		uqm::currentActivity() = uqm::makeWord(IN_LAST_BATTLE, 0);
+		uqm::currentActivity() = uqm::makeWord(ActivityKind::InLastBattle, 0);
 	}
 	else
 	{
-		uqm::currentActivity() = uqm::makeWord(IN_ENCOUNTER, 0);
+		uqm::currentActivity() = uqm::makeWord(ActivityKind::InEncounter, 0);
 	}
 
 	//    FreeSC2Data ();
@@ -1070,7 +1070,7 @@ void EncounterBattle(void)
 	delete GameSounds;
 	GameSounds = 0;
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		uqm::gameState().sis().CrewEnlisted = (uint16_t)~0;
 	}

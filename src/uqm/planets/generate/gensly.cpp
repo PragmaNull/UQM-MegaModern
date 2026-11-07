@@ -59,7 +59,7 @@ static bool GenerateSlylandro_generatePlanets(SolarSystemState* solarSys)
 		pSunDesc->PlanetByte = 3;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = RED_GAS_GIANT;
+		pPlanet->data_index = *PlanetType::RedGasGiant;
 		pPlanet->NumPlanets = 1;
 	}
 	else
@@ -83,7 +83,7 @@ static bool GenerateSlylandro_generateName(const SolarSystemState* solarSys,
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
-							GameString(PLANET_NUMBER_BASE + 36));
+							GameString(GameStringBase::PlanetNumber + 36));
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
@@ -96,7 +96,7 @@ static bool GenerateSlylandro_generateOrbital(SolarSystemState* solarSys,
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		InitCommunication(SLYLANDRO_HOME_CONVERSATION);
+		InitCommunication(Conversation::SlylandroHome);
 		return true;
 	}
 

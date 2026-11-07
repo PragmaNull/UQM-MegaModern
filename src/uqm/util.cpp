@@ -362,7 +362,7 @@ static void DrawPauseText(GfxRect* rect)
 	Color OldColor;
 	GfxRect block;
 
-	if (!strlen(GameString(QUITMENU_STRING_BASE + 4)))
+	if (!strlen(GameString(GameStringBase::QuitmenuString + 4)))
 	{
 		return;
 	}
@@ -387,7 +387,7 @@ static void DrawPauseText(GfxRect* rect)
 	text.baseline.y += ResScale(10);
 	text.align = TextAlign::Center;
 	text.pStr = AlignText(
-		(const char*)GameString(QUITMENU_STRING_BASE + 4),
+		(const char*)GameString(GameStringBase::QuitmenuString + 4),
 		&text.baseline.x);
 	text.CharCount = (uint16_t)~0;
 
@@ -411,13 +411,13 @@ bool PauseGame(void)
 	TimeCount deltaT;
 
 	if (ActivityFrame == 0
-		|| (uqm::currentActivity() & (CHECK_ABORT | CHECK_PAUSE))
-		|| (LastActivity & (CHECK_LOAD | CHECK_RESTART)))
+		|| (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckPause))
+		|| (LastActivity & (ActivityFlag::CheckLoad | ActivityFlag::CheckRestart)))
 	{
 		return (false);
 	}
 
-	uqm::currentActivity() |= CHECK_PAUSE;
+	uqm::currentActivity() |= ActivityFlag::CheckPause;
 
 	if (PlayingTrack())
 	{
@@ -498,7 +498,7 @@ bool PauseGame(void)
 
 
 	TaskSwitch();
-	uqm::currentActivity() &= ~CHECK_PAUSE;
+	uqm::currentActivity() &= ~ActivityFlag::CheckPause;
 	return (true);
 }
 
@@ -516,7 +516,7 @@ bool WaitForAnyButtonUntil(bool newButton, TimeCount timeOut,
 	bool buttonPressed {AnyButtonPress(true)};
 	while (!buttonPressed
 		   && GetTimeCounter() < timeOut
-		   && !(uqm::currentActivity() & CHECK_ABORT)
+		   && !(uqm::currentActivity() & ActivityFlag::CheckAbort)
 		   && !QuitPosted)
 	{
 		SleepThread(c_gameSecond / 40);
@@ -545,7 +545,7 @@ bool WaitForActButtonUntil(bool newButton, TimeCount timeOut,
 	bool buttonPressed {ActKeysPress()};
 	while (!buttonPressed
 		   && GetTimeCounter() < timeOut
-		   && !(uqm::currentActivity() & CHECK_ABORT)
+		   && !(uqm::currentActivity() & ActivityFlag::CheckAbort)
 		   && !QuitPosted)
 	{
 		SleepThread(c_gameSecond / 40);
@@ -579,7 +579,7 @@ bool WaitForNoInputUntil(TimeCount timeOut, bool resetInput)
 	bool buttonPressed {AnyButtonPress(true)};
 	while (buttonPressed
 		   && GetTimeCounter() < timeOut
-		   && !(uqm::currentActivity() & CHECK_ABORT)
+		   && !(uqm::currentActivity() & ActivityFlag::CheckAbort)
 		   && !QuitPosted)
 	{
 		SleepThread(c_gameSecond / 40);
@@ -651,8 +651,8 @@ uint32_t get_fuel_to_sol(void)
 	// JSD Replace old hard coded SOL with plot based SOL
 	//pt.x -= SOL_X;
 	//pt.y -= SOL_Y;
-	pt.x -= plot_map[SOL_DEFINED].star_pt.x;
-	pt.y -= plot_map[SOL_DEFINED].star_pt.y;
+	pt.x -= plot_map[*PlotId::Sol].star_pt.x;
+	pt.y -= plot_map[*PlotId::Sol].star_pt.y;
 
 	const uint32_t f {(uint32_t)((long)pt.x * pt.x + (long)pt.y * pt.y)};
 	if (f == 0 || uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1)

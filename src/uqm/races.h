@@ -75,44 +75,46 @@ inline constexpr auto ShofixtiExplosion {(1 << 10)};
 inline constexpr auto AndrosynCometToggle {(1 << 11)};
 
 /* These track the old resource package orderings for the ship resource indices */
-enum SPECIES_ID
+enum class SpeciesId
 {
-	NO_ID,
-	ARILOU_ID,
-	CHMMR_ID,
-	EARTHLING_ID,
-	ORZ_ID,
-	PKUNK_ID,
-	SHOFIXTI_ID,
-	SPATHI_ID,
-	SUPOX_ID,
-	THRADDASH_ID,
-	UTWIG_ID,
-	VUX_ID,
-	YEHAT_ID,
-	MELNORME_ID,
-	DRUUGE_ID,
-	ILWRATH_ID,
-	MYCON_ID,
-	SLYLANDRO_ID,
-	UMGAH_ID,
-	UR_QUAN_ID,
-	ZOQFOTPIK_ID,
-	SYREEN_ID,
-	KOHR_AH_ID,
-	ANDROSYNTH_ID,
-	CHENJESU_ID,
-	MMRNMHRM_ID,
-	LAST_MELEE_ID = MMRNMHRM_ID,
-	SIS_SHIP_ID,
-	SA_MATRA_ID,
-	UR_QUAN_PROBE_ID,
-	NUM_SPECIES_ID
+	None,
+	Arilou,
+	Chmmr,
+	Earthling,
+	Orz,
+	Pkunk,
+	Shofixti,
+	Spathi,
+	Supox,
+	Thraddash,
+	Utwig,
+	Vux,
+	Yehat,
+	Melnorme,
+	Druuge,
+	Ilwrath,
+	Mycon,
+	Slylandro,
+	Umgah,
+	UrQuan,
+	Zoqfotpik,
+	Syreen,
+	KohrAh,
+	Androsynth,
+	Chenjesu,
+	Mmrnmhrm,
+	LastMelee = Mmrnmhrm,
+	SisShip,
+	SaMatra,
+	UrQuanProbe,
+	NumSpecies
 };
+template <>
+inline constexpr bool IsArithmeticEnum<SpeciesId> = true;
 // TODO figure out why we need this.
-inline SPECIES_ID postIncSpeciesId_HACK(SPECIES_ID& id)
+inline SpeciesId postIncSpeciesId_HACK(SpeciesId& id)
 {
-	const SPECIES_ID ret {id};
+	const SpeciesId ret {id};
 	++reinterpret_cast<int&>(id);
 	return ret;
 }
@@ -252,7 +254,7 @@ struct ShipBase
 	HLINK pred;
 	HLINK succ;
 
-	SPECIES_ID SpeciesID;
+	SpeciesId SpeciesID;
 	uint8_t captains_name_index; /* Also used in full-game to detect if a Starship is an escort
 			 * or the flagship (captains_name_index == 0) */
 };
@@ -349,7 +351,7 @@ struct FleetInfo
 	HFLEETINFO pred;
 	HFLEETINFO succ;
 
-	SPECIES_ID SpeciesID;
+	SpeciesId SpeciesID;
 	const char* shipIdStr;
 
 	uint16_t allied_state; /* GOOD_GUY, BAD_GUY or DEAD_GUY */
@@ -410,77 +412,79 @@ static inline FleetInfo* LockFleetInfo(const Queue* pq, HFLEETINFO h)
 constexpr auto UnlockFleetInfo(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
 
 // Used as index into avail_race_q.
-typedef enum
+enum class RaceId
 {
-	ARILOU_SHIP,
-	CHMMR_SHIP,
-	HUMAN_SHIP,
-	ORZ_SHIP,
-	PKUNK_SHIP,
-	SHOFIXTI_SHIP,
-	SPATHI_SHIP,
-	SUPOX_SHIP,
-	THRADDASH_SHIP,
-	UTWIG_SHIP,
-	VUX_SHIP,
-	YEHAT_SHIP,
-	MELNORME_SHIP,
-	DRUUGE_SHIP,
-	ILWRATH_SHIP,
-	MYCON_SHIP,
-	SLYLANDRO_SHIP,
-	UMGAH_SHIP,
-	URQUAN_SHIP,
-	ZOQFOTPIK_SHIP,
+	Arilou,
+	Chmmr,
+	Human,
+	Orz,
+	Pkunk,
+	Shofixti,
+	Spathi,
+	Supox,
+	Thraddash,
+	Utwig,
+	Vux,
+	Yehat,
+	Melnorme,
+	Druuge,
+	Ilwrath,
+	Mycon,
+	Slylandro,
+	Umgah,
+	Urquan,
+	Zoqfotpik,
 
-	SYREEN_SHIP,
-	BLACK_URQUAN_SHIP,
-	ANDROSYNTH_SHIP,
-	CHENJESU_SHIP,
-	MMRNMHRM_SHIP,
-	NUM_BUILDABLE_SHIPS,
-	YEHAT_REBEL_SHIP = NUM_BUILDABLE_SHIPS,
-	URQUAN_DRONE_SHIP,
-	SAMATRA_SHIP = URQUAN_DRONE_SHIP,
+	Syreen,
+	BlackUrquan,
+	Androsynth,
+	Chenjesu,
+	Mmrnmhrm,
+	NumBuildableShips,
+	YehatRebel = NumBuildableShips,
+	UrquanDrone,
+	Samatra = UrquanDrone,
 
-	NUM_AVAILABLE_RACES
-} RACE_ID;
+	NumAvailableRaces
+};
+template <>
+inline constexpr bool IsArithmeticEnum<RaceId> = true;
 
 inline constexpr Color RaceColors[] {
 	BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53), /* ARILOU_SHIP */
 };
 
 inline constexpr uint16_t RaceShipForComm[] {
-	ARILOU_SHIP,	   /* ARILOU_CONVERSATION */
-	CHMMR_SHIP,		   /* CHMMR_CONVERSATION */
-	HUMAN_SHIP,		   /* COMMANDER_CONVERSATION */
-	ORZ_SHIP,		   /* ORZ_CONVERSATION */
-	PKUNK_SHIP,		   /* PKUNK_CONVERSATION */
-	SHOFIXTI_SHIP,	   /* SHOFIXTI_CONVERSATION */
-	SPATHI_SHIP,	   /* SPATHI_CONVERSATION */
-	SUPOX_SHIP,		   /* SUPOX_CONVERSATION */
-	THRADDASH_SHIP,	   /* THRADD_CONVERSATION */
-	UTWIG_SHIP,		   /* UTWIG_CONVERSATION */
-	VUX_SHIP,		   /* VUX_CONVERSATION */
-	YEHAT_SHIP,		   /* YEHAT_CONVERSATION */
-	MELNORME_SHIP,	   /* MELNORME_CONVERSATION */
-	DRUUGE_SHIP,	   /* DRUUGE_CONVERSATION */
-	ILWRATH_SHIP,	   /* ILWRATH_CONVERSATION */
-	MYCON_SHIP,		   /* MYCON_CONVERSATION */
-	SLYLANDRO_SHIP,	   /* SLYLANDRO_CONVERSATION */
-	UMGAH_SHIP,		   /* UMGAH_CONVERSATION */
-	URQUAN_SHIP,	   /* URQUAN_CONVERSATION */
-	ZOQFOTPIK_SHIP,	   /* ZOQFOTPIK_CONVERSATION */
-	SYREEN_SHIP,	   /* SYREEN_CONVERSATION */
-	BLACK_URQUAN_SHIP, /* BLACKURQ_CONVERSATION */
-	ANDROSYNTH_SHIP,   /* ANDROSYNTH_CONVERSATION */
-	CHENJESU_SHIP,	   /* CHENJESU_CONVERSATION */
-	MMRNMHRM_SHIP,	   /* MMRNMHRM_CONVERSATION */
-	UMGAH_SHIP,		   /* TALKING_PET_CONVERSATION */
-	SLYLANDRO_SHIP,	   /* SLYLANDRO_HOME_CONVERSATION */
-	URQUAN_DRONE_SHIP, /* URQUAN_DRONE_CONVERSATION */
-	YEHAT_SHIP,		   /* YEHAT_REBEL_CONVERSATION */
-	HUMAN_SHIP		   /* INVALID_CONVERSATION */
+	*RaceId::Arilou,	  /* ARILOU_CONVERSATION */
+	*RaceId::Chmmr,		  /* CHMMR_CONVERSATION */
+	*RaceId::Human,		  /* COMMANDER_CONVERSATION */
+	*RaceId::Orz,		  /* ORZ_CONVERSATION */
+	*RaceId::Pkunk,		  /* PKUNK_CONVERSATION */
+	*RaceId::Shofixti,	  /* SHOFIXTI_CONVERSATION */
+	*RaceId::Spathi,	  /* SPATHI_CONVERSATION */
+	*RaceId::Supox,		  /* SUPOX_CONVERSATION */
+	*RaceId::Thraddash,	  /* THRADD_CONVERSATION */
+	*RaceId::Utwig,		  /* UTWIG_CONVERSATION */
+	*RaceId::Vux,		  /* VUX_CONVERSATION */
+	*RaceId::Yehat,		  /* YEHAT_CONVERSATION */
+	*RaceId::Melnorme,	  /* MELNORME_CONVERSATION */
+	*RaceId::Druuge,	  /* DRUUGE_CONVERSATION */
+	*RaceId::Ilwrath,	  /* ILWRATH_CONVERSATION */
+	*RaceId::Mycon,		  /* MYCON_CONVERSATION */
+	*RaceId::Slylandro,	  /* SLYLANDRO_CONVERSATION */
+	*RaceId::Umgah,		  /* UMGAH_CONVERSATION */
+	*RaceId::Urquan,	  /* URQUAN_CONVERSATION */
+	*RaceId::Zoqfotpik,	  /* ZOQFOTPIK_CONVERSATION */
+	*RaceId::Syreen,	  /* SYREEN_CONVERSATION */
+	*RaceId::BlackUrquan, /* BLACKURQ_CONVERSATION */
+	*RaceId::Androsynth,  /* ANDROSYNTH_CONVERSATION */
+	*RaceId::Chenjesu,	  /* CHENJESU_CONVERSATION */
+	*RaceId::Mmrnmhrm,	  /* MMRNMHRM_CONVERSATION */
+	*RaceId::Umgah,		  /* TALKING_PET_CONVERSATION */
+	*RaceId::Slylandro,	  /* SLYLANDRO_HOME_CONVERSATION */
+	*RaceId::UrquanDrone, /* URQUAN_DRONE_CONVERSATION */
+	*RaceId::Yehat,		  /* YEHAT_REBEL_CONVERSATION */
+	*RaceId::Human		  /* INVALID_CONVERSATION */
 };
 
 constexpr auto LogToIp(const auto& s) { return ((s) << 1); }
@@ -642,72 +646,74 @@ inline constexpr uint8_t RaceEncounterMakeup[] {
 
 // JMS: For showing the SC1-era situation in starmap
 
-typedef enum
+enum class HomeId
 {
-	CHMMR_HOME,
-	ORZ_HOME,
-	PKUNK_HOME,
-	SHOFIXTI_HOME,
-	SPATHI_HOME,
-	SUPOX_HOME,
-	THRADDASH_HOME,
-	UTWIG_HOME,
-	VUX_HOME,
-	YEHAT_HOME,
-	DRUUGE_HOME,
-	ILWRATH_HOME,
-	MYCON_HOME,
-	SLYLANDRO_HOME,
-	UMGAH_HOME,
-	ZOQFOTPIK_HOME,
+	Chmmr,
+	Orz,
+	Pkunk,
+	Shofixti,
+	Spathi,
+	Supox,
+	Thraddash,
+	Utwig,
+	Vux,
+	Yehat,
+	Druuge,
+	Ilwrath,
+	Mycon,
+	Slylandro,
+	Umgah,
+	Zoqfotpik,
 
-	SYREEN_HOME,
-	ANDROSYNTH_HOME,
-	NUM_AVAILABLE_HOMES
-} HOME_ID;
+	Syreen,
+	Androsynth,
+	NumAvailableHomes
+};
+template <>
+inline constexpr bool IsArithmeticEnum<HomeId> = true;
 
-static inline HOME_ID SpeciesToHomeID(SPECIES_ID species_id)
+static inline HomeId SpeciesToHomeID(SpeciesId species_id)
 {
 	switch (species_id)
 	{
-		case CHMMR_ID:
-			return CHMMR_HOME;
-		case ORZ_ID:
-			return ORZ_HOME;
-		case PKUNK_ID:
-			return PKUNK_HOME;
-		case SHOFIXTI_ID:
-			return SHOFIXTI_HOME;
-		case SPATHI_ID:
-			return SPATHI_HOME;
-		case SUPOX_ID:
-			return SUPOX_HOME;
-		case THRADDASH_ID:
-			return THRADDASH_HOME;
-		case UTWIG_ID:
-			return UTWIG_HOME;
-		case VUX_ID:
-			return VUX_HOME;
-		case YEHAT_ID:
-			return YEHAT_HOME;
-		case DRUUGE_ID:
-			return DRUUGE_HOME;
-		case ILWRATH_ID:
-			return ILWRATH_HOME;
-		case MYCON_ID:
-			return MYCON_HOME;
-		case SLYLANDRO_ID:
-			return SLYLANDRO_HOME;
-		case UMGAH_ID:
-			return UMGAH_HOME;
-		case ZOQFOTPIK_ID:
-			return ZOQFOTPIK_HOME;
-		case SYREEN_ID:
-			return SYREEN_HOME;
-		case ANDROSYNTH_ID:
-			return ANDROSYNTH_HOME;
+		case SpeciesId::Chmmr:
+			return HomeId::Chmmr;
+		case SpeciesId::Orz:
+			return HomeId::Orz;
+		case SpeciesId::Pkunk:
+			return HomeId::Pkunk;
+		case SpeciesId::Shofixti:
+			return HomeId::Shofixti;
+		case SpeciesId::Spathi:
+			return HomeId::Spathi;
+		case SpeciesId::Supox:
+			return HomeId::Supox;
+		case SpeciesId::Thraddash:
+			return HomeId::Thraddash;
+		case SpeciesId::Utwig:
+			return HomeId::Utwig;
+		case SpeciesId::Vux:
+			return HomeId::Vux;
+		case SpeciesId::Yehat:
+			return HomeId::Yehat;
+		case SpeciesId::Druuge:
+			return HomeId::Druuge;
+		case SpeciesId::Ilwrath:
+			return HomeId::Ilwrath;
+		case SpeciesId::Mycon:
+			return HomeId::Mycon;
+		case SpeciesId::Slylandro:
+			return HomeId::Slylandro;
+		case SpeciesId::Umgah:
+			return HomeId::Umgah;
+		case SpeciesId::Zoqfotpik:
+			return HomeId::Zoqfotpik;
+		case SpeciesId::Syreen:
+			return HomeId::Syreen;
+		case SpeciesId::Androsynth:
+			return HomeId::Androsynth;
 		default:
-			return NUM_AVAILABLE_HOMES;
+			return HomeId::NumAvailableHomes;
 	}
 }
 

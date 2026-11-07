@@ -511,8 +511,8 @@ RaceDesc* init_shofixti(void)
 	shofixti_desc.cyborg_control.intelligence_func = shofixti_intelligence;
 
 	new_shofixti_desc = shofixti_desc;
-	if (uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
-		&& CurStarDescPtr() && CurStarDescPtr()->Index == SHOFIXTI_DEFINED
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InEncounter
+		&& CurStarDescPtr() && CurStarDescPtr()->Index == PlotId::Shofixti
 		&& !uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED))
 	{
 		// Tanaka/Katana flies in a damaged ship.

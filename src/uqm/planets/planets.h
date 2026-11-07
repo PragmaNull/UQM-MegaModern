@@ -19,27 +19,30 @@
 #ifndef UQM_PLANETS_PLANETS_H_
 #define UQM_PLANETS_PLANETS_H_
 
+#include "core/types/enum.h"
 #include "libs/mathlib.h"
 #include "libs/sndlib.h"
 #include "options.h"
 #include "../units.h"
 #include "../globdata.h"
 
-inline constexpr auto EndInterplanetary {START_INTERPLANETARY};
+inline constexpr auto EndInterplanetary {ActivityFlag::StartInterplanetary};
 
 inline constexpr auto OneYear {365.25};
 #ifndef M_PI
 #define M_PI 3.141592653589
 #endif
 
-enum PlanetScanTypes
+enum class ScanType
 {
-	MINERAL_SCAN = 0,
-	ENERGY_SCAN,
-	BIOLOGICAL_SCAN,
+	Mineral = 0,
+	Energy,
+	Biological,
 
-	NUM_SCAN_TYPES,
+	Count,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<ScanType> = true;
 
 inline constexpr auto Sc2MapWidth {210};
 inline constexpr auto Sc2MapHeight {67};
@@ -57,24 +60,26 @@ inline constexpr GfxExtent MapDimensions[] {
 	{(UqmMapWidth - 1), UqmMapHeight},
 };
 
-enum
+enum class LanderEvent
 {
-	BIOLOGICAL_DISASTER = 0,
-	EARTHQUAKE_DISASTER,
-	LIGHTNING_DISASTER,
-	LAVASPOT_DISASTER,
+	BiologicalDisaster = 0,
+	EarthquakeDisaster,
+	LightningDisaster,
+	LavaspotDisaster,
 
 	/* additional lander sounds */
-	LANDER_INJURED,
-	LANDER_SHOOTS,
-	LANDER_HITS,
-	LIFEFORM_CANNED,
-	LANDER_PICKUP,
-	LANDER_FULL,
-	LANDER_DEPARTS,
-	LANDER_RETURNS,
-	LANDER_DESTROYED
+	LanderInjured,
+	LanderShoots,
+	LanderHits,
+	LifeformCanned,
+	LanderPickup,
+	LanderFull,
+	LanderDeparts,
+	LanderReturns,
+	LanderDestroyed
 };
+template <>
+inline constexpr bool IsArithmeticEnum<LanderEvent> = true;
 
 inline auto MaxScrounged() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50); }
 inline auto MaxHoldBars() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50); }
@@ -125,8 +130,8 @@ inline auto PlanetOrgY() { return ResScale(ScanScreenHeight() >> 1) - UseDosSphe
 
 inline constexpr auto NumRaceRuins {16};
 
-constexpr auto MinBrightness(const auto& a) { return ((a == ENERGY_SCAN) ? (50) : (55)); }
-constexpr auto MaxBrightness(const auto& a) { return ((a == ENERGY_SCAN) ? (90) : (135)); }
+constexpr auto MinBrightness(const auto& a) { return ((a == ScanType::Energy) ? (50) : (55)); }
+constexpr auto MaxBrightness(const auto& a) { return ((a == ScanType::Energy) ? (90) : (135)); }
 
 struct SystemPlanet;
 struct StarDesc;
@@ -190,7 +195,7 @@ struct PlanetOrbit
 	FRAME TopoMask;
 	uint8_t* sphereBytes;
 	COLORMAP sphereMap;
-	uint16_t scanType;
+	ScanType scanType;
 
 	FRAME Shade;
 	Color* ShadeColors;
@@ -334,7 +339,7 @@ struct SolarSystemState
 	bool InOrbit;
 	// Set to true when player hits a world in an inner system
 	// Homeworld encounters count as 'in orbit'
-	FRAME ScanFrame[NUM_SCAN_TYPES];
+	FRAME ScanFrame[*ScanType::Count];
 	// For PC scan, generated from TopoFrame
 };
 
@@ -351,7 +356,7 @@ struct PlotLocation
 {
 	GfxPoint star_pt;
 	StarDesc* star;
-	uint32_t dist_sq[NUM_PLOTS];
+	uint32_t dist_sq[*PlotId::NumPlots];
 };
 
 // PortalLocation aka PortalLocation.  The star_pt is the location in

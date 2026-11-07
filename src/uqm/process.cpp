@@ -227,7 +227,7 @@ static uint16_t CalcReduction(int32_t dx, int32_t dy)
 
 	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 	{
-		if (uqm::lowByte(uqm::currentActivity()) > IN_ENCOUNTER)
+		if (uqm::activityKind(uqm::currentActivity()) > ActivityKind::InEncounter)
 		{
 			return (0);
 		}
@@ -264,14 +264,14 @@ static uint16_t CalcReduction(int32_t dx, int32_t dy)
 		}
 
 		if (next_reduction == 0
-			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+			&& uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 		{
 			next_reduction += ReductionShift;
 		}
 	}
 	else
 	{
-		if (uqm::lowByte(uqm::currentActivity()) > IN_ENCOUNTER)
+		if (uqm::activityKind(uqm::currentActivity()) > ActivityKind::InEncounter)
 		{
 			return (1 << ZoomShift);
 		}
@@ -306,7 +306,7 @@ static uint16_t CalcReduction(int32_t dx, int32_t dy)
 		}
 
 		if (next_reduction < (2 << ZoomShift)
-			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+			&& uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 		{
 			next_reduction = (2 << ZoomShift);
 		}
@@ -399,7 +399,7 @@ static ViewState CalcView(LargePoint* pNewScrollPt, int16_t next_reduction,
 		view_state = ViewState::Change;
 	}
 
-	if (uqm::lowByte(uqm::currentActivity()) <= IN_HYPERSPACE)
+	if (uqm::activityKind(uqm::currentActivity()) <= ActivityKind::InHyperspace)
 	{
 		MoveGalaxy(view_state, dx, dy);
 	}
@@ -1120,8 +1120,8 @@ void RedrawQueue(bool clear)
 	}
 
 	SetContext(SpaceContext);
-	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE
-		|| !(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee
+		|| !(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
 		const uint8_t skip_frames {uqm::highByte(nth_frame)};
 		if (skip_frames != (uint8_t)~0

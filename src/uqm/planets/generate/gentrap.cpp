@@ -56,7 +56,7 @@ static bool GenerateTrap_generatePlanets(SolarSystemState* solarSys)
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = TELLURIC_WORLD;
+		pPlanet->data_index = *PlanetType::Telluric;
 		pPlanet->NumPlanets = 1;
 		pPlanet->radius = EarthRadius * 203L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};

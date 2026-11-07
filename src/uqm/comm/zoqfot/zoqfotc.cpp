@@ -41,7 +41,7 @@ static constexpr auto FotToPik {26};
 
 static ConversationData zoqfot_desc =
 	{
-		ZOQFOTPIK_CONVERSATION, /* AlienConv */
+		Conversation::Zoqfotpik, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -236,7 +236,7 @@ static void ExitConversation(RESPONSE_REF R)
 		NPCPhrase_cb(EMMISSARIES7, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		SetHomeworldKnown(ZOQFOTPIK_HOME);
+		SetHomeworldKnown(*HomeId::Zoqfotpik);
 	}
 	else if (PlayerSaid(R, sure))
 	{
@@ -247,8 +247,8 @@ static void ExitConversation(RESPONSE_REF R)
 		NPCPhrase_cb(WE_ALLY4, &SelectAlienZOQ);
 		NPCPhrase_cb(WE_ALLY5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
-		SetRaceAllied(ZOQFOTPIK_SHIP, true);
-		AddEvent(EventType::Relative, 3, 0, 0, ZOQFOT_DISTRESS_EVENT);
+		SetRaceAllied(RaceId::Zoqfotpik, true);
+		AddEvent(EventType::Relative, 3, 0, 0, GameEventId::ZoqfotDistressEvent);
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, all_very_interesting))
@@ -757,8 +757,8 @@ static void ZoqFotHome(RESPONSE_REF R)
 		NPCPhrase_cb(GOOD9, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		SetRaceAllied(ZOQFOTPIK_SHIP, true);
-		AddEvent(EventType::Relative, 3, 0, 0, ZOQFOT_DISTRESS_EVENT);
+		SetRaceAllied(RaceId::Zoqfotpik, true);
+		AddEvent(EventType::Relative, 3, 0, 0, GameEventId::ZoqfotDistressEvent);
 	}
 	else if (PlayerSaid(R, enough_info))
 	{
@@ -774,7 +774,7 @@ static void ZoqFotHome(RESPONSE_REF R)
 	{
 		Response(any_war_news, ZoqFotHome);
 	}
-	if (CheckAlliance(ZOQFOTPIK_SHIP) != RaceAllegiance::Good)
+	if (CheckAlliance(RaceId::Zoqfotpik) != RaceAllegiance::Good)
 	{
 		Response(i_want_alliance, ZoqFotHome);
 	}
@@ -789,9 +789,9 @@ static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	SetHomeworldKnown(ZOQFOTPIK_HOME);
+	SetHomeworldKnown(*HomeId::Zoqfotpik);
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase_cb(OUT_TAKES0, &SelectAlienZOQ);
 		NPCPhrase_cb(OUT_TAKES1, &SelectAlienPIK);
@@ -898,12 +898,12 @@ static void Intro(void)
 			ZFPTalkSegue((uint16_t)~0);
 
 			uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_DISTRESS, static_cast<uint32_t>(0));
-			AddEscortShips(ZOQFOTPIK_SHIP, difficultyCase(4, 4, 2));
+			AddEscortShips(RaceId::Zoqfotpik, difficultyCase(4, 4, 2));
 		}
 		else
 		{
 			NumVisits = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_HOME_VISITS);
-			if (CheckAlliance(ZOQFOTPIK_SHIP) != RaceAllegiance::Good)
+			if (CheckAlliance(RaceId::Zoqfotpik) != RaceAllegiance::Good)
 			{
 				switch (NumVisits++)
 				{
@@ -988,8 +988,8 @@ ConversationData* init_zoqfot_comm(void)
 
 	zoqfot_desc.AlienTextWidth = (SisTextWidth() >> 1) - TextXOffs();
 
-	if (CheckAlliance(ZOQFOTPIK_SHIP) == RaceAllegiance::Good
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (CheckAlliance(RaceId::Zoqfotpik) == RaceAllegiance::Good
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

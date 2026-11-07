@@ -73,7 +73,7 @@ static bool GenerateRainbowWorld_generatePlanets(SolarSystemState* solarSys)
 	pSunDesc->PlanetByte = 0;
 	SystemPlanet* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
-	pPlanet->data_index = RAINBOW_WORLD;
+	pPlanet->data_index = *PlanetType::Rainbow;
 
 	if (uqm::isOriginalSeed())
 	{
@@ -100,8 +100,8 @@ static bool GenerateRainbowWorld_generateOrbital(SolarSystemState* solarSys,
 												 SystemPlanet* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
-		&& CurStarDescPtr()->Index >= RAINBOW0_DEFINED
-		&& CurStarDescPtr()->Index <= RAINBOW9_DEFINED)
+		&& CurStarDescPtr()->Index >= PlotId::Rainbow0
+		&& CurStarDescPtr()->Index <= PlotId::Rainbow9)
 	{
 		uint16_t rainbow_mask {};
 
@@ -109,7 +109,7 @@ static bool GenerateRainbowWorld_generateOrbital(SolarSystemState* solarSys,
 			uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD0),
 			uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD1));
 
-		rainbow_mask |= 1 << (CurStarDescPtr()->Index - RAINBOW0_DEFINED);
+		rainbow_mask |= 1 << (CurStarDescPtr()->Index - *PlotId::Rainbow0);
 		uqm::gameState().setFlag(uqm::GameFlag::RAINBOW_WORLD0, static_cast<uint32_t>(uqm::lowByte(rainbow_mask)));
 		uqm::gameState().setFlag(uqm::GameFlag::RAINBOW_WORLD1, static_cast<uint32_t>(uqm::highByte(rainbow_mask)));
 	}
@@ -135,7 +135,7 @@ static void GenerateSlylandro(SolarSystemState* solarSys)
 		which_group = 0;
 		do
 		{
-			CloneShipFragment(SLYLANDRO_SHIP,
+			CloneShipFragment(RaceId::Slylandro,
 							  &uqm::gameState().game().npc_built_ship_q, 0);
 			PutGroupInfo(GroupsRandom, ++which_group);
 			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
@@ -152,7 +152,7 @@ static void GenerateSlylandro(SolarSystemState* solarSys)
 		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
-		GroupPtr->task = IN_ORBIT;
+		GroupPtr->task = *GroupTask::InOrbit;
 		GroupPtr->sys_loc = solarSys->SunDesc[0].PlanetByte + 1;
 		GroupPtr->dest_loc = GroupPtr->sys_loc;
 		GroupPtr->orbit_pos =

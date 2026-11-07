@@ -76,7 +76,7 @@ static bool GenerateSyreen_generatePlanets(SolarSystemState* solarSys)
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = WATER_WORLD; // | PLANET_SHIELDED;
+		pPlanet->data_index = *PlanetType::Water; // | PLANET_SHIELDED;
 		pPlanet->NumPlanets = 1;
 	}
 	else
@@ -92,9 +92,9 @@ static bool GenerateSyreen_generatePlanets(SolarSystemState* solarSys)
 		}
 	}
 
-	if (!RaceDead(SYREEN_SHIP))
+	if (!RaceDead(RaceId::Syreen))
 	{
-		pPlanet->data_index |= PLANET_SHIELDED;
+		pPlanet->data_index |= *PlanetType::PlanetShielded;
 	}
 
 	return true;
@@ -110,13 +110,13 @@ static bool GenerateSyreen_generateMoons(SolarSystemState* solarSys,
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		SystemPlanet* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
-		if (!RaceDead(SYREEN_SHIP))
+		if (!RaceDead(RaceId::Syreen))
 		{
-			pMoonDesc->data_index = HIERARCHY_STARBASE;
+			pMoonDesc->data_index = *PlanetType::HierarchyStarbase;
 		}
 		else
 		{
-			pMoonDesc->data_index = DESTROYED_STARBASE;
+			pMoonDesc->data_index = *PlanetType::DestroyedStarbase;
 		}
 
 		if (uqm::isOriginalSeed() || uqm::isStarSeed())
@@ -145,7 +145,7 @@ static bool GenerateSyreen_generateName(const SolarSystemState* solarSys,
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
-							GameString(PLANET_NUMBER_BASE + 39));
+							GameString(GameStringBase::PlanetNumber + 39));
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
@@ -183,9 +183,9 @@ static bool GenerateSyreen_generateOrbital(SolarSystemState* solarSys,
 	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		/* Starbase */
-		if (!RaceDead(SYREEN_SHIP))
+		if (!RaceDead(RaceId::Syreen))
 		{
-			InitCommunication(SYREEN_CONVERSATION);
+			InitCommunication(Conversation::Syreen);
 
 			return true;
 		}

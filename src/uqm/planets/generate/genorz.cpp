@@ -65,7 +65,7 @@ static bool GenerateOrz_generatePlanets(SolarSystemState* solarSys)
 	SystemPlanet* pPlanet {};
 	SystemPlanet* pSunDesc = &solarSys->SunDesc[0];
 
-	if (CurStarDescPtr()->Index == ORZ_DEFINED)
+	if (CurStarDescPtr()->Index == PlotId::Orz)
 	{
 		GenerateDefault_generatePlanets(solarSys);
 
@@ -74,7 +74,7 @@ static bool GenerateOrz_generatePlanets(SolarSystemState* solarSys)
 			pSunDesc->PlanetByte = 0;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-			pPlanet->data_index = WATER_WORLD;
+			pPlanet->data_index = *PlanetType::Water;
 			pPlanet->radius = EarthRadius * 156L / 100;
 			pPlanet->NumPlanets = 0;
 			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
@@ -91,7 +91,7 @@ static bool GenerateOrz_generatePlanets(SolarSystemState* solarSys)
 		}
 	}
 
-	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED)
+	if (CurStarDescPtr()->Index == PlotId::TaaloProtector)
 	{
 		pSunDesc->PlanetByte = 1;
 		pSunDesc->MoonByte = 2;
@@ -145,7 +145,7 @@ static bool GenerateOrz_generateMoons(SolarSystemState* solarSys, SystemPlanet* 
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::TaaloProtector
 		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet)
 		&& IsExtended())
 	{
@@ -160,26 +160,26 @@ static bool GenerateOrz_generateMoons(SolarSystemState* solarSys, SystemPlanet* 
 
 static bool GenerateOrz_generateOrbital(SolarSystemState* solarSys, SystemPlanet* world)
 {
-	if ((CurStarDescPtr()->Index == ORZ_DEFINED
+	if ((CurStarDescPtr()->Index == PlotId::Orz
 		 && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
-		|| (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
+		|| (CurStarDescPtr()->Index == PlotId::TaaloProtector
 			&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
 			&& !uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR)))
 	{
 		uint16_t i {};
 
-		if ((CurStarDescPtr()->Index == ORZ_DEFINED
+		if ((CurStarDescPtr()->Index == PlotId::Orz
 			 || !uqm::gameState().flag(uqm::GameFlag::TAALO_UNPROTECTED))
-			&& StartSphereTracking(ORZ_SHIP))
+			&& StartSphereTracking(RaceId::Orz))
 		{
-			NotifyOthers(ORZ_SHIP, IpnlAllClear);
+			NotifyOthers(*RaceId::Orz, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&uqm::gameState().game().ip_group_q);
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			if (CurStarDescPtr()->Index == ORZ_DEFINED)
+			if (CurStarDescPtr()->Index == PlotId::Orz)
 			{
-				CloneShipFragment(ORZ_SHIP,
+				CloneShipFragment(RaceId::Orz,
 								  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			}
@@ -187,15 +187,15 @@ static bool GenerateOrz_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 			{
 				for (i = 0; i < 14; ++i)
 				{
-					CloneShipFragment(ORZ_SHIP,
+					CloneShipFragment(RaceId::Orz,
 									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
 				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
 			}
-			uqm::currentActivity() |= START_INTERPLANETARY;
-			InitCommunication(ORZ_CONVERSATION);
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
+			InitCommunication(Conversation::Orz);
 
-			if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+			if (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 			{
 				return true;
 			}
@@ -204,10 +204,10 @@ static bool GenerateOrz_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 				bool OrzSurvivors {};
 
 				OrzSurvivors = GetHeadLink(&uqm::gameState().game().npc_built_ship_q)
-							&& (CurStarDescPtr()->Index == ORZ_DEFINED
+							&& (CurStarDescPtr()->Index == PlotId::Orz
 								|| !uqm::gameState().flag(uqm::GameFlag::TAALO_UNPROTECTED));
 
-				uqm::currentActivity() &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 
@@ -221,7 +221,7 @@ static bool GenerateOrz_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::TAALO_UNPROTECTED, static_cast<uint32_t>(1));
-		if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED)
+		if (CurStarDescPtr()->Index == PlotId::TaaloProtector)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
@@ -242,14 +242,14 @@ static bool GenerateOrz_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::TaaloProtector
 		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		solarSys->SysInfo.PlanetInfo.Weather = 0;
 		solarSys->SysInfo.PlanetInfo.Tectonics = 0;
 	}
-	if (CurStarDescPtr()->Index == ORZ_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::Orz
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
@@ -264,7 +264,7 @@ static bool GenerateOrz_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 static uint16_t GenerateOrz_generateEnergy(const SolarSystemState* solarSys,
 										   const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
-	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::TaaloProtector
 		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		// This check is redundant since the retrieval bit will keep the
@@ -278,7 +278,7 @@ static uint16_t GenerateOrz_generateEnergy(const SolarSystemState* solarSys,
 			solarSys, whichNode, info);
 	}
 
-	if (CurStarDescPtr()->Index == ORZ_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::Orz
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
@@ -290,7 +290,7 @@ static uint16_t GenerateOrz_generateEnergy(const SolarSystemState* solarSys,
 static bool GenerateOrz_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 									 uint16_t whichNode)
 {
-	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::TaaloProtector
 		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		assert(!uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR) && whichNode == 0);
@@ -304,7 +304,7 @@ static bool GenerateOrz_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* w
 		return true; // picked up
 	}
 
-	if (CurStarDescPtr()->Index == ORZ_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::Orz
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report

@@ -27,7 +27,7 @@
 
 static ConversationData slylandro_desc =
 	{
-		SLYLANDRO_HOME_CONVERSATION, /* AlienConv */
+		Conversation::SlylandroHome, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -834,7 +834,7 @@ static void HomeWorld(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP, static_cast<uint32_t>(1));
 		i = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER) + 1;
 		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_MULTIPLIER, static_cast<uint32_t>(i));
-		AddEvent(EventType::Relative, 0, 0, 0, SLYLANDRO_RAMP_DOWN);
+		AddEvent(EventType::Relative, 0, 0, 0, GameEventId::SlylandroRampDown);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK1))
@@ -968,7 +968,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-		SetHomeworldKnown(SLYLANDRO_HOME);
+		SetHomeworldKnown(*HomeId::Slylandro);
 	}
 
 	HomeWorld((RESPONSE_REF)0);

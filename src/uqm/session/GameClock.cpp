@@ -163,7 +163,7 @@ bool GameClock::resolveDate(EventType type, uint16_t& month, uint16_t& day, uint
 	return !dateIsBefore(year, month, day, m_year, m_month, m_day);
 }
 
-HEVENT GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, uint8_t funcIndex)
+HEVENT GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, GameEventId funcIndex)
 {
 	const HEVENT newEvent {AllocLink(&m_events)};
 	if (!newEvent)
@@ -225,7 +225,7 @@ bool GameClock::isBefore(uint16_t year, uint16_t month, uint16_t day) const noex
 	return dateIsBefore(m_year, m_month, m_day, year, month, day);
 }
 
-bool GameClock::takeDueEvent(uint8_t& funcIndex)
+bool GameClock::takeDueEvent(GameEventId& funcIndex)
 {
 	const HEVENT event {GetHeadLink(&m_events)};
 	if (event == 0)

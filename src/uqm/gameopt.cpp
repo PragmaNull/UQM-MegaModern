@@ -76,12 +76,12 @@ void ConfirmSaveLoad(GfxStamp* MsgStamp)
 	t.CharCount = (uint16_t)~0;
 	if (MsgStamp)
 	{
-		t.pStr = GameString(SAVEGAME_STRING_BASE + 0);
+		t.pStr = GameString(GameStringBase::SavegameString + 0);
 	}
 	// "Saving . . ."
 	else
 	{
-		t.pStr = GameString(SAVEGAME_STRING_BASE + 1);
+		t.pStr = GameString(GameStringBase::SavegameString + 1);
 	}
 	// "Loading . . ."
 	TextRect(&t, &r, nullptr);
@@ -170,7 +170,7 @@ static void RestoreSISMessage(bool inStarbase, uint8_t outfitOrShipyard)
 {
 	if (inStarbase && outfitOrShipyard > 1)
 	{
-		DrawSISMessage(GameString(STARBASE_STRING_BASE + outfitOrShipyard));
+		DrawSISMessage(GameString(GameStringBase::StarbaseString + outfitOrShipyard));
 	}
 	else
 	{
@@ -188,16 +188,16 @@ static void FeedbackSetting(uint8_t which_setting)
 		case *SettingsMenuItem::SoundOn:
 		case *SettingsMenuItem::SoundOff:
 			fmt::format_to_sz_n(buf, "{} {}",
-								GameString(OPTION_STRING_BASE + 0),
-								uqm::globalFlags() & SoundDisabled ? GameString(OPTION_STRING_BASE + 3) :
-																	 GameString(OPTION_STRING_BASE + 4));
+								GameString(GameStringBase::OptionString + 0),
+								uqm::globalFlags() & SoundDisabled ? GameString(GameStringBase::OptionString + 3) :
+																	 GameString(GameStringBase::OptionString + 4));
 			break;
 		case *SettingsMenuItem::MusicOn:
 		case *SettingsMenuItem::MusicOff:
 			fmt::format_to_sz_n(buf, "{} {}",
-								GameString(OPTION_STRING_BASE + 1),
-								uqm::globalFlags() & MusicDisabled ? GameString(OPTION_STRING_BASE + 3) :
-																	 GameString(OPTION_STRING_BASE + 4));
+								GameString(GameStringBase::OptionString + 1),
+								uqm::globalFlags() & MusicDisabled ? GameString(GameStringBase::OptionString + 3) :
+																	 GameString(GameStringBase::OptionString + 4));
 			break;
 		case *SettingsMenuItem::CyborgOff:
 		case *SettingsMenuItem::CyborgNormal:
@@ -219,9 +219,9 @@ static void FeedbackSetting(uint8_t which_setting)
 				tmpstr = "";
 			}
 			fmt::format_to_sz_n(buf, "{} {}{}",
-								GameString(OPTION_STRING_BASE + 2),
-								!(uqm::globalFlags() & CyborgEnabled) ? GameString(OPTION_STRING_BASE + 3) :
-																		GameString(OPTION_STRING_BASE + 4),
+								GameString(GameStringBase::OptionString + 2),
+								!(uqm::globalFlags() & CyborgEnabled) ? GameString(GameStringBase::OptionString + 3) :
+																		GameString(GameStringBase::OptionString + 4),
 								tmpstr);
 			break;
 		case *SettingsMenuItem::ReadVerySlow:
@@ -230,13 +230,13 @@ static void FeedbackSetting(uint8_t which_setting)
 		case *SettingsMenuItem::ReadFast:
 		case *SettingsMenuItem::ReadVeryFast:
 			fmt::format_to_sz_n(buf, "{}",
-								GameString(OPTION_STRING_BASE + 5
+								GameString(GameStringBase::OptionString + 5
 										   + (uqm::globalFlags() & ReadSpeedMask)));
 			break;
 		case *SettingsMenuItem::ChangeCaptain:
 		case *SettingsMenuItem::ChangeShip:
 			uqm::strncpy_safe(buf, GameString(
-									   NAMING_STRING_BASE + (is3DO(uqm::UQMOptions::read().whichFonts) ? 7 : 0)));
+									   GameStringBase::NamingString + (is3DO(uqm::UQMOptions::read().whichFonts) ? 7 : 0)));
 			break;
 	}
 
@@ -425,7 +425,7 @@ static void NameCaptainOrShip(bool nameCaptain, bool gamestart)
 
 	DrawStatusMessage(
 		GameString(
-			NAMING_STRING_BASE + (is3DO(uqm::UQMOptions::read().whichFonts) ? 7 : 0)));
+			GameStringBase::NamingString + (is3DO(uqm::UQMOptions::read().whichFonts) ? 7 : 0)));
 
 	if (nameCaptain)
 	{
@@ -462,11 +462,11 @@ static void NameCaptainOrShip(bool nameCaptain, bool gamestart)
 	if (gamestart && (Setting != nullptr) && (Setting[0] == '\0'))
 	{
 		uqm::strncpy_safe({Setting, strlen(Setting)}, GameString // Zelnick & Vindicator
-						  (NAMING_STRING_BASE + 2 + nameCaptain));
-		CursPos = (uint16_t)strlen(GameString(NAMING_STRING_BASE + 2 + nameCaptain));
+						  (GameStringBase::NamingString + 2 + nameCaptain));
+		CursPos = (uint16_t)strlen(GameString(GameStringBase::NamingString + 2 + nameCaptain));
 	}
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		NewGameInit = false;
 	}
@@ -685,7 +685,7 @@ static bool DoSettings(MenuState* pMS)
 	uint8_t read_speed {};
 	static uint8_t i = 0;
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		i = 0;
 		return false;
@@ -914,7 +914,7 @@ static void DrawAllLabels(GfxRect rect)
 
 	for (uint16_t i {4}; i <= 8; i++)
 	{
-		if (!strlen(GameString(LABEL_STRING_BASE + i)))
+		if (!strlen(GameString(GameStringBase::LabelString + i)))
 		{
 			return;
 		}
@@ -933,21 +933,21 @@ static void DrawAllLabels(GfxRect rect)
 	width = SummLabelLeftW;
 	pt.x = SummLabelLeftX();
 	pt.y = SummLabelTopY;
-	DrawLabel(pt, width, LABEL_STRING_BASE + 4); // CARGO
+	DrawLabel(pt, width, *GameStringBase::LabelString + 4); // CARGO
 
 	pt.y = 76;
-	DrawLabel(pt, width, LABEL_STRING_BASE + 5); // LANDER
+	DrawLabel(pt, width, *GameStringBase::LabelString + 5); // LANDER
 
 	width = SummLabelRightW;
 	pt.x = SummLabelRightX();
 	pt.y = SummLabelTopY;
-	DrawLabel(pt, width, LABEL_STRING_BASE + 6); // DEVICES
+	DrawLabel(pt, width, *GameStringBase::LabelString + 6); // DEVICES
 
 	pt.y = 87;
-	DrawLabel(pt, width, LABEL_STRING_BASE + 7); // R.U.
+	DrawLabel(pt, width, *GameStringBase::LabelString + 7); // R.U.
 
 	pt.y = 111;
-	DrawLabel(pt, width, LABEL_STRING_BASE + 8); // CREDITS
+	DrawLabel(pt, width, *GameStringBase::LabelString + 8); // CREDITS
 }
 
 static void DrawBlankSavegameDisplay(PickGameState* pickState)
@@ -1013,7 +1013,7 @@ static void DrawSaveLoadText(PickGameState* pickState)
 	};
 
 	if (!strlen(
-			GameString(LABEL_STRING_BASE + (3 - pickState->saving))))
+			GameString(GameStringBase::LabelString + (3 - pickState->saving))))
 	{
 		DrawSaveLoad(pickState);
 		return;
@@ -1036,7 +1036,7 @@ static void DrawSaveLoadText(PickGameState* pickState)
 	text.baseline.y = ResScale(5) + SaveLoadY() + SafeBoolScl(2, 1);
 
 	uqm::utf8StringCopy(buf, sizeof(buf),
-						GameString(LABEL_STRING_BASE + (3 - pickState->saving)));
+						GameString(GameStringBase::LabelString + (3 - pickState->saving)));
 
 	text.align = TextAlign::Center;
 	text.CharCount = (uint16_t)~0;
@@ -1085,9 +1085,9 @@ static void DrawSavegameCargo(FlagshipData* sisState)
 	t.pStr = buf;
 
 	// draw Element icons and amounts
-	for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
+	for (i = 0; i < MineralCategory::NumElementCategories; ++i)
 	{
-		if (i == NUM_ELEMENT_CATEGORIES / 2)
+		if (i == *MineralCategory::NumElementCategories / 2)
 		{
 			s.origin.x += ElementSpacingX();
 			s.origin.y = ElementOrgY();
@@ -1148,7 +1148,7 @@ static void DrawEmptySlot(void)
 	t.baseline.y = ResScale(66);
 
 	uqm::utf8StringCopy(buf, sizeof(buf),
-						GameString(LABEL_STRING_BASE + 1)); // EMPTY SLOT
+						GameString(GameStringBase::LabelString + 1)); // EMPTY SLOT
 
 	t.align = TextAlign::Center;
 
@@ -1220,8 +1220,8 @@ static void DrawBombPodText(GfxStamp* s)
 	GfxRect r;
 	int16_t og_baseline_x = 0;
 
-	if (!strlen(GameString(LABEL_STRING_BASE + 9))
-		|| !strlen(GameString(LABEL_STRING_BASE + 10)))
+	if (!strlen(GameString(GameStringBase::LabelString + 9))
+		|| !strlen(GameString(GameStringBase::LabelString + 10)))
 	{
 		return;
 	}
@@ -1238,7 +1238,7 @@ static void DrawBombPodText(GfxStamp* s)
 	DrawFilledRectangle(&r);
 
 	uqm::utf8StringCopy(buf, sizeof(buf),
-						GameString(LABEL_STRING_BASE + 9));
+						GameString(GameStringBase::LabelString + 9));
 	// AMPLIFIED PRECURSOR BOMB
 
 	t.baseline.x = (r.extent.width >> 1) + r.corner.x + s->origin.x;
@@ -1265,7 +1265,7 @@ static void DrawBombPodText(GfxStamp* s)
 	DrawFilledRectangle(&r);
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
-						GameString(LABEL_STRING_BASE + 10));
+						GameString(GameStringBase::LabelString + 10));
 	// ESCAPE POD
 
 	t.baseline.x = og_baseline_x;
@@ -1311,7 +1311,7 @@ static void DrawNoLimit(void)
 	t.baseline.x = (r.extent.width >> 1) + r.corner.x - IfHd(2);
 	t.baseline.y = r.corner.y + leading;
 
-	t.pStr = GameString(LABEL_STRING_BASE); // NO LIMIT
+	t.pStr = GameString(GameStringBase::LabelString); // NO LIMIT
 	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 
@@ -1407,7 +1407,7 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 		for (i = 0; i < pSD->NumShips; ++i)
 		{
 			CloneShipFragment(
-				(RACE_ID)pSD->ShipList[i], &uqm::gameState().game().built_ship_q, 0);
+				(RaceId)pSD->ShipList[i], &uqm::gameState().game().built_ship_q, 0);
 		}
 		DateToString(buf, sizeof buf,
 					 pSD->month_index, pSD->day_index, pSD->year_index);
@@ -1499,10 +1499,10 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 		starPt.y = LogyToUniverse(pSD->SS.log_y);
 		switch (pSD->Activity)
 		{
-			case IN_LAST_BATTLE:
-			case IN_INTERPLANETARY:
-			case IN_PLANET_ORBIT:
-			case IN_STARBASE:
+			case ActivityKind::InLastBattle:
+			case ActivityKind::InInterplanetary:
+			case ActivityKind::InPlanetOrbit:
+			case ActivityKind::InStarbase:
 				{
 					uint8_t QuasiState {};
 
@@ -1521,13 +1521,13 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 			default:
 				buf[0] = '\0';
 				break;
-			case IN_HYPERSPACE:
+			case ActivityKind::InHyperspace:
 				uqm::utf8StringCopy(buf, sizeof(buf),
-									GameString(NAVIGATION_STRING_BASE + 0));
+									GameString(GameStringBase::NavigationString + 0));
 				break;
-			case IN_QUASISPACE:
+			case ActivityKind::InQuasispace:
 				uqm::utf8StringCopy(buf, sizeof(buf),
-									GameString(NAVIGATION_STRING_BASE + 1));
+									GameString(GameStringBase::NavigationString + 1));
 				break;
 		}
 
@@ -1554,15 +1554,15 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 
 		switch (pSD->Activity)
 		{
-			case IN_STARBASE:
+			case ActivityKind::InStarbase:
 				uqm::strncpy_safe(buf, // Starbase
-								  GameString(STARBASE_STRING_BASE));
+								  GameString(GameStringBase::StarbaseString));
 				break;
-			case IN_LAST_BATTLE:
+			case ActivityKind::InLastBattle:
 				uqm::strncpy_safe(buf, // Sa-Matra
-								  GameString(PLANET_NUMBER_BASE + 32));
+								  GameString(GameStringBase::PlanetNumber + 32));
 				break;
-			case IN_PLANET_ORBIT:
+			case ActivityKind::InPlanetOrbit:
 				uqm::strncpy_safe(buf, pSD->SS.PlanetName);
 				break;
 			default:
@@ -1683,7 +1683,7 @@ static void DrawGameSelection(PickGameState* pickState, uint16_t selSlot)
 		t.baseline.x = r.corner.x + ResScale(3);
 		if (desc->year_index == 0)
 		{
-			uqm::strncpy_safe(buf, GameString(SAVEGAME_STRING_BASE + 3));
+			uqm::strncpy_safe(buf, GameString(GameStringBase::SavegameString + 3));
 			// "Empty Slot"
 		}
 		else
@@ -1692,7 +1692,7 @@ static void DrawGameSelection(PickGameState* pickState, uint16_t selSlot)
 						 desc->day_index, desc->year_index);
 
 			SaveName = desc->SaveName[0] ? desc->SaveName :
-										   GameString(SAVEGAME_STRING_BASE + 4);
+										   GameString(GameStringBase::SavegameString + 4);
 
 			fmt::format_to_sz_n(buf, "{}: {}", buf2, SaveName);
 
@@ -1731,7 +1731,7 @@ static bool DoPickGame(MenuState* pMS)
 	const SaveSummaryData* pSD {};
 	const TimeCount TimeIn {GetTimeCounter()};
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false;
 	}
@@ -1990,7 +1990,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 
 	if (pickState.success && !saving)
 	{ // Load succeeded, signal up the chain
-		uqm::currentActivity() |= CHECK_LOAD;
+		uqm::currentActivity() |= ActivityFlag::CheckLoad;
 	}
 
 	if (pickState.success)
@@ -2007,7 +2007,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 		uqm::log::info("Nomad: {:s}\n", getNomadMode());
 	}
 
-	if (!(uqm::currentActivity() & CHECK_ABORT) && (saving || (!pickState.success && !fromMainMenu)))
+	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort) && (saving || (!pickState.success && !fromMainMenu)))
 	{ // Restore previous screen
 		const bool InStarbase = (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0);
 
@@ -2035,7 +2035,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 		}
 		else if (InStarbase)
 		{
-			DrawSISTitle(GameString(STARBASE_STRING_BASE + 0));
+			DrawSISTitle(GameString(GameStringBase::StarbaseString + 0));
 		}
 		else if (uqm::flagship().ipPlanet == 0)
 		{
@@ -2067,7 +2067,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 
 static bool DoGameOptions(MenuState* pMS)
 {
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false;
 	}
@@ -2127,7 +2127,7 @@ bool GameOptions(void)
 
 	memset(&menuState, 0, sizeof menuState);
 
-	if (LastActivity == CHECK_LOAD)
+	if (LastActivity == ActivityFlag::CheckLoad)
 	{ // Selected LOAD from main menu
 		if (const char* path {TakePlaySave()})
 		{
@@ -2138,7 +2138,7 @@ bool GameOptions(void)
 			}
 			// Fades the screen in, as the load menu does.
 			FadeScreen(ScreenFadeType::FadeAllToColor, TimePeriod {});
-			uqm::currentActivity() |= loaded ? CHECK_LOAD : CHECK_ABORT;
+			uqm::currentActivity() |= loaded ? ActivityFlag::CheckLoad : ActivityFlag::CheckAbort;
 			return false;
 		}
 
@@ -2146,7 +2146,7 @@ bool GameOptions(void)
 		const bool success {PickGame(false, true)};
 		if (!success)
 		{ // Selected LOAD from main menu, and canceled
-			uqm::currentActivity() |= CHECK_ABORT;
+			uqm::currentActivity() |= ActivityFlag::CheckAbort;
 		}
 		return false;
 	}
@@ -2165,10 +2165,10 @@ bool GameOptions(void)
 	DoInput(&menuState, true);
 	SetFlashRect(nullptr, false);
 
-	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
 		RestoreSISMessage(inStarbase, outfitOrShipyard);
 	}
 
-	return !(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD));
+	return !(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad));
 }

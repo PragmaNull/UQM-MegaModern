@@ -10,8 +10,8 @@
 struct GameData
 {
 	uint8_t CrewCost, FuelCost;
-	uint8_t ModuleCost[NUM_MODULES];
-	uint8_t ElementWorth[NUM_ELEMENT_CATEGORIES];
+	uint8_t ModuleCost[*ModuleType::NumModules];
+	uint8_t ElementWorth[*MineralCategory::NumElementCategories];
 
 	uint32_t BattleGroupRef;
 	uqm::LinkQueue avail_race_q;

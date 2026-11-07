@@ -93,7 +93,7 @@ static HSTARSHIP MeleeShipByQueueIndex(const Queue* queue, uint16_t index)
 		if (StarShipPtr->index == index)
 		{
 			hNextShip = hShip;
-			if (StarShipPtr->SpeciesID == NO_ID)
+			if (StarShipPtr->SpeciesID == SpeciesId::None)
 			{
 				hShip = 0;
 			}
@@ -116,7 +116,7 @@ static HSTARSHIP MeleeShipByUsedIndex(const Queue* queue, uint16_t index)
 	for (hShip = GetHeadLink(queue); hShip != 0; hShip = hNextShip)
 	{
 		const Starship* StarShipPtr = LockStarShip(queue, hShip);
-		if ((StarShipPtr->SpeciesID != NO_ID) && index-- == 0)
+		if ((StarShipPtr->SpeciesID != SpeciesId::None) && index-- == 0)
 		{
 			UnlockStarShip(queue, hShip);
 			break;
@@ -349,7 +349,7 @@ static bool DoGetMelee(PickMeleeState* gms)
 	}
 #endif
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		goto aborted;
 	}
@@ -401,7 +401,7 @@ aborted:
 		gms->player[playerI].choice = 0;
 		gms->player[playerI].hBattleShip = 0;
 	}
-	uqm::currentActivity() &= ~CHECK_ABORT;
+	uqm::currentActivity() &= ~ActivityFlag::CheckAbort;
 	return false;
 }
 
@@ -417,7 +417,7 @@ static uint16_t GetRaceQueueValue(const Queue* queue)
 		const Starship* StarShipPtr = LockStarShip(queue, hBattleShip);
 		hNextShip = _GetSuccLink(StarShipPtr);
 
-		if (StarShipPtr->SpeciesID == NO_ID)
+		if (StarShipPtr->SpeciesID == SpeciesId::None)
 		{
 			continue; // Not active any more.
 		}
@@ -596,7 +596,7 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 			MeleeShip StarShip;
 
 			StarShip = MeleeSetup_getShip(setup, sideI, index);
-			if (StarShip == MELEE_NONE)
+			if (StarShip == MeleeShip::None)
 			{
 				continue;
 			}
@@ -605,7 +605,7 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 				uint8_t ship_cost {};
 				uint8_t captains_name_index {};
 
-				HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, StarShip)};
+				HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, *StarShip)};
 				const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 
 				captains_name_index = NameCaptain(&race_q[side],
@@ -695,7 +695,7 @@ void MeleeGameOver(void)
 
 		Async_process();
 		TaskSwitch();
-	} while (!(uqm::currentActivity() & CHECK_ABORT)
+	} while (!(uqm::currentActivity() & ActivityFlag::CheckAbort)
 			 && (!ButtonState
 				 && (!testFlag((PlayerControl[0] & PlayerControl[1]), PlayerControlFlags::Psytron)
 					 || GetTimeCounter() < TimeOut)));
@@ -704,7 +704,7 @@ void MeleeGameOver(void)
 void MeleeShipDeath(Starship* ship)
 {
 	// Deactivate fleet position.
-	ship->SpeciesID = NO_ID;
+	ship->SpeciesID = SpeciesId::None;
 
 	FRAME frame {SetAbsFrameIndex(PickMeleeFrame, ship->playerNr)};
 	CrossOutShip(frame, ship->index);
@@ -853,7 +853,7 @@ static bool GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 	if (!ok)
 	{
 		// Aborting.
-		uqm::currentActivity() &= ~IN_BATTLE;
+		uqm::currentActivity() &= ~ActivityFlag::InBattle;
 	}
 
 #ifdef NETPLAY

@@ -266,7 +266,7 @@ static bool DoModifyRoster(MenuState* pMS)
 	bool pgup {};
 	bool pgdn {};
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false;
 	}

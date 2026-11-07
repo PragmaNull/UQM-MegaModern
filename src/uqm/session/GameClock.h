@@ -65,7 +65,7 @@ public:
 	// Makes a relative date absolute. Returns false if the date is before today.
 	[[nodiscard]] bool resolveDate(EventType type, uint16_t& month, uint16_t& day, uint16_t& year) const;
 	// Adds an event at an absolute date, after the events on the same date. Returns 0 if the queue is full.
-	HEVENT addEvent(uint16_t month, uint16_t day, uint16_t year, uint8_t funcIndex);
+	HEVENT addEvent(uint16_t month, uint16_t day, uint16_t year, GameEventId funcIndex);
 	// The first event in the queue, or nullopt if the queue is empty.
 	[[nodiscard]] uqstl::optional<GameEvent> firstEvent() const;
 	// The events in the queue, in date order.
@@ -74,7 +74,7 @@ public:
 	[[nodiscard]] bool isBefore(uint16_t year, uint16_t month, uint16_t day) const noexcept;
 	// Removes the first event of today or before from the queue and gives its function index.
 	// Returns false if no event is due.
-	[[nodiscard]] bool takeDueEvent(uint8_t& funcIndex);
+	[[nodiscard]] bool takeDueEvent(GameEventId& funcIndex);
 
 	[[nodiscard]] Queue& events() noexcept
 	{

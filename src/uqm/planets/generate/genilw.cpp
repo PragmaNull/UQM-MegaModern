@@ -66,7 +66,7 @@ static bool GenerateIlwrath_generatePlanets(SolarSystemState* solarSys)
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = PRIMORDIAL_WORLD;
+		pPlanet->data_index = *PlanetType::Primordial;
 		pPlanet->radius = EarthRadius * 204L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = Cosine(angle, pPlanet->radius);
@@ -89,23 +89,23 @@ static bool GenerateIlwrath_generateOrbital(SolarSystemState* solarSys,
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if (StartSphereTracking(ILWRATH_SHIP))
+		if (StartSphereTracking(RaceId::Ilwrath))
 		{
-			NotifyOthers(ILWRATH_SHIP, IpnlAllClear);
+			NotifyOthers(*RaceId::Ilwrath, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&uqm::gameState().game().ip_group_q);
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			CloneShipFragment(ILWRATH_SHIP,
+			CloneShipFragment(RaceId::Ilwrath,
 							  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 
-			uqm::currentActivity() |= START_INTERPLANETARY;
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
-			InitCommunication(ILWRATH_CONVERSATION);
+			InitCommunication(Conversation::Ilwrath);
 
-			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 			{
-				uqm::currentActivity() &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}

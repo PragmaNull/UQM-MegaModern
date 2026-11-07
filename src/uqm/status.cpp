@@ -521,7 +521,7 @@ bool DeltaCrew(Element* ElementPtr, int16_t crew_delta)
 	Starship* StarShipPtr {};
 	ShipInfoDesc* ShipInfoPtr {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle
 		&& ElementPtr->playerNr == NpcPlayerNum)
 	{
 		return (true); /* Samatra can't be crew-modified */

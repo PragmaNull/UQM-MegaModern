@@ -78,14 +78,14 @@ void doInstantMove(void)
 		{
 			// Leave HyperSpace/QuasiSpace if we're there:
 			uqm::gameState().setFlag(uqm::GameFlag::USED_BROADCASTER, static_cast<uint32_t>(0));
-			uqm::currentActivity() &= ~IN_BATTLE;
+			uqm::currentActivity() &= ~ActivityFlag::InBattle;
 
 			// Enter IP:
 			uqm::flagship().shipFacing = 0;
 			uqm::flagship().ipPlanet = 0;
 			uqm::flagship().inOrbit = 0;
 			// This causes the ship position in IP to be reset.
-			uqm::currentActivity() |= START_INTERPLANETARY;
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
 		}
 	}
 
@@ -125,7 +125,7 @@ void resetEnergyBattle(void)
 	const Starship* StarShipPtr {};
 	uint16_t delta {};
 
-	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
+	if (!(uqm::currentActivity() & ActivityFlag::InBattle) || inHQSpace())
 	{
 		return;
 	}
@@ -162,7 +162,7 @@ static void scuttleOpponent(void)
 	uint16_t delta {};
 	GFXCONTEXT OldContext {};
 
-	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
+	if (!(uqm::currentActivity() & ActivityFlag::InBattle) || inHQSpace())
 	{
 		return;
 	}
@@ -202,7 +202,7 @@ static void HaltShips(void)
 	const Starship* StarShipPtr {};
 	Element* ElementPtr {};
 
-	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
+	if (!(uqm::currentActivity() & ActivityFlag::InBattle) || inHQSpace())
 	{
 		return;
 	}
@@ -275,18 +275,18 @@ void debugKeyPressedSynchronous(void)
 		// Give the player the ships you can't ally with under normal
 		// conditions.
 		clearEscorts();
-		AddEscortShips(ARILOU_SHIP, 1);
-		AddEscortShips(PKUNK_SHIP, 1);
-		AddEscortShips(VUX_SHIP, 1);
-		AddEscortShips(YEHAT_SHIP, 1);
-		AddEscortShips(MELNORME_SHIP, 1);
-		AddEscortShips(DRUUGE_SHIP, 1);
-		AddEscortShips(ILWRATH_SHIP, 1);
-		AddEscortShips(MYCON_SHIP, 1);
-		AddEscortShips(SLYLANDRO_SHIP, 1);
-		AddEscortShips(UMGAH_SHIP, 1);
-		AddEscortShips(URQUAN_SHIP, 1);
-		AddEscortShips(BLACK_URQUAN_SHIP, 1);
+		AddEscortShips(RaceId::Arilou, 1);
+		AddEscortShips(RaceId::Pkunk, 1);
+		AddEscortShips(RaceId::Vux, 1);
+		AddEscortShips(RaceId::Yehat, 1);
+		AddEscortShips(RaceId::Melnorme, 1);
+		AddEscortShips(RaceId::Druuge, 1);
+		AddEscortShips(RaceId::Ilwrath, 1);
+		AddEscortShips(RaceId::Mycon, 1);
+		AddEscortShips(RaceId::Slylandro, 1);
+		AddEscortShips(RaceId::Umgah, 1);
+		AddEscortShips(RaceId::Urquan, 1);
+		AddEscortShips(RaceId::BlackUrquan, 1);
 
 		resetCrewBattle();
 		resetEnergyBattle();
@@ -368,45 +368,45 @@ void forwardToNextEvent(bool skipHEE)
 	MoveGameClockToNextEvent(skipHEE);
 }
 
-const char* eventName(uint8_t func_index)
+const char* eventName(GameEventId func_index)
 {
 	switch (func_index)
 	{
-		case ARILOU_ENTRANCE_EVENT:
+		case GameEventId::ArilouEntranceEvent:
 			return "ARILOU_ENTRANCE_EVENT";
-		case ARILOU_EXIT_EVENT:
+		case GameEventId::ArilouExitEvent:
 			return "ARILOU_EXIT_EVENT";
-		case HYPERSPACE_ENCOUNTER_EVENT:
+		case GameEventId::HyperspaceEncounterEvent:
 			return "HYPERSPACE_ENCOUNTER_EVENT";
-		case KOHR_AH_VICTORIOUS_EVENT:
+		case GameEventId::KohrAhVictoriousEvent:
 			return "KOHR_AH_VICTORIOUS_EVENT";
-		case ADVANCE_PKUNK_MISSION:
+		case GameEventId::AdvancePkunkMission:
 			return "ADVANCE_PKUNK_MISSION";
-		case ADVANCE_THRADD_MISSION:
+		case GameEventId::AdvanceThraddMission:
 			return "ADVANCE_THRADD_MISSION";
-		case ZOQFOT_DISTRESS_EVENT:
+		case GameEventId::ZoqfotDistressEvent:
 			return "ZOQFOT_DISTRESS";
-		case ZOQFOT_DEATH_EVENT:
+		case GameEventId::ZoqfotDeathEvent:
 			return "ZOQFOT_DEATH_EVENT";
-		case SHOFIXTI_RETURN_EVENT:
+		case GameEventId::ShofixtiReturnEvent:
 			return "SHOFIXTI_RETURN_EVENT";
-		case ADVANCE_UTWIG_SUPOX_MISSION:
+		case GameEventId::AdvanceUtwigSupoxMission:
 			return "ADVANCE_UTWIG_SUPOX_MISSION";
-		case KOHR_AH_GENOCIDE_EVENT:
+		case GameEventId::KohrAhGenocideEvent:
 			return "KOHR_AH_GENOCIDE_EVENT";
-		case SPATHI_SHIELD_EVENT:
+		case GameEventId::SpathiShieldEvent:
 			return "SPATHI_SHIELD_EVENT";
-		case ADVANCE_ILWRATH_MISSION:
+		case GameEventId::AdvanceIlwrathMission:
 			return "ADVANCE_ILWRATH_MISSION";
-		case ADVANCE_MYCON_MISSION:
+		case GameEventId::AdvanceMyconMission:
 			return "ADVANCE_MYCON_MISSION";
-		case ARILOU_UMGAH_CHECK:
+		case GameEventId::ArilouUmgahCheck:
 			return "ARILOU_UMGAH_CHECK";
-		case YEHAT_REBEL_EVENT:
+		case GameEventId::YehatRebelEvent:
 			return "YEHAT_REBEL_EVENT";
-		case SLYLANDRO_RAMP_UP:
+		case GameEventId::SlylandroRampUp:
 			return "SLYLANDRO_RAMP_UP";
-		case SLYLANDRO_RAMP_DOWN:
+		case GameEventId::SlylandroRampDown:
 			return "SLYLANDRO_RAMP_DOWN";
 		default:
 			// Should not happen
@@ -414,59 +414,59 @@ const char* eventName(uint8_t func_index)
 	}
 }
 
-const char* raceName(uint8_t func_index)
+const char* raceName(SpeciesId func_index)
 {
 	switch (func_index)
 	{
-		case ARILOU_ID:
+		case SpeciesId::Arilou:
 			return "Arilou Lalee'lay";
-		case CHMMR_ID:
+		case SpeciesId::Chmmr:
 			return "Chmmr";
-		case EARTHLING_ID:
+		case SpeciesId::Earthling:
 			return "Human";
-		case ORZ_ID:
+		case SpeciesId::Orz:
 			return "Orz";
-		case PKUNK_ID:
+		case SpeciesId::Pkunk:
 			return "Pkunk";
-		case SHOFIXTI_ID:
+		case SpeciesId::Shofixti:
 			return "Shofixti";
-		case SPATHI_ID:
+		case SpeciesId::Spathi:
 			return "Spathi";
-		case SUPOX_ID:
+		case SpeciesId::Supox:
 			return "Supox";
-		case THRADDASH_ID:
+		case SpeciesId::Thraddash:
 			return "Thraddash";
-		case UTWIG_ID:
+		case SpeciesId::Utwig:
 			return "Utwig";
-		case VUX_ID:
+		case SpeciesId::Vux:
 			return "Vux";
-		case YEHAT_ID:
+		case SpeciesId::Yehat:
 			return "Yehat";
-		case MELNORME_ID:
+		case SpeciesId::Melnorme:
 			return "Melnorme";
-		case DRUUGE_ID:
+		case SpeciesId::Druuge:
 			return "Druuge";
-		case ILWRATH_ID:
+		case SpeciesId::Ilwrath:
 			return "Ilwrath";
-		case MYCON_ID:
+		case SpeciesId::Mycon:
 			return "Mycon";
-		case SLYLANDRO_ID:
+		case SpeciesId::Slylandro:
 			return "Slylandro";
-		case UMGAH_ID:
+		case SpeciesId::Umgah:
 			return "Umgah";
-		case UR_QUAN_ID:
+		case SpeciesId::UrQuan:
 			return "Ur-Quan";
-		case ZOQFOTPIK_ID:
+		case SpeciesId::Zoqfotpik:
 			return "Zoq-Fot-Pik";
-		case SYREEN_ID:
+		case SpeciesId::Syreen:
 			return "Syreen";
-		case KOHR_AH_ID:
+		case SpeciesId::KohrAh:
 			return "Kohr-Ah";
-		case ANDROSYNTH_ID:
+		case SpeciesId::Androsynth:
 			return "Androsynth";
-		case CHENJESU_ID:
+		case SpeciesId::Chenjesu:
 			return "Chenjesu";
-		case MMRNMHRM_ID:
+		case SpeciesId::Mmrnmhrm:
 			return "Mmrnmhrm";
 		default:
 			// Should not happen
@@ -505,7 +505,7 @@ void equipShip(void)
 	int i;
 
 	// Don't do anything unless in the full game.
-	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee)
 	{
 		return;
 	}
@@ -513,17 +513,17 @@ void equipShip(void)
 	// Thrusters:
 	for (i = 0; i < NumDriveSlots; i++)
 	{
-		uqm::gameState().sis().DriveSlots[i] = FUSION_THRUSTER;
+		uqm::gameState().sis().DriveSlots[i] = ModuleType::FusionThruster;
 	}
 
 	// Turning jets:
 	for (i = 0; i < NumJetSlots; i++)
 	{
-		uqm::gameState().sis().JetSlots[i] = TURNING_JETS;
+		uqm::gameState().sis().JetSlots[i] = ModuleType::TurningJets;
 	}
 
 	// Shields:
-	uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>((1 << EARTHQUAKE_DISASTER) | (1 << BIOLOGICAL_DISASTER) | (1 << LIGHTNING_DISASTER) | (1 << LAVASPOT_DISASTER)));
+	uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>((1 << *LanderEvent::EarthquakeDisaster) | (1 << *LanderEvent::BiologicalDisaster) | (1 << *LanderEvent::LightningDisaster) | (1 << *LanderEvent::LavaspotDisaster)));
 	// Lander upgrades:
 	uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_SPEED, static_cast<uint32_t>(1));
 	uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_CARGO, static_cast<uint32_t>(1));
@@ -535,22 +535,22 @@ void equipShip(void)
 		// The Precursor bomb has not been installed.
 		// This is the original TFB testing layout.
 		i = 0;
-		uqm::gameState().sis().ModuleSlots[i++] = HIGHEFF_FUELSYS;
-		uqm::gameState().sis().ModuleSlots[i++] = CREW_POD;
-		uqm::gameState().sis().ModuleSlots[i++] = STORAGE_BAY;
-		uqm::gameState().sis().ModuleSlots[i++] = STORAGE_BAY;
-		uqm::gameState().sis().ModuleSlots[i++] = ANTIMISSILE_DEFENSE;
-		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
-		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
-		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
-		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
-		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
-		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
-		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
-		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
-		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
-		uqm::gameState().sis().ModuleSlots[i++] = CANNON_WEAPON;
-		uqm::gameState().sis().ModuleSlots[i++] = CANNON_WEAPON;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::HigheffFuelsys;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::CrewPod;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::StorageBay;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::StorageBay;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::AntimissileDefense;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::TrackingSystem;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::TrackingSystem;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::TrackingSystem;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::DynamoUnit;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::DynamoUnit;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::DynamoUnit;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::ShivaFurnace;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::ShivaFurnace;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::ShivaFurnace;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::CannonWeapon;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::CannonWeapon;
 
 		// Landers:
 		uqm::gameState().sis().NumLanders = MaxLanders;
@@ -559,12 +559,12 @@ void equipShip(void)
 	{
 		// The Precursor bomb has been installed.
 		i = NumBombModules;
-		uqm::gameState().sis().ModuleSlots[i++] = HIGHEFF_FUELSYS;
-		uqm::gameState().sis().ModuleSlots[i++] = CREW_POD;
-		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
-		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
-		uqm::gameState().sis().ModuleSlots[i++] = CANNON_WEAPON;
-		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::HigheffFuelsys;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::CrewPod;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::DynamoUnit;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::ShivaFurnace;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::CannonWeapon;
+		uqm::gameState().sis().ModuleSlots[i++] = ModuleType::TrackingSystem;
 	}
 
 	assert(i <= NumModuleSlots);
@@ -576,14 +576,16 @@ void equipShip(void)
 	{
 		switch (uqm::gameState().sis().ModuleSlots[i])
 		{
-			case CREW_POD:
+			case ModuleType::CrewPod:
 				uqm::gameState().sis().CrewEnlisted += CrewPodCapacity;
 				break;
-			case FUEL_TANK:
+			case ModuleType::FuelTank:
 				uqm::gameState().sis().FuelOnBoard += FuelTankCapacity;
 				break;
-			case HIGHEFF_FUELSYS:
+			case ModuleType::HigheffFuelsys:
 				uqm::gameState().sis().FuelOnBoard += HefuelTankCapacity;
+				break;
+			default:
 				break;
 		}
 	}
@@ -595,7 +597,7 @@ void equipShip(void)
 		pSolarSysState->max_ship_speed = 5 * IpShipThrustIncrement;
 		for (i = 0; i < NumDriveSlots; i++)
 		{
-			if (uqm::gameState().sis().DriveSlots[i] == FUSION_THRUSTER)
+			if (uqm::gameState().sis().DriveSlots[i] == ModuleType::FusionThruster)
 			{
 				pSolarSysState->max_ship_speed += IpShipThrustIncrement;
 			}
@@ -605,7 +607,7 @@ void equipShip(void)
 		pSolarSysState->turn_wait = IpShipTurnWait;
 		for (i = 0; i < NumJetSlots; i++)
 		{
-			if (uqm::gameState().sis().JetSlots[i] == TURNING_JETS)
+			if (uqm::gameState().sis().JetSlots[i] == ModuleType::TurningJets)
 			{
 				pSolarSysState->turn_wait -= IpShipTurnDecrement;
 			}
@@ -613,7 +615,7 @@ void equipShip(void)
 	}
 
 	// Make sure everything is redrawn:
-	if (inHQSpace() || uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
+	if (inHQSpace() || uqm::activityKind(uqm::currentActivity()) == ActivityKind::InInterplanetary)
 	{
 		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 	}
@@ -714,9 +716,9 @@ void showSpheres(bool Animated)
 	if (Animated)
 	{ // Alternative which allows you to view
 		// the animated SOI expand for each race
-		for (i = 0; i <= BLACK_URQUAN_SHIP; i++)
+		for (i = 0; i <= RaceId::BlackUrquan; i++)
 		{
-			StartSphereTracking((RACE_ID)i);
+			StartSphereTracking((RaceId)i);
 		}
 	}
 	else
@@ -744,21 +746,21 @@ void showSpheres(bool Animated)
 	if (IsExtended())
 	{
 		HFLEETINFO hSyreen = GetStarShipFromIndex(
-			&uqm::gameState().game().avail_race_q, SYREEN_SHIP);
+			&uqm::gameState().game().avail_race_q, *RaceId::Syreen);
 		FleetInfo* SyreenPtr = LockFleetInfo(
 			&uqm::gameState().game().avail_race_q, hSyreen);
 		HFLEETINFO hChmmr = GetStarShipFromIndex(
-			&uqm::gameState().game().avail_race_q, CHMMR_SHIP);
+			&uqm::gameState().game().avail_race_q, *RaceId::Chmmr);
 		FleetInfo* ChmmrPtr = LockFleetInfo(
 			&uqm::gameState().game().avail_race_q, hChmmr);
 
 		SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
-		SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
-		StartSphereTracking(SYREEN_SHIP);
+		SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, *PlotId::Home);
+		StartSphereTracking(RaceId::Syreen);
 
 		ChmmrPtr->actual_strength = 986 / SphereRadiusIncrement * 2;
-		ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map, HOME);
-		StartSphereTracking(CHMMR_SHIP);
+		ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map, *PlotId::Home);
+		StartSphereTracking(RaceId::Chmmr);
 
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hChmmr);
@@ -871,7 +873,7 @@ static void starRecurse(StarDesc* star, void* arg)
 
 	SolarSysState.SunDesc[0].pPrevDesc = 0;
 	SolarSysState.SunDesc[0].rand_seed = SysGenRNGDebug->next();
-	SolarSysState.SunDesc[0].data_index = StarType(star->Type);
+	SolarSysState.SunDesc[0].data_index = *StarType(star->Type);
 	SolarSysState.SunDesc[0].location.x = 0;
 	SolarSysState.SunDesc[0].location.y = 0;
 	//SolarSysState.SunDesc[0].radius = MinZoomRadius;
@@ -962,10 +964,10 @@ static void moonRecurse(StarDesc* star, SolarSystemState* system, SystemPlanet* 
 	if (universeRecurseArg->moonFunc != nullptr)
 	{
 		system->pOrbitalDesc = moon;
-		if (moon->data_index != HIERARCHY_STARBASE
-			&& moon->data_index != SA_MATRA
-			&& moon->data_index != DESTROYED_STARBASE
-			&& moon->data_index != PRECURSOR_STARBASE)
+		if (moon->data_index != PlanetType::HierarchyStarbase
+			&& moon->data_index != PlanetType::SaMatra
+			&& moon->data_index != PlanetType::DestroyedStarbase
+			&& moon->data_index != PlanetType::PrecursorStarbase)
 		{
 			DoPlanetaryAnalysis(&system->SysInfo, moon);
 			// When GenerateDefaultFunctions is used as genFuncs,
@@ -1052,27 +1054,27 @@ void dumpSystem(FILE* out, const StarDesc* star, const SolarSystemState* system)
 	(void)system; /* satisfy compiler */
 }
 
-const char* bodyColorString(uint8_t col)
+const char* bodyColorString(StarBodyColor col)
 {
 	switch (col)
 	{
-		case BLUE_BODY:
+		case StarBodyColor::Blue:
 			return "blue";
-		case GREEN_BODY:
+		case StarBodyColor::Green:
 			return "green";
-		case ORANGE_BODY:
+		case StarBodyColor::Orange:
 			return "orange";
-		case RED_BODY:
+		case StarBodyColor::Red:
 			return "red";
-		case WHITE_BODY:
+		case StarBodyColor::White:
 			return "white";
-		case YELLOW_BODY:
+		case StarBodyColor::Yellow:
 			return "yellow";
-		case CYAN_BODY:
+		case StarBodyColor::Cyan:
 			return "cyan";
-		case PURPLE_BODY:
+		case StarBodyColor::Purple:
 			return "purple";
-		case VIOLET_BODY:
+		case StarBodyColor::Violet:
 			return "violet";
 		default:
 			// Should not happen
@@ -1080,15 +1082,15 @@ const char* bodyColorString(uint8_t col)
 	}
 }
 
-const char* starTypeString(uint8_t type)
+const char* starTypeString(StellarSize type)
 {
 	switch (type)
 	{
-		case DWARF_STAR:
+		case StellarSize::Dwarf:
 			return "dwarf";
-		case GIANT_STAR:
+		case StellarSize::Giant:
 			return "giant";
-		case SUPER_GIANT_STAR:
+		case StellarSize::SuperGiant:
 			return "super giant";
 		default:
 			// Should not happen
@@ -1103,121 +1105,121 @@ const char* starPresenceString(uint8_t index)
 		case 0:
 			// nothing
 			return "";
-		case SOL_DEFINED:
+		case *PlotId::Sol:
 			return "Sol";
-		case SHOFIXTI_DEFINED:
+		case *PlotId::Shofixti:
 			return "Shofixti male";
-		case MAIDENS_DEFINED:
+		case *PlotId::Maidens:
 			return "Shofixti maidens";
-		case START_COLONY_DEFINED:
+		case *PlotId::StartColony:
 			return "Starting colony";
-		case SPATHI_DEFINED:
+		case *PlotId::Spathi:
 			return "Spathi home";
-		case ZOQFOT_DEFINED:
+		case *PlotId::Zoqfot:
 			return "Zoq-Fot-Pik home";
-		case MELNORME0_DEFINED:
+		case *PlotId::Melnorme0:
 			return "Melnorme trader #0";
-		case MELNORME1_DEFINED:
+		case *PlotId::Melnorme1:
 			return "Melnorme trader #1";
-		case MELNORME2_DEFINED:
+		case *PlotId::Melnorme2:
 			return "Melnorme trader #2";
-		case MELNORME3_DEFINED:
+		case *PlotId::Melnorme3:
 			return "Melnorme trader #3";
-		case MELNORME4_DEFINED:
+		case *PlotId::Melnorme4:
 			return "Melnorme trader #4";
-		case MELNORME5_DEFINED:
+		case *PlotId::Melnorme5:
 			return "Melnorme trader #5";
-		case MELNORME6_DEFINED:
+		case *PlotId::Melnorme6:
 			return "Melnorme trader #6";
-		case MELNORME7_DEFINED:
+		case *PlotId::Melnorme7:
 			return "Melnorme trader #7";
-		case MELNORME8_DEFINED:
+		case *PlotId::Melnorme8:
 			return "Melnorme trader #8";
-		case TALKING_PET_DEFINED:
+		case *PlotId::TalkingPet:
 			return "Talking Pet";
-		case CHMMR_DEFINED:
+		case *PlotId::Chmmr:
 			return "Chmmr home";
-		case SYREEN_DEFINED:
+		case *PlotId::Syreen:
 			return "Syreen home";
-		case BURVIXESE_DEFINED:
+		case *PlotId::Burvixese:
 			return "Burvixese ruins";
-		case SLYLANDRO_DEFINED:
+		case *PlotId::Slylandro:
 			return "Slylandro home";
-		case DRUUGE_DEFINED:
+		case *PlotId::Druuge:
 			return "Druuge home";
-		case BOMB_DEFINED:
+		case *PlotId::Bomb:
 			return "Precursor bomb";
-		case AQUA_HELIX_DEFINED:
+		case *PlotId::AquaHelix:
 			return "Aqua Helix";
-		case SUN_DEVICE_DEFINED:
+		case *PlotId::SunDevice:
 			return "Sun Device";
-		case TAALO_PROTECTOR_DEFINED:
+		case *PlotId::TaaloProtector:
 			return "Taalo Shield";
-		case SHIP_VAULT_DEFINED:
+		case *PlotId::ShipVault:
 			return "Syreen ship vault";
-		case URQUAN_WRECK_DEFINED:
+		case *PlotId::UrquanWreck:
 			return "Ur-Quan ship wreck";
-		case VUX_BEAST_DEFINED:
+		case *PlotId::VuxBeast:
 			return "Zex' beauty";
-		case SAMATRA_DEFINED:
+		case *PlotId::Samatra:
 			return "Sa-Matra";
-		case ZOQ_SCOUT_DEFINED:
+		case *PlotId::ZoqScout:
 			return "Zoq-Fot-Pik scout";
-		case MYCON_DEFINED:
+		case *PlotId::Mycon:
 			return "Mycon home";
-		case EGG_CASE0_DEFINED:
+		case *PlotId::EggCase0:
 			return "Mycon egg shell #0";
-		case EGG_CASE1_DEFINED:
+		case *PlotId::EggCase1:
 			return "Mycon egg shell #1";
-		case EGG_CASE2_DEFINED:
+		case *PlotId::EggCase2:
 			return "Mycon egg shell #2";
-		case PKUNK_DEFINED:
+		case *PlotId::Pkunk:
 			return "Pkunk home";
-		case UTWIG_DEFINED:
+		case *PlotId::Utwig:
 			return "Utwig home";
-		case SUPOX_DEFINED:
+		case *PlotId::Supox:
 			return "Supox home";
-		case YEHAT_DEFINED:
+		case *PlotId::Yehat:
 			return "Yehat home";
-		case VUX_DEFINED:
+		case *PlotId::Vux:
 			return "Vux home";
-		case ORZ_DEFINED:
+		case *PlotId::Orz:
 			return "Orz home";
-		case THRADD_DEFINED:
+		case *PlotId::Thradd:
 			return "Thraddash home";
-		case RAINBOW0_DEFINED:
-		case RAINBOW1_DEFINED:
-		case RAINBOW2_DEFINED:
-		case RAINBOW3_DEFINED:
-		case RAINBOW4_DEFINED:
-		case RAINBOW5_DEFINED:
-		case RAINBOW6_DEFINED:
-		case RAINBOW7_DEFINED:
-		case RAINBOW8_DEFINED:
-		case RAINBOW9_DEFINED:
+		case *PlotId::Rainbow0:
+		case *PlotId::Rainbow1:
+		case *PlotId::Rainbow2:
+		case *PlotId::Rainbow3:
+		case *PlotId::Rainbow4:
+		case *PlotId::Rainbow5:
+		case *PlotId::Rainbow6:
+		case *PlotId::Rainbow7:
+		case *PlotId::Rainbow8:
+		case *PlotId::Rainbow9:
 			return "Rainbow world";
-		case ILWRATH_DEFINED:
+		case *PlotId::Ilwrath:
 			return "Ilwrath home";
-		case ANDROSYNTH_DEFINED:
+		case *PlotId::Androsynth:
 			return "Androsynth ruins";
-		case MYCON_TRAP_DEFINED:
+		case *PlotId::MyconTrap:
 			return "Mycon trap";
-		case URQUAN0_DEFINED:
-		case URQUAN1_DEFINED:
-		case URQUAN2_DEFINED:
-		case KOHRAH0_DEFINED:
-		case KOHRAH1_DEFINED:
-		case KOHRAH2_DEFINED:
-		case DESTROYED_STARBASE_DEFINED:
+		case *PlotId::Urquan0:
+		case *PlotId::Urquan1:
+		case *PlotId::Urquan2:
+		case *PlotId::Kohrah0:
+		case *PlotId::Kohrah1:
+		case *PlotId::Kohrah2:
+		case *PlotId::DestroyedStarbase:
 			return "Destroyed Starbase";
-		case MOTHER_ARK_DEFINED:
+		case *PlotId::MotherArk:
 			return "Mother-Ark";
-		case ZOQ_COLONY0_DEFINED:
-		case ZOQ_COLONY1_DEFINED:
-		case ZOQ_COLONY2_DEFINED:
-		case ZOQ_COLONY3_DEFINED:
+		case *PlotId::ZoqColony0:
+		case *PlotId::ZoqColony1:
+		case *PlotId::ZoqColony2:
+		case *PlotId::ZoqColony3:
 			return "Zoq Fot Ruins";
-		case ALGOLITES_DEFINED:
+		case *PlotId::Algolites:
 			return "Algolites";
 		default:
 			// Should not happen
@@ -1235,7 +1237,7 @@ void dumpPlanet(FILE* out, const SystemPlanet* planet)
 {
 	(*pSolarSysState->genFuncs->generateName)(pSolarSysState, planet);
 	fmt::print(out, "- {:>37}  {}\n", uqm::gameState().sis().PlanetName,
-			   planetTypeString(planet->data_index & ~PLANET_SHIELDED));
+			   planetTypeString(planet->data_index & ~*PlanetType::PlanetShielded));
 	dumpWorld(out, planet);
 }
 
@@ -1249,25 +1251,25 @@ void dumpMoon(FILE* out, const SystemPlanet* moon)
 {
 	const char* typeStr;
 
-	if (moon->data_index == HIERARCHY_STARBASE)
+	if (moon->data_index == PlanetType::HierarchyStarbase)
 	{
 		typeStr = "StarBase";
 	}
-	else if (moon->data_index == SA_MATRA)
+	else if (moon->data_index == PlanetType::SaMatra)
 	{
 		typeStr = "Sa-Matra";
 	}
-	else if (moon->data_index == DESTROYED_STARBASE)
+	else if (moon->data_index == PlanetType::DestroyedStarbase)
 	{
 		typeStr = "Destroyed StarBase";
 	}
-	else if (moon->data_index == PRECURSOR_STARBASE)
+	else if (moon->data_index == PlanetType::PrecursorStarbase)
 	{
 		typeStr = "Precursor StarBase";
 	}
 	else
 	{
-		typeStr = planetTypeString(moon->data_index & ~PLANET_SHIELDED);
+		typeStr = planetTypeString(moon->data_index & ~*PlanetType::PlanetShielded);
 	}
 	fmt::print(out, "  - Moon {:>30}  {}\n",
 			   'a' + (char)(moon - &pSolarSysState->MoonDesc[0]), typeStr);
@@ -1279,22 +1281,22 @@ static void dumpWorld(FILE* out, const SystemPlanet* world)
 {
 	PlanetData* info;
 
-	if (world->data_index == HIERARCHY_STARBASE)
+	if (world->data_index == PlanetType::HierarchyStarbase)
 	{
 		return;
 	}
 
-	if (world->data_index == SA_MATRA)
+	if (world->data_index == PlanetType::SaMatra)
 	{
 		return;
 	}
 
-	if (world->data_index == DESTROYED_STARBASE)
+	if (world->data_index == PlanetType::DestroyedStarbase)
 	{
 		return;
 	}
 
-	if (world->data_index == PRECURSOR_STARBASE)
+	if (world->data_index == PlanetType::PrecursorStarbase)
 	{
 		return;
 	}
@@ -1312,7 +1314,7 @@ static void dumpWorld(FILE* out, const SystemPlanet* world)
 	fmt::print(out, "          LifeChance: {}\n", info->LifeChance);
 	fmt::print(out, "          DistToSun:  {}\n", info->PlanetToSunDist);
 
-	if (world->data_index & PLANET_SHIELDED)
+	if (world->data_index & *PlanetType::PlanetShielded)
 	{
 		// Slave-shielded planet
 		return;
@@ -1329,10 +1331,10 @@ void printWorld(const SystemPlanet* world)
 	char buf[200] {};
 	GfxPoint universe = CurStarDescPtr()->star_pt;
 
-	if (world->data_index == HIERARCHY_STARBASE
-		|| world->data_index == SA_MATRA
-		|| world->data_index == DESTROYED_STARBASE
-		|| world->data_index == PRECURSOR_STARBASE)
+	if (world->data_index == PlanetType::HierarchyStarbase
+		|| world->data_index == PlanetType::SaMatra
+		|| world->data_index == PlanetType::DestroyedStarbase
+		|| world->data_index == PlanetType::PrecursorStarbase)
 	{
 		return;
 	}
@@ -1372,7 +1374,7 @@ void printWorld(const SystemPlanet* world)
 	fmt::print(fp, "Day:        {}\n", info->RotationPeriod);
 	fmt::print(fp, "AxialTilt:  {}\n\n", info->AxialTilt);
 
-	if (world->data_index & PLANET_SHIELDED)
+	if (world->data_index & *PlanetType::PlanetShielded)
 	{ // Slave-shielded planet
 		fmt::print(fp, "LifeChance: {}\n", info->LifeChance);
 		fmt::print(fp, "____________________________________\n\n");
@@ -1398,13 +1400,13 @@ uint16_t calculateBioValue(const SolarSystemState* system, const SystemPlanet* w
 	assert(system->pOrbitalDesc == world);
 
 	numBio = callGenerateForScanType(system, world, GenerateAll,
-									 BIOLOGICAL_SCAN, nullptr);
+									 ScanType::Biological, nullptr);
 
 	result = 0;
 	for (i = 0; i < numBio; i++)
 	{
 		SurfaceNode info;
-		callGenerateForScanType(system, world, i, BIOLOGICAL_SCAN, &info);
+		callGenerateForScanType(system, world, i, ScanType::Biological, &info);
 		result += BioCreditValueDefault * uqm::lowNibble(CreatureData[info.type].ValueAndHitPoints);
 	}
 	return result;
@@ -1419,7 +1421,7 @@ void generateBioIndex(const SolarSystemState* system, const SystemPlanet* world,
 	assert(system->pOrbitalDesc == world);
 
 	numBio = callGenerateForScanType(system, world, GenerateAll,
-									 BIOLOGICAL_SCAN, nullptr);
+									 ScanType::Biological, nullptr);
 
 	for (i = 0; i < NumCreatureTypes + NumSpecialCreatureTypes; i++)
 	{
@@ -1429,7 +1431,7 @@ void generateBioIndex(const SolarSystemState* system, const SystemPlanet* world,
 	for (i = 0; i < numBio; i++)
 	{
 		SurfaceNode info;
-		callGenerateForScanType(system, world, i, BIOLOGICAL_SCAN, &info);
+		callGenerateForScanType(system, world, i, ScanType::Biological, &info);
 		bio[info.type]++;
 	}
 }
@@ -1443,13 +1445,13 @@ uint16_t calculateMineralValue(const SolarSystemState* system, const SystemPlane
 	assert(system->pOrbitalDesc == world);
 
 	numDeposits = callGenerateForScanType(system, world, GenerateAll,
-										  MINERAL_SCAN, nullptr);
+										  ScanType::Mineral, nullptr);
 
 	result = 0;
 	for (i = 0; i < numDeposits; i++)
 	{
 		SurfaceNode info;
-		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
+		callGenerateForScanType(system, world, i, ScanType::Mineral, &info);
 		result += uqm::highByte(info.density) * uqm::gameState().game().ElementWorth[ElementCategory(info.type)];
 	}
 	return result;
@@ -1464,9 +1466,9 @@ void generateMineralIndex(const SolarSystemState* system, const SystemPlanet* wo
 	assert(system->pOrbitalDesc == world);
 
 	numDeposits = callGenerateForScanType(system, world, GenerateAll,
-										  MINERAL_SCAN, nullptr);
+										  ScanType::Mineral, nullptr);
 
-	for (i = 0; i < NUM_ELEMENT_CATEGORIES; i++)
+	for (i = 0; i < MineralCategory::NumElementCategories; i++)
 	{
 		minerals[i] = 0;
 	}
@@ -1474,7 +1476,7 @@ void generateMineralIndex(const SolarSystemState* system, const SystemPlanet* wo
 	for (i = 0; i < numDeposits; i++)
 	{
 		SurfaceNode info;
-		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
+		callGenerateForScanType(system, world, i, ScanType::Mineral, &info);
 		minerals[ElementCategory(info.type)] += uqm::highByte(info.density);
 	}
 }
@@ -1566,22 +1568,22 @@ static void tallyMoonCallback(const SystemPlanet* moon, void* arg)
 
 static void tallyResourcesWorld(TallyResourcesArg* arg, const SystemPlanet* world)
 {
-	if (world->data_index == HIERARCHY_STARBASE)
+	if (world->data_index == PlanetType::HierarchyStarbase)
 	{
 		return;
 	}
 
-	if (world->data_index == SA_MATRA)
+	if (world->data_index == PlanetType::SaMatra)
 	{
 		return;
 	}
 
-	if (world->data_index == DESTROYED_STARBASE)
+	if (world->data_index == PlanetType::DestroyedStarbase)
 	{
 		return;
 	}
 
-	if (world->data_index == PRECURSOR_STARBASE)
+	if (world->data_index == PlanetType::PrecursorStarbase)
 	{
 		return;
 	}
@@ -1597,7 +1599,7 @@ void forAllPlanetTypes(void (*callback)(int, const PlanetFrame*, void*),
 {
 	int i;
 
-	for (i = 0; i < NUMBER_OF_PLANET_TYPES; i++)
+	for (i = 0; i < PlanetType::NumberOfPlanetTypes; i++)
 	{
 		callback(i, &PlanetsArray[i], arg);
 	}
@@ -1654,8 +1656,8 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 				   DepositQuantity(entry->Density),
 				   depositQualityString(DepositQuality(entry->Density)),
 				   DepositQuality(entry->Density) * 5,
-				   GameString(ELEMENTS_STRING_BASE + entry->ElementType),
-				   GameString(CARGO_STRING_BASE + 2 + ElementCategory(entry->ElementType)));
+				   GameString(GameStringBase::ElementsString + entry->ElementType),
+				   GameString(GameStringBase::CargoString + 2 + ElementCategory(entry->ElementType)));
 	}
 	fmt::print(out, "\n");
 }
@@ -1664,32 +1666,32 @@ const char* planetTypeString(int typeIndex)
 {
 	static char typeStr[40];
 
-	if (typeIndex >= FIRST_GAS_GIANT)
+	if (typeIndex >= PlanetType::FirstGasGiant)
 	{
 		// "Gas Giant"
 		fmt::format_to_sz_n(typeStr, "{}",
-							GameString(SCAN_STRING_BASE + 4 + 51));
+							GameString(GameStringBase::ScanString + 4 + 51));
 	}
 	else
 	{
 		// "<type> World" (eg. "Water World")
 		fmt::format_to_sz_n(typeStr, "{} {}",
-							GameString(SCAN_STRING_BASE + 4 + typeIndex),
-							GameString(SCAN_STRING_BASE + 4 + 50));
+							GameString(GameStringBase::ScanString + 4 + typeIndex),
+							GameString(GameStringBase::ScanString + 4 + 50));
 	}
 	return typeStr;
 }
 
 // size is what you get from Plansize (planetFrame.Type)
-const char* worldSizeString(uint8_t size)
+const char* worldSizeString(PlanetSize size)
 {
 	switch (size)
 	{
-		case SMALL_ROCKY_WORLD:
+		case PlanetSize::SmallRockyWorld:
 			return "small rocky world";
-		case LARGE_ROCKY_WORLD:
+		case PlanetSize::LargeRockyWorld:
 			return "large rocky world";
-		case GAS_GIANT:
+		case PlanetSize::GasGiant:
 			return "gas giant";
 		default:
 			// Should not happen
@@ -1740,13 +1742,13 @@ const char* tectonicsString(uint8_t tectonics)
 // atmosphere is what you get from HINIBBLE (planetFrame.AtmoAndDensity)
 const char* atmosphereString(uint8_t atmosphere)
 {
-	switch (atmosphere)
+	switch (static_cast<DepositSize>(atmosphere))
 	{
-		case LIGHT:
+		case DepositSize::Light:
 			return "thin";
-		case MEDIUM:
+		case DepositSize::Medium:
 			return "normal";
-		case HEAVY:
+		case DepositSize::Heavy:
 			return "thick";
 		default:
 			return "super thick";
@@ -1756,19 +1758,19 @@ const char* atmosphereString(uint8_t atmosphere)
 // density is what you get from LONIBBLE (planetFrame.AtmoAndDensity)
 const char* densityString(uint8_t density)
 {
-	switch (density)
+	switch (static_cast<DensityClass>(density))
 	{
-		case GAS_DENSITY:
+		case DensityClass::Gas:
 			return "gaseous";
-		case LIGHT_DENSITY:
+		case DensityClass::Light:
 			return "light";
-		case LOW_DENSITY:
+		case DensityClass::Low:
 			return "low";
-		case NORMAL_DENSITY:
+		case DensityClass::Normal:
 			return "normal";
-		case HIGH_DENSITY:
+		case DensityClass::High:
 			return "high";
-		case SUPER_DENSITY:
+		case DensityClass::Super:
 			return "super high";
 		default:
 			// Should not happen
@@ -1779,13 +1781,13 @@ const char* densityString(uint8_t density)
 // quality is what you get from DepositQuality (elementEntry.Density)
 const char* depositQualityString(uint8_t quality)
 {
-	switch (quality)
+	switch (static_cast<DepositSize>(quality))
 	{
-		case LIGHT:
+		case DepositSize::Light:
 			return "low";
-		case MEDIUM:
+		case DepositSize::Medium:
 			return "medium";
-		case HEAVY:
+		case DepositSize::Heavy:
 			return "high";
 		default:
 			// Should not happen
@@ -1801,7 +1803,7 @@ void resetCrewBattle(void)
 	uint16_t delta;
 	GFXCONTEXT OldContext;
 
-	if (!(uqm::currentActivity() & IN_BATTLE) || (inHQSpace()))
+	if (!(uqm::currentActivity() & ActivityFlag::InBattle) || (inHQSpace()))
 	{
 		return;
 	}
@@ -1831,31 +1833,31 @@ void dumpStrings(FILE* out)
 		size_t base;
 		size_t count;
 	} categories[] = {
-		{"0",					  0,					  0					},
-		{"STAR_STRING_BASE",		 STAR_STRING_BASE,	   StarStringCount	  },
-		{"DEVICE_STRING_BASE",	   DEVICE_STRING_BASE,	   DeviceStringCount	},
-		{"CARGO_STRING_BASE",	  CARGO_STRING_BASE,		 CargoStringCount	 },
-		{"ELEMENTS_STRING_BASE",	 ELEMENTS_STRING_BASE,   ElementsStringCount  },
-		{"SCAN_STRING_BASE",		 SCAN_STRING_BASE,	   ScanStringCount	  },
-		{"STAR_NUMBER_BASE",		 STAR_NUMBER_BASE,	   StarNumberCount	  },
-		{"PLANET_NUMBER_BASE",	   PLANET_NUMBER_BASE,	   PlanetNumberCount	},
-		{"MONTHS_STRING_BASE",	   MONTHS_STRING_BASE,	   MonthsStringCount	},
-		{"FEEDBACK_STRING_BASE",	 FEEDBACK_STRING_BASE,   FeedbackStringCount  },
-		{"STARBASE_STRING_BASE",	 STARBASE_STRING_BASE,   StarbaseStringCount  },
-		{"ENCOUNTER_STRING_BASE",  ENCOUNTER_STRING_BASE,	 EncounterStringCount },
-		{"NAVIGATION_STRING_BASE", NAVIGATION_STRING_BASE, NavigationStringCount},
-		{"NAMING_STRING_BASE",	   NAMING_STRING_BASE,	   NamingStringCount	},
-		{"MELEE_STRING_BASE",	  MELEE_STRING_BASE,		 MeleeStringCount	 },
-		{"SAVEGAME_STRING_BASE",	 SAVEGAME_STRING_BASE,   SavegameStringCount  },
-		{"OPTION_STRING_BASE",	   OPTION_STRING_BASE,	   OptionStringCount	},
-		{"QUITMENU_STRING_BASE",	 QUITMENU_STRING_BASE,   QuitmenuStringCount  },
-		{"STATUS_STRING_BASE",	   STATUS_STRING_BASE,	   StatusStringCount	},
-		{"FLAGSHIP_STRING_BASE",	 FLAGSHIP_STRING_BASE,   FlagshipStringCount  },
-		{"ORBITSCAN_STRING_BASE",  ORBITSCAN_STRING_BASE,	 OrbitscanStringCount },
-		{"MAINMENU_STRING_BASE",	 MAINMENU_STRING_BASE,   MainmenuStringCount  },
-		{"NETMELEE_STRING_BASE",	 NETMELEE_STRING_BASE,   NetmeleeStringCount  },
-		{"BIOLOGICAL_STRING_BASE", BIOLOGICAL_STRING_BASE, BiologicalStringCount},
-		{"GAMESTR_COUNT",		  GAMESTR_COUNT,			 (size_t)-1		   }
+		{"0",					  0,								 0					},
+		{"STAR_STRING_BASE",		 *GameStringBase::StarString,		  StarStringCount		 },
+		{"DEVICE_STRING_BASE",	   *GameStringBase::DeviceString,	  DeviceStringCount	   },
+		{"CARGO_STRING_BASE",	  *GameStringBase::CargoString,		CargoStringCount		},
+		{"ELEMENTS_STRING_BASE",	 *GameStringBase::ElementsString,	  ElementsStringCount	 },
+		{"SCAN_STRING_BASE",		 *GameStringBase::ScanString,		  ScanStringCount		 },
+		{"STAR_NUMBER_BASE",		 *GameStringBase::StarNumber,		  StarNumberCount		 },
+		{"PLANET_NUMBER_BASE",	   *GameStringBase::PlanetNumber,	  PlanetNumberCount	   },
+		{"MONTHS_STRING_BASE",	   *GameStringBase::MonthsString,	  MonthsStringCount	   },
+		{"FEEDBACK_STRING_BASE",	 *GameStringBase::FeedbackString,	  FeedbackStringCount	 },
+		{"STARBASE_STRING_BASE",	 *GameStringBase::StarbaseString,	  StarbaseStringCount	 },
+		{"ENCOUNTER_STRING_BASE",  *GameStringBase::EncounterString,	EncounterStringCount },
+		{"NAVIGATION_STRING_BASE", *GameStringBase::NavigationString, NavigationStringCount},
+		{"NAMING_STRING_BASE",	   *GameStringBase::NamingString,	  NamingStringCount	   },
+		{"MELEE_STRING_BASE",	  *GameStringBase::MeleeString,		MeleeStringCount		},
+		{"SAVEGAME_STRING_BASE",	 *GameStringBase::SavegameString,	  SavegameStringCount	 },
+		{"OPTION_STRING_BASE",	   *GameStringBase::OptionString,	  OptionStringCount	   },
+		{"QUITMENU_STRING_BASE",	 *GameStringBase::QuitmenuString,	  QuitmenuStringCount	 },
+		{"STATUS_STRING_BASE",	   *GameStringBase::StatusString,	  StatusStringCount	   },
+		{"FLAGSHIP_STRING_BASE",	 *GameStringBase::FlagshipString,	  FlagshipStringCount	 },
+		{"ORBITSCAN_STRING_BASE",  *GameStringBase::OrbitscanString,	OrbitscanStringCount },
+		{"MAINMENU_STRING_BASE",	 *GameStringBase::MainmenuString,	  MainmenuStringCount	 },
+		{"NETMELEE_STRING_BASE",	 *GameStringBase::NetmeleeString,	  NetmeleeStringCount	 },
+		{"BIOLOGICAL_STRING_BASE", *GameStringBase::BiologicalString, BiologicalStringCount},
+		{"GAMESTR_COUNT",		  *GameStringBase::GamestrCount,	 (size_t)-1		   }
 	};
 	size_t numCategories = std::size(categories);
 	size_t numStrings = GameStrings->size();
@@ -1874,11 +1876,11 @@ void dumpStrings(FILE* out)
 		}
 	}
 
-	if (GAMESTR_COUNT != numStrings)
+	if (GameStringBase::GamestrCount != numStrings)
 	{
 		fmt::print(stderr, "Warning: GAMESTR_COUNT is {}, but GameStrings "
 						   "contains {} strings.\n",
-				   GAMESTR_COUNT, numStrings);
+				   GameStringBase::GamestrCount, numStrings);
 	}
 
 	categoryI = 0;

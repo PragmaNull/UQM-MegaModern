@@ -176,13 +176,13 @@ struct FlagshipBattleData
 };
 
 static void InitWeaponSlots(RaceDesc* RaceDescPtr,
-							const uint8_t* ModuleSlots);
+							const ModuleType* ModuleSlots);
 static void InitModuleSlots(RaceDesc* RaceDescPtr,
-							const uint8_t* ModuleSlots);
+							const ModuleType* ModuleSlots);
 static void InitDriveSlots(RaceDesc* RaceDescPtr,
-						   const uint8_t* DriveSlots);
+						   const ModuleType* DriveSlots);
 static void InitJetSlots(RaceDesc* RaceDescPtr,
-						 const uint8_t* JetSlots);
+						 const ModuleType* JetSlots);
 static void uninit_sis(RaceDesc* pRaceDesc);
 
 
@@ -763,7 +763,7 @@ static void sis_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfConcer
 	}
 }
 
-static void InitWeaponSlots(RaceDesc* RaceDescPtr, const uint8_t* ModuleSlots)
+static void InitWeaponSlots(RaceDesc* RaceDescPtr, const ModuleType* ModuleSlots)
 {
 	FlagshipBattleData* SisData = GetCustomShipData(RaceDescPtr);
 	MissileDesc* lpMB = SisData->MissileBlock;
@@ -778,14 +778,14 @@ static void InitWeaponSlots(RaceDesc* RaceDescPtr, const uint8_t* ModuleSlots)
 			i = NumModuleSlots - 1;
 		}
 
-		uint16_t which_gun {ModuleSlots[(NumModuleSlots - 1) - i]};
+		uint16_t which_gun {*ModuleSlots[(NumModuleSlots - 1) - i]};
 
-		if (which_gun < GUN_WEAPON || which_gun > CANNON_WEAPON)
+		if (which_gun < ModuleType::GunWeapon || which_gun > ModuleType::CannonWeapon)
 		{
 			continue; /* not a gun */
 		}
 
-		which_gun -= GUN_WEAPON - 1;
+		which_gun -= *ModuleType::GunWeapon - 1;
 		RaceDescPtr->characteristics.weapon_energy_cost +=
 			which_gun * (IfHard ? 4 : 2);
 
@@ -850,7 +850,7 @@ static void InitWeaponSlots(RaceDesc* RaceDescPtr, const uint8_t* ModuleSlots)
 	}
 }
 
-static void InitModuleSlots(RaceDesc* RaceDescPtr, const uint8_t* ModuleSlots)
+static void InitModuleSlots(RaceDesc* RaceDescPtr, const ModuleType* ModuleSlots)
 {
 	FlagshipBattleData* SisData = GetCustomShipData(RaceDescPtr);
 
@@ -858,30 +858,32 @@ static void InitModuleSlots(RaceDesc* RaceDescPtr, const uint8_t* ModuleSlots)
 	uint16_t num_trackers {0};
 	for (uint16_t i {0}; i < NumModuleSlots; ++i)
 	{
-		const uint8_t which_mod {ModuleSlots[(NumModuleSlots - 1) - i]};
+		const ModuleType which_mod {ModuleSlots[(NumModuleSlots - 1) - i]};
 		switch (which_mod)
 		{
-			case CREW_POD:
+			case ModuleType::CrewPod:
 				RaceDescPtr->ship_info.max_crew += CrewPodCapacity;
 				break;
-			case TRACKING_SYSTEM:
+			case ModuleType::TrackingSystem:
 				++num_trackers;
 				break;
-			case ANTIMISSILE_DEFENSE:
+			case ModuleType::AntimissileDefense:
 				RaceDescPtr->characteristics.special_energy_cost +=
 					AntimissileEnergyInc;
 				break;
-			case SHIVA_FURNACE:
+			case ModuleType::ShivaFurnace:
 				RaceDescPtr->characteristics.energy_regeneration +=
 					ShivaEnergyRegenInc;
 				break;
-			case DYNAMO_UNIT:
+			case ModuleType::DynamoUnit:
 				RaceDescPtr->characteristics.energy_wait -=
 					DynamoUnitEnergyWaitDec;
 				if (RaceDescPtr->characteristics.energy_wait < MinEnergyWait)
 				{
 					RaceDescPtr->characteristics.energy_wait = MinEnergyWait;
 				}
+				break;
+			default:
 				break;
 		}
 	}
@@ -903,7 +905,7 @@ static void InitModuleSlots(RaceDesc* RaceDescPtr, const uint8_t* ModuleSlots)
 	}
 }
 
-static void InitDriveSlots(RaceDesc* RaceDescPtr, const uint8_t* DriveSlots)
+static void InitDriveSlots(RaceDesc* RaceDescPtr, const ModuleType* DriveSlots)
 {
 	// NB. RaceDescPtr->characteristics.max_thrust is already initialised.
 	RaceDescPtr->characteristics.thrust_wait = 0;
@@ -911,9 +913,11 @@ static void InitDriveSlots(RaceDesc* RaceDescPtr, const uint8_t* DriveSlots)
 	{
 		switch (DriveSlots[i])
 		{
-			case FUSION_THRUSTER:
+			case ModuleType::FusionThruster:
 				RaceDescPtr->characteristics.max_thrust += ResScale(2);
 				++RaceDescPtr->characteristics.thrust_wait;
+				break;
+			default:
 				break;
 		}
 	}
@@ -923,14 +927,16 @@ static void InitDriveSlots(RaceDesc* RaceDescPtr, const uint8_t* DriveSlots)
 		* RaceDescPtr->characteristics.thrust_increment;
 }
 
-static void InitJetSlots(RaceDesc* RaceDescPtr, const uint8_t* JetSlots)
+static void InitJetSlots(RaceDesc* RaceDescPtr, const ModuleType* JetSlots)
 {
 	for (uint16_t i {0}; i < NumJetSlots; ++i)
 	{
 		switch (JetSlots[i])
 		{
-			case TURNING_JETS:
+			case ModuleType::TurningJets:
 				RaceDescPtr->characteristics.turn_wait -= 2;
+				break;
+			default:
 				break;
 		}
 	}
@@ -1017,7 +1023,7 @@ RaceDesc* init_sis(void)
 	InitDriveSlots(&new_sis_desc, uqm::gameState().sis().DriveSlots);
 	InitJetSlots(&new_sis_desc, uqm::gameState().sis().JetSlots);
 
-	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee)
 	{
 		new_sis_desc.ship_info.crew_level = new_sis_desc.ship_info.max_crew;
 	}

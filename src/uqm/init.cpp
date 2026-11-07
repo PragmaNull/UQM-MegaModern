@@ -120,7 +120,7 @@ static uint8_t space_ini_cnt;
 bool InitSpace(void)
 {
 	if ((space_ini_cnt++ == 0
-		 && uqm::lowByte(uqm::currentActivity()) <= IN_ENCOUNTER)
+		 && uqm::activityKind(uqm::currentActivity()) <= ActivityKind::InEncounter)
 		|| optRequiresReload)
 	{
 		stars_in_space = CaptureDrawable(
@@ -197,7 +197,7 @@ void UninitSpace(void)
 
 static HSTARSHIP BuildSIS(void)
 {
-	HSTARSHIP hStarShip {Build(&race_q[0], SIS_SHIP_ID)};
+	HSTARSHIP hStarShip {Build(&race_q[0], SpeciesId::SisShip)};
 	if (!hStarShip)
 	{
 		return 0;
@@ -261,7 +261,7 @@ int16_t InitShips(void)
 			SetContext(OldContext);
 		}
 
-		if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+		if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 		{
 			free_gravity_well();
 		}
@@ -369,10 +369,10 @@ void UninitShips(void)
 		UnlockElement(hElement);
 	}
 
-	uqm::currentActivity() &= ~IN_BATTLE;
+	uqm::currentActivity() &= ~ActivityFlag::InBattle;
 
-	if (uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
-		&& !(uqm::currentActivity() & CHECK_ABORT))
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InEncounter
+		&& !(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		// Encounter battle in full game.
 		//   Record the crew left in the last ship standing. The crew left
@@ -387,7 +387,7 @@ void UninitShips(void)
 		}
 	}
 
-	if (uqm::lowByte(uqm::currentActivity()) != IN_ENCOUNTER)
+	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InEncounter)
 	{
 		// Remove any ships left from the race queue.
 		for (i = 0; i < NumPlayers; i++)

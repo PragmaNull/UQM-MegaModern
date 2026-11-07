@@ -133,7 +133,7 @@ void SplashScreen(void (*DoProcessing)(TimeCount TimeOut))
 	{
 		DoProcessing(TimeOut);
 	}
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return;
 	}
@@ -149,11 +149,11 @@ void SplashScreen(void (*DoProcessing)(TimeCount TimeOut))
 	{
 		SleepThreadUntil(OverallWait);
 	}
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return;
 	}
-	uqm::currentActivity() &= ~CHECK_ABORT;
+	uqm::currentActivity() &= ~ActivityFlag::CheckAbort;
 
 	if (!uqm::UQMOptions::read().skipIntro)
 	{

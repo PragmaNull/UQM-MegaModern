@@ -32,7 +32,7 @@
 
 static ConversationData commander_desc =
 	{
-		COMMANDER_CONVERSATION, /* AlienConv */
+		Conversation::Commander, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -288,7 +288,7 @@ static void NoRadioactives(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_TIME);
 
-		if (uqm::gameState().sis().ElementAmounts[RADIOACTIVE])
+		if (uqm::gameState().sis().ElementAmounts[*MineralCategory::Radioactive])
 		{
 			GiveRadios(0);
 		}
@@ -348,7 +348,7 @@ static void NoRadioactives(RESPONSE_REF R)
 			DeltaSISGauges(0, 5 * FuelTankScale, 0);
 		}
 
-		if (uqm::gameState().sis().ElementAmounts[RADIOACTIVE])
+		if (uqm::gameState().sis().ElementAmounts[*MineralCategory::Radioactive])
 		{
 			GiveRadios(0);
 		}
@@ -796,7 +796,7 @@ static void Intro(void)
 
 			NPCPhrase(DO_YOU_HAVE_RADIO_THIS_TIME);
 
-			if (uqm::gameState().sis().ElementAmounts[RADIOACTIVE])
+			if (uqm::gameState().sis().ElementAmounts[*MineralCategory::Radioactive])
 			{
 				GiveRadios(0);
 			}

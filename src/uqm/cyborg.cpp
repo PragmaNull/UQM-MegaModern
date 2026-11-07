@@ -761,8 +761,8 @@ void Pursue(Element* ShipPtr, ObjectEvaluation* EvalDescPtr)
 			}
 
 			// This code prevents Kohr-Ah, Ur-Quan and ISD from turning around mid-chase while pursuing Earthling.
-			if (StarShipPtr->SpeciesID == (KOHR_AH_ID | UR_QUAN_ID)
-				&& EnemyStarShipPtr->SpeciesID == EARTHLING_ID
+			if (StarShipPtr->SpeciesID == (*SpeciesId::KohrAh | *SpeciesId::UrQuan)
+				&& EnemyStarShipPtr->SpeciesID == SpeciesId::Earthling
 				&& !(EnemyStarShipPtr->cur_status_flags & (ShipBeyondMaxSpeed | ShipInGravityWell)))
 			{
 				distance_to_give_up_and_turn = 44;

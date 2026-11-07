@@ -71,9 +71,9 @@ void dumpEvents(FILE* out);
 // Describe one event.
 void dumpEvent(FILE* out, const GameEvent* eventPtr);
 // Get the name of one event.
-const char* eventName(uint8_t func_index);
+const char* eventName(GameEventId func_index);
 // Get the name of one race.
-const char* raceName(uint8_t func_index);
+const char* raceName(SpeciesId func_index);
 
 // Give the flagship a decent equipment for debugging.
 void equipShip(void);
@@ -133,9 +133,9 @@ void dumpUniverseToFile(void);
 void dumpSystem(FILE* out, const StarDesc* star,
 				const SolarSystemState* system);
 // Get a star color as a string.
-const char* bodyColorString(uint8_t col);
+const char* bodyColorString(StarBodyColor col);
 // Get a star type as a string.
-const char* starTypeString(uint8_t type);
+const char* starTypeString(StellarSize type);
 // Get a string describing special presence in the star system.
 const char* starPresenceString(uint8_t index);
 // Get a list describing all planets in a star.
@@ -176,7 +176,7 @@ void dumpPlanetTypes(FILE* out);
 // Get a string describing a planet type.
 const char* planetTypeString(int typeIndex);
 // Get a string describing the size of a type of planet.
-const char* worldSizeString(uint8_t size);
+const char* worldSizeString(PlanetSize size);
 // Get a string describing a planet type map generation algoritm.
 const char* worldGenAlgoString(uint8_t algo);
 // Get a string describing the severity of a tectonics on a type of planet.

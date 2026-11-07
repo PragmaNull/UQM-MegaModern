@@ -55,7 +55,7 @@ struct PlanetsideDesc
 	uint16_t ElementLevel;
 	uint16_t MaxElementLevel;
 	uint16_t BiologicalLevel;
-	uint16_t ElementAmounts[NUM_ELEMENT_CATEGORIES];
+	uint16_t ElementAmounts[*MineralCategory::NumElementCategories];
 
 	uint16_t NumFrames;
 	char AmountBuf[40];

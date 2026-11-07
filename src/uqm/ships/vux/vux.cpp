@@ -342,7 +342,7 @@ static void vux_preprocess(Element* ElementPtr)
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		uint16_t facing {StarShipPtr->ShipFacing};
-		if ((uqm::lowByte(uqm::currentActivity()) != IN_ENCOUNTER
+		if ((uqm::activityKind(uqm::currentActivity()) != ActivityKind::InEncounter
 			 || isDifficulty(uqm::Difficulty::Hard))
 			&& TrackShip(ElementPtr, &facing) >= 0)
 		{
@@ -352,7 +352,7 @@ static void vux_preprocess(Element* ElementPtr)
 
 			// JMS: Not REALLY necessary as VUX can ordinarily never be played against Sa-Matra.
 			// But handy in debugging as a single VUX limpet incapacitates Sa-Matra completely.
-			if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+			if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 			{
 				SA_MATRA_EXTRA_DIST += ResScale(1000);
 			}

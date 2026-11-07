@@ -41,7 +41,7 @@ static void SellMinerals(RESPONSE_REF R);
 
 static ConversationData commander_desc =
 	{
-		COMMANDER_CONVERSATION, /* AlienConv */
+		Conversation::Commander, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -216,7 +216,7 @@ static uint16_t DoSellMinerals(void)
 
 	FlushInput();
 
-	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
+	for (uint16_t i {0}; i < MineralCategory::NumElementCategories; ++i)
 	{
 		uint16_t amount {};
 		TimeCount TimeIn {};
@@ -227,7 +227,7 @@ static uint16_t DoSellMinerals(void)
 			TimeIn = GetTimeCounter() + c_gameSecond / 2;
 			while (GetTimeCounter() <= TimeIn)
 			{
-				if (AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
+				if (AnyButtonPress(true) || (uqm::currentActivity() & ActivityFlag::CheckAbort))
 				{
 					Sleepy = false;
 					break;
@@ -250,7 +250,7 @@ static uint16_t DoSellMinerals(void)
 			total += amount * uqm::gameState().game().ElementWorth[i];
 			do
 			{
-				if (!Sleepy || AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
+				if (!Sleepy || AnyButtonPress(true) || (uqm::currentActivity() & ActivityFlag::CheckAbort))
 				{
 					Sleepy = false;
 					uqm::gameState().sis().ElementAmounts[i] = 0;
@@ -275,7 +275,7 @@ static uint16_t DoSellMinerals(void)
 			TimeIn = GetTimeCounter() + (c_gameSecond / 4);
 			while (GetTimeCounter() <= TimeIn)
 			{
-				if (AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
+				if (AnyButtonPress(true) || (uqm::currentActivity() & ActivityFlag::CheckAbort))
 				{
 					Sleepy = false;
 					break;
@@ -469,7 +469,7 @@ static void AllianceInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_SHOFIXTI);
 		AllianceMask |= AllianceShofixti;
-		SetHomeworldKnown(SHOFIXTI_HOME);
+		SetHomeworldKnown(*HomeId::Shofixti);
 	}
 	else if (PlayerSaid(R, yehat))
 	{
@@ -565,7 +565,7 @@ static void HierarchyInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_ANDROSYNTH);
 		HierarchyMask |= HierarchyAndrosynth;
-		SetHomeworldKnown(ANDROSYNTH_HOME);
+		SetHomeworldKnown(*HomeId::Androsynth);
 	}
 	else if (PlayerSaid(R, ilwrath))
 	{
@@ -906,27 +906,29 @@ static void AnalyzeCondition(void)
 	}
 	for (i = 0; i < NumModuleSlots; ++i)
 	{
-		uint8_t which_piece {};
+		ModuleType which_piece {};
 
 		switch (which_piece = uqm::gameState().sis().ModuleSlots[i])
 		{
-			case STORAGE_BAY:
+			case ModuleType::StorageBay:
 				++num_bays;
 				break;
-			case DYNAMO_UNIT:
-			case SHIVA_FURNACE:
-				num_batts += 1 + (which_piece - DYNAMO_UNIT);
+			case ModuleType::DynamoUnit:
+			case ModuleType::ShivaFurnace:
+				num_batts += 1 + (which_piece - ModuleType::DynamoUnit);
 				break;
-			case GUN_WEAPON:
-			case BLASTER_WEAPON:
-			case CANNON_WEAPON:
-				num_guns += 1 + (which_piece - GUN_WEAPON);
+			case ModuleType::GunWeapon:
+			case ModuleType::BlasterWeapon:
+			case ModuleType::CannonWeapon:
+				num_guns += 1 + (which_piece - ModuleType::GunWeapon);
 				break;
-			case TRACKING_SYSTEM:
+			case ModuleType::TrackingSystem:
 				++num_track;
 				break;
-			case ANTIMISSILE_DEFENSE:
+			case ModuleType::AntimissileDefense:
 				++num_defense;
+				break;
+			default:
 				break;
 		}
 	}
@@ -992,9 +994,9 @@ static void AnalyzeCondition(void)
 		bool HasMaximum {};
 
 		const uint16_t FleetStrength {CalculateEscortsWorth()};
-		for (i = 0; i < NUM_AVAILABLE_RACES; ++i)
+		for (i = 0; i < RaceId::NumAvailableRaces; ++i)
 		{
-			if (i != HUMAN_SHIP && CheckAlliance((RACE_ID)i) == RaceAllegiance::Good)
+			if (i != RaceId::Human && CheckAlliance((RaceId)i) == RaceAllegiance::Good)
 			{
 				++num_aliens;
 			}
@@ -1383,12 +1385,12 @@ static bool DiscussDevices(bool TalkAbout)
 
 	uint16_t VuxBeastIndex {0};
 	//Undiscussed = false; unused
-	for (uint16_t i {0}; i < NUM_DEVICES; ++i)
+	for (Device i {}; i < Device::NumDevices; ++i)
 	{
 		RESPONSE_REF pStr {0};
 		switch (i)
 		{
-			case ROSY_SPHERE_DEVICE:
+			case Device::RosySphere:
 				if (uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ROSY_SPHERE))
 				{
@@ -1396,7 +1398,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ROSY_SPHERE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case WIMBLIS_TRIDENT_DEVICE:
+			case Device::WimblisTrident:
 				if (uqm::gameState().flag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_WIMBLIS_TRIDENT))
 				{
@@ -1404,7 +1406,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_WIMBLIS_TRIDENT, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case GLOWING_ROD_DEVICE:
+			case Device::GlowingRod:
 				if (uqm::gameState().flag(uqm::GameFlag::GLOWING_ROD_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_GLOWING_ROD))
 				{
@@ -1412,7 +1414,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_GLOWING_ROD, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case SUN_EFFICIENCY_DEVICE:
+			case Device::SunEfficiency:
 				if (uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_SUN_EFFICIENCY))
 				{
@@ -1420,7 +1422,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_SUN_EFFICIENCY, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case UTWIG_BOMB_DEVICE:
+			case Device::UtwigBomb:
 				if (uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_UTWIG_BOMB))
 				{
@@ -1428,7 +1430,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_UTWIG_BOMB, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case ULTRON_0_DEVICE:
+			case Device::Ultron0:
 				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 1
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
@@ -1436,7 +1438,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case ULTRON_1_DEVICE:
+			case Device::Ultron1:
 				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 2
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
@@ -1444,7 +1446,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case ULTRON_2_DEVICE:
+			case Device::Ultron2:
 				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 3
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
@@ -1452,7 +1454,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case ULTRON_3_DEVICE:
+			case Device::Ultron3:
 				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 4
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
@@ -1460,7 +1462,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case MAIDENS_DEVICE:
+			case Device::Maidens:
 				if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_MAIDENS))
 				{
@@ -1468,7 +1470,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_MAIDENS, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case TALKING_PET_DEVICE:
+			case Device::TalkingPet:
 				if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_TALKING_PET))
 				{
@@ -1476,7 +1478,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_TALKING_PET, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case AQUA_HELIX_DEVICE:
+			case Device::AquaHelix:
 				if (uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_AQUA_HELIX))
 				{
@@ -1484,7 +1486,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_AQUA_HELIX, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case CLEAR_SPINDLE_DEVICE:
+			case Device::ClearSpindle:
 				if (uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_CLEAR_SPINDLE))
 				{
@@ -1492,7 +1494,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_CLEAR_SPINDLE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case UMGAH_HYPERWAVE_DEVICE:
+			case Device::UmgahHyperwave:
 				if (uqm::gameState().flag(uqm::GameFlag::UMGAH_BROADCASTERS_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_UMGAH_HYPERWAVE))
 				{
@@ -1501,7 +1503,7 @@ static bool DiscussDevices(bool TalkAbout)
 				}
 				break;
 #ifdef NEVER
-			case DATA_PLATE_1_DEVICE:
+			case Device::DataPlate1:
 				if (uqm::gameState().flag(uqm::GameFlag::DATA_PLATE_1_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_DATA_PLATE_1))
 				{
@@ -1509,7 +1511,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_DATA_PLATE_1, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case DATA_PLATE_2_DEVICE:
+			case Device::DataPlate2:
 				if (uqm::gameState().flag(uqm::GameFlag::DATA_PLATE_2_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_DATA_PLATE_2))
 				{
@@ -1517,7 +1519,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_DATA_PLATE_2, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case DATA_PLATE_3_DEVICE:
+			case Device::DataPlate3:
 				if (uqm::gameState().flag(uqm::GameFlag::DATA_PLATE_3_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_DATA_PLATE_3))
 				{
@@ -1526,7 +1528,7 @@ static bool DiscussDevices(bool TalkAbout)
 				}
 				break;
 #endif /* NEVER */
-			case TAALO_PROTECTOR_DEVICE:
+			case Device::TaaloProtector:
 				if (uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_TAALO_PROTECTOR))
 				{
@@ -1534,7 +1536,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_TAALO_PROTECTOR, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case EGG_CASING0_DEVICE:
+			case Device::EggCasing0:
 				if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_EGG_CASING0))
 				{
@@ -1544,7 +1546,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING2, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case EGG_CASING1_DEVICE:
+			case Device::EggCasing1:
 				if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_EGG_CASING1))
 				{
@@ -1554,7 +1556,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING2, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case EGG_CASING2_DEVICE:
+			case Device::EggCasing2:
 				if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_EGG_CASING2))
 				{
@@ -1564,7 +1566,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING2, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case SYREEN_SHUTTLE_DEVICE:
+			case Device::SyreenShuttle:
 				if (uqm::gameState().flag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_SYREEN_SHUTTLE))
 				{
@@ -1572,7 +1574,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_SYREEN_SHUTTLE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case VUX_BEAST_DEVICE:
+			case Device::VuxBeast:
 				if (uqm::gameState().flag(uqm::GameFlag::VUX_BEAST_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_VUX_BEAST))
 				{
@@ -1580,7 +1582,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_VUX_BEAST, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case DESTRUCT_CODE_DEVICE:
+			case Device::DestructCode:
 				if (uqm::gameState().flag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_DESTRUCT_CODE))
 				{
@@ -1588,7 +1590,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_DESTRUCT_CODE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case PORTAL_SPAWNER_DEVICE:
+			case Device::PortalSpawner:
 				if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_PORTAL_SPAWNER))
 				{
@@ -1596,7 +1598,7 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_PORTAL_SPAWNER, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case URQUAN_WARP_DEVICE:
+			case Device::UrquanWarp:
 				if (uqm::gameState().flag(uqm::GameFlag::PORTAL_KEY_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_URQUAN_WARP))
 				{
@@ -1604,13 +1606,15 @@ static bool DiscussDevices(bool TalkAbout)
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_URQUAN_WARP, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
-			case BURVIX_HYPERWAVE_DEVICE:
+			case Device::BurvixHyperwave:
 				if (uqm::gameState().flag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_BURVIX_HYPERWAVE))
 				{
 					pStr = ABOUT_BCASTER;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_BURVIX_HYPERWAVE, static_cast<uint32_t>(TalkAbout));
 				}
+				break;
+			default:
 				break;
 		}
 
@@ -1720,31 +1724,31 @@ static void CheckBulletins(bool Repeat)
 			switch (b0)
 			{
 				case 0:
-					if (CheckAlliance(SPATHI_SHIP) == RaceAllegiance::Good)
+					if (CheckAlliance(RaceId::Spathi) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_1;
 					}
 					break;
 				case 1:
-					if (CheckAlliance(ZOQFOTPIK_SHIP) == RaceAllegiance::Good)
+					if (CheckAlliance(RaceId::Zoqfotpik) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_2;
 					}
 					break;
 				case 2:
-					if (CheckAlliance(SUPOX_SHIP) == RaceAllegiance::Good)
+					if (CheckAlliance(RaceId::Supox) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_3;
 					}
 					break;
 				case 3:
-					if (CheckAlliance(UTWIG_SHIP) == RaceAllegiance::Good)
+					if (CheckAlliance(RaceId::Utwig) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_4;
 					}
 					break;
 				case 4:
-					if (CheckAlliance(ORZ_SHIP) == RaceAllegiance::Good)
+					if (CheckAlliance(RaceId::Orz) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_5;
 					}
@@ -1755,12 +1759,12 @@ static void CheckBulletins(bool Repeat)
 						BulletinMask |= 1L << b0;
 					}
 					else if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER)
-							 && (Repeat || EscortFeasibilityStudy(ARILOU_SHIP)))
+							 && (Repeat || EscortFeasibilityStudy(RaceId::Arilou)))
 					{
 						pStr = STARBASE_BULLETIN_6;
 						if (!Repeat)
 						{
-							AddEscortShips(ARILOU_SHIP, NumGiftArilous);
+							AddEscortShips(RaceId::Arilou, NumGiftArilous);
 						}
 					}
 					break;
@@ -1818,13 +1822,13 @@ static void CheckBulletins(bool Repeat)
 					}
 					break;
 				case 12:
-					if (CheckAlliance(CHMMR_SHIP) == RaceAllegiance::Good)
+					if (CheckAlliance(RaceId::Chmmr) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_13;
 					}
 					break;
 				case 13:
-					if (CheckAlliance(SHOFIXTI_SHIP) == RaceAllegiance::Good)
+					if (CheckAlliance(RaceId::Shofixti) == RaceAllegiance::Good)
 					{
 						pStr = STARBASE_BULLETIN_14;
 					}
@@ -2091,13 +2095,13 @@ static void SellMinerals(RESPONSE_REF R)
 	}
 	else
 	{
-		uint16_t amount[NUM_ELEMENT_CATEGORIES];
-		uint16_t Ru[NUM_ELEMENT_CATEGORIES];
+		uint16_t amount[*MineralCategory::NumElementCategories];
+		uint16_t Ru[*MineralCategory::NumElementCategories];
 		uint16_t seg = 0;
 		uint16_t count = 0;
 
 		NPCPhrase(CARGO_LIST);
-		for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
+		for (uint16_t i {0}; i < MineralCategory::NumElementCategories; ++i)
 		{
 			if ((amount[seg] = uqm::gameState().sis().ElementAmounts[i]) != 0)
 			{

@@ -30,7 +30,7 @@
 
 static ConversationData druuge_desc =
 	{
-		DRUUGE_CONVERSATION, /* AlienConv */
+		Conversation::Druuge, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -302,7 +302,7 @@ static void Buy(RESPONSE_REF R)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
-		else if (EscortFeasibilityStudy(DRUUGE_SHIP) == 0)
+		else if (EscortFeasibilityStudy(RaceId::Druuge) == 0)
 		{
 			NPCPhrase(NOT_ENOUGH_ROOM);
 		}
@@ -310,7 +310,7 @@ static void Buy(RESPONSE_REF R)
 		{
 			DeltaSISGauges(-ShipCrewCost, 0, 0);
 			SlaveryCount += ShipCrewCost;
-			AddEscortShips(DRUUGE_SHIP, 1);
+			AddEscortShips(RaceId::Druuge, 1);
 
 			NPCPhrase(BOUGHT_SHIP);
 		}
@@ -477,7 +477,7 @@ static void DoTransaction(RESPONSE_REF R)
 
 		uint8_t trade_gas {0};
 		uint8_t ships_to_trade {0};
-		ship_slots = EscortFeasibilityStudy(DRUUGE_SHIP);
+		ship_slots = EscortFeasibilityStudy(RaceId::Druuge);
 		if (PlayerSaid(R, sell_maidens))
 		{
 			NPCPhrase(BOUGHT_MAIDENS);
@@ -504,7 +504,7 @@ static void DoTransaction(RESPONSE_REF R)
 		NPCPhrase(YOU_GET);
 		if (ships_to_trade)
 		{
-			AddEscortShips(DRUUGE_SHIP, ships_to_trade);
+			AddEscortShips(RaceId::Druuge, ships_to_trade);
 
 			if (ship_slots >= ships_to_trade)
 			{
@@ -535,12 +535,12 @@ static void DoTransaction(RESPONSE_REF R)
 			uint8_t slot {NumModuleSlots - 1};
 			do
 			{
-				if (uqm::gameState().sis().ModuleSlots[slot] == FUEL_TANK
-					|| uqm::gameState().sis().ModuleSlots[slot] == HIGHEFF_FUELSYS)
+				if (uqm::gameState().sis().ModuleSlots[slot] == ModuleType::FuelTank
+					|| uqm::gameState().sis().ModuleSlots[slot] == ModuleType::HigheffFuelsys)
 				{
 					uint16_t volume {};
 
-					volume = uqm::gameState().sis().ModuleSlots[slot] == FUEL_TANK ? FuelTankCapacity : HefuelTankCapacity;
+					volume = uqm::gameState().sis().ModuleSlots[slot] == ModuleType::FuelTank ? FuelTankCapacity : HefuelTankCapacity;
 					capacity += volume;
 				}
 			} while (slot--);
@@ -816,7 +816,7 @@ static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -966,9 +966,9 @@ static void Intro(void)
 		{
 			for (NumVisits = 0; NumVisits < NumModuleSlots; ++NumVisits)
 			{
-				const uint8_t which_module {uqm::gameState().sis().ModuleSlots[NumVisits]};
-				if (which_module >= GUN_WEAPON
-					&& which_module <= CANNON_WEAPON)
+				const uint8_t which_module {*uqm::gameState().sis().ModuleSlots[NumVisits]};
+				if (which_module >= ModuleType::GunWeapon
+					&& which_module <= ModuleType::CannonWeapon)
 				{
 					NumVisits = 0;
 					break;
@@ -1001,7 +1001,7 @@ static void Intro(void)
 			{
 				case 0:
 					NPCPhrase(INIT_SPACE_HELLO);
-					SetHomeworldKnown(DRUUGE_HOME);
+					SetHomeworldKnown(*HomeId::Druuge);
 					break;
 				case 1:
 					NPCPhrase(SUBSEQUENT_SPACE_HELLO);
@@ -1052,7 +1052,7 @@ ConversationData* init_druuge_comm(void)
 
 	if ((uqm::gameState().flag(uqm::GameFlag::DRUUGE_MANNER) == 0
 		 && (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

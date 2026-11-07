@@ -243,8 +243,8 @@ void InitGalaxy(void)
 	uint16_t i {};
 	LargePoint* ppt {};
 	const bool useScenery = (IsExtended() && uqm::gameState().flag(uqm::GameFlag::URQUAN_PROTECTING_SAMATRA)
-							 && uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE
-							 && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE);
+							 && uqm::activityKind(uqm::currentActivity()) != ActivityKind::InHyperspace
+							 && uqm::activityKind(uqm::currentActivity()) != ActivityKind::InLastBattle);
 
 	uqm::log::debug("InitGalaxy(): transition_width = {}, "
 					"transition_height = {}",
@@ -290,7 +290,7 @@ void InitGalaxy(void)
 			if (IsHd())
 			{ // In HdResolutionFactor the smallest stars are images
 				SetPrimType(&DisplayArray[p], PrimitiveType::Stamp);
-				if (uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE)
+				if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InHyperspace)
 				{
 					SetPrimFlags(&DisplayArray[p], UnscaledStamp);
 					DisplayArray[p].Object.Stamp.frame =
@@ -309,7 +309,7 @@ void InitGalaxy(void)
 			else
 			{ // Pixel starpoints in original res
 				SetPrimType(&DisplayArray[p], PrimitiveType::Point);
-				if (uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE)
+				if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InHyperspace)
 				{
 					SetPrimColor(&DisplayArray[p],
 								 BuildColor(

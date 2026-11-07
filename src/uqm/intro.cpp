@@ -200,7 +200,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 
 	for (slot = 0; slot < NumDriveSlots; ++slot)
 	{
-		piece = uqm::gameState().sis().DriveSlots[slot];
+		piece = *uqm::gameState().sis().DriveSlots[slot];
 		if (piece < EmptySlot)
 		{
 			s.origin.x = DriveTopX();
@@ -212,7 +212,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 	}
 	for (slot = 0; slot < NumJetSlots; ++slot)
 	{
-		piece = uqm::gameState().sis().JetSlots[slot];
+		piece = *uqm::gameState().sis().JetSlots[slot];
 		if (piece < EmptySlot)
 		{
 			s.origin.x = JetTopX();
@@ -224,14 +224,14 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 	}
 	for (slot = 0; slot < NumModuleSlots; ++slot)
 	{
-		piece = uqm::gameState().sis().ModuleSlots[slot];
+		piece = *uqm::gameState().sis().ModuleSlots[slot];
 		if (piece < EmptySlot)
 		{
 			s.origin.x = ModuleTopXP();
 			s.origin.y = ModuleTopYP();
 			s.origin.x += slot * ShipPieceOffset();
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
-			if (piece >= BOMB_MODULE_0)
+			if (piece >= ModuleType::BombModule0)
 			{ // Blue glow around the bomb - mimic PC-DOS pre-rendered cutscene
 				const Color oldColor = SetContextForeGroundColor(
 					BuildColorRgb(0x00, 0x00, 0x5F));
@@ -353,7 +353,7 @@ static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_
 		sq.corner.x += ResScale(6);
 
 		UpdateInputState();
-		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & CHECK_ABORT))
+		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
 			*skip = true;
 		}
@@ -392,7 +392,7 @@ static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_
 		sq.corner.x += ResScale(6);
 
 		UpdateInputState();
-		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & CHECK_ABORT))
+		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
 			*skip = true;
 		}
@@ -423,7 +423,7 @@ static bool ShowPresentationFile(const char* name)
 
 struct IntroShip
 {
-	SPECIES_ID sID;	   // The ship SPECIES_ID, a second index
+	SpeciesId sID;	   // The ship SPECIES_ID, a second index
 	char ditty[256];   // The ditty string (file name)
 	char race[256];	   // The race's name string e.g. EARTHLING
 	char ship[256];	   // The ship's name string e.g. CRUISER
@@ -432,31 +432,31 @@ struct IntroShip
 };
 
 const static IntroShip ship_map[] = {
-	{ARILOU_ID,		"arilou",	  "ARILOULALEELAY", " SKIFF",		  2,	 123},
-	{CHMMR_ID,	   "chmmr",		"CHMMR",			 " AVATAR",		2,   50 },
-	{EARTHLING_ID,  "earthling",	"EARTHLING",		 " CRUISER",		 130, 79 },
-	{ORZ_ID,		 "orz",		"ORZ",			   " NEMESIS",	   2,	  25 },
-	{PKUNK_ID,	   "pkunk",		"PKUNK",			 " FURY",		  2,	 43 },
-	{SHOFIXTI_ID,	  "shofixti",	  "SHOFIXTI",		  " SCOUT",		4,   61 },
-	{SPATHI_ID,		"spathi",	  "SPATHI",			" ELUDER",	   2,	  47 },
-	{SUPOX_ID,	   "supox",		"SUPOX",			 " BLADE",		   2,	  43 },
-	{THRADDASH_ID,  "thraddash",	"THRADDASH",		 " TORCH",		   2,	  87 },
-	{UTWIG_ID,	   "utwig",		"UTWIG",			 " JUGGER",		2,   43 },
-	{VUX_ID,		 "vux",		"VUX",			   " INTRUDER",		130, 28 },
-	{YEHAT_ID,	   "yehat",		"YEHAT",			 " TERMINATOR",	130, 46 },
-	{MELNORME_ID,	  "melnorme",	  "MELNORME",		  " TRADER",		 2,	77 },
-	{DRUUGE_ID,		"druuge",	  "DRUUGE",			" MAULER",	   2,	  53 },
-	{ILWRATH_ID,	 "ilwrath",	"ILWRATH",		   " AVENGER",	   2,	  62 },
-	{MYCON_ID,	   "mycon",		"MYCON",			 " PODSHIP",		 127, 47 },
-	{SLYLANDRO_ID,  "slylandro",	"SLYLANDRO",		 " PROBE",		   1,	  80 },
-	{UMGAH_ID,	   "umgah",		"UMGAH",			 " DRONE",		   127, 50 },
-	{UR_QUAN_ID,	 "urquan",	   "UR-QUAN",		  "\nDREADNAUGHT", 119, 66 },
-	{ZOQFOTPIK_ID,  "zoqfotpik",	"ZOQ-FOT-PIK",	   " STINGER",	   130, 92 },
-	{SYREEN_ID,		"syreen",	  "SYREEN",			" PENETRATOR",   2,	  53 },
-	{KOHR_AH_ID,	 "kohrah",	   "KOHR-AH",		  "",			  119, 64 },
-	{ANDROSYNTH_ID, "androsynth", "ANDROSYNTH",		" GUARDIAN",	 2,	94 },
-	{CHENJESU_ID,	  "chenjesu",	  "CHENJESU",		  "    BROODHOME", 1,	  71 },
-	{MMRNMHRM_ID,	  "mmrnmhrm",	  "MMRNMHRM",		  " TRANSFORMER",  128, 84 },
+	{SpeciesId::Arilou,		"arilou",	  "ARILOULALEELAY", " SKIFF",		  2,	 123},
+	{SpeciesId::Chmmr,	   "chmmr",		"CHMMR",			 " AVATAR",		2,   50 },
+	{SpeciesId::Earthling,  "earthling",	"EARTHLING",		 " CRUISER",		 130, 79 },
+	{SpeciesId::Orz,		 "orz",		"ORZ",			   " NEMESIS",	   2,	  25 },
+	{SpeciesId::Pkunk,	   "pkunk",		"PKUNK",			 " FURY",		  2,	 43 },
+	{SpeciesId::Shofixti,	  "shofixti",	  "SHOFIXTI",		  " SCOUT",		4,   61 },
+	{SpeciesId::Spathi,		"spathi",	  "SPATHI",			" ELUDER",	   2,	  47 },
+	{SpeciesId::Supox,	   "supox",		"SUPOX",			 " BLADE",		   2,	  43 },
+	{SpeciesId::Thraddash,  "thraddash",	"THRADDASH",		 " TORCH",		   2,	  87 },
+	{SpeciesId::Utwig,	   "utwig",		"UTWIG",			 " JUGGER",		2,   43 },
+	{SpeciesId::Vux,		 "vux",		"VUX",			   " INTRUDER",		130, 28 },
+	{SpeciesId::Yehat,	   "yehat",		"YEHAT",			 " TERMINATOR",	130, 46 },
+	{SpeciesId::Melnorme,	  "melnorme",	  "MELNORME",		  " TRADER",		 2,	77 },
+	{SpeciesId::Druuge,		"druuge",	  "DRUUGE",			" MAULER",	   2,	  53 },
+	{SpeciesId::Ilwrath,	 "ilwrath",	"ILWRATH",		   " AVENGER",	   2,	  62 },
+	{SpeciesId::Mycon,	   "mycon",		"MYCON",			 " PODSHIP",		 127, 47 },
+	{SpeciesId::Slylandro,  "slylandro",	"SLYLANDRO",		 " PROBE",		   1,	  80 },
+	{SpeciesId::Umgah,	   "umgah",		"UMGAH",			 " DRONE",		   127, 50 },
+	{SpeciesId::UrQuan,		"urquan",	  "UR-QUAN",		 "\nDREADNAUGHT", 119, 66 },
+	{SpeciesId::Zoqfotpik,  "zoqfotpik",	"ZOQ-FOT-PIK",	   " STINGER",	   130, 92 },
+	{SpeciesId::Syreen,		"syreen",	  "SYREEN",			" PENETRATOR",   2,	  53 },
+	{SpeciesId::KohrAh,		"kohrah",	  "KOHR-AH",		 "",				 119, 64 },
+	{SpeciesId::Androsynth, "androsynth", "ANDROSYNTH",		" GUARDIAN",	 2,	94 },
+	{SpeciesId::Chenjesu,	  "chenjesu",	  "CHENJESU",		  "    BROODHOME", 1,	  71 },
+	{SpeciesId::Mmrnmhrm,	  "mmrnmhrm",	  "MMRNMHRM",		  " TRANSFORMER",  128, 84 },
 };
 
 static constexpr uint16_t NumShips {static_cast<uint16_t>(uqstl::size(ship_map))};
@@ -514,11 +514,11 @@ static void SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
 		goto SeedLineSpinPassThru;
 	}
 
-	if (ship_map[shipID].sID == KOHR_AH_ID && ship_map[raceID].sID != ARILOU_ID && ship_map[raceID].width > 80 && *y2 == 122)
+	if (ship_map[shipID].sID == SpeciesId::KohrAh && ship_map[raceID].sID != SpeciesId::Arilou && ship_map[raceID].width > 80 && *y2 == 122)
 	{
 		*x2 -= ship_map[raceID].width - 80; // Shorten line for Spinning Blade
 	}
-	if (ship_map[shipID].sID == DRUUGE_ID && !IsHd() && ship_map[raceID].width > 80 && *y1 == 21)
+	if (ship_map[shipID].sID == SpeciesId::Druuge && !IsHd() && ship_map[raceID].width > 80 && *y1 == 21)
 	{ // Line for High-recoil Cannon in SD, needs to move down for wide ships
 		*y1 += 10;
 		*y2 += 10;
@@ -534,15 +534,15 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 		goto SeedTextSpinPassThru;
 	}
 
-	if (ship_map[shipID].sID == SPATHI_ID && IsHd() && ship_map[raceID].sID != ARILOU_ID && ship_map[raceID].width > 80 && (*x == 25 || *x == 40))
+	if (ship_map[shipID].sID == SpeciesId::Spathi && IsHd() && ship_map[raceID].sID != SpeciesId::Arilou && ship_map[raceID].width > 80 && (*x == 25 || *x == 40))
 	{
 		*x -= 15; // Rear-firing Missile Launch Tube, move left for wide ships
 	}
-	if (ship_map[shipID].sID == DRUUGE_ID && !IsHd() && ship_map[raceID].width > 80 && *x == 108)
+	if (ship_map[shipID].sID == SpeciesId::Druuge && !IsHd() && ship_map[raceID].width > 80 && *x == 108)
 	{
 		*y += 10; // This is High-recoil Cannon, move down for wide ships
 	}
-	if (ship_map[shipID].sID == SLYLANDRO_ID && *x == 18)
+	if (ship_map[shipID].sID == SpeciesId::Slylandro && *x == 18)
 	{
 		goto SeedTextSpinSkipLine; // This is 2418-B skip unless O.G.
 	}
@@ -550,11 +550,11 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 	{
 		goto SeedTextSpinPassThru; // This is anything not on the spinline
 	}
-	if (ship_map[shipID].sID == MELNORME_ID && *x == 215)
+	if (ship_map[shipID].sID == SpeciesId::Melnorme && *x == 215)
 	{
 		goto SeedTextSpinPassThru; // This is Confusion Ray, on the spinline
 	}
-	if (ship_map[shipID].sID == UR_QUAN_ID && *x == 222)
+	if (ship_map[shipID].sID == SpeciesId::UrQuan && *x == 222)
 	{
 		goto SeedTextSpinPassThru; // This is Fusion Blast, on the spinline
 	}
@@ -569,28 +569,28 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 
 	switch (ship_map[shipID].sID)
 	{
-		case CHENJESU_ID:
-		case EARTHLING_ID:
-		case KOHR_AH_ID:
-		case MYCON_ID:
-		case THRADDASH_ID: // Right hand huggers
-			if ((ship_map[shipID].sID == EARTHLING_ID || (ship_map[shipID].sID == KOHR_AH_ID && IsHd())) && ship_map[raceID].sID == ARILOU_ID)
+		case SpeciesId::Chenjesu:
+		case SpeciesId::Earthling:
+		case SpeciesId::KohrAh:
+		case SpeciesId::Mycon:
+		case SpeciesId::Thraddash: // Right hand huggers
+			if ((ship_map[shipID].sID == SpeciesId::Earthling || (ship_map[shipID].sID == SpeciesId::KohrAh && IsHd())) && ship_map[raceID].sID == SpeciesId::Arilou)
 			{ // Special case - ship doesn't have room, cuts to "ARILOU"
 				buf -= 8 * sizeof(char);
 				*x += ship_map[shipID].width - 50;
 				break;
 			}
-			if (ship_map[shipID].sID == CHENJESU_ID && IsHd())
+			if (ship_map[shipID].sID == SpeciesId::Chenjesu && IsHd())
 			{
 				*x -= 10; // Better centering the gap over the broodhome
 			}
 			*x += ship_map[shipID].width - ship_map[raceID].width;
 			break;
-		case SHOFIXTI_ID: // Right hand hugger but squeeze it a little
+		case SpeciesId::Shofixti: // Right hand hugger but squeeze it a little
 			*x += (ship_map[shipID].width - ship_map[raceID].width) * 4 / 5;
 			break;
-		case VUX_ID: // Middle but squeeze the right a little
-			if (ship_map[shipID].sID == VUX_ID && ship_map[raceID].sID == ARILOU_ID)
+		case SpeciesId::Vux: // Middle but squeeze the right a little
+			if (ship_map[shipID].sID == SpeciesId::Vux && ship_map[raceID].sID == SpeciesId::Arilou)
 			{ // Special case - ship doesn't have room, cuts to "ARILOU"
 				buf -= 8 * sizeof(char);
 				*x += (ship_map[shipID].width - 50) * 3 / 5;
@@ -598,52 +598,52 @@ static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, in
 			}
 			*x += (ship_map[shipID].width - ship_map[raceID].width) * 3 / 5;
 			break;
-		case ANDROSYNTH_ID:
-		case ARILOU_ID:
-		case PKUNK_ID:
-		case SPATHI_ID:
-		case SYREEN_ID:
-		case UTWIG_ID:
-		case MMRNMHRM_ID: // Middle-ships
-			if (ship_map[shipID].sID == SPATHI_ID && ship_map[raceID].sID == ARILOU_ID)
+		case SpeciesId::Androsynth:
+		case SpeciesId::Arilou:
+		case SpeciesId::Pkunk:
+		case SpeciesId::Spathi:
+		case SpeciesId::Syreen:
+		case SpeciesId::Utwig:
+		case SpeciesId::Mmrnmhrm: // Middle-ships
+			if (ship_map[shipID].sID == SpeciesId::Spathi && ship_map[raceID].sID == SpeciesId::Arilou)
 			{ // Special case - ship doesn't have room, cuts to "ARILOU"
 				buf -= 8 * sizeof(char);
 				*x += (ship_map[shipID].width - 50) / 2;
 				break;
 			}
-			if (ship_map[shipID].sID == SPATHI_ID)
+			if (ship_map[shipID].sID == SpeciesId::Spathi)
 			{
 				*x += 2; // Better centering over (In Attack Position)
 			}
-			if (ship_map[shipID].sID == ARILOU_ID)
+			if (ship_map[shipID].sID == SpeciesId::Arilou)
 			{
 				*x += 4; // Better centering over (Last Reported Position)
 			}
 			*x += (ship_map[shipID].width - ship_map[raceID].width) / 2;
 			break;
-		case CHMMR_ID:
-		case ILWRATH_ID:
-		case MELNORME_ID:
-		case ORZ_ID:
-		case SLYLANDRO_ID:
-		case UMGAH_ID:
-		case UR_QUAN_ID:
-		case YEHAT_ID:
-		case ZOQFOTPIK_ID: // Lefties need no adjustment
-			if ((ship_map[shipID].sID == CHMMR_ID || ship_map[shipID].sID == ORZ_ID || ship_map[shipID].sID == ZOQFOTPIK_ID) && ship_map[raceID].sID == ARILOU_ID)
+		case SpeciesId::Chmmr:
+		case SpeciesId::Ilwrath:
+		case SpeciesId::Melnorme:
+		case SpeciesId::Orz:
+		case SpeciesId::Slylandro:
+		case SpeciesId::Umgah:
+		case SpeciesId::UrQuan:
+		case SpeciesId::Yehat:
+		case SpeciesId::Zoqfotpik: // Lefties need no adjustment
+			if ((ship_map[shipID].sID == SpeciesId::Chmmr || ship_map[shipID].sID == SpeciesId::Orz || ship_map[shipID].sID == SpeciesId::Zoqfotpik) && ship_map[raceID].sID == SpeciesId::Arilou)
 			{ // Special case - ship doesn't have room, cuts to "ARILOU"
 				buf -= 8 * sizeof(char);
 				break;
 			}
-			if (ship_map[shipID].sID == UMGAH_ID && !IsHd())
+			if (ship_map[shipID].sID == SpeciesId::Umgah && !IsHd())
 			{ // Right hand hugger but squeeze it a little
 				*x += (ship_map[shipID].width - ship_map[raceID].width)
 					* 4 / 5;
 				break;
 			}
 			break;
-		case DRUUGE_ID:
-		case SUPOX_ID: // Lefties but line break when long
+		case SpeciesId::Druuge:
+		case SpeciesId::Supox: // Lefties but line break when long
 			if (ship_map[raceID].width > 80)
 			{
 				const char* pad = (IsHd() ? "\n   " : "\n       ");
@@ -672,7 +672,7 @@ static bool DoPresentation(void* pIS)
 	PresentationInputState* pPIS = (PresentationInputState*)pIS;
 
 	if (PulsedInputState.menu[*MenuKey::MenuCancel]
-		|| (uqm::currentActivity() & CHECK_ABORT))
+		|| (uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		return false; /* abort requested - we are done */
 	}
@@ -805,7 +805,7 @@ static bool DoPresentation(void* pIS)
 					while (PlayingStream(MusicSource))
 					{
 						if (CurrentInputState.menu[*MenuKey::MenuCancel]
-							|| (uqm::currentActivity() & CHECK_ABORT))
+							|| (uqm::currentActivity() & ActivityFlag::CheckAbort))
 						{
 							StopMusic();
 							pPIS->Skip = true;
@@ -824,7 +824,7 @@ static bool DoPresentation(void* pIS)
 						while (GetTimeCounter() < TimeOut)
 						{
 							if (CurrentInputState.menu[*MenuKey::MenuCancel]
-								|| (uqm::currentActivity() & CHECK_ABORT))
+								|| (uqm::currentActivity() & ActivityFlag::CheckAbort))
 							{
 								Present_BatchGraphics(pPIS);
 								pPIS->Skip = true;
@@ -938,7 +938,7 @@ static bool DoPresentation(void* pIS)
 						DoSpinText("THI", x + ResScale(25),
 								   y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-						if (ship_map[shipID].sID == UR_QUAN_ID)
+						if (ship_map[shipID].sID == SpeciesId::UrQuan)
 						{ // All for a ship that won't occur anyway
 							x -= ResScale(52);
 							y += ResScale(11);
@@ -1408,7 +1408,7 @@ static bool DoVideoInput(void* pIS)
 	if (PulsedInputState.menu[*MenuKey::MenuSelect]
 		|| PulsedInputState.menu[*MenuKey::MenuCancel]
 		|| PulsedInputState.menu[*MenuKey::MenuSpecial]
-		|| (uqm::currentActivity() & CHECK_ABORT))
+		|| (uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{ // abort movie
 		return false;
 	}

@@ -29,7 +29,7 @@
 
 static ConversationData mycon_desc =
 	{
-		MYCON_CONVERSATION, /* AlienConv */
+		Conversation::Mycon, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -384,7 +384,7 @@ static void TrickMycon(RESPONSE_REF R)
 
 		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH, static_cast<uint32_t>(1));
-		AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_MYCON_MISSION);
+		AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvanceMyconMission);
 	}
 	else
 	{
@@ -590,7 +590,7 @@ static void Intro(void)
 		{
 			case 0:
 				NPCPhrase(HELLO_SUN_DEVICE_WORLD_1);
-				SetHomeworldKnown(MYCON_HOME);
+				SetHomeworldKnown(*HomeId::Mycon);
 				break;
 			case 1:
 				NPCPhrase(HELLO_SUN_DEVICE_WORLD_2);
@@ -643,7 +643,7 @@ static void Intro(void)
 		{
 			case 0:
 				NPCPhrase(HELLO_SPACE_1);
-				SetHomeworldKnown(MYCON_HOME);
+				SetHomeworldKnown(*HomeId::Mycon);
 				break;
 			case 1:
 				NPCPhrase(HELLO_SPACE_2);
@@ -699,7 +699,7 @@ ConversationData* init_mycon_comm(void)
 
 	MadeChoice = 0;
 
-	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Hostile);
 	}

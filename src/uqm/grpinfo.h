@@ -17,6 +17,7 @@
 #ifndef UQM_GRPINFO_H_
 #define UQM_GRPINFO_H_
 
+#include "core/types/enum.h"
 #include "port.h"
 #include "core/misc/bittricks.h"
 #include "displist.h"
@@ -68,16 +69,23 @@ struct InterplanetaryGroup
 	IP_FLAGS flags;
 };
 
-enum
+enum class GroupTask
 {
-	IN_ORBIT = 0,
-	EXPLORE,
-	FLEE,
-	ON_STATION,
-
-	IGNORE_FLAGSHIP = 1 << 2,
-	REFORM_GROUP = 1 << 3
+	InOrbit = 0,
+	Explore,
+	Flee,
+	OnStation,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<GroupTask> = true;
+
+enum class GroupTaskFlag : uint8_t
+{
+	IgnoreFlagship = 1 << 2,
+	ReformGroup = 1 << 3
+};
+template <>
+inline constexpr bool IsFlagEnum<GroupTaskFlag> = true;
 inline constexpr auto MaxRevolutions {5};
 
 inline constexpr auto StationRadius {1600};

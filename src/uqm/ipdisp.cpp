@@ -38,7 +38,7 @@ bool legacySave;
 uint8_t GTFO = 0;
 extern FRAME SpaceJunkFrame;
 
-static inline int16_t RaceIPSpeed(RACE_ID Index)
+static inline int16_t RaceIPSpeed(RaceId Index)
 {
 	static int seedStamp = -1;
 	const auto& defaultMap {RaceIpSpeed};
@@ -79,7 +79,7 @@ static inline int16_t RaceIPSpeed(RACE_ID Index)
 			speedMap[0] = 1;
 		}
 	}
-	return speedMap[Index];
+	return speedMap[*Index];
 }
 
 void NotifyOthers(uint16_t which_race, uint8_t target_loc)
@@ -103,7 +103,7 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 
 		if (target_loc == IpnlInterceptPlayer)
 		{
-			GroupPtr->task &= ~IGNORE_FLAGSHIP;
+			GroupPtr->task &= ~GroupTaskFlag::IgnoreFlagship;
 			// XXX: orbit_pos is abused here to store the previous
 			//   group destination, before the intercept task.
 			//   Returned to dest_loc below.
@@ -112,7 +112,7 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 		}
 		else if (target_loc == IpnlAllClear)
 		{
-			GroupPtr->task |= IGNORE_FLAGSHIP;
+			GroupPtr->task |= GroupTaskFlag::IgnoreFlagship;
 
 			if (GroupPtr->dest_loc == IpnlInterceptPlayer)
 			{ // The group was intercepting, so send it back where it came
@@ -129,9 +129,9 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 			// If the group wasn't intercepting, it will just continue
 			// going about its business.
 
-			if (!(GroupPtr->task & REFORM_GROUP))
+			if (!(GroupPtr->task & GroupTaskFlag::ReformGroup))
 			{
-				if ((GroupPtr->task & ~IGNORE_FLAGSHIP) != EXPLORE)
+				if ((GroupPtr->task & ~GroupTaskFlag::IgnoreFlagship) != GroupTask::Explore)
 				{
 					GroupPtr->group_counter = 0;
 				}
@@ -146,8 +146,8 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 		else
 		{ // Send the group to the location.
 			// XXX: There is currently no use of such notify that I know of.
-			GroupPtr->task &= REFORM_GROUP;
-			GroupPtr->task |= FLEE | IGNORE_FLAGSHIP;
+			GroupPtr->task &= GroupTaskFlag::ReformGroup;
+			GroupPtr->task |= *GroupTask::Flee | GroupTaskFlag::IgnoreFlagship;
 			GroupPtr->dest_loc = 0;
 		}
 
@@ -232,26 +232,26 @@ static void ip_group_preprocess(Element* ElementPtr)
 	const uint8_t flagship_loc {getFlagshipLocation()};
 
 	if ((uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
-		 && CheckAlliance((RACE_ID)GroupPtr->race_id) == RaceAllegiance::Dead)
-		|| (GTFO == 1 && GroupPtr->race_id == ILWRATH_SHIP))
+		 && CheckAlliance((RaceId)GroupPtr->race_id) == RaceAllegiance::Dead)
+		|| (GTFO == 1 && GroupPtr->race_id == RaceId::Ilwrath))
 	{
 		GTFO = 0;
 		NotifyOthers(GroupPtr->race_id, IpnlFlee);
 	}
 
-	if (GTFO == 2 && GroupPtr->race_id == ILWRATH_SHIP)
+	if (GTFO == 2 && GroupPtr->race_id == RaceId::Ilwrath)
 	{
 		GTFO = 0;
-		NotifyOthers(ILWRATH_SHIP, IpnlInterceptPlayer);
+		NotifyOthers(*RaceId::Ilwrath, IpnlInterceptPlayer);
 	}
 
 	task = GroupPtr->task;
 
-	if ((task & REFORM_GROUP) && --GroupPtr->group_counter == 0)
+	if ((task & GroupTaskFlag::ReformGroup) && --GroupPtr->group_counter == 0)
 	{ // Finished reforming the group
-		task &= ~REFORM_GROUP;
+		task &= ~GroupTaskFlag::ReformGroup;
 		GroupPtr->task = task;
-		if ((task & ~IGNORE_FLAGSHIP) != EXPLORE)
+		if ((task & ~GroupTaskFlag::IgnoreFlagship) != GroupTask::Explore)
 		{
 			GroupPtr->group_counter = 0;
 		}
@@ -264,16 +264,16 @@ static void ip_group_preprocess(Element* ElementPtr)
 	}
 
 	// If fleeing *and* ignoring flagship
-	if ((task & ~(IGNORE_FLAGSHIP | REFORM_GROUP)) == FLEE
-		&& (task & IGNORE_FLAGSHIP))
+	if ((task & ~(GroupTaskFlag::IgnoreFlagship | GroupTaskFlag::ReformGroup)) == GroupTask::Flee
+		&& (task & GroupTaskFlag::IgnoreFlagship))
 	{ // Make fleeing groups non-collidable
 		EPtr->state_flags |= Nonsolid;
 	}
 
 	uint8_t target_loc {GroupPtr->dest_loc};
-	if (!(task & (IGNORE_FLAGSHIP | REFORM_GROUP)))
+	if (!(task & (GroupTaskFlag::IgnoreFlagship | GroupTaskFlag::ReformGroup)))
 	{
-		if (target_loc == IpnlInterceptPlayer && task != FLEE)
+		if (target_loc == IpnlInterceptPlayer && task != GroupTask::Flee)
 		{
 			/* if intercepting flagship */
 			target_loc = flagship_loc;
@@ -287,7 +287,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 		{
 			int16_t detect_dist = 1200;
 
-			if (IsExtended() && CheckAlliance((RACE_ID)GroupPtr->race_id) == RaceAllegiance::Good)
+			if (IsExtended() && CheckAlliance((RaceId)GroupPtr->race_id) == RaceAllegiance::Good)
 			{
 				detect_dist = 0;
 			}
@@ -295,7 +295,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 			if (group_loc != 0) /* if in planetary views */
 			{
 				detect_dist *= (MaxZoomRadius / MinZoomRadius);
-				if (GroupPtr->race_id == URQUAN_DRONE_SHIP)
+				if (GroupPtr->race_id == RaceId::UrquanDrone)
 				{
 					detect_dist <<= 1;
 				}
@@ -322,7 +322,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 
 	GetCurrentVelocityComponents(&EPtr->velocity, &vdx, &vdy);
 
-	task &= ~IGNORE_FLAGSHIP;
+	task &= ~GroupTaskFlag::IgnoreFlagship;
 	// Make sure we have images for the xform and ywing
 	if (uqm::currentSeed().ships)
 	{
@@ -339,9 +339,9 @@ static void ip_group_preprocess(Element* ElementPtr)
 	}
 
 #ifdef NEVER
-	if (task <= FLEE || (task == ON_STATION && GroupPtr->dest_loc == 0))
+	if (task <= GroupTask::Flee || (task == GroupTask::OnStation && GroupPtr->dest_loc == 0))
 #else
-	if (task <= ON_STATION)
+	if (task <= GroupTask::OnStation)
 #endif /* NEVER */
 	{
 		int16_t delta_x {};
@@ -349,20 +349,20 @@ static void ip_group_preprocess(Element* ElementPtr)
 		uint16_t angle {};
 		FRAME suggestedFrame {};
 		const bool FilthyCheater =
-			(GroupPtr->race_id == URQUAN_DRONE_SHIP
+			(GroupPtr->race_id == RaceId::UrquanDrone
 			 && (uqm::UQMOptions::read().bubbleWarp
-				 || CountSISPieces(FUSION_THRUSTER) > 6));
+				 || CountSISPieces(*ModuleType::FusionThruster) > 6));
 
 		bool Transition {false};
 		bool isOrbiting {false};
-		if (task == FLEE)
+		if (task == GroupTask::Flee)
 		{
 			dest_pt.x = GroupPtr->loc.x << 1;
 			dest_pt.y = GroupPtr->loc.y << 1;
 		}
-		else if (((task != ON_STATION || GroupPtr->dest_loc == IpnlInterceptPlayer)
+		else if (((task != GroupTask::OnStation || GroupPtr->dest_loc == IpnlInterceptPlayer)
 				  && group_loc == target_loc)
-				 || (task == ON_STATION && GroupPtr->dest_loc != IpnlInterceptPlayer
+				 || (task == GroupTask::OnStation && GroupPtr->dest_loc != IpnlInterceptPlayer
 					 && group_loc == 0))
 		{
 			if (GroupPtr->dest_loc == IpnlInterceptPlayer)
@@ -376,7 +376,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 				GfxPoint org;
 
 				isOrbiting = true;
-				if (task != ON_STATION)
+				if (task != GroupTask::OnStation)
 				{
 					orbit_dist = OrbitRadius;
 					org.x = org.y = 0;
@@ -406,7 +406,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 					{
 						--GroupPtr->group_counter;
 					}
-					else if (task == EXPLORE
+					else if (task == GroupTask::Explore
 							 && (next_loc = (uint8_t)(((uint16_t)uqm::random().next()
 													   % pSolarSysState->SunDesc[0].NumPlanets)
 													  + 1))
@@ -432,7 +432,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 		}
 		else
 		{
-			if (task == ON_STATION)
+			if (task == GroupTask::OnStation)
 			{
 				target_loc = 0;
 			}
@@ -457,14 +457,14 @@ static void ip_group_preprocess(Element* ElementPtr)
 			if (EPtr->thrust_wait && GroupPtr->dest_loc != IpnlInterceptPlayer)
 			{
 				speed = OrbitSpeed;
-				if (task == ON_STATION)
+				if (task == GroupTask::OnStation)
 				{
 					speed >>= 1;
 				}
 			}
 			else
 			{
-				speed = RaceIPSpeed((RACE_ID)GroupPtr->race_id);
+				speed = RaceIPSpeed((RaceId)GroupPtr->race_id);
 				EPtr->thrust_wait = TrackWait;
 			}
 
@@ -479,7 +479,7 @@ static void ip_group_preprocess(Element* ElementPtr)
 		{
 			if (target_loc == 0)
 			{
-				if (task == FLEE)
+				if (task == GroupTask::Flee)
 				{
 					goto CheckGetAway;
 				}
@@ -503,7 +503,7 @@ PartialRevolution:
 			{ // In outer system
 				adjustDeltaVforZoom(radius, &dx, &dy);
 
-				if (task == ON_STATION && GroupPtr->dest_loc)
+				if (task == GroupTask::OnStation && GroupPtr->dest_loc)
 				{
 					goto PartialRevolution;
 				}
@@ -584,7 +584,7 @@ CheckGetAway:
 		{
 			if (GroupPtr->flags & Rotates)
 			{ // BW : make IP ships face the direction they're going into
-				if (uqm::currentActivity() & START_ENCOUNTER)
+				if (uqm::currentActivity() & ActivityFlag::StartEncounter)
 				{ // sometimes they give up chase, don't turn them away
 					// from sis during red alert phase
 					suggestedFrame =
@@ -646,7 +646,7 @@ CheckGetAway:
 			}
 		}
 	}
-	else if (task >= REFORM_GROUP && uqm::UQMOptions::read().shipDirectionIP)
+	else if (task >= *GroupTaskFlag::ReformGroup && uqm::UQMOptions::read().shipDirectionIP)
 	{ // To face sis while reforming
 		if (GroupPtr->flags & Rotates)
 		{
@@ -694,7 +694,7 @@ CheckGetAway:
 	// Don't draw the group if it's not at flagship location,
 	// or flash the group while it's reforming
 	if (group_loc != flagship_loc
-		|| ((task & REFORM_GROUP)
+		|| ((task & GroupTaskFlag::ReformGroup)
 			&& (GroupPtr->group_counter & 1)))
 	{
 		SetPrimType(&DisplayArray[EPtr->PrimIndex], NoPrim);
@@ -703,7 +703,7 @@ CheckGetAway:
 	else
 	{
 		SetPrimType(&DisplayArray[EPtr->PrimIndex], PrimitiveType::Stamp);
-		if (task & REFORM_GROUP)
+		if (task & GroupTaskFlag::ReformGroup)
 		{
 			EPtr->state_flags |= Nonsolid;
 		}
@@ -715,7 +715,7 @@ CheckGetAway:
 static void flag_ship_collision(Element* ElementPtr0, GfxPoint* pPt0,
 								Element* ElementPtr1, GfxPoint* pPt1)
 {
-	if (uqm::currentActivity() & START_ENCOUNTER)
+	if (uqm::currentActivity() & ActivityFlag::StartEncounter)
 	{
 		return; // ignore the rest of the collisions
 	}
@@ -728,7 +728,7 @@ static void flag_ship_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	else
 	{ // Both Element's collisions have now been processed
 		ElementPtr1->state_flags &= ~Collision;
-		uqm::currentActivity() |= START_ENCOUNTER;
+		uqm::currentActivity() |= ActivityFlag::StartEncounter;
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
@@ -740,7 +740,7 @@ static void ip_group_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	InterplanetaryGroup* GroupPtr {};
 	void* OtherPtr {};
 
-	if (uqm::currentActivity() & START_ENCOUNTER)
+	if (uqm::currentActivity() & ActivityFlag::StartEncounter)
 	{
 		return; // ignore the rest of the collisions
 	}
@@ -749,7 +749,7 @@ static void ip_group_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	OtherPtr = ElementPtr1->pParent;
 
 	if (!(uqm::flagship().autopilot.target().x == ~0 && uqm::flagship().autopilot.target().y == ~0)
-		&& (CheckAlliance((RACE_ID)GroupPtr->race_id) == RaceAllegiance::Good))
+		&& (CheckAlliance((RaceId)GroupPtr->race_id) == RaceAllegiance::Good))
 	{
 		return; // Ignore collisions when allied during Auto-Pilot
 	}
@@ -776,7 +776,7 @@ static void ip_group_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	{	 // Collision with a flagship
 		EncounterGroup = GroupPtr->group_id;
 
-		GroupPtr->task |= REFORM_GROUP;
+		GroupPtr->task |= GroupTaskFlag::ReformGroup;
 		GroupPtr->group_counter = 100;
 		// Send "all clear" for the time being. After the Encounter, if
 		// the player battles the group, the "intercept" notify will be
@@ -791,7 +791,7 @@ static void ip_group_collision(Element* ElementPtr0, GfxPoint* pPt0,
 		else
 		{ // Both Element's collisions have now been processed
 			ElementPtr1->state_flags &= ~Collision;
-			uqm::currentActivity() |= START_ENCOUNTER;
+			uqm::currentActivity() |= ActivityFlag::StartEncounter;
 		}
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
@@ -824,15 +824,15 @@ static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 			 * effect (InitIntersectFrame)
 			 */
 		GroupPtr->flags = 0;
-		if (GroupPtr->race_id != SLYLANDRO_SHIP)
+		if (GroupPtr->race_id != RaceId::Slylandro)
 		{
 			GroupPtr->flags |= Rotates;
 		}
-		if (GroupPtr->race_id == MMRNMHRM_SHIP)
+		if (GroupPtr->race_id == RaceId::Mmrnmhrm)
 		{
 			GroupPtr->flags |= IsXform;
 		}
-		if (GroupPtr->race_id == SLYLANDRO_SHIP)
+		if (GroupPtr->race_id == RaceId::Slylandro)
 		{
 			GroupPtr->flags |= IsProbe;
 		}
@@ -846,40 +846,40 @@ static void spawn_ip_group(InterplanetaryGroup* GroupPtr)
 			}
 			if (TemplatePtr)
 			{
-				const SPECIES_ID ship = SeedShip(TemplatePtr->SpeciesID, false);
+				const SpeciesId ship = SeedShip(TemplatePtr->SpeciesID, false);
 				UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 				GroupPtr->flags = 0;
 				switch (ship)
 				{
-					case SLYLANDRO_ID:
+					case SpeciesId::Slylandro:
 						GroupPtr->flags |= IsProbe;
 						break;
-					case MMRNMHRM_ID:
+					case SpeciesId::Mmrnmhrm:
 						GroupPtr->flags |= IsXform + Rotates;
 						break;
-					case ORZ_ID:
-					case UTWIG_ID:
-					case YEHAT_ID:
-					case MYCON_ID:
-					case UR_QUAN_ID:
-					case KOHR_AH_ID:
-					case ARILOU_ID:
-					case PKUNK_ID:
-					case SPATHI_ID:
-					case SUPOX_ID:
-					case MELNORME_ID:
-					case DRUUGE_ID:
-					case SHOFIXTI_ID:
-					case THRADDASH_ID:
-					case VUX_ID:
-					case ILWRATH_ID:
-					case UMGAH_ID:
-					case ZOQFOTPIK_ID:
-					case CHMMR_ID:
-					case CHENJESU_ID:
-					case ANDROSYNTH_ID:
-					case EARTHLING_ID:
-					case SYREEN_ID:
+					case SpeciesId::Orz:
+					case SpeciesId::Utwig:
+					case SpeciesId::Yehat:
+					case SpeciesId::Mycon:
+					case SpeciesId::UrQuan:
+					case SpeciesId::KohrAh:
+					case SpeciesId::Arilou:
+					case SpeciesId::Pkunk:
+					case SpeciesId::Spathi:
+					case SpeciesId::Supox:
+					case SpeciesId::Melnorme:
+					case SpeciesId::Druuge:
+					case SpeciesId::Shofixti:
+					case SpeciesId::Thraddash:
+					case SpeciesId::Vux:
+					case SpeciesId::Ilwrath:
+					case SpeciesId::Umgah:
+					case SpeciesId::Zoqfotpik:
+					case SpeciesId::Chmmr:
+					case SpeciesId::Chenjesu:
+					case SpeciesId::Androsynth:
+					case SpeciesId::Earthling:
+					case SpeciesId::Syreen:
 						GroupPtr->flags |= Rotates;
 						break;
 					default:
@@ -1015,7 +1015,7 @@ static void flag_ship_preprocess(Element* ElementPtr)
 		}
 
 		if ((ec = uqm::gameState().flag(uqm::GameFlag::ESCAPE_COUNTER))
-			&& !(uqm::currentActivity() & START_ENCOUNTER))
+			&& !(uqm::currentActivity() & ActivityFlag::StartEncounter))
 		{
 			ElementPtr->state_flags |= Nonsolid;
 
@@ -1037,7 +1037,7 @@ static void AdjustInitialPosition(void)
 
 	pt = locationToDisplay(uqm::flagship().ipLocation, radius);
 
-	if (LastActivity & CHECK_LOAD)
+	if (LastActivity & ActivityFlag::CheckLoad)
 	{
 		InitialIntersect();
 	}
@@ -1109,7 +1109,7 @@ void DoMissions(void)
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		if (GroupPtr->in_system
-			&& CheckAlliance((RACE_ID)GroupPtr->race_id) != RaceAllegiance::Dead)
+			&& CheckAlliance((RaceId)GroupPtr->race_id) != RaceAllegiance::Dead)
 		{
 			spawn_ip_group(GroupPtr);
 		}

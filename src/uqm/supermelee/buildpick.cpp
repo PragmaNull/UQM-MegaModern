@@ -132,10 +132,10 @@ void DrawPickIcon(MeleeShip ship, bool DrawErase)
 
 	GetFrameRect(BuildPickFrame, &r);
 
-	s.origin.x = r.corner.x + ResScale(20) + (ship % NumPickCols) * ResScale(18);
-	s.origin.y = r.corner.y + ResScale(5) + (ship / NumPickCols) * ResScale(18);
+	s.origin.x = r.corner.x + ResScale(20) + (*ship % NumPickCols) * ResScale(18);
+	s.origin.y = r.corner.y + ResScale(5) + (*ship / NumPickCols) * ResScale(18);
 
-	s.frame = GetShipIconsFromIndex(ship);
+	s.frame = GetShipIconsFromIndex(*ship);
 
 	// Draw a rectangle below ship to remove artifacts in HdResolutionFactor
 	if (IsHd())
@@ -280,7 +280,7 @@ static bool DoPickShip(MeleeState* pMS)
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		pMS->buildPickConfirmed = false;
 		return false;
@@ -296,14 +296,14 @@ static bool DoPickShip(MeleeState* pMS)
 	}
 
 	if (PulsedInputState.menu[*MenuKey::MenuSpecial]
-		&& (pMS->currentShip != MELEE_NONE))
+		&& (pMS->currentShip != MeleeShip::None))
 	{
 		if (isPC(uqm::UQMOptions::read().whichIntro))
 		{
 			PlayMenuSound(MenuSoundEffect::Success);
 		}
 		// Show ship spin video.
-		DoShipSpin(pMS->currentShip, pMS->hMusic);
+		DoShipSpin(*pMS->currentShip, pMS->hMusic);
 
 		return true;
 	}
@@ -315,7 +315,7 @@ static bool DoPickShip(MeleeState* pMS)
 
 		if (PulsedInputState.menu[*MenuKey::MenuLeft])
 		{
-			if (newSelectedShip % NumPickCols == 0)
+			if (*newSelectedShip % NumPickCols == 0)
 			{
 				newSelectedShip += NumPickCols;
 			}
@@ -324,7 +324,7 @@ static bool DoPickShip(MeleeState* pMS)
 		else if (PulsedInputState.menu[*MenuKey::MenuRight])
 		{
 			++newSelectedShip;
-			if (newSelectedShip % NumPickCols == 0)
+			if (*newSelectedShip % NumPickCols == 0)
 			{
 				newSelectedShip -= NumPickCols;
 			}
@@ -377,7 +377,7 @@ bool BuildPickShip(MeleeState* pMS)
 {
 	FlushInput();
 
-	if (pMS->currentShip == MELEE_NONE)
+	if (pMS->currentShip == MeleeShip::None)
 	{
 		pMS->currentShip = (MeleeShip)0;
 	}

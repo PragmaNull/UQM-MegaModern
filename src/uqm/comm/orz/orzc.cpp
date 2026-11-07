@@ -31,7 +31,7 @@
 
 static ConversationData orz_desc =
 	{
-		ORZ_CONVERSATION, /* AlienConv */
+		Conversation::Orz, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -287,7 +287,7 @@ static void ExitConversation(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(3));
-		SetRaceAllied(ORZ_SHIP, true);
+		SetRaceAllied(RaceId::Orz, true);
 	}
 	else if (PlayerSaid(R, demand_to_land))
 	{
@@ -321,8 +321,8 @@ static void ExitConversation(RESPONSE_REF R)
 		setSegue(Segue::Hostile);
 		if (PlayerSaid(R, about_andro_3))
 		{
-			SetRaceAllied(ORZ_SHIP, false);
-			RemoveEscortShips(ORZ_SHIP);
+			SetRaceAllied(RaceId::Orz, false);
+			RemoveEscortShips(RaceId::Orz);
 		}
 	}
 	else /* insults */
@@ -388,7 +388,7 @@ static void TaaloWorld(RESPONSE_REF R)
 		else
 		{
 			NPCPhrase(ANGRY_PLACE);
-			SetHomeworldKnown(ORZ_HOME);
+			SetHomeworldKnown(*HomeId::Orz);
 		}
 
 		DisablePhrase(what_is_this_place);
@@ -402,7 +402,7 @@ static void TaaloWorld(RESPONSE_REF R)
 	else if (PlayerSaid(R, make_alliance))
 	{
 		NPCPhrase(CANT_ALLY_HERE);
-		SetHomeworldKnown(ORZ_HOME);
+		SetHomeworldKnown(*HomeId::Orz);
 
 		DisablePhrase(make_alliance);
 	}
@@ -415,7 +415,7 @@ static void TaaloWorld(RESPONSE_REF R)
 
 	if (PhraseEnabled(may_we_land))
 	{
-		if (Manner == 3 && CheckAlliance(ORZ_SHIP) == RaceAllegiance::Good)
+		if (Manner == 3 && CheckAlliance(RaceId::Orz) == RaceAllegiance::Good)
 		{
 			Response(may_we_land, ExitConversation);
 		}
@@ -758,7 +758,7 @@ static void Intro(void)
 	uint8_t NumVisits {};
 	uint8_t Manner {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -834,7 +834,7 @@ static void Intro(void)
 
 		TaaloWorld((RESPONSE_REF)0);
 	}
-	else if (Manner == 3 && CheckAlliance(ORZ_SHIP) == RaceAllegiance::Good)
+	else if (Manner == 3 && CheckAlliance(RaceId::Orz) == RaceAllegiance::Good)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
@@ -1011,7 +1011,7 @@ ConversationData* init_orz_comm(void)
 	orz_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER) == 3
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

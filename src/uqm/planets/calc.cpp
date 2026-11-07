@@ -64,39 +64,43 @@ static void CalcSysInfo(SolarSystemInfo* SysInfoPtr)
 	SysInfoPtr->StarSize = pSolarSysState->SunDesc[0].data_index;
 	switch (StarColor(CurStarDescPtr()->Type))
 	{
-		case BLUE_BODY:
+		case StarBodyColor::Blue:
 			SysInfoPtr->StarIntensity = *SunIntensity::Blue;
 			break;
-		case GREEN_BODY:
+		case StarBodyColor::Green:
 			SysInfoPtr->StarIntensity = *SunIntensity::Green;
 			break;
-		case ORANGE_BODY:
+		case StarBodyColor::Orange:
 			SysInfoPtr->StarIntensity = *SunIntensity::Orange;
 			break;
-		case RED_BODY:
+		case StarBodyColor::Red:
 			SysInfoPtr->StarIntensity = *SunIntensity::Red;
 			break;
-		case WHITE_BODY:
+		case StarBodyColor::White:
 			SysInfoPtr->StarIntensity = *SunIntensity::White;
 			break;
-		case YELLOW_BODY:
+		case StarBodyColor::Yellow:
 			SysInfoPtr->StarIntensity = *SunIntensity::Yellow;
+			break;
+		default:
 			break;
 	}
 
 	switch (StarType(CurStarDescPtr()->Type))
 	{
-		case DWARF_STAR:
+		case StellarSize::Dwarf:
 			SysInfoPtr->StarEnergy =
 				(SysInfoPtr->StarIntensity + 1) * DwarfEnergy;
 			break;
-		case GIANT_STAR:
+		case StellarSize::Giant:
 			SysInfoPtr->StarEnergy =
 				(SysInfoPtr->StarIntensity + 1) * GiantEnergy;
 			break;
-		case SUPER_GIANT_STAR:
+		case StellarSize::SuperGiant:
 			SysInfoPtr->StarEnergy =
 				(SysInfoPtr->StarIntensity + 1) * SupergiantEnergy;
+			break;
+		default:
 			break;
 	}
 }
@@ -104,18 +108,18 @@ static void CalcSysInfo(SolarSystemInfo* SysInfoPtr)
 static uint16_t GeneratePlanetComposition(PlanetData* PlanetInfoPtr, int16_t SurfaceTemp,
 										  int16_t radius)
 {
-	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
+	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == PlanetSize::GasGiant)
 	{
 		PlanetInfoPtr->Weather = 7 << 5;
 		return (GasGiantAtmosphere);
 	}
 	else
 	{
-		uint8_t range {};
+		DepositSize range {};
 
 		PlanetInfoPtr->Weather = 0;
 		uint16_t atmo {0};
-		if ((range = uqm::highNibble(PlanetInfoPtr->PlanDataPtr->AtmoAndDensity)) <= HEAVY)
+		if ((range = static_cast<DepositSize>(uqm::highNibble(PlanetInfoPtr->PlanDataPtr->AtmoAndDensity))) <= DepositSize::Heavy)
 		{
 			if (SurfaceTemp < ColdThreshold)
 			{
@@ -126,19 +130,19 @@ static uint16_t GeneratePlanetComposition(PlanetData* PlanetInfoPtr, int16_t Sur
 				++range;
 			}
 
-			if (range <= HEAVY + 1)
+			if (range <= DepositSize::Heavy + 1)
 			{
 				switch (range)
 				{
-					case LIGHT:
+					case DepositSize::Light:
 						atmo = ThinAtmosphere;
 						PlanetInfoPtr->Weather = 1 << 5;
 						break;
-					case MEDIUM:
+					case DepositSize::Medium:
 						atmo = NormalAtmosphere;
 						PlanetInfoPtr->Weather = 2 << 5;
 						break;
-					case HEAVY:
+					case DepositSize::Heavy:
 						atmo = ThickAtmosphere;
 						PlanetInfoPtr->Weather = 4 << 5;
 						break;
@@ -198,7 +202,7 @@ static int16_t CalcTemp(SolarSystemInfo* SysInfoPtr, int16_t radius)
 
 	int16_t bonus {0};
 	if (SysInfoPtr == &pSolarSysState->SysInfo
-		&& uqm::highNibble(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity) <= HEAVY)
+		&& uqm::highNibble(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity) <= DepositSize::Heavy)
 	{
 		if (centigrade >= HotThreshold)
 		{
@@ -221,7 +225,7 @@ static constexpr auto TiltRange {180};
 
 static uint16_t CalcRotation(PlanetData* PlanetInfoPtr)
 {
-	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
+	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == PlanetSize::GasGiant)
 	{
 		return ((uint16_t)CalcFromBase(80, 80));
 	}
@@ -282,7 +286,7 @@ static int CalcLifeChance(const PlanetData* PlanetInfoPtr)
 {
 	int16_t life_var = 0;
 
-	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
+	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == PlanetSize::GasGiant)
 	{
 		return -1;
 	}
@@ -441,8 +445,8 @@ static constexpr auto MaxGasRadius {1500};
 // Sets the SysGenRNG to the required state first.
 void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr, SystemPlanet* pPlanetDesc)
 {
-	assert((pPlanetDesc->data_index & ~WORLD_TYPE_SPECIAL)
-		   < NUMBER_OF_PLANET_TYPES);
+	assert((pPlanetDesc->data_index & ~*PlanetType::WorldTypeSpecial)
+		   < PlanetType::NumberOfPlanetTypes);
 
 	SysGenRNG->reseed(pPlanetDesc->rand_seed);
 
@@ -476,7 +480,7 @@ void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr, SystemPlanet* pPlanetDesc)
 		int16_t radius {};
 
 		SysInfoPtr->PlanetInfo.PlanDataPtr =
-			&PlanData[pPlanetDesc->data_index & ~PLANET_SHIELDED];
+			&PlanData[pPlanetDesc->data_index & ~*PlanetType::PlanetShielded];
 
 		if (pPlanetDesc->pPrevDesc == pSolarSysState->SunDesc)
 		{
@@ -490,24 +494,24 @@ void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr, SystemPlanet* pPlanetDesc)
 
 		SysInfoPtr->PlanetInfo.SurfaceTemperature =
 			CalcTemp(SysInfoPtr, radius);
-		switch (uqm::lowNibble(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity))
+		switch (static_cast<DensityClass>(uqm::lowNibble(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity)))
 		{
-			case GAS_DENSITY:
+			case DensityClass::Gas:
 				SysInfoPtr->PlanetInfo.PlanetDensity = 20;
 				break;
-			case LIGHT_DENSITY:
+			case DensityClass::Light:
 				SysInfoPtr->PlanetInfo.PlanetDensity = 33;
 				break;
-			case LOW_DENSITY:
+			case DensityClass::Low:
 				SysInfoPtr->PlanetInfo.PlanetDensity = 60;
 				break;
-			case NORMAL_DENSITY:
+			case DensityClass::Normal:
 				SysInfoPtr->PlanetInfo.PlanetDensity = 100;
 				break;
-			case HIGH_DENSITY:
+			case DensityClass::High:
 				SysInfoPtr->PlanetInfo.PlanetDensity = 150;
 				break;
-			case SUPER_DENSITY:
+			case DensityClass::Super:
 				SysInfoPtr->PlanetInfo.PlanetDensity = 200;
 				break;
 		}
@@ -518,15 +522,17 @@ void DoPlanetaryAnalysis(SolarSystemInfo* SysInfoPtr, SystemPlanet* pPlanetDesc)
 
 		switch (Plansize(SysInfoPtr->PlanetInfo.PlanDataPtr->Type))
 		{
-			case SMALL_ROCKY_WORLD:
+			case PlanetSize::SmallRockyWorld:
 				SysInfoPtr->PlanetInfo.PlanetRadius = CalcHalfBaseVariance(SmallRadius);
 				break;
-			case LARGE_ROCKY_WORLD:
+			case PlanetSize::LargeRockyWorld:
 				SysInfoPtr->PlanetInfo.PlanetRadius = CalcHalfBaseVariance(LargeRadius);
 				break;
-			case GAS_GIANT:
+			case PlanetSize::GasGiant:
 				SysInfoPtr->PlanetInfo.PlanetRadius =
 					CalcFromBase(MinGasRadius, MaxGasRadius - MinGasRadius);
+				break;
+			default:
 				break;
 		}
 

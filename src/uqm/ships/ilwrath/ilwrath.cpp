@@ -178,7 +178,7 @@ static void ilwrath_intelligence(Element* ShipPtr, ObjectEvaluation* ObjectsOfCo
 		StarShipPtr->ship_input_state |= WeaponFlag;
 	}
 	else if (StarShipPtr->special_counter == 0
-			 && (uqm::lowByte(uqm::currentActivity()) != IN_ENCOUNTER
+			 && (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InEncounter
 				 || !uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER)))
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;

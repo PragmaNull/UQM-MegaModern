@@ -218,7 +218,7 @@ void Flash_terminate(FlashContext* context)
 	if (context->started)
 	{
 		// Restore the flash rectangle IF not quiting:
-		if (!(uqm::currentActivity() & CHECK_ABORT))
+		if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
 			Flash_drawFrame(context, context->original, false);
 		}

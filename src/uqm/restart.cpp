@@ -137,7 +137,7 @@ void DrawToolTips(MenuState* pMS, int answer)
 
 	SetContextForeGroundColor(BlackColor);
 
-	t.pStr = GameString(MAINMENU_STRING_BASE + 66 + answer);
+	t.pStr = GameString(GameStringBase::MainmenuString + 66 + answer);
 	const int line_count {SplitString(t.pStr, '\n', 30, lines, bank)};
 
 	t.baseline.x = r.corner.x
@@ -175,7 +175,7 @@ static void DrawDiffChooser(MenuState* pMS, int answer, bool confirm)
 
 	for (uint16_t i {0}; i <= 2; i++)
 	{
-		t.pStr = GameString(MAINMENU_STRING_BASE + 56
+		t.pStr = GameString(GameStringBase::MainmenuString + 56
 							+ (!i ? 1 : (i > 1 ? 2 : 0)));
 		t.CharCount = (uint16_t)uqm::utf8StringCount(t.pStr);
 
@@ -217,7 +217,7 @@ static bool DoDiffChooser(MenuState* pMS)
 	{
 		UpdateInputState();
 
-		if (uqm::currentActivity() & CHECK_ABORT)
+		if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 		{
 			return false;
 		}
@@ -339,7 +339,7 @@ static void InitPulseText(void)
 
 	for (uint16_t i {*MainMenuItem::StartNewGame}; i < MainMenuItem::Count; i++)
 	{
-		t.pStr = GameString(MAINMENU_STRING_BASE + 69 + i);
+		t.pStr = GameString(GameStringBase::MainmenuString + 69 + i);
 
 		frame = CaptureDrawable(CreateDrawable(WantPixmap, CanvasWidth,
 											   CanvasHeight, 1));
@@ -395,7 +395,7 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 
 	for (uint16_t i {*MainMenuItem::StartNewGame}; i < MainMenuItem::Count; i++)
 	{
-		t.pStr = GameString(MAINMENU_STRING_BASE + 69 + i);
+		t.pStr = GameString(GameStringBase::MainmenuString + 69 + i);
 		font_DrawText(&t);
 		t.baseline.y += leading;
 	}
@@ -416,8 +416,8 @@ static void DrawRestartMenuGraphic(MenuState* pMS)
 	if (uqm::UQMOptions::read().mainMenuMusic)
 	{
 		fmt::format_to_sz_n(buf, "{} {}",
-							GameString(MAINMENU_STRING_BASE + 61),
-							GameString(MAINMENU_STRING_BASE + 62 + Rando));
+							GameString(GameStringBase::MainmenuString + 61),
+							GameString(GameStringBase::MainmenuString + 62 + Rando));
 		t.baseline.x = ResScale(2);
 		t.baseline.y = CanvasHeight - ResScale(2);
 		t.align = TextAlign::Left;
@@ -445,12 +445,12 @@ static bool RestartMessage(void)
 	}
 
 	SetFlashRect(nullptr, false);
-	DoPopupWindow(GameString(MAINMENU_STRING_BASE + 35));
+	DoPopupWindow(GameString(GameStringBase::MainmenuString + 35));
 	// Got to restart -message
 	SetMenuSounds(MenuSoundUp | MenuSoundDown, MenuSoundSelect);
 	SetTransitionSource(nullptr);
 	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
-	uqm::currentActivity() = CHECK_ABORT;
+	uqm::currentActivity() = *ActivityFlag::CheckAbort;
 	restartGame = true;
 	return true;
 }
@@ -499,7 +499,7 @@ static bool DoRestart(MenuState* pMS)
 		PulsedInputState.menu[*MenuKey::MenuSelect] = 65535;
 	}
 
-	if (pMS->Initialized && !(uqm::currentActivity() & CHECK_ABORT))
+	if (pMS->Initialized && !(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		Flash_process(pMS->flashContext);
 	}
@@ -532,7 +532,7 @@ static bool DoRestart(MenuState* pMS)
 
 		SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToColor, c_gameSecond / 2));
 	}
-	else if (uqm::currentActivity() & CHECK_ABORT)
+	else if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		SleepThreadUntil(
 			FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
@@ -547,7 +547,7 @@ static bool DoRestart(MenuState* pMS)
 				{
 					SetFlashRect(nullptr, false);
 					DoPopupWindow(
-						GameString(MAINMENU_STRING_BASE + 65));
+						GameString(GameStringBase::MainmenuString + 65));
 					// Got to restart -message
 					SetMenuSounds(
 						MenuSoundUp | MenuSoundDown,
@@ -555,7 +555,7 @@ static bool DoRestart(MenuState* pMS)
 					SetTransitionSource(nullptr);
 					SleepThreadUntil(
 						FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
-					uqm::currentActivity() = CHECK_ABORT;
+					uqm::currentActivity() = *ActivityFlag::CheckAbort;
 					restartGame = true;
 					break;
 				}
@@ -598,17 +598,17 @@ static bool DoRestart(MenuState* pMS)
 					return true;
 				}
 
-				LastActivity = CHECK_LOAD | CHECK_RESTART;
-				uqm::currentActivity() = IN_INTERPLANETARY;
+				LastActivity = *(ActivityFlag::CheckLoad | ActivityFlag::CheckRestart);
+				uqm::currentActivity() = *ActivityKind::InInterplanetary;
 				break;
 			case *MainMenuItem::LoadSavedGame:
-				LastActivity = CHECK_LOAD;
-				uqm::currentActivity() = IN_INTERPLANETARY;
+				LastActivity = *ActivityFlag::CheckLoad;
+				uqm::currentActivity() = *ActivityKind::InInterplanetary;
 				optLoadGame = false;
 				break;
 			case *MainMenuItem::PlaySuperMelee:
 				ReloadMasterShipList(nullptr);
-				uqm::currentActivity() = SUPER_MELEE;
+				uqm::currentActivity() = *ActivityKind::SuperMelee;
 				optSuperMelee = false;
 				break;
 			case *MainMenuItem::SetupGame:
@@ -641,7 +641,7 @@ static bool DoRestart(MenuState* pMS)
 			case *MainMenuItem::QuitGame:
 				SleepThreadUntil(
 					FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
-				uqm::currentActivity() = CHECK_ABORT;
+				uqm::currentActivity() = *ActivityFlag::CheckAbort;
 				break;
 		}
 
@@ -725,7 +725,7 @@ void ShowGameEnding(void)
 
 	SetContext(ScreenContext);
 
-	uqm::currentActivity() |= CHECK_ABORT;
+	uqm::currentActivity() |= *ActivityFlag::CheckAbort;
 	if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0
 		&& uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP)
 		&& !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB)
@@ -740,7 +740,7 @@ void ShowGameEnding(void)
 		ClearDrawable();
 		FlushColorXForms();
 
-		uqm::currentActivity() = IN_ENCOUNTER;
+		uqm::currentActivity() = *ActivityKind::InEncounter;
 
 		if (uqm::UQMOptions::read().gameOver)
 		{
@@ -756,7 +756,7 @@ void ShowGameEnding(void)
 	{
 		if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
 		{
-			uqm::currentActivity() = IN_ENCOUNTER;
+			uqm::currentActivity() = *ActivityKind::InEncounter;
 
 			if (DeathByMelee)
 			{
@@ -776,14 +776,14 @@ void ShowGameEnding(void)
 			}
 		}
 
-		if (uqm::lowByte(lastActivity) == WON_LAST_BATTLE)
+		if (uqm::activityKind(lastActivity) == ActivityKind::WonLastBattle)
 		{
-			uqm::currentActivity() = WON_LAST_BATTLE;
+			uqm::currentActivity() = *ActivityKind::WonLastBattle;
 			Victory();
 			Credits(true);
 		}
 	}
-	uqm::currentActivity() = CHECK_ABORT;
+	uqm::currentActivity() = *ActivityFlag::CheckAbort;
 }
 
 static bool RestartMenu(MenuState* pMS)
@@ -794,7 +794,7 @@ static bool RestartMenu(MenuState* pMS)
 	SetContext(ScreenContext);
 
 	FreeGameData();
-	uqm::currentActivity() = CHECK_ABORT;
+	uqm::currentActivity() = *ActivityFlag::CheckAbort;
 
 	LastActivity = 0;
 	NextActivity = 0;
@@ -808,7 +808,7 @@ static bool RestartMenu(MenuState* pMS)
 	pMS->CurFrame = CaptureDrawable(LoadGraphic(RestartPmapAnimRes));
 
 	DrawRestartMenuGraphic(pMS);
-	uqm::currentActivity() &= ~CHECK_ABORT;
+	uqm::currentActivity() &= ~ActivityFlag::CheckAbort;
 	SetMenuSounds(MenuSoundUp | MenuSoundDown, MenuSoundSelect);
 	SetDefaultMenuRepeatDelay();
 	DoInput(pMS, true);
@@ -839,7 +839,7 @@ static bool RestartMenu(MenuState* pMS)
 		return (false); // timed out
 	}
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return (false); // quit
 	}
@@ -847,7 +847,7 @@ static bool RestartMenu(MenuState* pMS)
 	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 	FlushColorXForms();
 
-	return (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE);
+	return (uqm::activityKind(uqm::currentActivity()) != ActivityKind::SuperMelee);
 }
 
 static bool TryStartGame(void)
@@ -862,7 +862,7 @@ static bool TryStartGame(void)
 
 	while (!RestartMenu(&menuState))
 	{ // spin until a game is started or loaded
-		if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE && !(uqm::currentActivity() & CHECK_ABORT))
+		if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee && !(uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
 			FreeGameData();
 			uqm::UQMGame::getInstance().beginSession(uqm::SessionKind::SuperMelee);
@@ -875,7 +875,7 @@ static bool TryStartGame(void)
 			SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToBlack, c_gameSecond / 2));
 			return (false);
 		}
-		else if (uqm::currentActivity() & CHECK_ABORT)
+		else if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 		{ // quit
 			return (false);
 		}
@@ -909,13 +909,13 @@ bool StartGame(void)
 				}
 			}
 
-			if (uqm::currentActivity() & CHECK_ABORT)
+			if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 			{
 				return (false); // quit
 			}
 		}
 
-		if (LastActivity & CHECK_RESTART)
+		if (LastActivity & ActivityFlag::CheckRestart)
 		{ // starting a new game
 			if (!uqm::UQMOptions::read().skipIntro)
 			{
@@ -923,7 +923,7 @@ bool StartGame(void)
 			}
 		}
 
-	} while (uqm::currentActivity() & CHECK_ABORT);
+	} while (uqm::currentActivity() & ActivityFlag::CheckAbort);
 
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "StartGame called for {} mode with seed {} shipseed {}.\n",

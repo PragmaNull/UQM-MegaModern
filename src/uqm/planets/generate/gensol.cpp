@@ -82,7 +82,7 @@ static bool GenerateSol_initNpcs(SolarSystemState* solarSys)
 	uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS);
 	if (uqm::gameState().game().BattleGroupRef == 0 && !uqm::gameState().flag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED))
 	{
-		CloneShipFragment(URQUAN_DRONE_SHIP,
+		CloneShipFragment(RaceId::UrquanDrone,
 						  &uqm::gameState().game().npc_built_ship_q, 0);
 		uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
 		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
@@ -136,49 +136,49 @@ static bool GenerateSol_generatePlanets(SolarSystemState* solarSys)
 		switch (planetI)
 		{
 			case 0: /* MERCURY */
-				pCurDesc->data_index = METAL_WORLD;
+				pCurDesc->data_index = *PlanetType::Metal;
 				pCurDesc->radius = EarthRadius * 39L / 100;
 				pCurDesc->NumPlanets = 0;
 				break;
 			case 1: /* VENUS */
-				pCurDesc->data_index = PRIMORDIAL_WORLD;
+				pCurDesc->data_index = *PlanetType::Primordial;
 				pCurDesc->radius = EarthRadius * 72L / 100;
 				pCurDesc->NumPlanets = 0;
 				pCurDesc->angle =
 					NormalizeAngle(FullCircle - pCurDesc->angle);
 				break;
 			case 2: /* EARTH */
-				pCurDesc->data_index = WATER_WORLD | PLANET_SHIELDED;
+				pCurDesc->data_index = *PlanetType::Water | *PlanetType::PlanetShielded;
 				pCurDesc->radius = EarthRadius;
 				pCurDesc->NumPlanets = 2;
 				break;
 			case 3: /* MARS */
-				pCurDesc->data_index = DUST_WORLD;
+				pCurDesc->data_index = *PlanetType::Dust;
 				pCurDesc->radius = EarthRadius * 152L / 100;
 				pCurDesc->NumPlanets = 0;
 				break;
 			case 4: /* JUPITER */
-				pCurDesc->data_index = RED_GAS_GIANT;
+				pCurDesc->data_index = *PlanetType::RedGasGiant;
 				pCurDesc->radius = EarthRadius * 500L /* 520L */ / 100;
 				pCurDesc->NumPlanets = 4;
 				break;
 			case 5: /* SATURN */
-				pCurDesc->data_index = ORA_GAS_GIANT;
+				pCurDesc->data_index = *PlanetType::OraGasGiant;
 				pCurDesc->radius = EarthRadius * 750L /* 952L */ / 100;
 				pCurDesc->NumPlanets = 1;
 				break;
 			case 6: /* URANUS */
-				pCurDesc->data_index = GRN_GAS_GIANT;
+				pCurDesc->data_index = *PlanetType::GrnGasGiant;
 				pCurDesc->radius = EarthRadius * 1000L /* 1916L */ / 100;
 				pCurDesc->NumPlanets = 0;
 				break;
 			case 7: /* NEPTUNE */
-				pCurDesc->data_index = BLU_GAS_GIANT;
+				pCurDesc->data_index = *PlanetType::BluGasGiant;
 				pCurDesc->radius = EarthRadius * 1250L /* 2999L */ / 100;
 				pCurDesc->NumPlanets = 1;
 				break;
 			case 8: /* PLUTO */
-				pCurDesc->data_index = PELLUCID_WORLD;
+				pCurDesc->data_index = *PlanetType::Pellucid;
 				pCurDesc->radius = EarthRadius * 1550L /* 3937L */ / 100;
 				pCurDesc->NumPlanets = IsExtended();
 				if (uqm::isOriginalSeed())
@@ -209,7 +209,7 @@ static bool GenerateSol_generateMoons(SolarSystemState* solarSys, SystemPlanet* 
 				uint16_t angle {};
 
 				/* Starbase: */
-				solarSys->MoonDesc[0].data_index = HIERARCHY_STARBASE;
+				solarSys->MoonDesc[0].data_index = *PlanetType::HierarchyStarbase;
 				solarSys->MoonDesc[0].radius = MinMoonRadius();
 				angle = HalfCircle + Quadrant;
 				solarSys->MoonDesc[0].location.x =
@@ -219,7 +219,7 @@ static bool GenerateSol_generateMoons(SolarSystemState* solarSys, SystemPlanet* 
 				solarSys->MoonDesc[0].orb_speed = FullCircle / 11.46;
 
 				/* Luna: */
-				solarSys->MoonDesc[1].data_index = SELENIC_WORLD;
+				solarSys->MoonDesc[1].data_index = *PlanetType::Selenic;
 				solarSys->MoonDesc[1].radius = MinMoonRadius()
 											 + (4 - 1) * MoonDelta();
 				rand_val = SysGenRNG->next();
@@ -232,33 +232,33 @@ static bool GenerateSol_generateMoons(SolarSystemState* solarSys, SystemPlanet* 
 				break;
 			}
 		case 4: /* moons of JUPITER */
-			solarSys->MoonDesc[0].data_index = RADIOACTIVE_WORLD;
+			solarSys->MoonDesc[0].data_index = *PlanetType::Radioactive;
 			solarSys->MoonDesc[0].orb_speed = FullCircle / 1.75;
 			/* Io */
-			solarSys->MoonDesc[1].data_index = HALIDE_WORLD;
+			solarSys->MoonDesc[1].data_index = *PlanetType::Halide;
 			solarSys->MoonDesc[1].orb_speed = FullCircle / 3.5;
 			/* Europa */
-			solarSys->MoonDesc[2].data_index = CYANIC_WORLD;
+			solarSys->MoonDesc[2].data_index = *PlanetType::Cyanic;
 			solarSys->MoonDesc[2].orb_speed = FullCircle / 7.16;
 			/* Ganymede */
-			solarSys->MoonDesc[3].data_index = PELLUCID_WORLD;
+			solarSys->MoonDesc[3].data_index = *PlanetType::Pellucid;
 			solarSys->MoonDesc[3].orb_speed = FullCircle / 16.7;
 			/* Callisto */
 			break;
 		case 5: /* moons of SATURN */
-			solarSys->MoonDesc[0].data_index = ALKALI_WORLD;
+			solarSys->MoonDesc[0].data_index = *PlanetType::Alkali;
 			/*solarSys->MoonDesc[0].radius = MinMoonRadius()
 					+ (MaxGenMoons - 1) * MoonDelta();*/
 			solarSys->MoonDesc[0].orb_speed = FullCircle / 15.22;
 			/* Titan */
 			break;
 		case 7: /* moons of NEPTUNE */
-			solarSys->MoonDesc[0].data_index = VINYLOGOUS_WORLD;
+			solarSys->MoonDesc[0].data_index = *PlanetType::Vinylogous;
 			solarSys->MoonDesc[0].orb_speed = FullCircle / -5.87;
 			/* Triton */
 			break;
 		case 8: /* moons of Pluto */
-			solarSys->MoonDesc[0].data_index = SELENIC_WORLD;
+			solarSys->MoonDesc[0].data_index = *PlanetType::Selenic;
 			solarSys->MoonDesc[0].orb_speed = FullCircle / 6.38;
 			/* Charon */
 			break;
@@ -274,7 +274,7 @@ static bool GenerateSol_generateName(const SolarSystemState* solarSys,
 
 	uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 						sizeof(uqm::gameState().sis().PlanetName),
-						GameString(PLANET_NUMBER_BASE + planetNr));
+						GameString(GameStringBase::PlanetNumber + planetNr));
 	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(solarSys->PlanetDesc[planetNr].data_index));
 
 	return true;
@@ -295,7 +295,7 @@ static bool GenerateSol_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			EncounterGroup = 0;
-			uqm::currentActivity() |= START_ENCOUNTER;
+			uqm::currentActivity() |= ActivityFlag::StartEncounter;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
 
 			return true;
@@ -319,7 +319,7 @@ static bool GenerateSol_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 	DoPlanetaryAnalysis(&solarSys->SysInfo, world);
 	rand_val = SysGenRNG->seed();
 
-	solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
+	solarSys->SysInfo.PlanetInfo.ScanSeed[*ScanType::Mineral] = rand_val;
 	GenerateMineralDeposits(&solarSys->SysInfo, GenerateAll, nullptr);
 	rand_val = SysGenRNG->seed();
 
@@ -508,7 +508,7 @@ static bool GenerateSol_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 				//   irrelevant. The seed will be used to randomly place
 				//   the tractors, but since they are mobile, they will be
 				//   moved to different locations not governed by this seed.
-				solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] =
+				solarSys->SysInfo.PlanetInfo.ScanSeed[*ScanType::Biological] =
 					rand_val;
 
 				if (!uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED))
@@ -660,13 +660,13 @@ static uint16_t GenerateSol_generateMinerals(const SolarSystemState* solarSys,
 	{
 		/* Pluto's Moon, Charon */
 		return CustomMineralDeposits(&solarSys->SysInfo, whichNode, info,
-									 5, CHARON_DUST, LIGHT);
+									 5, *ChemicalElement::CharonDust, *DepositSize::Light);
 	}
 	else if (!uqm::isOriginalSeed() && matchWorld(solarSys, world, 0, MatchPlanet))
 	{
 		/* Mercury */
 		return CustomMineralDeposits(&solarSys->SysInfo, whichNode, info,
-									 5, RADIOACTIVE_COMPOUNDS, LIGHT);
+									 5, *ChemicalElement::RadioactiveCompounds, *DepositSize::Light);
 	}
 	else
 	{
@@ -778,7 +778,7 @@ static uint16_t GenerateSol_generateLife(const SolarSystemState* solarSys,
 	if (matchWorld(solarSys, world, 2, 1))
 	{
 		/* Earth Moon */
-		return GenerateRandomNodes(&solarSys->SysInfo, BIOLOGICAL_SCAN,
+		return GenerateRandomNodes(&solarSys->SysInfo, *ScanType::Biological,
 								   10, BrainboxBulldozer, whichNode, info);
 	}
 
@@ -795,7 +795,7 @@ static int init_probe(void)
 		&& (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q)))
 	{
 		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
-		GroupPtr->task = IN_ORBIT;
+		GroupPtr->task = *GroupTask::InOrbit;
 		GroupPtr->sys_loc = 2 + 1;	/* orbitting earth */
 		GroupPtr->dest_loc = 2 + 1; /* orbitting earth */
 		GroupPtr->loc.x = 0;
@@ -827,12 +827,12 @@ static void check_probe(void)
 	InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
-	if (GroupPtr->race_id == URQUAN_DRONE_SHIP
-		&& (GroupPtr->task & REFORM_GROUP))
+	if (GroupPtr->race_id == RaceId::UrquanDrone
+		&& (GroupPtr->task & GroupTaskFlag::ReformGroup))
 	{
 		// We just want the probe to take off as fast as possible,
 		// so clear out REFORM_GROUP
-		GroupPtr->task = FLEE | IGNORE_FLAGSHIP;
+		GroupPtr->task = *GroupTask::Flee | GroupTaskFlag::IgnoreFlagship;
 		GroupPtr->dest_loc = 0;
 	}
 	UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);

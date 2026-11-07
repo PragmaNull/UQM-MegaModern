@@ -94,7 +94,7 @@ static void on_battle_frame(void)
 	GameClockTick();
 	checkArilouGate();
 
-	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
 		SeedUniverse();
 	}
@@ -108,7 +108,7 @@ static void BackgroundInitKernel(TimeCount TimeOut)
 	TaskSwitch();
 	InitGameKernel();
 
-	while ((GetTimeCounter() <= TimeOut) && !(uqm::currentActivity() & CHECK_ABORT))
+	while ((GetTimeCounter() <= TimeOut) && !(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		UpdateInputState();
 		TaskSwitch();
@@ -119,7 +119,7 @@ static void BackgroundInitKernel(TimeCount TimeOut)
 void SignalStopMainThread(void)
 {
 	GamePaused = false;
-	uqm::currentActivity() |= CHECK_ABORT;
+	uqm::currentActivity() |= ActivityFlag::CheckAbort;
 	TaskSwitch();
 }
 
@@ -301,7 +301,7 @@ int Starcon2Main(void* threadArg)
 		DebugKeyPressed = false;
 
 		// Debug info when starting a new game
-		if (LastActivity == (CHECK_LOAD | CHECK_RESTART))
+		if (LastActivity == (ActivityFlag::CheckLoad | ActivityFlag::CheckRestart))
 		{
 			uqm::log::info("New Game Seed Type: {}", toString(uqm::currentSeed().type));
 			uqm::log::info("New Game Seed: {}", uqm::gameState().sis().Seed);
@@ -323,17 +323,17 @@ int Starcon2Main(void* threadArg)
 
 			SetStatusMessageMode(StatMsgMode::Default);
 
-			if (!((uqm::currentActivity() | NextActivity) & CHECK_LOAD))
+			if (!((uqm::currentActivity() | NextActivity) & ActivityFlag::CheckLoad))
 			{
 				ZeroVelocityComponents(&uqm::flagship().velocity);
 			}
 			// not going into talking pet conversation
-			else if (uqm::currentActivity() & CHECK_LOAD)
+			else if (uqm::currentActivity() & ActivityFlag::CheckLoad)
 			{
 				uqm::currentActivity() = NextActivity;
 			}
 
-			if ((uqm::currentActivity() & START_ENCOUNTER)
+			if ((uqm::currentActivity() & ActivityFlag::StartEncounter)
 				|| uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 			{
 				if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2
@@ -344,27 +344,27 @@ int Starcon2Main(void* threadArg)
 				else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
 						 || uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 				{
-					uqm::currentActivity() |= START_ENCOUNTER;
+					uqm::currentActivity() |= ActivityFlag::StartEncounter;
 					VisitStarBase();
 				}
 				else
 				{
-					uqm::currentActivity() |= START_ENCOUNTER;
+					uqm::currentActivity() |= ActivityFlag::StartEncounter;
 					RaceCommunication();
 				}
 
-				if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+				if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 				{
-					uqm::currentActivity() &= ~START_ENCOUNTER;
-					if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
+					uqm::currentActivity() &= ~ActivityFlag::StartEncounter;
+					if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InInterplanetary)
 					{
-						uqm::currentActivity() |= START_INTERPLANETARY;
+						uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
 					}
 				}
 			}
-			else if (uqm::currentActivity() & START_INTERPLANETARY)
+			else if (uqm::currentActivity() & ActivityFlag::StartInterplanetary)
 			{
-				uqm::currentActivity() = uqm::makeWord(IN_INTERPLANETARY, 0);
+				uqm::currentActivity() = uqm::makeWord(ActivityKind::InInterplanetary, 0);
 
 				DrawAutoPilotMessage(true);
 				SetGameClockRate(InterplanetaryClockRate);
@@ -373,7 +373,7 @@ int Starcon2Main(void* threadArg)
 			else
 			{
 				// Entering HyperSpace or QuasiSpace.
-				uqm::currentActivity() = uqm::makeWord(IN_HYPERSPACE, 0);
+				uqm::currentActivity() = uqm::makeWord(ActivityKind::InHyperspace, 0);
 
 				DrawAutoPilotMessage(true);
 				SetGameClockRate(HyperspaceClockRate);
@@ -384,28 +384,28 @@ int Starcon2Main(void* threadArg)
 
 			LastActivity = uqm::currentActivity();
 
-			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
-				&& (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE
+			if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
+				&& (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle
 					// if died for some reason
 					|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0))
 			{
 				if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL))
 				{
-					InitCommunication(BLACKURQ_CONVERSATION);
+					InitCommunication(Conversation::Blackurq);
 					if (uqm::UQMOptions::read().gameOver)
 					{
 						GameOver(EndgameScenario::DeathMarch);
 					}
 				}
-				else if (uqm::currentActivity() & CHECK_RESTART)
+				else if (uqm::currentActivity() & ActivityFlag::CheckRestart)
 				{
 					// surrendered to Ur-Quan
 					DeathBySurrender = true;
-					uqm::currentActivity() &= ~CHECK_RESTART;
+					uqm::currentActivity() &= ~ActivityFlag::CheckRestart;
 				}
 				break;
 			}
-		} while (!(uqm::currentActivity() & CHECK_ABORT));
+		} while (!(uqm::currentActivity() & ActivityFlag::CheckAbort));
 
 		StopSound();
 		ShowGameEnding();

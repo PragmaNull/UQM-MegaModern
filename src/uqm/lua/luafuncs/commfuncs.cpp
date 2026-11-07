@@ -366,7 +366,7 @@ static int luaUqm_comm_setSegue(lua_State* luaState)
 
 static int luaUqm_comm_isInOuttakes(lua_State* luaState)
 {
-	const bool result = (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE);
+	const bool result = (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle);
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -410,7 +410,7 @@ static int luaUqm_comm_getPoint(lua_State* luaState)
 	fmt::print(stderr, "get Point called ({} {}) plot ID {}\n", prime_text,
 			   plot_name, plot_id);
 #endif
-	if (plot_id >= NUM_PLOTS)
+	if (plot_id >= PlotId::NumPlots)
 	{
 		fmt::print(stderr, "Plot not found for Point ({} {}).\n", prime_text,
 				   plot_name);
@@ -473,7 +473,7 @@ static int luaUqm_comm_getStarName(lua_State* luaState)
 	fmt::print(stderr, "get Star Name called ({} {}) plot ID {}\n",
 			   prime_text, plot_name, plot_id);
 #endif
-	if (plot_id >= NUM_PLOTS)
+	if (plot_id >= PlotId::NumPlots)
 	{
 		fmt::print(stderr, "Plot not found for Star Name ({} {}).\n",
 				   prime_text, plot_name);
@@ -513,7 +513,7 @@ static int luaUqm_comm_getConstellation(lua_State* luaState)
 	fmt::print(stderr, "get Constellation called ({} {}) plot ID {}\n",
 			   prime_text, plot_name, plot_id);
 #endif
-	if (plot_id >= NUM_PLOTS)
+	if (plot_id >= PlotId::NumPlots)
 	{
 		fmt::print(stderr, "Plot not found for Constellation ({} {}).\n",
 				   prime_text, plot_name);
@@ -546,7 +546,7 @@ static int luaUqm_comm_getColor(lua_State* luaState)
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "get Color called ({} {})\n", prime_text, plot_name);
 #endif
-	if (plot_id >= NUM_PLOTS)
+	if (plot_id >= PlotId::NumPlots)
 	{
 		fmt::print(stderr, "Plot not found for getColor ({} {}).\n",
 				   prime_text, plot_name);
@@ -557,39 +557,39 @@ static int luaUqm_comm_getColor(lua_State* luaState)
 	uqstl::string dialog {};
 	switch (StarColor(plot_map[plot_id].star->Type))
 	{
-		case RED_BODY:
+		case StarBodyColor::Red:
 			dialog = "red";
-			RoboTrack[0] = (plot_id == ILWRATH_DEFINED) ?
+			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
 							   ILWRATH_COLOR_RED :
 							   ROBOT_COLOR_RED;
 			break;
-		case ORANGE_BODY:
+		case StarBodyColor::Orange:
 			dialog = "orange";
-			RoboTrack[0] = (plot_id == ILWRATH_DEFINED) ?
+			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
 							   ILWRATH_COLOR_ORANGE :
 							   ROBOT_COLOR_ORANGE;
 			break;
-		case YELLOW_BODY:
+		case StarBodyColor::Yellow:
 			dialog = "yellow";
-			RoboTrack[0] = (plot_id == ILWRATH_DEFINED) ?
+			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
 							   ILWRATH_COLOR_YELLOW :
 							   ROBOT_COLOR_YELLOW;
 			break;
-		case GREEN_BODY:
+		case StarBodyColor::Green:
 			dialog = "green";
-			RoboTrack[0] = (plot_id == ILWRATH_DEFINED) ?
+			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
 							   ILWRATH_COLOR_GREEN :
 							   ROBOT_COLOR_GREEN;
 			break;
-		case BLUE_BODY:
+		case StarBodyColor::Blue:
 			dialog = "blue";
-			RoboTrack[0] = (plot_id == ILWRATH_DEFINED) ?
+			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
 							   ILWRATH_COLOR_BLUE :
 							   ROBOT_COLOR_BLUE;
 			break;
-		case WHITE_BODY:
+		case StarBodyColor::White:
 			dialog = "white";
-			RoboTrack[0] = (plot_id == ILWRATH_DEFINED) ?
+			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
 							   ILWRATH_COLOR_WHITE :
 							   ROBOT_COLOR_WHITE;
 			break;

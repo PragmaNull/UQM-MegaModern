@@ -35,7 +35,7 @@
 static auto ElementOrgY() { return ResScale(35); }
 static auto BioOrgY() { return ResScale(119); }
 static auto ElementSpacingY() { return ResScale(9); }
-static auto FreeOrgY() { return (ElementOrgY() + (NUM_ELEMENT_CATEGORIES * ElementSpacingY())); }
+static auto FreeOrgY() { return (ElementOrgY() + (*MineralCategory::NumElementCategories * ElementSpacingY())); }
 
 static auto ElementCol0() { return ResScale(7); }
 static auto ElementCol1() { return ResScale(32); }
@@ -99,7 +99,7 @@ static void DrawElementAmount(uint16_t Element, bool selected)
 	r.extent.width = ElementSelWidth();
 	r.extent.height = ElementSpacingY() - ResScale(2);
 
-	if (Element == NUM_ELEMENT_CATEGORIES)
+	if (Element == MineralCategory::NumElementCategories)
 	{
 		r.corner.y = BioOrgY();
 	}
@@ -118,7 +118,7 @@ static void DrawElementAmount(uint16_t Element, bool selected)
 	t.pStr = buf;
 	t.baseline.y = r.corner.y + TextBaseline();
 
-	if (Element == NUM_ELEMENT_CATEGORIES)
+	if (Element == MineralCategory::NumElementCategories)
 	{ // Bio
 		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().TotalBioMass);
 	}
@@ -175,7 +175,7 @@ static void DrawCargoDisplay(void)
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = ResScale(27);
 	t.align = TextAlign::Center;
-	t.pStr = GameString(CARGO_STRING_BASE);
+	t.pStr = GameString(GameStringBase::CargoString);
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(CargoSelectedAmountColor);
 	font_DrawText(&t);
@@ -212,7 +212,7 @@ static void DrawCargoDisplay(void)
 	font_DrawText(&t);
 
 	// draw Element icons and print amounts
-	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i, cy += ElementSpacingY())
+	for (uint16_t i {0}; i < MineralCategory::NumElementCategories; ++i, cy += ElementSpacingY())
 	{
 		// erase background under an Element icon
 		SetContextForeGroundColor(BlackColor);
@@ -238,7 +238,7 @@ static void DrawCargoDisplay(void)
 	DrawStamp(&s);
 
 	// print the Bio amount
-	DrawElementAmount(NUM_ELEMENT_CATEGORIES, false);
+	DrawElementAmount(*MineralCategory::NumElementCategories, false);
 
 	// draw the line over the Bio amount
 	r.corner.x = ResScale(4);
@@ -252,7 +252,7 @@ static void DrawCargoDisplay(void)
 	t.baseline.x = ResScale(5);
 	t.baseline.y = FreeOrgY() + TextBaseline();
 	t.align = TextAlign::Left;
-	t.pStr = GameString(CARGO_STRING_BASE + 1);
+	t.pStr = GameString(GameStringBase::CargoString + 1);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
@@ -273,7 +273,7 @@ void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 
 	BatchGraphics();
 
-	if (OldElement > NUM_ELEMENT_CATEGORIES)
+	if (OldElement > MineralCategory::NumElementCategories)
 	{ // Asked for the initial display
 		DrawCargoDisplay();
 
@@ -297,7 +297,7 @@ void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 
 static void DrawElementDescription(uint16_t Element)
 {
-	DrawStatusMessage(GameString(Element + (CARGO_STRING_BASE + 2)));
+	DrawStatusMessage(GameString(Element + (GameStringBase::CargoString + 2)));
 }
 
 void DrawRainbowPlanet(uint16_t planet)
@@ -332,7 +332,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = ResScale(27);
 	t.align = TextAlign::Center;
-	t.pStr = GameString(CARGO_STRING_BASE + 10); // datalog
+	t.pStr = GameString(GameStringBase::CargoString + 10); // datalog
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(CargoSelectedAmountColor);
 	font_DrawText(&t);
@@ -382,7 +382,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	// decoration text
 	if (planet == 0)
 	{
-		t.pStr = GameString(CARGO_STRING_BASE + 11); // complete
+		t.pStr = GameString(GameStringBase::CargoString + 11); // complete
 		t.CharCount = (uint16_t)~0;
 		t.baseline.y += ResScale(25);
 		SetContextForeGroundColor(PcmenuTextColor);
@@ -390,12 +390,12 @@ void DrawRainbowPlanet(uint16_t planet)
 	}
 	else
 	{
-		t.pStr = GameString(CARGO_STRING_BASE + 12); // Uploading
+		t.pStr = GameString(GameStringBase::CargoString + 12); // Uploading
 		t.CharCount = (uint16_t)~0;
 		t.baseline.y += ResScale(22);
 		SetContextForeGroundColor(PcmenuTextColor);
 		font_DrawText(&t);
-		t.pStr = GameString(CARGO_STRING_BASE + 13); // data
+		t.pStr = GameString(GameStringBase::CargoString + 13); // data
 		t.CharCount = (uint16_t)~0;
 		t.baseline.y += ResScale(7);
 		font_DrawText(&t);
@@ -416,7 +416,7 @@ static bool DoDiscardCargo(MenuState* pMS)
 	const bool back {PulsedInputState.menu[*MenuKey::MenuUp] || PulsedInputState.menu[*MenuKey::MenuLeft]};
 	const bool forward {PulsedInputState.menu[*MenuKey::MenuDown] || PulsedInputState.menu[*MenuKey::MenuRight]};
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false;
 	}
@@ -447,14 +447,14 @@ static bool DoDiscardCargo(MenuState* pMS)
 		{
 			if (NewState == 0)
 			{
-				NewState += NUM_ELEMENT_CATEGORIES;
+				NewState += *MineralCategory::NumElementCategories;
 			}
 			--NewState;
 		}
 		else if (forward)
 		{
 			++NewState;
-			if (NewState == NUM_ELEMENT_CATEGORIES)
+			if (NewState == MineralCategory::NumElementCategories)
 			{
 				NewState = 0;
 			}

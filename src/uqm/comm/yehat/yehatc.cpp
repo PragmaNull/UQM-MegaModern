@@ -31,7 +31,7 @@
 
 static ConversationData yehat_desc =
 	{
-		YEHAT_CONVERSATION, /* AlienConv */
+		Conversation::Yehat, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -312,7 +312,7 @@ static void ExitConversation(RESPONSE_REF R)
 			uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 		}
 
-		AddEvent(EventType::Relative, 0, 0, 0, YEHAT_REBEL_EVENT);
+		AddEvent(EventType::Relative, 0, 0, 0, GameEventId::YehatRebelEvent);
 	}
 }
 
@@ -387,7 +387,7 @@ static void StartRevolt(RESPONSE_REF R)
 		NPCPhrase(SEND_HIM_OVER_2);
 	}
 
-	if (HaveEscortShip(SHOFIXTI_SHIP))
+	if (HaveEscortShip(RaceId::Shofixti))
 	{
 		Response(ok_send, ExitConversation);
 	}
@@ -401,7 +401,7 @@ static void StartRevolt(RESPONSE_REF R)
 static void YehatHome(RESPONSE_REF R)
 {
 
-	SetHomeworldKnown(YEHAT_HOME);
+	SetHomeworldKnown(*HomeId::Yehat);
 
 	if (PlayerSaid(R, whats_up_homeworld))
 	{
@@ -495,7 +495,7 @@ static void YehatSpace(RESPONSE_REF R)
 				break;
 			case 1:
 				NPCPhrase(GENERAL_INFO_SPACE_2);
-				SetHomeworldKnown(YEHAT_HOME);
+				SetHomeworldKnown(*HomeId::Yehat);
 				break;
 			case 2:
 				NPCPhrase(GENERAL_INFO_SPACE_3);
@@ -628,7 +628,7 @@ static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -738,7 +738,7 @@ ConversationData* init_yehat_comm(void)
 	yehat_desc.AlienTextBaseline.y = ResScale(107 * 2 / 3);
 	yehat_desc.AlienTextWidth = (SisTextWidth() - ResScale(16)) * 2 / 3;
 
-	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Hostile);
 	}

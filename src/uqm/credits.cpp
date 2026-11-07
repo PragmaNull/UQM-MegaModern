@@ -568,23 +568,23 @@ static constexpr auto NumOuttakes {15};
 
 static void OutTakes(void)
 {
-	const static CONVERSATION outtake_list[NumOuttakes] =
+	const static Conversation outtake_list[NumOuttakes] =
 		{
-			ZOQFOTPIK_CONVERSATION,
-			TALKING_PET_CONVERSATION,
-			ORZ_CONVERSATION,
-			UTWIG_CONVERSATION,
-			THRADD_CONVERSATION,
-			SUPOX_CONVERSATION,
-			SYREEN_CONVERSATION,
-			SHOFIXTI_CONVERSATION,
-			PKUNK_CONVERSATION,
-			YEHAT_CONVERSATION,
-			DRUUGE_CONVERSATION,
-			URQUAN_CONVERSATION,
-			VUX_CONVERSATION,
-			BLACKURQ_CONVERSATION,
-			ARILOU_CONVERSATION};
+			Conversation::Zoqfotpik,
+			Conversation::TalkingPet,
+			Conversation::Orz,
+			Conversation::Utwig,
+			Conversation::Thradd,
+			Conversation::Supox,
+			Conversation::Syreen,
+			Conversation::Shofixti,
+			Conversation::Pkunk,
+			Conversation::Yehat,
+			Conversation::Druuge,
+			Conversation::Urquan,
+			Conversation::Vux,
+			Conversation::Blackurq,
+			Conversation::Arilou};
 
 	const bool oldsubtitles = uqm::UQMOptions::read().subtitles.value;
 	int i = 0;
@@ -594,7 +594,7 @@ static void OutTakes(void)
 	sliderDisabled = true;
 	oscillDisabled = true;
 
-	for (i = 0; (i < NumOuttakes) && !(uqm::currentActivity() & CHECK_ABORT); i++)
+	for (i = 0; (i < NumOuttakes) && !(uqm::currentActivity() & ActivityFlag::CheckAbort); i++)
 	{
 		SetCommIntroMode(CommIntroMode::CrossfadeWindow, TimePeriod {});
 		InitCommunication(outtake_list[i]);
@@ -625,7 +625,7 @@ static bool DoCreditsInput(void* pIS)
 		pCIS->CloseTimeOut = TimeCount {};
 	}
 
-	if ((uqm::currentActivity() & CHECK_ABORT)
+	if ((uqm::currentActivity() & ActivityFlag::CheckAbort)
 		|| (pCIS->AllowCancel && (PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel])))
 	{ // aborted
 		return false;
@@ -733,7 +733,7 @@ void Credits(bool WithOuttakes)
 		OutTakesRunning = false;
 	}
 
-	if (!(uqm::currentActivity() & CHECK_ABORT))
+	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		if (hMusic)
 		{

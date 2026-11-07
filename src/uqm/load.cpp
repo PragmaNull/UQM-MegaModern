@@ -236,7 +236,7 @@ void LoadShipQueue(SaveReader& reader, yyjson_val* root, const char* key, Queue*
 	{
 		uint16_t raceId {};
 		reader.get(item, "race_id", raceId);
-		const HSHIPFRAG hStarShip {reader.ok() ? CloneShipFragment(static_cast<RACE_ID>(raceId), pQueue, 0) : HSHIPFRAG {}};
+		const HSHIPFRAG hStarShip {reader.ok() ? CloneShipFragment(static_cast<RaceId>(raceId), pQueue, 0) : HSHIPFRAG {}};
 		if (!hStarShip)
 		{
 			reader.fail(key);
@@ -382,7 +382,7 @@ void LoadEvents(SaveReader& reader, yyjson_val* root)
 						EventPtr->year_index,
 						EventPtr->func_index);
 #endif /* DEBUG_LOAD */
-		if (uqm::UQMOptions::read().deCleansing && EventPtr->func_index == KOHR_AH_VICTORIOUS_EVENT)
+		if (uqm::UQMOptions::read().deCleansing && EventPtr->func_index == GameEventId::KohrAhVictoriousEvent)
 		{
 			UnlockEvent(hEvent);
 			uqm::log::debug("EventPtr->year_index: {}\n", EventPtr->year_index);
@@ -401,7 +401,7 @@ void LoadEvents(SaveReader& reader, yyjson_val* root)
 		if (uqm::UQMOptions::read().deCleansing && DeCleanse)
 		{
 			AddEvent(EventType::Absolute, 2, 17, StartYear + YearsToKohrahVictory(),
-					 KOHR_AH_VICTORIOUS_EVENT);
+					 GameEventId::KohrAhVictoriousEvent);
 		}
 	}
 }
@@ -472,7 +472,7 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameSta
 	reader.getPoint(velocityObj, "error", velocity.error.width, velocity.error.height);
 	reader.getPoint(velocityObj, "incr", velocity.incr.width, velocity.incr.height);
 
-	if (uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY)
+	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InInterplanetary)
 	{ // Let's make savegames work even between different resolution modes.
 		velocity.vector.width <<= resolutionFactor;
 		velocity.vector.height <<= resolutionFactor;
@@ -496,9 +496,9 @@ void LoadSisState(SaveReader& reader, yyjson_val* obj, FlagshipData& SS)
 	reader.get(sis, "CrewEnlisted", SS.CrewEnlisted);
 	reader.get(sis, "TotalElementMass", SS.TotalElementMass);
 	reader.get(sis, "TotalBioMass", SS.TotalBioMass);
-	reader.getFixedArray<uint8_t>(sis, "ModuleSlots", SS.ModuleSlots);
-	reader.getFixedArray<uint8_t>(sis, "DriveSlots", SS.DriveSlots);
-	reader.getFixedArray<uint8_t>(sis, "JetSlots", SS.JetSlots);
+	reader.getFixedArray<ModuleType>(sis, "ModuleSlots", SS.ModuleSlots);
+	reader.getFixedArray<ModuleType>(sis, "DriveSlots", SS.DriveSlots);
+	reader.getFixedArray<ModuleType>(sis, "JetSlots", SS.JetSlots);
 	reader.get(sis, "NumLanders", SS.NumLanders);
 	reader.getFixedArray<uint16_t>(sis, "ElementAmounts", SS.ElementAmounts);
 	reader.getString(sis, "ShipName", SS.ShipName);
@@ -910,10 +910,10 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SaveSumm
 	ReinitQueue(&race_q[0]);
 	ReinitQueue(&race_q[1]);
 	CurStarDescPtr() = FindStar(nullptr, &SD.star_pt, 0, 0);
-	if (!(NextActivity & START_ENCOUNTER)
-		&& uqm::lowByte(NextActivity) == IN_INTERPLANETARY)
+	if (!(NextActivity & ActivityFlag::StartEncounter)
+		&& uqm::activityKind(NextActivity) == ActivityKind::InInterplanetary)
 	{
-		NextActivity |= START_INTERPLANETARY;
+		NextActivity |= ActivityFlag::StartInterplanetary;
 	}
 
 	// Reset Debug Key

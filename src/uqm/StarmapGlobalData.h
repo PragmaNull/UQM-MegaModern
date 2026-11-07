@@ -33,589 +33,589 @@ static constexpr StarDesc StarmapArray[] =
 		//                                        alien presence  |   |
 		//                                     owner (unused)  |  |   |
 		//   x,    y              star type   colour       |   |  |   |
-		{{5007, 35}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 6, 74},
-		{{708, 41}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 7, 91},
-		{{4714, 78}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 7, 74},
-		{{2187, 83}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 0, 126},
-		{{2814, 89}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 82},
-		{{4244, 91}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 0, 125},
-		{{5652, 98}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 0, 124},
-		{{2939, 116}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 82},
-		{{2771, 146}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 82},
-		{{5313, 150}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 6, 73},
-		{{265, 156}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 92},
-		{{4529, 169}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 8, 74},
-		{{4911, 180}, MakeStar(GIANT_STAR, ORANGE_BODY, -1), 0, 1, 74},
-		{{4747, 221}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 74},
-		{{9708, 250}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 0, 112},
-		{{4861, 262}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 74},
-		{{2908, 269}, MakeStar(DWARF_STAR, BLUE_BODY, -1), SHOFIXTI_DEFINED, 4, 82},
-		{{1855, 270}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 5, 81},
-		{{7958, 270}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 8},
-		{{5160, 280}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 4, 73},
-		{{570, 289}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 92},
-		{{4923, 294}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), YEHAT_DEFINED, 3, 74},
-		{{2820, 301}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 5, 82},
-		{{7934, 318}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 8},
-		{{8062, 318}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 8},
-		{{1116, 334}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 6, 91},
-		{{803, 337}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 3, 91},
-		{{1787, 338}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 6, 81},
-		{{877, 340}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 4, 91},
-		{{5338, 355}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 5, 73},
-		{{5039, 373}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 73},
-		{{843, 380}, MakeStar(GIANT_STAR, ORANGE_BODY, -1), 0, 1, 91},
-		{{4872, 408}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 5, 74},
-		{{1740, 423}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 7, 81},
-		{{4596, 429}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 9, 74},
-		{{843, 431}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 2, 91},
-		{{2156, 440}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 81},
-		{{2004, 441}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 81},
-		{{530, 442}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 92},
-		{{958, 468}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 5, 91},
-		{{2058, 475}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 2, 81},
-		{{304, 477}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 1, 92},
-		{{522, 525}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), PKUNK_DEFINED, 3, 92},
-		{{2100, 554}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 3, 81},
-		{{134, 565}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 6, 92},
-		{{6858, 577}, MakeStar(DWARF_STAR, GREEN_BODY, -1), MYCON_TRAP_DEFINED, 0, 123},
-		{{5014, 584}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 73},
-		{{5256, 608}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 73},
-		{{2411, 718}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 9},
-		{{2589, 741}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 9},
-		{{675, 742}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 8, 91},
-		{{9292, 750}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 4, 5},
-		{{1463, 779}, MakeStar(GIANT_STAR, RED_BODY, -1), 0, 6, 80},
-		{{3089, 782}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 4, 9},
-		{{2854, 787}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 9},
-		{{3333, 801}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 5, 9},
-		{{9237, 821}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 5, 5},
-		{{9339, 843}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 5},
-		{{242, 857}, MakeStar(GIANT_STAR, ORANGE_BODY, -1), 0, 3, 90},
-		{{1515, 866}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 5, 80},
-		{{4770, 895}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 5, 75},
-		{{1412, 905}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 80},
-		{{4681, 916}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), RAINBOW0_DEFINED, 6, 75},
-		{{9333, 937}, MakeStar(SUPER_GIANT_STAR, YELLOW_BODY, -1), MELNORME0_DEFINED, 2, 5},
-		{{9419, 942}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 5},
-		{{230, 952}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 2, 90},
-		{{146, 955}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 90},
-		{{4873, 968}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 75},
-		{{1559, 993}, MakeStar(SUPER_GIANT_STAR, RED_BODY, -1), MELNORME1_DEFINED, 1, 80},
-		{{1895, 1041}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 93},
-		{{4337, 1066}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 75},
-		{{3732, 1067}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 0, 122},
-		{{1579, 1115}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 80},
-		{{4875, 1145}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 75},
-		{{4604, 1187}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 75},
-		{{5812, 1208}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 72},
-		{{1312, 1260}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 4, 80},
-		{{1916, 1270}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 93},
-		{{6562, 1270}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 0, 121},
-		{{416, 1301}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 0, 120},
-		{{3958, 1354}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 89},
-		{{4000, 1363}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 89},
-		{{1752, 1450}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), SOL_DEFINED, 0, 129},
-		{{2187, 1500}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 0, 127},
-		{{1806, 1507}, MakeStar(GIANT_STAR, WHITE_BODY, -1), 0, 0, 128},
-		{{5708, 1520}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 72},
-		{{9469, 1548}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 6},
-		{{4333, 1562}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 88},
-		{{6041, 1562}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 72},
-		{{9375, 1583}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 6},
-		{{2881, 1614}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 96},
-		{{6083, 1625}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 72},
-		{{4250, 1645}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 88},
-		{{650, 1646}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 7, 85},
-		{{9477, 1670}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 3, 6},
-		{{2840, 1676}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 96},
-		{{9541, 1687}, MakeStar(GIANT_STAR, RED_BODY, -1), 0, 4, 6},
-		{{7395, 1687}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 3, 69},
-		{{4333, 1687}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), VUX_DEFINED, 2, 88},
-		{{9559, 1735}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 6},
-		{{736, 1737}, MakeStar(GIANT_STAR, BLUE_BODY, -1), 0, 6, 85},
-		{{1601, 1746}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 94},
-		{{7395, 1750}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 69},
-		{{951, 1770}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 1, 85},
-		{{1666, 1812}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 2, 94},
-		{{7187, 1833}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 2, 69},
-		{{705, 1838}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 5, 85},
-		{{1140, 1847}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 85},
-		{{6467, 1878}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 71},
-		{{2791, 1895}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 96},
-		{{6500, 1916}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 71},
-		{{5458, 1916}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 0, 119},
-		{{1048, 1919}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 85},
-		{{3678, 1926}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 99},
-		{{3345, 1931}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), START_COLONY_DEFINED, 0, 98},
-		{{8187, 1937}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 4, 7},
-		{{3352, 1940}, MakeStar(SUPER_GIANT_STAR, WHITE_BODY, -1), MELNORME2_DEFINED, 0, 97},
-		{{977, 1953}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 4, 85},
-		{{4221, 1986}, MakeStar(DWARF_STAR, BLUE_BODY, -1), MAIDENS_DEFINED, 1, 100},
-		{{4500, 2000}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 100},
-		{{6833, 2000}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 70},
-		{{8163, 2009}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 3, 7},
-		{{8080, 2011}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 7},
-		{{6036, 2035}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 4, 71},
-		{{6479, 2062}, MakeStar(DWARF_STAR, GREEN_BODY, -1), EGG_CASE1_DEFINED, 3, 71},
-		{{2104, 2083}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), ZOQ_SCOUT_DEFINED, 0, 118},
-		{{8062, 2083}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 7},
-		{{270, 2187}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 79},
-		{{6500, 2208}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 6, 71},
-		{{6291, 2208}, MakeStar(DWARF_STAR, GREEN_BODY, -1), MYCON_DEFINED, 5, 71},
-		{{125, 2229}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 79},
-		{{312, 2250}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 79},
-		{{3884, 2262}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 3, 99},
-		{{742, 2268}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), CHMMR_DEFINED, 0, 117},
-		{{2306, 2285}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 95},
-		{{2402, 2309}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 95},
-		{{6395, 2312}, MakeStar(DWARF_STAR, GREEN_BODY, -1), SUN_DEVICE_DEFINED, 2, 12},
-		{{8875, 2312}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 9, 61},
-		{{3551, 2320}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 99},
-		{{6208, 2333}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 12},
-		{{3354, 2354}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 99},
-		{{9909, 2359}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 0, 111},
-		{{2298, 2385}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 95},
-		{{7020, 2395}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 2, 70},
-		{{9038, 2407}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 5, 61},
-		{{9375, 2416}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 8, 61},
-		{{6500, 2458}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 6, 12},
-		{{217, 2509}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 78},
-		{{3641, 2512}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 86},
-		{{5625, 2520}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 14},
-		{{3713, 2537}, MakeStar(DWARF_STAR, GREEN_BODY, -1), ORZ_DEFINED, 3, 86},
-		{{3587, 2566}, MakeStar(DWARF_STAR, GREEN_BODY, -1), ANDROSYNTH_DEFINED, 7, 86},
-		{{9291, 2583}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 61},
-		{{3654, 2587}, MakeStar(SUPER_GIANT_STAR, GREEN_BODY, -1), MELNORME3_DEFINED, 1, 86},
-		{{3721, 2619}, MakeStar(DWARF_STAR, GREEN_BODY, -1), TAALO_PROTECTOR_DEFINED, 4, 86},
-		{{5791, 2625}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 14},
-		{{6416, 2625}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 12},
-		{{6008, 2631}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), EGG_CASE0_DEFINED, 2, 14},
-		{{3608, 2637}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 6, 86},
-		{{3499, 2648}, MakeStar(DWARF_STAR, BLUE_BODY, -1), EXCAVATION_SITE_DEFINED, 1, 87},
-		{{9479, 2666}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 61},
-		{{3668, 2666}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 5, 86},
-		{{229, 2666}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 78},
-		{{8895, 2687}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 7, 61},
-		{{138, 2696}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 5, 78},
-		{{5375, 2729}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 0, 116},
-		{{6354, 2729}, MakeStar(DWARF_STAR, WHITE_BODY, -1), EGG_CASE2_DEFINED, 3, 12},
-		{{6458, 2750}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 12},
-		{{2458, 2750}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 6, 106},
-		{{351, 2758}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 2, 78},
-		{{7083, 2770}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 70},
-		{{3759, 2778}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 87},
-		{{9333, 2791}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 61},
-		{{3400, 2804}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 87},
-		{{9469, 2806}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), DRUUGE_DEFINED, 6, 61},
-		{{3619, 2830}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 87},
-		{{2208, 2854}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 7, 106},
-		{{9250, 2854}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 4, 61},
-		{{672, 2863}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 7, 78},
-		{{167, 2875}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 6, 78},
-		{{4030, 2887}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 105},
-		{{384, 2900}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 78},
-		{{2727, 2951}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 5, 106},
-		{{4645, 2958}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 105},
-		{{5625, 2958}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 13},
-		{{8270, 2958}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 66},
-		{{8291, 2979}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 66},
-		{{6020, 2979}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), RAINBOW1_DEFINED, 3, 13},
-		{{6562, 3020}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 4, 70},
-		{{2011, 3043}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 8, 106},
-		{{8125, 3083}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 66},
-		{{2354, 3166}, MakeStar(GIANT_STAR, YELLOW_BODY, -1), 0, 4, 106},
-		{{3833, 3187}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 105},
-		{{5812, 3208}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 1, 13},
-		{{9000, 3250}, MakeStar(DWARF_STAR, RED_BODY, -1), ALGOLITES_DEFINED, 0, 113},
-		{{291, 3250}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 84},
-		{{501, 3259}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 84},
-		{{791, 3270}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 84},
-		{{2354, 3291}, MakeStar(SUPER_GIANT_STAR, RED_BODY, -1), MELNORME4_DEFINED, 1, 106},
-		{{1104, 3333}, MakeStar(DWARF_STAR, WHITE_BODY, -1), MOTHER_ARK_DEFINED, 4, 84},
-		{{2687, 3333}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 106},
-		{{3187, 3375}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 107},
-		{{1758, 3418}, MakeStar(DWARF_STAR, BLUE_BODY, -1), SPATHI_MONUMENT_DEFINED, 2, 108},
-		{{2520, 3437}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 106},
-		{{8437, 3458}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 64},
-		{{8770, 3458}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 64},
-		{{3000, 3500}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 107},
-		{{149, 3519}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 5, 76},
-		{{8791, 3541}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 64},
-		{{2148, 3551}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 109},
-		{{7375, 3562}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 0, 115},
-		{{9312, 3562}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 63},
-		{{9599, 3583}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 63},
-		{{9375, 3604}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 3, 63},
-		{{90, 3614}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 6, 76},
-		{{2770, 3625}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 4, 107},
-		{{8708, 3625}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 64},
-		{{267, 3645}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 76},
-		{{1604, 3645}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 108},
-		{{2274, 3663}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 109},
-		{{229, 3666}, MakeStar(DWARF_STAR, GREEN_BODY, -1), ILWRATH_DEFINED, 1, 76},
-		{{3083, 3674}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 107},
-		{{2416, 3687}, MakeStar(GIANT_STAR, ORANGE_BODY, -1), SPATHI_DEFINED, 5, 109},
-		{{9333, 3708}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 63},
-		{{2250, 3708}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 3, 109},
-		{{288, 3735}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 76},
-		{{2354, 3741}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 4, 109},
-		{{2583, 3750}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 6, 109},
-		{{4125, 3770}, MakeStar(DWARF_STAR, BLUE_BODY, -1), SYREEN_DEFINED, 0, 114},
-		{{166, 3770}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 4, 76},
-		{{6270, 3833}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 10},
-		{{2145, 3916}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 110},
-		{{6125, 3937}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 10},
-		{{6291, 3937}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 9, 10},
-		{{5937, 3937}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), SHIP_VAULT_DEFINED, 5, 10},
-		{{2479, 3958}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 7, 109},
-		{{926, 3972}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 83},
-		{{2062, 3991}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 110},
-		{{5895, 4020}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 8, 10},
-		{{285, 4020}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 77},
-		{{6062, 4041}, MakeStar(GIANT_STAR, YELLOW_BODY, -1), 0, 1, 10},
-		{{2875, 4041}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 20},
-		{{8645, 4062}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 65},
-		{{860, 4065}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 83},
-		{{5958, 4083}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 10},
-		{{3038, 4083}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 20},
-		{{291, 4104}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 77},
-		{{6166, 4125}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 6, 10},
-		{{9812, 4145}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 62},
-		{{8520, 4166}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 65},
-		{{9573, 4182}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 62},
-		{{500, 4187}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 77},
-		{{2145, 4208}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 110},
-		{{6208, 4229}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 7, 10},
-		{{2812, 4250}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 7, 20},
-		{{2937, 4306}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 4, 20},
-		{{9416, 4395}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 62},
-		{{2875, 4479}, MakeStar(GIANT_STAR, WHITE_BODY, -1), 0, 1, 20},
-		{{250, 4583}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 5, 26},
-		{{7250, 4583}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 68},
-		{{479, 4583}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 26},
-		{{5708, 4604}, MakeStar(DWARF_STAR, RED_BODY, -1), URQUAN0_DEFINED, 0, 104},
-		{{479, 4645}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 26},
-		{{2895, 4687}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 6, 20},
-		{{2708, 4708}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 5, 20},
-		{{562, 4708}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 26},
-		{{416, 4717}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 4, 26},
-		{{5094, 4931}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 4, 11},
-		{{9000, 5000}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 67},
-		{{8958, 5000}, MakeStar(GIANT_STAR, BLUE_BODY, -1), 0, 1, 67},
-		{{5006, 5011}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), URQUAN1_DEFINED, 3, 11},
-		{{7312, 5062}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 68},
-		{{3679, 5068}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), ZOQ_COLONY0_DEFINED, 3, 17},
-		{{9062, 5083}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 67},
-		{{7416, 5083}, MakeStar(DWARF_STAR, GREEN_BODY, -1), RAINBOW2_DEFINED, 3, 68},
-		{{5155, 5122}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 11},
-		{{3875, 5145}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 4, 17},
-		{{4937, 5145}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 11},
-		{{2979, 5166}, MakeStar(GIANT_STAR, ORANGE_BODY, -1), 0, 1, 15},
-		{{3035, 5178}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 15},
-		{{3994, 5185}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 5, 17},
-		{{3541, 5187}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 17},
-		{{5977, 5246}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 102},
-		{{3770, 5250}, MakeStar(DWARF_STAR, GREEN_BODY, -1), ZOQ_COLONY1_DEFINED, 2, 17},
-		{{1520, 5261}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 55},
-		{{1613, 5279}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 55},
-		{{7020, 5291}, MakeStar(DWARF_STAR, BLUE_BODY, -1), KOHRAH0_DEFINED, 2, 68},
-		{{1416, 5315}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 55},
-		{{2993, 5318}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 15},
-		{{1425, 5404}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 55},
-		{{1854, 5416}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 5, 55},
-		{{3625, 5437}, MakeStar(GIANT_STAR, GREEN_BODY, -1), 0, 1, 16},
-		{{3416, 5437}, MakeStar(DWARF_STAR, BLUE_BODY, -1), ZOQ_COLONY2_DEFINED, 2, 16},
-		{{4000, 5437}, MakeStar(DWARF_STAR, GREEN_BODY, -1), ZOQFOT_DEFINED, 1, 18},
-		{{6270, 5479}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 102},
-		{{3583, 5479}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 16},
-		{{4083, 5513}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 18},
-		{{2159, 5614}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 6, 55},
-		{{3937, 5625}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), ZOQ_COLONY3_DEFINED, 2, 18},
-		{{6014, 5632}, MakeStar(GIANT_STAR, BLUE_BODY, -1), 0, 1, 21},
-		{{250, 5687}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 25},
-		{{3625, 5750}, MakeStar(GIANT_STAR, RED_BODY, -1), 0, 2, 19},
-		{{371, 5772}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 25},
-		{{6107, 5785}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 2, 21},
-		{{9645, 5791}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), BURVIXESE_DEFINED, 0, 130},
-		{{1545, 5818}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 54},
-		{{3750, 5833}, MakeStar(GIANT_STAR, GREEN_BODY, -1), 0, 1, 19},
-		{{6301, 5875}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 5, 21},
-		{{1923, 5878}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 54},
-		{{4625, 5895}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 131},
-		{{152, 5900}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 25},
-		{{5437, 5916}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 4, 33},
-		{{1714, 5926}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 4, 54},
-		{{6200, 5935}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), SAMATRA_DEFINED, 4, 21},
-		{{6429, 5958}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 7, 21},
-		{{4729, 5958}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 131},
-		{{1978, 5968}, MakeStar(DWARF_STAR, GREEN_BODY, -1), TALKING_PET_DEFINED, 2, 54},
-		{{395, 5979}, MakeStar(GIANT_STAR, GREEN_BODY, -1), 0, 1, 22},
-		{{563, 5980}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 22},
-		{{456, 5989}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 6, 22},
-		{{4625, 6000}, MakeStar(DWARF_STAR, BLUE_BODY, -1), URQUAN2_DEFINED, 1, 131},
-		{{6166, 6000}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 3, 21},
-		{{6496, 6032}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 6, 21},
-		{{2228, 6038}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 12, 54},
-		{{4583, 6041}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 131},
-		{{1558, 6058}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 6, 54},
-		{{1902, 6065}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 54},
-		{{2159, 6073}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 11, 54},
-		{{365, 6093}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 22},
-		{{541, 6145}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 22},
-		{{2200, 6176}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 10, 54},
-		{{729, 6208}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 23},
-		{{5250, 6229}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 3, 33},
-		{{8166, 6250}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 40},
-		{{6215, 6255}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 8, 21},
-		{{437, 6270}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 22},
-		{{5583, 6291}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 33},
-		{{1881, 6308}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 8, 54},
-		{{1795, 6329}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 7, 54},
-		{{2118, 6379}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 9, 54},
-		{{750, 6458}, MakeStar(GIANT_STAR, WHITE_BODY, -1), 0, 1, 23},
-		{{3716, 6458}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 30},
-		{{1360, 6489}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 56},
-		{{7333, 6500}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 40},
-		{{3770, 6500}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 30},
-		{{4500, 6500}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 0, 37},
-		{{187, 6520}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 24},
-		{{125, 6541}, MakeStar(GIANT_STAR, RED_BODY, -1), 0, 1, 24},
-		{{7812, 6562}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 40},
-		{{770, 6602}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 23},
-		{{5910, 6624}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 29},
-		{{208, 6625}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 24},
-		{{2604, 6645}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 101},
-		{{1578, 6668}, MakeStar(SUPER_GIANT_STAR, GREEN_BODY, -1), MELNORME5_DEFINED, 1, 56},
-		{{5479, 6687}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 33},
-		{{375, 6716}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 24},
-		{{312, 6728}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 24},
-		{{6020, 6729}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 29},
-		{{5062, 6750}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 10, 28},
-		{{4208, 6854}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 31},
-		{{5145, 6875}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 9, 28},
-		{{4291, 6937}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 31},
-		{{5145, 6958}, MakeStar(DWARF_STAR, BLUE_BODY, -1), KOHRAH1_DEFINED, 8, 28},
-		{{7208, 7000}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 39},
-		{{8625, 7000}, MakeStar(DWARF_STAR, GREEN_BODY, -1), RAINBOW3_DEFINED, 1, 41},
-		{{4955, 7034}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 28},
-		{{4895, 7041}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 28},
-		{{4971, 7104}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 28},
-		{{8666, 7104}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 41},
-		{{4854, 7125}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 28},
-		{{5083, 7145}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 7, 28},
-		{{7360, 7184}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 4, 39},
-		{{1020, 7187}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 58},
-		{{3875, 7187}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 32},
-		{{4879, 7201}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 5, 28},
-		{{4958, 7229}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 6, 28},
-		{{7125, 7250}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 39},
-		{{7532, 7258}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 5, 39},
-		{{2416, 7291}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 101},
-		{{3854, 7291}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 2, 32},
-		{{9687, 7333}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 3, 44},
-		{{395, 7458}, MakeStar(DWARF_STAR, BLUE_BODY, -1), RAINBOW4_DEFINED, 2, 60},
-		{{4895, 7458}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 36},
-		{{4645, 7479}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 4, 36},
-		{{6940, 7514}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 11, 39},
-		{{7443, 7538}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 6, 39},
-		{{6479, 7541}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), KOHRAH2_DEFINED, 0, 38},
-		{{7208, 7541}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 1, 39},
-		{{5791, 7583}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 3, 34},
-		{{333, 7625}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 60},
-		{{5958, 7645}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 34},
-		{{1041, 7708}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 58},
-		{{5875, 7729}, MakeStar(SUPER_GIANT_STAR, YELLOW_BODY, -1), MELNORME6_DEFINED, 1, 34},
-		{{1125, 7791}, MakeStar(GIANT_STAR, BLUE_BODY, -1), 0, 1, 58},
-		{{4979, 7791}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 2, 36},
-		{{4958, 7791}, MakeStar(GIANT_STAR, WHITE_BODY, -1), 0, 1, 36},
-		{{6889, 7803}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 10, 39},
-		{{7200, 7849}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 8, 39},
-		{{7395, 7854}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 7, 39},
-		{{9437, 7854}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 44},
-		{{2836, 7857}, MakeStar(DWARF_STAR, WHITE_BODY, -1), RAINBOW5_DEFINED, 5, 53},
-		{{5375, 7875}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 35},
-		{{6187, 7875}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 7, 35},
-		{{6041, 7916}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 35},
-		{{5979, 7979}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 35},
-		{{7083, 7993}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 9, 39},
-		{{3270, 8000}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 8, 53},
-		{{6104, 8000}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 6, 35},
-		{{687, 8000}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 59},
-		{{562, 8000}, MakeStar(GIANT_STAR, GREEN_BODY, -1), URQUAN_WRECK_DEFINED, 1, 59},
-		{{5645, 8020}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 35},
-		{{1395, 8041}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 4, 58},
-		{{8229, 8041}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 43},
-		{{2518, 8056}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 3, 53},
-		{{5875, 8062}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 35},
-		{{8416, 8083}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 43},
-		{{9000, 8229}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 44},
-		{{3562, 8250}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 9, 53},
-		{{5437, 8270}, MakeStar(DWARF_STAR, RED_BODY, -1), RAINBOW6_DEFINED, 5, 48},
-		{{1520, 8333}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 58},
-		{{2771, 8351}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 53},
-		{{2535, 8358}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), THRADD_DEFINED, 4, 53},
-		{{3151, 8390}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 7, 53},
-		{{2362, 8395}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 11, 53},
-		{{2822, 8395}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 53},
-		{{5500, 8395}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 48},
-		{{2536, 8504}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 4, 2},
-		{{2582, 8507}, MakeStar(SUPER_GIANT_STAR, YELLOW_BODY, -1), MELNORME7_DEFINED, 1, 2},
-		{{8625, 8562}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 6, 3},
-		{{4375, 8562}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 0, 50},
-		{{2593, 8569}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 2},
-		{{2562, 8572}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 2},
-		{{8492, 8578}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 7, 3},
-		{{1125, 8583}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 6, 58},
-		{{8073, 8588}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 46},
-		{{8560, 8638}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 3},
-		{{8750, 8645}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 5, 3},
-		{{5562, 8645}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 1, 48},
-		{{2588, 8653}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 14, 53},
-		{{2458, 8666}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 10, 53},
-		{{7666, 8666}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), RAINBOW7_DEFINED, 2, 46},
-		{{2776, 8673}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), AQUA_HELIX_DEFINED, 6, 53},
-		{{8630, 8693}, MakeStar(DWARF_STAR, GREEN_BODY, -1), UTWIG_DEFINED, 2, 3},
-		{{2310, 8702}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 12, 53},
-		{{437, 8770}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 57},
-		{{8534, 8797}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), RAINBOW8_DEFINED, 3, 3},
-		{{8588, 8812}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 4, 3},
-		{{7187, 8812}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 3, 46},
-		{{5475, 8823}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 48},
-		{{3050, 8833}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 4, 1},
-		{{2831, 8854}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 1},
-		{{2300, 8861}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 13, 53},
-		{{479, 8875}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 57},
-		{{2706, 8910}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 2, 1},
-		{{333, 8916}, MakeStar(DWARF_STAR, GREEN_BODY, -1), DESTROYED_STARBASE_DEFINED, 3, 57}, // here
-		{{2535, 8917}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 5, 1},
-		{{8322, 8934}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 1, 45},
-		{{8249, 8958}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 45},
-		{{8375, 8958}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 2, 45},
-		{{5645, 8979}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 4, 48},
-		{{2687, 9000}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 1},
-		{{8375, 9041}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 45},
-		{{9960, 9042}, MakeStar(GIANT_STAR, WHITE_BODY, -1), RAINBOW9_DEFINED, 0, 42},
-		{{7354, 9062}, MakeStar(DWARF_STAR, BLUE_BODY, -1), 0, 1, 47},
-		{{7833, 9083}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 6, 47},
-		{{2581, 9105}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 6, 1},
-		{{7545, 9107}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 3, 47},
-		{{7414, 9124}, MakeStar(DWARF_STAR, GREEN_BODY, -1), SUPOX_DEFINED, 2, 47},
-		{{8500, 9125}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 45},
-		{{104, 9125}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 5, 27},
-		{{7889, 9181}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 7, 47},
-		{{7791, 9187}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 47},
-		{{7791, 9229}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 5, 47},
-		{{4812, 9270}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 0, 51},
-		{{8500, 9372}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), BOMB_DEFINED, 6, 45},
-		{{7255, 9374}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 11, 45},
-		{{8458, 9393}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 7, 45},
-		{{1000, 9395}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 4, 27},
-		{{5711, 9475}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 2, 49},
-		{{62, 9479}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 3, 27},
-		{{5989, 9496}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 7, 49},
-		{{8000, 9505}, MakeStar(DWARF_STAR, WHITE_BODY, -1), 0, 9, 45},
-		{{5329, 9538}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 5, 49},
-		{{2916, 9541}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 103},
-		{{8296, 9548}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 8, 45},
-		{{5600, 9552}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 1, 49},
-		{{7664, 9589}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 10, 45},
-		{{6125, 9604}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 8, 49},
-		{{9144, 9686}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 4, 4},
-		{{5781, 9711}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 3, 49},
-		{{5229, 9729}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 6, 49},
-		{{9120, 9741}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 3, 4},
-		{{9186, 9741}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 2, 4},
-		{{9159, 9745}, MakeStar(SUPER_GIANT_STAR, BLUE_BODY, -1), MELNORME8_DEFINED, 1, 4},
-		{{333, 9750}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 0, 0},
-		{{9147, 9790}, MakeStar(DWARF_STAR, ORANGE_BODY, -1), 0, 5, 4},
-		{{5704, 9795}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), VUX_BEAST_DEFINED, 4, 49},
-		{{333, 9812}, MakeStar(DWARF_STAR, GREEN_BODY, -1), SLYLANDRO_DEFINED, 2, 27},
-		{{1020, 9937}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 7, 27},
-		{{83, 9979}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 6, 27},
-		{{1937, 9979}, MakeStar(DWARF_STAR, RED_BODY, -1), 0, 1, 103},
-		{{4395, 9979}, MakeStar(DWARF_STAR, GREEN_BODY, -1), 0, 0, 52},
+		{{5007, 35}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 6, 74},
+		{{708, 41}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 7, 91},
+		{{4714, 78}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 7, 74},
+		{{2187, 83}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 0, 126},
+		{{2814, 89}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 82},
+		{{4244, 91}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 0, 125},
+		{{5652, 98}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 0, 124},
+		{{2939, 116}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 82},
+		{{2771, 146}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 82},
+		{{5313, 150}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 6, 73},
+		{{265, 156}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 92},
+		{{4529, 169}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 8, 74},
+		{{4911, 180}, MakeStar(StellarSize::Giant, StarBodyColor::Orange, -1), 0, 1, 74},
+		{{4747, 221}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 74},
+		{{9708, 250}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 0, 112},
+		{{4861, 262}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 74},
+		{{2908, 269}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::Shofixti, 4, 82},
+		{{1855, 270}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 5, 81},
+		{{7958, 270}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 8},
+		{{5160, 280}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 4, 73},
+		{{570, 289}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 92},
+		{{4923, 294}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::Yehat, 3, 74},
+		{{2820, 301}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 5, 82},
+		{{7934, 318}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 8},
+		{{8062, 318}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 8},
+		{{1116, 334}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 6, 91},
+		{{803, 337}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 3, 91},
+		{{1787, 338}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 6, 81},
+		{{877, 340}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 4, 91},
+		{{5338, 355}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 5, 73},
+		{{5039, 373}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 73},
+		{{843, 380}, MakeStar(StellarSize::Giant, StarBodyColor::Orange, -1), 0, 1, 91},
+		{{4872, 408}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 5, 74},
+		{{1740, 423}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 7, 81},
+		{{4596, 429}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 9, 74},
+		{{843, 431}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 2, 91},
+		{{2156, 440}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 81},
+		{{2004, 441}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 81},
+		{{530, 442}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 92},
+		{{958, 468}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 5, 91},
+		{{2058, 475}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 2, 81},
+		{{304, 477}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 1, 92},
+		{{522, 525}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::Pkunk, 3, 92},
+		{{2100, 554}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 3, 81},
+		{{134, 565}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 6, 92},
+		{{6858, 577}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::MyconTrap, 0, 123},
+		{{5014, 584}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 73},
+		{{5256, 608}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 73},
+		{{2411, 718}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 9},
+		{{2589, 741}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 9},
+		{{675, 742}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 8, 91},
+		{{9292, 750}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 4, 5},
+		{{1463, 779}, MakeStar(StellarSize::Giant, StarBodyColor::Red, -1), 0, 6, 80},
+		{{3089, 782}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 4, 9},
+		{{2854, 787}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 9},
+		{{3333, 801}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 5, 9},
+		{{9237, 821}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 5, 5},
+		{{9339, 843}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 5},
+		{{242, 857}, MakeStar(StellarSize::Giant, StarBodyColor::Orange, -1), 0, 3, 90},
+		{{1515, 866}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 5, 80},
+		{{4770, 895}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 5, 75},
+		{{1412, 905}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 80},
+		{{4681, 916}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Rainbow0, 6, 75},
+		{{9333, 937}, MakeStar(StellarSize::SuperGiant, StarBodyColor::Yellow, -1), *PlotId::Melnorme0, 2, 5},
+		{{9419, 942}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 5},
+		{{230, 952}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 2, 90},
+		{{146, 955}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 90},
+		{{4873, 968}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 75},
+		{{1559, 993}, MakeStar(StellarSize::SuperGiant, StarBodyColor::Red, -1), *PlotId::Melnorme1, 1, 80},
+		{{1895, 1041}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 93},
+		{{4337, 1066}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 75},
+		{{3732, 1067}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 0, 122},
+		{{1579, 1115}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 80},
+		{{4875, 1145}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 75},
+		{{4604, 1187}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 75},
+		{{5812, 1208}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 72},
+		{{1312, 1260}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 4, 80},
+		{{1916, 1270}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 93},
+		{{6562, 1270}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 0, 121},
+		{{416, 1301}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 0, 120},
+		{{3958, 1354}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 89},
+		{{4000, 1363}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 89},
+		{{1752, 1450}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::Sol, 0, 129},
+		{{2187, 1500}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 0, 127},
+		{{1806, 1507}, MakeStar(StellarSize::Giant, StarBodyColor::White, -1), 0, 0, 128},
+		{{5708, 1520}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 72},
+		{{9469, 1548}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 6},
+		{{4333, 1562}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 88},
+		{{6041, 1562}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 72},
+		{{9375, 1583}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 6},
+		{{2881, 1614}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 96},
+		{{6083, 1625}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 72},
+		{{4250, 1645}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 88},
+		{{650, 1646}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 7, 85},
+		{{9477, 1670}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 3, 6},
+		{{2840, 1676}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 96},
+		{{9541, 1687}, MakeStar(StellarSize::Giant, StarBodyColor::Red, -1), 0, 4, 6},
+		{{7395, 1687}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 3, 69},
+		{{4333, 1687}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Vux, 2, 88},
+		{{9559, 1735}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 6},
+		{{736, 1737}, MakeStar(StellarSize::Giant, StarBodyColor::Blue, -1), 0, 6, 85},
+		{{1601, 1746}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 94},
+		{{7395, 1750}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 69},
+		{{951, 1770}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 1, 85},
+		{{1666, 1812}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 2, 94},
+		{{7187, 1833}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 2, 69},
+		{{705, 1838}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 5, 85},
+		{{1140, 1847}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 85},
+		{{6467, 1878}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 71},
+		{{2791, 1895}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 96},
+		{{6500, 1916}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 71},
+		{{5458, 1916}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 0, 119},
+		{{1048, 1919}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 85},
+		{{3678, 1926}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 99},
+		{{3345, 1931}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::StartColony, 0, 98},
+		{{8187, 1937}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 4, 7},
+		{{3352, 1940}, MakeStar(StellarSize::SuperGiant, StarBodyColor::White, -1), *PlotId::Melnorme2, 0, 97},
+		{{977, 1953}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 4, 85},
+		{{4221, 1986}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::Maidens, 1, 100},
+		{{4500, 2000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 100},
+		{{6833, 2000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 70},
+		{{8163, 2009}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 3, 7},
+		{{8080, 2011}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 7},
+		{{6036, 2035}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 4, 71},
+		{{6479, 2062}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::EggCase1, 3, 71},
+		{{2104, 2083}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::ZoqScout, 0, 118},
+		{{8062, 2083}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 7},
+		{{270, 2187}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 79},
+		{{6500, 2208}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 6, 71},
+		{{6291, 2208}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Mycon, 5, 71},
+		{{125, 2229}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 79},
+		{{312, 2250}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 79},
+		{{3884, 2262}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 3, 99},
+		{{742, 2268}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Chmmr, 0, 117},
+		{{2306, 2285}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 95},
+		{{2402, 2309}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 95},
+		{{6395, 2312}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::SunDevice, 2, 12},
+		{{8875, 2312}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 9, 61},
+		{{3551, 2320}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 99},
+		{{6208, 2333}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 12},
+		{{3354, 2354}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 99},
+		{{9909, 2359}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 0, 111},
+		{{2298, 2385}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 95},
+		{{7020, 2395}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 2, 70},
+		{{9038, 2407}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 5, 61},
+		{{9375, 2416}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 8, 61},
+		{{6500, 2458}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 6, 12},
+		{{217, 2509}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 78},
+		{{3641, 2512}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 86},
+		{{5625, 2520}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 14},
+		{{3713, 2537}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Orz, 3, 86},
+		{{3587, 2566}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Androsynth, 7, 86},
+		{{9291, 2583}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 61},
+		{{3654, 2587}, MakeStar(StellarSize::SuperGiant, StarBodyColor::Green, -1), *PlotId::Melnorme3, 1, 86},
+		{{3721, 2619}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::TaaloProtector, 4, 86},
+		{{5791, 2625}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 14},
+		{{6416, 2625}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 12},
+		{{6008, 2631}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::EggCase0, 2, 14},
+		{{3608, 2637}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 6, 86},
+		{{3499, 2648}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::ExcavationSite, 1, 87},
+		{{9479, 2666}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 61},
+		{{3668, 2666}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 5, 86},
+		{{229, 2666}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 78},
+		{{8895, 2687}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 7, 61},
+		{{138, 2696}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 5, 78},
+		{{5375, 2729}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 0, 116},
+		{{6354, 2729}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), *PlotId::EggCase2, 3, 12},
+		{{6458, 2750}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 12},
+		{{2458, 2750}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 6, 106},
+		{{351, 2758}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 2, 78},
+		{{7083, 2770}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 70},
+		{{3759, 2778}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 87},
+		{{9333, 2791}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 61},
+		{{3400, 2804}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 87},
+		{{9469, 2806}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Druuge, 6, 61},
+		{{3619, 2830}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 87},
+		{{2208, 2854}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 7, 106},
+		{{9250, 2854}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 4, 61},
+		{{672, 2863}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 7, 78},
+		{{167, 2875}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 6, 78},
+		{{4030, 2887}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 105},
+		{{384, 2900}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 78},
+		{{2727, 2951}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 5, 106},
+		{{4645, 2958}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 105},
+		{{5625, 2958}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 13},
+		{{8270, 2958}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 66},
+		{{8291, 2979}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 66},
+		{{6020, 2979}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Rainbow1, 3, 13},
+		{{6562, 3020}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 4, 70},
+		{{2011, 3043}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 8, 106},
+		{{8125, 3083}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 66},
+		{{2354, 3166}, MakeStar(StellarSize::Giant, StarBodyColor::Yellow, -1), 0, 4, 106},
+		{{3833, 3187}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 105},
+		{{5812, 3208}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 1, 13},
+		{{9000, 3250}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), *PlotId::Algolites, 0, 113},
+		{{291, 3250}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 84},
+		{{501, 3259}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 84},
+		{{791, 3270}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 84},
+		{{2354, 3291}, MakeStar(StellarSize::SuperGiant, StarBodyColor::Red, -1), *PlotId::Melnorme4, 1, 106},
+		{{1104, 3333}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), *PlotId::MotherArk, 4, 84},
+		{{2687, 3333}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 106},
+		{{3187, 3375}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 107},
+		{{1758, 3418}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::SpathiMonument, 2, 108},
+		{{2520, 3437}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 106},
+		{{8437, 3458}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 64},
+		{{8770, 3458}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 64},
+		{{3000, 3500}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 107},
+		{{149, 3519}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 5, 76},
+		{{8791, 3541}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 64},
+		{{2148, 3551}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 109},
+		{{7375, 3562}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 0, 115},
+		{{9312, 3562}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 63},
+		{{9599, 3583}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 63},
+		{{9375, 3604}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 3, 63},
+		{{90, 3614}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 6, 76},
+		{{2770, 3625}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 4, 107},
+		{{8708, 3625}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 64},
+		{{267, 3645}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 76},
+		{{1604, 3645}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 108},
+		{{2274, 3663}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 109},
+		{{229, 3666}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Ilwrath, 1, 76},
+		{{3083, 3674}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 107},
+		{{2416, 3687}, MakeStar(StellarSize::Giant, StarBodyColor::Orange, -1), *PlotId::Spathi, 5, 109},
+		{{9333, 3708}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 63},
+		{{2250, 3708}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 3, 109},
+		{{288, 3735}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 76},
+		{{2354, 3741}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 4, 109},
+		{{2583, 3750}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 6, 109},
+		{{4125, 3770}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::Syreen, 0, 114},
+		{{166, 3770}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 4, 76},
+		{{6270, 3833}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 10},
+		{{2145, 3916}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 110},
+		{{6125, 3937}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 10},
+		{{6291, 3937}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 9, 10},
+		{{5937, 3937}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::ShipVault, 5, 10},
+		{{2479, 3958}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 7, 109},
+		{{926, 3972}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 83},
+		{{2062, 3991}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 110},
+		{{5895, 4020}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 8, 10},
+		{{285, 4020}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 77},
+		{{6062, 4041}, MakeStar(StellarSize::Giant, StarBodyColor::Yellow, -1), 0, 1, 10},
+		{{2875, 4041}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 20},
+		{{8645, 4062}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 65},
+		{{860, 4065}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 83},
+		{{5958, 4083}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 10},
+		{{3038, 4083}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 20},
+		{{291, 4104}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 77},
+		{{6166, 4125}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 6, 10},
+		{{9812, 4145}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 62},
+		{{8520, 4166}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 65},
+		{{9573, 4182}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 62},
+		{{500, 4187}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 77},
+		{{2145, 4208}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 110},
+		{{6208, 4229}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 7, 10},
+		{{2812, 4250}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 7, 20},
+		{{2937, 4306}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 4, 20},
+		{{9416, 4395}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 62},
+		{{2875, 4479}, MakeStar(StellarSize::Giant, StarBodyColor::White, -1), 0, 1, 20},
+		{{250, 4583}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 5, 26},
+		{{7250, 4583}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 68},
+		{{479, 4583}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 26},
+		{{5708, 4604}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), *PlotId::Urquan0, 0, 104},
+		{{479, 4645}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 26},
+		{{2895, 4687}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 6, 20},
+		{{2708, 4708}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 5, 20},
+		{{562, 4708}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 26},
+		{{416, 4717}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 4, 26},
+		{{5094, 4931}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 4, 11},
+		{{9000, 5000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 67},
+		{{8958, 5000}, MakeStar(StellarSize::Giant, StarBodyColor::Blue, -1), 0, 1, 67},
+		{{5006, 5011}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Urquan1, 3, 11},
+		{{7312, 5062}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 68},
+		{{3679, 5068}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::ZoqColony0, 3, 17},
+		{{9062, 5083}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 67},
+		{{7416, 5083}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Rainbow2, 3, 68},
+		{{5155, 5122}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 11},
+		{{3875, 5145}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 4, 17},
+		{{4937, 5145}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 11},
+		{{2979, 5166}, MakeStar(StellarSize::Giant, StarBodyColor::Orange, -1), 0, 1, 15},
+		{{3035, 5178}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 15},
+		{{3994, 5185}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 5, 17},
+		{{3541, 5187}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 17},
+		{{5977, 5246}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 102},
+		{{3770, 5250}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::ZoqColony1, 2, 17},
+		{{1520, 5261}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 55},
+		{{1613, 5279}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 55},
+		{{7020, 5291}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::Kohrah0, 2, 68},
+		{{1416, 5315}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 55},
+		{{2993, 5318}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 15},
+		{{1425, 5404}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 55},
+		{{1854, 5416}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 5, 55},
+		{{3625, 5437}, MakeStar(StellarSize::Giant, StarBodyColor::Green, -1), 0, 1, 16},
+		{{3416, 5437}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::ZoqColony2, 2, 16},
+		{{4000, 5437}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Zoqfot, 1, 18},
+		{{6270, 5479}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 102},
+		{{3583, 5479}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 16},
+		{{4083, 5513}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 18},
+		{{2159, 5614}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 6, 55},
+		{{3937, 5625}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::ZoqColony3, 2, 18},
+		{{6014, 5632}, MakeStar(StellarSize::Giant, StarBodyColor::Blue, -1), 0, 1, 21},
+		{{250, 5687}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 25},
+		{{3625, 5750}, MakeStar(StellarSize::Giant, StarBodyColor::Red, -1), 0, 2, 19},
+		{{371, 5772}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 25},
+		{{6107, 5785}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 2, 21},
+		{{9645, 5791}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Burvixese, 0, 130},
+		{{1545, 5818}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 54},
+		{{3750, 5833}, MakeStar(StellarSize::Giant, StarBodyColor::Green, -1), 0, 1, 19},
+		{{6301, 5875}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 5, 21},
+		{{1923, 5878}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 54},
+		{{4625, 5895}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 131},
+		{{152, 5900}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 25},
+		{{5437, 5916}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 4, 33},
+		{{1714, 5926}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 4, 54},
+		{{6200, 5935}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::Samatra, 4, 21},
+		{{6429, 5958}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 7, 21},
+		{{4729, 5958}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 131},
+		{{1978, 5968}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::TalkingPet, 2, 54},
+		{{395, 5979}, MakeStar(StellarSize::Giant, StarBodyColor::Green, -1), 0, 1, 22},
+		{{563, 5980}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 22},
+		{{456, 5989}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 6, 22},
+		{{4625, 6000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::Urquan2, 1, 131},
+		{{6166, 6000}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 3, 21},
+		{{6496, 6032}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 6, 21},
+		{{2228, 6038}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 12, 54},
+		{{4583, 6041}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 131},
+		{{1558, 6058}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 6, 54},
+		{{1902, 6065}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 54},
+		{{2159, 6073}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 11, 54},
+		{{365, 6093}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 22},
+		{{541, 6145}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 22},
+		{{2200, 6176}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 10, 54},
+		{{729, 6208}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 23},
+		{{5250, 6229}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 3, 33},
+		{{8166, 6250}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 40},
+		{{6215, 6255}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 8, 21},
+		{{437, 6270}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 22},
+		{{5583, 6291}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 33},
+		{{1881, 6308}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 8, 54},
+		{{1795, 6329}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 7, 54},
+		{{2118, 6379}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 9, 54},
+		{{750, 6458}, MakeStar(StellarSize::Giant, StarBodyColor::White, -1), 0, 1, 23},
+		{{3716, 6458}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 30},
+		{{1360, 6489}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 56},
+		{{7333, 6500}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 40},
+		{{3770, 6500}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 30},
+		{{4500, 6500}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 0, 37},
+		{{187, 6520}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 24},
+		{{125, 6541}, MakeStar(StellarSize::Giant, StarBodyColor::Red, -1), 0, 1, 24},
+		{{7812, 6562}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 40},
+		{{770, 6602}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 23},
+		{{5910, 6624}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 29},
+		{{208, 6625}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 24},
+		{{2604, 6645}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 101},
+		{{1578, 6668}, MakeStar(StellarSize::SuperGiant, StarBodyColor::Green, -1), *PlotId::Melnorme5, 1, 56},
+		{{5479, 6687}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 33},
+		{{375, 6716}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 24},
+		{{312, 6728}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 24},
+		{{6020, 6729}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 29},
+		{{5062, 6750}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 10, 28},
+		{{4208, 6854}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 31},
+		{{5145, 6875}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 9, 28},
+		{{4291, 6937}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 31},
+		{{5145, 6958}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::Kohrah1, 8, 28},
+		{{7208, 7000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 39},
+		{{8625, 7000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Rainbow3, 1, 41},
+		{{4955, 7034}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 28},
+		{{4895, 7041}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 28},
+		{{4971, 7104}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 28},
+		{{8666, 7104}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 41},
+		{{4854, 7125}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 28},
+		{{5083, 7145}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 7, 28},
+		{{7360, 7184}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 4, 39},
+		{{1020, 7187}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 58},
+		{{3875, 7187}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 32},
+		{{4879, 7201}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 5, 28},
+		{{4958, 7229}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 6, 28},
+		{{7125, 7250}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 39},
+		{{7532, 7258}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 5, 39},
+		{{2416, 7291}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 101},
+		{{3854, 7291}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 2, 32},
+		{{9687, 7333}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 3, 44},
+		{{395, 7458}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), *PlotId::Rainbow4, 2, 60},
+		{{4895, 7458}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 36},
+		{{4645, 7479}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 4, 36},
+		{{6940, 7514}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 11, 39},
+		{{7443, 7538}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 6, 39},
+		{{6479, 7541}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Kohrah2, 0, 38},
+		{{7208, 7541}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 1, 39},
+		{{5791, 7583}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 3, 34},
+		{{333, 7625}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 60},
+		{{5958, 7645}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 34},
+		{{1041, 7708}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 58},
+		{{5875, 7729}, MakeStar(StellarSize::SuperGiant, StarBodyColor::Yellow, -1), *PlotId::Melnorme6, 1, 34},
+		{{1125, 7791}, MakeStar(StellarSize::Giant, StarBodyColor::Blue, -1), 0, 1, 58},
+		{{4979, 7791}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 2, 36},
+		{{4958, 7791}, MakeStar(StellarSize::Giant, StarBodyColor::White, -1), 0, 1, 36},
+		{{6889, 7803}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 10, 39},
+		{{7200, 7849}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 8, 39},
+		{{7395, 7854}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 7, 39},
+		{{9437, 7854}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 44},
+		{{2836, 7857}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), *PlotId::Rainbow5, 5, 53},
+		{{5375, 7875}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 35},
+		{{6187, 7875}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 7, 35},
+		{{6041, 7916}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 35},
+		{{5979, 7979}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 35},
+		{{7083, 7993}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 9, 39},
+		{{3270, 8000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 8, 53},
+		{{6104, 8000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 6, 35},
+		{{687, 8000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 59},
+		{{562, 8000}, MakeStar(StellarSize::Giant, StarBodyColor::Green, -1), *PlotId::UrquanWreck, 1, 59},
+		{{5645, 8020}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 35},
+		{{1395, 8041}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 4, 58},
+		{{8229, 8041}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 43},
+		{{2518, 8056}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 3, 53},
+		{{5875, 8062}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 35},
+		{{8416, 8083}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 43},
+		{{9000, 8229}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 44},
+		{{3562, 8250}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 9, 53},
+		{{5437, 8270}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), *PlotId::Rainbow6, 5, 48},
+		{{1520, 8333}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 58},
+		{{2771, 8351}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 53},
+		{{2535, 8358}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::Thradd, 4, 53},
+		{{3151, 8390}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 7, 53},
+		{{2362, 8395}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 11, 53},
+		{{2822, 8395}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 53},
+		{{5500, 8395}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 48},
+		{{2536, 8504}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 4, 2},
+		{{2582, 8507}, MakeStar(StellarSize::SuperGiant, StarBodyColor::Yellow, -1), *PlotId::Melnorme7, 1, 2},
+		{{8625, 8562}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 6, 3},
+		{{4375, 8562}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 0, 50},
+		{{2593, 8569}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 2},
+		{{2562, 8572}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 2},
+		{{8492, 8578}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 7, 3},
+		{{1125, 8583}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 6, 58},
+		{{8073, 8588}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 46},
+		{{8560, 8638}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 3},
+		{{8750, 8645}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 5, 3},
+		{{5562, 8645}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 1, 48},
+		{{2588, 8653}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 14, 53},
+		{{2458, 8666}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 10, 53},
+		{{7666, 8666}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Rainbow7, 2, 46},
+		{{2776, 8673}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::AquaHelix, 6, 53},
+		{{8630, 8693}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Utwig, 2, 3},
+		{{2310, 8702}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 12, 53},
+		{{437, 8770}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 57},
+		{{8534, 8797}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), *PlotId::Rainbow8, 3, 3},
+		{{8588, 8812}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 4, 3},
+		{{7187, 8812}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 3, 46},
+		{{5475, 8823}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 48},
+		{{3050, 8833}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 4, 1},
+		{{2831, 8854}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 1},
+		{{2300, 8861}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 13, 53},
+		{{479, 8875}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 57},
+		{{2706, 8910}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 2, 1},
+		{{333, 8916}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::DestroyedStarbase, 3, 57}, // here
+		{{2535, 8917}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 5, 1},
+		{{8322, 8934}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 1, 45},
+		{{8249, 8958}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 45},
+		{{8375, 8958}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 2, 45},
+		{{5645, 8979}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 4, 48},
+		{{2687, 9000}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 1},
+		{{8375, 9041}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 45},
+		{{9960, 9042}, MakeStar(StellarSize::Giant, StarBodyColor::White, -1), *PlotId::Rainbow9, 0, 42},
+		{{7354, 9062}, MakeStar(StellarSize::Dwarf, StarBodyColor::Blue, -1), 0, 1, 47},
+		{{7833, 9083}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 6, 47},
+		{{2581, 9105}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 6, 1},
+		{{7545, 9107}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 3, 47},
+		{{7414, 9124}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Supox, 2, 47},
+		{{8500, 9125}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 45},
+		{{104, 9125}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 5, 27},
+		{{7889, 9181}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 7, 47},
+		{{7791, 9187}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 47},
+		{{7791, 9229}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 5, 47},
+		{{4812, 9270}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 0, 51},
+		{{8500, 9372}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::Bomb, 6, 45},
+		{{7255, 9374}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 11, 45},
+		{{8458, 9393}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 7, 45},
+		{{1000, 9395}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 4, 27},
+		{{5711, 9475}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 2, 49},
+		{{62, 9479}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 3, 27},
+		{{5989, 9496}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 7, 49},
+		{{8000, 9505}, MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1), 0, 9, 45},
+		{{5329, 9538}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 5, 49},
+		{{2916, 9541}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 103},
+		{{8296, 9548}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 8, 45},
+		{{5600, 9552}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 1, 49},
+		{{7664, 9589}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 10, 45},
+		{{6125, 9604}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 8, 49},
+		{{9144, 9686}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 4, 4},
+		{{5781, 9711}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 3, 49},
+		{{5229, 9729}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 6, 49},
+		{{9120, 9741}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 3, 4},
+		{{9186, 9741}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 2, 4},
+		{{9159, 9745}, MakeStar(StellarSize::SuperGiant, StarBodyColor::Blue, -1), *PlotId::Melnorme8, 1, 4},
+		{{333, 9750}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 0, 0},
+		{{9147, 9790}, MakeStar(StellarSize::Dwarf, StarBodyColor::Orange, -1), 0, 5, 4},
+		{{5704, 9795}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), *PlotId::VuxBeast, 4, 49},
+		{{333, 9812}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), *PlotId::Slylandro, 2, 27},
+		{{1020, 9937}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 7, 27},
+		{{83, 9979}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 6, 27},
+		{{1937, 9979}, MakeStar(StellarSize::Dwarf, StarBodyColor::Red, -1), 0, 1, 103},
+		{{4395, 9979}, MakeStar(StellarSize::Dwarf, StarBodyColor::Green, -1), 0, 0, 52},
 
 		{{MaxXUniverse << 1, MaxYUniverse << 1}, 0, 0, 0, 0},
 
 		// QuasiSpace locations
 		{{(-12 * VortexScale) + 5000, (-21 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 133},
 		{{(1 * VortexScale) + 5000, (-20 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 134},
 		{{(-16 * VortexScale) + 5000, (-18 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 135},
 		{{(8 * VortexScale) + 5000, (-17 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 136},
 		{{(3 * VortexScale) + 5000, (-13 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 137},
 		{{(-21 * VortexScale) + 5000, (-4 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 138},
 		{{(-4 * VortexScale) + 5000, (-4 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 139},
 		{{(-12 * VortexScale) + 5000, (-2 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 140},
 		{{(-26 * VortexScale) + 5000, (2 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 141},
 		{{(-17 * VortexScale) + 5000, (7 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 142},
 		{{(10 * VortexScale) + 5000, (7 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 143},
 		{{(15 * VortexScale) + 5000, (14 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 144},
 		{{(22 * VortexScale) + 5000, (16 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 145},
 		{{(-6 * VortexScale) + 5000, (19 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 146},
 		{{(10 * VortexScale) + 5000, (20 * VortexScale) + 5000},
-		 MakeStar(DWARF_STAR, WHITE_BODY, -1),
+		 MakeStar(StellarSize::Dwarf, StarBodyColor::White, -1),
 		 0,
 		 0,
 		 147},
 
-		{{ArilouHomeX, ArilouHomeY}, MakeStar(DWARF_STAR, YELLOW_BODY, -1), 0, 0, 148},
+		{{ArilouHomeX, ArilouHomeY}, MakeStar(StellarSize::Dwarf, StarBodyColor::Yellow, -1), 0, 0, 148},
 
 		{{MaxXUniverse << 1, MaxYUniverse << 1}, 0, 0, 0, 0},
 };
@@ -1680,171 +1680,171 @@ static constexpr GfxPoint ConstellationsArray[] =
 		{MaxXUniverse << 1, MaxYUniverse << 1}
 };
 
-static constexpr uint8_t ElementsArray[NUMBER_OF_ELEMENTS] =
+static constexpr uint8_t ElementsArray[*ChemicalElement::NumberOfElements] =
 	{
-		COMMON,		 /* HYDROGEN */
-		COMMON,		 /* HELIUM */
-		COMMON,		 /* LITHIUM */
-		BASE_METAL,	 /* BERYLLIUM */
-		BASE_METAL,	 /* BORON */
-		COMMON,		 /* CARBON */
-		COMMON,		 /* NITROGEN */
-		CORROSIVE,	 /* OXYGEN */
-		CORROSIVE,	 /* FLUORINE */
-		NOBLE,		 /* NEON */
-		BASE_METAL,	 /* SODIUM */
-		BASE_METAL,	 /* MAGNESIUM */
-		BASE_METAL,	 /* ALUMINUM */
-		COMMON,		 /* SILICON */
-		COMMON,		 /* PHOSPHORUS */
-		CORROSIVE,	 /* SULFUR */
-		CORROSIVE,	 /* CHLORINE */
-		NOBLE,		 /* ARGON */
-		BASE_METAL,	 /* POTASSIUM */
-		BASE_METAL,	 /* CALCIUM */
-		BASE_METAL,	 /* SCANDIUM */
-		BASE_METAL,	 /* TITANIUM */
-		BASE_METAL,	 /* VANADIUM */
-		BASE_METAL,	 /* CHROMIUM */
-		BASE_METAL,	 /* MANGANESE */
-		BASE_METAL,	 /* IRON */
-		BASE_METAL,	 /* COBALT */
-		BASE_METAL,	 /* NICKEL */
-		BASE_METAL,	 /* COPPER */
-		BASE_METAL,	 /* ZINC */
-		BASE_METAL,	 /* GALLIUM */
-		BASE_METAL,	 /* GERMANIUM */
-		COMMON,		 /* ARSENIC */
-		COMMON,		 /* SELENIUM */
-		CORROSIVE,	 /* BROMINE */
-		NOBLE,		 /* KRYPTON */
-		BASE_METAL,	 /* RUBIDIUM */
-		BASE_METAL,	 /* STRONTIUM */
-		BASE_METAL,	 /* YTTRIUM */
-		BASE_METAL,	 /* ZIRCONIUM */
-		BASE_METAL,	 /* NIOBIUM */
-		BASE_METAL,	 /* MOLYBDENUM */
-		RADIOACTIVE, /* TECHNETIUM */
-		BASE_METAL,	 /* RUTHENIUM */
-		BASE_METAL,	 /* RHODIUM */
-		PRECIOUS,	 /* PALLADIUM */
-		PRECIOUS,	 /* SILVER */
-		BASE_METAL,	 /* CADMIUM */
-		BASE_METAL,	 /* INDIUM */
-		BASE_METAL,	 /* TIN */
-		BASE_METAL,	 /* ANTIMONY */
-		BASE_METAL,	 /* TELLURIUM */
-		CORROSIVE,	 /* IODINE */
-		NOBLE,		 /* XENON */
-		BASE_METAL,	 /* CESIUM */
-		BASE_METAL,	 /* BARIUM */
-		RARE_EARTH,	 /* LANTHANUM */
-		RARE_EARTH,	 /* CERIUM */
-		RARE_EARTH,	 /* PRASEODYMIUM */
-		RARE_EARTH,	 /* NEODYMIUM */
-		RARE_EARTH,	 /* PROMETHIUM */
-		RARE_EARTH,	 /* SAMARIUM */
-		RARE_EARTH,	 /* EUROPIUM */
-		RARE_EARTH,	 /* GADOLINIUM */
-		RARE_EARTH,	 /* TERBIUM */
-		RARE_EARTH,	 /* DYPROSIUM */
-		RARE_EARTH,	 /* HOLMIUM */
-		RARE_EARTH,	 /* ERBIUM */
-		RARE_EARTH,	 /* THULIUM */
-		RARE_EARTH,	 /* YTTERBIUM */
-		RARE_EARTH,	 /* LUTETIUM */
-		BASE_METAL,	 /* HAFNIUM */
-		BASE_METAL,	 /* TANTALUM */
-		BASE_METAL,	 /* TUNGSTEN */
-		BASE_METAL,	 /* RHENIUM */
-		BASE_METAL,	 /* OSMIUM */
-		PRECIOUS,	 /* IRIDIUM */
-		PRECIOUS,	 /* PLATINUM */
-		PRECIOUS,	 /* GOLD */
-		BASE_METAL,	 /* MERCURY */
-		BASE_METAL,	 /* THALLIUM */
-		BASE_METAL,	 /* LEAD */
-		BASE_METAL,	 /* BISMUTH */
-		RADIOACTIVE, /* POLONIUM */
-		RADIOACTIVE, /* ASTATINE */
-		NOBLE,		 /* RADON */
-		RADIOACTIVE, /* FRANCIUM */
-		RADIOACTIVE, /* RADIUM */
-		RADIOACTIVE, /* ACTINIUM */
-		RADIOACTIVE, /* THORIUM */
-		RADIOACTIVE, /* PROTACTINIUM */
-		RADIOACTIVE, /* URANIUM */
-		RADIOACTIVE, /* NEPTUNIUM */
-		RADIOACTIVE, /* PLUTONIUM */
+		*MineralCategory::Common,	   /* HYDROGEN */
+		*MineralCategory::Common,	   /* HELIUM */
+		*MineralCategory::Common,	   /* LITHIUM */
+		*MineralCategory::BaseMetal,   /* BERYLLIUM */
+		*MineralCategory::BaseMetal,   /* BORON */
+		*MineralCategory::Common,	   /* CARBON */
+		*MineralCategory::Common,	   /* NITROGEN */
+		*MineralCategory::Corrosive,   /* OXYGEN */
+		*MineralCategory::Corrosive,   /* FLUORINE */
+		*MineralCategory::Noble,	   /* NEON */
+		*MineralCategory::BaseMetal,   /* SODIUM */
+		*MineralCategory::BaseMetal,   /* MAGNESIUM */
+		*MineralCategory::BaseMetal,   /* ALUMINUM */
+		*MineralCategory::Common,	   /* SILICON */
+		*MineralCategory::Common,	   /* PHOSPHORUS */
+		*MineralCategory::Corrosive,   /* SULFUR */
+		*MineralCategory::Corrosive,   /* CHLORINE */
+		*MineralCategory::Noble,	   /* ARGON */
+		*MineralCategory::BaseMetal,   /* POTASSIUM */
+		*MineralCategory::BaseMetal,   /* CALCIUM */
+		*MineralCategory::BaseMetal,   /* SCANDIUM */
+		*MineralCategory::BaseMetal,   /* TITANIUM */
+		*MineralCategory::BaseMetal,   /* VANADIUM */
+		*MineralCategory::BaseMetal,   /* CHROMIUM */
+		*MineralCategory::BaseMetal,   /* MANGANESE */
+		*MineralCategory::BaseMetal,   /* IRON */
+		*MineralCategory::BaseMetal,   /* COBALT */
+		*MineralCategory::BaseMetal,   /* NICKEL */
+		*MineralCategory::BaseMetal,   /* COPPER */
+		*MineralCategory::BaseMetal,   /* ZINC */
+		*MineralCategory::BaseMetal,   /* GALLIUM */
+		*MineralCategory::BaseMetal,   /* GERMANIUM */
+		*MineralCategory::Common,	   /* ARSENIC */
+		*MineralCategory::Common,	   /* SELENIUM */
+		*MineralCategory::Corrosive,   /* BROMINE */
+		*MineralCategory::Noble,	   /* KRYPTON */
+		*MineralCategory::BaseMetal,   /* RUBIDIUM */
+		*MineralCategory::BaseMetal,   /* STRONTIUM */
+		*MineralCategory::BaseMetal,   /* YTTRIUM */
+		*MineralCategory::BaseMetal,   /* ZIRCONIUM */
+		*MineralCategory::BaseMetal,   /* NIOBIUM */
+		*MineralCategory::BaseMetal,   /* MOLYBDENUM */
+		*MineralCategory::Radioactive, /* TECHNETIUM */
+		*MineralCategory::BaseMetal,   /* RUTHENIUM */
+		*MineralCategory::BaseMetal,   /* RHODIUM */
+		*MineralCategory::Precious,	   /* PALLADIUM */
+		*MineralCategory::Precious,	   /* SILVER */
+		*MineralCategory::BaseMetal,   /* CADMIUM */
+		*MineralCategory::BaseMetal,   /* INDIUM */
+		*MineralCategory::BaseMetal,   /* TIN */
+		*MineralCategory::BaseMetal,   /* ANTIMONY */
+		*MineralCategory::BaseMetal,   /* TELLURIUM */
+		*MineralCategory::Corrosive,   /* IODINE */
+		*MineralCategory::Noble,	   /* XENON */
+		*MineralCategory::BaseMetal,   /* CESIUM */
+		*MineralCategory::BaseMetal,   /* BARIUM */
+		*MineralCategory::RareEarth,   /* LANTHANUM */
+		*MineralCategory::RareEarth,   /* CERIUM */
+		*MineralCategory::RareEarth,   /* PRASEODYMIUM */
+		*MineralCategory::RareEarth,   /* NEODYMIUM */
+		*MineralCategory::RareEarth,   /* PROMETHIUM */
+		*MineralCategory::RareEarth,   /* SAMARIUM */
+		*MineralCategory::RareEarth,   /* EUROPIUM */
+		*MineralCategory::RareEarth,   /* GADOLINIUM */
+		*MineralCategory::RareEarth,   /* TERBIUM */
+		*MineralCategory::RareEarth,   /* DYPROSIUM */
+		*MineralCategory::RareEarth,   /* HOLMIUM */
+		*MineralCategory::RareEarth,   /* ERBIUM */
+		*MineralCategory::RareEarth,   /* THULIUM */
+		*MineralCategory::RareEarth,   /* YTTERBIUM */
+		*MineralCategory::RareEarth,   /* LUTETIUM */
+		*MineralCategory::BaseMetal,   /* HAFNIUM */
+		*MineralCategory::BaseMetal,   /* TANTALUM */
+		*MineralCategory::BaseMetal,   /* TUNGSTEN */
+		*MineralCategory::BaseMetal,   /* RHENIUM */
+		*MineralCategory::BaseMetal,   /* OSMIUM */
+		*MineralCategory::Precious,	   /* IRIDIUM */
+		*MineralCategory::Precious,	   /* PLATINUM */
+		*MineralCategory::Precious,	   /* GOLD */
+		*MineralCategory::BaseMetal,   /* MERCURY */
+		*MineralCategory::BaseMetal,   /* THALLIUM */
+		*MineralCategory::BaseMetal,   /* LEAD */
+		*MineralCategory::BaseMetal,   /* BISMUTH */
+		*MineralCategory::Radioactive, /* POLONIUM */
+		*MineralCategory::Radioactive, /* ASTATINE */
+		*MineralCategory::Noble,	   /* RADON */
+		*MineralCategory::Radioactive, /* FRANCIUM */
+		*MineralCategory::Radioactive, /* RADIUM */
+		*MineralCategory::Radioactive, /* ACTINIUM */
+		*MineralCategory::Radioactive, /* THORIUM */
+		*MineralCategory::Radioactive, /* PROTACTINIUM */
+		*MineralCategory::Radioactive, /* URANIUM */
+		*MineralCategory::Radioactive, /* NEPTUNIUM */
+		*MineralCategory::Radioactive, /* PLUTONIUM */
 
-		COMMON,		 /* OZONE */
-		COMMON,		 /* FREE RADICALS */
-		COMMON,		 /* CARBON DIOXIDE */
-		COMMON,		 /* CARBON MONOXIDE */
-		COMMON,		 /* AMMONIA */
-		COMMON,		 /* METHANE */
-		COMMON,		 /* SULFURIC ACID */
-		COMMON,		 /* HYDROCHLORIC ACID */
-		COMMON,		 /* HYDROCYANIC ACID */
-		COMMON,		 /* FORMIC ACID */
-		COMMON,		 /* PHOSPHORIC ACID */
-		COMMON,		 /* FORMALDEHYDE */
-		COMMON,		 /* CYANOACETYLENE */
-		COMMON,		 /* METHANOL */
-		COMMON,		 /* ETHANOL */
-		COMMON,		 /* SILICON MONOXIDE */
-		COMMON,		 /* TITANIUM OXIDE */
-		COMMON,		 /* ZIRCONIUM OXIDE */
-		COMMON,		 /* WATER */
-		COMMON,		 /* SILICON COMPOUNDS */
-		COMMON,		 /* METAL OXIDES */
-		EXOTIC,		 /* QUANTUM BLACK HOLES */
-		EXOTIC,		 /* NEUTRONIUM */
-		EXOTIC,		 /* MAGNETIC MONOPOLES */
-		EXOTIC,		 /* DEGENERATE MATTER */
-		EXOTIC,		 /* SUPER FLUIDS */
-		EXOTIC,		 /* AGUUTI NODULES */
-		COMMON,		 /* IRON COMPOUNDS */
-		COMMON,		 /* ALUMINUM COMPOUNDS */
-		COMMON,		 /* NITROUS OXIDE */
-		RADIOACTIVE, /* RADIOACTIVES */
-		COMMON,		 /* HYDROCARBONS */
-		COMMON,		 /* CARBON COMPOUNDS */
-		EXOTIC,		 /* ANTIMATTER */
-		EXOTIC,		 /* CHARON DUST */
-		EXOTIC,		 /* REISBURG HELICES */
-		EXOTIC,		 /* TZO CRYSTALS */
-		COMMON,		 /* CALCIUM COMPOUNDS */
-		COMMON,		 /* NITRIC ACID */
+		*MineralCategory::Common,	   /* OZONE */
+		*MineralCategory::Common,	   /* FREE RADICALS */
+		*MineralCategory::Common,	   /* CARBON DIOXIDE */
+		*MineralCategory::Common,	   /* CARBON MONOXIDE */
+		*MineralCategory::Common,	   /* AMMONIA */
+		*MineralCategory::Common,	   /* METHANE */
+		*MineralCategory::Common,	   /* SULFURIC ACID */
+		*MineralCategory::Common,	   /* HYDROCHLORIC ACID */
+		*MineralCategory::Common,	   /* HYDROCYANIC ACID */
+		*MineralCategory::Common,	   /* FORMIC ACID */
+		*MineralCategory::Common,	   /* PHOSPHORIC ACID */
+		*MineralCategory::Common,	   /* FORMALDEHYDE */
+		*MineralCategory::Common,	   /* CYANOACETYLENE */
+		*MineralCategory::Common,	   /* METHANOL */
+		*MineralCategory::Common,	   /* ETHANOL */
+		*MineralCategory::Common,	   /* SILICON MONOXIDE */
+		*MineralCategory::Common,	   /* TITANIUM OXIDE */
+		*MineralCategory::Common,	   /* ZIRCONIUM OXIDE */
+		*MineralCategory::Common,	   /* WATER */
+		*MineralCategory::Common,	   /* SILICON COMPOUNDS */
+		*MineralCategory::Common,	   /* METAL OXIDES */
+		*MineralCategory::Exotic,	   /* QUANTUM BLACK HOLES */
+		*MineralCategory::Exotic,	   /* NEUTRONIUM */
+		*MineralCategory::Exotic,	   /* MAGNETIC MONOPOLES */
+		*MineralCategory::Exotic,	   /* DEGENERATE MATTER */
+		*MineralCategory::Exotic,	   /* SUPER FLUIDS */
+		*MineralCategory::Exotic,	   /* AGUUTI NODULES */
+		*MineralCategory::Common,	   /* IRON COMPOUNDS */
+		*MineralCategory::Common,	   /* ALUMINUM COMPOUNDS */
+		*MineralCategory::Common,	   /* NITROUS OXIDE */
+		*MineralCategory::Radioactive, /* RADIOACTIVES */
+		*MineralCategory::Common,	   /* HYDROCARBONS */
+		*MineralCategory::Common,	   /* CARBON COMPOUNDS */
+		*MineralCategory::Exotic,	   /* ANTIMATTER */
+		*MineralCategory::Exotic,	   /* CHARON DUST */
+		*MineralCategory::Exotic,	   /* REISBURG HELICES */
+		*MineralCategory::Exotic,	   /* TZO CRYSTALS */
+		*MineralCategory::Common,	   /* CALCIUM COMPOUNDS */
+		*MineralCategory::Common,	   /* NITRIC ACID */
 };
 
 /*------------------------------ Global Data ------------------------------ */
 
 inline constexpr auto NoDeposit {0};
 
-inline constexpr auto TraceUseful {MineralDeposit(Few, LIGHT)};
-inline constexpr auto LightUseful {MineralDeposit(Moderate, LIGHT)};
-inline constexpr auto MediumUseful {MineralDeposit(Moderate, MEDIUM)};
-inline constexpr auto HeavyUseful {MineralDeposit(Moderate, HEAVY)};
-inline constexpr auto HugeUseful {MineralDeposit(Numerous, HEAVY)};
+inline constexpr auto TraceUseful {MineralDeposit(Few, DepositSize::Light)};
+inline constexpr auto LightUseful {MineralDeposit(Moderate, DepositSize::Light)};
+inline constexpr auto MediumUseful {MineralDeposit(Moderate, DepositSize::Medium)};
+inline constexpr auto HeavyUseful {MineralDeposit(Moderate, DepositSize::Heavy)};
+inline constexpr auto HugeUseful {MineralDeposit(Numerous, DepositSize::Heavy)};
 
-static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
+static constexpr PlanetFrame PlanetsArray[*PlanetType::NumberOfPlanetTypes] =
 	{
 		{
 			/* OOLITE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  VIOLET_BODY),													  /* Color and type/size of planet */
-			LowTectonics,										/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,				HEAVY),																					  /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Violet),												   /* Color and type/size of planet */
+			LowTectonics,											   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,				  DepositSize::Heavy),																									  /* Atmosphere and density */
 			{
-				{HOLMIUM, MediumUseful},
-				{ERBIUM, MediumUseful},
-				{THULIUM, MediumUseful},
-				{YTTERBIUM, MediumUseful},
-				{LUTETIUM, MediumUseful},
-				{PALLADIUM, MediumUseful},
-				{SILVER, MediumUseful},
-				{IRIDIUM, MediumUseful},
+				{*ChemicalElement::Holmium, MediumUseful},
+				{*ChemicalElement::Erbium, MediumUseful},
+				{*ChemicalElement::Thulium, MediumUseful},
+				{*ChemicalElement::Ytterbium, MediumUseful},
+				{*ChemicalElement::Lutetium, MediumUseful},
+				{*ChemicalElement::Palladium, MediumUseful},
+				{*ChemicalElement::Silver, MediumUseful},
+				{*ChemicalElement::Iridium, MediumUseful},
 			},
 			OoliteColorTabRes,
 			OoliteXlatTabRes,
@@ -1855,13 +1855,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* YTTRIC_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  VIOLET_BODY),																		   /* Color and type/size of planet */
-			LowTectonics,							 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,																			 MEDIUM),																																				 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Violet),																				 /* Color and type/size of planet */
+			LowTectonics,									/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,																					  DepositSize::Medium),																																													   /* Atmosphere and density */
 			{
-				{YTTERBIUM, HugeUseful},
-				{YTTRIUM, HugeUseful},
+				{*ChemicalElement::Ytterbium, HugeUseful},
+				{*ChemicalElement::Yttrium, HugeUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -1878,12 +1878,12 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* QUASI_DEGENERATE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + TopoAlgo,
-		  GREEN_BODY),															  /* Color and type/size of planet */
-			MedTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,																								  Nothing),																																		 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + TopoAlgo,
+		  StarBodyColor::Green),																	/* Color and type/size of planet */
+			MedTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,																													 Nothing),																																											   /* Atmosphere and density */
 			{
-				{DEGENERATE_MATTER, MediumUseful},
+				{*ChemicalElement::DegenerateMatter, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -1901,19 +1901,19 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* LANTHANIDE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  YELLOW_BODY),																 /* Color and type/size of planet */
-			HighTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,																					 LIGHT),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Yellow),																	   /* Color and type/size of planet */
+			HighTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,																										DepositSize::Light),																																																									 /* Atmosphere and density */
 			{
-				{LANTHANUM, MediumUseful},
-				{CERIUM, MediumUseful},
-				{PRASEODYMIUM, MediumUseful},
-				{NEODYMIUM, MediumUseful},
-				{PROMETHIUM, MediumUseful},
-				{SAMARIUM, MediumUseful},
-				{GADOLINIUM, MediumUseful},
-				{TERBIUM, MediumUseful},
+				{*ChemicalElement::Lanthanum, MediumUseful},
+				{*ChemicalElement::Cerium, MediumUseful},
+				{*ChemicalElement::Praseodymium, MediumUseful},
+				{*ChemicalElement::Neodymium, MediumUseful},
+				{*ChemicalElement::Promethium, MediumUseful},
+				{*ChemicalElement::Samarium, MediumUseful},
+				{*ChemicalElement::Gadolinium, MediumUseful},
+				{*ChemicalElement::Terbium, MediumUseful},
 			},
 			LanthanideColorTabRes,
 			LanthanideXlatTabRes,
@@ -1924,17 +1924,17 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* TREASURE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + TopoAlgo,
-		  YELLOW_BODY),												 /* Color and type/size of planet */
-			NoTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(SUPER_DENSITY,																						LIGHT),																																													/* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + TopoAlgo,
+		  StarBodyColor::Yellow),													/* Color and type/size of planet */
+			NoTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Super,																										   DepositSize::Light),																																																									/* Atmosphere and density */
 			{
-				{PALLADIUM, HeavyUseful},
-				{SILVER, HeavyUseful},
-				{SILVER, HeavyUseful},
-				{IRIDIUM, HeavyUseful},
-				{GOLD, HeavyUseful},
-				{PLATINUM, HeavyUseful},
+				{*ChemicalElement::Palladium, HeavyUseful},
+				{*ChemicalElement::Silver, HeavyUseful},
+				{*ChemicalElement::Silver, HeavyUseful},
+				{*ChemicalElement::Iridium, HeavyUseful},
+				{*ChemicalElement::Gold, HeavyUseful},
+				{*ChemicalElement::Platinum, HeavyUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 			},
@@ -1947,13 +1947,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* UREA_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  YELLOW_BODY),											   /* Color and type/size of planet */
-			HighTectonics,														/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																	   HEAVY),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Yellow),									  /* Color and type/size of planet */
+			HighTectonics,																		   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																						  DepositSize::Heavy),																																																								   /* Atmosphere and density */
 			{
-				{AMMONIA, LightUseful},
-				{FORMALDEHYDE, MediumUseful},
+				{*ChemicalElement::Ammonia, LightUseful},
+				{*ChemicalElement::Formaldehyde, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -1970,18 +1970,18 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* METAL_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  ORANGE_BODY),	/* Color and type/size of planet */
-			LowTectonics,	/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,HEAVY),																																									   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Orange),   /* Color and type/size of planet */
+			LowTectonics,	   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,DepositSize::Heavy),																																																					   /* Atmosphere and density */
 			{
-				{IRON, HugeUseful},
-				{NICKEL, HeavyUseful},
-				{VANADIUM, MediumUseful},
-				{SILVER, MediumUseful},
-				{URANIUM, HeavyUseful},
-				{SULFUR, MediumUseful},
-				{COPPER, HeavyUseful},
+				{*ChemicalElement::Iron, HugeUseful},
+				{*ChemicalElement::Nickel, HeavyUseful},
+				{*ChemicalElement::Vanadium, MediumUseful},
+				{*ChemicalElement::Silver, MediumUseful},
+				{*ChemicalElement::Uranium, HeavyUseful},
+				{*ChemicalElement::Sulfur, MediumUseful},
+				{*ChemicalElement::Copper, HeavyUseful},
 				{Nothing, NoDeposit},
 			},
 			MetalColorTabRes,
@@ -1993,17 +1993,17 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* RADIOACTIVE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  ORANGE_BODY),													  /* Color and type/size of planet */
-			NoTectonics,										 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(SUPER_DENSITY,			 LIGHT),																																									 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Orange),													/* Color and type/size of planet */
+			NoTectonics,												/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Super,				   DepositSize::Light),																																																		   /* Atmosphere and density */
 			{
-				{ASTATINE, MediumUseful},
-				{FRANCIUM, MediumUseful},
-				{RADIUM, MediumUseful},
-				{ACTINIUM, MediumUseful},
-				{THORIUM, MediumUseful},
-				{PROTACTINIUM, MediumUseful},
+				{*ChemicalElement::Astatine, MediumUseful},
+				{*ChemicalElement::Francium, MediumUseful},
+				{*ChemicalElement::Radium, MediumUseful},
+				{*ChemicalElement::Actinium, MediumUseful},
+				{*ChemicalElement::Thorium, MediumUseful},
+				{*ChemicalElement::Protactinium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 			},
@@ -2016,17 +2016,17 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* OPALESCENT_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  CYAN_BODY),																		   /* Color and type/size of planet */
-			LowTectonics,							 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																			 Nothing),																																				  /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Cyan),																				 /* Color and type/size of planet */
+			LowTectonics,								   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																					  Nothing),																																														/* Atmosphere and density */
 			{
-				{SAMARIUM, LightUseful},
-				{GADOLINIUM, LightUseful},
-				{ARGON, LightUseful},
-				{LITHIUM, LightUseful},
-				{SILICON, LightUseful},
-				{ARSENIC, LightUseful},
+				{*ChemicalElement::Samarium, LightUseful},
+				{*ChemicalElement::Gadolinium, LightUseful},
+				{*ChemicalElement::Argon, LightUseful},
+				{*ChemicalElement::Lithium, LightUseful},
+				{*ChemicalElement::Silicon, LightUseful},
+				{*ChemicalElement::Arsenic, LightUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 			},
@@ -2039,12 +2039,12 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* CYANIC_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + TopoAlgo,
-		  GREEN_BODY),															  /* Color and type/size of planet */
-			NoTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LIGHT_DENSITY,																								  LIGHT),																																	 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + TopoAlgo,
+		  StarBodyColor::Green),																	/* Color and type/size of planet */
+			NoTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Light,																													 DepositSize::Light),																																										   /* Atmosphere and density */
 			{
-				{CYANOACETYLENE, HugeUseful},
+				{*ChemicalElement::Cyanoacetylene, HugeUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2062,17 +2062,17 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* ACID_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  GREEN_BODY),																 /* Color and type/size of planet */
-			LowTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																					 LIGHT),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Green),																	   /* Color and type/size of planet */
+			LowTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																										DepositSize::Light),																																																									 /* Atmosphere and density */
 			{
-				{SULFURIC_ACID, HeavyUseful},
-				{HYDROCHLORIC_ACID, HeavyUseful},
-				{FORMIC_ACID, HeavyUseful},
-				{HYDROCYANIC_ACID, HeavyUseful},
-				{PHOSPHORIC_ACID, HeavyUseful},
-				{NITRIC_ACID, HeavyUseful},
+				{*ChemicalElement::SulfuricAcid, HeavyUseful},
+				{*ChemicalElement::HydrochloricAcid, HeavyUseful},
+				{*ChemicalElement::FormicAcid, HeavyUseful},
+				{*ChemicalElement::HydrocyanicAcid, HeavyUseful},
+				{*ChemicalElement::PhosphoricAcid, HeavyUseful},
+				{*ChemicalElement::NitricAcid, HeavyUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 			},
@@ -2085,14 +2085,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* ALKALI_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  GREEN_BODY),												   /* Color and type/size of planet */
-			LowTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																						MEDIUM),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Green),														  /* Color and type/size of planet */
+			LowTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																										   DepositSize::Medium),																																																									 /* Atmosphere and density */
 			{
-				{CALCIUM, MediumUseful},
-				{BARIUM, MediumUseful},
-				{STRONTIUM, MediumUseful},
+				{*ChemicalElement::Calcium, MediumUseful},
+				{*ChemicalElement::Barium, MediumUseful},
+				{*ChemicalElement::Strontium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2108,16 +2108,16 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* HALIDE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  GREEN_BODY),											   /* Color and type/size of planet */
-			NoTectonics,															/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																		   LIGHT),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Green),									  /* Color and type/size of planet */
+			NoTectonics,																			   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																							  DepositSize::Light),																																																								   /* Atmosphere and density */
 			{
-				{FLUORINE, MediumUseful},
-				{BROMINE, MediumUseful},
-				{BROMINE, MediumUseful},
-				{ASTATINE, MediumUseful},
-				{IODINE, MediumUseful},
+				{*ChemicalElement::Fluorine, MediumUseful},
+				{*ChemicalElement::Bromine, MediumUseful},
+				{*ChemicalElement::Bromine, MediumUseful},
+				{*ChemicalElement::Astatine, MediumUseful},
+				{*ChemicalElement::Iodine, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2131,13 +2131,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* GREEN_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  GREEN_BODY), /* Color and type/size of planet */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Green), /* Color and type/size of planet */
 			MedTectonics, /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,HEAVY),																																									 /* Atmosphere and density */
+			uqm::makeByte(DensityClass::Normal,DepositSize::Heavy),																																																					 /* Atmosphere and density */
 			{
-				{PRASEODYMIUM, HeavyUseful},
-				{NEODYMIUM, HeavyUseful},
+				{*ChemicalElement::Praseodymium, HeavyUseful},
+				{*ChemicalElement::Neodymium, HeavyUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2154,13 +2154,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* COPPER_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + TopoAlgo,
-		  GREEN_BODY),													   /* Color and type/size of planet */
-			NoTectonics,										 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,				MEDIUM),							 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + TopoAlgo,
+		  StarBodyColor::Green),													/* Color and type/size of planet */
+			NoTectonics,													/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,					  DepositSize::Medium),							/* Atmosphere and density */
 			{
-				{COPPER, HugeUseful},
-				{COPPER, HugeUseful},
+				{*ChemicalElement::Copper, HugeUseful},
+				{*ChemicalElement::Copper, HugeUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2177,14 +2177,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* CARBIDE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  RED_BODY),																		   /* Color and type/size of planet */
-			LowTectonics,						  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																			  LIGHT),																																				  /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Red),																				 /* Color and type/size of planet */
+			LowTectonics,									 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																					   DepositSize::Light),																																														/* Atmosphere and density */
 			{
-				{CARBON, HeavyUseful},
-				{CARBON, HeavyUseful},
-				{CARBON, HeavyUseful},
+				{*ChemicalElement::Carbon, HeavyUseful},
+				{*ChemicalElement::Carbon, HeavyUseful},
+				{*ChemicalElement::Carbon, HeavyUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2200,14 +2200,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* ULTRAMARINE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  BLUE_BODY),															  /* Color and type/size of planet */
-			NoTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LIGHT_DENSITY,																								  HEAVY),																																		 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Blue),																	/* Color and type/size of planet */
+			NoTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Light,																													 DepositSize::Heavy),																																											   /* Atmosphere and density */
 			{
-				{KRYPTON, MediumUseful},
-				{COBALT, MediumUseful},
-				{HOLMIUM, MediumUseful},
+				{*ChemicalElement::Krypton, MediumUseful},
+				{*ChemicalElement::Cobalt, MediumUseful},
+				{*ChemicalElement::Holmium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2223,17 +2223,17 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* NOBLE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  BLUE_BODY),																 /* Color and type/size of planet */
-			NoTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LIGHT_DENSITY,																					 LIGHT),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Blue),																	   /* Color and type/size of planet */
+			NoTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Light,																										DepositSize::Light),																																																									 /* Atmosphere and density */
 			{
-				{NEON, LightUseful},
-				{RADON, LightUseful},
-				{ARGON, LightUseful},
-				{KRYPTON, LightUseful},
-				{XENON, LightUseful},
-				{HELIUM, LightUseful},
+				{*ChemicalElement::Neon, LightUseful},
+				{*ChemicalElement::Radon, LightUseful},
+				{*ChemicalElement::Argon, LightUseful},
+				{*ChemicalElement::Krypton, LightUseful},
+				{*ChemicalElement::Xenon, LightUseful},
+				{*ChemicalElement::Helium, LightUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 			},
@@ -2246,14 +2246,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* AZURE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  BLUE_BODY),												 /* Color and type/size of planet */
-			MedTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																						MEDIUM),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Blue),													   /* Color and type/size of planet */
+			MedTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																										   DepositSize::Medium),																																																								   /* Atmosphere and density */
 			{
-				{INDIUM, LightUseful},
-				{MOLYBDENUM, LightUseful},
-				{VANADIUM, LightUseful},
+				{*ChemicalElement::Indium, LightUseful},
+				{*ChemicalElement::Molybdenum, LightUseful},
+				{*ChemicalElement::Vanadium, LightUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2269,13 +2269,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* CHONDRITE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  PURPLE_BODY),												/* Color and type/size of planet */
-			HighTectonics,													 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																	Nothing),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Purple),									  /* Color and type/size of planet */
+			HighTectonics,																		/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																					   Nothing),																																																								   /* Atmosphere and density */
 			{
-				{ETHANOL, HeavyUseful},
-				{FREE_RADICALS, HeavyUseful},
+				{*ChemicalElement::Ethanol, HeavyUseful},
+				{*ChemicalElement::FreeRadicals, HeavyUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2292,13 +2292,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* PURPLE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  PURPLE_BODY),   /* Color and type/size of planet */
-			LowTectonics,	   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,LIGHT),																																									  /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Purple),	  /* Color and type/size of planet */
+			LowTectonics,	  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,DepositSize::Light),																																																					  /* Atmosphere and density */
 			{
-				{RHENIUM, MediumUseful},
-				{CADMIUM, MediumUseful},
+				{*ChemicalElement::Rhenium, MediumUseful},
+				{*ChemicalElement::Cadmium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2315,13 +2315,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* SUPER_DENSE_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + TopoAlgo,
-		  PURPLE_BODY),														/* Color and type/size of planet */
-			HighTectonics,										 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(SUPER_DENSITY,				 HEAVY),			 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + TopoAlgo,
+		  StarBodyColor::Purple),													/* Color and type/size of planet */
+			HighTectonics,													/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Super,				   DepositSize::Heavy),				/* Atmosphere and density */
 			{
-				{LEAD, MediumUseful},
-				{OSMIUM, MediumUseful},
+				{*ChemicalElement::Lead, MediumUseful},
+				{*ChemicalElement::Osmium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2338,12 +2338,12 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* PELLUCID_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  PURPLE_BODY),																		   /* Color and type/size of planet */
-			NoTectonics,						   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																			 LIGHT),																																				/* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Purple),																				 /* Color and type/size of planet */
+			NoTectonics,									  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																					  DepositSize::Light),																																													  /* Atmosphere and density */
 			{
-				{TZO_CRYSTALS, TraceUseful},
+				{*ChemicalElement::TzoCrystals, TraceUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2361,14 +2361,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* DUST_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  RED_BODY),															  /* Color and type/size of planet */
-			LowTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																								  MEDIUM),																																	 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Red),																	/* Color and type/size of planet */
+			LowTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																													 DepositSize::Medium),																																										   /* Atmosphere and density */
 			{
-				{BISMUTH, LightUseful},
-				{ALUMINUM, LightUseful},
-				{POTASSIUM, LightUseful},
+				{*ChemicalElement::Bismuth, LightUseful},
+				{*ChemicalElement::Aluminum, LightUseful},
+				{*ChemicalElement::Potassium, LightUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2384,16 +2384,16 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* CRIMSON_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  RED_BODY),																 /* Color and type/size of planet */
-			NoTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																					 HEAVY),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Red),																	   /* Color and type/size of planet */
+			NoTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																										DepositSize::Heavy),																																																									 /* Atmosphere and density */
 			{
-				{BARIUM, LightUseful},
-				{BORON, LightUseful},
-				{BERYLLIUM, LightUseful},
-				{BISMUTH, LightUseful},
-				{BROMINE, LightUseful},
+				{*ChemicalElement::Barium, LightUseful},
+				{*ChemicalElement::Boron, LightUseful},
+				{*ChemicalElement::Beryllium, LightUseful},
+				{*ChemicalElement::Bismuth, LightUseful},
+				{*ChemicalElement::Bromine, LightUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2407,15 +2407,15 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* CIMMERIAN_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + TopoAlgo,
-		  RED_BODY),											  /* Color and type/size of planet */
-			LowTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,																						Nothing),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + TopoAlgo,
+		  StarBodyColor::Red),													/* Color and type/size of planet */
+			LowTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,																										   Nothing),																																																									 /* Atmosphere and density */
 			{
-				{METHANE, MediumUseful},
-				{AMMONIA, MediumUseful},
-				{METHANOL, MediumUseful},
-				{LITHIUM, MediumUseful},
+				{*ChemicalElement::Methane, MediumUseful},
+				{*ChemicalElement::Ammonia, MediumUseful},
+				{*ChemicalElement::Methanol, MediumUseful},
+				{*ChemicalElement::Lithium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2430,12 +2430,12 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* INFRARED_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  RED_BODY),											  /* Color and type/size of planet */
-			LowTectonics,														/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																	   HEAVY),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::Red),										 /* Color and type/size of planet */
+			LowTectonics,																		   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																						  DepositSize::Heavy),																																																								   /* Atmosphere and density */
 			{
-				{MERCURY, HeavyUseful},
+				{*ChemicalElement::Mercury, HeavyUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2453,14 +2453,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* SELENIC_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + CrateredAlgo,
-		  WHITE_BODY),	   /* Color and type/size of planet */
-			NoTectonics,	   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,LIGHT),																																									   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + CrateredAlgo,
+		  StarBodyColor::White),	  /* Color and type/size of planet */
+			NoTectonics,	  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,DepositSize::Light),																																																					   /* Atmosphere and density */
 			{
-				{IRON, LightUseful},
-				{ALUMINUM, LightUseful},
-				{CALCIUM, MediumUseful},
+				{*ChemicalElement::Iron, LightUseful},
+				{*ChemicalElement::Aluminum, LightUseful},
+				{*ChemicalElement::Calcium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2476,14 +2476,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* AURIC_WORLD */
-			uqm::makeByte(SMALL_ROCKY_WORLD + TopoAlgo,
-		  YELLOW_BODY),														 /* Color and type/size of planet */
-			NoTectonics,											 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,				MEDIUM),				 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::SmallRockyWorld + TopoAlgo,
+		  StarBodyColor::Yellow),														/* Color and type/size of planet */
+			NoTectonics,													/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,				  DepositSize::Medium),				/* Atmosphere and density */
 			{
-				{GOLD, HugeUseful},
-				{GOLD, HugeUseful},
-				{GOLD, HugeUseful},
+				{*ChemicalElement::Gold, HugeUseful},
+				{*ChemicalElement::Gold, HugeUseful},
+				{*ChemicalElement::Gold, HugeUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2501,15 +2501,15 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 
 		{
 			/* FLUORESCENT_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  VIOLET_BODY),																		   /* Color and type/size of planet */
-			LowTectonics,								/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,																				LIGHT),																																					/* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Violet),																				 /* Color and type/size of planet */
+			LowTectonics,									   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,																						 DepositSize::Light),																																														  /* Atmosphere and density */
 			{
-				{TECHNETIUM, HugeUseful},
-				{NEON, HugeUseful},
-				{RADON, LightUseful},
-				{POTASSIUM, LightUseful},
+				{*ChemicalElement::Technetium, HugeUseful},
+				{*ChemicalElement::Neon, HugeUseful},
+				{*ChemicalElement::Radon, LightUseful},
+				{*ChemicalElement::Potassium, LightUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2524,15 +2524,15 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* ULTRAVIOLET_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  VIOLET_BODY),															  /* Color and type/size of planet */
-			MedTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,																								  HEAVY),																																	 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Violet),																	/* Color and type/size of planet */
+			MedTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,																													 DepositSize::Heavy),																																										   /* Atmosphere and density */
 			{
-				{POLONIUM, HugeUseful},
-				{GOLD, HugeUseful},
-				{PHOSPHORUS, HugeUseful},
-				{SCANDIUM, MediumUseful},
+				{*ChemicalElement::Polonium, HugeUseful},
+				{*ChemicalElement::Gold, HugeUseful},
+				{*ChemicalElement::Phosphorus, HugeUseful},
+				{*ChemicalElement::Scandium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2547,18 +2547,18 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* PLUTONIC_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  YELLOW_BODY),																 /* Color and type/size of planet */
-			LowTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,																					 HEAVY),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Yellow),																	   /* Color and type/size of planet */
+			LowTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,																										DepositSize::Heavy),																																																									 /* Atmosphere and density */
 			{
-				{BERYLLIUM, HugeUseful},
-				{BORON, HugeUseful},
-				{LANTHANUM, MediumUseful},
-				{ASTATINE, MediumUseful},
-				{FRANCIUM, MediumUseful},
-				{TITANIUM, LightUseful},
-				{CERIUM, MediumUseful},
+				{*ChemicalElement::Beryllium, HugeUseful},
+				{*ChemicalElement::Boron, HugeUseful},
+				{*ChemicalElement::Lanthanum, MediumUseful},
+				{*ChemicalElement::Astatine, MediumUseful},
+				{*ChemicalElement::Francium, MediumUseful},
+				{*ChemicalElement::Titanium, LightUseful},
+				{*ChemicalElement::Cerium, MediumUseful},
 				{Nothing, NoDeposit},
 			},
 			PlutonicColorTabRes,
@@ -2570,18 +2570,18 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* RAINBOW_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + TopoAlgo,
-		  YELLOW_BODY),												 /* Color and type/size of planet */
-			NoTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																						LIGHT),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + TopoAlgo,
+		  StarBodyColor::Yellow),														  /* Color and type/size of planet */
+			NoTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																										   DepositSize::Light),																																																								   /* Atmosphere and density */
 			{
-				{ACTINIUM, HeavyUseful},
-				{THORIUM, HeavyUseful},
-				{PROTACTINIUM, HeavyUseful},
-				{NEPTUNIUM, HeavyUseful},
-				{PLUTONIUM, HeavyUseful},
-				{OZONE, HugeUseful},
-				{OZONE, HugeUseful},
+				{*ChemicalElement::Actinium, HeavyUseful},
+				{*ChemicalElement::Thorium, HeavyUseful},
+				{*ChemicalElement::Protactinium, HeavyUseful},
+				{*ChemicalElement::Neptunium, HeavyUseful},
+				{*ChemicalElement::Plutonium, HeavyUseful},
+				{*ChemicalElement::Ozone, HugeUseful},
+				{*ChemicalElement::Ozone, HugeUseful},
 				{Nothing, NoDeposit},
 			},
 			RainbowColorTabRes,
@@ -2593,18 +2593,18 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* SHATTERED_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  ORANGE_BODY),											/* Color and type/size of planet */
-			SuperTectonics,														   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																		  Nothing),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Orange),									  /* Color and type/size of planet */
+			SuperTectonics,																			  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																							 Nothing),																																																								   /* Atmosphere and density */
 			{
-				{PALLADIUM, HugeUseful},
-				{IRIDIUM, HugeUseful},
-				{TECHNETIUM, HugeUseful},
-				{POLONIUM, HugeUseful},
-				{SODIUM, HugeUseful},
-				{MANGANESE, HugeUseful},
-				{CHROMIUM, HugeUseful},
+				{*ChemicalElement::Palladium, HugeUseful},
+				{*ChemicalElement::Iridium, HugeUseful},
+				{*ChemicalElement::Technetium, HugeUseful},
+				{*ChemicalElement::Polonium, HugeUseful},
+				{*ChemicalElement::Sodium, HugeUseful},
+				{*ChemicalElement::Manganese, HugeUseful},
+				{*ChemicalElement::Chromium, HugeUseful},
 				{Nothing, NoDeposit},
 			},
 			ShatteredColorTabRes,
@@ -2616,13 +2616,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* SAPPHIRE_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + TopoAlgo,
-		  CYAN_BODY),	 /* Color and type/size of planet */
-			NoTectonics,	 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,Nothing),																																								/* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + TopoAlgo,
+		  StarBodyColor::Cyan),   /* Color and type/size of planet */
+			NoTectonics,	   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,Nothing),																																																				/* Atmosphere and density */
 			{
-				{REISBURG_HELICES, HugeUseful},
-				{RT_SUPER_FLUID, MediumUseful},
+				{*ChemicalElement::ReisburgHelices, HugeUseful},
+				{*ChemicalElement::RtSuperFluid, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2639,15 +2639,15 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* ORGANIC_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + TopoAlgo,
-		  CYAN_BODY),													  /* Color and type/size of planet */
-			MedTectonics,									  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,			  LIGHT), /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + TopoAlgo,
+		  StarBodyColor::Cyan),													 /* Color and type/size of planet */
+			MedTectonics,												 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,				DepositSize::Light), /* Atmosphere and density */
 			{
-				{FREE_RADICALS, HeavyUseful},
-				{FORMALDEHYDE, HeavyUseful},
-				{CARBON, HeavyUseful},
-				{CARBON_DIOXIDE, HeavyUseful},
+				{*ChemicalElement::FreeRadicals, HeavyUseful},
+				{*ChemicalElement::Formaldehyde, HeavyUseful},
+				{*ChemicalElement::Carbon, HeavyUseful},
+				{*ChemicalElement::CarbonDioxide, HeavyUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2662,14 +2662,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* XENOLITHIC_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  CYAN_BODY),																		   /* Color and type/size of planet */
-			LowTectonics,						   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																			 MEDIUM),																																				 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Cyan),																				 /* Color and type/size of planet */
+			LowTectonics,									  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																					  DepositSize::Medium),																																													   /* Atmosphere and density */
 			{
-				{ALUMINUM, HugeUseful},
-				{PLATINUM, LightUseful},
-				{GERMANIUM, TraceUseful},
+				{*ChemicalElement::Aluminum, HugeUseful},
+				{*ChemicalElement::Platinum, LightUseful},
+				{*ChemicalElement::Germanium, TraceUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2685,18 +2685,18 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* REDUX_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  GREEN_BODY),															  /* Color and type/size of planet */
-			LowTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																								  LIGHT),																																		 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Green),																	 /* Color and type/size of planet */
+			LowTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																													 DepositSize::Light),																																											   /* Atmosphere and density */
 			{
-				{BROMINE, MediumUseful},
-				{OXYGEN, MediumUseful},
-				{FLUORINE, MediumUseful},
-				{SULFUR, MediumUseful},
-				{CHLORINE, MediumUseful},
-				{IODINE, MediumUseful},
-				{ZIRCONIUM, LightUseful},
+				{*ChemicalElement::Bromine, MediumUseful},
+				{*ChemicalElement::Oxygen, MediumUseful},
+				{*ChemicalElement::Fluorine, MediumUseful},
+				{*ChemicalElement::Sulfur, MediumUseful},
+				{*ChemicalElement::Chlorine, MediumUseful},
+				{*ChemicalElement::Iodine, MediumUseful},
+				{*ChemicalElement::Zirconium, LightUseful},
 				{Nothing, NoDeposit},
 			},
 			ReduxColorTabRes,
@@ -2708,16 +2708,16 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* PRIMORDIAL_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  GREEN_BODY),																 /* Color and type/size of planet */
-			SuperTectonics,																		 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																					 HEAVY),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Green),																	   /* Color and type/size of planet */
+			SuperTectonics,																							/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																										DepositSize::Heavy),																																																									 /* Atmosphere and density */
 			{
-				{CESIUM, MediumUseful},
-				{BARIUM, MediumUseful},
-				{RUBIDIUM, MediumUseful},
-				{METHANE, HugeUseful},
-				{AMMONIA, HugeUseful},
+				{*ChemicalElement::Cesium, MediumUseful},
+				{*ChemicalElement::Barium, MediumUseful},
+				{*ChemicalElement::Rubidium, MediumUseful},
+				{*ChemicalElement::Methane, HugeUseful},
+				{*ChemicalElement::Ammonia, HugeUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2731,13 +2731,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* EMERALD_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + TopoAlgo,
-		  GREEN_BODY),												 /* Color and type/size of planet */
-			NoTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																						Nothing),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + TopoAlgo,
+		  StarBodyColor::Green),													   /* Color and type/size of planet */
+			NoTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																										   Nothing),																																																									 /* Atmosphere and density */
 			{
-				{AGUUTI_NODULES, HugeUseful},
-				{ANTIMATTER, MediumUseful},
+				{*ChemicalElement::AguutiNodules, HugeUseful},
+				{*ChemicalElement::Antimatter, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2754,17 +2754,17 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* CHLORINE_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  GREEN_BODY),											  /* Color and type/size of planet */
-			HighTectonics,														/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																	   LIGHT),																																													/* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Green),												 /* Color and type/size of planet */
+			HighTectonics,																		   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																						  DepositSize::Light),																																																									/* Atmosphere and density */
 			{
-				{CHLORINE, HeavyUseful},
-				{CHLORINE, HeavyUseful},
-				{HYDROCHLORIC_ACID, HeavyUseful},
-				{HYDROCHLORIC_ACID, HeavyUseful},
-				{ZINC, LightUseful},
-				{GALLIUM, TraceUseful},
+				{*ChemicalElement::Chlorine, HeavyUseful},
+				{*ChemicalElement::Chlorine, HeavyUseful},
+				{*ChemicalElement::HydrochloricAcid, HeavyUseful},
+				{*ChemicalElement::HydrochloricAcid, HeavyUseful},
+				{*ChemicalElement::Zinc, LightUseful},
+				{*ChemicalElement::Gallium, TraceUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 			},
@@ -2777,16 +2777,16 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* MAGNETIC_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  GREEN_BODY), /* Color and type/size of planet */
-			HighTectonics,  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,Nothing),																																									/* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Green), /* Color and type/size of planet */
+			HighTectonics,	/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,Nothing),																																																					/* Atmosphere and density */
 			{
-				{ZINC, HeavyUseful},
-				{NICKEL, MediumUseful},
-				{MAGNETIC_MONOPOLES, TraceUseful},
-				{NIOBIUM, LightUseful},
-				{IRON, HeavyUseful},
+				{*ChemicalElement::Zinc, HeavyUseful},
+				{*ChemicalElement::Nickel, MediumUseful},
+				{*ChemicalElement::MagneticMonopoles, TraceUseful},
+				{*ChemicalElement::Niobium, LightUseful},
+				{*ChemicalElement::Iron, HeavyUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2800,17 +2800,17 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* WATER_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  BLUE_BODY),														/* Color and type/size of planet */
-			LowTectonics,										   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,			  MEDIUM),					   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Blue),													  /* Color and type/size of planet */
+			LowTectonics,												  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,				DepositSize::Medium),								  /* Atmosphere and density */
 			{
-				{IRON, LightUseful},
-				{ALUMINUM, LightUseful},
-				{TIN, LightUseful},
-				{LEAD, LightUseful},
-				{URANIUM, TraceUseful},
-				{MOLYBDENUM, TraceUseful},
+				{*ChemicalElement::Iron, LightUseful},
+				{*ChemicalElement::Aluminum, LightUseful},
+				{*ChemicalElement::Tin, LightUseful},
+				{*ChemicalElement::Lead, LightUseful},
+				{*ChemicalElement::Uranium, TraceUseful},
+				{*ChemicalElement::Molybdenum, TraceUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 			},
@@ -2823,14 +2823,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* TELLURIC_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  BLUE_BODY),																		   /* Color and type/size of planet */
-			LowTectonics,						  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																			  HEAVY),																																				  /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Blue),																				 /* Color and type/size of planet */
+			LowTectonics,									 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																					   DepositSize::Heavy),																																														/* Atmosphere and density */
 			{
-				{IRIDIUM, MediumUseful},
-				{RUTHENIUM, MediumUseful},
-				{THALLIUM, MediumUseful},
+				{*ChemicalElement::Iridium, MediumUseful},
+				{*ChemicalElement::Ruthenium, MediumUseful},
+				{*ChemicalElement::Thallium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2846,14 +2846,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* HYDROCARBON_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + TopoAlgo,
-		  BLUE_BODY),															  /* Color and type/size of planet */
-			LowTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																								  LIGHT),																																	 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + TopoAlgo,
+		  StarBodyColor::Blue),																	 /* Color and type/size of planet */
+			LowTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																													 DepositSize::Light),																																										   /* Atmosphere and density */
 			{
-				{HYDROCARBONS, HugeUseful},
-				{BISMUTH, LightUseful},
-				{TANTALUM, TraceUseful},
+				{*ChemicalElement::Hydrocarbons, HugeUseful},
+				{*ChemicalElement::Bismuth, LightUseful},
+				{*ChemicalElement::Tantalum, TraceUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2869,14 +2869,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* IODINE_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  GREEN_BODY),																 /* Color and type/size of planet */
-			MedTectonics,																		 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																					 MEDIUM),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Green),																	   /* Color and type/size of planet */
+			MedTectonics,																							/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																										DepositSize::Medium),																																																									 /* Atmosphere and density */
 			{
-				{IODINE, HeavyUseful},
-				{MAGNESIUM, LightUseful},
-				{TUNGSTEN, TraceUseful},
+				{*ChemicalElement::Iodine, HeavyUseful},
+				{*ChemicalElement::Magnesium, LightUseful},
+				{*ChemicalElement::Tungsten, TraceUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2892,15 +2892,15 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* VINYLOGOUS_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  PURPLE_BODY),													/* Color and type/size of planet */
-			LowTectonics,																		 /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(NORMAL_DENSITY,																						Nothing),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Purple),														  /* Color and type/size of planet */
+			LowTectonics,																							/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Normal,																										   Nothing),																																																									 /* Atmosphere and density */
 			{
-				{TITANIUM, LightUseful},
-				{ARSENIC, LightUseful},
-				{POTASSIUM, LightUseful},
-				{RHENIUM, LightUseful},
+				{*ChemicalElement::Titanium, LightUseful},
+				{*ChemicalElement::Arsenic, LightUseful},
+				{*ChemicalElement::Potassium, LightUseful},
+				{*ChemicalElement::Rhenium, LightUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2915,13 +2915,13 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* RUBY_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + TopoAlgo,
-		  RED_BODY),											   /* Color and type/size of planet */
-			NoTectonics,														/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,																	   LIGHT),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + TopoAlgo,
+		  StarBodyColor::Red),									  /* Color and type/size of planet */
+			NoTectonics,																		   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,																						  DepositSize::Light),																																																								   /* Atmosphere and density */
 			{
-				{TZO_CRYSTALS, HugeUseful},
-				{NEUTRONIUM, MediumUseful},
+				{*ChemicalElement::TzoCrystals, HugeUseful},
+				{*ChemicalElement::Neutronium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2938,14 +2938,14 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* MAGMA_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + TopoAlgo,
-		  RED_BODY),	/* Color and type/size of planet */
-			SuperTectonics, /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(HIGH_DENSITY,			LIGHT),																																								   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + TopoAlgo,
+		  StarBodyColor::Red),  /* Color and type/size of planet */
+			SuperTectonics,			   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::High,							  DepositSize::Light),																																																				   /* Atmosphere and density */
 			{
-				{LEAD, LightUseful},
-				{NICKEL, LightUseful},
-				{IRON, LightUseful},
+				{*ChemicalElement::Lead, LightUseful},
+				{*ChemicalElement::Nickel, LightUseful},
+				{*ChemicalElement::Iron, LightUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -2961,16 +2961,16 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* MAROON_WORLD */
-			uqm::makeByte(LARGE_ROCKY_WORLD + CrateredAlgo,
-		  RED_BODY),														/* Color and type/size of planet */
-			NoTectonics,										/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(LOW_DENSITY,			   MEDIUM),																					 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::LargeRockyWorld + CrateredAlgo,
+		  StarBodyColor::Red),													   /* Color and type/size of planet */
+			NoTectonics,												   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Low,				 DepositSize::Medium),																									 /* Atmosphere and density */
 			{
-				{CESIUM, MediumUseful},
-				{SILICON, MediumUseful},
-				{PHOSPHORUS, MediumUseful},
-				{RHODIUM, MediumUseful},
-				{CADMIUM, MediumUseful},
+				{*ChemicalElement::Cesium, MediumUseful},
+				{*ChemicalElement::Silicon, MediumUseful},
+				{*ChemicalElement::Phosphorus, MediumUseful},
+				{*ChemicalElement::Rhodium, MediumUseful},
+				{*ChemicalElement::Cadmium, MediumUseful},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -3003,10 +3003,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		//},
 
 		{
-			uqm::makeByte(GAS_GIANT + GasGiantAlgo,
-		  BLUE_BODY),																		   /* Color and type/size of planet */
-			NoTectonics,						   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(GAS_DENSITY,																			   HEAVY),																																				   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::GasGiant + GasGiantAlgo,
+		  StarBodyColor::Blue),																				 /* Color and type/size of planet */
+			NoTectonics,									  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Gas,																						DepositSize::Heavy),																																														 /* Atmosphere and density */
 			{
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -3025,10 +3025,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		 },
 		{
-			uqm::makeByte(GAS_GIANT + GasGiantAlgo,
-		  CYAN_BODY),															  /* Color and type/size of planet */
-			NoTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(GAS_DENSITY,																								  HEAVY),																																		 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::GasGiant + GasGiantAlgo,
+		  StarBodyColor::Cyan),																	/* Color and type/size of planet */
+			NoTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Gas,																													 DepositSize::Heavy),																																											   /* Atmosphere and density */
 			{
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -3047,10 +3047,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		 },
 		{
-			uqm::makeByte(GAS_GIANT + GasGiantAlgo,
-		  GREEN_BODY),																 /* Color and type/size of planet */
-			NoTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(GAS_DENSITY,																					 HEAVY),																																													 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::GasGiant + GasGiantAlgo,
+		  StarBodyColor::Green),																	   /* Color and type/size of planet */
+			NoTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Gas,																										DepositSize::Heavy),																																																									 /* Atmosphere and density */
 			{
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -3069,10 +3069,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		 },
 		{
-			uqm::makeByte(GAS_GIANT + GasGiantAlgo,
-		  GRAY_BODY),												  /* Color and type/size of planet */
-			NoTectonics,																		/* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(GAS_DENSITY,																						HEAVY),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::GasGiant + GasGiantAlgo,
+		  StarBodyColor::Gray),														  /* Color and type/size of planet */
+			NoTectonics,																						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Gas,																										   DepositSize::Heavy),																																																								   /* Atmosphere and density */
 			{
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -3091,10 +3091,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		 },
 		{
-			uqm::makeByte(GAS_GIANT + GasGiantAlgo,
-		  ORANGE_BODY),										   /* Color and type/size of planet */
-			NoTectonics,													  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(GAS_DENSITY,																	 HEAVY),																																												   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::GasGiant + GasGiantAlgo,
+		  StarBodyColor::Orange),												  /* Color and type/size of planet */
+			NoTectonics,																		 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Gas,																						DepositSize::Heavy),																																																								   /* Atmosphere and density */
 			{
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -3113,10 +3113,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		 },
 		{
-			uqm::makeByte(GAS_GIANT + GasGiantAlgo,
-		  PURPLE_BODY),	   /* Color and type/size of planet */
-			NoTectonics,	   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(GAS_DENSITY,HEAVY),																																									   /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::GasGiant + GasGiantAlgo,
+		  StarBodyColor::Purple),	  /* Color and type/size of planet */
+			NoTectonics,	  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Gas,DepositSize::Heavy),																																																					   /* Atmosphere and density */
 			{
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -3135,10 +3135,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		 },
 		{
-			uqm::makeByte(GAS_GIANT + GasGiantAlgo,
-		  RED_BODY),														 /* Color and type/size of planet */
-			NoTectonics,									   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(GAS_DENSITY,			   HEAVY),																						/* Atmosphere and density */
+			uqm::makeByte(PlanetSize::GasGiant + GasGiantAlgo,
+		  StarBodyColor::Red),													  /* Color and type/size of planet */
+			NoTectonics,												  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Gas,				 DepositSize::Heavy),																						   /* Atmosphere and density */
 			{
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -3157,10 +3157,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		 },
 		{
-			uqm::makeByte(GAS_GIANT + GasGiantAlgo,
-		  VIOLET_BODY),																		   /* Color and type/size of planet */
-			NoTectonics,						   /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(GAS_DENSITY,																				HEAVY),																																					 /* Atmosphere and density */
+			uqm::makeByte(PlanetSize::GasGiant + GasGiantAlgo,
+		  StarBodyColor::Violet),																				 /* Color and type/size of planet */
+			NoTectonics,									  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Gas,																						 DepositSize::Heavy),																																														   /* Atmosphere and density */
 			{
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},
@@ -3180,10 +3180,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		 },
 		{
 			/* A Jupiter-like World */
-			uqm::makeByte(GAS_GIANT + GasGiantAlgo,
-		  YELLOW_BODY),															  /* Color and type/size of planet */
-			NoTectonics,																		  /* Tectonics - Scaled with Earth at 82    */
-			uqm::makeByte(GAS_DENSITY,																								  HEAVY),																																				/* Atmosphere and density */
+			uqm::makeByte(PlanetSize::GasGiant + GasGiantAlgo,
+		  StarBodyColor::Yellow),																	/* Color and type/size of planet */
+			NoTectonics,																							 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(DensityClass::Gas,																													 DepositSize::Heavy),																																													 /* Atmosphere and density */
 			{
 				{Nothing, NoDeposit},
 				{Nothing, NoDeposit},

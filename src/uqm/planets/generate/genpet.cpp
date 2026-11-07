@@ -72,7 +72,7 @@ static bool GenerateTalkingPet_generatePlanets(SolarSystemState* solarSys)
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = TELLURIC_WORLD;
+		pPlanet->data_index = *PlanetType::Telluric;
 		pPlanet->radius = EarthRadius * 204L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = Cosine(angle, pPlanet->radius);
@@ -96,42 +96,42 @@ static bool GenerateTalkingPet_generateOrbital(SolarSystemState* solarSys,
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& (uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES)
 			|| !uqm::gameState().flag(uqm::GameFlag::TALKING_PET)
-			|| StartSphereTracking(UMGAH_SHIP)))
+			|| StartSphereTracking(RaceId::Umgah)))
 	{
-		NotifyOthers(UMGAH_SHIP, IpnlAllClear);
+		NotifyOthers(*RaceId::Umgah, IpnlAllClear);
 		PutGroupInfo(GroupsRandom, GroupSaveIp);
 		ReinitQueue(&uqm::gameState().game().ip_group_q);
 		assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-		if (StartSphereTracking(UMGAH_SHIP))
+		if (StartSphereTracking(RaceId::Umgah))
 		{
-			uqm::currentActivity() |= START_INTERPLANETARY;
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			if (!uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES))
 			{
-				CloneShipFragment(UMGAH_SHIP,
+				CloneShipFragment(RaceId::Umgah,
 								  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
-				InitCommunication(UMGAH_CONVERSATION);
+				InitCommunication(Conversation::Umgah);
 			}
 			else
 			{
 				for (uint16_t i {0}; i < 10; ++i)
 				{
-					CloneShipFragment(UMGAH_SHIP,
+					CloneShipFragment(RaceId::Umgah,
 									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
-				InitCommunication(TALKING_PET_CONVERSATION);
+				InitCommunication(Conversation::TalkingPet);
 			}
 		}
 
-		if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+		if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 		{
 			bool UmgahSurvivors {};
 
 			UmgahSurvivors = GetHeadLink(
 								 &uqm::gameState().game().npc_built_ship_q)
 						  != 0;
-			uqm::currentActivity() &= ~START_INTERPLANETARY;
+			uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 
 			if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED))
 			{
@@ -141,13 +141,13 @@ static bool GenerateTalkingPet_generateOrbital(SolarSystemState* solarSys,
 					 && !UmgahSurvivors)
 			{
 				// Defeated the zombie fleet.
-				InitCommunication(TALKING_PET_CONVERSATION);
+				InitCommunication(Conversation::TalkingPet);
 			}
-			else if (!(StartSphereTracking(UMGAH_SHIP)))
+			else if (!(StartSphereTracking(RaceId::Umgah)))
 			{
 				// The Kohr-Ah have destroyed the Umgah, but the
 				// talking pet survived.
-				InitCommunication(TALKING_PET_CONVERSATION);
+				InitCommunication(Conversation::TalkingPet);
 			}
 
 			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
@@ -226,24 +226,24 @@ static void ZapToUrquanEncounter(void)
 		InsertEncounter(hEncounter, GetHeadEncounter());
 
 		hStarShip = GetStarShipFromIndex(
-			&uqm::gameState().game().avail_race_q, URQUAN_SHIP);
+			&uqm::gameState().game().avail_race_q, *RaceId::Urquan);
 		const FleetInfo* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 		EncounterPtr->origin = TemplatePtr->loc;
 		EncounterPtr->radius = TemplatePtr->actual_strength;
-		EncounterPtr->race_id = URQUAN_SHIP;
+		EncounterPtr->race_id = *RaceId::Urquan;
 		EncounterPtr->num_ships = 1;
 		EncounterPtr->flags = OneShotEncounter;
 		BriefShipInfo* BSIPtr {&EncounterPtr->ShipList[0]};
-		BSIPtr->race_id = URQUAN_SHIP;
+		BSIPtr->race_id = *RaceId::Urquan;
 		BSIPtr->crew_level = TemplatePtr->crew_level;
 		BSIPtr->max_crew = TemplatePtr->max_crew;
 		BSIPtr->max_energy = TemplatePtr->max_energy;
 
-		HFLEETINFO hUmgah = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, UMGAH_SHIP);
+		HFLEETINFO hUmgah = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Umgah);
 		FleetInfo* UmgahPtr =
 			LockFleetInfo(&uqm::gameState().game().avail_race_q, hUmgah);
 
-		EncounterPtr->loc_pt = SeedFleetLocation(UmgahPtr, plot_map, SAMATRA_DEFINED);
+		EncounterPtr->loc_pt = SeedFleetLocation(UmgahPtr, plot_map, *PlotId::Samatra);
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hUmgah);
 
 		EncounterPtr->log_x = UniverseToLogx(EncounterPtr->loc_pt.x);
@@ -258,7 +258,7 @@ static void ZapToUrquanEncounter(void)
 		}
 
 		uqm::currentActivity() =
-			uqm::makeWord(IN_HYPERSPACE, 0) | START_ENCOUNTER;
+			uqm::makeWord(ActivityKind::InHyperspace, 0) | ActivityFlag::StartEncounter;
 		SetBattlePlanet();
 
 		dx = CurStarDescPtr()->star_pt.x - EncounterPtr->loc_pt.x;

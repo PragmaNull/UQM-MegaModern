@@ -1,6 +1,7 @@
 // Tests the calendar and the event queue of uqm::GameClock.
 
 #include <gtest/gtest.h>
+#include "uqm/gameev.h"
 #include "uqm/session/GameClock.h"
 
 namespace
@@ -102,46 +103,46 @@ TEST_F(GameClockTest, ResolveDateRefusesPastDates)
 
 TEST_F(GameClockTest, DueEventsComeInDateOrder)
 {
-	EXPECT_NE(m_clock.addEvent(2, 19, StartYear, 3), nullptr);
-	EXPECT_NE(m_clock.addEvent(2, 18, StartYear, 1), nullptr);
-	EXPECT_NE(m_clock.addEvent(2, 18, StartYear, 2), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 19, StartYear, GameEventId::KohrAhVictoriousEvent), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 18, StartYear, GameEventId::ArilouExitEvent), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 18, StartYear, GameEventId::HyperspaceEncounterEvent), nullptr);
 
-	uint8_t funcIndex {};
+	GameEventId funcIndex {};
 	EXPECT_FALSE(m_clock.takeDueEvent(funcIndex));
 
 	m_clock.nextDay();
 	ASSERT_TRUE(m_clock.takeDueEvent(funcIndex));
-	EXPECT_EQ(funcIndex, 1);
+	EXPECT_EQ(funcIndex, GameEventId::ArilouExitEvent);
 	ASSERT_TRUE(m_clock.takeDueEvent(funcIndex));
-	EXPECT_EQ(funcIndex, 2);
+	EXPECT_EQ(funcIndex, GameEventId::HyperspaceEncounterEvent);
 	EXPECT_FALSE(m_clock.takeDueEvent(funcIndex));
 
 	m_clock.nextDay();
 	ASSERT_TRUE(m_clock.takeDueEvent(funcIndex));
-	EXPECT_EQ(funcIndex, 3);
+	EXPECT_EQ(funcIndex, GameEventId::KohrAhVictoriousEvent);
 }
 
 TEST_F(GameClockTest, EventsThatWereMissedAreDue)
 {
-	EXPECT_NE(m_clock.addEvent(2, 17, StartYear, 5), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 17, StartYear, GameEventId::AdvanceThraddMission), nullptr);
 	m_clock.nextDay();
 	m_clock.nextDay();
 
-	uint8_t funcIndex {};
+	GameEventId funcIndex {};
 	ASSERT_TRUE(m_clock.takeDueEvent(funcIndex));
-	EXPECT_EQ(funcIndex, 5);
+	EXPECT_EQ(funcIndex, GameEventId::AdvanceThraddMission);
 	EXPECT_FALSE(m_clock.takeDueEvent(funcIndex));
 }
 
 TEST_F(GameClockTest, FirstEventIsTheEarliest)
 {
 	EXPECT_FALSE(m_clock.firstEvent().has_value());
-	EXPECT_NE(m_clock.addEvent(5, 1, StartYear, 4), nullptr);
-	EXPECT_NE(m_clock.addEvent(3, 9, StartYear, 6), nullptr);
+	EXPECT_NE(m_clock.addEvent(5, 1, StartYear, GameEventId::AdvancePkunkMission), nullptr);
+	EXPECT_NE(m_clock.addEvent(3, 9, StartYear, GameEventId::AdvanceIlwrathMission), nullptr);
 
 	const auto first {m_clock.firstEvent()};
 	ASSERT_TRUE(first.has_value());
-	EXPECT_EQ(first->func_index, 6);
+	EXPECT_EQ(first->func_index, GameEventId::AdvanceIlwrathMission);
 	EXPECT_EQ(first->month_index, 3);
 	EXPECT_EQ(first->day_index, 9);
 }
@@ -158,9 +159,9 @@ TEST_F(GameClockTest, AddEventFailsWhenTheQueueIsFull)
 {
 	for (int i {0}; i < 8; ++i)
 	{
-		EXPECT_NE(m_clock.addEvent(3, 1, StartYear, 0), nullptr);
+		EXPECT_NE(m_clock.addEvent(3, 1, StartYear, GameEventId::ArilouEntranceEvent), nullptr);
 	}
-	EXPECT_EQ(m_clock.addEvent(3, 1, StartYear, 0), nullptr);
+	EXPECT_EQ(m_clock.addEvent(3, 1, StartYear, GameEventId::ArilouEntranceEvent), nullptr);
 }
 
 } // namespace

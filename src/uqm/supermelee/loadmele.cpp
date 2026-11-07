@@ -198,8 +198,8 @@ static void DrawFileString(const MeleeTeam* team, const GfxPoint* origin,
 				break;
 			}
 
-			StarShip = team->ships[slotI];
-			if (StarShip != MELEE_NONE)
+			StarShip = *team->ships[slotI];
+			if (StarShip != MeleeShip::None)
 			{
 				s.frame = GetShipIconsFromIndex(StarShip);
 				DrawStamp(&s);
@@ -326,7 +326,7 @@ bool DoLoadTeam(MeleeState* pMS)
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false;
 	}
@@ -535,245 +535,245 @@ static void InitPreBuilt(MeleeState* pMS)
 	{
 		/* "Balanced Team 1" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 4));
-		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
-		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
-		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
-		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
-		MeleeTeam_setShip(*list, i++, MELEE_MELNORME);
-		MeleeTeam_setShip(*list, i++, MELEE_ORZ);
-		MeleeTeam_setShip(*list, i++, MELEE_SPATHI);
-		MeleeTeam_setShip(*list, i++, MELEE_SYREEN);
-		MeleeTeam_setShip(*list, i++, MELEE_UTWIG);
+		MeleeTeam_setName(*list, GameString(GameStringBase::MeleeString + 4));
+		MeleeTeam_setShip(*list, i++, MeleeShip::Androsynth);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chmmr);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Druuge);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Urquan);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Melnorme);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Orz);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Spathi);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Syreen);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Utwig);
 		list++;
 	}
 
 	{
 		/* "Balanced Team 2" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 5));
-		MeleeTeam_setShip(*list, i++, MELEE_ARILOU);
-		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_KOHR_AH);
-		MeleeTeam_setShip(*list, i++, MELEE_MYCON);
-		MeleeTeam_setShip(*list, i++, MELEE_YEHAT);
-		MeleeTeam_setShip(*list, i++, MELEE_PKUNK);
-		MeleeTeam_setShip(*list, i++, MELEE_SUPOX);
-		MeleeTeam_setShip(*list, i++, MELEE_THRADDASH);
-		MeleeTeam_setShip(*list, i++, MELEE_ZOQFOTPIK);
-		MeleeTeam_setShip(*list, i++, MELEE_SHOFIXTI);
+		MeleeTeam_setName(*list, GameString(GameStringBase::MeleeString + 5));
+		MeleeTeam_setShip(*list, i++, MeleeShip::Arilou);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chenjesu);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::KohrAh);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Mycon);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Yehat);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Pkunk);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Supox);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Thraddash);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Zoqfotpik);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Shofixti);
 		list++;
 	}
 
 	{
 		/* "200 points" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 6));
-		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
-		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
-		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
-		MeleeTeam_setShip(*list, i++, MELEE_MELNORME);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_KOHR_AH);
-		MeleeTeam_setShip(*list, i++, MELEE_SUPOX);
-		MeleeTeam_setShip(*list, i++, MELEE_ORZ);
-		MeleeTeam_setShip(*list, i++, MELEE_SPATHI);
-		MeleeTeam_setShip(*list, i++, MELEE_ILWRATH);
-		MeleeTeam_setShip(*list, i++, MELEE_VUX);
+		MeleeTeam_setName(*list, GameString(GameStringBase::MeleeString + 6));
+		MeleeTeam_setShip(*list, i++, MeleeShip::Androsynth);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chmmr);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Druuge);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Melnorme);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::KohrAh);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Supox);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Orz);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Spathi);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Ilwrath);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Vux);
 		list++;
 	}
 
 	{
 		/* "Behemoth Zenith" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 7));
-		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
-		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
-		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
-		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
-		MeleeTeam_setShip(*list, i++, MELEE_KOHR_AH);
-		MeleeTeam_setShip(*list, i++, MELEE_KOHR_AH);
-		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
-		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
-		MeleeTeam_setShip(*list, i++, MELEE_UTWIG);
-		MeleeTeam_setShip(*list, i++, MELEE_UTWIG);
+		MeleeTeam_setName(*list, GameString(GameStringBase::MeleeString + 7));
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chenjesu);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chenjesu);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chmmr);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chmmr);
+		MeleeTeam_setShip(*list, i++, MeleeShip::KohrAh);
+		MeleeTeam_setShip(*list, i++, MeleeShip::KohrAh);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Urquan);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Urquan);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Utwig);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Utwig);
 		list++;
 	}
 
 	{
 		/* "The Peeled Eyes" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 8));
-		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
-		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
-		MeleeTeam_setShip(*list, i++, MELEE_MYCON);
-		MeleeTeam_setShip(*list, i++, MELEE_SYREEN);
-		MeleeTeam_setShip(*list, i++, MELEE_ZOQFOTPIK);
-		MeleeTeam_setShip(*list, i++, MELEE_SHOFIXTI);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_KOHR_AH);
-		MeleeTeam_setShip(*list, i++, MELEE_MELNORME);
-		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
-		MeleeTeam_setShip(*list, i++, MELEE_PKUNK);
-		MeleeTeam_setShip(*list, i++, MELEE_ORZ);
+		MeleeTeam_setName(*list, GameString(GameStringBase::MeleeString + 8));
+		MeleeTeam_setShip(*list, i++, MeleeShip::Urquan);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chenjesu);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Mycon);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Syreen);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Zoqfotpik);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Shofixti);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::KohrAh);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Melnorme);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Druuge);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Pkunk);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Orz);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "Ford's Fighters");
-		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
-		MeleeTeam_setShip(*list, i++, MELEE_ZOQFOTPIK);
-		MeleeTeam_setShip(*list, i++, MELEE_MELNORME);
-		MeleeTeam_setShip(*list, i++, MELEE_SUPOX);
-		MeleeTeam_setShip(*list, i++, MELEE_UTWIG);
-		MeleeTeam_setShip(*list, i++, MELEE_UMGAH);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chmmr);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Zoqfotpik);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Melnorme);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Supox);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Utwig);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Umgah);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "Leyland's Lashers");
-		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_MYCON);
-		MeleeTeam_setShip(*list, i++, MELEE_ORZ);
-		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Androsynth);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Mycon);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Orz);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Urquan);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "The Gregorizers 200");
-		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
-		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
-		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
-		MeleeTeam_setShip(*list, i++, MELEE_MELNORME);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_KOHR_AH);
-		MeleeTeam_setShip(*list, i++, MELEE_SUPOX);
-		MeleeTeam_setShip(*list, i++, MELEE_ORZ);
-		MeleeTeam_setShip(*list, i++, MELEE_PKUNK);
-		MeleeTeam_setShip(*list, i++, MELEE_SPATHI);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Androsynth);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chmmr);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Druuge);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Melnorme);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::KohrAh);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Supox);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Orz);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Pkunk);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Spathi);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "300 point Armada!");
-		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
-		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
-		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
-		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_KOHR_AH);
-		MeleeTeam_setShip(*list, i++, MELEE_MELNORME);
-		MeleeTeam_setShip(*list, i++, MELEE_MYCON);
-		MeleeTeam_setShip(*list, i++, MELEE_ORZ);
-		MeleeTeam_setShip(*list, i++, MELEE_PKUNK);
-		MeleeTeam_setShip(*list, i++, MELEE_SPATHI);
-		MeleeTeam_setShip(*list, i++, MELEE_SUPOX);
-		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
-		MeleeTeam_setShip(*list, i++, MELEE_YEHAT);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Androsynth);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chmmr);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chenjesu);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Druuge);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::KohrAh);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Melnorme);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Mycon);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Orz);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Pkunk);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Spathi);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Supox);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Urquan);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Yehat);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "Little Dudes with Attitudes");
-		MeleeTeam_setShip(*list, i++, MELEE_UMGAH);
-		MeleeTeam_setShip(*list, i++, MELEE_THRADDASH);
-		MeleeTeam_setShip(*list, i++, MELEE_SHOFIXTI);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_VUX);
-		MeleeTeam_setShip(*list, i++, MELEE_ZOQFOTPIK);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Umgah);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Thraddash);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Shofixti);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Vux);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Zoqfotpik);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "New Alliance Ships");
-		MeleeTeam_setShip(*list, i++, MELEE_ARILOU);
-		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_ORZ);
-		MeleeTeam_setShip(*list, i++, MELEE_PKUNK);
-		MeleeTeam_setShip(*list, i++, MELEE_SHOFIXTI);
-		MeleeTeam_setShip(*list, i++, MELEE_SUPOX);
-		MeleeTeam_setShip(*list, i++, MELEE_SYREEN);
-		MeleeTeam_setShip(*list, i++, MELEE_UTWIG);
-		MeleeTeam_setShip(*list, i++, MELEE_ZOQFOTPIK);
-		MeleeTeam_setShip(*list, i++, MELEE_YEHAT);
-		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
-		MeleeTeam_setShip(*list, i++, MELEE_THRADDASH);
-		MeleeTeam_setShip(*list, i++, MELEE_SPATHI);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Arilou);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chmmr);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Orz);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Pkunk);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Shofixti);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Supox);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Syreen);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Utwig);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Zoqfotpik);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Yehat);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Druuge);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Thraddash);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Spathi);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "Old Alliance Ships");
-		MeleeTeam_setShip(*list, i++, MELEE_ARILOU);
-		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_MMRNMHRM);
-		MeleeTeam_setShip(*list, i++, MELEE_SHOFIXTI);
-		MeleeTeam_setShip(*list, i++, MELEE_SYREEN);
-		MeleeTeam_setShip(*list, i++, MELEE_YEHAT);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Arilou);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chenjesu);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Mmrnmhrm);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Shofixti);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Syreen);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Yehat);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "Old Hierarchy Ships");
-		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
-		MeleeTeam_setShip(*list, i++, MELEE_ILWRATH);
-		MeleeTeam_setShip(*list, i++, MELEE_MYCON);
-		MeleeTeam_setShip(*list, i++, MELEE_SPATHI);
-		MeleeTeam_setShip(*list, i++, MELEE_UMGAH);
-		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
-		MeleeTeam_setShip(*list, i++, MELEE_VUX);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Androsynth);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Ilwrath);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Mycon);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Spathi);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Umgah);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Urquan);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Vux);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "Star Control 1");
-		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
-		MeleeTeam_setShip(*list, i++, MELEE_ARILOU);
-		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
-		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
-		MeleeTeam_setShip(*list, i++, MELEE_ILWRATH);
-		MeleeTeam_setShip(*list, i++, MELEE_MMRNMHRM);
-		MeleeTeam_setShip(*list, i++, MELEE_MYCON);
-		MeleeTeam_setShip(*list, i++, MELEE_SHOFIXTI);
-		MeleeTeam_setShip(*list, i++, MELEE_SPATHI);
-		MeleeTeam_setShip(*list, i++, MELEE_SYREEN);
-		MeleeTeam_setShip(*list, i++, MELEE_UMGAH);
-		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
-		MeleeTeam_setShip(*list, i++, MELEE_VUX);
-		MeleeTeam_setShip(*list, i++, MELEE_YEHAT);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Androsynth);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Arilou);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chenjesu);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Earthling);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Ilwrath);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Mmrnmhrm);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Mycon);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Shofixti);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Spathi);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Syreen);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Umgah);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Urquan);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Vux);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Yehat);
 		list++;
 	}
 
 	{
 		FleetShipIndex i = 0;
 		MeleeTeam_setName(*list, "Star Control 2");
-		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
-		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
-		MeleeTeam_setShip(*list, i++, MELEE_KOHR_AH);
-		MeleeTeam_setShip(*list, i++, MELEE_MELNORME);
-		MeleeTeam_setShip(*list, i++, MELEE_ORZ);
-		MeleeTeam_setShip(*list, i++, MELEE_PKUNK);
-		MeleeTeam_setShip(*list, i++, MELEE_SLYLANDRO);
-		MeleeTeam_setShip(*list, i++, MELEE_SUPOX);
-		MeleeTeam_setShip(*list, i++, MELEE_THRADDASH);
-		MeleeTeam_setShip(*list, i++, MELEE_UTWIG);
-		MeleeTeam_setShip(*list, i++, MELEE_ZOQFOTPIK);
-		MeleeTeam_setShip(*list, i++, MELEE_ZOQFOTPIK);
-		MeleeTeam_setShip(*list, i++, MELEE_ZOQFOTPIK);
-		MeleeTeam_setShip(*list, i++, MELEE_ZOQFOTPIK);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Chmmr);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Druuge);
+		MeleeTeam_setShip(*list, i++, MeleeShip::KohrAh);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Melnorme);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Orz);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Pkunk);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Slylandro);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Supox);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Thraddash);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Utwig);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Zoqfotpik);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Zoqfotpik);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Zoqfotpik);
+		MeleeTeam_setShip(*list, i++, MeleeShip::Zoqfotpik);
 		list++;
 	}
 

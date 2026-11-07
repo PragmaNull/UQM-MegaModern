@@ -86,7 +86,7 @@ static bool DoPickBattleShip(MenuState* pMS)
 	int dx = 0;
 	int dy = 0;
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		pMS->CurFrame = 0;
 		return (false);
@@ -207,7 +207,7 @@ ChangeSelection:
 				{
 					StarShipPtr = LockStarShip(&race_q[0], hBattleShip);
 					if (StarShipPtr->index == ship_index
-						&& (StarShipPtr->SpeciesID != NO_ID))
+						&& (StarShipPtr->SpeciesID != SpeciesId::None))
 					{
 						UnlockStarShip(&race_q[0], hBattleShip);
 						break;
@@ -399,7 +399,7 @@ HSTARSHIP GetEncounterStarShip(Starship* LastStarShipPtr, uint16_t which_player)
 		// SIS for the Hyperspace flight
 		return GetHeadLink(&race_q[which_player]);
 	}
-	else if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
+	else if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee)
 	{
 		// Let the player chose their own ship. (May be a computer player).
 		HSTARSHIP hBattleShip {};
@@ -579,10 +579,10 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GfxRect* pPickRect)
 			SetContextForeGroundColor(BlackColor);
 			DrawFilledRectangle(&r);
 
-			if ((StarShipPtr->SpeciesID != NO_ID) || (StarShipPtr->crew_level == 0))
+			if ((StarShipPtr->SpeciesID != SpeciesId::None) || (StarShipPtr->crew_level == 0))
 			{
 				DrawStamp(&s);
-				if (StarShipPtr->SpeciesID == NO_ID)
+				if (StarShipPtr->SpeciesID == SpeciesId::None)
 				{
 					/* Dead ship - mark with an X. */
 					s.origin.x -= ResScale(1);

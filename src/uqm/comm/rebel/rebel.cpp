@@ -26,7 +26,7 @@
 
 static ConversationData yehat_desc =
 	{
-		YEHAT_REBEL_CONVERSATION, /* AlienConv */
+		Conversation::YehatRebel, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -273,7 +273,7 @@ static void RebelInfo(RESPONSE_REF R)
 	else if (PlayerSaid(R, what_about_war))
 	{
 		NPCPhrase(ABOUT_WAR);
-		SetHomeworldKnown(SHOFIXTI_HOME);
+		SetHomeworldKnown(*HomeId::Shofixti);
 
 		DisablePhrase(what_about_war);
 	}
@@ -352,11 +352,11 @@ static void Rebels(RESPONSE_REF R)
 	}
 	else if (PlayerSaid(R, any_ships))
 	{
-		if (!ShipsReady(YEHAT_SHIP))
+		if (!ShipsReady(RaceId::Yehat))
 		{
 			NPCPhrase(NO_SHIPS_YET);
 		}
-		else if ((NumVisits = EscortFeasibilityStudy(YEHAT_SHIP)) == 0)
+		else if ((NumVisits = EscortFeasibilityStudy(RaceId::Yehat)) == 0)
 		{
 			NPCPhrase(NO_ROOM);
 		}
@@ -375,8 +375,8 @@ static void Rebels(RESPONSE_REF R)
 			}
 
 			AlienTalkSegue((uint16_t)~0);
-			AddEscortShips(YEHAT_SHIP, NumVisits);
-			PrepareShip(YEHAT_SHIP);
+			AddEscortShips(RaceId::Yehat, NumVisits);
+			PrepareShip(RaceId::Yehat);
 		}
 
 		DisablePhrase(any_ships);
@@ -425,18 +425,18 @@ static void Intro(void)
 	uint8_t NumVisits {};
 
 	setSegue(Segue::Peace);
-	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 	{
 		NPCPhrase(YEHAT_CAVALRY);
 		AlienTalkSegue((uint16_t)~0);
 
-		NumVisits = (uint8_t)EscortFeasibilityStudy(YEHAT_REBEL_SHIP);
+		NumVisits = (uint8_t)EscortFeasibilityStudy(RaceId::YehatRebel);
 		if (NumVisits > 8)
 		{
 			NumVisits = difficultyCase(8, 8, 4);
 		}
-		AddEscortShips(YEHAT_REBEL_SHIP, NumVisits - (NumVisits >> 1));
-		AddEscortShips(PKUNK_SHIP, NumVisits >> 1);
+		AddEscortShips(RaceId::YehatRebel, NumVisits - (NumVisits >> 1));
+		AddEscortShips(RaceId::Pkunk, NumVisits >> 1);
 	}
 	else
 	{

@@ -70,7 +70,7 @@ static bool GenerateSupox_generatePlanets(SolarSystemState* solarSys)
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = WATER_WORLD;
+		pPlanet->data_index = *PlanetType::Water;
 		pPlanet->NumPlanets = 2;
 		pPlanet->radius = EarthRadius * 152L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
@@ -102,7 +102,7 @@ static bool GenerateSupox_generateName(const SolarSystemState* solarSys,
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
-							GameString(PLANET_NUMBER_BASE + 38));
+							GameString(GameStringBase::PlanetNumber + 38));
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
@@ -115,23 +115,23 @@ static bool GenerateSupox_generateOrbital(SolarSystemState* solarSys,
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if (StartSphereTracking(SUPOX_SHIP))
+		if (StartSphereTracking(RaceId::Supox))
 		{
-			NotifyOthers(SUPOX_SHIP, IpnlAllClear);
+			NotifyOthers(*RaceId::Supox, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&uqm::gameState().game().ip_group_q);
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			CloneShipFragment(SUPOX_SHIP, &uqm::gameState().game().npc_built_ship_q,
+			CloneShipFragment(RaceId::Supox, &uqm::gameState().game().npc_built_ship_q,
 							  InfiniteFleet);
 
-			uqm::currentActivity() |= START_INTERPLANETARY;
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
-			InitCommunication(SUPOX_CONVERSATION);
+			InitCommunication(Conversation::Supox);
 
-			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 			{
-				uqm::currentActivity() &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}

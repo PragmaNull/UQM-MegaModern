@@ -66,19 +66,19 @@ static void DrawConfirmationWindow(bool answer, bool confirm)
 
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y + ResScale(10);
-	t.pStr = GameString(QUITMENU_STRING_BASE); // "Really Quit?"
+	t.pStr = GameString(GameStringBase::QuitmenuString); // "Really Quit?"
 	t.align = TextAlign::Center;
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 	t.baseline.y += ResScale(10);
 	t.baseline.x = r.corner.x + (r.extent.width >> 2);
-	t.pStr = GameString(QUITMENU_STRING_BASE + 1); // "Yes"
+	t.pStr = GameString(GameStringBase::QuitmenuString + 1); // "Yes"
 	SetContextForeGroundColor(
 		answer ? (confirm ? WhiteColor : MenuHighlightColor) :
 				 BlackColor);
 	font_DrawText(&t);
 	t.baseline.x += (r.extent.width >> 1);
-	t.pStr = GameString(QUITMENU_STRING_BASE + 2); // "No"
+	t.pStr = GameString(GameStringBase::QuitmenuString + 2); // "No"
 	SetContextForeGroundColor(
 		answer ? BlackColor : MenuHighlightColor);
 	font_DrawText(&t);
@@ -150,7 +150,7 @@ bool DoConfirmExit(void)
 			ExitRequested = false;
 			GamePaused = false;
 			UpdateInputState();
-			if (uqm::currentActivity() & CHECK_ABORT)
+			if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 			{ // something else triggered an exit
 				done = true;
 				response = true;
@@ -188,10 +188,10 @@ bool DoConfirmExit(void)
 		}
 		DestroyDrawable(ReleaseDrawable(s.frame));
 		ClearSystemRect();
-		if (response || (uqm::currentActivity() & CHECK_ABORT))
+		if (response || (uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
 			result = true;
-			uqm::currentActivity() |= CHECK_ABORT;
+			uqm::currentActivity() |= ActivityFlag::CheckAbort;
 		}
 		else
 		{
@@ -227,7 +227,7 @@ static bool DoPopup(struct PopupState* self)
 {
 	(void)self;
 	SleepThread(c_gameSecond / 20);
-	return !(PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & CHECK_ABORT));
+	return !(PulsedInputState.menu[*MenuKey::MenuSelect] || PulsedInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & ActivityFlag::CheckAbort));
 }
 
 void DoPopupWindow(const char* msg)

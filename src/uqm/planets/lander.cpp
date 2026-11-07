@@ -305,7 +305,7 @@ void object_animation(Element* ElementPtr)
 	Primitive* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (GetPrimType(pPrim) == PrimitiveType::StampFill
 		&& !((ElementPtr->state_flags & FiniteLife)
-			 && ElementPtr->mass_points == EARTHQUAKE_DISASTER))
+			 && ElementPtr->mass_points == LanderEvent::EarthquakeDisaster))
 	{
 		Color c;
 
@@ -320,7 +320,7 @@ void object_animation(Element* ElementPtr)
 					SetAbsFrameIndex(pPrim->Object.Stamp.frame, 0);
 
 				PlaySound(
-					GetSound(LanderSounds, LIFEFORM_CANNED),
+					GetSound(LanderSounds, LanderEvent::LifeformCanned),
 					NotPositional(), nullptr, GameSoundPriority);
 			}
 		}
@@ -352,7 +352,7 @@ void object_animation(Element* ElementPtr)
 						DecFrameIndex(pPrim->Object.Stamp.frame);
 				}
 			}
-			else if (ElementPtr->mass_points == EARTHQUAKE_DISASTER)
+			else if (ElementPtr->mass_points == LanderEvent::EarthquakeDisaster)
 			{
 				//int16_t s; unused
 				const int16_t frame_amount = 13;
@@ -373,19 +373,19 @@ void object_animation(Element* ElementPtr)
 				{
 					PlaySound(
 						GetSound(LanderSounds,
-								 EARTHQUAKE_DISASTER),
+								 LanderEvent::EarthquakeDisaster),
 						NotPositional(), nullptr, GameSoundPriority);
 				}
 			}
 
-			if (ElementPtr->mass_points == LAVASPOT_DISASTER
+			if (ElementPtr->mass_points == LanderEvent::LavaspotDisaster
 				&& frame_index == 5
 				&& uqm::random().next() % 100 < 90)
 			{
 				HELEMENT hLavaElement {};
 
 				/* Change lava-spot direction of travel */
-				hLavaElement = AddGroundDisaster(LAVASPOT_DISASTER);
+				hLavaElement = AddGroundDisaster(*LanderEvent::LavaspotDisaster);
 				if (hLavaElement)
 				{
 					Element* LavaElementPtr {};
@@ -613,7 +613,7 @@ static void DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 		crew_delta = crew_left;
 		s.frame = SetAbsFrameIndex(LanderFrame[0], 56);
 
-		PlaySound(GetSound(LanderSounds, LANDER_INJURED),
+		PlaySound(GetSound(LanderSounds, LanderEvent::LanderInjured),
 				  NotPositional(), nullptr, GameSoundPriority);
 	}
 
@@ -641,10 +641,10 @@ static void FillLanderHold(PlanetsideDesc* pPSD, uint16_t scan, uint16_t NumRetr
 	GfxStamp s;
 	GFXCONTEXT OldContext {};
 
-	PlaySound(GetSound(LanderSounds, LANDER_PICKUP),
+	PlaySound(GetSound(LanderSounds, LanderEvent::LanderPickup),
 			  NotPositional(), nullptr, GameSoundPriority);
 
-	if (scan == BIOLOGICAL_SCAN)
+	if (scan == ScanType::Biological)
 	{
 		start_count = pPSD->BiologicalLevel;
 
@@ -718,14 +718,14 @@ static bool pickupNode(PlanetsideDesc* pPSD, uint16_t NumRetrieved,
 	uint16_t* Amount {&pPSD->BiologicalLevel};
 	Max = MaxScrounged();
 	uint8_t EType {ElementPtr->thrust_wait};
-	uint16_t Offset {BIOLOGICAL_STRING_BASE};
+	uint16_t Offset {*GameStringBase::BiologicalString};
 
-	if (Scan != BIOLOGICAL_SCAN)
+	if (Scan != ScanType::Biological)
 	{
 		Amount = &pPSD->ElementLevel;
 		Max = pPSD->MaxElementLevel;
 		EType = ElementPtr->turn_wait;
-		Offset = ELEMENTS_STRING_BASE;
+		Offset = *GameStringBase::ElementsString;
 	}
 
 	// JMS: The rest of partially scavenged minerals stay on the surface.
@@ -734,7 +734,7 @@ static bool pickupNode(PlanetsideDesc* pPSD, uint16_t NumRetrieved,
 	if (*Amount >= Max)
 	{
 		// Lander full
-		PlaySound(GetSound(LanderSounds, LANDER_FULL),
+		PlaySound(GetSound(LanderSounds, LanderEvent::LanderFull),
 				  NotPositional(), nullptr, GameSoundPriority);
 		return false;
 	}
@@ -747,7 +747,7 @@ static bool pickupNode(PlanetsideDesc* pPSD, uint16_t NumRetrieved,
 		// Deposit could only be picked up partially.
 		NumRetrieved = (uint16_t)(Max - *Amount);
 
-		if (Scan != BIOLOGICAL_SCAN && uqm::UQMOptions::read().partialPickup)
+		if (Scan != ScanType::Biological && uqm::UQMOptions::read().partialPickup)
 		{ // JMS: Subtract the scavenged kilotons from the mineral
 			// deposit. The rest will stay on the surface.
 			ElementPtr->mass_points -= NumRetrieved;
@@ -755,7 +755,7 @@ static bool pickupNode(PlanetsideDesc* pPSD, uint16_t NumRetrieved,
 			// JMS: This makes the mineral deposit subtraction keep
 			// in effect even after leaving & re-entering the planet.
 			which_node = uqm::highByte(ElementPtr->scan_node) - 1;
-			pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[MINERAL_SCAN][which_node] =
+			pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[*ScanType::Mineral][which_node] =
 				NumRetrieved;
 
 			// JMS: If the deposit was large and its amount now equates to
@@ -795,10 +795,10 @@ static bool pickupNode(PlanetsideDesc* pPSD, uint16_t NumRetrieved,
 			PartialPickup = true;
 		}
 
-		if (Scan == BIOLOGICAL_SCAN && uqm::UQMOptions::read().partialPickup)
+		if (Scan == ScanType::Biological && uqm::UQMOptions::read().partialPickup)
 		{
 			// Lander full
-			PlaySound(GetSound(LanderSounds, LANDER_FULL),
+			PlaySound(GetSound(LanderSounds, LanderEvent::LanderFull),
 					  NotPositional(), nullptr, GameSoundPriority);
 			return false;
 		}
@@ -806,7 +806,7 @@ static bool pickupNode(PlanetsideDesc* pPSD, uint16_t NumRetrieved,
 
 	FillLanderHold(pPSD, Scan, NumRetrieved);
 
-	if (Scan != BIOLOGICAL_SCAN)
+	if (Scan != ScanType::Biological)
 	{
 		const uint8_t NumNodesGrabbed = pPSD->NodeData.NumNodesGrabbed;
 
@@ -884,7 +884,7 @@ static void ExplodeCritter(Element* ElementPtr)
 		UnlockElement(hExplosionElement);
 		InsertElement(hExplosionElement, GetHeadElement());
 
-		PlaySound(GetSound(LanderSounds, LANDER_DESTROYED),
+		PlaySound(GetSound(LanderSounds, LanderEvent::LanderDestroyed),
 				  NotPositional(), nullptr, GameSoundPriority + 1);
 
 		ElementPtr->state_flags |= Disappearing;
@@ -896,7 +896,7 @@ static void ExplodeCritter(Element* ElementPtr)
 		// there was no biodata to collect). This ensures the critter isn't
 		// resurrected when visiting the planet next time.
 		temp_which_node = uqm::highByte(ElementPtr->scan_node) - 1;
-		pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask[BIOLOGICAL_SCAN] |=
+		pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask[*ScanType::Biological] |=
 			(1L << temp_which_node);
 		// Mark this bio blip's state as "collected".
 		//
@@ -962,7 +962,7 @@ static void shotCreature(Element* ElementPtr, uint8_t value,
 	SetPrimType(pPrim, PrimitiveType::StampFill);
 	SetPrimColor(pPrim, WhiteColor);
 
-	PlaySound(GetSound(LanderSounds, LANDER_HITS),
+	PlaySound(GetSound(LanderSounds, LanderEvent::LanderHits),
 			  NotPositional(), nullptr, GameSoundPriority);
 }
 
@@ -1061,26 +1061,28 @@ static void CheckObjectCollision(uint16_t index)
 					{
 						/* A natural disaster */
 						scan = ElementPtr->mass_points;
-						switch (scan)
+						switch (static_cast<LanderEvent>(scan))
 						{
-							case EARTHQUAKE_DISASTER:
-							case LAVASPOT_DISASTER:
+							case LanderEvent::EarthquakeDisaster:
+							case LanderEvent::LavaspotDisaster:
 								if (uqm::random().next() % 100 < 25)
 								{
 									DeltaLanderCrew(-1, scan);
 								}
+								break;
+							default:
 								break;
 						}
 
 						UnlockElement(hElement);
 						continue;
 					}
-					else if (scan == ENERGY_SCAN)
+					else if (scan == ScanType::Energy)
 					{
 						// noop; handled by generation funcs, see below
 						DrawRadarArea();
 					}
-					else if (scan == BIOLOGICAL_SCAN
+					else if (scan == ScanType::Biological
 							 && ElementPtr->hit_points)
 					{
 						const uint8_t danger_vals[] =
@@ -1094,10 +1096,10 @@ static void CheckObjectCollision(uint16_t index)
 						if (uqm::random().next() % 128 < danger_vals[dangerLevel])
 						{
 							PlaySound(GetSound(
-										  LanderSounds, BIOLOGICAL_DISASTER),
+										  LanderSounds, LanderEvent::BiologicalDisaster),
 									  NotPositional(), nullptr,
 									  GameSoundPriority);
-							DeltaLanderCrew(-1, BIOLOGICAL_DISASTER);
+							DeltaLanderCrew(-1, *LanderEvent::BiologicalDisaster);
 						}
 						UnlockElement(hElement);
 						continue;
@@ -1115,14 +1117,14 @@ static void CheckObjectCollision(uint16_t index)
 				{
 					uint8_t value {};
 
-					if (scan == ENERGY_SCAN)
+					if (scan == ScanType::Energy)
 					{
 						/* Collision of a stun bolt with an energy node */
 						UnlockElement(hElement);
 						break;
 					}
 
-					if (scan == BIOLOGICAL_SCAN
+					if (scan == ScanType::Biological
 						&& (value = uqm::lowNibble(CreatureData[ElementPtr->mass_points
 																& ~CreatureAware]
 													   .ValueAndHitPoints)))
@@ -1139,12 +1141,12 @@ static void CheckObjectCollision(uint16_t index)
 
 				if (NumRetrieved)
 				{
-					switch (scan)
+					switch (static_cast<ScanType>(scan))
 					{
-						case ENERGY_SCAN:
+						case ScanType::Energy:
 							break;
-						case MINERAL_SCAN:
-						case BIOLOGICAL_SCAN:
+						case ScanType::Mineral:
+						case ScanType::Biological:
 							if (!pickupNode(pPSD, NumRetrieved,
 											ElementPtr, &LanderControl,
 											&ElementControl, scan))
@@ -1152,15 +1154,17 @@ static void CheckObjectCollision(uint16_t index)
 								continue;
 							}
 							break;
+						default:
+							break;
 					}
 				}
 
 				which_node = uqm::highByte(ElementPtr->scan_node) - 1;
 				if (callPickupForScanType(pSolarSysState,
-										  pSolarSysState->pOrbitalDesc, which_node, scan))
+										  pSolarSysState->pOrbitalDesc, which_node, static_cast<ScanType>(scan)))
 				{ // Node retrieved, remove from the surface
 					setNodeRetrieved(&pSolarSysState->SysInfo.PlanetInfo,
-									 scan, which_node);
+									 static_cast<ScanType>(scan), which_node);
 					uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
 					ElementPtr->state_flags |= Disappearing;
 				}
@@ -1203,7 +1207,7 @@ static void lightning_process(Element* ElementPtr)
 			}
 			SetPrimColor(pPrim, color_tab[s]);
 
-			if (ElementPtr->mass_points == LIGHTNING_DISASTER)
+			if (ElementPtr->mass_points == LanderEvent::LightningDisaster)
 			{
 				/* This one always strikes the lander and can hurt */
 				if (crew_left && uqm::random().next() % 100 < 10
@@ -1248,7 +1252,7 @@ static void AddLightning(void)
 		}
 		else
 		{
-			LightningElementPtr->mass_points = LIGHTNING_DISASTER;
+			LightningElementPtr->mass_points = *LanderEvent::LightningDisaster;
 		}
 
 		rand_val = uqm::random().next();
@@ -1287,7 +1291,7 @@ static void AddLightning(void)
 
 		PutElement(hLightningElement);
 
-		PlaySound(GetSound(LanderSounds, LIGHTNING_DISASTER),
+		PlaySound(GetSound(LanderSounds, LanderEvent::LightningDisaster),
 				  NotPositional(), nullptr, GameSoundPriority);
 	}
 }
@@ -1319,7 +1323,7 @@ static HELEMENT AddGroundDisaster(uint16_t which_disaster)
 												  % (MapHeight() << MagShift);
 
 
-		if (which_disaster == EARTHQUAKE_DISASTER)
+		if (which_disaster == LanderEvent::EarthquakeDisaster)
 		{
 			if (!IsHd())
 			{
@@ -1372,14 +1376,14 @@ static void BuildObjectList(void)
 	const uint32_t rand_val {uqm::random().next()};
 	if (uqm::lowByte(uqm::highWord(rand_val)) < pPSD->FireChance)
 	{
-		AddGroundDisaster(LAVASPOT_DISASTER);
-		PlaySound(GetSound(LanderSounds, LAVASPOT_DISASTER),
+		AddGroundDisaster(*LanderEvent::LavaspotDisaster);
+		PlaySound(GetSound(LanderSounds, LanderEvent::LavaspotDisaster),
 				  NotPositional(), nullptr, GameSoundPriority);
 	}
 
 	if (uqm::highByte(uqm::lowWord(rand_val)) < pPSD->TectonicsChance)
 	{
-		AddGroundDisaster(EARTHQUAKE_DISASTER);
+		AddGroundDisaster(*LanderEvent::EarthquakeDisaster);
 	}
 
 	if (uqm::lowByte(uqm::lowWord(rand_val)) < pPSD->WeatherChance)
@@ -1660,7 +1664,7 @@ static void ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 
 	if (lander_flags & KillCrew)
 	{
-		DeltaLanderCrew(-1, LIGHTNING_DISASTER);
+		DeltaLanderCrew(-1, *LanderEvent::LightningDisaster);
 	}
 
 	if (isPC(uqm::UQMOptions::read().landerStyle))
@@ -1833,7 +1837,7 @@ static void AnimateLanderWarmup(void)
 
 	animationInterframe(&TimeIn, 2);
 
-	PlaySound(GetSound(LanderSounds, LANDER_DEPARTS),
+	PlaySound(GetSound(LanderSounds, LanderEvent::LanderDeparts),
 			  NotPositional(), nullptr, GameSoundPriority + 1);
 }
 
@@ -1979,7 +1983,7 @@ static void LanderFire(int16_t facing)
 
 	InsertElement(hWeaponElement, GetHeadElement());
 
-	PlaySound(GetSound(LanderSounds, LANDER_SHOOTS),
+	PlaySound(GetSound(LanderSounds, LanderEvent::LanderShoots),
 			  NotPositional(), nullptr, GameSoundPriority);
 }
 
@@ -1996,10 +2000,10 @@ static void put_node(Element* ElementPtr)
 
 	callGenerateForScanType(pSolarSysState,
 							pSolarSysState->pOrbitalDesc, ElementPtr->cycle,
-							MINERAL_SCAN, &info);
+							ScanType::Mineral, &info);
 
 	setNodeNotRetrieved(&pSolarSysState->SysInfo.PlanetInfo,
-						MINERAL_SCAN, ElementPtr->cycle);
+						ScanType::Mineral, ElementPtr->cycle);
 
 	ElementPtr->next.location.x >>= MagShift;
 	ElementPtr->next.location.y >>= MagShift;
@@ -2010,7 +2014,7 @@ static void put_node(Element* ElementPtr)
 	LockElement(hNodeElement, &NodeElementPtr);
 
 	NodeElementPtr->scan_node =
-		uqm::makeWord(MINERAL_SCAN, ElementPtr->cycle + 1);
+		uqm::makeWord(ScanType::Mineral, ElementPtr->cycle + 1);
 	NodeElementPtr->playerNr = *PlanetsidePlayer::NonPlayer;
 	NodeElementPtr->current.location = info.loc_pt;
 
@@ -2021,7 +2025,7 @@ static void put_node(Element* ElementPtr)
 	// JMS: Partially scavenged energy blips won't return
 	// anymore to original size after leaving planet.
 	NodeElementPtr->mass_points = uqm::highByte(info.density)
-								- pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[MINERAL_SCAN][ElementPtr->cycle];
+								- pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[*ScanType::Mineral][ElementPtr->cycle];
 
 	NodeElementPtr->current.image.frame = SetAbsFrameIndex(
 		MiscDataFrame, (NumScandotTransitions * 2)
@@ -2179,7 +2183,7 @@ static void ScatterDeposits(void)
 	NumNodesGrabbed = pPSD->NodeData.NumNodesGrabbed;
 
 	numDeposits = callGenerateForScanType(pSolarSysState,
-										  pSolarSysState->pOrbitalDesc, GenerateAll, MINERAL_SCAN, nullptr);
+										  pSolarSysState->pOrbitalDesc, GenerateAll, ScanType::Mineral, nullptr);
 
 	for (uint16_t i {numDeposits}; i < (numDeposits + NumNodesGrabbed); i++)
 	{
@@ -2227,7 +2231,7 @@ static bool LanderExplosion(void)
 
 	InsertElement(hExplosionElement, GetHeadElement());
 
-	PlaySound(GetSound(LanderSounds, LANDER_DESTROYED),
+	PlaySound(GetSound(LanderSounds, LanderEvent::LanderDestroyed),
 			  NotPositional(), nullptr, GameSoundPriority + 1);
 
 	ScatterDeposits();
@@ -2243,7 +2247,7 @@ static bool DoPlanetSide(LanderInputState* pMS)
 	const auto ShuttleTurnWait = [&] {
 		return (isPC(uqm::UQMOptions::read().landerStyle) ? 1 : 3);
 	};
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return (false);
 	}
@@ -2680,7 +2684,7 @@ bool KillLanderCrewSeq(uint16_t numKilled, TimePeriod period)
 	for (uint16_t i {0}; i < numKilled && crew_left; ++i)
 	{
 		TimeOut += period;
-		DeltaLanderCrew(-1, LANDER_INJURED);
+		DeltaLanderCrew(-1, *LanderEvent::LanderInjured);
 		SleepThreadUntil(TimeOut);
 	}
 
@@ -2721,14 +2725,16 @@ static uint8_t GetHazardChance(int hazardType, unsigned HazardRating)
 		WeatherChanceTab[1] = 1;
 	}
 
-	switch (hazardType)
+	switch (static_cast<LanderEvent>(hazardType))
 	{
-		case EARTHQUAKE_DISASTER:
+		case LanderEvent::EarthquakeDisaster:
 			return TectonicsChanceTab[HazardRating];
-		case LIGHTNING_DISASTER:
+		case LanderEvent::LightningDisaster:
 			return WeatherChanceTab[HazardRating];
-		case LAVASPOT_DISASTER:
+		case LanderEvent::LavaspotDisaster:
 			return FireChanceTab[HazardRating];
+		default:
+			break;
 	}
 
 	return 0;
@@ -2744,11 +2750,11 @@ void PlanetSide(GfxPoint planetLoc)
 	PSD.InTransit = true;
 
 	// Set our chances of hazards occurring.
-	PSD.TectonicsChance = GetHazardChance(EARTHQUAKE_DISASTER,
+	PSD.TectonicsChance = GetHazardChance(*LanderEvent::EarthquakeDisaster,
 										  pSolarSysState->SysInfo.PlanetInfo.Tectonics);
-	PSD.WeatherChance = GetHazardChance(LIGHTNING_DISASTER,
+	PSD.WeatherChance = GetHazardChance(*LanderEvent::LightningDisaster,
 										pSolarSysState->SysInfo.PlanetInfo.Weather);
-	PSD.FireChance = GetHazardChance(LAVASPOT_DISASTER,
+	PSD.FireChance = GetHazardChance(*LanderEvent::LavaspotDisaster,
 									 GetThermalHazardRating(
 										 pSolarSysState->SysInfo.PlanetInfo.SurfaceTemperature));
 
@@ -2810,7 +2816,7 @@ void PlanetSide(GfxPoint planetLoc)
 
 	DoInput(&landerInputState, false);
 
-	if (!(uqm::currentActivity() & CHECK_ABORT))
+	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		if (crew_left == 0)
 		{
@@ -2825,7 +2831,7 @@ void PlanetSide(GfxPoint planetLoc)
 		else
 		{
 			PSD.InTransit = true;
-			PlaySound(GetSound(LanderSounds, LANDER_RETURNS),
+			PlaySound(GetSound(LanderSounds, LanderEvent::LanderReturns),
 					  NotPositional(), nullptr, GameSoundPriority + 1);
 
 			LandingTakeoffSequence(&landerInputState, false);
@@ -2852,7 +2858,7 @@ void PlanetSide(GfxPoint planetLoc)
 
 			if (PSD.ElementLevel)
 			{
-				for (index = 0; index < NUM_ELEMENT_CATEGORIES; ++index)
+				for (index = 0; index < MineralCategory::NumElementCategories; ++index)
 				{
 					uqm::gameState().sis().ElementAmounts[index] +=
 						PSD.ElementAmounts[index];
@@ -2911,7 +2917,7 @@ static void DrawMinDatText(void)
 	GfxRect rect;
 	Color OldColor;
 
-	if (!strlen(GameString(STATUS_STRING_BASE + 20)) || !strlen(GameString(STATUS_STRING_BASE + 21)))
+	if (!strlen(GameString(GameStringBase::StatusString + 20)) || !strlen(GameString(GameStringBase::StatusString + 21)))
 	{
 		return;
 	}
@@ -2928,7 +2934,7 @@ static void DrawMinDatText(void)
 	text.align = TextAlign::Left;
 	text.baseline.x = rect.corner.x + ResScale(1);
 	text.baseline.y = rect.corner.y + rect.extent.height;
-	text.pStr = GameString(STATUS_STRING_BASE + 20); // MIN
+	text.pStr = GameString(GameStringBase::StatusString + 20); // MIN
 	text.CharCount = (uint16_t)~0;
 
 	font_DrawText(&text);
@@ -2936,7 +2942,7 @@ static void DrawMinDatText(void)
 	SetContextForeGroundColor(LandStatDatColor);
 	text.align = TextAlign::Right;
 	text.baseline.x = rect.corner.x + rect.extent.width - ResScale(1);
-	text.pStr = GameString(STATUS_STRING_BASE + 21); // DAT
+	text.pStr = GameString(GameStringBase::StatusString + 21); // DAT
 	text.CharCount = (uint16_t)~0;
 
 	font_DrawText(&text);
@@ -2981,7 +2987,7 @@ void InitLander(uint8_t LanderFlags)
 		}
 		else
 		{
-			ShieldFlags = (unsigned char)(LanderFlags & ((1 << EARTHQUAKE_DISASTER) | (1 << BIOLOGICAL_DISASTER) | (1 << LIGHTNING_DISASTER) | (1 << LAVASPOT_DISASTER)));
+			ShieldFlags = (unsigned char)(LanderFlags & ((1 << *LanderEvent::EarthquakeDisaster) | (1 << *LanderEvent::BiologicalDisaster) | (1 << *LanderEvent::LightningDisaster) | (1 << *LanderEvent::LavaspotDisaster)));
 			s.frame = IncFrameIndex(s.frame);
 			DrawStamp(&s);
 			if (LanderFlags & (1 << (4 + 0)))
@@ -3034,22 +3040,22 @@ void InitLander(uint8_t LanderFlags)
 		}
 
 		s.frame = SetAbsFrameIndex(s.frame, 37);
-		if (ShieldFlags & (1 << EARTHQUAKE_DISASTER))
+		if (ShieldFlags & (1 << *LanderEvent::EarthquakeDisaster))
 		{
 			DrawStamp(&s);
 		}
 		s.frame = IncFrameIndex(s.frame);
-		if (ShieldFlags & (1 << BIOLOGICAL_DISASTER))
+		if (ShieldFlags & (1 << *LanderEvent::BiologicalDisaster))
 		{
 			DrawStamp(&s);
 		}
 		s.frame = IncFrameIndex(s.frame);
-		if (ShieldFlags & (1 << LIGHTNING_DISASTER))
+		if (ShieldFlags & (1 << *LanderEvent::LightningDisaster))
 		{
 			DrawStamp(&s);
 		}
 		s.frame = IncFrameIndex(s.frame);
-		if (ShieldFlags & (1 << LAVASPOT_DISASTER))
+		if (ShieldFlags & (1 << *LanderEvent::LavaspotDisaster))
 		{
 			DrawStamp(&s);
 		}
@@ -3073,9 +3079,9 @@ void InitPCLander(bool Loading)
 	DrawFilledRectangle(&r);
 
 	if (uqm::gameState().sis().NumLanders && !Loading
-		&& !(pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED)
-		&& !(pSolarSysState->pOrbitalDesc->data_index >= FIRST_GAS_GIANT
-			 && pSolarSysState->pOrbitalDesc->data_index <= LAST_GAS_GIANT))
+		&& !(pSolarSysState->pOrbitalDesc->data_index & *PlanetType::PlanetShielded)
+		&& !(pSolarSysState->pOrbitalDesc->data_index >= PlanetType::FirstGasGiant
+			 && pSolarSysState->pOrbitalDesc->data_index <= PlanetType::LastGasGiant))
 	{ // Do not draw lander graphics if it's impossible to land (shielded
 		// and gas giant) This mimics PC behaviour.
 		uint8_t ShieldFlags {};
@@ -3122,22 +3128,22 @@ void InitPCLander(bool Loading)
 		}
 
 		s.frame = SetAbsFrameIndex(s.frame, 37);
-		if (ShieldFlags & (1 << EARTHQUAKE_DISASTER))
+		if (ShieldFlags & (1 << *LanderEvent::EarthquakeDisaster))
 		{
 			DrawStamp(&s);
 		}
 		s.frame = IncFrameIndex(s.frame);
-		if (ShieldFlags & (1 << BIOLOGICAL_DISASTER))
+		if (ShieldFlags & (1 << *LanderEvent::BiologicalDisaster))
 		{
 			DrawStamp(&s);
 		}
 		s.frame = IncFrameIndex(s.frame);
-		if (ShieldFlags & (1 << LIGHTNING_DISASTER))
+		if (ShieldFlags & (1 << *LanderEvent::LightningDisaster))
 		{
 			DrawStamp(&s);
 		}
 		s.frame = IncFrameIndex(s.frame);
-		if (ShieldFlags & (1 << LAVASPOT_DISASTER))
+		if (ShieldFlags & (1 << *LanderEvent::LavaspotDisaster))
 		{
 			DrawStamp(&s);
 		}

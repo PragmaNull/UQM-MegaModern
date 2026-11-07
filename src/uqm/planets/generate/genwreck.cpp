@@ -119,15 +119,15 @@ static bool GenerateWreck_generateOrbital(SolarSystemState* solarSys,
 
 			for (uint16_t i {0}; i < sum; ++i)
 			{
-				CloneShipFragment(SLYLANDRO_SHIP,
+				CloneShipFragment(RaceId::Slylandro,
 								  &uqm::gameState().game().npc_built_ship_q, 0);
 			}
 
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
-			uqm::currentActivity() |= START_INTERPLANETARY;
-			InitCommunication(SLYLANDRO_CONVERSATION);
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
+			InitCommunication(Conversation::Slylandro);
 
-			if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+			if (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 			{
 				return true;
 			}
@@ -136,7 +136,7 @@ static bool GenerateWreck_generateOrbital(SolarSystemState* solarSys,
 				const bool Survivors =
 					GetHeadLink(&uqm::gameState().game().npc_built_ship_q) != 0;
 
-				uqm::currentActivity() &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 

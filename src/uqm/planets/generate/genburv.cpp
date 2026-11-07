@@ -70,7 +70,7 @@ static bool GenerateBurvixese_generatePlanets(SolarSystemState* solarSys)
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = REDUX_WORLD;
+		pPlanet->data_index = *PlanetType::Redux;
 		pPlanet->NumPlanets = 1;
 		pPlanet->radius = EarthRadius * 39L / 100;
 		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
@@ -115,7 +115,7 @@ static bool GenerateBurvixese_generateMoons(SolarSystemState* solarSys,
 		SystemPlanet* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 		uint16_t angle {};
 
-		pMoonDesc->data_index = SELENIC_WORLD;
+		pMoonDesc->data_index = *PlanetType::Selenic;
 		pMoonDesc->radius =
 			MinMoonRadius() + (MaxGenMoons - 1) * MoonDelta();
 		const uint32_t rand_val {SysGenRNG->next()};
@@ -134,14 +134,14 @@ static bool GenerateBurvixese_generateOrbital(SolarSystemState* solarSys,
 	DoPlanetaryAnalysis(&solarSys->SysInfo, world);
 	uint32_t rand_val {SysGenRNG->seed()};
 
-	solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] = rand_val;
+	solarSys->SysInfo.PlanetInfo.ScanSeed[*ScanType::Biological] = rand_val;
 	GenerateLifeForms(&solarSys->SysInfo, GenerateAll, nullptr);
 	rand_val = SysGenRNG->seed();
 
-	solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
+	solarSys->SysInfo.PlanetInfo.ScanSeed[*ScanType::Mineral] = rand_val;
 	GenerateMineralDeposits(&solarSys->SysInfo, GenerateAll, nullptr);
 
-	solarSys->SysInfo.PlanetInfo.ScanSeed[ENERGY_SCAN] = rand_val;
+	solarSys->SysInfo.PlanetInfo.ScanSeed[*ScanType::Energy] = rand_val;
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

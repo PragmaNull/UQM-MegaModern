@@ -81,21 +81,21 @@ static bool GenerateMyconDefenders(uint8_t index)
 
 		for (i = 0; i < 4; ++i)
 		{
-			CloneShipFragment(MYCON_SHIP,
+			CloneShipFragment(RaceId::Mycon,
 							  &uqm::gameState().game().npc_built_ship_q, 0);
 		}
 
-		uqm::currentActivity() |= START_INTERPLANETARY;
-		InitCommunication(MYCON_CONVERSATION);
+		uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
+		InitCommunication(Conversation::Mycon);
 
-		if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+		if (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 		{
 			return true;
 		}
 
 		Survivors = GetHeadLink(&uqm::gameState().game().npc_built_ship_q) != 0;
 
-		uqm::currentActivity() &= ~START_INTERPLANETARY;
+		uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 		GetGroupInfo(GroupsRandom, GroupLoadIp);
 
@@ -129,7 +129,7 @@ static bool GenerateMycon_generatePlanets(SolarSystemState* solarSys)
 
 	SystemPlanet* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
-	pPlanet->data_index = SHATTERED_WORLD;
+	pPlanet->data_index = *PlanetType::Shattered;
 
 	if (uqm::isOriginalSeed())
 	{
@@ -152,7 +152,7 @@ static bool GenerateMycon_generateName(const SolarSystemState* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (CurStarDescPtr()->Index == EGG_CASE0_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::EggCase0
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
@@ -160,7 +160,7 @@ static bool GenerateMycon_generateName(const SolarSystemState* solarSys,
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
-							GameString(PLANET_NUMBER_BASE + 42));
+							GameString(GameStringBase::PlanetNumber + 42));
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
@@ -173,22 +173,22 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if ((CurStarDescPtr()->Index == MYCON_DEFINED
-			 || CurStarDescPtr()->Index == SUN_DEVICE_DEFINED)
-			&& StartSphereTracking(MYCON_SHIP))
+		if ((CurStarDescPtr()->Index == PlotId::Mycon
+			 || CurStarDescPtr()->Index == PlotId::SunDevice)
+			&& StartSphereTracking(RaceId::Mycon))
 		{
-			if (CurStarDescPtr()->Index == MYCON_DEFINED
+			if (CurStarDescPtr()->Index == PlotId::Mycon
 				|| !uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_UNGUARDED))
 			{
-				NotifyOthers(MYCON_SHIP, IpnlAllClear);
+				NotifyOthers(*RaceId::Mycon, IpnlAllClear);
 				PutGroupInfo(GroupsRandom, GroupSaveIp);
 				ReinitQueue(&uqm::gameState().game().ip_group_q);
 				assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-				if (CurStarDescPtr()->Index == MYCON_DEFINED
+				if (CurStarDescPtr()->Index == PlotId::Mycon
 					|| !uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 				{
-					CloneShipFragment(MYCON_SHIP,
+					CloneShipFragment(RaceId::Mycon,
 									  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 				}
 				else
@@ -197,13 +197,13 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 
 					for (uint16_t i {0}; i < sum; ++i)
 					{
-						CloneShipFragment(MYCON_SHIP,
+						CloneShipFragment(RaceId::Mycon,
 										  &uqm::gameState().game().npc_built_ship_q, 0);
 					}
 				}
 
-				uqm::currentActivity() |= START_INTERPLANETARY;
-				if (CurStarDescPtr()->Index == MYCON_DEFINED)
+				uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
+				if (CurStarDescPtr()->Index == PlotId::Mycon)
 				{
 					uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 				}
@@ -211,9 +211,9 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 				{
 					uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
 				}
-				InitCommunication(MYCON_CONVERSATION);
+				InitCommunication(Conversation::Mycon);
 
-				if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+				if (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 				{
 					return true;
 				}
@@ -224,7 +224,7 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 					MyconSurvivors =
 						GetHeadLink(&uqm::gameState().game().npc_built_ship_q) != 0;
 
-					uqm::currentActivity() &= ~START_INTERPLANETARY;
+					uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 					ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 					GetGroupInfo(GroupsRandom, GroupLoadIp);
 
@@ -239,9 +239,9 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 			}
 		}
 
-		switch (CurStarDescPtr()->Index)
+		switch (static_cast<PlotId>(CurStarDescPtr()->Index))
 		{
-			case SUN_DEVICE_DEFINED:
+			case PlotId::SunDevice:
 				if (!uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE))
 				{
 					LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -253,15 +253,15 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 				break;
-			case EGG_CASE0_DEFINED:
-			case EGG_CASE1_DEFINED:
-			case EGG_CASE2_DEFINED:
+			case PlotId::EggCase0:
+			case PlotId::EggCase1:
+			case PlotId::EggCase2:
 				if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) == 0)
 				{
 					uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(1));
 				}
 
-				if (isDifficulty(uqm::Difficulty::Hard) && StartSphereTracking(MYCON_SHIP))
+				if (isDifficulty(uqm::Difficulty::Hard) && StartSphereTracking(RaceId::Mycon))
 				{
 					if (GenerateMyconDefenders(CurStarDescPtr()->Index))
 					{
@@ -270,7 +270,7 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 				}
 
 				if (!isNodeRetrieved(&solarSys->SysInfo.PlanetInfo,
-									 ENERGY_SCAN, 0))
+									 ScanType::Energy, 0))
 				{
 					LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 					solarSys->PlanetSideFrame[1] =
@@ -280,6 +280,8 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -287,7 +289,7 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !uqm::isOriginalSeed()
-		&& (CurStarDescPtr()->Index != EGG_CASE0_DEFINED || isDifficulty(uqm::Difficulty::Hard)))
+		&& (CurStarDescPtr()->Index != PlotId::EggCase0 || isDifficulty(uqm::Difficulty::Hard)))
 	{
 		PlanetData* pPlanetInfo = &solarSys->SysInfo.PlanetInfo;
 		const uint32_t rand = SysGenRNG->next();
@@ -301,7 +303,7 @@ static bool GenerateMycon_generateOrbital(SolarSystemState* solarSys,
 static uint16_t GenerateMycon_generateEnergy(const SolarSystemState* solarSys,
 											 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
-	if (CurStarDescPtr()->Index == SUN_DEVICE_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::SunDevice
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// This check is redundant since the retrieval bit will keep the
@@ -315,9 +317,9 @@ static uint16_t GenerateMycon_generateEnergy(const SolarSystemState* solarSys,
 			solarSys, whichNode, info);
 	}
 
-	if ((CurStarDescPtr()->Index == EGG_CASE0_DEFINED
-		 || CurStarDescPtr()->Index == EGG_CASE1_DEFINED
-		 || CurStarDescPtr()->Index == EGG_CASE2_DEFINED)
+	if ((CurStarDescPtr()->Index == PlotId::EggCase0
+		 || CurStarDescPtr()->Index == PlotId::EggCase1
+		 || CurStarDescPtr()->Index == PlotId::EggCase2)
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// This check is redundant since the retrieval bit will keep the
@@ -339,7 +341,7 @@ static uint16_t GenerateMycon_generateEnergy(const SolarSystemState* solarSys,
 static bool GenerateMycon_pickupEnergy(SolarSystemState* solarSys, SystemPlanet* world,
 									   uint16_t whichNode)
 {
-	if (CurStarDescPtr()->Index == SUN_DEVICE_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::SunDevice
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(!uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE) && whichNode == 0);
@@ -354,9 +356,9 @@ static bool GenerateMycon_pickupEnergy(SolarSystemState* solarSys, SystemPlanet*
 		return true; // picked up
 	}
 
-	if ((CurStarDescPtr()->Index == EGG_CASE0_DEFINED
-		 || CurStarDescPtr()->Index == EGG_CASE1_DEFINED
-		 || CurStarDescPtr()->Index == EGG_CASE2_DEFINED)
+	if ((CurStarDescPtr()->Index == PlotId::EggCase0
+		 || CurStarDescPtr()->Index == PlotId::EggCase1
+		 || CurStarDescPtr()->Index == PlotId::EggCase2)
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(whichNode == 0);
@@ -364,16 +366,18 @@ static bool GenerateMycon_pickupEnergy(SolarSystemState* solarSys, SystemPlanet*
 		GenerateDefault_landerReport(solarSys);
 		SetLanderTakeoff();
 
-		switch (CurStarDescPtr()->Index)
+		switch (static_cast<PlotId>(CurStarDescPtr()->Index))
 		{
-			case EGG_CASE0_DEFINED:
+			case PlotId::EggCase0:
 				uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE0_ON_SHIP, static_cast<uint32_t>(1));
 				break;
-			case EGG_CASE1_DEFINED:
+			case PlotId::EggCase1:
 				uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE1_ON_SHIP, static_cast<uint32_t>(1));
 				break;
-			case EGG_CASE2_DEFINED:
+			case PlotId::EggCase2:
 				uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE2_ON_SHIP, static_cast<uint32_t>(1));
+				break;
+			default:
 				break;
 		}
 

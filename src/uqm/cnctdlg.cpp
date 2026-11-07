@@ -461,11 +461,11 @@ static void CreateWidgets(void)
 		buttons[i].height = Widget_HeightOneLine;
 		buttons[i].width = Widget_WidthFullScreen;
 	}
-	buttons[0].name = GameString(NETMELEE_STRING_BASE + 19);
+	buttons[0].name = GameString(GameStringBase::NetmeleeString + 19);
 	// "Connect to remote host"
-	buttons[1].name = GameString(NETMELEE_STRING_BASE + 20);
+	buttons[1].name = GameString(GameStringBase::NetmeleeString + 20);
 	// "Wait for incoming connection"
-	buttons[2].name = GameString(NETMELEE_STRING_BASE + 21);
+	buttons[2].name = GameString(GameStringBase::NetmeleeString + 21);
 	// "Cancel"
 
 	buttons[0].handleEvent = do_connect;
@@ -496,7 +496,7 @@ static void CreateWidgets(void)
 	slider.max = netplayOptions.getMaxFrameInputDelay();
 	slider.step = 1;
 	slider.value = netplayOptions.getFrameInputDelay();
-	slider.category = GameString(NETMELEE_STRING_BASE + 24);
+	slider.category = GameString(GameStringBase::NetmeleeString + 24);
 	// "Net Delay"
 
 	for (i = 0; i < 2; i++)
@@ -514,9 +514,9 @@ static void CreateWidgets(void)
 		texts[i].cursor_pos = 0;
 	}
 
-	texts[0].category = GameString(NETMELEE_STRING_BASE + 22);
+	texts[0].category = GameString(GameStringBase::NetmeleeString + 22);
 	// "Host"
-	texts[1].category = GameString(NETMELEE_STRING_BASE + 23);
+	texts[1].category = GameString(GameStringBase::NetmeleeString + 23);
 	// "Port"
 
 	/* We sometimes assign to these internals; cannot strncpy over self! */
@@ -608,7 +608,7 @@ static bool DoMeleeConnectDialog(ConnectDialogState* state)
 
 	SleepThreadUntil(state->NextTime + MenuFrameRate);
 	state->NextTime = GetTimeCounter();
-	return !((uqm::currentActivity() & CHECK_ABORT) || done);
+	return !((uqm::currentActivity() & ActivityFlag::CheckAbort) || done);
 }
 
 bool MeleeConnectDialog(int side)

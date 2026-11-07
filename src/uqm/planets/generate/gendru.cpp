@@ -76,7 +76,7 @@ static bool GenerateDruuge_generatePlanets(SolarSystemState* solarSys)
 				sizeof(solarSys->PlanetDesc[0]) * pSunDesc->NumPlanets);
 		++pSunDesc->NumPlanets;
 
-		pPlanet->data_index = DUST_WORLD;
+		pPlanet->data_index = *PlanetType::Dust;
 		pPlanet->radius = EarthRadius * 50L / 100;
 		pPlanet->NumPlanets = 0;
 		const uint16_t angle {HalfCircle - Octant};
@@ -103,14 +103,14 @@ static bool GenerateDruuge_generateName(const SolarSystemState* solarSys,
 	GenerateDefault_generateName(solarSys, world);
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
-		&& IsHomeworldKnown(DRUUGE_HOME))
+		&& IsHomeworldKnown(*HomeId::Druuge))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const SystemPlanet pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
-							GameString(PLANET_NUMBER_BASE + 41));
+							GameString(GameStringBase::PlanetNumber + 41));
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
@@ -123,22 +123,22 @@ static bool GenerateDruuge_generateOrbital(SolarSystemState* solarSys,
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if (StartSphereTracking(DRUUGE_SHIP))
+		if (StartSphereTracking(RaceId::Druuge))
 		{
-			NotifyOthers(DRUUGE_SHIP, IpnlAllClear);
+			NotifyOthers(*RaceId::Druuge, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&uqm::gameState().game().ip_group_q);
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			CloneShipFragment(DRUUGE_SHIP,
+			CloneShipFragment(RaceId::Druuge,
 							  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 
-			uqm::currentActivity() |= START_INTERPLANETARY;
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
-			InitCommunication(DRUUGE_CONVERSATION);
-			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+			InitCommunication(Conversation::Druuge);
+			if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 			{
-				uqm::currentActivity() &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}

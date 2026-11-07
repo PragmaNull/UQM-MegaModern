@@ -140,7 +140,7 @@ static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, u
 		uqm::utf8StringCopy(buf, sizeof buf,
 							(i == MenuString::Fuel) ? pm_fuel_str :
 							(i == MenuString::Crew) ? pm_crew_str :
-													  GameString(MAINMENU_STRING_BASE + j));
+													  GameString(GameStringBase::MainmenuString + j));
 		if (hilite && pos == i)
 		{
 			// Currently selected menu option.
@@ -642,12 +642,12 @@ const char* IndexToText(int Index)
 			break;
 	}
 
-	if (i == -1 || !strlen(GameString(PLAYMENU_STRING_BASE + i)))
+	if (i == -1 || !strlen(GameString(GameStringBase::PlaymenuString + i)))
 	{
 		return nullptr;
 	}
 
-	return GameString(PLAYMENU_STRING_BASE + i);
+	return GameString(GameStringBase::PlaymenuString + i);
 }
 
 static void Draw3DOMenuText(GfxRect* r, int Index)
@@ -700,7 +700,7 @@ void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)
 	uint8_t hilite = 1;
 	extern FRAME PlayFrame;
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return;
 	}
@@ -753,13 +753,13 @@ void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)
 		if (beg_index == MenuString::Crew)
 		{
 			fmt::format_to_sz_n(pm_crew_str, "{}({})",
-								GameString(MAINMENU_STRING_BASE + static_cast<int>(MenuString::Crew)),
+								GameString(GameStringBase::MainmenuString + static_cast<int>(MenuString::Crew)),
 								uqm::gameState().game().CrewCost);
 		}
 		if (beg_index == MenuString::Fuel)
 		{
 			fmt::format_to_sz_n(pm_fuel_str, "{}({})",
-								GameString(MAINMENU_STRING_BASE + static_cast<int>(MenuString::Fuel)),
+								GameString(GameStringBase::MainmenuString + static_cast<int>(MenuString::Fuel)),
 								uqm::gameState().game().FuelCost);
 		}
 		if (beg_index == MenuString::SoundOn)
@@ -951,7 +951,7 @@ void DrawMineralHelpers(void)
 	r.corner.x = ElementCol0() - ResScale(3);
 
 	// draw Element icons and worths
-	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
+	for (uint16_t i {0}; i < MineralCategory::NumElementCategories; ++i)
 	{
 		// draw Element icon
 		DrawStamp(&s);
@@ -1005,22 +1005,22 @@ void DrawMineralHelpers(void)
 	t.align = TextAlign::Left;
 	t.baseline.x = r.corner.x + ResScale(2);
 	t.baseline.y = r.corner.y + leading + ResScale(1);
-	t.pStr = GameString(STATUS_STRING_BASE + 8); // FUEL:
+	t.pStr = GameString(GameStringBase::StatusString + 8); // FUEL:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
-	t.pStr = GameString(STATUS_STRING_BASE + 9); // CREW:
+	t.pStr = GameString(GameStringBase::StatusString + 9); // CREW:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
-	t.pStr = GameString(STATUS_STRING_BASE + 10); // LAND.:
+	t.pStr = GameString(GameStringBase::StatusString + 10); // LAND.:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
-	t.pStr = GameString(STATUS_STRING_BASE + 11); // CARGO:
+	t.pStr = GameString(GameStringBase::StatusString + 11); // CARGO:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 

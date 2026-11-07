@@ -317,7 +317,7 @@ static bool DoSetupMenu(SetupMenuState* pInputState)
 
 	SleepThreadUntil(pInputState->NextTime + MenuFrameRate);
 	pInputState->NextTime = GetTimeCounter();
-	return !((uqm::currentActivity() & CHECK_ABORT) || (next == nullptr));
+	return !((uqm::currentActivity() & ActivityFlag::CheckAbort) || (next == nullptr));
 }
 
 static void redraw_menu(void)
@@ -680,7 +680,7 @@ static void init_widgets(void)
 	uqm::MenuWidgets::Hooks hooks {};
 	hooks.isAddonAvailable = uqm::isMenuAddonAvailable;
 	hooks.addonUnavailable = [] {
-		DoPopupWindow(GameString(MAINMENU_STRING_BASE + 36));
+		DoPopupWindow(GameString(GameStringBase::MainmenuString + 36));
 		Widget_SetFont(PlyrFont);
 	};
 	hooks.settingChanged = [](const uqm::SettingBase& setting) {
@@ -966,7 +966,7 @@ void SetupMenu(void)
 	SetInputScriptMenuDump(dump_setup_menu);
 	DoInput(&s, true);
 	SetInputScriptMenuDump(nullptr);
-	uqm::currentActivity() &= ~CHECK_ABORT;
+	uqm::currentActivity() &= ~ActivityFlag::CheckAbort;
 	apply_settings();
 	clean_up_widgets();
 
@@ -996,7 +996,7 @@ uqstl::optional<uqm::GameSeed> NewGameMenu(void)
 	clean_up_widgets();
 
 	uqstl::optional<uqm::GameSeed> result {};
-	if (newGameStarted && !(uqm::currentActivity() & CHECK_ABORT))
+	if (newGameStarted && !(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		result = uqm::normalized({.type = *newGameSettings->seedType, .value = *newGameSettings->customSeed, .ships = *newGameSettings->shipSeed});
 	}

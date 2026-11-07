@@ -26,8 +26,9 @@ inline constexpr bool IsFlagEnum = false;
 template <typename E>
 concept BitFlagEnum = EnumType<E> && IsFlagEnum<E>;
 
-// The value of an arithmetic enum as an integer, for example as an array index: array[*Race::Arilou].
-template <ArithmeticEnum E>
+// The value of an arithmetic or flag enum as an integer, for example as an array index: array[*Race::Arilou].
+template <EnumType E>
+	requires(ArithmeticEnum<E> || BitFlagEnum<E>)
 [[nodiscard]] constexpr auto operator*(E e) noexcept
 {
 	return static_cast<std::underlying_type_t<E>>(e);
@@ -61,6 +62,18 @@ template <ArithmeticEnum E>
 [[nodiscard]] constexpr int operator-(E a, E b) noexcept
 {
 	return *a - *b;
+}
+
+template <ArithmeticEnum E, std::integral I>
+constexpr E& operator+=(E& e, I n) noexcept
+{
+	return e = e + n;
+}
+
+template <ArithmeticEnum E, std::integral I>
+constexpr E& operator-=(E& e, I n) noexcept
+{
+	return e = e - n;
 }
 
 template <ArithmeticEnum E>
@@ -151,6 +164,43 @@ template <BitFlagEnum E>
 constexpr E& operator^=(E& a, E b) noexcept
 {
 	return a = a ^ b;
+}
+
+// Bit operations on an integer that holds the bits of a flag enum.
+template <BitFlagEnum E, std::integral I>
+[[nodiscard]] constexpr I operator&(I a, E b) noexcept
+{
+	return static_cast<I>(a & static_cast<std::underlying_type_t<E>>(b));
+}
+
+template <BitFlagEnum E, std::integral I>
+[[nodiscard]] constexpr I operator|(I a, E b) noexcept
+{
+	return static_cast<I>(a | static_cast<std::underlying_type_t<E>>(b));
+}
+
+template <BitFlagEnum E, std::integral I>
+[[nodiscard]] constexpr bool operator==(I a, E b) noexcept
+{
+	return uqstl::cmp_equal(a, static_cast<std::underlying_type_t<E>>(b));
+}
+
+template <BitFlagEnum E, std::integral I>
+constexpr I& operator&=(I& a, E b) noexcept
+{
+	return a = a & b;
+}
+
+template <BitFlagEnum E, std::integral I>
+constexpr I& operator|=(I& a, E b) noexcept
+{
+	return a = a | b;
+}
+
+template <BitFlagEnum E, std::integral I>
+constexpr I& operator^=(I& a, E b) noexcept
+{
+	return a = static_cast<I>(a ^ static_cast<std::underlying_type_t<E>>(b));
 }
 
 // fmt formats arithmetic and flag enums as their numbers.

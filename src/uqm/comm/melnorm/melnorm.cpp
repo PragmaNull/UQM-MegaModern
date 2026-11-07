@@ -125,7 +125,7 @@ const static NumberSpeechDesc melnorme_numbers_english =
 };
 static ConversationData melnorme_desc =
 	{
-		MELNORME_CONVERSATION, /* AlienConv */
+		Conversation::Melnorme, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -287,19 +287,19 @@ struct TechData
 const static TechData tech_data_table[] =
 	{
 		// Tech ID                      Tech Type,               Supplemental info
-		{TechId::ModuleBlaster,			TechType::Module,		  BLASTER_WEAPON,										  4000},
+		{TechId::ModuleBlaster,			TechType::Module,		  *ModuleType::BlasterWeapon,							  4000},
 		{TechId::LanderSpeed,			  TechType::State,		   static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SPEED), 1	},
-		{TechId::ModuleAntimissile,		TechType::Module,		  ANTIMISSILE_DEFENSE,									   4000},
-		{TechId::LanderShieldBio,		  TechType::LanderShield, BIOLOGICAL_DISASTER,									   -1	 },
+		{TechId::ModuleAntimissile,		TechType::Module,		  *ModuleType::AntimissileDefense,						   4000},
+		{TechId::LanderShieldBio,		  TechType::LanderShield, *LanderEvent::BiologicalDisaster,						-1  },
 		{TechId::LanderCargo,			  TechType::State,		   static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_CARGO), 1	},
-		{TechId::ModuleBigfueltank,		TechType::Module,		  HIGHEFF_FUELSYS,										   1000},
+		{TechId::ModuleBigfueltank,		TechType::Module,		  *ModuleType::HigheffFuelsys,							   1000},
 		{TechId::LanderRapidfire,		  TechType::State,		   static_cast<int>(uqm::GameFlag::IMPROVED_LANDER_SHOT),  1   },
-		{TechId::LanderShieldQuake,		TechType::LanderShield, EARTHQUAKE_DISASTER,									 -1  },
-		{TechId::ModuleTracking,		 TechType::Module,	   TRACKING_SYSTEM,										5000},
-		{TechId::LanderShieldLightning, TechType::LanderShield, LIGHTNING_DISASTER,										-1  },
-		{TechId::LanderShieldHeat,	   TechType::LanderShield, LAVASPOT_DISASTER,									  -1	},
-		{TechId::ModuleCannon,		   TechType::Module,		 CANNON_WEAPON,											6000},
-		{TechId::ModuleFurnace,			TechType::Module,		  SHIVA_FURNACE,											 4000},
+		{TechId::LanderShieldQuake,		TechType::LanderShield, *LanderEvent::EarthquakeDisaster,						  -1	},
+		{TechId::ModuleTracking,		 TechType::Module,	   *ModuleType::TrackingSystem,							5000},
+		{TechId::LanderShieldLightning, TechType::LanderShield, *LanderEvent::LightningDisaster,						 -1  },
+		{TechId::LanderShieldHeat,	   TechType::LanderShield, *LanderEvent::LavaspotDisaster,						   -1	 },
+		{TechId::ModuleCannon,		   TechType::Module,		 *ModuleType::CannonWeapon,								6000},
+		{TechId::ModuleFurnace,			TechType::Module,		  *ModuleType::ShivaFurnace,								 4000},
 };
 const size_t NUM_TECHNOLOGIES = std::size(tech_data_table);
 
@@ -512,41 +512,41 @@ static TechSaleData* GetNextTechForSale(void)
 
 	if (isDifficulty(uqm::Difficulty::Hard) && CurStarDescPtr())
 	{
-		switch (CurStarDescPtr()->Index)
+		switch (static_cast<PlotId>(CurStarDescPtr()->Index))
 		{
-			case MELNORME0_DEFINED:
+			case PlotId::Melnorme0:
 				i = *TechId::ModuleCannon;
 				j = i + 1;
 				break;
-			case MELNORME1_DEFINED:
+			case PlotId::Melnorme1:
 				i = *TechId::ModuleBlaster;
 				j = i + 1;
 				break;
-			case MELNORME2_DEFINED:
+			case PlotId::Melnorme2:
 				i = *TechId::LanderShieldBio;
 				j = i + 2; // TECH_LANDER_CARGO
 				break;
-			case MELNORME3_DEFINED:
+			case PlotId::Melnorme3:
 				i = *TechId::LanderRapidfire;
 				j = i + 2; // TECH_LANDER_SHIELD_QUAKE
 				break;
-			case MELNORME4_DEFINED:
+			case PlotId::Melnorme4:
 				i = *TechId::ModuleBigfueltank;
 				j = i + 1;
 				break;
-			case MELNORME5_DEFINED:
+			case PlotId::Melnorme5:
 				i = *TechId::LanderSpeed;
 				j = i + 2; // TECH_MODULE_ANTIMISSILE
 				break;
-			case MELNORME6_DEFINED:
+			case PlotId::Melnorme6:
 				i = *TechId::ModuleTracking;
 				j = i + 1;
 				break;
-			case MELNORME7_DEFINED:
+			case PlotId::Melnorme7:
 				i = *TechId::LanderShieldLightning;
 				j = i + 2; // TECH_LANDER_SHIELD_HEAT
 				break;
-			case MELNORME8_DEFINED:
+			case PlotId::Melnorme8:
 				i = *TechId::ModuleFurnace;
 				j = i + 1;
 				break;
@@ -593,19 +593,19 @@ static uint16_t ShipWorth(void)
 	uint16_t worth {};
 
 	worth = uqm::gameState().sis().NumLanders
-		  * uqm::gameState().game().ModuleCost[PLANET_LANDER];
+		  * uqm::gameState().game().ModuleCost[*ModuleType::PlanetLander];
 	for (i = 0; i < NumDriveSlots; ++i)
 	{
 		if (uqm::gameState().sis().DriveSlots[i] < EmptySlot)
 		{
-			worth += uqm::gameState().game().ModuleCost[FUSION_THRUSTER];
+			worth += uqm::gameState().game().ModuleCost[*ModuleType::FusionThruster];
 		}
 	}
 	for (i = 0; i < NumJetSlots; ++i)
 	{
 		if (uqm::gameState().sis().JetSlots[i] < EmptySlot)
 		{
-			worth += uqm::gameState().game().ModuleCost[TURNING_JETS];
+			worth += uqm::gameState().game().ModuleCost[*ModuleType::TurningJets];
 		}
 	}
 
@@ -613,9 +613,9 @@ static uint16_t ShipWorth(void)
 						  / CrewPodCapacity);
 	for (i = 0; i < NumModuleSlots; ++i)
 	{
-		const uint8_t which_module {uqm::gameState().sis().ModuleSlots[i]};
-		if (which_module < BOMB_MODULE_0
-			&& (which_module != CREW_POD || ++crew_pods > 0))
+		const uint8_t which_module {*uqm::gameState().sis().ModuleSlots[i]};
+		if (which_module < ModuleType::BombModule0
+			&& (which_module != ModuleType::CrewPod || ++crew_pods > 0))
 		{
 			worth += uqm::gameState().game().ModuleCost[which_module];
 		}
@@ -631,31 +631,31 @@ static FlagshipData SIS_copy;
 // for stripping a given module.
 static int GetStripModuleRef(int moduleID)
 {
-	switch (moduleID)
+	switch (static_cast<ModuleType>(moduleID))
 	{
-		case PLANET_LANDER:
+		case ModuleType::PlanetLander:
 			return LANDERS;
-		case FUSION_THRUSTER:
+		case ModuleType::FusionThruster:
 			return THRUSTERS;
-		case TURNING_JETS:
+		case ModuleType::TurningJets:
 			return JETS;
-		case CREW_POD:
+		case ModuleType::CrewPod:
 			return PODS;
-		case STORAGE_BAY:
+		case ModuleType::StorageBay:
 			return BAYS;
-		case DYNAMO_UNIT:
+		case ModuleType::DynamoUnit:
 			return DYNAMOS;
-		case SHIVA_FURNACE:
+		case ModuleType::ShivaFurnace:
 			return FURNACES;
-		case GUN_WEAPON:
+		case ModuleType::GunWeapon:
 			return GUNS;
-		case BLASTER_WEAPON:
+		case ModuleType::BlasterWeapon:
 			return BLASTERS;
-		case CANNON_WEAPON:
+		case ModuleType::CannonWeapon:
 			return CANNONS;
-		case TRACKING_SYSTEM:
+		case ModuleType::TrackingSystem:
 			return TRACKERS;
-		case ANTIMISSILE_DEFENSE:
+		case ModuleType::AntimissileDefense:
 			return DEFENSES;
 		// If a modder has added new modules, should it really
 		// be a fatal error if the Melnorme don't know about
@@ -679,8 +679,8 @@ static uint32_t getStripRandomSeed(void)
 	y = LogyToUniverse(uqm::gameState().sis().log_y) / 100;
 	// prime numbers help randomness
 	return y * 1013 + x + uqm::gameState().sis().NumLanders
-		 + uqm::gameState().sis().ModuleSlots[1] + uqm::gameState().sis().ModuleSlots[4]
-		 + uqm::gameState().sis().ModuleSlots[7] + uqm::gameState().sis().ModuleSlots[10];
+		 + *uqm::gameState().sis().ModuleSlots[1] + *uqm::gameState().sis().ModuleSlots[4]
+		 + *uqm::gameState().sis().ModuleSlots[7] + *uqm::gameState().sis().ModuleSlots[10];
 }
 
 static bool StripShip(uint16_t fuel_required)
@@ -703,11 +703,11 @@ static bool StripShip(uint16_t fuel_required)
 		uqm::gameState().sis().NumLanders = 0;
 		for (i = 0; i < NumDriveSlots; ++i)
 		{
-			uqm::gameState().sis().DriveSlots[i] = EmptySlot + 0;
+			uqm::gameState().sis().DriveSlots[i] = ModuleType::EmptyDriveSlot;
 		}
 		for (i = 0; i < NumJetSlots; ++i)
 		{
-			uqm::gameState().sis().JetSlots[i] = EmptySlot + 1;
+			uqm::gameState().sis().JetSlots[i] = ModuleType::EmptyJetSlot;
 		}
 		if (uqm::gameState().sis().FuelOnBoard > FuelReserve)
 		{
@@ -715,18 +715,18 @@ static bool StripShip(uint16_t fuel_required)
 		}
 		uqm::gameState().sis().TotalBioMass = 0;
 		uqm::gameState().sis().TotalElementMass = 0;
-		for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
+		for (i = 0; i < MineralCategory::NumElementCategories; ++i)
 		{
 			uqm::gameState().sis().ElementAmounts[i] = 0;
 		}
 		for (i = 0; i < NumModuleSlots; ++i)
 		{
-			which_module = uqm::gameState().sis().ModuleSlots[i];
-			if (which_module < BOMB_MODULE_0
-				&& (which_module != CREW_POD
+			which_module = *uqm::gameState().sis().ModuleSlots[i];
+			if (which_module < ModuleType::BombModule0
+				&& (which_module != ModuleType::CrewPod
 					|| ++crew_pods > 0))
 			{
-				uqm::gameState().sis().ModuleSlots[i] = EmptySlot + 2;
+				uqm::gameState().sis().ModuleSlots[i] = ModuleType::EmptyModuleSlot;
 			}
 		}
 
@@ -738,7 +738,7 @@ static bool StripShip(uint16_t fuel_required)
 		uint8_t beg_mod {};
 		uint8_t end_mod {};
 		uint16_t worth {};
-		uint8_t module_count[BOMB_MODULE_0];
+		uint8_t module_count[*ModuleType::BombModule0];
 
 		// Bug #567
 		// In order to offer the same deal each time if it is refused, we seed
@@ -749,7 +749,7 @@ static bool StripShip(uint16_t fuel_required)
 		rc.reseed(getStripRandomSeed());
 
 		SIS_copy = uqm::gameState().sis();
-		for (i = PLANET_LANDER; i < BOMB_MODULE_0; ++i)
+		for (i = *ModuleType::PlanetLander; i < ModuleType::BombModule0; ++i)
 		{
 			module_count[i] = 0;
 		}
@@ -758,12 +758,12 @@ static bool StripShip(uint16_t fuel_required)
 		uint8_t slot {NumModuleSlots - 1};
 		do
 		{
-			if (SIS_copy.ModuleSlots[slot] == FUEL_TANK
-				|| SIS_copy.ModuleSlots[slot] == HIGHEFF_FUELSYS)
+			if (SIS_copy.ModuleSlots[slot] == ModuleType::FuelTank
+				|| SIS_copy.ModuleSlots[slot] == ModuleType::HigheffFuelsys)
 			{
 				uint16_t volume {};
 
-				volume = SIS_copy.ModuleSlots[slot] == FUEL_TANK ? FuelTankCapacity : HefuelTankCapacity;
+				volume = SIS_copy.ModuleSlots[slot] == ModuleType::FuelTank ? FuelTankCapacity : HefuelTankCapacity;
 				capacity += volume;
 			}
 		} while (slot--);
@@ -776,12 +776,12 @@ static bool StripShip(uint16_t fuel_required)
 						 / StorageBayCapacity);
 		for (i = 0; i < NumModuleSlots; ++i)
 		{
-			which_module = SIS_copy.ModuleSlots[i];
-			if (which_module == CREW_POD)
+			which_module = *SIS_copy.ModuleSlots[i];
+			if (which_module == ModuleType::CrewPod)
 			{
 				++crew_pods;
 			}
-			else if (which_module == STORAGE_BAY)
+			else if (which_module == ModuleType::StorageBay)
 			{
 				++bays;
 			}
@@ -794,16 +794,16 @@ static bool StripShip(uint16_t fuel_required)
 		while (total < worth && ShipWorth() && ++num_searches)
 		{
 			const uint32_t rand_val {rc.next()};
-			switch (which_module = uqm::lowByte(uqm::lowWord(rand_val)) % (CREW_POD + 1))
+			switch (static_cast<ModuleType>(which_module = uqm::lowByte(uqm::lowWord(rand_val)) % (*ModuleType::CrewPod + 1)))
 			{
-				case PLANET_LANDER:
+				case ModuleType::PlanetLander:
 					if (SIS_copy.NumLanders == 0)
 					{
 						continue;
 					}
 					--SIS_copy.NumLanders;
 					break;
-				case FUSION_THRUSTER:
+				case ModuleType::FusionThruster:
 					for (i = 0; i < NumDriveSlots; ++i)
 					{
 						if (SIS_copy.DriveSlots[i] < EmptySlot)
@@ -815,9 +815,9 @@ static bool StripShip(uint16_t fuel_required)
 					{
 						continue;
 					}
-					SIS_copy.DriveSlots[i] = EmptySlot + 0;
+					SIS_copy.DriveSlots[i] = ModuleType::EmptyDriveSlot;
 					break;
-				case TURNING_JETS:
+				case ModuleType::TurningJets:
 					for (i = 0; i < NumJetSlots; ++i)
 					{
 						if (SIS_copy.JetSlots[i] < EmptySlot)
@@ -829,22 +829,24 @@ static bool StripShip(uint16_t fuel_required)
 					{
 						continue;
 					}
-					SIS_copy.JetSlots[i] = EmptySlot + 1;
+					SIS_copy.JetSlots[i] = ModuleType::EmptyJetSlot;
 					break;
-				case CREW_POD:
+				case ModuleType::CrewPod:
 					i = uqm::highByte(uqm::lowWord(rand_val)) % NumModuleSlots;
-					which_module = SIS_copy.ModuleSlots[i];
-					if (which_module >= BOMB_MODULE_0
-						|| which_module == FUEL_TANK
-						|| which_module == HIGHEFF_FUELSYS
-						|| (which_module == STORAGE_BAY
-							&& module_count[STORAGE_BAY] >= bays)
-						|| (which_module == CREW_POD
-							&& module_count[CREW_POD] >= crew_pods))
+					which_module = *SIS_copy.ModuleSlots[i];
+					if (which_module >= ModuleType::BombModule0
+						|| which_module == ModuleType::FuelTank
+						|| which_module == ModuleType::HigheffFuelsys
+						|| (which_module == ModuleType::StorageBay
+							&& module_count[*ModuleType::StorageBay] >= bays)
+						|| (which_module == ModuleType::CrewPod
+							&& module_count[*ModuleType::CrewPod] >= crew_pods))
 					{
 						continue;
 					}
-					SIS_copy.ModuleSlots[i] = EmptySlot + 2;
+					SIS_copy.ModuleSlots[i] = ModuleType::EmptyModuleSlot;
+					break;
+				default:
 					break;
 			}
 
@@ -878,7 +880,7 @@ static bool StripShip(uint16_t fuel_required)
 			{
 				NPCPhrase(RESCUE_HOME);
 			}
-			for (i = PLANET_LANDER; i < BOMB_MODULE_0; ++i)
+			for (i = *ModuleType::PlanetLander; i < ModuleType::BombModule0; ++i)
 			{
 				if (module_count[i])
 				{
@@ -995,9 +997,9 @@ static void DoRescue(RESPONSE_REF R)
 	//dy = LogyToUniverse (GLOBAL_SIS (log_y))
 	//		- SOL_Y;
 	dx = LogxToUniverse(uqm::gameState().sis().log_x)
-	   - plot_map[SOL_DEFINED].star_pt.x;
+	   - plot_map[*PlotId::Sol].star_pt.x;
 	dy = LogyToUniverse(uqm::gameState().sis().log_y)
-	   - plot_map[SOL_DEFINED].star_pt.y;
+	   - plot_map[*PlotId::Sol].star_pt.y;
 	fuel_required = square_root(
 						(uint32_t)((long)dx * dx + (long)dy * dy))
 				  + (2 * FuelTankScale);
@@ -1057,10 +1059,10 @@ static void CurrentEvents(void)
 	switch (phraseId)
 	{
 		case OK_BUY_EVENT_1:
-			SetHomeworldKnown(SHOFIXTI_HOME);
+			SetHomeworldKnown(*HomeId::Shofixti);
 			break;
 		case OK_BUY_EVENT_6:
-			SetHomeworldKnown(SLYLANDRO_HOME);
+			SetHomeworldKnown(*HomeId::Slylandro);
 			break;
 	}
 	NPCPhrase(phraseId);
@@ -1075,19 +1077,19 @@ static void AlienRaces(void)
 	switch (phraseId)
 	{
 		case OK_BUY_ALIEN_RACE_5:
-			SetHomeworldKnown(DRUUGE_HOME);
+			SetHomeworldKnown(*HomeId::Druuge);
 			break;
 		case OK_BUY_ALIEN_RACE_7:
-			SetHomeworldKnown(THRADDASH_HOME);
+			SetHomeworldKnown(*HomeId::Thraddash);
 			break;
 		case OK_BUY_ALIEN_RACE_8:
-			SetHomeworldKnown(CHMMR_HOME);
+			SetHomeworldKnown(*HomeId::Chmmr);
 			break;
 		case OK_BUY_ALIEN_RACE_12:
-			SetHomeworldKnown(SHOFIXTI_HOME);
+			SetHomeworldKnown(*HomeId::Shofixti);
 			break;
 		case OK_BUY_ALIEN_RACE_13:
-			SetHomeworldKnown(SLYLANDRO_HOME);
+			SetHomeworldKnown(*HomeId::Slylandro);
 			break;
 		case OK_BUY_ALIEN_RACE_14:
 			if (!uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI))
@@ -1095,7 +1097,7 @@ static void AlienRaces(void)
 				uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_PASSWORD, static_cast<uint32_t>(1));
 				uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(7));
 			}
-			SetHomeworldKnown(SPATHI_HOME);
+			SetHomeworldKnown(*HomeId::Spathi);
 			break;
 		case OK_BUY_ALIEN_RACE_15:
 			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
@@ -1103,10 +1105,10 @@ static void AlienRaces(void)
 				uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED, static_cast<uint32_t>(1));
-			SetHomeworldKnown(SYREEN_HOME);
+			SetHomeworldKnown(*HomeId::Syreen);
 			break;
 		case OK_BUY_ALIEN_RACE_16:
-			SetHomeworldKnown(YEHAT_HOME);
+			SetHomeworldKnown(*HomeId::Yehat);
 			break;
 	}
 	NPCPhrase(phraseId);
@@ -1147,12 +1149,12 @@ static void DoBuy(RESPONSE_REF R)
 	uint8_t slot {NumModuleSlots - 1};
 	do
 	{
-		if (uqm::gameState().sis().ModuleSlots[slot] == FUEL_TANK
-			|| uqm::gameState().sis().ModuleSlots[slot] == HIGHEFF_FUELSYS)
+		if (uqm::gameState().sis().ModuleSlots[slot] == ModuleType::FuelTank
+			|| uqm::gameState().sis().ModuleSlots[slot] == ModuleType::HigheffFuelsys)
 		{
 			uint16_t volume {};
 
-			volume = uqm::gameState().sis().ModuleSlots[slot] == FUEL_TANK ? FuelTankCapacity : HefuelTankCapacity;
+			volume = uqm::gameState().sis().ModuleSlots[slot] == ModuleType::FuelTank ? FuelTankCapacity : HefuelTankCapacity;
 			capacity += volume;
 		}
 	} while (slot--);
@@ -1472,16 +1474,16 @@ static void DoSell(RESPONSE_REF R)
 			while (GetTimeCounter() < TimeIn && Sleepy)
 			{
 				UpdateDuty(true);
-				Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
+				Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & ActivityFlag::CheckAbort);
 			}
 			DrawCargoStrings(
-				(uint8_t)NUM_ELEMENT_CATEGORIES,
-				(uint8_t)NUM_ELEMENT_CATEGORIES);
+				(uint8_t)MineralCategory::NumElementCategories,
+				(uint8_t)MineralCategory::NumElementCategories);
 
 			while (uqm::gameState().sis().TotalBioMass && Sleepy)
 			{
 				Sleepy = !(AnyButtonPress(true)
-						   || uqm::currentActivity() & CHECK_ABORT);
+						   || uqm::currentActivity() & ActivityFlag::CheckAbort);
 
 				UpdateDuty(true);
 
@@ -1489,8 +1491,8 @@ static void DoSell(RESPONSE_REF R)
 				TaskSwitch();
 				DeltaCredit(BioCreditValue);
 				DrawCargoStrings(
-					(uint8_t)NUM_ELEMENT_CATEGORIES,
-					(uint8_t)NUM_ELEMENT_CATEGORIES);
+					(uint8_t)MineralCategory::NumElementCategories,
+					(uint8_t)MineralCategory::NumElementCategories);
 			}
 
 			if (!Sleepy && uqm::gameState().sis().TotalBioMass)
@@ -1506,7 +1508,7 @@ static void DoSell(RESPONSE_REF R)
 				while (GetTimeCounter() < TimeIn && Sleepy)
 				{
 					UpdateDuty(true);
-					Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
+					Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & ActivityFlag::CheckAbort);
 				}
 			}
 			ClearSISRect(DrawSisDisplay);
@@ -1552,7 +1554,7 @@ static void DoSell(RESPONSE_REF R)
 				while (GetTimeCounter() < TimeIn && Sleepy)
 				{
 					UpdateDuty(true);
-					Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
+					Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & ActivityFlag::CheckAbort);
 				}
 
 				DrawRainbowPlanet(planets);
@@ -1562,7 +1564,7 @@ static void DoSell(RESPONSE_REF R)
 				while (planets != 0 && Sleepy)
 				{
 					Sleepy = !(AnyButtonPress(true)
-							   || uqm::currentActivity() & CHECK_ABORT);
+							   || uqm::currentActivity() & ActivityFlag::CheckAbort);
 
 					UpdateDuty(true);
 
@@ -1586,7 +1588,7 @@ static void DoSell(RESPONSE_REF R)
 					while (GetTimeCounter() < TimeIn && Sleepy)
 					{
 						UpdateDuty(true);
-						Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
+						Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & ActivityFlag::CheckAbort);
 					}
 				}
 				ClearSISRect(DrawSisDisplay);

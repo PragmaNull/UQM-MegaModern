@@ -61,7 +61,7 @@ static uint16_t CalcMineralDeposits(const SolarSystemInfo* SysInfoPtr, uint16_t 
 			// partially scavenged.
 			if (which_deposit < 32)
 			{
-				temp_deposit_quality = deposit_quality_fine - ((SysInfoPtr->PlanetInfo.PartiallyScavengedList[MINERAL_SCAN][which_deposit]) * 10);
+				temp_deposit_quality = deposit_quality_fine - ((SysInfoPtr->PlanetInfo.PartiallyScavengedList[*ScanType::Mineral][which_deposit]) * 10);
 			}
 			// JMS: In case which_deposit >= 32 (most likely 65535), it
 			// means that this function is being called only to count the
@@ -127,7 +127,7 @@ uint16_t GenerateMineralDeposits(const SolarSystemInfo* SysInfoPtr, uint16_t whi
 	{
 		info = &temp_info;
 	}
-	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[*ScanType::Mineral]);
 	return CalcMineralDeposits(SysInfoPtr, whichDeposit, info);
 }
 
@@ -137,7 +137,7 @@ static uint16_t CalcLifeForms(const SolarSystemInfo* SysInfoPtr, uint16_t which_
 							  SurfaceNode* info)
 {
 	uint16_t num_life_forms {0};
-	if (Plansize(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != GAS_GIANT)
+	if (Plansize(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != PlanetSize::GasGiant)
 	{
 		int16_t life_var {};
 
@@ -196,7 +196,7 @@ uint16_t GenerateLifeForms(const SolarSystemInfo* SysInfoPtr, uint16_t whichLife
 	{
 		info = &temp_info;
 	}
-	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[*ScanType::Biological]);
 	return CalcLifeForms(SysInfoPtr, whichLife, info);
 }
 
@@ -220,7 +220,7 @@ uint16_t GeneratePresetLife(const SolarSystemInfo* SysInfoPtr, const int8_t* lif
 	// kept this way to preserve the universe. That is done by preserving
 	// the order and number of Random() calls.
 
-	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[*ScanType::Biological]);
 
 	for (i = 0; lifeTypes[i] >= 0; ++i)
 	{
@@ -332,7 +332,7 @@ uint16_t CustomMineralDeposits(const SolarSystemInfo* SysInfoPtr, uint16_t which
 		info = &temp_info;
 	}
 
-	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[*ScanType::Mineral]);
 
 	const ElementDeposit* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
 	uint16_t num_deposits {0};
@@ -375,7 +375,7 @@ uint16_t CustomMineralDeposits(const SolarSystemInfo* SysInfoPtr, uint16_t which
 			if (which_deposit < 32)
 			{
 				temp_deposit_quality = deposit_quality_fine
-									 - ((SysInfoPtr->PlanetInfo.PartiallyScavengedList[MINERAL_SCAN][which_deposit]) * 10);
+									 - ((SysInfoPtr->PlanetInfo.PartiallyScavengedList[*ScanType::Mineral][which_deposit]) * 10);
 			}
 			// JMS: In case which_deposit >= 32 (most likely 65535), it means that this
 			// function is being called only to count the number of deposit nodes on the

@@ -27,7 +27,7 @@
 
 static ConversationData shofixti_desc =
 	{
-		SHOFIXTI_CONVERSATION, /* AlienConv */
+		Conversation::Shofixti, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -228,7 +228,7 @@ static void ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(OK_WILL_BE_SENTRY);
 
-		SetHomeworldKnown(SHOFIXTI_HOME);
+		SetHomeworldKnown(*HomeId::Shofixti);
 
 		setSegue(Segue::Peace);
 	}
@@ -242,7 +242,7 @@ static void ExitConversation(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::MAIDENS_ON_SHIP, static_cast<uint32_t>(0));
 		setSegue(Segue::Peace);
 
-		AddEvent(EventType::Relative, 2, 0, 0, SHOFIXTI_RETURN_EVENT);
+		AddEvent(EventType::Relative, 2, 0, 0, GameEventId::ShofixtiReturnEvent);
 	}
 	else if (PlayerSaid(R, dont_attack))
 	{
@@ -470,7 +470,7 @@ static void Friendly(RESPONSE_REF R)
 	{
 		NPCPhrase(I_GUARD);
 
-		SetHomeworldKnown(SHOFIXTI_HOME);
+		SetHomeworldKnown(*HomeId::Shofixti);
 
 		LastStack = 1;
 		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(1));
@@ -492,7 +492,7 @@ static void Friendly(RESPONSE_REF R)
 	{
 		NPCPhrase(BLEW_IT_UP);
 
-		SetHomeworldKnown(SHOFIXTI_HOME);
+		SetHomeworldKnown(*HomeId::Shofixti);
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(1));
@@ -579,7 +579,7 @@ static void Friendly(RESPONSE_REF R)
 
 static void Intro(void)
 {
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 

@@ -51,7 +51,7 @@ static bool GenerateZoqFotPikScout_initNpcs(SolarSystemState* solarSys)
 		uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_GRPOFFS);
 		if (uqm::gameState().game().BattleGroupRef == 0)
 		{
-			CloneShipFragment(ZOQFOTPIK_SHIP,
+			CloneShipFragment(RaceId::Zoqfotpik,
 							  &uqm::gameState().game().npc_built_ship_q, 0);
 			uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
 			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
@@ -82,10 +82,10 @@ static bool GenerateZoqFotPikScout_reinitNpcs(SolarSystemState* solarSys)
 	InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
-	if (GroupPtr->race_id == ZOQFOTPIK_SHIP
-		&& (GroupPtr->task & REFORM_GROUP))
+	if (GroupPtr->race_id == RaceId::Zoqfotpik
+		&& (GroupPtr->task & GroupTaskFlag::ReformGroup))
 	{
-		GroupPtr->task = FLEE | IGNORE_FLAGSHIP | REFORM_GROUP;
+		GroupPtr->task = *GroupTask::Flee | GroupTaskFlag::IgnoreFlagship | GroupTaskFlag::ReformGroup;
 		GroupPtr->dest_loc = 0;
 	}
 	UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);

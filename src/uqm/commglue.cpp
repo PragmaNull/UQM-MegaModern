@@ -531,7 +531,7 @@ void setSegue(Segue segue)
 		case Segue::Defeat:
 			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 			uqm::gameState().sis().CrewEnlisted = (uint16_t)~0;
-			uqm::currentActivity() |= CHECK_RESTART;
+			uqm::currentActivity() |= ActivityFlag::CheckRestart;
 			break;
 	}
 }
@@ -540,7 +540,7 @@ Segue getSegue(void)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::BATTLE_SEGUE) == 0)
 	{
-		if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0 && (uqm::currentActivity() & CHECK_RESTART))
+		if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0 && (uqm::currentActivity() & ActivityFlag::CheckRestart))
 		{
 			return Segue::Defeat;
 		}
@@ -562,17 +562,17 @@ Segue getSegue(void)
 	}
 }
 
-ConversationData* init_race(CONVERSATION comm_id)
+ConversationData* init_race(Conversation comm_id)
 {
 	switch (comm_id)
 	{
-		case ARILOU_CONVERSATION:
+		case Conversation::Arilou:
 			return init_arilou_comm();
-		case BLACKURQ_CONVERSATION:
+		case Conversation::Blackurq:
 			return init_blackurq_comm();
-		case CHMMR_CONVERSATION:
+		case Conversation::Chmmr:
 			return init_chmmr_comm();
-		case COMMANDER_CONVERSATION:
+		case Conversation::Commander:
 			if (!uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 			{
 				return init_commander_comm();
@@ -581,25 +581,25 @@ ConversationData* init_race(CONVERSATION comm_id)
 			{
 				return init_starbase_comm();
 			}
-		case DRUUGE_CONVERSATION:
+		case Conversation::Druuge:
 			return init_druuge_comm();
-		case ILWRATH_CONVERSATION:
+		case Conversation::Ilwrath:
 			return init_ilwrath_comm();
-		case MELNORME_CONVERSATION:
+		case Conversation::Melnorme:
 			return init_melnorme_comm();
-		case MYCON_CONVERSATION:
+		case Conversation::Mycon:
 			return init_mycon_comm();
-		case ORZ_CONVERSATION:
+		case Conversation::Orz:
 			return init_orz_comm();
-		case PKUNK_CONVERSATION:
+		case Conversation::Pkunk:
 			return init_pkunk_comm();
-		case SHOFIXTI_CONVERSATION:
+		case Conversation::Shofixti:
 			return init_shofixti_comm();
-		case SLYLANDRO_CONVERSATION:
+		case Conversation::Slylandro:
 			return init_slyland_comm();
-		case SLYLANDRO_HOME_CONVERSATION:
+		case Conversation::SlylandroHome:
 			return init_slylandro_comm();
-		case SPATHI_CONVERSATION:
+		case Conversation::Spathi:
 			if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 			{
 				return init_spathi_comm();
@@ -608,27 +608,27 @@ ConversationData* init_race(CONVERSATION comm_id)
 			{
 				return init_spahome_comm();
 			}
-		case SUPOX_CONVERSATION:
+		case Conversation::Supox:
 			return init_supox_comm();
-		case SYREEN_CONVERSATION:
+		case Conversation::Syreen:
 			return init_syreen_comm();
-		case TALKING_PET_CONVERSATION:
+		case Conversation::TalkingPet:
 			return init_talkpet_comm();
-		case THRADD_CONVERSATION:
+		case Conversation::Thradd:
 			return init_thradd_comm();
-		case UMGAH_CONVERSATION:
+		case Conversation::Umgah:
 			return init_umgah_comm();
-		case URQUAN_CONVERSATION:
+		case Conversation::Urquan:
 			return init_urquan_comm();
-		case UTWIG_CONVERSATION:
+		case Conversation::Utwig:
 			return init_utwig_comm();
-		case VUX_CONVERSATION:
+		case Conversation::Vux:
 			return init_vux_comm();
-		case YEHAT_REBEL_CONVERSATION:
+		case Conversation::YehatRebel:
 			return init_rebel_yehat_comm();
-		case YEHAT_CONVERSATION:
+		case Conversation::Yehat:
 			return init_yehat_comm();
-		case ZOQFOTPIK_CONVERSATION:
+		case Conversation::Zoqfotpik:
 			return init_zoqfot_comm();
 		default:
 			return init_chmmr_comm();

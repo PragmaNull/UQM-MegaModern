@@ -31,7 +31,7 @@ static constexpr auto NumStrobes {(StrobeLength * StrobeRate / GameTicksPerSecon
 
 static ConversationData talkpet_desc =
 	{
-		TALKING_PET_CONVERSATION, /* AlienConv */
+		Conversation::TalkingPet, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -758,7 +758,7 @@ static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -766,7 +766,7 @@ static void Intro(void)
 		return;
 	}
 
-	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(0));
 		setSegue(Segue::Hostile);
@@ -881,7 +881,7 @@ static void Intro(void)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-		SetHomeworldKnown(UMGAH_HOME);
+		SetHomeworldKnown(*HomeId::Umgah);
 		if (NumVisits == 1)
 		{
 			CompelPlayer((RESPONSE_REF)0);
@@ -900,7 +900,7 @@ static void Intro(void)
 	}
 	else
 	{
-		if (StartSphereTracking(UMGAH_SHIP))
+		if (StartSphereTracking(RaceId::Umgah))
 		{
 			NPCPhrase(LETS_MAKE_A_DEAL);
 		}
@@ -946,7 +946,7 @@ ConversationData* init_talkpet_comm(void)
 	talkpet_desc.AlienTextBaseline.y = 0;
 	talkpet_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

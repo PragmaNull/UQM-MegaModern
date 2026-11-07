@@ -24,7 +24,7 @@
 
 static ConversationData vux_desc =
 	{
-		VUX_CONVERSATION, /* AlienConv */
+		Conversation::Vux, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -829,7 +829,7 @@ static void Intro(void)
 		CommData.AlienAmbientArray[17].AnimFlags &= ~AnimDisabled;
 	}
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -866,7 +866,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::VUX_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-			SetHomeworldKnown(VUX_HOME);
+			SetHomeworldKnown(*HomeId::Vux);
 		}
 		else
 		{
@@ -931,7 +931,7 @@ ConversationData* init_vux_comm(void)
 	}
 
 	if ((uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

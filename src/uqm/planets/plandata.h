@@ -19,6 +19,7 @@
 #ifndef UQM_PLANETS_PLANDATA_H_
 #define UQM_PLANETS_PLANDATA_H_
 
+#include "core/types/enum.h"
 #include "libs/reslib.h"
 
 #if 0 //defined(__cplusplus)
@@ -28,50 +29,58 @@ extern "C" {
 /*------------------------------ Type Defines ----------------------------- */
 
 
-enum
+enum class PlanetSize : uint8_t
 {
-	SMALL_ROCKY_WORLD = 0,
-	LARGE_ROCKY_WORLD,
-	GAS_GIANT,
+	SmallRockyWorld = 0,
+	LargeRockyWorld,
+	GasGiant,
 
-	NUM_PLANET_TYPES
+	Count
 };
+template <>
+inline constexpr bool IsArithmeticEnum<PlanetSize> = true;
 
-enum
+enum class StellarSize : uint8_t
 {
-	DWARF_STAR = 0,
-	GIANT_STAR,
-	SUPER_GIANT_STAR,
+	Dwarf = 0,
+	Giant,
+	SuperGiant,
 
-	NUM_STAR_TYPES
+	Count
 };
+template <>
+inline constexpr bool IsArithmeticEnum<StellarSize> = true;
 
-enum
+enum class StarBodyColor : uint8_t
 {
-	BLUE_BODY = 0,
-	GREEN_BODY,
-	ORANGE_BODY,
-	RED_BODY,
-	WHITE_BODY,
-	GRAY_BODY = WHITE_BODY,
-	YELLOW_BODY,
+	Blue = 0,
+	Green,
+	Orange,
+	Red,
+	White,
+	Gray = White,
+	Yellow,
 
-	NUM_STAR_COLORS,
+	Count,
 
-	CYAN_BODY = NUM_STAR_COLORS,
-	PURPLE_BODY,
-	VIOLET_BODY,
-	NUM_PLANET_COLORS
+	Cyan = Count,
+	Purple,
+	Violet,
+	NumPlanetColors
 };
+template <>
+inline constexpr bool IsArithmeticEnum<StarBodyColor> = true;
 
-enum
+enum class SystemOwner
 {
-	OWNER_NOBODY = 0,
-	OWNER_NEUTRAL,
-	OWNER_HIERARCHY,
+	Nobody = 0,
+	Neutral,
+	Hierarchy,
 
-	OWNER_PLAYER = (1 << 2)
+	Player = (1 << 2)
 };
+template <>
+inline constexpr bool IsArithmeticEnum<SystemOwner> = true;
 
 inline constexpr auto StarOwnerShift {0};
 inline constexpr auto StarTypeShift {3};  /* STAR_OWNER_SHIFT + 3 */
@@ -79,12 +88,12 @@ inline constexpr auto StarColorShift {5}; /* STAR_TYPE_SHIFT + 2 */
 inline constexpr auto StarColorMask {(uint8_t)(0xFF << StarColorShift)};
 inline constexpr auto StarTypeMask {(uint8_t)((0xFF << StarTypeShift) & ~StarColorMask)};
 inline constexpr auto StarOwnerMask {(uint8_t)((0xFF << StarOwnerShift) & ~(StarColorMask | StarTypeMask))};
-inline constexpr auto StarUnknownMask {(StarOwnerMask & ~OWNER_PLAYER)};
+inline constexpr auto StarUnknownMask {(StarOwnerMask & ~*SystemOwner::Player)};
 
 constexpr auto MakeStar(const auto& t, const auto& c, const auto& o) { return (uint8_t)((((uint8_t)(t) << StarTypeShift) & StarTypeMask) | (((uint8_t)(c) << StarColorShift) & StarColorMask) | (((uint8_t)(o) << StarOwnerShift) & StarOwnerMask)); }
-constexpr auto StarType(const auto& f) { return (uint8_t)(((f)&StarTypeMask) >> StarTypeShift); }
-constexpr auto StarColor(const auto& f) { return (uint8_t)(((f)&StarColorMask) >> StarColorShift); }
-constexpr auto StarOwner(const auto& f) { return (uint8_t)(((f)&StarOwnerMask) >> StarOwnerShift); }
+constexpr auto StarType(const auto& f) { return static_cast<StellarSize>(((f)&StarTypeMask) >> StarTypeShift); }
+constexpr auto StarColor(const auto& f) { return static_cast<StarBodyColor>(((f)&StarColorMask) >> StarColorShift); }
+constexpr auto StarOwner(const auto& f) { return static_cast<SystemOwner>(((f)&StarOwnerMask) >> StarOwnerShift); }
 
 
 inline constexpr auto PlanSizeMask {0x03};
@@ -94,9 +103,9 @@ inline constexpr auto CrateredAlgo {(1 << 2)};
 inline constexpr auto GasGiantAlgo {(2 << 2)};
 inline constexpr auto PlanAlgoMask {0x0C};
 
-constexpr auto Plansize(const auto& type) { return ((uint8_t)((type)&PlanSizeMask)); }
+constexpr auto Plansize(const auto& type) { return static_cast<PlanetSize>((type)&PlanSizeMask); }
 constexpr auto Planalgo(const auto& type) { return ((uint8_t)((type)&PlanAlgoMask)); }
-constexpr auto Plancolor(const auto& type) { return uqm::highNibble(type); }
+constexpr auto Plancolor(const auto& type) { return static_cast<StarBodyColor>(uqm::highNibble(type)); }
 
 inline constexpr auto ThinAtmosphere {10};
 inline constexpr auto NormalAtmosphere {75};
@@ -104,95 +113,97 @@ inline constexpr auto ThickAtmosphere {200};
 inline constexpr auto SuperThickAtmosphere {2500};
 inline constexpr auto GasGiantAtmosphere {0xFFFF};
 
-enum
+enum class PlanetType
 {
-	FIRST_ROCKY_WORLD = 0,
-	FIRST_SMALL_ROCKY_WORLD = FIRST_ROCKY_WORLD,
+	FirstRocky = 0,
+	FirstSmallRocky = FirstRocky,
 
-	OOLITE_WORLD = FIRST_SMALL_ROCKY_WORLD,
-	YTTRIC_WORLD,
-	QUASI_DEGENERATE_WORLD,
-	LANTHANIDE_WORLD,
-	TREASURE_WORLD,
-	UREA_WORLD,
-	METAL_WORLD,
-	RADIOACTIVE_WORLD,
-	OPALESCENT_WORLD,
-	CYANIC_WORLD,
-	ACID_WORLD,
-	ALKALI_WORLD,
-	HALIDE_WORLD,
-	GREEN_WORLD,
-	COPPER_WORLD,
-	CARBIDE_WORLD,
-	ULTRAMARINE_WORLD,
-	NOBLE_WORLD,
-	AZURE_WORLD,
-	CHONDRITE_WORLD,
-	PURPLE_WORLD,
-	SUPER_DENSE_WORLD,
-	PELLUCID_WORLD,
-	DUST_WORLD,
-	CRIMSON_WORLD,
-	CIMMERIAN_WORLD,
-	INFRARED_WORLD,
-	SELENIC_WORLD,
-	AURIC_WORLD,
-	LAST_SMALL_ROCKY_WORLD = AURIC_WORLD,
+	Oolite = FirstSmallRocky,
+	Yttric,
+	QuasiDegenerate,
+	Lanthanide,
+	Treasure,
+	Urea,
+	Metal,
+	Radioactive,
+	Opalescent,
+	Cyanic,
+	Acid,
+	Alkali,
+	Halide,
+	Green,
+	Copper,
+	Carbide,
+	Ultramarine,
+	Noble,
+	Azure,
+	Chondrite,
+	Purple,
+	SuperDense,
+	Pellucid,
+	Dust,
+	Crimson,
+	Cimmerian,
+	Infrared,
+	Selenic,
+	Auric,
+	LastSmallRocky = Auric,
 
-	FIRST_LARGE_ROCKY_WORLD,
-	FLUORESCENT_WORLD = FIRST_LARGE_ROCKY_WORLD,
-	ULTRAVIOLET_WORLD,
-	PLUTONIC_WORLD,
-	RAINBOW_WORLD,
-	SHATTERED_WORLD,
-	SAPPHIRE_WORLD,
-	ORGANIC_WORLD,
-	XENOLITHIC_WORLD,
-	REDUX_WORLD,
-	PRIMORDIAL_WORLD,
-	EMERALD_WORLD,
-	CHLORINE_WORLD,
-	MAGNETIC_WORLD,
-	WATER_WORLD,
-	TELLURIC_WORLD,
-	HYDROCARBON_WORLD,
-	IODINE_WORLD,
-	VINYLOGOUS_WORLD,
-	RUBY_WORLD,
-	MAGMA_WORLD,
-	MAROON_WORLD,
+	FirstLargeRocky,
+	Fluorescent = FirstLargeRocky,
+	Ultraviolet,
+	Plutonic,
+	Rainbow,
+	Shattered,
+	Sapphire,
+	Organic,
+	Xenolithic,
+	Redux,
+	Primordial,
+	Emerald,
+	Chlorine,
+	Magnetic,
+	Water,
+	Telluric,
+	Hydrocarbon,
+	Iodine,
+	Vinylogous,
+	Ruby,
+	Magma,
+	Maroon,
 	//DIAMOND_WORLD,
-	LAST_LARGE_ROCKY_WORLD = MAROON_WORLD,
-	LAST_ROCKY_WORLD = LAST_LARGE_ROCKY_WORLD,
+	LastLargeRocky = Maroon,
+	LastRocky = LastLargeRocky,
 
-	FIRST_GAS_GIANT,
-	BLU_GAS_GIANT = FIRST_GAS_GIANT, /* Gas Giants */
-	CYA_GAS_GIANT,
-	GRN_GAS_GIANT,
-	GRY_GAS_GIANT,
-	ORA_GAS_GIANT,
-	PUR_GAS_GIANT,
-	RED_GAS_GIANT,
-	VIO_GAS_GIANT,
-	YEL_GAS_GIANT,
-	LAST_GAS_GIANT = YEL_GAS_GIANT,
+	FirstGasGiant,
+	BluGasGiant = FirstGasGiant, /* Gas Giants */
+	CyaGasGiant,
+	GrnGasGiant,
+	GryGasGiant,
+	OraGasGiant,
+	PurGasGiant,
+	RedGasGiant,
+	VioGasGiant,
+	YelGasGiant,
+	LastGasGiant = YelGasGiant,
 
-	NUMBER_OF_PLANET_TYPES,
+	NumberOfPlanetTypes,
 
-	WORLD_TYPE_SPECIAL = 0x80,
-	PLANET_SHIELDED = WORLD_TYPE_SPECIAL,
+	WorldTypeSpecial = 0x80,
+	PlanetShielded = WorldTypeSpecial,
 
-	HIERARCHY_STARBASE = 127 | WORLD_TYPE_SPECIAL,
-	SA_MATRA = 126 | WORLD_TYPE_SPECIAL,
-	DESTROYED_STARBASE = 125 | WORLD_TYPE_SPECIAL,
-	PRECURSOR_STARBASE = 124 | WORLD_TYPE_SPECIAL,
+	HierarchyStarbase = 127 | WorldTypeSpecial,
+	SaMatra = 126 | WorldTypeSpecial,
+	DestroyedStarbase = 125 | WorldTypeSpecial,
+	PrecursorStarbase = 124 | WorldTypeSpecial,
 };
+template <>
+inline constexpr bool IsArithmeticEnum<PlanetType> = true;
 
-inline constexpr auto NumberOfSmallRockyWorlds {(LAST_SMALL_ROCKY_WORLD - FIRST_SMALL_ROCKY_WORLD + 1)};
-inline constexpr auto NumberOfLargeRockyWorlds {(LAST_LARGE_ROCKY_WORLD - FIRST_LARGE_ROCKY_WORLD + 1)};
+inline constexpr auto NumberOfSmallRockyWorlds {(PlanetType::LastSmallRocky - PlanetType::FirstSmallRocky + 1)};
+inline constexpr auto NumberOfLargeRockyWorlds {(PlanetType::LastLargeRocky - PlanetType::FirstLargeRocky + 1)};
 inline constexpr auto NumberOfRockyWorlds {(NumberOfSmallRockyWorlds + NumberOfLargeRockyWorlds)};
-inline constexpr auto NumberOfGasGiants {(LAST_GAS_GIANT - FIRST_GAS_GIANT + 1)};
+inline constexpr auto NumberOfGasGiants {(PlanetType::LastGasGiant - PlanetType::FirstGasGiant + 1)};
 
 // TODO: This struct is highly alignment and padding dependent and
 //   should not be used! The data is loaded as binary from files and
@@ -274,8 +285,8 @@ struct PlanetData
 
 	const PlanetFrame* PlanDataPtr;
 
-	uint32_t ScanSeed[NUM_SCAN_TYPES];
-	uint32_t ScanRetrieveMask[NUM_SCAN_TYPES];
+	uint32_t ScanSeed[*ScanType::Count];
+	uint32_t ScanRetrieveMask[*ScanType::Count];
 
 	// JMS: This stores the amount of partially scavenged minerals.
 	//
@@ -285,7 +296,7 @@ struct PlanetData
 	// There can be max uint32_t = 32 mineral deposits on the planet, thus the 32.
 	//
 	// This can be later made to support also partially scavenged biodata.
-	uint8_t PartiallyScavengedList[NUM_SCAN_TYPES][32];
+	uint8_t PartiallyScavengedList[*ScanType::Count][32];
 
 	uqm::StringTablePtr DiscoveryStrings {};
 	size_t DiscoveryIndex {};
@@ -293,15 +304,17 @@ struct PlanetData
 	FRAME LanderFontEff;
 };
 
-enum
+enum class DensityClass
 {
-	GAS_DENSITY,
-	LIGHT_DENSITY,
-	LOW_DENSITY,
-	NORMAL_DENSITY,
-	HIGH_DENSITY,
-	SUPER_DENSITY
+	Gas,
+	Light,
+	Low,
+	Normal,
+	High,
+	Super
 };
+template <>
+inline constexpr bool IsArithmeticEnum<DensityClass> = true;
 
 extern uint16_t CalcGravity(const PlanetData*);
 

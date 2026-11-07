@@ -125,29 +125,29 @@ uint8_t clip_channel(int c)
 
 void TransformColor(Color* c, uint16_t scan)
 {
-	if (scan == NUM_SCAN_TYPES)
+	if (scan == ScanType::Count)
 	{
 		return;
 	}
 
 	c->r = c->g = c->b = (c->r + c->g + c->b) / 3;
 
-	switch (scan)
+	switch (static_cast<ScanType>(scan))
 	{
-		case MINERAL_SCAN:
+		case ScanType::Mineral:
 			{
 				c->b = 0x00;
 				c->g = 0x00;
 				break;
 			}
-		case ENERGY_SCAN:
+		case ScanType::Energy:
 			{
 				c->r = (c->r / 3) * 2;
 				c->b = c->r;
 				c->g = c->r;
 				break;
 			}
-		case BIOLOGICAL_SCAN:
+		case ScanType::Biological:
 			{
 				c->r = 0x00;
 				c->b = 0x00;
@@ -160,7 +160,7 @@ void TransformColor(Color* c, uint16_t scan)
 
 int8_t ColorDelta(uint16_t scan, uint32_t avg)
 {
-	if (scan == NUM_SCAN_TYPES)
+	if (scan == ScanType::Count)
 	{
 		return 0;
 	}
@@ -230,21 +230,21 @@ void AdjustColor(Color* c, uint16_t scan, uint16_t height, uint16_t width, int8_
 	{
 		for (x = 0; x < width; ++x, ++c)
 		{
-			switch (scan)
+			switch (static_cast<ScanType>(scan))
 			{
-				case MINERAL_SCAN:
+				case ScanType::Mineral:
 					{
 						c->r += diff;
 						break;
 					}
-				case ENERGY_SCAN:
+				case ScanType::Energy:
 					{
 						c->r += diff;
 						c->g += diff;
 						c->b += diff;
 						break;
 					}
-				case BIOLOGICAL_SCAN:
+				case ScanType::Biological:
 					{
 						c->g += diff;
 						break;
@@ -258,15 +258,15 @@ void AdjustColor(Color* c, uint16_t scan, uint16_t height, uint16_t width, int8_
 
 RESOURCE GetAltColorMap(SystemPlanet* pPlanetDesc)
 {
-	switch (pPlanetDesc->data_index)
+	switch (static_cast<PlanetType>(pPlanetDesc->data_index))
 	{
-		case METAL_WORLD: /* MERCURY */
+		case PlanetType::Metal: /* MERCURY */
 			return MercuryColorTabRes;
-		case PRIMORDIAL_WORLD: /* VENUS */
+		case PlanetType::Primordial: /* VENUS */
 			return VenusColorTabRes;
-		case DUST_WORLD: /* MARS */
+		case PlanetType::Dust: /* MARS */
 			return MarsColorTabRes;
-		case PELLUCID_WORLD: /* PLUTO & CALLISTO */
+		case PlanetType::Pellucid: /* PLUTO & CALLISTO */
 			{
 				if (worldIsPlanet(pSolarSysState, pPlanetDesc))
 				{
@@ -277,7 +277,7 @@ RESOURCE GetAltColorMap(SystemPlanet* pPlanetDesc)
 					return CallistoColorTabRes;
 				}
 			}
-		case SELENIC_WORLD: /* LUNA & CHARON */
+		case PlanetType::Selenic: /* LUNA & CHARON */
 			{
 				if (planetIndex(pSolarSysState, pPlanetDesc) == 2)
 				{
@@ -288,15 +288,15 @@ RESOURCE GetAltColorMap(SystemPlanet* pPlanetDesc)
 					return CharonColorTabRes;
 				}
 			}
-		case RADIOACTIVE_WORLD: /* IO */
+		case PlanetType::Radioactive: /* IO */
 			return IoColorTabRes;
-		case HALIDE_WORLD: /* EUROPA */
+		case PlanetType::Halide: /* EUROPA */
 			return EuropaColorTabRes;
-		case CYANIC_WORLD: /* GANYMEDE */
+		case PlanetType::Cyanic: /* GANYMEDE */
 			return GanymedeColorTabRes;
-		case ALKALI_WORLD: /* TITAN */
+		case PlanetType::Alkali: /* TITAN */
 			return TitanColorTabRes;
-		case VINYLOGOUS_WORLD: /* TRITON */
+		case PlanetType::Vinylogous: /* TRITON */
 			return TritonColorTabRes;
 		default:
 			return nullptr;
@@ -403,7 +403,7 @@ static void RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	}
 	SetPrimNextLink(&pBatch[-1], EndOfList);
 
-	const PlanetFrame* PlanDataPtr {&PlanData[pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED]};
+	const PlanetFrame* PlanDataPtr {&PlanData[pSolarSysState->pOrbitalDesc->data_index & ~*PlanetType::PlanetShielded]};
 	const uint8_t AlgoType {Planalgo(PlanDataPtr->Type)};
 
 	if (SurfDef)
@@ -500,7 +500,7 @@ static void RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 		return;
 	}
 
-	const PlanetFrame* PlanDataPtr {&PlanData[pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED]};
+	const PlanetFrame* PlanDataPtr {&PlanData[pSolarSysState->pOrbitalDesc->data_index & ~*PlanetType::PlanetShielded]};
 	const uint8_t AlgoType {Planalgo(PlanDataPtr->Type)};
 
 	if (SurfDef)
@@ -1237,9 +1237,9 @@ void RenderPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset,
 	Color* pix {Orbit->ScratchArray};
 	clear = BuildColorRgba(0, 0, 0, 0);
 
-	if ((Orbit->scanType < NUM_SCAN_TYPES) && Orbit->ScanColors)
+	if ((Orbit->scanType < ScanType::Count) && Orbit->ScanColors)
 	{
-		pixels = Orbit->ScanColors[Orbit->scanType] + offset;
+		pixels = Orbit->ScanColors[*Orbit->scanType] + offset;
 	}
 	else
 	{
@@ -1338,9 +1338,9 @@ void RenderPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset,
 			c.a = 0xff;
 
 			if (uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::Console3DO && uqm::UQMOptions::read().tintPlanSphere == uqm::EmulationMode::PC
-				&& Orbit->scanType < NUM_SCAN_TYPES)
+				&& Orbit->scanType < ScanType::Count)
 			{
-				*pix = apply_alpha_pixel(c, Orbit->scanType);
+				*pix = apply_alpha_pixel(c, *Orbit->scanType);
 			}
 			else
 			{
@@ -1499,16 +1499,16 @@ void Render3DOPlanetSphere(PlanetOrbit* Orbit, FRAME MaskFrame, int offset,
 				c->b = clip_channel(c->b - shade->b);
 
 				if (uqm::UQMOptions::read().tintPlanSphere == uqm::EmulationMode::PC
-					&& Orbit->scanType < NUM_SCAN_TYPES)
+					&& Orbit->scanType < ScanType::Count)
 				{
 					if (uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::Console3DO)
 					{
 						*c = apply_additive_pixel(
-							*c, Orbit->scanType);
+							*c, *Orbit->scanType);
 					}
 					else if (uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::PC)
 					{
-						TransformColor(c, Orbit->scanType);
+						TransformColor(c, *Orbit->scanType);
 					}
 				}
 			}
@@ -2073,7 +2073,7 @@ static void planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		Orbit->TopoMask = 0;
 		Orbit->sphereBytes = nullptr;
 		Orbit->sphereMap = 0;
-		Orbit->scanType = NUM_SCAN_TYPES;
+		Orbit->scanType = ScanType::Count;
 
 		Orbit->Shade = 0;
 		Orbit->ShadeColors = nullptr;
@@ -2089,8 +2089,8 @@ static void planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		if (forOrbit && isPC(uqm::UQMOptions::read().scanStyle) && isPC(uqm::UQMOptions::read().tintPlanSphere)
 			&& !use3DOSpheres)
 		{ // generate only on that conditions and then use if not nullptr
-			Orbit->ScanColors = new Color*[NUM_SCAN_TYPES];
-			for (i = 0; i < NUM_SCAN_TYPES; i++)
+			Orbit->ScanColors = new Color*[*ScanType::Count];
+			for (i = 0; i < ScanType::Count; i++)
 			{
 				Orbit->ScanColors[i] = new Color[height * (width + spherespanx)];
 			}
@@ -2737,12 +2737,12 @@ void GetPlanetTopography(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame)
 	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	uint16_t width {};
 	uint16_t height {};
-	const bool shielded = (pPlanetDesc->data_index & PLANET_SHIELDED);
+	const bool shielded = (pPlanetDesc->data_index & *PlanetType::PlanetShielded);
 
 	width = ScaledMapWidth();
 	height = MapHeight();
 
-	const PlanetFrame* PlanDataPtr {&PlanData[pPlanetDesc->data_index & ~PLANET_SHIELDED]};
+	const PlanetFrame* PlanDataPtr {&PlanData[pPlanetDesc->data_index & ~*PlanetType::PlanetShielded]};
 
 	if (SurfDefFrame)
 	{
@@ -2797,12 +2797,12 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 	GFXCONTEXT TopoContext {};
 	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	bool SurfDef = false;
-	const bool shielded = (pPlanetDesc->data_index & PLANET_SHIELDED) != 0;
+	const bool shielded = (pPlanetDesc->data_index & *PlanetType::PlanetShielded) != 0;
 	uint16_t spherespanx {};
 	uint16_t radius {};
 	bool ForIP {};
 	const bool customTexture =
-		solTexturesPresent && CurStarDescPtr()->Index == SOL_DEFINED;
+		solTexturesPresent && CurStarDescPtr()->Index == PlotId::Sol;
 
 	if (!width && !height)
 	{
@@ -2832,7 +2832,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 
 	planet_orbit_init(width, height, !ForIP);
 
-	const PlanetFrame* PlanDataPtr {&PlanData[pPlanetDesc->data_index & ~PLANET_SHIELDED]};
+	const PlanetFrame* PlanDataPtr {&PlanData[pPlanetDesc->data_index & ~*PlanetType::PlanetShielded]};
 
 	load_color_resources(
 		pPlanetDesc, PlanDataPtr, PlanetInfo,
@@ -2932,7 +2932,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 
 		if (SurfDef)
 		{
-			for (i = 0; i < NUM_SCAN_TYPES; i++)
+			for (i = 0; i < ScanType::Count; i++)
 			{
 				uint16_t x {};
 
@@ -2963,7 +2963,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 		{
 			const uqm::StringTablePtr scanTable {uqm::loadStringTable(ScanColorTabRes)};
 
-			for (i = 0; i < NUM_SCAN_TYPES; i++)
+			for (i = 0; i < ScanType::Count; i++)
 			{
 				pSolarSysState->ScanFrame[i] = CaptureDrawable(
 					CreateDrawable(WantPixmap, (int16_t)width,
@@ -3028,7 +3028,7 @@ void GeneratePlanetSurface(SystemPlanet* pPlanetDesc, FRAME SurfDefFrame,
 	{ // prepare colors for every scan tint if we ever created them
 		uint32_t y {};
 
-		for (uint16_t i {0}; i < NUM_SCAN_TYPES; i++)
+		for (uint16_t i {0}; i < ScanType::Count; i++)
 		{
 			ReadFramePixelColors(pSolarSysState->ScanFrame[i],
 								 Orbit->ScanColors[i], width + spherespanx, height);

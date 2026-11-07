@@ -107,7 +107,7 @@ static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLe
 	uint16_t first_line_length = 0;
 
 	fmt::format_to_n(end_page_buf, sizeof(end_page_buf) - 1, "{}\n",
-					 GameString(static_cast<int>(SCAN_STRING_BASE) + static_cast<int>(NUM_SCAN_TYPES)));
+					 GameString(static_cast<int>(GameStringBase::ScanString) + static_cast<int>(ScanType::Count)));
 	end_page_len = uqm::utf8StringCount(end_page_buf);
 
 	GetFrameRect(SetAbsFrameIndex(SpaceJunkFrame, 18), &r);
@@ -235,7 +235,7 @@ static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLe
 					pNextStr = t.pStr;
 					c = uqm::getCharFromString(&pNextStr);
 
-					if (uqm::currentActivity() & CHECK_ABORT)
+					if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 					{
 						return;
 					}

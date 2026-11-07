@@ -19,6 +19,7 @@
 #ifndef UQM_PLANETS_ELEMDATA_H_
 #define UQM_PLANETS_ELEMDATA_H_
 
+#include "core/types/enum.h"
 #include "core/misc/bittricks.h"
 
 #if 0 //defined(__cplusplus)
@@ -26,175 +27,181 @@ extern "C" {
 #endif
 
 /*------------------------------ Type Defines ----------------------------- */
-enum
+enum class MineralCategory
 {
-	COMMON = 0,
-	CORROSIVE,
-	BASE_METAL,
-	NOBLE,
-	RARE_EARTH,
-	PRECIOUS,
-	RADIOACTIVE,
-	EXOTIC,
+	Common = 0,
+	Corrosive,
+	BaseMetal,
+	Noble,
+	RareEarth,
+	Precious,
+	Radioactive,
+	Exotic,
 
-	NUM_ELEMENT_CATEGORIES
+	NumElementCategories
 };
+template <>
+inline constexpr bool IsArithmeticEnum<MineralCategory> = true;
 
 
 /*------------------------------ Global Data ------------------------------ */
 
-enum
+enum class ChemicalElement
 {
-	HYDROGEN, // Unused - Common
-	HELIUM,
-	LITHIUM,
-	BERYLLIUM,
-	BORON,
-	CARBON,
-	NITROGEN, // Unused - Common
-	OXYGEN,
-	FLUORINE,
-	NEON,
-	SODIUM,
-	MAGNESIUM,
-	ALUMINUM,
-	SILICON,
-	PHOSPHORUS,
-	SULFUR,
-	CHLORINE,
-	ARGON,
-	POTASSIUM,
-	CALCIUM,
-	SCANDIUM,
-	TITANIUM,
-	VANADIUM,
-	CHROMIUM,
-	MANGANESE,
-	IRON,
-	COBALT,
-	NICKEL,
-	COPPER,
-	ZINC,
-	GALLIUM,
-	GERMANIUM,
-	ARSENIC,
-	SELENIUM,
-	BROMINE,
-	KRYPTON,
-	RUBIDIUM,
-	STRONTIUM,
-	YTTRIUM,
-	ZIRCONIUM,
-	NIOBIUM,
-	MOLYBDENUM,
-	TECHNETIUM,
-	RUTHENIUM,
-	RHODIUM,
-	PALLADIUM,
-	SILVER,
-	CADMIUM,
-	INDIUM,
-	TIN,
-	ANTIMONY,  // Unused - Base Metal
-	TELLURIUM, // Unused - Base Metal
-	IODINE,
-	XENON,
-	CESIUM,
-	BARIUM,
-	LANTHANUM,
-	CERIUM,
-	PRASEODYMIUM,
-	NEODYMIUM,
-	PROMETHIUM,
-	SAMARIUM,
-	EUROPIUM, // Unused - Rare Earth
-	GADOLINIUM,
-	TERBIUM,
-	DYPROSIUM, // Unused - Rare Earth
-	HOLMIUM,
-	ERBIUM,
-	THULIUM,
-	YTTERBIUM,
-	LUTETIUM,
-	HAFNIUM, // Unused - Base Metal
-	TANTALUM,
-	TUNGSTEN,
-	RHENIUM,
-	OSMIUM,
-	IRIDIUM,
-	PLATINUM,
-	GOLD,
-	MERCURY,
-	THALLIUM,
-	LEAD,
-	BISMUTH,
-	POLONIUM,
-	ASTATINE,
-	RADON,
-	FRANCIUM,
-	RADIUM,
-	ACTINIUM,
-	THORIUM,
-	PROTACTINIUM,
-	URANIUM,
-	NEPTUNIUM,
-	PLUTONIUM,
-	NUMBER_OF_NORMAL,
+	Hydrogen, // Unused - Common
+	Helium,
+	Lithium,
+	Beryllium,
+	Boron,
+	Carbon,
+	Nitrogen, // Unused - Common
+	Oxygen,
+	Fluorine,
+	Neon,
+	Sodium,
+	Magnesium,
+	Aluminum,
+	Silicon,
+	Phosphorus,
+	Sulfur,
+	Chlorine,
+	Argon,
+	Potassium,
+	Calcium,
+	Scandium,
+	Titanium,
+	Vanadium,
+	Chromium,
+	Manganese,
+	Iron,
+	Cobalt,
+	Nickel,
+	Copper,
+	Zinc,
+	Gallium,
+	Germanium,
+	Arsenic,
+	Selenium,
+	Bromine,
+	Krypton,
+	Rubidium,
+	Strontium,
+	Yttrium,
+	Zirconium,
+	Niobium,
+	Molybdenum,
+	Technetium,
+	Ruthenium,
+	Rhodium,
+	Palladium,
+	Silver,
+	Cadmium,
+	Indium,
+	Tin,
+	Antimony,  // Unused - Base Metal
+	Tellurium, // Unused - Base Metal
+	Iodine,
+	Xenon,
+	Cesium,
+	Barium,
+	Lanthanum,
+	Cerium,
+	Praseodymium,
+	Neodymium,
+	Promethium,
+	Samarium,
+	Europium, // Unused - Rare Earth
+	Gadolinium,
+	Terbium,
+	Dyprosium, // Unused - Rare Earth
+	Holmium,
+	Erbium,
+	Thulium,
+	Ytterbium,
+	Lutetium,
+	Hafnium, // Unused - Base Metal
+	Tantalum,
+	Tungsten,
+	Rhenium,
+	Osmium,
+	Iridium,
+	Platinum,
+	Gold,
+	Mercury,
+	Thallium,
+	Lead,
+	Bismuth,
+	Polonium,
+	Astatine,
+	Radon,
+	Francium,
+	Radium,
+	Actinium,
+	Thorium,
+	Protactinium,
+	Uranium,
+	Neptunium,
+	Plutonium,
+	NumberOfNormal,
 
-	OZONE = NUMBER_OF_NORMAL,
-	FREE_RADICALS,
-	CARBON_DIOXIDE,
-	CARBON_MONOXIDE, // Unused - Common
-	AMMONIA,
-	METHANE,
-	SULFURIC_ACID,
-	HYDROCHLORIC_ACID,
-	HYDROCYANIC_ACID,
-	FORMIC_ACID,
-	PHOSPHORIC_ACID,
-	FORMALDEHYDE,
-	CYANOACETYLENE,
-	METHANOL,
-	ETHANOL,
-	SILICON_MONOXIDE,  // Unused - Common
-	TITANIUM_OXIDE,	   // Unused - Common
-	ZIRCONIUM_OXIDE,   // Unused - Common
-	WATER,			   // Unused - Common
-	SILICON_COMPOUNDS, // Unused - Common
-	METAL_OXIDES,	   // Unused - Common
-	QUANTUM_BH,		   // Unused - Exotic
-	NEUTRONIUM,
-	MAGNETIC_MONOPOLES,
-	DEGENERATE_MATTER,
-	RT_SUPER_FLUID,
-	AGUUTI_NODULES,
-	IRON_COMPOUNDS,		   // Unused - Common
-	ALUMINUM_COMPOUNDS,	   // Unused - Common
-	NITROUS_OXIDE,		   // Unused - Common
-	RADIOACTIVE_COMPOUNDS, // Unused - Radioactive
-	HYDROCARBONS,
-	CARBON_COMPOUNDS, // Unused - Common
-	ANTIMATTER,
-	CHARON_DUST, // Unused - Exotic
-	REISBURG_HELICES,
-	TZO_CRYSTALS,
-	CALCIUM_COMPOUNDS, // Unused - Common
-	NITRIC_ACID,
+	Ozone = NumberOfNormal,
+	FreeRadicals,
+	CarbonDioxide,
+	CarbonMonoxide, // Unused - Common
+	Ammonia,
+	Methane,
+	SulfuricAcid,
+	HydrochloricAcid,
+	HydrocyanicAcid,
+	FormicAcid,
+	PhosphoricAcid,
+	Formaldehyde,
+	Cyanoacetylene,
+	Methanol,
+	Ethanol,
+	SiliconMonoxide,  // Unused - Common
+	TitaniumOxide,	  // Unused - Common
+	ZirconiumOxide,	  // Unused - Common
+	Water,			  // Unused - Common
+	SiliconCompounds, // Unused - Common
+	MetalOxides,	  // Unused - Common
+	QuantumBh,		  // Unused - Exotic
+	Neutronium,
+	MagneticMonopoles,
+	DegenerateMatter,
+	RtSuperFluid,
+	AguutiNodules,
+	IronCompounds,		  // Unused - Common
+	AluminumCompounds,	  // Unused - Common
+	NitrousOxide,		  // Unused - Common
+	RadioactiveCompounds, // Unused - Radioactive
+	Hydrocarbons,
+	CarbonCompounds, // Unused - Common
+	Antimatter,
+	CharonDust, // Unused - Exotic
+	ReisburgHelices,
+	TzoCrystals,
+	CalciumCompounds, // Unused - Common
+	NitricAcid,
 
-	NUMBER_OF_ELEMENTS
+	NumberOfElements
 };
+template <>
+inline constexpr bool IsArithmeticEnum<ChemicalElement> = true;
 
 
 inline constexpr auto Few {1};
 inline constexpr auto Moderate {4};
 inline constexpr auto Numerous {8};
 
-enum
+enum class DepositSize
 {
-	LIGHT = 0,
-	MEDIUM,
-	HEAVY
+	Light = 0,
+	Medium,
+	Heavy
 };
+template <>
+inline constexpr bool IsArithmeticEnum<DepositSize> = true;
 inline constexpr auto Nothing {(uint8_t)(~0)};
 
 constexpr auto MineralDeposit(const auto& qn, const auto& ql) { return uqm::makeByte(qn, ql); }

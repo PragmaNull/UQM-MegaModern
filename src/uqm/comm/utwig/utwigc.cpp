@@ -27,7 +27,7 @@
 
 static ConversationData utwig_desc =
 	{
-		UTWIG_CONVERSATION, /* AlienConv */
+		Conversation::Utwig, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -283,7 +283,7 @@ static void ExitConversation(RESPONSE_REF R)
 
 			uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ULTRON_AT_BOMB, static_cast<uint32_t>(1));
 
-			SetHomeworldKnown(UTWIG_HOME);
+			SetHomeworldKnown(*HomeId::Utwig);
 		}
 		else
 		{
@@ -337,7 +337,7 @@ static void ExitConversation(RESPONSE_REF R)
 				{
 					NPCPhrase(OK_ATTACK_KOHRAH);
 
-					AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_UTWIG_SUPOX_MISSION);
+					AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvanceUtwigSupoxMission);
 				}
 
 				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HAVE_ULTRON, static_cast<uint32_t>(1));
@@ -356,15 +356,15 @@ static void ExitConversation(RESPONSE_REF R)
 				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOSTILE, static_cast<uint32_t>(0));
 				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOSTILE, static_cast<uint32_t>(0));
 
-				SetRaceAllied(UTWIG_SHIP, true);
-				SetRaceAllied(SUPOX_SHIP, true);
+				SetRaceAllied(RaceId::Utwig, true);
+				SetRaceAllied(RaceId::Supox, true);
 			}
 		}
 	}
 	else if (PlayerSaid(R, can_you_help))
 	{
 		NPCPhrase(HOW_HELP);
-		if (EscortFeasibilityStudy(UTWIG_SHIP) == 0)
+		if (EscortFeasibilityStudy(RaceId::Utwig) == 0)
 		{
 			NPCPhrase(DONT_NEED);
 		}
@@ -373,8 +373,8 @@ static void ExitConversation(RESPONSE_REF R)
 			NPCPhrase(HAVE_4_SHIPS);
 
 			AlienTalkSegue((uint16_t)~0);
-			AddEscortShips(UTWIG_SHIP, difficultyCase(4, 4, 2));
-			PrepareShip(UTWIG_SHIP);
+			AddEscortShips(RaceId::Utwig, difficultyCase(4, 4, 2));
+			PrepareShip(RaceId::Utwig);
 		}
 	}
 }
@@ -480,7 +480,7 @@ static void AlliedHome(RESPONSE_REF R)
 	{
 		Response(how_is_ultron, AlliedHome);
 	}
-	if (IsExtended() && ShipsReady(UTWIG_SHIP))
+	if (IsExtended() && ShipsReady(RaceId::Utwig))
 	{
 		Response(can_you_help, ExitConversation);
 	}
@@ -622,7 +622,7 @@ static void NeutralUtwig(RESPONSE_REF R)
 		NPCPhrase(ABOUT_US_2);
 
 		LastStack = 2;
-		StartSphereTracking(SUPOX_SHIP);
+		StartSphereTracking(RaceId::Supox);
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, what_about_you_3))
@@ -630,7 +630,7 @@ static void NeutralUtwig(RESPONSE_REF R)
 		NPCPhrase(ABOUT_US_3);
 
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(3));
-		SetHomeworldKnown(SUPOX_HOME);
+		SetHomeworldKnown(*HomeId::Supox);
 	}
 	else if (PlayerSaid(R, what_about_urquan_1))
 	{
@@ -829,7 +829,7 @@ static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -895,7 +895,7 @@ static void Intro(void)
 			Response(hey_wait_got_ultron, ExitConversation);
 		}
 	}
-	else if (CheckAlliance(UTWIG_SHIP) == RaceAllegiance::Good)
+	else if (CheckAlliance(RaceId::Utwig) == RaceAllegiance::Good)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
@@ -1067,7 +1067,7 @@ ConversationData* init_utwig_comm(void)
 
 
 	if (uqm::gameState().flag(uqm::GameFlag::UTWIG_HAVE_ULTRON)
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

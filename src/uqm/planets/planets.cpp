@@ -94,7 +94,7 @@ void DestroyOrbitStruct(PlanetOrbit* Orbit, int16_t height)
 
 	if (Orbit->ScanColors)
 	{
-		for (uint16_t i {0}; i < NUM_SCAN_TYPES; i++)
+		for (uint16_t i {0}; i < ScanType::Count; i++)
 		{
 			delete[] Orbit->ScanColors[i];
 			Orbit->ScanColors[i] = nullptr;
@@ -149,7 +149,7 @@ void DestroyOrbitStruct(PlanetOrbit* Orbit, int16_t height)
 	delete Orbit->sphereMap;
 	Orbit->sphereMap = 0;
 
-	Orbit->scanType = 0;
+	Orbit->scanType = ScanType::Mineral;
 
 	DestroyDrawable(ReleaseDrawable(Orbit->Shade));
 	Orbit->Shade = 0;
@@ -340,7 +340,7 @@ static void DrawEnterOrbitText(GfxRect rect)
 	const int16_t og_baseline_x {text.baseline.x};
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
-						GameString(NAVIGATION_STRING_BASE + 8));
+						GameString(GameStringBase::NavigationString + 8));
 
 	text.align = TextAlign::Center;
 	{
@@ -372,7 +372,7 @@ void DrawOrbitMapGraphic(void)
 	if (uqm::UQMOptions::read().sphereType != 1)
 	{
 		const bool HaveString =
-			strlen(GameString(NAVIGATION_STRING_BASE + 8)) > 0;
+			strlen(GameString(GameStringBase::NavigationString + 8)) > 0;
 
 		s.frame = SetAbsFrameIndex(CaptureDrawable(
 									   LoadGraphic(OrbenterPmapAnimRes)),
@@ -507,7 +507,7 @@ static void DrawOrbitalDisplay(DrawOrbitalMode Mode)
 // with its own bitmap (currently only for Earth)
 void LoadPlanet(FRAME SurfDefFrame)
 {
-	const bool WaitMode = !(LastActivity & CHECK_LOAD);
+	const bool WaitMode = !(LastActivity & ActivityFlag::CheckLoad);
 	TimeCount sleep;
 
 #ifdef DEBUG
@@ -536,7 +536,7 @@ void LoadPlanet(FRAME SurfDefFrame)
 	}
 
 	GeneratePlanetSurface(pPlanetDesc, SurfDefFrame, 0, 0);
-	OrbitNum = SetPlanetMusic(pPlanetDesc->data_index & ~PLANET_SHIELDED);
+	OrbitNum = SetPlanetMusic(pPlanetDesc->data_index & ~*PlanetType::PlanetShielded);
 	GeneratePlanetSide();
 	MaskLanderGraphics();
 
@@ -589,7 +589,7 @@ void FreePlanet(void)
 
 	if (uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::PC)
 	{
-		for (uint16_t k {0}; k < NUM_SCAN_TYPES; k++)
+		for (uint16_t k {0}; k < ScanType::Count; k++)
 		{
 			DestroyDrawable(
 				ReleaseDrawable(pSolarSysState->ScanFrame[k]));
@@ -633,7 +633,7 @@ static bool DoPlanetOrbit(MenuState* pMS)
 {
 	bool select = (bool)PulsedInputState.menu[*MenuKey::MenuSelect];
 
-	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+	if ((uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
 	{
 		return false;
@@ -657,14 +657,14 @@ static bool DoPlanetOrbit(MenuState* pMS)
 	{
 		case *PlanetMenuItem::Scan:
 			ScanSystem();
-			if (uqm::currentActivity() & START_ENCOUNTER)
+			if (uqm::currentActivity() & ActivityFlag::StartEncounter)
 			{ // Found Fwiffo on Pluto
 				return false;
 			}
 			break;
 		case *PlanetMenuItem::EquipDevice:
 			select = DevicesMenu();
-			if (uqm::currentActivity() & START_ENCOUNTER)
+			if (uqm::currentActivity() & ActivityFlag::StartEncounter)
 			{ // Invoked Talking Pet, a Caster or Sun Device over Chmmr,
 				// or a Caster for Ilwrath
 				// Going into conversation
@@ -691,7 +691,7 @@ static bool DoPlanetOrbit(MenuState* pMS)
 				RepairSISBorder();
 
 				const bool AutoPilotSet {StarMap()};
-				if (uqm::currentActivity() & CHECK_ABORT)
+				if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 				{
 					return false;
 				}
@@ -710,7 +710,7 @@ static bool DoPlanetOrbit(MenuState* pMS)
 			return false;
 	}
 
-	if (!(uqm::currentActivity() & CHECK_ABORT))
+	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		if (select)
 		{ // 3DO menu jumps to NAVIGATE after a successful submenu run
@@ -731,7 +731,7 @@ static bool DoPlanetOrbit(MenuState* pMS)
 
 static void on_input_frame(void)
 {
-	if (!(uqm::currentActivity() & CHECK_ABORT))
+	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		RotatePlanetSphere(true, nullptr);
 	}
@@ -755,7 +755,7 @@ void PlanetOrbitMenu(void)
 	SetInputCallback(oldCallback);
 
 	SetFlashRect(nullptr, false);
-	if (!(uqm::currentActivity() & CHECK_LOAD))
+	if (!(uqm::currentActivity() & ActivityFlag::CheckLoad))
 	{
 		DrawMenuStateStrings(MenuString::Starmap, -PlanetMenuItem::Navigation);
 	}

@@ -1,46 +1,49 @@
 #ifndef MELEESHIP_H
 #define MELEESHIP_H
 
+#include "core/types/enum.h"
 #include <cstdint>
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
-typedef enum MeleeShip
+enum class MeleeShip
 {
-	MELEE_ANDROSYNTH,
-	MELEE_ARILOU,
-	MELEE_CHENJESU,
-	MELEE_CHMMR,
-	MELEE_DRUUGE,
-	MELEE_EARTHLING,
-	MELEE_ILWRATH,
-	MELEE_KOHR_AH,
-	MELEE_MELNORME,
-	MELEE_MMRNMHRM,
-	MELEE_MYCON,
-	MELEE_ORZ,
-	MELEE_PKUNK,
-	MELEE_SHOFIXTI,
-	MELEE_SLYLANDRO,
-	MELEE_SPATHI,
-	MELEE_SUPOX,
-	MELEE_SYREEN,
-	MELEE_THRADDASH,
-	MELEE_UMGAH,
-	MELEE_URQUAN,
-	MELEE_UTWIG,
-	MELEE_VUX,
-	MELEE_YEHAT,
-	MELEE_ZOQFOTPIK,
+	Androsynth,
+	Arilou,
+	Chenjesu,
+	Chmmr,
+	Druuge,
+	Earthling,
+	Ilwrath,
+	KohrAh,
+	Melnorme,
+	Mmrnmhrm,
+	Mycon,
+	Orz,
+	Pkunk,
+	Shofixti,
+	Slylandro,
+	Spathi,
+	Supox,
+	Syreen,
+	Thraddash,
+	Umgah,
+	Urquan,
+	Utwig,
+	Vux,
+	Yehat,
+	Zoqfotpik,
 
-	MELEE_UNSET = ((uint8_t)~0) - 1,
+	Unset = ((uint8_t)~0) - 1,
 	// Used with the Update protocol, to register in the sentTeam
-	MELEE_NONE = (uint8_t)~0
+	None = (uint8_t)~0
 	// Empty fleet position.
-} MeleeShip;
-inline constexpr auto NumMeleeShips {(MELEE_ZOQFOTPIK + 1)};
+};
+template <>
+inline constexpr bool IsArithmeticEnum<MeleeShip> = true;
+inline constexpr auto NumMeleeShips {(MeleeShip::Zoqfotpik + 1)};
 inline MeleeShip operator+=(MeleeShip lhs, int rhs) { return static_cast<MeleeShip>(static_cast<int>(lhs) + rhs); }
 inline MeleeShip operator-=(MeleeShip lhs, int rhs) { return static_cast<MeleeShip>(static_cast<int>(lhs) - rhs); }
 inline MeleeShip operator++(MeleeShip val) { return static_cast<MeleeShip>(static_cast<int>(val) + 1); }
@@ -48,7 +51,7 @@ inline MeleeShip operator--(MeleeShip val) { return static_cast<MeleeShip>(stati
 
 static inline bool MeleeShip_valid(MeleeShip ship)
 {
-	return (ship < NumMeleeShips) || (ship == MELEE_NONE);
+	return (ship < NumMeleeShips) || (ship == MeleeShip::None);
 }
 
 #if 0 //defined(__cplusplus)

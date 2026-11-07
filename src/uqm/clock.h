@@ -32,6 +32,8 @@ inline constexpr auto ClockFrameRate {(c_gameSecond / ClockBaseFramerate)};
 
 typedef HLINK HEVENT;
 
+enum class GameEventId : uint8_t;
+
 struct GameEvent
 {
 	// QueueLink elements; must be first
@@ -39,7 +41,7 @@ struct GameEvent
 
 	uint8_t day_index, month_index;
 	uint16_t year_index;
-	uint8_t func_index;
+	GameEventId func_index;
 };
 
 enum class EventType
@@ -72,8 +74,8 @@ extern float daysElapsed(void);
 extern void SetGameClockRate(uint16_t seconds_per_day);
 extern bool ValidateEvent(EventType type, uint16_t* pmonth_index,
 						  uint16_t* pday_index, uint16_t* pyear_index);
-extern HEVENT AddEvent(EventType type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index);
-extern void EventHandler(uint8_t selector);
+extern HEVENT AddEvent(EventType type, uint16_t month_index, uint16_t day_index, uint16_t year_index, GameEventId func_index);
+extern void EventHandler(GameEventId selector);
 extern void GameClockTick(void);
 extern void MoveGameClockDays(uint16_t days);
 // Moves the date to the first event, and runs the events on the way. Can go past the hyperspace Encounter events.

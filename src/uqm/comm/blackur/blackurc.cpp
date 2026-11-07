@@ -23,7 +23,7 @@
 
 static ConversationData blackurq_desc =
 	{
-		BLACKURQ_CONVERSATION, /* AlienConv */
+		Conversation::Blackurq, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -493,7 +493,7 @@ static void DieHuman(RESPONSE_REF R)
 
 static void Intro(void)
 {
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -517,7 +517,7 @@ static void Intro(void)
 	}
 
 	const uint32_t GrpOffs {uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS)};
-	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InInterplanetary
 		&& uqm::gameState().game().BattleGroupRef
 		&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 	{
@@ -601,7 +601,7 @@ ConversationData* init_blackurq_comm(void)
 	blackurq_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL)
-		&& uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
+		&& uqm::activityKind(uqm::currentActivity()) != ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Hostile);
 	}

@@ -27,7 +27,7 @@
 
 static ConversationData syreen_desc =
 	{
-		SYREEN_CONVERSATION, /* AlienConv */
+		Conversation::Syreen, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -894,18 +894,18 @@ static void PlanAmbush(RESPONSE_REF R)
 	if (IsExtended())
 	{
 		HFLEETINFO hSyreen =
-			GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, SYREEN_SHIP);
+			GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Syreen);
 		FleetInfo* SyreenPtr =
 			LockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
 
 		if (SyreenPtr)
 		{
 			SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
-			SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
-			StartSphereTracking(SYREEN_SHIP);
+			SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, *PlotId::Home);
+			StartSphereTracking(RaceId::Syreen);
 			const GfxPoint loc = SeedFleetLocation(SyreenPtr, plot_map,
-												   MYCON_TRAP_DEFINED);
-			SetRaceDest(SYREEN_SHIP, loc.x, loc.y, 15, (uint8_t)~0);
+												   *PlotId::MyconTrap);
+			SetRaceDest(*RaceId::Syreen, loc.x, loc.y, 15, (uint8_t)~0);
 		}
 
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
@@ -935,9 +935,9 @@ static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	SetHomeworldKnown(SYREEN_HOME);
+	SetHomeworldKnown(*HomeId::Syreen);
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -952,7 +952,7 @@ static void Intro(void)
 		{
 			case 0:
 				NPCPhrase(HELLO_AFTER_AMBUSH_1);
-				SetRaceAllied(SYREEN_SHIP, true);
+				SetRaceAllied(RaceId::Syreen, true);
 				break;
 			case 1:
 				NPCPhrase(HELLO_AFTER_AMBUSH_2);

@@ -60,7 +60,7 @@ static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewStat
 		{
 			if (OldState != NewState)
 			{
-				t.pStr = GameString(STARBASE_STRING_BASE + 1 + OldState);
+				t.pStr = GameString(GameStringBase::StarbaseString + 1 + OldState);
 				t.CharCount = (uint16_t)~0;
 				font_DrawText(&t);
 			}
@@ -69,14 +69,14 @@ static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewStat
 	}
 
 	t.baseline.y = text_base_y + SafeY() + (text_spacing_y * OldState);
-	t.pStr = GameString(STARBASE_STRING_BASE + 1 + OldState);
+	t.pStr = GameString(GameStringBase::StarbaseString + 1 + OldState);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E));
 	t.baseline.y = text_base_y + SafeY() + (text_spacing_y * NewState);
-	t.pStr = GameString(STARBASE_STRING_BASE + 1 + NewState);
+	t.pStr = GameString(GameStringBase::StarbaseString + 1 + NewState);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 }
@@ -91,24 +91,24 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	GfxStamp Top;
 
 	int8_t RepairSlot {0};
-	switch (which_piece)
+	switch (static_cast<ModuleType>(which_piece))
 	{
-		case FUSION_THRUSTER:
-		case EmptySlot + 0:
+		case ModuleType::FusionThruster:
+		case ModuleType::EmptyDriveSlot:
 			Side.origin.x = DriveSideX();
 			Side.origin.y = DriveSideY();
 			Top.origin.x = DriveTopX();
 			Top.origin.y = DriveTopY();
 			break;
-		case TURNING_JETS:
-		case EmptySlot + 1:
+		case ModuleType::TurningJets:
+		case ModuleType::EmptyJetSlot:
 			Side.origin.x = JetSideX();
 			Side.origin.y = JetSideY();
 			Top.origin.x = JetTopX();
 			Top.origin.y = JetTopY();
 			break;
 		default:
-			if (which_piece < EmptySlot + 2)
+			if (which_piece < ModuleType::EmptyModuleSlot)
 			{
 				RepairSlot = 1;
 				if (which_piece < EmptySlot
@@ -129,7 +129,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 					&& uqm::gameState().sis().ModuleSlots[which_slot + 1] < EmptySlot)
 				{
 					RepairSlot = -1;
-					if (which_piece == EmptySlot + 3
+					if (which_piece == ModuleType::EmptyLanderSlot
 						|| which_slot + 1 == NumModuleSlots - 3)
 					{
 						--RepairSlot;
@@ -148,7 +148,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	if (RepairSlot < 0)
 	{
 		Side.frame = SetAbsFrameIndex(ModuleFrame,
-									  ((NUM_MODULES - 1) + (6 - 2)) + (NUM_MODULES + 6)
+									  ((*ModuleType::NumModules - 1) + (6 - 2)) + (*ModuleType::NumModules + 6)
 										  - (RepairSlot + 1));
 		DrawStamp(&Side);
 	}
@@ -213,7 +213,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 		Top.origin.x += which_slot * ShipPieceOffset();
 		if (RepairSlot < 0)
 		{
-			Top.frame = SetRelFrameIndex(Side.frame, -((NUM_MODULES - 1) + 6));
+			Top.frame = SetRelFrameIndex(Side.frame, -((ModuleType::NumModules - 1) + 6));
 			DrawStamp(&Top);
 		}
 		else if (RepairSlot)
@@ -266,20 +266,20 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 		Top.frame = SetAbsFrameIndex(ModuleFrame, which_piece);
 		DrawStamp(&Top);
 
-		Side.frame = SetRelFrameIndex(Top.frame, (NUM_MODULES - 1) + 6);
+		Side.frame = SetRelFrameIndex(Top.frame, *(ModuleType::NumModules - 1) + 6);
 		DrawStamp(&Side);
 
-		if (which_slot == 1 && which_piece == EmptySlot + 2)
+		if (which_slot == 1 && which_piece == ModuleType::EmptyModuleSlot)
 		{
 			GfxStamp s;
 
 			s.origin = Top.origin;
 			s.origin.x -= ShipPieceOffset();
-			s.frame = SetAbsFrameIndex(ModuleFrame, NUM_MODULES + 5);
+			s.frame = SetAbsFrameIndex(ModuleFrame, ModuleType::NumModules + 5);
 			DrawStamp(&s);
 			s.origin = Side.origin;
 			s.origin.x -= ShipPieceOffset();
-			s.frame = SetRelFrameIndex(s.frame, (NUM_MODULES - 1) + 6);
+			s.frame = SetRelFrameIndex(s.frame, *(ModuleType::NumModules - 1) + 6);
 			DrawStamp(&s);
 		}
 
@@ -287,8 +287,8 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 		{
 			Top.origin.x += ShipPieceOffset();
 			Side.origin.x += ShipPieceOffset();
-			which_piece = uqm::gameState().sis().ModuleSlots[++which_slot];
-			if (which_piece == EmptySlot + 2
+			which_piece = *uqm::gameState().sis().ModuleSlots[++which_slot];
+			if (which_piece == ModuleType::EmptyModuleSlot
 				&& which_slot >= NumModuleSlots - 3)
 			{
 				++which_piece;
@@ -297,7 +297,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 			Top.frame = SetAbsFrameIndex(ModuleFrame, which_piece);
 			DrawStamp(&Top);
 
-			Side.frame = SetRelFrameIndex(Top.frame, (NUM_MODULES - 1) + 6);
+			Side.frame = SetRelFrameIndex(Top.frame, *(ModuleType::NumModules - 1) + 6);
 			DrawStamp(&Side);
 		}
 	}
@@ -338,7 +338,7 @@ bool DoStarBase(MenuState* pMS)
 {
 	// XXX: This function is full of hacks and otherwise strange code
 
-	if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+	if (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 	{
 		pMS->CurState = *StarbaseMenuItem::DepartBase;
 		goto ExitStarBase;
@@ -347,7 +347,7 @@ bool DoStarBase(MenuState* pMS)
 
 	if (!pMS->Initialized)
 	{
-		LastActivity &= ~CHECK_LOAD;
+		LastActivity &= ~ActivityFlag::CheckLoad;
 		pMS->InputFunc = DoStarBase;
 
 		SetFlashRect(nullptr, false);
@@ -396,7 +396,7 @@ ExitStarBase:
 
 		if (pMS->CurState == StarbaseMenuItem::DepartBase)
 		{
-			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 			{
 				uqm::gameState().setFlag(uqm::GameFlag::STARBASE_VISITED, static_cast<uint32_t>(0));
 			}
@@ -407,7 +407,7 @@ ExitStarBase:
 		if (pMS->CurState == StarbaseMenuItem::TalkCommander)
 		{
 			FlushInput();
-			InitCommunication(COMMANDER_CONVERSATION);
+			InitCommunication(Conversation::Commander);
 			// XXX: InitCommunication() clears these flags, and we need them
 			//   This marks that we are in Starbase.
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
@@ -533,9 +533,9 @@ void VisitStarBase(void)
 
 		// Unallied Starbase conversation
 		SetCommIntroMode(CommIntroMode::CrossfadeScreen, TimePeriod {});
-		InitCommunication(COMMANDER_CONVERSATION);
+		InitCommunication(Conversation::Commander);
 		if (!uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER)
-			|| (uqm::currentActivity() & CHECK_ABORT))
+			|| (uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
 			CleanupAfterStarBase();
 			return;
@@ -543,7 +543,7 @@ void VisitStarBase(void)
 
 		/* Create an Ilwrath ship responding to the Ur-Quan
 		 * probe's broadcast */
-		hStarShip = CloneShipFragment(ILWRATH_SHIP,
+		hStarShip = CloneShipFragment(RaceId::Ilwrath,
 									  &uqm::gameState().game().npc_built_ship_q, 7);
 		FragPtr = LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 		/* Hack (sort of): Suppress the tally and salvage info
@@ -551,17 +551,17 @@ void VisitStarBase(void)
 		FragPtr->race_id = (uint8_t)~0;
 		UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 
-		InitCommunication(ILWRATH_CONVERSATION);
+		InitCommunication(Conversation::Ilwrath);
 		if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0
-			|| (uqm::currentActivity() & CHECK_ABORT))
+			|| (uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
 			return; // Killed by Ilwrath
 		}
 
 		// After Ilwrath battle, about-to-ally Starbase conversation
 		SetCommIntroMode(CommIntroMode::CrossfadeScreen, TimePeriod {});
-		InitCommunication(COMMANDER_CONVERSATION);
-		if (uqm::currentActivity() & CHECK_ABORT)
+		InitCommunication(Conversation::Commander);
+		if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 		{
 			return;
 		}
@@ -584,8 +584,8 @@ void VisitStarBase(void)
 		}
 
 		SetCommIntroMode(CommIntroMode::FadeInScreen, c_gameSecond * 2);
-		InitCommunication(COMMANDER_CONVERSATION);
-		if (uqm::currentActivity() & CHECK_ABORT)
+		InitCommunication(Conversation::Commander);
+		if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 		{
 			return;
 		}
@@ -607,14 +607,14 @@ void VisitStarBase(void)
 
 static void CleanupAfterStarBase(void)
 {
-	if (!(uqm::currentActivity() & (CHECK_LOAD | CHECK_ABORT)))
+	if (!(uqm::currentActivity() & (ActivityFlag::CheckLoad | ActivityFlag::CheckAbort)))
 	{
 		// Mark as not in Starbase anymore
 		uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(0));
 		// Fake a load so Starcon2Main takes us to IP
-		uqm::currentActivity() = CHECK_LOAD;
-		NextActivity = uqm::makeWord(IN_INTERPLANETARY, 0)
-					 | START_INTERPLANETARY;
+		uqm::currentActivity() = *ActivityFlag::CheckLoad;
+		NextActivity = uqm::makeWord(ActivityKind::InInterplanetary, 0)
+					 | ActivityFlag::StartInterplanetary;
 	}
 }
 
@@ -633,8 +633,8 @@ void InstallBombAtEarth(void)
 	SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToColor, TimePeriod {}));
 
 	uqm::gameState().setFlag(uqm::GameFlag::CHMMR_BOMB_STATE, static_cast<uint32_t>(3)); /* bomb processed */
-	uqm::currentActivity() = CHECK_LOAD;												 /* fake a load game */
-	NextActivity = uqm::makeWord(IN_INTERPLANETARY, 0) | START_INTERPLANETARY;
+	uqm::currentActivity() = *ActivityFlag::CheckLoad;									 /* fake a load game */
+	NextActivity = uqm::makeWord(ActivityKind::InInterplanetary, 0) | ActivityFlag::StartInterplanetary;
 	CurStarDescPtr() = 0; /* force SolarSys reload */
 }
 

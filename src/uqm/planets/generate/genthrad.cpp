@@ -73,9 +73,9 @@ static bool GenerateThraddash_generatePlanets(SolarSystemState* solarSys)
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED)
+		if (CurStarDescPtr()->Index == PlotId::AquaHelix)
 		{
-			pPlanet->data_index = PRIMORDIAL_WORLD;
+			pPlanet->data_index = *PlanetType::Primordial;
 			pPlanet->radius = EarthRadius * 65L / 100;
 			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
 			pPlanet->location.x = Cosine(angle, pPlanet->radius);
@@ -83,7 +83,7 @@ static bool GenerateThraddash_generatePlanets(SolarSystemState* solarSys)
 		}
 		else /* CurStarDescPtr()->Index == THRADD_DEFINED */
 		{
-			pPlanet->data_index = WATER_WORLD;
+			pPlanet->data_index = *PlanetType::Water;
 			pPlanet->NumPlanets = 0;
 			pPlanet->radius = EarthRadius * 98L / 100;
 			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
@@ -109,21 +109,21 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if (StartSphereTracking(THRADDASH_SHIP)
-			&& (CurStarDescPtr()->Index == THRADD_DEFINED
+		if (StartSphereTracking(RaceId::Thraddash)
+			&& (CurStarDescPtr()->Index == PlotId::Thradd
 				|| (!uqm::gameState().flag(uqm::GameFlag::HELIX_UNPROTECTED)
 					&& (uint8_t)(uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION) - 1) >= 3)))
 		{
-			NotifyOthers(THRADDASH_SHIP, IpnlAllClear);
+			NotifyOthers(*RaceId::Thraddash, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&uqm::gameState().game().ip_group_q);
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			CloneShipFragment(THRADDASH_SHIP, &uqm::gameState().game().npc_built_ship_q,
+			CloneShipFragment(RaceId::Thraddash, &uqm::gameState().game().npc_built_ship_q,
 							  InfiniteFleet);
 
-			uqm::currentActivity() |= START_INTERPLANETARY;
-			if (CurStarDescPtr()->Index == THRADD_DEFINED)
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
+			if (CurStarDescPtr()->Index == PlotId::Thradd)
 			{
 				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			}
@@ -131,18 +131,18 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 			{
 				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
 			}
-			InitCommunication(THRADD_CONVERSATION);
+			InitCommunication(Conversation::Thradd);
 
-			if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+			if (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 			{
 				return true;
 			}
 
-			uqm::currentActivity() &= ~START_INTERPLANETARY;
+			uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 			GetGroupInfo(GroupsRandom, GroupLoadIp);
 
-			if (CurStarDescPtr()->Index == THRADD_DEFINED
+			if (CurStarDescPtr()->Index == PlotId::Thradd
 				|| (!uqm::gameState().flag(uqm::GameFlag::HELIX_UNPROTECTED)
 					&& (uint8_t)(uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION) - 1) >= 3))
 			{
@@ -154,11 +154,11 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 			// them at helix world
 		}
 		else if (isDifficulty(uqm::Difficulty::Hard)
-				 && CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
+				 && CurStarDescPtr()->Index == PlotId::AquaHelix
 				 && !uqm::gameState().flag(uqm::GameFlag::HELIX_UNPROTECTED)
 				 && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS)
 					  & 1 << *HardModeEncounter::Thraddash)
-				 && (StartSphereTracking(THRADDASH_SHIP)
+				 && (StartSphereTracking(RaceId::Thraddash)
 					 || !(uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))))
 		{
 			uint16_t sum {};
@@ -167,7 +167,7 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 			ReinitQueue(&uqm::gameState().game().ip_group_q);
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			if (!StartSphereTracking(THRADDASH_SHIP)
+			if (!StartSphereTracking(RaceId::Thraddash)
 				|| uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 			{
 				sum = 6;
@@ -179,15 +179,15 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 
 			for (uint16_t i {0}; i < sum; ++i)
 			{
-				CloneShipFragment(THRADDASH_SHIP,
+				CloneShipFragment(RaceId::Thraddash,
 								  &uqm::gameState().game().npc_built_ship_q, 0);
 			}
 
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
-			uqm::currentActivity() |= START_INTERPLANETARY;
-			InitCommunication(THRADD_CONVERSATION);
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
+			InitCommunication(Conversation::Thradd);
 
-			if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+			if (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 			{
 				return true;
 			}
@@ -196,7 +196,7 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 				const bool Survivors =
 					GetHeadLink(&uqm::gameState().game().npc_built_ship_q) != 0;
 
-				uqm::currentActivity() &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 
@@ -219,7 +219,7 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 			}
 		}
 
-		if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
+		if (CurStarDescPtr()->Index == PlotId::AquaHelix
 			&& !uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX))
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -228,7 +228,7 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(AquaStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
-		else if (CurStarDescPtr()->Index == THRADD_DEFINED)
+		else if (CurStarDescPtr()->Index == PlotId::Thradd)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
@@ -245,13 +245,13 @@ static bool GenerateThraddash_generateOrbital(SolarSystemState* solarSys,
 static uint16_t GenerateThraddash_generateEnergy(const SolarSystemState* solarSys,
 												 const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
-	if (CurStarDescPtr()->Index == THRADD_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::Thradd
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
-	if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::AquaHelix
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// This check is redundant since the retrieval bit will keep the
@@ -271,7 +271,7 @@ static uint16_t GenerateThraddash_generateEnergy(const SolarSystemState* solarSy
 static bool GenerateThraddash_pickupEnergy(SolarSystemState* solarSys,
 										   SystemPlanet* world, uint16_t whichNode)
 {
-	if (CurStarDescPtr()->Index == THRADD_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::Thradd
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
@@ -279,12 +279,12 @@ static bool GenerateThraddash_pickupEnergy(SolarSystemState* solarSys,
 		return false;
 	}
 
-	if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::AquaHelix
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		HFLEETINFO hThradd =
 			GetStarShipFromIndex(
-				&uqm::gameState().game().avail_race_q, THRADDASH_SHIP);
+				&uqm::gameState().game().avail_race_q, *RaceId::Thraddash);
 		FleetInfo* ThraddPtr =
 			LockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd);
 		int16_t strength_loss {};
@@ -301,8 +301,8 @@ static bool GenerateThraddash_pickupEnergy(SolarSystemState* solarSys,
 		if (IsExtended() && ThraddPtr->allied_state == RaceAllegiance::Good
 			&& uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
-			SetRaceAllied(THRADDASH_SHIP, false);
-			RemoveEscortShips(THRADDASH_SHIP);
+			SetRaceAllied(RaceId::Thraddash, false);
+			RemoveEscortShips(RaceId::Thraddash);
 			strength_loss = (int16_t)(ThraddPtr->actual_strength);
 			ThraddPtr->growth =
 				(uint8_t)(-strength_loss / ThraddPtr->days_left);

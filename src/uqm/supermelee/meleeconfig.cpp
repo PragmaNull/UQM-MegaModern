@@ -6,6 +6,7 @@
 
 #include <yyjson.h>
 
+#include <cctype>
 #include <cstdlib>
 
 namespace uqm
@@ -15,15 +16,17 @@ namespace
 {
 
 constexpr int64_t c_meleeConfigVersion {1};
-constexpr uqstl::string_view c_shipPrefix {"MELEE_"};
-
-// Ship names are the enumerator names without the "MELEE_" prefix, e.g. "ANDROSYNTH".
-uqstl::string_view shipName(MeleeShip ship)
+// Ship names are the enumerator names in upper case with '_' between the words, e.g. "KOHR_AH".
+uqstl::string shipName(MeleeShip ship)
 {
-	uqstl::string_view name {magic_enum::enum_name(ship)};
-	if (name.starts_with(c_shipPrefix))
+	uqstl::string name {};
+	for (const char c : magic_enum::enum_name(ship))
 	{
-		name.remove_prefix(c_shipPrefix.size());
+		if (std::isupper(static_cast<unsigned char>(c)) && !name.empty())
+		{
+			name += '_';
+		}
+		name += static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
 	}
 	return name;
 }
@@ -90,7 +93,7 @@ uqstl::optional<MeleeSideConfig> readSide(yyjson_val* sideObj)
 	{
 		if (yyjson_is_null(ship))
 		{
-			side.ships.push_back(MELEE_NONE);
+			side.ships.push_back(MeleeShip::None);
 			continue;
 		}
 		if (!yyjson_is_str(ship))
@@ -136,12 +139,12 @@ uqstl::string meleeConfigToJson(uqstl::span<const MeleeSideConfig> sides)
 		yyjson_mut_val* ships {yyjson_mut_obj_add_arr(doc, team, "ships")};
 		for (const MeleeShip ship : side.ships)
 		{
-			if (ship == MELEE_NONE || ship >= NumMeleeShips)
+			if (ship == MeleeShip::None || ship >= NumMeleeShips)
 			{
 				yyjson_mut_arr_add_null(doc, ships);
 				continue;
 			}
-			const uqstl::string_view name {shipName(ship)};
+			const uqstl::string name {shipName(ship)};
 			yyjson_mut_arr_add_strncpy(doc, ships, name.data(), name.size());
 		}
 	}

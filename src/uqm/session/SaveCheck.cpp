@@ -95,9 +95,9 @@ void compare(yyjson_val* loaded, yyjson_val* saved, const uqstl::string& path, u
 	}
 	// The game loop starts the loaded activity in the same way.
 	currentActivity() = NextActivity;
-	if (!(currentActivity() & START_ENCOUNTER) && (currentActivity() & START_INTERPLANETARY))
+	if (!(currentActivity() & ActivityFlag::StartEncounter) && (currentActivity() & ActivityFlag::StartInterplanetary))
 	{
-		currentActivity() = makeWord(IN_INTERPLANETARY, 0);
+		currentActivity() = makeWord(ActivityKind::InInterplanetary, 0);
 	}
 
 	const auto saved {SaveGameJson(&summary, summary.SaveName)};

@@ -79,7 +79,7 @@ static bool GenerateShofixti_initNpcs(SolarSystemState* solarSys)
 				uqm::gameState().game().BattleGroupRef = ~0L;
 			}
 
-			hStarShip = CloneShipFragment(SHOFIXTI_SHIP,
+			hStarShip = CloneShipFragment(RaceId::Shofixti,
 										  &uqm::gameState().game().npc_built_ship_q, 1);
 			if (hStarShip)
 			{ /* Set old Shofixti name; his brother if Tanaka died */
@@ -160,11 +160,11 @@ static bool GenerateShofixti_generatePlanets(SolarSystemState* solarSys)
 			pCurDesc->NumPlanets = 0;
 			if (i < (NumPlanets >> 1))
 			{
-				pCurDesc->data_index = SELENIC_WORLD;
+				pCurDesc->data_index = *PlanetType::Selenic;
 			}
 			else
 			{
-				pCurDesc->data_index = METAL_WORLD;
+				pCurDesc->data_index = *PlanetType::Metal;
 			}
 		}
 
@@ -196,27 +196,27 @@ static bool GenerateShofixti_generatePlanets(SolarSystemState* solarSys)
 		// and re-random every 4th time.
 		for (i = 0; i < pSunDesc->NumPlanets; ++i)
 		{
-			solarSys->PlanetDesc[i].data_index = METAL_WORLD;
+			solarSys->PlanetDesc[i].data_index = *PlanetType::Metal;
 		}
 		for (i = 0; i < pSunDesc->NumPlanets / 2; ++i)
 		{
 			uint8_t offset = uqm::lowByte(rand_val) % (pSunDesc->NumPlanets - i);
 
-			while (solarSys->PlanetDesc[planet].data_index == SELENIC_WORLD || offset > 0)
+			while (solarSys->PlanetDesc[planet].data_index == PlanetType::Selenic || offset > 0)
 			{
-				if (solarSys->PlanetDesc[planet].data_index == METAL_WORLD)
+				if (solarSys->PlanetDesc[planet].data_index == PlanetType::Metal)
 				{
 					offset--;
 				}
 				planet = (planet + 1) % pSunDesc->NumPlanets;
 			}
 
-			solarSys->PlanetDesc[planet].data_index = SELENIC_WORLD;
+			solarSys->PlanetDesc[planet].data_index = *PlanetType::Selenic;
 			rand_val = rand_val >> 8;
 		}
 	}
 
-	if (getNomadMode() != uqm::NomadMode::Off && CheckAlliance(SHOFIXTI_SHIP) == RaceAllegiance::Good)
+	if (getNomadMode() != uqm::NomadMode::Off && CheckAlliance(RaceId::Shofixti) == RaceAllegiance::Good)
 	{
 		solarSys->PlanetDesc[pSunDesc->PlanetByte].NumPlanets = 1;
 	}
@@ -234,7 +234,7 @@ static bool GenerateShofixti_generateMoons(SolarSystemState* solarSys,
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		SystemPlanet* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
-		pMoonDesc->data_index = HIERARCHY_STARBASE;
+		pMoonDesc->data_index = *PlanetType::HierarchyStarbase;
 	}
 
 	return true;
@@ -252,7 +252,7 @@ static bool GenerateShofixti_generateName(const SolarSystemState* solarSys,
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
-							GameString(PLANET_NUMBER_BASE + 35));
+							GameString(GameStringBase::PlanetNumber + 35));
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
@@ -265,10 +265,10 @@ static bool GenerateShofixti_generateOrbital(SolarSystemState* solarSys,
 {
 	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
-		if (CheckAlliance(SHOFIXTI_SHIP) == RaceAllegiance::Good)
+		if (CheckAlliance(RaceId::Shofixti) == RaceAllegiance::Good)
 		{
-			const bool MaxShips = (CountEscortShips(SHOFIXTI_SHIP) < ifHardDifficulty(1, 2) ? true : false);
-			const bool RoomInFleet = EscortFeasibilityStudy(SHOFIXTI_SHIP);
+			const bool MaxShips = (CountEscortShips(RaceId::Shofixti) < ifHardDifficulty(1, 2) ? true : false);
+			const bool RoomInFleet = EscortFeasibilityStudy(RaceId::Shofixti);
 			const uint8_t Index = !MaxShips ? 0 : (!RoomInFleet ? 1 : 2);
 
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -280,8 +280,8 @@ static bool GenerateShofixti_generateOrbital(SolarSystemState* solarSys,
 
 			if (Index == 2)
 			{
-				AddEscortShips(SHOFIXTI_SHIP, (
-												  CountEscortShips(SHOFIXTI_SHIP) == 1 ? 1 : 2));
+				AddEscortShips(RaceId::Shofixti, (
+													 CountEscortShips(RaceId::Shofixti) == 1 ? 1 : 2));
 			}
 
 			solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
@@ -311,11 +311,11 @@ static void check_old_shofixti(void)
 	InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
-	if (GroupPtr->race_id == SHOFIXTI_SHIP
-		&& (GroupPtr->task & REFORM_GROUP)
+	if (GroupPtr->race_id == RaceId::Shofixti
+		&& (GroupPtr->task & GroupTaskFlag::ReformGroup)
 		&& uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED))
 	{
-		GroupPtr->task = FLEE | IGNORE_FLAGSHIP | REFORM_GROUP;
+		GroupPtr->task = *GroupTask::Flee | GroupTaskFlag::IgnoreFlagship | GroupTaskFlag::ReformGroup;
 		GroupPtr->dest_loc = 0;
 	}
 	UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);

@@ -71,7 +71,7 @@ enum class HyperMenuItem
 template <>
 inline constexpr bool IsArithmeticEnum<HyperMenuItem> = true;
 
-static inline int16_t RaceHyperSpeed(RACE_ID Index)
+static inline int16_t RaceHyperSpeed(RaceId Index)
 {
 	static int seedStamp = -1;
 	const int defaultMap[] {
@@ -140,7 +140,7 @@ static inline int16_t RaceHyperSpeed(RACE_ID Index)
 			speedMap[0] = 1;
 		}
 	}
-	return speedMap[Index];
+	return speedMap[*Index];
 }
 /*
  * draws the melee icon for the battle group inside the black holes,
@@ -377,7 +377,7 @@ void check_hyperspace_encounter(void)
 	universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
 	universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q), Type = 0;
-		 hStarShip && (uqm::currentActivity() & IN_BATTLE);
+		 hStarShip && (uqm::currentActivity() & ActivityFlag::InBattle);
 		 hStarShip = hNextShip, ++Type)
 	{
 		const FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
@@ -405,7 +405,7 @@ void check_hyperspace_encounter(void)
 					(encounter_radius * SphereRadiusIncrement) >> 1;
 
 				if (IsExtended() && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
-					&& Type == BLACK_URQUAN_SHIP
+					&& Type == RaceId::BlackUrquan
 					&& uqm::gameState().flag(uqm::GameFlag::USED_BROADCASTER))
 				{
 					encounter_radius = (MaxXUniverse + 1) << 1;
@@ -420,7 +420,7 @@ void check_hyperspace_encounter(void)
 				HENCOUNTER hNextEncounter {};
 
 				encounter_radius = (MaxXUniverse + 1) << 1;
-				if (Type == SLYLANDRO_SHIP)
+				if (Type == RaceId::Slylandro)
 				{
 					encounter_flags = OneShotEncounter;
 					if (!uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
@@ -441,7 +441,7 @@ void check_hyperspace_encounter(void)
 				if ((IsExtended() && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 					|| !IsExtended())
 				{
-					if (Type == MELNORME_SHIP
+					if (Type == RaceId::Melnorme
 						&& (uqm::gameState().sis().FuelOnBoard == 0
 							|| uqm::gameState().flag(uqm::GameFlag::USED_BROADCASTER))
 						&& uqm::gameState().flag(uqm::GameFlag::MELNORME_ANGER) < 3)
@@ -473,7 +473,7 @@ void check_hyperspace_encounter(void)
 				}
 
 
-				if (percent == 100 && Type == MELNORME_SHIP)
+				if (percent == 100 && Type == RaceId::Melnorme)
 				{
 					uqm::gameState().setFlag(uqm::GameFlag::BROADCASTER_RESPONSE, static_cast<uint32_t>(1));
 				}
@@ -569,13 +569,13 @@ bool LoadHyperspace(void)
 		stars_in_space = F;
 	}
 
-	if (!(LastActivity & CHECK_LOAD))
+	if (!(LastActivity & ActivityFlag::CheckLoad))
 	{
 		RepairSISBorder();
 	}
 	else
 	{
-		if (uqm::lowByte(LastActivity) == 0)
+		if (uqm::activityKind(LastActivity) == 0)
 		{
 			DrawSISFrame();
 		}
@@ -700,7 +700,7 @@ static void InterplanetaryTransition(Element* ElementPtr)
 	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
 		// Enter a solar system from HyperSpace.
-		uqm::currentActivity() |= START_INTERPLANETARY;
+		uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
 		uqm::gameState().setFlag(uqm::GameFlag::ESCAPE_COUNTER, static_cast<uint32_t>(0));
 	}
 	else
@@ -728,7 +728,7 @@ static void InterplanetaryTransition(Element* ElementPtr)
 			&& CurStarDescPtr()->star_pt.y == ArilouHomeY)
 		{
 			// Meet the Arilou.
-			uqm::currentActivity() |= START_ENCOUNTER;
+			uqm::currentActivity() |= ActivityFlag::StartEncounter;
 
 			// JMS: The arilou homeworld name can now be shown on QS map.
 			KnownQSPortals |= (1 << 15);
@@ -798,8 +798,8 @@ static void ArilouSpaceTransition(void)
 			// JSD Converting hard coded ARILOU portal to plot based
 			//GLOBAL_SIS (log_x) = UniverseToLogx (ArilouSpaceX);
 			//GLOBAL_SIS (log_y) = UniverseToLogy (ArilouSpaceY);
-			uqm::gameState().sis().log_x = UniverseToLogx(plot_map[ARILOU_DEFINED].star_pt.x);
-			uqm::gameState().sis().log_y = UniverseToLogy(plot_map[ARILOU_DEFINED].star_pt.y);
+			uqm::gameState().sis().log_x = UniverseToLogx(plot_map[*PlotId::Arilou].star_pt.x);
+			uqm::gameState().sis().log_y = UniverseToLogy(plot_map[*PlotId::Arilou].star_pt.y);
 		}
 		else if (IsExtended() && ValidPoint(LoadLastLoc()))
 		{
@@ -851,13 +851,13 @@ static void unhyper_transition(Element* ElementPtr)
 	{
 		cleanup_hyperspace();
 
-		uqm::currentActivity() &= ~IN_BATTLE;
+		uqm::currentActivity() &= ~ActivityFlag::InBattle;
 		switch ((TransitionType)ElementPtr->turn_wait)
 		{
 			case TransitionType::RandomEncounter:
 				SaveSisHyperState();
 				SetBattlePlanet();
-				uqm::currentActivity() |= START_ENCOUNTER;
+				uqm::currentActivity() |= ActivityFlag::StartEncounter;
 				break;
 			case TransitionType::Interplanetary:
 				InterplanetaryTransition(ElementPtr);
@@ -947,9 +947,9 @@ bool hyper_transition(Element* ElementPtr)
 {
 	if (ElementPtr->state_flags & Appearing)
 	{
-		if (LastActivity & CHECK_LOAD)
+		if (LastActivity & ActivityFlag::CheckLoad)
 		{
-			LastActivity &= ~CHECK_LOAD;
+			LastActivity &= ~ActivityFlag::CheckLoad;
 
 			ElementPtr->current = ElementPtr->next;
 			SetUpElement(ElementPtr);
@@ -1062,7 +1062,7 @@ static void hyper_collision(Element* ElementPtr0, GfxPoint* pPt0,
 			CurStarDescPtr() = SDPtr;
 			ElementPtr0->state_flags |= DefyPhysics | Collision;
 		}
-		else if ((uqm::currentActivity() & IN_BATTLE)
+		else if ((uqm::currentActivity() & ActivityFlag::InBattle)
 				 && (!uqm::flagship().autopilot.hasTarget()
 					 || (uqm::flagship().autopilot.target().x == SDPtr->star_pt.x
 						 && uqm::flagship().autopilot.target().y == SDPtr->star_pt.y)))
@@ -1081,7 +1081,7 @@ static void hyper_collision(Element* ElementPtr0, GfxPoint* pPt0,
 static void hyper_death(Element* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & DefyPhysics)
-		&& (uqm::currentActivity() & IN_BATTLE))
+		&& (uqm::currentActivity() & ActivityFlag::InBattle))
 	{
 		CurStarDescPtr() = 0;
 	}
@@ -1326,7 +1326,7 @@ static void encounter_collision(Element* ElementPtr0, GfxPoint* pPt0,
 	HENCOUNTER hNextEncounter {};
 
 	if (!(ElementPtr1->state_flags & PlayerShip)
-		|| !(uqm::currentActivity() & IN_BATTLE))
+		|| !(uqm::currentActivity() & ActivityFlag::InBattle))
 	{
 		return;
 	}
@@ -1665,7 +1665,7 @@ static bool ProcessEncounter(Encounter* EncounterPtr, GfxPoint* puniverse,
 			delta_facing = NormalizeFacing(cur_facing - AngleToFacing(ARCTAN(puniverse->x - EncounterPtr->loc_pt.x, puniverse->y - EncounterPtr->loc_pt.y)));
 			if (delta_facing || (delta_x == 0 && delta_y == 0))
 			{
-				int16_t speed {RaceHyperSpeed((RACE_ID)EncounterPtr->race_id)};
+				int16_t speed {RaceHyperSpeed((RaceId)EncounterPtr->race_id)};
 				if (delta_facing < AngleToFacing(HalfCircle))
 				{
 					--cur_facing;
@@ -1828,17 +1828,17 @@ static constexpr auto NumFrames {32};
 
 static Color GetMaskColor(uint8_t startype)
 {
-	switch (startype)
+	switch (static_cast<StarBodyColor>(startype))
 	{
-		case RED_BODY:
+		case StarBodyColor::Red:
 			return RedStarColor;
-		case ORANGE_BODY:
+		case StarBodyColor::Orange:
 			return OrangeStarColor;
-		case YELLOW_BODY:
+		case StarBodyColor::Yellow:
 			return YellowStarColor;
-		case GREEN_BODY:
+		case StarBodyColor::Green:
 			return GreenStarColor;
-		case BLUE_BODY:
+		case StarBodyColor::Blue:
 			return BlueStarColor;
 		default:
 			return WhiteColor;
@@ -1903,10 +1903,10 @@ void SeedUniverse(void)
 			{
 				ex = SDPtr->star_pt.x;
 				ey = SDPtr->star_pt.y;
-				uint8_t star_type {StarType(SDPtr->Type)};
+				uint8_t star_type {*StarType(SDPtr->Type)};
 				if (arilouSpaceSide >= 2 && ex == ArilouHomeX && ey == ArilouHomeY)
 				{
-					star_type = SUPER_GIANT_STAR;
+					star_type = *StellarSize::SuperGiant;
 				}
 
 				s.origin.x = (int16_t)((long)ex * RadarWidth()
@@ -1986,7 +1986,7 @@ void SeedUniverse(void)
 				// JSD Converting hard coded ARILOU portal to plot based
 				//SD[i].star_pt.x = ArilouSpaceX;
 				//SD[i].star_pt.y = ArilouSpaceY;
-				SD[i].star_pt = plot_map[ARILOU_DEFINED].star_pt;
+				SD[i].star_pt = plot_map[*PlotId::Arilou].star_pt;
 			}
 			else
 			{
@@ -2087,7 +2087,7 @@ void SeedUniverse(void)
 		while ((SDPtr = FindStar(SDPtr, &universe, Xoffs(), Yoffs())))
 		{
 			const uint8_t star_type = SDPtr->Type;
-			const uint8_t star_color = StarColor(star_type);
+			const StarBodyColor star_color {StarColor(star_type)};
 
 			lx = UniverseToLogx(SDPtr->star_pt.x) - uqm::gameState().sis().log_x;
 			ly = UniverseToLogy(SDPtr->star_pt.y) - uqm::gameState().sis().log_y;
@@ -2097,20 +2097,20 @@ void SeedUniverse(void)
 				if ((arilouSpaceSide > 1))
 				{
 					star_frame = SetAbsFrameIndex(hyperstars[2],
-												  frameCounter + ((star_color == YELLOW_BODY) ? 40 : 8));
+												  frameCounter + ((star_color == StarBodyColor::Yellow) ? 40 : 8));
 				}
 				else
 				{
 					star_frame = SetAbsFrameIndex(hyperstars[1],
-												  StarType(star_type) * NumFrames + frameCounter);
+												  *StarType(star_type) * NumFrames + frameCounter);
 				}
 			}
 			else
 			{
 				star_frame = SetAbsFrameIndex(
 					hyperstars[1 + (arilouSpaceSide >> 1)],
-					StarType(star_type) * NUM_STAR_COLORS
-						+ star_color);
+					*StarType(star_type) * *StarBodyColor::Count
+						+ *star_color);
 			}
 
 			if (star_frame == nullptr)
@@ -2137,7 +2137,7 @@ void SeedUniverse(void)
 			LockElement(hHyperSpaceElement, &HyperSpaceElementPtr);
 
 			if (AnimatedHyperspace() && !(arilouSpaceSide > 1)
-				&& star_color != WHITE_BODY)
+				&& star_color != StarBodyColor::White)
 			{
 				const uint16_t* PrimIndex {};
 
@@ -2149,7 +2149,7 @@ void SeedUniverse(void)
 
 				SetPrimType(&DisplayArray[*PrimIndex], PrimitiveType::StampFill);
 				SetPrimColor(&DisplayArray[*PrimIndex],
-							 GetMaskColor(StarColor(star_type)));
+							 GetMaskColor(*StarColor(star_type)));
 				SetPrimFlags(&DisplayArray[*PrimIndex], HsStarmask);
 
 				HyperSpaceElementPtr->state_flags =
@@ -2223,7 +2223,7 @@ static bool DoHyperspaceMenu(MenuState* pMS)
 {
 	bool select = PulsedInputState.menu[*MenuKey::MenuSelect];
 
-	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+	if ((uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad))
 		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
 	{
 		return false;
@@ -2250,7 +2250,7 @@ static bool DoHyperspaceMenu(MenuState* pMS)
 			{ // A player-induced portal to QuasiSpace is opening
 				return false;
 			}
-			if (uqm::currentActivity() & START_ENCOUNTER)
+			if (uqm::currentActivity() & ActivityFlag::StartEncounter)
 			{ // Selected Talking Pet, going into conversation
 				return false;
 			}
@@ -2274,7 +2274,7 @@ static bool DoHyperspaceMenu(MenuState* pMS)
 			return false;
 	}
 
-	if (!(uqm::currentActivity() & CHECK_ABORT))
+	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		if (select)
 		{ // 3DO menu jumps to NAVIGATE after a successful submenu run
@@ -2316,7 +2316,7 @@ void HyperspaceMenu(void)
 
 	SetContext(SpaceContext);
 
-	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
 		ClearSISRect(ClearSisRadar);
 		WaitForNoInput(c_gameSecond / 2, false);
@@ -2324,7 +2324,7 @@ void HyperspaceMenu(void)
 
 	SetContextBackGroundColor(OldColor);
 	SetContext(OldContext);
-	if (!(uqm::currentActivity() & IN_BATTLE))
+	if (!(uqm::currentActivity() & ActivityFlag::InBattle))
 	{
 		cleanup_hyperspace();
 	}

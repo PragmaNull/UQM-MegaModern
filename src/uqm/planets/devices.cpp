@@ -77,7 +77,7 @@ enum class DeviceStatus
 
 struct DevicesMenuState
 {
-	uint8_t list[NUM_DEVICES];
+	uint8_t list[*Device::NumDevices];
 	// List of all devices player has
 	uint16_t count;
 	// Number of devices in the list
@@ -133,7 +133,7 @@ static void DrawDevice(uint16_t device, uint16_t pos, bool selected)
 								  DevicesSelectedNameColor :
 								  DevicesNameColor);
 	t.baseline.y = r.corner.y + TextBaseline();
-	t.pStr = GameString(device + DEVICE_STRING_BASE + 1);
+	t.pStr = GameString(device + GameStringBase::DeviceString + 1);
 	t.CharCount = uqm::utf8StringPos(t.pStr, ' ');
 	font_DrawText(&t);
 	t.baseline.y += TextSpacingY();
@@ -172,7 +172,7 @@ static void DrawDevicesDisplay(DevicesMenuState* devState)
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = r.corner.y + ResScale(7);
 	t.align = TextAlign::Center;
-	t.pStr = GameString(DEVICE_STRING_BASE);
+	t.pStr = GameString(GameStringBase::DeviceString);
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(DevicesSelectedNameColor);
 	font_DrawText(&t);
@@ -207,7 +207,7 @@ static void DrawDevices(DevicesMenuState* devState, uint16_t OldDevice, uint16_t
 
 	SetContext(StatusContext);
 
-	if (OldDevice > NUM_DEVICES)
+	if (OldDevice > Device::NumDevices)
 	{ // Asked for the initial display or refresh
 		DrawDevicesDisplay(devState);
 
@@ -221,7 +221,7 @@ static void DrawDevices(DevicesMenuState* devState, uint16_t OldDevice, uint16_t
 				   false);
 	}
 
-	if (NewDevice < NUM_DEVICES)
+	if (NewDevice < Device::NumDevices)
 	{ // select the new Element
 		DrawDevice(devState->list[NewDevice], NewDevice - devState->topIndex,
 				   true);
@@ -244,7 +244,7 @@ static bool UseCaster(void)
 		return false;
 	}
 
-	if (uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY
+	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InInterplanetary
 		|| !playerInSolarSystem())
 	{
 		return false;
@@ -253,12 +253,12 @@ static bool UseCaster(void)
 	if (playerInPlanetOrbit()
 		&& matchWorld(pSolarSysState, pSolarSysState->pOrbitalDesc,
 					  MatchPbyte, MatchPlanet)
-		&& CurStarDescPtr()->Index == CHMMR_DEFINED
+		&& CurStarDescPtr()->Index == PlotId::Chmmr
 		&& !uqm::gameState().flag(uqm::GameFlag::CHMMR_UNLEASHED))
 	{
 		// In orbit around the Chenjesu/Mmrnmhrm home planet.
-		NextActivity |= CHECK_LOAD; /* fake a load game */
-		uqm::currentActivity() |= START_ENCOUNTER;
+		NextActivity |= ActivityFlag::CheckLoad; /* fake a load game */
+		uqm::currentActivity() |= ActivityFlag::StartEncounter;
 
 		EncounterGroup = 0;
 		PutGroupInfo(GroupsRandom, GroupSaveIp);
@@ -274,8 +274,8 @@ static bool UseCaster(void)
 		bool FoundIlwrath {};
 		HIPGROUP hGroup {};
 
-		FoundIlwrath = (CurStarDescPtr()->Index == ILWRATH_DEFINED)
-					&& StartSphereTracking(ILWRATH_SHIP);
+		FoundIlwrath = (CurStarDescPtr()->Index == PlotId::Ilwrath)
+					&& StartSphereTracking(RaceId::Ilwrath);
 		// In the Ilwrath home system and they are alive?
 
 		if (!FoundIlwrath && (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q)))
@@ -283,21 +283,21 @@ static bool UseCaster(void)
 			// Is an Ilwrath ship in the system?
 
 			const InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
-			FoundIlwrath = (GroupPtr->race_id == ILWRATH_SHIP);
+			FoundIlwrath = (GroupPtr->race_id == RaceId::Ilwrath);
 			UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 		}
 
 		if (FoundIlwrath)
 		{
-			NextActivity |= CHECK_LOAD; /* fake a load game */
-			uqm::currentActivity() |= START_ENCOUNTER;
+			NextActivity |= ActivityFlag::CheckLoad; /* fake a load game */
+			uqm::currentActivity() |= ActivityFlag::StartEncounter;
 
 			EncounterGroup = 0;
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&uqm::gameState().game().ip_group_q);
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			if (CurStarDescPtr()->Index == ILWRATH_DEFINED)
+			if (CurStarDescPtr()->Index == PlotId::Ilwrath)
 			{
 				// Ilwrath home system.
 				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 4));
@@ -323,9 +323,9 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 {
 	uint8_t val {};
 
-	switch (which_device)
+	switch (static_cast<Device>(which_device))
 	{
-		case ROSY_SPHERE_DEVICE:
+		case Device::RosySphere:
 			val = uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION);
 			if (val)
 			{
@@ -336,18 +336,18 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				return DeviceStatus::Success;
 			}
 			break;
-		case WIMBLIS_TRIDENT_DEVICE:
+		case Device::WimblisTrident:
 			break;
-		case GLOWING_ROD_DEVICE:
+		case Device::GlowingRod:
 			break;
-		case SUN_EFFICIENCY_DEVICE:
-			if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
+		case Device::SunEfficiency:
+			if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InInterplanetary
 				&& playerInPlanetOrbit())
 			{
 				PlayMenuSound(MenuSoundEffect::Invoked);
 				SleepThreadUntil(FadeScreen(ScreenFadeType::FadeAllToWhite, c_gameSecond * 1)
 								 + (c_gameSecond * 2));
-				if (CurStarDescPtr()->Index != CHMMR_DEFINED
+				if (CurStarDescPtr()->Index != PlotId::Chmmr
 					|| !matchWorld(pSolarSysState,
 								   pSolarSysState->pOrbitalDesc,
 								   MatchPbyte, MatchPlanet))
@@ -359,37 +359,37 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 					uqm::gameState().setFlag(uqm::GameFlag::CHMMR_EMERGING, static_cast<uint32_t>(1));
 
 					EncounterGroup = 0;
-					uqm::currentActivity() |= START_ENCOUNTER;
+					uqm::currentActivity() |= ActivityFlag::StartEncounter;
 
 					PutGroupInfo(GroupsRandom, GroupSaveIp);
 					ReinitQueue(&uqm::gameState().game().ip_group_q);
 					assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-					CloneShipFragment(CHMMR_SHIP,
+					CloneShipFragment(RaceId::Chmmr,
 									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
 				return DeviceStatus::SuccessNoSound;
 			}
 			break;
-		case UTWIG_BOMB_DEVICE:
+		case Device::UtwigBomb:
 			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_BOMB, static_cast<uint32_t>(0));
-			uqm::currentActivity() &= ~IN_BATTLE;
+			uqm::currentActivity() &= ~ActivityFlag::InBattle;
 			uqm::gameState().sis().CrewEnlisted = (uint16_t)~0;
 			DeathBySuicide = true;
 			return DeviceStatus::Success;
-		case ULTRON_0_DEVICE:
+		case Device::Ultron0:
 			break;
-		case ULTRON_1_DEVICE:
+		case Device::Ultron1:
 			break;
-		case ULTRON_2_DEVICE:
+		case Device::Ultron2:
 			break;
-		case ULTRON_3_DEVICE:
+		case Device::Ultron3:
 			break;
-		case MAIDENS_DEVICE:
+		case Device::Maidens:
 			break;
-		case TALKING_PET_DEVICE:
-			NextActivity |= CHECK_LOAD; /* fake a load game */
-			uqm::currentActivity() |= START_ENCOUNTER;
+		case Device::TalkingPet:
+			NextActivity |= ActivityFlag::CheckLoad; /* fake a load game */
+			uqm::currentActivity() |= ActivityFlag::StartEncounter;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(0));
 			if (inHQSpace())
 			{
@@ -397,7 +397,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				{
 					uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(1));
 				}
-				uqm::currentActivity() &= ~IN_BATTLE;
+				uqm::currentActivity() &= ~ActivityFlag::InBattle;
 
 				SaveSisHyperState();
 			}
@@ -413,7 +413,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 					assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 				}
 
-				if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
+				if (CurStarDescPtr()->Index == PlotId::Samatra)
 				{
 					uqm::gameState().setFlag(uqm::GameFlag::READY_TO_CONFUSE_URQUAN, static_cast<uint32_t>(1));
 				}
@@ -423,7 +423,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				}
 			}
 			return DeviceStatus::Success;
-		case AQUA_HELIX_DEVICE:
+		case Device::AquaHelix:
 			val = uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION);
 			if (val)
 			{
@@ -434,7 +434,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				return DeviceStatus::Success;
 			}
 			break;
-		case CLEAR_SPINDLE_DEVICE:
+		case Device::ClearSpindle:
 			val = uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION);
 			if (val)
 			{
@@ -445,26 +445,26 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				return DeviceStatus::Success;
 			}
 			break;
-		case UMGAH_HYPERWAVE_DEVICE:
-		case BURVIX_HYPERWAVE_DEVICE:
+		case Device::UmgahHyperwave:
+		case Device::BurvixHyperwave:
 			if (UseCaster())
 			{
 				return DeviceStatus::Success;
 			}
 			break;
-		case TAALO_PROTECTOR_DEVICE:
+		case Device::TaaloProtector:
 			break;
-		case EGG_CASING0_DEVICE:
-		case EGG_CASING1_DEVICE:
-		case EGG_CASING2_DEVICE:
+		case Device::EggCasing0:
+		case Device::EggCasing1:
+		case Device::EggCasing2:
 			break;
-		case SYREEN_SHUTTLE_DEVICE:
+		case Device::SyreenShuttle:
 			break;
-		case VUX_BEAST_DEVICE:
+		case Device::VuxBeast:
 			break;
-		case DESTRUCT_CODE_DEVICE:
+		case Device::DestructCode:
 			break;
-		case PORTAL_SPAWNER_DEVICE:
+		case Device::PortalSpawner:
 			{
 
 				const uint32_t portalFuelCost {difficultyCase<uint32_t>(5, 10, 20) * FuelTankScale};
@@ -494,9 +494,11 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 				}
 			}
 			break;
-		case URQUAN_WARP_DEVICE:
+		case Device::UrquanWarp:
 			break;
-		case LUNAR_BASE_DEVICE:
+		case Device::LunarBase:
+			break;
+		default:
 			break;
 	}
 
@@ -505,7 +507,7 @@ static DeviceStatus InvokeDevice(uint8_t which_device)
 
 bool InvokeSpawner(void)
 {
-	const DeviceStatus status = InvokeDevice(PORTAL_SPAWNER_DEVICE);
+	const DeviceStatus status = InvokeDevice(*Device::PortalSpawner);
 	if (status == DeviceStatus::Failure)
 	{
 		PlayMenuSound(MenuSoundEffect::Failure);
@@ -535,7 +537,7 @@ static bool DoManipulateDevices(MenuState* pMS)
 	pagefwd = PulsedInputState.menu[*MenuKey::MenuPageDown];
 	pageback = PulsedInputState.menu[*MenuKey::MenuPageUp];
 
-	if (uqm::currentActivity() & CHECK_ABORT)
+	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
 		return false;
 	}
@@ -619,87 +621,89 @@ static bool DoManipulateDevices(MenuState* pMS)
 int16_t InventoryDevices(uint8_t* pDeviceMap, uint16_t Size)
 {
 	int16_t DevicesOnBoard {0};
-	for (uint8_t i {0}; i < NUM_DEVICES && Size > 0; ++i)
+	for (Device i {}; i < Device::NumDevices && Size > 0; ++i)
 	{
 		uint8_t DeviceState {0};
 		switch (i)
 		{
-			case ROSY_SPHERE_DEVICE:
+			case Device::RosySphere:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP);
 				break;
-			case WIMBLIS_TRIDENT_DEVICE:
+			case Device::WimblisTrident:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP);
 				break;
-			case GLOWING_ROD_DEVICE:
+			case Device::GlowingRod:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::GLOWING_ROD_ON_SHIP);
 				break;
-			case SUN_EFFICIENCY_DEVICE:
+			case Device::SunEfficiency:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_ON_SHIP);
 				break;
-			case UTWIG_BOMB_DEVICE:
+			case Device::UtwigBomb:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP);
 				break;
-			case ULTRON_0_DEVICE:
+			case Device::Ultron0:
 				DeviceState = (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 1);
 				break;
-			case ULTRON_1_DEVICE:
+			case Device::Ultron1:
 				DeviceState = (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 2);
 				break;
-			case ULTRON_2_DEVICE:
+			case Device::Ultron2:
 				DeviceState = (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 3);
 				break;
-			case ULTRON_3_DEVICE:
+			case Device::Ultron3:
 				DeviceState = (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 4);
 				break;
-			case MAIDENS_DEVICE:
+			case Device::Maidens:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP);
 				break;
-			case TALKING_PET_DEVICE:
+			case Device::TalkingPet:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP);
 				break;
-			case AQUA_HELIX_DEVICE:
+			case Device::AquaHelix:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX_ON_SHIP);
 				break;
-			case CLEAR_SPINDLE_DEVICE:
+			case Device::ClearSpindle:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP);
 				break;
-			case UMGAH_HYPERWAVE_DEVICE:
+			case Device::UmgahHyperwave:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::UMGAH_BROADCASTERS_ON_SHIP);
 				break;
-			case TAALO_PROTECTOR_DEVICE:
+			case Device::TaaloProtector:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP);
 				break;
-			case EGG_CASING0_DEVICE:
+			case Device::EggCasing0:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP);
 				break;
-			case EGG_CASING1_DEVICE:
+			case Device::EggCasing1:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP);
 				break;
-			case EGG_CASING2_DEVICE:
+			case Device::EggCasing2:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP);
 				break;
-			case SYREEN_SHUTTLE_DEVICE:
+			case Device::SyreenShuttle:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP);
 				break;
-			case VUX_BEAST_DEVICE:
+			case Device::VuxBeast:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::VUX_BEAST_ON_SHIP);
 				break;
-			case DESTRUCT_CODE_DEVICE:
+			case Device::DestructCode:
 #ifdef NEVER
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP);
 #endif /* NEVER */
 				break;
-			case PORTAL_SPAWNER_DEVICE:
+			case Device::PortalSpawner:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP);
 				break;
-			case URQUAN_WARP_DEVICE:
+			case Device::UrquanWarp:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::PORTAL_KEY_ON_SHIP);
 				break;
-			case BURVIX_HYPERWAVE_DEVICE:
+			case Device::BurvixHyperwave:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP);
 				break;
-			case LUNAR_BASE_DEVICE:
+			case Device::LunarBase:
 				DeviceState = uqm::gameState().flag(uqm::GameFlag::MOONBASE_ON_SHIP);
+				break;
+			default:
 				break;
 		}
 
@@ -707,7 +711,7 @@ int16_t InventoryDevices(uint8_t* pDeviceMap, uint16_t Size)
 		if (DeviceState)
 #endif /* DEBUG_DEVICES */
 		{
-			*pDeviceMap++ = i;
+			*pDeviceMap++ = *i;
 			++DevicesOnBoard;
 			--Size;
 		}
@@ -726,7 +730,7 @@ bool DevicesMenu(void)
 
 	memset(&DevicesState, 0, sizeof DevicesState);
 
-	DevicesState.count = InventoryDevices(DevicesState.list, NUM_DEVICES);
+	DevicesState.count = InventoryDevices(DevicesState.list, *Device::NumDevices);
 	if (!DevicesState.count)
 	{
 		return false;
@@ -748,12 +752,12 @@ bool DevicesMenu(void)
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	if (uqm::gameState().sis().CrewEnlisted != (uint16_t)~0
-		&& !(uqm::currentActivity() & CHECK_ABORT))
+		&& !(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		ClearSISRect(DrawSisDisplay);
 
 		if (!uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER)
-			&& !(uqm::currentActivity() & START_ENCOUNTER)
+			&& !(uqm::currentActivity() & ActivityFlag::StartEncounter)
 			&& uqm::gameState().sis().CrewEnlisted != (uint16_t)~0)
 		{
 			return true;

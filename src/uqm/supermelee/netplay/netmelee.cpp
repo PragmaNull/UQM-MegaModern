@@ -366,11 +366,11 @@ BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context, Starship* St
 			if (!NetConnection_isConnected(conn))
 			{
 				// Connection aborted.
-				uqm::currentActivity() |= CHECK_ABORT;
+				uqm::currentActivity() |= ActivityFlag::CheckAbort;
 				return (BATTLE_INPUT_STATE)0;
 			}
 
-			if (uqm::currentActivity() & CHECK_ABORT)
+			if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 			{
 				return (BATTLE_INPUT_STATE)0;
 			}
@@ -384,7 +384,7 @@ BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context, Starship* St
 			if (!NetConnection_isConnected(conn))
 			{
 				// Connection aborted.
-				uqm::currentActivity() |= CHECK_ABORT;
+				uqm::currentActivity() |= ActivityFlag::CheckAbort;
 				return (BATTLE_INPUT_STATE)0;
 			}
 		}

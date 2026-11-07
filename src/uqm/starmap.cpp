@@ -147,7 +147,7 @@ void GetClusterName(const StarDesc* pSD, char buf[])
 	char* pBuf {buf};
 	if (pSD->Prefix)
 	{
-		pStr = GameString(STAR_NUMBER_BASE + pSD->Prefix - 1);
+		pStr = GameString(GameStringBase::StarNumber + pSD->Prefix - 1);
 		if (pStr)
 		{
 			while ((*pBuf++ = *pStr++))
@@ -216,7 +216,7 @@ StarDesc* FindNearestConstellation(StarDesc* starmap, GfxPoint p)
 // distances are set.
 // The COORDS are initialized with {~0, ~0}, the rest 0.
 // Plot ID 0 (ARILOU_DEFINED) is ARILOU_HYPERSPACE_PORTAL location.
-PlotLocation plot_map[NUM_PLOTS] = {};
+PlotLocation plot_map[*PlotId::NumPlots] = {};
 //PlotLocation plot_map[NUM_PLOTS] = {[0 ... (NUM_PLOTS - 1)] =
 //		{{~0, ~0}, nullptr, {[0 ... (NUM_PLOTS - 1)] = 0}}};
 
@@ -326,8 +326,8 @@ void SeedStarmap(StarDesc* starmap)
 		rand_val = StarGenRNG->next();
 		// 469 is the default number of dwarf stars, and 24 the number of
 		// giant. Super giant is handled elsewhere.
-		starmap[i].Type = MakeStar(uqm::lowByte(rand_val) % (469 + 24) >= 24 ? DWARF_STAR : GIANT_STAR,
-								   uqm::highByte(rand_val) % NUM_STAR_COLORS,
+		starmap[i].Type = MakeStar(uqm::lowByte(rand_val) % (469 + 24) >= 24 ? StellarSize::Dwarf : StellarSize::Giant,
+								   uqm::highByte(rand_val) % *StarBodyColor::Count,
 								   -1);
 		starmap[i].Index = 0;
 	}
@@ -415,7 +415,7 @@ void SetPlotLength(PlotLocation* plot, uint16_t plotA, uint16_t plotB,
 	uint16_t min = p_min;
 	uint16_t max = p_max;
 	// Reject bad data
-	if (!plot || plotA >= NUM_PLOTS || plotB >= NUM_PLOTS || p_min > p_max - 100)
+	if (!plot || plotA >= PlotId::NumPlots || plotB >= PlotId::NumPlots || p_min > p_max - 100)
 	{
 		fmt::print(stderr, "{} called with bad data (PTR {} {} {} {})\n",
 				   "SetPlotLength (plotmap, plot, plot, min, max)",
@@ -481,7 +481,7 @@ void SetPlotLength(PlotLocation* plot, uint16_t plotA, uint16_t plotB,
 uint32_t ConnectedPlot(PlotLocation* plot, uint16_t plotA, uint16_t plotB)
 {
 	// report bad data
-	if (!(plot && (plotA < NUM_PLOTS) && (plotB < NUM_PLOTS)))
+	if (!(plot && (plotA < PlotId::NumPlots) && (plotB < PlotId::NumPlots)))
 	{
 		fmt::print(stderr, "{} called with bad data PTR {} {}\n",
 				   "ConnectedPlot (plotmap, plot_id, plot_id)",
@@ -518,13 +518,13 @@ uint16_t GetNextPlot(PlotLocation* plot)
 	}
 
 	// If we're already working on one, continue to try that one.
-	if (next_plot < NUM_PLOTS && !PlotSet(plot, next_plot))
+	if (next_plot < PlotId::NumPlots && !PlotSet(plot, next_plot))
 	{
 		return next_plot;
 	}
 
 	// If we have hard coded plots still waiting to be placed, do one.
-	for (i = 0; i < NUM_PLOTS; i++)
+	for (i = 0; i < PlotId::NumPlots; i++)
 	{
 		if (PlotHardcode(plot, i))
 		{
@@ -536,7 +536,7 @@ uint16_t GetNextPlot(PlotLocation* plot)
 	// Leaving this in for now as a stern reminder:
 	// This makes things worse, even if you turn off the retry-last-plot above.
 	// [Otherwise try and find one that's connected to the last one.]
-	for (i = 0; i < NUM_PLOTS && next_plot < NUM_PLOTS; i++)
+	for (i = 0; i < PlotId::NumPlots && next_plot < PlotId::NumPlots; i++)
 	{
 		if (ConnectedPlot (plot, next_plot, i) > top_weight && !PlotSet(plot, i))
 		{
@@ -547,7 +547,7 @@ uint16_t GetNextPlot(PlotLocation* plot)
 #endif
 
 	// Otherwise find the heaviest plot available.
-	for (i = 0; i < NUM_PLOTS; i++)
+	for (i = 0; i < PlotId::NumPlots; i++)
 	{
 		if ((PlotWeight(plot, i) > top_weight) && !(PlotSet(plot, i)))
 		{
@@ -560,7 +560,7 @@ uint16_t GetNextPlot(PlotLocation* plot)
 	// unassigned plots without weight, find the first one:
 	if (top_weight == 0)
 	{
-		while ((plot_id < NUM_PLOTS) && (PlotSet(plot, plot_id)))
+		while ((plot_id < PlotId::NumPlots) && (PlotSet(plot, plot_id)))
 		{
 			plot_id++;
 		}
@@ -585,9 +585,9 @@ void ResetPlot(PlotLocation* plot)
 		return;
 	}
 	uint16_t j {};
-	for (uint16_t i {0}; i < NUM_PLOTS; i++)
+	for (uint16_t i {0}; i < PlotId::NumPlots; i++)
 	{
-		for (j = 0; j < NUM_PLOTS; j++)
+		for (j = 0; j < PlotId::NumPlots; j++)
 		{
 			plot[i].dist_sq[j] = 0;
 		}
@@ -617,7 +617,7 @@ void DefaultPlot(PlotLocation* plot, StarDesc* starmap)
 	{
 		if (starmap[i].Index > 0)
 		{
-			if (starmap[i].Index >= NUM_PLOTS)
+			if (starmap[i].Index >= PlotId::NumPlots)
 			{
 				continue;
 			}
@@ -645,31 +645,31 @@ void InitPlot(PlotLocation* plotmap)
 	// or after the war where homeworlds inside the zone wouldn't make sense
 	// Orz are skipped, Androsynth takes care of them.
 	const uint16_t home_map[23][2] = {
-		{ARILOU_DEFINED,		 300 },
-		{SOL_DEFINED,		  700 },
-		{YEHAT_DEFINED,		700 },
-		{SHOFIXTI_DEFINED,	   700 },
-		{CHMMR_DEFINED,		700 },
-		{SYREEN_DEFINED,		 700 },
-		{EGG_CASE0_DEFINED,	700 },
-		{MOTHER_ARK_DEFINED,	 700 },
+		{*PlotId::Arilou,	  300 },
+		{*PlotId::Sol,		   700 },
+		{*PlotId::Yehat,		 700 },
+		{*PlotId::Shofixti,	700 },
+		{*PlotId::Chmmr,		 700 },
+		{*PlotId::Syreen,	  700 },
+		{*PlotId::EggCase0,	700 },
+		{*PlotId::MotherArk,	 700 },
 
-		{DRUUGE_DEFINED,		 1300},
-		{PKUNK_DEFINED,		700 },
-		{UTWIG_DEFINED,		700 },
-		{SUPOX_DEFINED,		300 },
-		{ZOQFOT_DEFINED,		 700 },
-		{BURVIXESE_DEFINED,	300 },
-		{START_COLONY_DEFINED, 300 },
+		{*PlotId::Druuge,	  1300},
+		{*PlotId::Pkunk,		 700 },
+		{*PlotId::Utwig,		 700 },
+		{*PlotId::Supox,		 300 },
+		{*PlotId::Zoqfot,	  700 },
+		{*PlotId::Burvixese,	 300 },
+		{*PlotId::StartColony, 300 },
 
-		{SAMATRA_DEFINED,	  3000},
-		{ANDROSYNTH_DEFINED,	 1000},
-		{ILWRATH_DEFINED,	  1000},
-		{MYCON_DEFINED,		1000},
-		{SPATHI_DEFINED,		 1000},
-		{THRADD_DEFINED,		 1000},
-		{VUX_DEFINED,		  1000},
-		{TALKING_PET_DEFINED,  1000}
+		{*PlotId::Samatra,	   3000},
+		{*PlotId::Androsynth,  1000},
+		{*PlotId::Ilwrath,	   1000},
+		{*PlotId::Mycon,		 1000},
+		{*PlotId::Spathi,	  1000},
+		{*PlotId::Thradd,	  1000},
+		{*PlotId::Vux,		   1000},
+		{*PlotId::TalkingPet,  1000}
 	   };
 	// Total 8 + 7 + 8 currently 23 homeworlds
 	// Set the homeworlds apart first (can be overwritten later)
@@ -698,37 +698,37 @@ void InitPlot(PlotLocation* plotmap)
 	// 5030 Arilou are not too close or far, so they can "hide" the humans
 	// 5090 Arilou and Orz are not in the same *space*
 	// 8480 The Slylandro are far away and annoying to find
-	SetPlotLength(plotmap, SOL_DEFINED, SAMATRA_DEFINED, 5000, MaxPlot);
-	SetPlotLength(plotmap, SOL_DEFINED, START_COLONY_DEFINED, 1500, 5000);
-	SetPlotLength(plotmap, ARILOU_DEFINED, ORZ_DEFINED, 4000, MaxPlot);
-	SetPlotLength(plotmap, ARILOU_DEFINED, SOL_DEFINED, 3000, 7000);
-	SetPlotLength(plotmap, SLYLANDRO_DEFINED, SOL_DEFINED, 6000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Sol, *PlotId::Samatra, 5000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Sol, *PlotId::StartColony, 1500, 5000);
+	SetPlotLength(plotmap, *PlotId::Arilou, *PlotId::Orz, 4000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Arilou, *PlotId::Sol, 3000, 7000);
+	SetPlotLength(plotmap, *PlotId::Slylandro, *PlotId::Sol, 6000, MaxPlot);
 
 	// Druuge 1400 and Melnorme
 	// 2990 Burvix are outside Druuge space but close enough to lure
 	// 650 Alas, the poor algolites.  Keep them in Druuge space for _reasons_
 	// 6600 They're not very close to Spathi at all for some reason.
-	SetPlotLength(plotmap, DRUUGE_DEFINED, BURVIXESE_DEFINED, 2000, 4000);
-	SetPlotLength(plotmap, DRUUGE_DEFINED, ALGOLITES_DEFINED, 0, 1250);
-	SetPlotLength(plotmap, SPATHI_DEFINED, ALGOLITES_DEFINED, 5000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Druuge, *PlotId::Burvixese, 2000, 4000);
+	SetPlotLength(plotmap, *PlotId::Druuge, *PlotId::Algolites, 0, 1250);
+	SetPlotLength(plotmap, *PlotId::Spathi, *PlotId::Algolites, 5000, MaxPlot);
 
 	// Ilwrath 1410 and Chmrr, Chenjesu
 	// 1490 The Chenjesu homeworld is between Ilwrath homeworld (guarding)
 	// 1760 [Chenjesu] and the Pkunk howeworld
 	// 3150 [Pkunk] Which the Ilwrath are attacking
-	SetPlotLength(plotmap, CHMMR_DEFINED, ILWRATH_DEFINED, 1000, 3000);
-	SetPlotLength(plotmap, CHMMR_DEFINED, PKUNK_DEFINED, 700, 3500);
-	SetPlotLength(plotmap, ILWRATH_DEFINED, PKUNK_DEFINED, 3000, 6000);
+	SetPlotLength(plotmap, *PlotId::Chmmr, *PlotId::Ilwrath, 1000, 3000);
+	SetPlotLength(plotmap, *PlotId::Chmmr, *PlotId::Pkunk, 700, 3500);
+	SetPlotLength(plotmap, *PlotId::Ilwrath, *PlotId::Pkunk, 3000, 6000);
 
 	// Mycon 1070
 	// 150 The Mycon start with the Sun Device very close
 	// 510, 240, 520 The Egg Cases (Syra is Egg #0) are all very close as well
 	// 1739 The trap should be outside Mycon SoI but not far
-	SetPlotLength(plotmap, MYCON_DEFINED, SUN_DEVICE_DEFINED, 0, 500);
-	SetPlotLength(plotmap, MYCON_DEFINED, EGG_CASE0_DEFINED, 300, 1250);
-	SetPlotLength(plotmap, MYCON_DEFINED, EGG_CASE1_DEFINED, 0, 500);
-	SetPlotLength(plotmap, MYCON_DEFINED, EGG_CASE2_DEFINED, 0, 800);
-	SetPlotLength(plotmap, MYCON_DEFINED, MYCON_TRAP_DEFINED, 1200, 3500);
+	SetPlotLength(plotmap, *PlotId::Mycon, *PlotId::SunDevice, 0, 500);
+	SetPlotLength(plotmap, *PlotId::Mycon, *PlotId::EggCase0, 300, 1250);
+	SetPlotLength(plotmap, *PlotId::Mycon, *PlotId::EggCase1, 0, 500);
+	SetPlotLength(plotmap, *PlotId::Mycon, *PlotId::EggCase2, 0, 800);
+	SetPlotLength(plotmap, *PlotId::Mycon, *PlotId::MyconTrap, 1200, 3500);
 
 	// Orz 333 and Androsynth
 	// Give Orz the standard UQ/KA push (they don't have other HW pushes)
@@ -737,40 +737,40 @@ void InitPlot(PlotLocation* plotmap)
 	// 120 The Androsynth were near the Dig Site
 	// 2150 The Androysnth fled Sol (but not too far because of colony)
 	// 680 The Start Colony is near Androsynth space
-	SetPlotLength(plotmap, ORZ_DEFINED, SAMATRA_DEFINED, 3000, MaxPlot);
-	SetPlotLength(plotmap, ANDROSYNTH_DEFINED, ORZ_DEFINED, 0, 350);
-	SetPlotLength(plotmap, ORZ_DEFINED, TAALO_PROTECTOR_DEFINED, 0, 350);
-	SetPlotLength(plotmap, ANDROSYNTH_DEFINED,
-				  EXCAVATION_SITE_DEFINED, 0, 350);
-	SetPlotLength(plotmap, ANDROSYNTH_DEFINED, SOL_DEFINED, 2000, 6000);
-	SetPlotLength(plotmap, ANDROSYNTH_DEFINED,
-				  START_COLONY_DEFINED, 350, 1000);
+	SetPlotLength(plotmap, *PlotId::Orz, *PlotId::Samatra, 3000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Androsynth, *PlotId::Orz, 0, 350);
+	SetPlotLength(plotmap, *PlotId::Orz, *PlotId::TaaloProtector, 0, 350);
+	SetPlotLength(plotmap, *PlotId::Androsynth,
+				  *PlotId::ExcavationSite, 0, 350);
+	SetPlotLength(plotmap, *PlotId::Androsynth, *PlotId::Sol, 2000, 6000);
+	SetPlotLength(plotmap, *PlotId::Androsynth,
+				  *PlotId::StartColony, 350, 1000);
 
 	// Pkunk 666
 	// 4410 The Pkunk went a pretty good distance from home
-	SetPlotLength(plotmap, PKUNK_DEFINED, YEHAT_DEFINED, 3000, 6000);
+	SetPlotLength(plotmap, *PlotId::Pkunk, *PlotId::Yehat, 3000, 6000);
 
 	// Spathi 1000 and Mmrnmhrm (eventually)
 	// 710 The Spathi were close to the contested world
 	// 660 The Mmrnmhrm were close to the contested world
 	// 1360 The Spathi and Mmrnmhrm were this far apart
-	SetPlotLength(plotmap, SPATHI_DEFINED, SPATHI_MONUMENT_DEFINED, 300, 1000);
-	SetPlotLength(plotmap, MOTHER_ARK_DEFINED, SPATHI_MONUMENT_DEFINED, 300, 1000);
-	SetPlotLength(plotmap, MOTHER_ARK_DEFINED, SPATHI_DEFINED, 1000, 2000);
+	SetPlotLength(plotmap, *PlotId::Spathi, *PlotId::SpathiMonument, 300, 1000);
+	SetPlotLength(plotmap, *PlotId::MotherArk, *PlotId::SpathiMonument, 300, 1000);
+	SetPlotLength(plotmap, *PlotId::MotherArk, *PlotId::Spathi, 1000, 2000);
 
 	// Supox 333
 	// 1290 This is the Supox Utwig Super Friends Zone
-	SetPlotLength(plotmap, SUPOX_DEFINED, UTWIG_DEFINED, 300, 3000);
+	SetPlotLength(plotmap, *PlotId::Supox, *PlotId::Utwig, 300, 3000);
 
 	// Thraddash 833
 	// 400 The Thraddash keep the Aqua Helix sacred
 	// 6350 Thraddash are far from Chmmr for Ilwrath distraction
 	// 5230 Have them start pretty far from Ilwrath space
 	// 8090 And also have them start far from the Pkunk space
-	SetPlotLength(plotmap, THRADD_DEFINED, AQUA_HELIX_DEFINED, 0, 700);
-	SetPlotLength(plotmap, CHMMR_DEFINED, THRADD_DEFINED, 3000, MaxPlot);
-	SetPlotLength(plotmap, ILWRATH_DEFINED, THRADD_DEFINED, 3000, MaxPlot);
-	SetPlotLength(plotmap, PKUNK_DEFINED, THRADD_DEFINED, 3000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Thradd, *PlotId::AquaHelix, 0, 700);
+	SetPlotLength(plotmap, *PlotId::Chmmr, *PlotId::Thradd, 3000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Ilwrath, *PlotId::Thradd, 3000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Pkunk, *PlotId::Thradd, 3000, MaxPlot);
 
 	// Umgah 833 (defined by their suffering: TALKING_PET_DEFINED)
 	// Alas, no plot threads for them, just standard homeworld stuff
@@ -780,36 +780,36 @@ void InitPlot(PlotLocation* plotmap)
 	// The Ship Vault is in the battle zone
 	// The UQ Wreck is outside the battle zone
 	// 1820 The Ship Vault is specifically close to the Syreen
-	SetPlotLength(plotmap, SAMATRA_DEFINED, SHIP_VAULT_DEFINED, 0, 3000);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, URQUAN_WRECK_DEFINED, 4000, MaxPlot);
-	SetPlotLength(plotmap, SYREEN_DEFINED, SHIP_VAULT_DEFINED, 1700, 2100);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::ShipVault, 0, 3000);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::UrquanWreck, 4000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Syreen, *PlotId::ShipVault, 1700, 2100);
 	// The UQ/KA bases are all in or near the battle zone
-	SetPlotLength(plotmap, SAMATRA_DEFINED, URQUAN0_DEFINED, 0, 2500);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, URQUAN1_DEFINED, 0, 2500);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, URQUAN2_DEFINED, 0, 3000);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, KOHRAH0_DEFINED, 0, 2500);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, KOHRAH1_DEFINED, 0, 2500);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, KOHRAH2_DEFINED, 0, 3000);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::Urquan0, 0, 2500);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::Urquan1, 0, 2500);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::Urquan2, 0, 3000);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::Kohrah0, 0, 2500);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::Kohrah1, 0, 2500);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::Kohrah2, 0, 3000);
 	// This is an abandoned slave-shielded planet
 	// (also used as random planet name by ZEX)
 	SetPlotLength(plotmap,
-				  SAMATRA_DEFINED, DESTROYED_STARBASE_DEFINED, 3000, MaxPlot);
+				  *PlotId::Samatra, *PlotId::DestroyedStarbase, 3000, MaxPlot);
 
 	// Utwig 666
 	// 690 The Utwig keep their Bomb handy
 	// 3070 The Burvixese were close enough to the Utwig to be targeted
-	SetPlotLength(plotmap, UTWIG_DEFINED, BOMB_DEFINED, 0, 750);
-	SetPlotLength(plotmap, UTWIG_DEFINED, BURVIXESE_DEFINED, 1000, 4000);
+	SetPlotLength(plotmap, *PlotId::Utwig, *PlotId::Bomb, 0, 750);
+	SetPlotLength(plotmap, *PlotId::Utwig, *PlotId::Burvixese, 1000, 4000);
 
 	// VUX 900
 	// 320 Admiral ZEX (the maidens) is within VUX territory
 	// 7950 the VUX beast is far away from ZEX
-	SetPlotLength(plotmap, VUX_DEFINED, MAIDENS_DEFINED, 0, 1000);
-	SetPlotLength(plotmap, VUX_BEAST_DEFINED, MAIDENS_DEFINED, 5000, MaxPlot);
+	SetPlotLength(plotmap, *PlotId::Vux, *PlotId::Maidens, 0, 1000);
+	SetPlotLength(plotmap, *PlotId::VuxBeast, *PlotId::Maidens, 5000, MaxPlot);
 
 	// Yehat 750 and Shofixti
 	// 2020 The Shofixti and Yehat - brothers for life
-	SetPlotLength(plotmap, SHOFIXTI_DEFINED, YEHAT_DEFINED, 700, 3000);
+	SetPlotLength(plotmap, *PlotId::Shofixti, *PlotId::Yehat, 700, 3000);
 
 	// Zoq Fot 320
 	// The ZFP start inside the conflict zone
@@ -817,17 +817,17 @@ void InitPlot(PlotLocation* plotmap)
 	// 720 and ZFP scout - SOL ; keep in mind Sol - Samatra > 5000
 	// 200, 490, 580, 300 ZFP colonies are inside the war zone and
 	// relatively near ZFP but not necessarily inside their zone
-	SetPlotLength(plotmap, ZOQFOT_DEFINED, SAMATRA_DEFINED, 1500, 2500);
-	SetPlotLength(plotmap, ZOQFOT_DEFINED, ZOQ_SCOUT_DEFINED, 2000, 5000);
-	SetPlotLength(plotmap, ZOQ_SCOUT_DEFINED, SOL_DEFINED, 0, 1500);
-	SetPlotLength(plotmap, ZOQFOT_DEFINED, ZOQ_COLONY0_DEFINED, 0, 1250);
-	SetPlotLength(plotmap, ZOQFOT_DEFINED, ZOQ_COLONY1_DEFINED, 0, 1000);
-	SetPlotLength(plotmap, ZOQFOT_DEFINED, ZOQ_COLONY2_DEFINED, 0, 1000);
-	SetPlotLength(plotmap, ZOQFOT_DEFINED, ZOQ_COLONY3_DEFINED, 0, 750);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, ZOQ_COLONY0_DEFINED, 0, 2500);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, ZOQ_COLONY1_DEFINED, 0, 2500);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, ZOQ_COLONY2_DEFINED, 0, 3000);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, ZOQ_COLONY3_DEFINED, 0, 3000);
+	SetPlotLength(plotmap, *PlotId::Zoqfot, *PlotId::Samatra, 1500, 2500);
+	SetPlotLength(plotmap, *PlotId::Zoqfot, *PlotId::ZoqScout, 2000, 5000);
+	SetPlotLength(plotmap, *PlotId::ZoqScout, *PlotId::Sol, 0, 1500);
+	SetPlotLength(plotmap, *PlotId::Zoqfot, *PlotId::ZoqColony0, 0, 1250);
+	SetPlotLength(plotmap, *PlotId::Zoqfot, *PlotId::ZoqColony1, 0, 1000);
+	SetPlotLength(plotmap, *PlotId::Zoqfot, *PlotId::ZoqColony2, 0, 1000);
+	SetPlotLength(plotmap, *PlotId::Zoqfot, *PlotId::ZoqColony3, 0, 750);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::ZoqColony0, 0, 2500);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::ZoqColony1, 0, 2500);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::ZoqColony2, 0, 3000);
+	SetPlotLength(plotmap, *PlotId::Samatra, *PlotId::ZoqColony3, 0, 3000);
 }
 
 // Sets up the plot threads for rainbow worlds and Melnormes, including
@@ -841,11 +841,11 @@ void InitMelnormeRainbow(PlotLocation* plotmap)
 	// that they are picked last.  In practice 2500 (rainbow) and
 	// 2800 (melnorme) are about as high as you can go before the
 	// seeding algorithm slows way down.
-	for (i = RAINBOW0_DEFINED; i <= RAINBOW9_DEFINED; i++)
+	for (i = *PlotId::Rainbow0; i <= PlotId::Rainbow9; i++)
 	{
 		plotmap[i].star = nullptr;
 		plotmap[i].star_pt = GfxPoint {~0, ~0};
-		for (j = RAINBOW0_DEFINED; j <= RAINBOW9_DEFINED; j++)
+		for (j = *PlotId::Rainbow0; j <= PlotId::Rainbow9; j++)
 		{
 			if (i != j)
 			{
@@ -853,11 +853,11 @@ void InitMelnormeRainbow(PlotLocation* plotmap)
 			}
 		}
 	}
-	for (i = MELNORME0_DEFINED; i <= MELNORME8_DEFINED; i++)
+	for (i = *PlotId::Melnorme0; i <= PlotId::Melnorme8; i++)
 	{
 		plotmap[i].star = nullptr;
 		plotmap[i].star_pt = GfxPoint {~0, ~0};
-		for (j = MELNORME0_DEFINED; j <= MELNORME8_DEFINED; j++)
+		for (j = *PlotId::Melnorme0; j <= PlotId::Melnorme8; j++)
 		{
 			if (i != j)
 			{
@@ -868,11 +868,11 @@ void InitMelnormeRainbow(PlotLocation* plotmap)
 
 	// Zero out their weights - just seeding them mostly last removes a
 	// lot of the issues.
-	for (i = RAINBOW0_DEFINED; i <= RAINBOW9_DEFINED; i++)
+	for (i = *PlotId::Rainbow0; i <= PlotId::Rainbow9; i++)
 	{
 		plotmap[i].dist_sq[i] *= 0;
 	}
-	for (i = MELNORME0_DEFINED; i <= MELNORME8_DEFINED; i++)
+	for (i = *PlotId::Melnorme0; i <= PlotId::Melnorme8; i++)
 	{
 		plotmap[i].dist_sq[i] *= 0;
 	}
@@ -883,12 +883,12 @@ void InitMelnormeRainbow(PlotLocation* plotmap)
 	// 520 Supox mention a rainbow world "gross star color"
 	// 500 By some strange coincidence, Melnormes have outpost #1 near SOL.
 	// 160 Thraddash also have the stele on Melnorme #7
-	SetPlotLength(plotmap, YEHAT_DEFINED, RAINBOW0_DEFINED, 0, 1000);
-	SetPlotLength(plotmap, THRADD_DEFINED, RAINBOW5_DEFINED, 0, 1000);
-	SetPlotLength(plotmap, SLYLANDRO_DEFINED, RAINBOW4_DEFINED, 1500, 3500);
-	SetPlotLength(plotmap, SUPOX_DEFINED, RAINBOW7_DEFINED, 0, 1000);
-	SetPlotLength(plotmap, SOL_DEFINED, MELNORME1_DEFINED, 0, 1000);
-	SetPlotLength(plotmap, THRADD_DEFINED, MELNORME7_DEFINED, 0, 1000);
+	SetPlotLength(plotmap, *PlotId::Yehat, *PlotId::Rainbow0, 0, 1000);
+	SetPlotLength(plotmap, *PlotId::Thradd, *PlotId::Rainbow5, 0, 1000);
+	SetPlotLength(plotmap, *PlotId::Slylandro, *PlotId::Rainbow4, 1500, 3500);
+	SetPlotLength(plotmap, *PlotId::Supox, *PlotId::Rainbow7, 0, 1000);
+	SetPlotLength(plotmap, *PlotId::Sol, *PlotId::Melnorme1, 0, 1000);
+	SetPlotLength(plotmap, *PlotId::Thradd, *PlotId::Melnorme7, 0, 1000);
 }
 
 // Internal
@@ -900,7 +900,7 @@ void InitMelnormeRainbow(PlotLocation* plotmap)
 bool CheckValid(PlotLocation* plot, uint16_t plot_id)
 {
 	uint32_t distance_sq {};
-	if (!plot || plot_id >= NUM_PLOTS)
+	if (!plot || plot_id >= PlotId::NumPlots)
 	{
 		fmt::print(stderr, "CheckValid (plotmap, plot_id) called {}.\n"
 						   "with bad data or nullptr: PTR",
@@ -914,7 +914,7 @@ bool CheckValid(PlotLocation* plot, uint16_t plot_id)
 				   plot_id);
 		return false;
 	}
-	for (uint16_t i {0}; i < NUM_PLOTS; i++)
+	for (uint16_t i {0}; i < PlotId::NumPlots; i++)
 	{
 		if (i == plot_id)
 		{
@@ -944,34 +944,34 @@ bool CheckValid(PlotLocation* plot, uint16_t plot_id)
 
 static bool NeedsHabitable(uint8_t sIndex)
 {
-	switch (sIndex)
+	switch (static_cast<PlotId>(sIndex))
 	{
-		case SHOFIXTI_DEFINED:
-		case START_COLONY_DEFINED:
-		case ZOQFOT_DEFINED:
-		case TALKING_PET_DEFINED:
-		case SYREEN_DEFINED:
-		case BURVIXESE_DEFINED:
-		case DRUUGE_DEFINED:
-		case SUN_DEVICE_DEFINED:
-		case VUX_BEAST_DEFINED:
-		case MYCON_DEFINED:
-		case EGG_CASE0_DEFINED:
-		case EGG_CASE1_DEFINED:
-		case EGG_CASE2_DEFINED:
-		case PKUNK_DEFINED:
-		case UTWIG_DEFINED:
-		case YEHAT_DEFINED:
-		case VUX_DEFINED:
-		case ORZ_DEFINED:
-		case THRADD_DEFINED:
-		case ANDROSYNTH_DEFINED:
-		case MYCON_TRAP_DEFINED:
-		case ZOQ_COLONY0_DEFINED:
-		case ZOQ_COLONY1_DEFINED:
-		case ZOQ_COLONY2_DEFINED:
-		case ZOQ_COLONY3_DEFINED:
-		case ALGOLITES_DEFINED:
+		case PlotId::Shofixti:
+		case PlotId::StartColony:
+		case PlotId::Zoqfot:
+		case PlotId::TalkingPet:
+		case PlotId::Syreen:
+		case PlotId::Burvixese:
+		case PlotId::Druuge:
+		case PlotId::SunDevice:
+		case PlotId::VuxBeast:
+		case PlotId::Mycon:
+		case PlotId::EggCase0:
+		case PlotId::EggCase1:
+		case PlotId::EggCase2:
+		case PlotId::Pkunk:
+		case PlotId::Utwig:
+		case PlotId::Yehat:
+		case PlotId::Vux:
+		case PlotId::Orz:
+		case PlotId::Thradd:
+		case PlotId::Androsynth:
+		case PlotId::MyconTrap:
+		case PlotId::ZoqColony0:
+		case PlotId::ZoqColony1:
+		case PlotId::ZoqColony2:
+		case PlotId::ZoqColony3:
+		case PlotId::Algolites:
 			return true;
 		default:
 			return false;
@@ -1003,24 +1003,24 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 	}
 
 	// Section 1: change the star to the right size for the plot
-	if (StarType(StarmapArray[i].Type) == SUPER_GIANT_STAR)
+	if (StarType(StarmapArray[i].Type) == StellarSize::SuperGiant)
 	{
 		star->Type = MakeStar(
-			SUPER_GIANT_STAR,
+			StellarSize::SuperGiant,
 			StarColor(star->Type),
 			StarOwner(star->Type));
 	}
-	if (StarType(StarmapArray[i].Type) == GIANT_STAR)
+	if (StarType(StarmapArray[i].Type) == StellarSize::Giant)
 	{
 		star->Type = MakeStar(
-			GIANT_STAR,
+			StellarSize::Giant,
 			StarColor(star->Type),
 			StarOwner(star->Type));
 	}
-	if (StarType(StarmapArray[i].Type) == DWARF_STAR)
+	if (StarType(StarmapArray[i].Type) == StellarSize::Dwarf)
 	{
 		star->Type = MakeStar(
-			DWARF_STAR,
+			StellarSize::Dwarf,
 			StarColor(star->Type),
 			StarOwner(star->Type));
 	}
@@ -1029,38 +1029,38 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 	// Specific homeworlds that work best with their correct color star (SOL)
 	if (NeedsHabitable(star->Index))
 	{
-		const uint8_t star_color = StarColor(star->Type);
+		const StarBodyColor star_color {StarColor(star->Type)};
 		const uint32_t rand_val = GetRandomSeedForStar(star);
 
-		if (StarType(star->Type) == DWARF_STAR && star_color == RED_BODY)
+		if (StarType(star->Type) == StellarSize::Dwarf && star_color == StarBodyColor::Red)
 		{
-			const uint8_t color_array[] = {BLUE_BODY, GREEN_BODY, ORANGE_BODY,
-										   WHITE_BODY, YELLOW_BODY};
+			const uint8_t color_array[] = {*StarBodyColor::Blue, *StarBodyColor::Green, *StarBodyColor::Orange,
+										   *StarBodyColor::White, *StarBodyColor::Yellow};
 
 			star->Type = MakeStar(
 				StarType(star->Type), color_array[rand_val % 5],
 				StarOwner(star->Type));
 		}
-		else if (StarType(star->Type) == GIANT_STAR
-				 && (star_color == BLUE_BODY || star_color == GREEN_BODY
-					 || star_color == WHITE_BODY))
+		else if (StarType(star->Type) == StellarSize::Giant
+				 && (star_color == StarBodyColor::Blue || star_color == StarBodyColor::Green
+					 || star_color == StarBodyColor::White))
 		{
-			const uint8_t color_array[] = {ORANGE_BODY, RED_BODY, YELLOW_BODY};
+			const uint8_t color_array[] = {*StarBodyColor::Orange, *StarBodyColor::Red, *StarBodyColor::Yellow};
 
 			star->Type = MakeStar(
 				StarType(star->Type), color_array[rand_val % 3],
 				StarOwner(star->Type));
 		}
 	}
-	if (star->Index == SOL_DEFINED)
+	if (star->Index == PlotId::Sol)
 	{
 		star->Type = StarmapArray[i].Type;
 	}
 	// On world 44s, the Eye Of Dogar is Green, of course
 	// All other channels are false gods
-	if (star->Index == ILWRATH_DEFINED)
+	if (star->Index == PlotId::Ilwrath)
 	{
-		const uint16_t newcolor = (StarColor(star->Type) + uqm::currentSeed().value) % 5;
+		const uint16_t newcolor = (*StarColor(star->Type) + uqm::currentSeed().value) % 5;
 		if (uqm::currentSeed().value % 44 == 0 || uqm::currentSeed().value % 100 == 44)
 		{
 			star->Type = StarmapArray[i].Type;
@@ -1069,54 +1069,54 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 		{
 			star->Type = MakeStar(
 				StarType(star->Type),
-				newcolor >= GREEN_BODY ? newcolor + 1 : newcolor,
+				newcolor >= StarBodyColor::Green ? newcolor + 1 : newcolor,
 				StarOwner(star->Type));
 		}
 	}
 #if 0
 	// Shofixti can't be orange due to planet types
 	// Not needed any more, after altering shofixti code a bit
-	if (star->Index == SHOFIXTI_DEFINED)
+	if (star->Index == PlotId::Shofixti)
 	{
 		uint16_t newcolor = (StarColor (star->Type) + uqm::currentSeed().value) % 5;
 		star->Type = MakeStar (
 			StarType (star->Type),
-			newcolor >= ORANGE_BODY ? newcolor + 1 : newcolor,
+			newcolor >= StarBodyColor::Orange ? newcolor + 1 : newcolor,
 			StarOwner (star->Type));
 	}
 #endif
 	// Green, Blue, and White giants are too hot for spathis.
 	// This is an asthetic choice but a good one.
-	if (star->Index == SPATHI_DEFINED)
+	if (star->Index == PlotId::Spathi)
 	{
-		if (StarColor(star->Type) == WHITE_BODY)
+		if (StarColor(star->Type) == StarBodyColor::White)
 		{
 			star->Type = MakeStar(
 				StarType(star->Type),
-				YELLOW_BODY,
+				StarBodyColor::Yellow,
 				StarOwner(star->Type));
 		}
-		if (StarColor(star->Type) == BLUE_BODY)
+		if (StarColor(star->Type) == StarBodyColor::Blue)
 		{
 			star->Type = MakeStar(
 				StarType(star->Type),
-				ORANGE_BODY,
+				StarBodyColor::Orange,
 				StarOwner(star->Type));
 		}
-		if (StarColor(star->Type) == GREEN_BODY)
+		if (StarColor(star->Type) == StarBodyColor::Green)
 		{
 			star->Type = MakeStar(
 				StarType(star->Type),
-				RED_BODY,
+				StarBodyColor::Red,
 				StarOwner(star->Type));
 		}
 	}
 	// Supox will NOT be the same color as rainbow world
 	// This swaps yellow/blue, red/white, and green/orange
-	if (star->Index == SUPOX_DEFINED)
+	if (star->Index == PlotId::Supox)
 	{
 		int j = 0;
-		while (RAINBOW0_DEFINED != starmap[j].Index)
+		while (PlotId::Rainbow0 != starmap[j].Index)
 		{
 			if (++j >= NumSolarSystems)
 			{
@@ -1125,16 +1125,16 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 		}
 		// This will either increment or decriment based on even/odd
 		// and then % 6 to put back into star_color.
-		star->Type = MakeStar(DWARF_STAR,
-							  (StarColor(starmap[j].Type) + 6 + StarColor(starmap[j].Type) % 2 - (StarColor(starmap[j].Type) + 1) % 2) % 6,
+		star->Type = MakeStar(StellarSize::Dwarf,
+							  (*StarColor(starmap[j].Type) + 6 + *StarColor(starmap[j].Type) % 2 - (*StarColor(starmap[j].Type) + 1) % 2) % 6,
 							  StarOwner(star->Type));
 	}
 	// Rainbow worlds all get RAINBOW0's color, whatever it is.
 	// We will use that later in the alien dialogs.
-	if ((star->Index > RAINBOW0_DEFINED) && (star->Index <= RAINBOW9_DEFINED))
+	if ((star->Index > PlotId::Rainbow0) && (star->Index <= PlotId::Rainbow9))
 	{
 		int j = 0;
-		while (RAINBOW0_DEFINED != starmap[j].Index)
+		while (PlotId::Rainbow0 != starmap[j].Index)
 		{
 			if (++j >= NumSolarSystems)
 			{
@@ -1149,7 +1149,7 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 	// Section 3: Mess with names of star systems
 	// Melnormes live in super giants, and super giants take the Alpha
 	// of their system.
-	if ((star->Index >= MELNORME0_DEFINED) && (star->Index <= MELNORME8_DEFINED) && (star->Prefix > 1))
+	if ((star->Index >= PlotId::Melnorme0) && (star->Index <= PlotId::Melnorme8) && (star->Prefix > 1))
 	{
 		int j = 0;
 		while ((starmap[j].Postfix != star->Postfix) || (starmap[j].Prefix != 1))
@@ -1162,7 +1162,7 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Melnorme {} swapping {} {} at {}.{} : {}.{} for "
 						   "{} {} at {}.{} : {}.{}\n",
-				   star->Index - MELNORME0_DEFINED, star->Prefix, star->Postfix,
+				   star->Index - PlotId::Melnorme0, star->Prefix, star->Postfix,
 				   star->star_pt.x / 10, star->star_pt.x % 10,
 				   star->star_pt.y / 10, star->star_pt.y % 10,
 				   starmap[j].Prefix, starmap[j].Postfix,
@@ -1173,7 +1173,7 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 		star->Prefix = 1;
 	}
 	// Humans and their egos.
-	if (star->Index == SOL_DEFINED)
+	if (star->Index == PlotId::Sol)
 	{
 		int j = 0;
 		while (starmap[j].Postfix != 129) // Postfix 129 = "Sol"
@@ -1224,7 +1224,7 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 	}
 	// Alas, the poor algolites... wherever they are, the stars
 	// carry their name (Postfix 113 = "Algol").
-	if (star->Index == ALGOLITES_DEFINED)
+	if (star->Index == PlotId::Algolites)
 	{
 		int j = 0;
 		for (j = 0; j < NumSolarSystems; j++)
@@ -1247,7 +1247,7 @@ void Plotify(StarDesc* starmap, StarDesc* star)
 }
 
 #ifdef DEBUG_STARSEED_TRACE
-uint16_t last_err = NUM_PLOTS;
+uint16_t last_err = PlotId::NumPlots;
 void DebugPlotTicker(uint16_t plot_id)
 {
 	if (last_err == plot_id)
@@ -1317,7 +1317,7 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 		fmt::print(stderr, "Starting a timer; global activity {} | "
 						   "uqm::currentSeed().value {} | NUM_PLOTS {}.\n",
 				   uqm::currentActivity(),
-				   uqm::currentSeed().value, NUM_PLOTS);
+				   uqm::currentSeed().value, PlotId::NumPlots);
 #endif
 		// Basically a wrapper around the recursion.
 		timer_running = true;
@@ -1327,20 +1327,20 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 		StarGenRNG->reseed(uqm::currentSeed().value);
 		// nullptr out all the plot pointers so that it "places" pregens
 		// in order to properly Plotify () the pregens.  ARILOU don't need.
-		for (i = 1; i < NUM_PLOTS; i++)
+		for (i = 1; i < PlotId::NumPlots; i++)
 		{
 			plotmap[i].star = nullptr;
 		}
 		// Just in case hard coded ARILOU doesn't have a pointer
 		// use Arilou homeworld pointer so we can just skip it
-		if (plotmap[ARILOU_DEFINED].star_pt.x != ~0 && plotmap[ARILOU_DEFINED].star_pt.y != ~0)
+		if (plotmap[*PlotId::Arilou].star_pt.x != ~0 && plotmap[*PlotId::Arilou].star_pt.y != ~0)
 		{
-			plotmap[ARILOU_DEFINED].star =
+			plotmap[*PlotId::Arilou].star =
 				&(starmap[NumSolarSystems + 1 + NumHyperVortices + 1]);
 		}
 #if 0
 		// Place down any plots which were already assigned in plotmap
-		for (i = 1; i < NUM_PLOTS; i++)
+		for (i = 1; i < PlotId::NumPlots; i++)
 		{
 			//if (plotmap[i].star_pt.x != ~0 && plotmap[i].star_pt.x != ~0)
 			if ((plotmap[i].star = FindNearestStar (starmap, plotmap[i].star_pt)))
@@ -1376,12 +1376,12 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 	{
 		fmt::print(stderr, "TIME'S UP!  Giving up on seed {}.\n", uqm::currentSeed().value);
 		timer_running = false;
-		return NUM_PLOTS + 1;
+		return *PlotId::NumPlots + 1;
 	}
 
 	rand_val = StarGenRNG->next();
 	// choose a plot by weight
-	if ((plot_id = GetNextPlot(plotmap)) == NUM_PLOTS)
+	if ((plot_id = GetNextPlot(plotmap)) == PlotId::NumPlots)
 	{
 		// Sanity check the placements - they all pass PlotSet(plot, id)
 		// but may be missing from starmap.
@@ -1390,7 +1390,7 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 		// were passed in and need Plotify().
 		//next_plot = ~0;
 		timer_running = false;
-		for (i = 1; i < NUM_PLOTS; i++)
+		for (i = 1; i < PlotId::NumPlots; i++)
 		{
 			if (!plotmap[i].star || plotmap[i].star != FindNearestStar(starmap, plotmap[i].star_pt))
 			{
@@ -1425,7 +1425,7 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 			}
 		}
 #ifdef DEBUG_STARSEED
-		for (i = 1; i < NUM_PLOTS; i++)
+		for (i = 1; i < PlotId::NumPlots; i++)
 		{
 			print_plot_id(i);
 			fmt::print(stderr, " at %05.1f : %05.1f.\n",
@@ -1433,7 +1433,7 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 					   (float)plotmap[i].star_pt.y / 10);
 		}
 #endif
-		return NUM_PLOTS;
+		return *PlotId::NumPlots;
 	}
 #ifdef DEBUG_STARSEED_TRACE
 	fmt::print(stderr, "\nSelected ");
@@ -1474,7 +1474,7 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 
 		return_id = SeedPlot(plotmap, starmap);
 
-		if (return_id == NUM_PLOTS)
+		if (return_id == PlotId::NumPlots)
 		{
 			timer_running = false;
 			Plotify(starmap, plotmap[plot_id].star);
@@ -1497,16 +1497,16 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 		DebugPlotTicker(plot_id);
 #endif
 		// ARILOU is a special case, we pick a point not a star
-		if (plot_id == ARILOU_DEFINED)
+		if (plot_id == PlotId::Arilou)
 		{
 			star_id = (rand_val + i * StarFactor) % 100;
-			plotmap[ARILOU_DEFINED].star_pt = GfxPoint {
+			plotmap[*PlotId::Arilou].star_pt = GfxPoint {
 				(star_id / 10) * 1000 + uqm::lowByte(rand_val) * 100 / 256,
 				(star_id % 10) * 1000 + uqm::highByte(rand_val) * 100 / 256};
-			plotmap[ARILOU_DEFINED].star = FindNearestStar(starmap,
-														   plotmap[ARILOU_DEFINED].star_pt);
+			plotmap[*PlotId::Arilou].star = FindNearestStar(starmap,
+															plotmap[*PlotId::Arilou].star_pt);
 			// Anything less than 2.0 units from a star is too close
-			if ((plotmap[ARILOU_DEFINED].star) && ((plotmap[ARILOU_DEFINED].star_pt.x - plotmap[ARILOU_DEFINED].star->star_pt.x) * (plotmap[ARILOU_DEFINED].star_pt.x - plotmap[ARILOU_DEFINED].star->star_pt.x) + (plotmap[ARILOU_DEFINED].star_pt.y - plotmap[ARILOU_DEFINED].star->star_pt.y) * (plotmap[ARILOU_DEFINED].star_pt.y - plotmap[ARILOU_DEFINED].star->star_pt.y) < 400))
+			if ((plotmap[*PlotId::Arilou].star) && ((plotmap[*PlotId::Arilou].star_pt.x - plotmap[*PlotId::Arilou].star->star_pt.x) * (plotmap[*PlotId::Arilou].star_pt.x - plotmap[*PlotId::Arilou].star->star_pt.x) + (plotmap[*PlotId::Arilou].star_pt.y - plotmap[*PlotId::Arilou].star->star_pt.y) * (plotmap[*PlotId::Arilou].star_pt.y - plotmap[*PlotId::Arilou].star->star_pt.y) < 400))
 			{
 				continue;
 			}
@@ -1546,10 +1546,10 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 					   (float)plotmap[plot_id].star_pt.y / 10);
 #endif
 			return_id = SeedPlot(plotmap, starmap);
-			if (return_id == NUM_PLOTS)
+			if (return_id == PlotId::NumPlots)
 			{
 				timer_running = false;
-				if (plot_id != ARILOU_DEFINED)
+				if (plot_id != PlotId::Arilou)
 				{
 					Plotify(starmap, plotmap[plot_id].star);
 				}
@@ -1557,7 +1557,7 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 			}
 			// If we ran out of time or the plot is not heavily connected,
 			// pop this layer
-			if (return_id > NUM_PLOTS || ConnectedPlot(plotmap, plot_id, return_id) <= 2000000)
+			if (return_id > PlotId::NumPlots || ConnectedPlot(plotmap, plot_id, return_id) <= 2000000)
 			{
 #ifdef DEBUG_STARSEED_TRACE_Y
 				fmt::print(stderr, " [{}] Popping ", return_id);
@@ -1565,10 +1565,10 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 				fmt::print(stderr, ", from %05.1f : %05.1f [C {}]\n",
 						   (float)plotmap[plot_id].star_pt.x / 10,
 						   (float)plotmap[plot_id].star_pt.y / 10,
-						   (return_id > NUM_PLOTS) ? -1 :
-													 (uint32_t)sqrt(ConnectedPlot(plotmap, plot_id, return_id)));
+						   (return_id > PlotId::NumPlots) ? -1 :
+															(uint32_t)sqrt(ConnectedPlot(plotmap, plot_id, return_id)));
 #endif
-				if (plot_id != ARILOU_DEFINED)
+				if (plot_id != PlotId::Arilou)
 				{
 					starmap[star_id].Index = 0;
 				}
@@ -1590,7 +1590,7 @@ uint16_t SeedPlot(PlotLocation* plotmap, StarDesc* starmap)
 				   (float)plotmap[plot_id].star_pt.x / 10,
 				   (float)plotmap[plot_id].star_pt.y / 10);
 #endif
-		if (plot_id != ARILOU_DEFINED)
+		if (plot_id != PlotId::Arilou)
 		{
 			starmap[star_id].Index = 0;
 		}
@@ -1676,8 +1676,8 @@ bool SeedQuasispace(PortalLocation* portalmap, PlotLocation* plotmap,
 				// We locate the portal by up to 1147 (114.7) in any direction.
 				// Also note int16_t is just int16_t and can be negative.
 				portalmap[i].star_pt = GfxPoint {
-					(int16_t)uqm::lowByte(rand_val) * 9 + plotmap[SOL_DEFINED].star_pt.x - 1147,
-					(int16_t)uqm::highByte(rand_val) * 9 + plotmap[SOL_DEFINED].star_pt.y - 1147};
+					(int16_t)uqm::lowByte(rand_val) * 9 + plotmap[*PlotId::Sol].star_pt.x - 1147,
+					(int16_t)uqm::highByte(rand_val) * 9 + plotmap[*PlotId::Sol].star_pt.y - 1147};
 				// Take care of anything off the map (w/in 18.9) or too close
 				// to SOL.  Here, 250000 (50.0 squared) is the min distance
 				// squared from SOL to portal and 1000000 (100.0 squared) is
@@ -1685,7 +1685,7 @@ bool SeedQuasispace(PortalLocation* portalmap, PlotLocation* plotmap,
 				// Note: as long as MinPortal > 1000 + 500 (1500) you don't
 				// have to check for other portals too close to SOL
 				// (as long as 500 is that limit).
-				if ((portalmap[i].star_pt.x < 189) || (portalmap[i].star_pt.x > MaxXUniverse - 189) || (portalmap[i].star_pt.y < 189) || (portalmap[i].star_pt.y > MaxYUniverse - 189) || ((portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) * (portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) + (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) * (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) < 250000) || ((portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) * (portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) + (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) * (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) > 1000000))
+				if ((portalmap[i].star_pt.x < 189) || (portalmap[i].star_pt.x > MaxXUniverse - 189) || (portalmap[i].star_pt.y < 189) || (portalmap[i].star_pt.y > MaxYUniverse - 189) || ((portalmap[i].star_pt.x - plotmap[*PlotId::Sol].star_pt.x) * (portalmap[i].star_pt.x - plotmap[*PlotId::Sol].star_pt.x) + (portalmap[i].star_pt.y - plotmap[*PlotId::Sol].star_pt.y) * (portalmap[i].star_pt.y - plotmap[*PlotId::Sol].star_pt.y) < 250000) || ((portalmap[i].star_pt.x - plotmap[*PlotId::Sol].star_pt.x) * (portalmap[i].star_pt.x - plotmap[*PlotId::Sol].star_pt.x) + (portalmap[i].star_pt.y - plotmap[*PlotId::Sol].star_pt.y) * (portalmap[i].star_pt.y - plotmap[*PlotId::Sol].star_pt.y) > 1000000))
 				{
 					valid = false;
 					continue;
@@ -1806,77 +1806,77 @@ struct PlotIdMap
 
 // The PlotIdMap is sorted **by name** for the binary search function.
 static constexpr PlotIdMap plotIdMap[] = {
-	{"algolites",		  ALGOLITES_DEFINED		   }, // Algol [IV]
-	{"androsynth",		   ANDROSYNTH_DEFINED		 }, // Eta Vulpeculae
-	{"aqua helix",		   AQUA_HELIX_DEFINED		 }, // Zeta Draconis
-	{"arilou",			   ARILOU_DEFINED			 }, // 43.8 : 637.2
-	{"bomb",			   BOMB_DEFINED				 }, // Zeta Hyades [VI-B]
-	{"burvixese",		  BURVIXESE_DEFINED		   }, // Arcturus [I]
-	{"chmmr",			  CHMMR_DEFINED			   }, // Procyon
-	{"destroyed starbase", DESTROYED_STARBASE_DEFINED},
-	{"druuge",			   DRUUGE_DEFINED			 }, // Zeta Persei [I]
-	{"egg case 0",		   EGG_CASE0_DEFINED			}, // Beta Copernicus [I]
-	{"egg case 1",		   EGG_CASE1_DEFINED			},
-	{"egg case 2",		   EGG_CASE2_DEFINED			},
-	{"excavation site",	EXCAVATION_SITE_DEFINED   }, // ALPHA LALANDE I
-	{"ilwrath",			ILWRATH_DEFINED		   }, // .. / .. / 022.9, 366.6
-	{"kohrah 0",			 KOHRAH0_DEFINED			},
-	{"kohrah 1",			 KOHRAH1_DEFINED			},
-	{"kohrah 2",			 KOHRAH2_DEFINED			},
-	{"maidens",			MAIDENS_DEFINED		   }, // Alpha Cerenkov [I]
-	{"melnorme 0",		   MELNORME0_DEFINED			},
-	{"melnorme 1",		   MELNORME1_DEFINED			}, // Alpha Centauri (SOL)
-	{"melnorme 2",		   MELNORME2_DEFINED			},
-	{"melnorme 3",		   MELNORME3_DEFINED			},
-	{"melnorme 4",		   MELNORME4_DEFINED			},
-	{"melnorme 5",		   MELNORME5_DEFINED			},
-	{"melnorme 6",		   MELNORME6_DEFINED			},
-	{"melnorme 7",		   MELNORME7_DEFINED			}, // Alpha Apodis (Thraddash)
-	{"melnorme 8",		   MELNORME8_DEFINED			},
-	{"mother ark",		   MOTHER_ARK_DEFINED		 }, //Delta Virginis (not said)
-	{"mycon",			  MYCON_DEFINED			   }, // Brahe / 629.1, 220.8
-	{"mycon trap",		   MYCON_TRAP_DEFINED		 }, // Organon [1] [I]
-	{"orz",				ORZ_DEFINED			   }, // Gamma Vulpeculae
-	{"pkunk",			  PKUNK_DEFINED			   }, // Gamma Krueger [I]
-	{"rainbow 0",		  RAINBOW0_DEFINED		  }, // Zeta Sextantis (Yehat)
-	{"rainbow 1",		  RAINBOW1_DEFINED		  }, //
-	{"rainbow 2",		  RAINBOW2_DEFINED		  }, //
-	{"rainbow 3",		  RAINBOW3_DEFINED		  }, //
-	{"rainbow 4",		  RAINBOW4_DEFINED		  }, // Slylandro (blue pair)
-	{"rainbow 5",		  RAINBOW5_DEFINED		  }, // Epsilon Draconis (Thradd)
-	{"rainbow 6",		  RAINBOW6_DEFINED		  },
-	{"rainbow 7",		  RAINBOW7_DEFINED		  }, // Beta Leporis (Supox)
-	{"rainbow 8",		  RAINBOW8_DEFINED		  },
-	{"rainbow 9",		  RAINBOW9_DEFINED		  }, // GIANT rbw (Groombridge)
+	{"algolites",		  *PlotId::Algolites		}, // Algol [IV]
+	{"androsynth",		   *PlotId::Androsynth		  }, // Eta Vulpeculae
+	{"aqua helix",		   *PlotId::AquaHelix		 }, // Zeta Draconis
+	{"arilou",			   *PlotId::Arilou			  }, // 43.8 : 637.2
+	{"bomb",			   *PlotId::Bomb			  }, // Zeta Hyades [VI-B]
+	{"burvixese",		  *PlotId::Burvixese		}, // Arcturus [I]
+	{"chmmr",			  *PlotId::Chmmr			}, // Procyon
+	{"destroyed starbase", *PlotId::DestroyedStarbase},
+	{"druuge",			   *PlotId::Druuge			  }, // Zeta Persei [I]
+	{"egg case 0",		   *PlotId::EggCase0			}, // Beta Copernicus [I]
+	{"egg case 1",		   *PlotId::EggCase1			},
+	{"egg case 2",		   *PlotId::EggCase2			},
+	{"excavation site",	*PlotId::ExcavationSite   }, // ALPHA LALANDE I
+	{"ilwrath",			*PlotId::Ilwrath			}, // .. / .. / 022.9, 366.6
+	{"kohrah 0",			 *PlotId::Kohrah0			 },
+	{"kohrah 1",			 *PlotId::Kohrah1			 },
+	{"kohrah 2",			 *PlotId::Kohrah2			 },
+	{"maidens",			*PlotId::Maidens			}, // Alpha Cerenkov [I]
+	{"melnorme 0",		   *PlotId::Melnorme0		 },
+	{"melnorme 1",		   *PlotId::Melnorme1		 }, // Alpha Centauri (SOL)
+	{"melnorme 2",		   *PlotId::Melnorme2		 },
+	{"melnorme 3",		   *PlotId::Melnorme3		 },
+	{"melnorme 4",		   *PlotId::Melnorme4		 },
+	{"melnorme 5",		   *PlotId::Melnorme5		 },
+	{"melnorme 6",		   *PlotId::Melnorme6		 },
+	{"melnorme 7",		   *PlotId::Melnorme7		 }, // Alpha Apodis (Thraddash)
+	{"melnorme 8",		   *PlotId::Melnorme8		 },
+	{"mother ark",		   *PlotId::MotherArk		 }, //Delta Virginis (not said)
+	{"mycon",			  *PlotId::Mycon			}, // Brahe / 629.1, 220.8
+	{"mycon trap",		   *PlotId::MyconTrap		 }, // Organon [1] [I]
+	{"orz",				*PlotId::Orz				}, // Gamma Vulpeculae
+	{"pkunk",			  *PlotId::Pkunk			}, // Gamma Krueger [I]
+	{"rainbow 0",		  *PlotId::Rainbow0		   }, // Zeta Sextantis (Yehat)
+	{"rainbow 1",		  *PlotId::Rainbow1		   }, //
+	{"rainbow 2",		  *PlotId::Rainbow2		   }, //
+	{"rainbow 3",		  *PlotId::Rainbow3		   }, //
+	{"rainbow 4",		  *PlotId::Rainbow4		   }, // Slylandro (blue pair)
+	{"rainbow 5",		  *PlotId::Rainbow5		   }, // Epsilon Draconis (Thradd)
+	{"rainbow 6",		  *PlotId::Rainbow6		   },
+	{"rainbow 7",		  *PlotId::Rainbow7		   }, // Beta Leporis (Supox)
+	{"rainbow 8",		  *PlotId::Rainbow8		   },
+	{"rainbow 9",		  *PlotId::Rainbow9		   }, // GIANT rbw (Groombridge)
 										// Thraddash / Slylandro.
-	{"samatra",			SAMATRA_DEFINED		   }, // Delta Crateris
-	{"ship vault",		   SHIP_VAULT_DEFINED		 }, // Epsilon Camelopardalis
-	{"shofixti",			 SHOFIXTI_DEFINED			 }, // Delta Gorno
-	{"slylandro",		  SLYLANDRO_DEFINED		   }, // Beta Corvi
-	{"sol",				SOL_DEFINED			   },
-	{"spathi",			   SPATHI_DEFINED			 }, // Epsilon Gruis
-	{"spathi monument",	SPATHI_MONUMENT_DEFINED   }, // Beta Herculis
-	{"start colony",		 START_COLONY_DEFINED		 }, // Vela
-	{"sun device",		   SUN_DEVICE_DEFINED		 }, // Beta Brahe
-	{"supox",			  SUPOX_DEFINED			   },
-	{"syreen",			   SYREEN_DEFINED			 }, // Betelgeuse
-	{"taalo protector",	TAALO_PROTECTOR_DEFINED   }, // Delta Vulpeculae
-	{"talking pet",		TALKING_PET_DEFINED	   }, // Beta Orionis
-	{"thraddash",		  THRADD_DEFINED			}, // Delta Draconis
-	{"urquan 0",			 URQUAN0_DEFINED			},
-	{"urquan 1",			 URQUAN1_DEFINED			},
-	{"urquan 2",			 URQUAN2_DEFINED			},
-	{"urquan wreck",		 URQUAN_WRECK_DEFINED		 }, // Alpha Pavonis
-	{"utwig",			  UTWIG_DEFINED			   }, // Aquarii [constellation]
-	{"vux",				VUX_DEFINED			   }, // Luyten [star group]
-	{"vux beast",		  VUX_BEAST_DEFINED		   }, // Delta Lyncis [I]
-	{"yehat",			  YEHAT_DEFINED			   }, // .. / Serpentis
-	{"zoq colony 0",		 ZOQ_COLONY0_DEFINED		},
-	{"zoq colony 1",		 ZOQ_COLONY1_DEFINED		},
-	{"zoq colony 2",		 ZOQ_COLONY2_DEFINED		},
-	{"zoq colony 3",		 ZOQ_COLONY3_DEFINED		},
-	{"zoq scout",		  ZOQ_SCOUT_DEFINED		   }, // Rigel
-	{"zoqfot",			   ZOQFOT_DEFINED			 }  // Alpha Tucanae
+	{"samatra",			*PlotId::Samatra			}, // Delta Crateris
+	{"ship vault",		   *PlotId::ShipVault		 }, // Epsilon Camelopardalis
+	{"shofixti",			 *PlotId::Shofixti		  }, // Delta Gorno
+	{"slylandro",		  *PlotId::Slylandro		}, // Beta Corvi
+	{"sol",				*PlotId::Sol				},
+	{"spathi",			   *PlotId::Spathi			  }, // Epsilon Gruis
+	{"spathi monument",	*PlotId::SpathiMonument   }, // Beta Herculis
+	{"start colony",		 *PlotId::StartColony		 }, // Vela
+	{"sun device",		   *PlotId::SunDevice		 }, // Beta Brahe
+	{"supox",			  *PlotId::Supox			},
+	{"syreen",			   *PlotId::Syreen			  }, // Betelgeuse
+	{"taalo protector",	*PlotId::TaaloProtector   }, // Delta Vulpeculae
+	{"talking pet",		*PlotId::TalkingPet	   }, // Beta Orionis
+	{"thraddash",		  *PlotId::Thradd			 }, // Delta Draconis
+	{"urquan 0",			 *PlotId::Urquan0			 },
+	{"urquan 1",			 *PlotId::Urquan1			 },
+	{"urquan 2",			 *PlotId::Urquan2			 },
+	{"urquan wreck",		 *PlotId::UrquanWreck		 }, // Alpha Pavonis
+	{"utwig",			  *PlotId::Utwig			}, // Aquarii [constellation]
+	{"vux",				*PlotId::Vux				}, // Luyten [star group]
+	{"vux beast",		  *PlotId::VuxBeast		   }, // Delta Lyncis [I]
+	{"yehat",			  *PlotId::Yehat			}, // .. / Serpentis
+	{"zoq colony 0",		 *PlotId::ZoqColony0		},
+	{"zoq colony 1",		 *PlotId::ZoqColony1		},
+	{"zoq colony 2",		 *PlotId::ZoqColony2		},
+	{"zoq colony 3",		 *PlotId::ZoqColony3		},
+	{"zoq scout",		  *PlotId::ZoqScout		   }, // Rigel
+	{"zoqfot",			   *PlotId::Zoqfot			  }  // Alpha Tucanae
 }; // Currently 70 total (correct number)
 
 static int PlotIdCompare(const void* id1, const void* id2)
@@ -1898,7 +1898,7 @@ uint16_t PlotIdStrToIndex(const char* plotIdStr)
 												 sizeof plotIdMap[0], PlotIdCompare);
 	if (found == nullptr)
 	{
-		return NUM_PLOTS + 1;
+		return *PlotId::NumPlots + 1;
 	}
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "END PlotIdStrToIndex {} {}.\n", plotIdStr, found->id);

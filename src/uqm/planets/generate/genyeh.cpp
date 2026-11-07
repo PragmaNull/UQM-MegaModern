@@ -66,7 +66,7 @@ static bool GenerateYehat_generatePlanets(SolarSystemState* solarSys)
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = WATER_WORLD;
+		pPlanet->data_index = *PlanetType::Water;
 		pPlanet->NumPlanets = 1;
 		pPlanet->radius = EarthRadius * 106L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
@@ -90,23 +90,23 @@ static bool GenerateYehat_generateOrbital(SolarSystemState* solarSys,
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if (StartSphereTracking(YEHAT_SHIP))
+		if (StartSphereTracking(RaceId::Yehat))
 		{
-			NotifyOthers(YEHAT_SHIP, IpnlAllClear);
+			NotifyOthers(*RaceId::Yehat, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&uqm::gameState().game().ip_group_q);
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			CloneShipFragment(YEHAT_SHIP, &uqm::gameState().game().npc_built_ship_q,
+			CloneShipFragment(RaceId::Yehat, &uqm::gameState().game().npc_built_ship_q,
 							  InfiniteFleet);
 
-			uqm::currentActivity() |= START_INTERPLANETARY;
+			uqm::currentActivity() |= ActivityFlag::StartInterplanetary;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
-			InitCommunication(YEHAT_CONVERSATION);
+			InitCommunication(Conversation::Yehat);
 
-			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 			{
-				uqm::currentActivity() &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~ActivityFlag::StartInterplanetary;
 				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}

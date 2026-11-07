@@ -28,7 +28,7 @@
 
 static ConversationData ilwrath_desc =
 	{
-		ILWRATH_CONVERSATION, /* AlienConv */
+		Conversation::Ilwrath, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -193,7 +193,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 				break;
 			case 2:
 				NPCPhrase(GENERAL_INFO_SPACE_3);
-				SetHomeworldKnown(ILWRATH_HOME);
+				SetHomeworldKnown(*HomeId::Ilwrath);
 				break;
 			case 3:
 				NPCPhrase(GENERAL_INFO_SPACE_4);
@@ -518,7 +518,7 @@ static void GodsSpeak(RESPONSE_REF R)
 		NPCPhrase(OK_KILL_THRADDASH);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_DECEIVED, static_cast<uint32_t>(1));
-		AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_ILWRATH_MISSION);
+		AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvanceIlwrathMission);
 	}
 	else if (PlayerSaid(R, worship_us))
 	{
@@ -756,7 +756,7 @@ ConversationData* init_ilwrath_comm(void)
 	if (uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER)
 		|| (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA)
 			& ((1 << 4) | (1 << 5)))
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

@@ -338,7 +338,7 @@ static void gate_collision(Element* ElementPtr0, GfxPoint* pPt0,
 					   == PrimitiveType::StampFill
 				&& uqm::gameState().flag(uqm::GameFlag::BOMB_CARRIER))
 			{
-				uqm::currentActivity() &= ~IN_BATTLE;
+				uqm::currentActivity() &= ~ActivityFlag::InBattle;
 			}
 		}
 		else

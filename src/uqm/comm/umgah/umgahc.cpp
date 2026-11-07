@@ -26,7 +26,7 @@
 
 static ConversationData umgah_desc =
 	{
-		UMGAH_CONVERSATION, /* AlienConv */
+		Conversation::Umgah, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -294,7 +294,7 @@ static void CombatIsInevitable(RESPONSE_REF R)
 		NPCPhrase(FUNNY_IDEA);
 
 		AlienTalkSegue((uint16_t)~0);
-		AddEscortShips(UMGAH_SHIP, difficultyCase(4, 4, 2));
+		AddEscortShips(RaceId::Umgah, difficultyCase(4, 4, 2));
 		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_HOSTILE, static_cast<uint32_t>(1));
 	}
 }
@@ -597,7 +597,7 @@ static void Intro(void)
 	uint8_t NumVisits {};
 
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
@@ -717,7 +717,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-			SetHomeworldKnown(UMGAH_HOME);
+			SetHomeworldKnown(*HomeId::Umgah);
 		}
 		else
 		{
@@ -749,7 +749,7 @@ static void Intro(void)
 		{
 			NPCPhrase(POST_ZOMBIE_HWLD_HELLO);
 
-			SetHomeworldKnown(UMGAH_HOME);
+			SetHomeworldKnown(*HomeId::Umgah);
 			UmgahReward((RESPONSE_REF)0);
 		}
 		else
@@ -801,7 +801,7 @@ ConversationData* init_umgah_comm(void)
 	umgah_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if ((uqm::gameState().flag(uqm::GameFlag::TALKING_PET) && !uqm::gameState().flag(uqm::GameFlag::UMGAH_HOSTILE))
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

@@ -364,7 +364,7 @@ static int SplitSubPages(const char* text, uqstl::string pages[], int32_t timest
 		}
 
 		if (uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC && !usingSpeech
-			&& (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE))
+			&& (uqm::activityKind(uqm::currentActivity()) != ActivityKind::WonLastBattle))
 		{
 			timestamp[page] =
 				RecalculateDelay(lead_ellips + pos + aft_ellips, true);

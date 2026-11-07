@@ -90,7 +90,7 @@ void DrawCurrentPlanetSphere(void)
 												  rotFrameIndex);
 			RenderPlanetSphere(Orbit, Orbit->SphereFrame, rotPointIndex,
 							   pSolarSysState->pOrbitalDesc->data_index
-								   & PLANET_SHIELDED,
+								   & *PlanetType::PlanetShielded,
 							   throbShield, rotwidth, rotheight,
 							   (rotheight >> 1) - IfHd(2));
 		}
@@ -171,7 +171,7 @@ void RerenderPlanetSphere(void)
 
 	if (useDosSpheres)
 	{ // palette switch for coloring sphere into scan colors
-		uint16_t sc {Orbit->scanType};
+		uint16_t sc {static_cast<uint16_t>(*Orbit->scanType)};
 		if (sc > 2)
 		{
 			sc = 0;
@@ -281,7 +281,7 @@ void PrepareNextRotationFrame(void)
 		Orbit->SphereFrame = SetAbsFrameIndex(Orbit->SphereFrame,
 											  rotFrameIndex);
 		RenderPlanetSphere(Orbit, Orbit->SphereFrame, rotPointIndex,
-						   pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED,
+						   pSolarSysState->pOrbitalDesc->data_index & *PlanetType::PlanetShielded,
 						   throbShield, rotwidth, rotheight,
 						   (rotheight >> 1) - IfHd(2));
 	}
@@ -367,7 +367,7 @@ void PrepareNextRotationFrameForIP(SystemPlanet* pPlanetDesc, int16_t frameCount
 										  pPlanetDesc->rotFrameIndex);
 	RenderPlanetSphere(Orbit, Orbit->SphereFrame,
 					   pPlanetDesc->rotPointIndex,
-					   pPlanetDesc->data_index & PLANET_SHIELDED,
+					   pPlanetDesc->data_index & *PlanetType::PlanetShielded,
 					   false, pPlanetDesc->rotwidth, pPlanetDesc->rotheight,
 					   (pPlanetDesc->rotheight >> 1) - IfHd(2)); // Radius
 	Orbit->SphereFrame->image->dirty = true;

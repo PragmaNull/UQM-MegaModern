@@ -126,7 +126,7 @@ inline auto BackgroundVol() { return (usingSpeech && !VolasPackPresent ? (Normal
 extern void init_communication(void);
 extern void uninit_communication(void);
 
-extern uint16_t InitCommunication(CONVERSATION which_comm);
+extern uint16_t InitCommunication(Conversation which_comm);
 extern void RaceCommunication(void);
 
 inline constexpr auto WaitTrackAll {((uint16_t)~0)};

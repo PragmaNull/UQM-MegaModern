@@ -32,7 +32,7 @@ static inline TFB_Char* getCharFrame(FontDesc* fontPtr, uqm::UniChar ch);
 
 TFB_Char* GetFrameForFPS(uqm::UniChar ch)
 {
-	if (StarConFont && !(uqm::currentActivity() & CHECK_ABORT))
+	if (StarConFont && !(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
 		return getCharFrame(StarConFont, ch);
 	}
@@ -44,7 +44,7 @@ TFB_Char* GetFrameForFPS(uqm::UniChar ch)
 
 bool GoodToGoFPS(void)
 {
-	return (bool)(StarConFont && !(uqm::currentActivity() & CHECK_ABORT)
+	return (bool)(StarConFont && !(uqm::currentActivity() & ActivityFlag::CheckAbort)
 				  && !optRequiresReload);
 }
 
@@ -664,7 +664,7 @@ void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FR
 			}
 		}
 		UpdateInputState();
-		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & CHECK_ABORT))
+		if (CurrentInputState.menu[*MenuKey::MenuCancel] || (uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
 			*skip = true;
 		}

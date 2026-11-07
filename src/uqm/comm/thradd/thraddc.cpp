@@ -27,7 +27,7 @@
 
 static ConversationData thradd_desc =
 	{
-		THRADD_CONVERSATION, /* AlienConv */
+		Conversation::Thradd, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -291,7 +291,7 @@ static void ExitConversation(RESPONSE_REF R)
 		NPCPhrase(GOOD_IDEA);
 
 		setSegue(Segue::Peace);
-		AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_THRADD_MISSION);
+		AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvanceThraddMission);
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(5));
 	}
 	else if (PlayerSaid(R, bye_hostile_helix))
@@ -553,7 +553,7 @@ static void ThraddWorship(RESPONSE_REF R)
 	uqm::gameState().setFlag(uqm::GameFlag::THRADD_VISITS, static_cast<uint32_t>(0));
 	uqm::gameState().setFlag(uqm::GameFlag::THRADD_MANNER, static_cast<uint32_t>(1));
 	uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(0));
-	SetRaceAllied(THRADDASH_SHIP, true);
+	SetRaceAllied(RaceId::Thraddash, true);
 
 	Response(be_polite, ThraddCulture);
 	Response(speak_pig_latin, ThraddCulture);
@@ -764,10 +764,10 @@ static void ThraddHostile(RESPONSE_REF R)
 static void Intro(void)
 {
 	uint8_t NumVisits {};
-	HFLEETINFO hThradd = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, THRADDASH_SHIP);
+	HFLEETINFO hThradd = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, *RaceId::Thraddash);
 	const FleetInfo* ThraddPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd);
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -899,7 +899,7 @@ static void Intro(void)
 		{
 			pStr0 = WELCOME_HOMEWORLD0;
 			pStr1 = WELCOME_HOMEWORLD1;
-			SetHomeworldKnown(THRADDASH_HOME);
+			SetHomeworldKnown(*HomeId::Thraddash);
 		}
 		else
 		{
@@ -973,7 +973,7 @@ static void Intro(void)
 						break;
 				}
 				uqm::gameState().setFlag(uqm::GameFlag::THRADD_HOME_VISITS, static_cast<uint32_t>(NumVisits));
-				SetHomeworldKnown(THRADDASH_HOME);
+				SetHomeworldKnown(*HomeId::Thraddash);
 			}
 			else if ((NumVisits = uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION)) == 0
 					 || NumVisits > 3)
@@ -1066,7 +1066,7 @@ ConversationData* init_thradd_comm(void)
 	thradd_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (uqm::gameState().flag(uqm::GameFlag::THRADD_MANNER)
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

@@ -32,7 +32,7 @@ struct MasterShipInfo
 	HMASTERSHIP pred;
 	HMASTERSHIP succ;
 
-	SPECIES_ID SpeciesID;
+	SpeciesId SpeciesID;
 
 	ShipInfoDesc ShipInfo;
 	FleetStatus Fleet;
@@ -56,8 +56,8 @@ constexpr auto UnlockMasterShip(const auto& pq, const auto& h) { return UnlockLi
 extern void LoadMasterShipList(void (*YieldProcessing)(void));
 extern void FreeMasterShipList(void);
 extern void ReloadMasterShipList(void (*YieldProcessing)(void));
-extern HMASTERSHIP FindMasterShip(SPECIES_ID ship_ref);
-extern int FindMasterShipIndex(SPECIES_ID ship_ref);
+extern HMASTERSHIP FindMasterShip(SpeciesId ship_ref);
+extern int FindMasterShipIndex(SpeciesId ship_ref);
 uint16_t GetShipCostFromIndex(unsigned Index);
 FRAME GetShipIconsFromIndex(unsigned Index);
 FRAME GetShipMeleeIconsFromIndex(unsigned Index);

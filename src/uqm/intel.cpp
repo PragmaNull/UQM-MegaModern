@@ -32,7 +32,7 @@ BATTLE_INPUT_STATE computer_intelligence(ComputerInputContext* context, Starship
 {
 	BATTLE_INPUT_STATE InputState {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 	{
 		return 0;
 	}
@@ -40,7 +40,7 @@ BATTLE_INPUT_STATE computer_intelligence(ComputerInputContext* context, Starship
 	if (StarShipPtr)
 	{
 		// Selecting the next action for in battle.
-		const bool isMelee {uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE};
+		const bool isMelee {uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee};
 		if (testFlag(StarShipPtr->control, PlayerControlFlags::Cyborg) && uqm::UQMOptions::read().passiveEnemy
 			&& (isMelee || StarShipPtr->playerNr != RpgPlayerNum))
 		{
@@ -69,9 +69,9 @@ BATTLE_INPUT_STATE computer_intelligence(ComputerInputContext* context, Starship
 	}
 	else
 	{
-		switch (uqm::lowByte(uqm::currentActivity()))
+		switch (uqm::activityKind(uqm::currentActivity()))
 		{
-			case SUPER_MELEE:
+			case ActivityKind::SuperMelee:
 				{
 					SleepThread(c_gameSecond / 2);
 					InputState = BattleWeapon; /* pick a random ship */

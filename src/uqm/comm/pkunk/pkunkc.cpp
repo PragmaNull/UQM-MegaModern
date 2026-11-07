@@ -26,7 +26,7 @@
 
 static ConversationData pkunk_desc =
 	{
-		PKUNK_CONVERSATION, /* AlienConv */
+		Conversation::Pkunk, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -158,9 +158,9 @@ static void ExitConversation(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_INFO, static_cast<uint32_t>(0));
 
-		AddEvent(EventType::Relative, 6, 0, 0, ADVANCE_PKUNK_MISSION);
+		AddEvent(EventType::Relative, 6, 0, 0, GameEventId::AdvancePkunkMission);
 
-		if (EscortFeasibilityStudy(PKUNK_SHIP) == 0)
+		if (EscortFeasibilityStudy(RaceId::Pkunk) == 0)
 		{
 			NPCPhrase(INIT_NO_ROOM);
 		}
@@ -168,9 +168,9 @@ static void ExitConversation(RESPONSE_REF R)
 		{
 			NPCPhrase(INIT_SHIP_GIFT);
 			AlienTalkSegue((uint16_t)~0);
-			if (AddEscortShips(PKUNK_SHIP, difficultyCase(4, 4, 2)))
+			if (AddEscortShips(RaceId::Pkunk, difficultyCase(4, 4, 2)))
 			{
-				PrepareShip(PKUNK_SHIP);
+				PrepareShip(RaceId::Pkunk);
 			}
 		}
 	}
@@ -218,13 +218,13 @@ static void ExitConversation(RESPONSE_REF R)
 		{
 			NPCPhrase(WE_GO_HOME_1);
 			ReasonMask |= GoodReason1;
-			AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_PKUNK_MISSION);
+			AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvancePkunkMission);
 		}
 		else if (PlayerSaid(R, good_reason_2))
 		{
 			NPCPhrase(WE_GO_HOME_2);
 			ReasonMask |= GoodReason2;
-			AddEvent(EventType::Relative, 0, 0, 0, ADVANCE_PKUNK_MISSION);
+			AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvancePkunkMission);
 		}
 		else if (PlayerSaid(R, bad_reason_1))
 		{
@@ -596,7 +596,7 @@ static void PkunkHome(RESPONSE_REF R)
 			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(1));
 		}
 		NPCPhrase(CAN_BE_FRIENDS);
-		SetHomeworldKnown(PKUNK_HOME);
+		SetHomeworldKnown(*HomeId::Pkunk);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(3));
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(0));
@@ -676,7 +676,7 @@ static void PkunkFriendlySpace(RESPONSE_REF R)
 
 	if (PlayerSaid(R, whats_up_space))
 	{
-		if (ShipsReady(PKUNK_SHIP) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 3)
+		if (ShipsReady(RaceId::Pkunk) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 3)
 		{
 			NPCPhrase(SHIPS_AT_HOME);
 		}
@@ -800,14 +800,14 @@ static void PkunkNeutralSpace(RESPONSE_REF R)
 	if (PlayerSaid(R, form_alliance))
 	{
 		NPCPhrase(GO_TO_HOMEWORLD);
-		SetHomeworldKnown(PKUNK_HOME);
+		SetHomeworldKnown(*HomeId::Pkunk);
 
 		DisablePhrase(form_alliance);
 	}
 	else if (PlayerSaid(R, can_you_help))
 	{
 		NPCPhrase(GO_TO_HOMEWORLD_AGAIN);
-		SetHomeworldKnown(PKUNK_HOME);
+		SetHomeworldKnown(*HomeId::Pkunk);
 
 		DisablePhrase(can_you_help);
 	}
@@ -894,7 +894,7 @@ static void Intro(void)
 	uint8_t NumVisits {};
 	uint8_t Manner {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -992,18 +992,18 @@ static void Intro(void)
 		}
 		else
 		{
-			if (NumVisits && ShipsReady(PKUNK_SHIP) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 3)
+			if (NumVisits && ShipsReady(RaceId::Pkunk) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 3)
 			{
-				if (EscortFeasibilityStudy(PKUNK_SHIP) == 0)
+				if (EscortFeasibilityStudy(RaceId::Pkunk) == 0)
 				{
 					NPCPhrase(NO_ROOM);
 				}
 				else
 				{
 					NPCPhrase(SHIP_GIFT);
-					if (AddEscortShips(PKUNK_SHIP, difficultyCase(4, 4, 2)))
+					if (AddEscortShips(RaceId::Pkunk, difficultyCase(4, 4, 2)))
 					{
-						PrepareShip(PKUNK_SHIP);
+						PrepareShip(RaceId::Pkunk);
 					}
 				}
 			}
@@ -1097,7 +1097,7 @@ static void Intro(void)
 					break;
 				case 3:
 					NPCPhrase(NEUTRAL_SPACE_HELLO_4);
-					SetHomeworldKnown(PKUNK_HOME);
+					SetHomeworldKnown(*HomeId::Pkunk);
 					--NumVisits;
 					break;
 			}
@@ -1183,7 +1183,7 @@ ConversationData* init_pkunk_comm(void)
 	pkunk_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 3
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		// Enter communications immediately.
 		setSegue(Segue::Peace);

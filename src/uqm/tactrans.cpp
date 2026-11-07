@@ -486,7 +486,7 @@ void new_ship(Element* DeadShipPtr)
 			if (!allOk)
 			{
 				// Some network connection has been reset.
-				uqm::currentActivity() &= ~IN_BATTLE;
+				uqm::currentActivity() &= ~ActivityFlag::InBattle;
 				BatchGraphics();
 				return;
 			}
@@ -497,7 +497,7 @@ void new_ship(Element* DeadShipPtr)
 		{ // This may be a dead ship (crew_level == 0) or a warped out ship
 			UpdateShipFragCrew(DeadStarShipPtr);
 			// Deactivate the ship (cannot be selected)
-			DeadStarShipPtr->SpeciesID = NO_ID;
+			DeadStarShipPtr->SpeciesID = SpeciesId::None;
 		}
 
 		if (GetNextStarShip(DeadStarShipPtr, DeadStarShipPtr->playerNr))
@@ -509,7 +509,7 @@ void new_ship(Element* DeadShipPtr)
 				if (!allOk)
 				{
 					// Some network connection has been reset.
-					uqm::currentActivity() &= ~IN_BATTLE;
+					uqm::currentActivity() &= ~ActivityFlag::InBattle;
 					BatchGraphics();
 					return;
 				}
@@ -523,13 +523,13 @@ void new_ship(Element* DeadShipPtr)
 		else if (battle_counter[0] == 0 || battle_counter[1] == 0)
 		{
 			// One player is out of ships. The battle is over.
-			uqm::currentActivity() &= ~IN_BATTLE;
+			uqm::currentActivity() &= ~ActivityFlag::InBattle;
 		}
 #ifdef NETPLAY
 		else
 		{
 			// Battle has been aborted.
-			uqm::currentActivity() |= CHECK_ABORT;
+			uqm::currentActivity() |= ActivityFlag::CheckAbort;
 		}
 #endif
 		BatchGraphics();
@@ -692,7 +692,7 @@ void RecordShipDeath(Element* deadShip)
 		battle_counter[deadStarShip->playerNr]--;
 	}
 
-	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee)
 	{
 		MeleeShipDeath(deadStarShip);
 	}

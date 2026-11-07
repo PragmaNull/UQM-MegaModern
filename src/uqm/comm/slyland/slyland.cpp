@@ -117,7 +117,7 @@ const static NumberSpeechDesc probe_numbers_english =
 
 static ConversationData slylandro_desc =
 	{
-		SLYLANDRO_CONVERSATION, /* AlienConv */
+		Conversation::Slylandro, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -421,8 +421,8 @@ static void CombatIsInevitable(RESPONSE_REF R)
 						// Probe's coordinate system is +/-{Y,X} relative to home
 						// If homeworld X or Y are < 5000, we will flip the sign
 						// (and always say Y before X)
-						dx = (plot_map[SLYLANDRO_DEFINED].star_pt.x - LogxToUniverse(uqm::gameState().sis().log_x)) * (plot_map[SLYLANDRO_DEFINED].star_pt.x > 5000 ? 1 : -1);
-						dy = (plot_map[SLYLANDRO_DEFINED].star_pt.y - LogyToUniverse(uqm::gameState().sis().log_y)) * (plot_map[SLYLANDRO_DEFINED].star_pt.y > 5000 ? 1 : -1);
+						dx = (plot_map[*PlotId::Slylandro].star_pt.x - LogxToUniverse(uqm::gameState().sis().log_x)) * (plot_map[*PlotId::Slylandro].star_pt.x > 5000 ? 1 : -1);
+						dy = (plot_map[*PlotId::Slylandro].star_pt.y - LogyToUniverse(uqm::gameState().sis().log_y)) * (plot_map[*PlotId::Slylandro].star_pt.y > 5000 ? 1 : -1);
 
 						NPCPhrase(THIS_IS_PROBE_40);
 						sayCoord(dy);

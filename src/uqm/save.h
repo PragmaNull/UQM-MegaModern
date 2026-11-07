@@ -40,7 +40,7 @@ constexpr uint32_t c_saveFormatVersion {1};
 struct SaveSummaryData
 {
 	FlagshipData SS;
-	uint8_t Activity;
+	ActivityKind Activity;
 	uint8_t Flags;
 	uint8_t day_index, month_index;
 	uint16_t year_index;

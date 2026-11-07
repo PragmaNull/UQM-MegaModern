@@ -61,7 +61,7 @@ static bool GenerateColony_initNpcs(SolarSystemState* solarSys)
 	uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::COLONY_GRPOFFS);
 	if (uqm::gameState().game().BattleGroupRef == 0)
 	{
-		CloneShipFragment(URQUAN_SHIP,
+		CloneShipFragment(RaceId::Urquan,
 						  &uqm::gameState().game().npc_built_ship_q, 0);
 		uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
 		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
@@ -76,7 +76,7 @@ static bool GenerateColony_initNpcs(SolarSystemState* solarSys)
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte + 1;
 
 		InterplanetaryGroup* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
-		GroupPtr->task = IN_ORBIT;
+		GroupPtr->task = *GroupTask::InOrbit;
 		GroupPtr->sys_loc = PlanetByte;	 /* orbitting colony */
 		GroupPtr->dest_loc = PlanetByte; /* orbitting colony */
 		GroupPtr->loc.x = 0;
@@ -103,7 +103,7 @@ static bool GenerateColony_generatePlanets(SolarSystemState* solarSys)
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = Cosine(angle, pPlanet->radius);
 		pPlanet->location.y = Sine(angle, pPlanet->radius);
-		pPlanet->data_index = WATER_WORLD | PLANET_SHIELDED;
+		pPlanet->data_index = *PlanetType::Water | *PlanetType::PlanetShielded;
 		ComputeSpeed(pPlanet, false, 1);
 		if (IsExtended())
 		{
@@ -117,7 +117,7 @@ static bool GenerateColony_generatePlanets(SolarSystemState* solarSys)
 		pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = GenerateHabitableWorld() | PLANET_SHIELDED;
+		pPlanet->data_index = GenerateHabitableWorld() | *PlanetType::PlanetShielded;
 
 		GeneratePlanets(solarSys);
 
@@ -140,7 +140,7 @@ static bool GenerateColony_generateMoons(SolarSystemState* solarSys,
 	if (IsExtended()
 		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
-		solarSys->MoonDesc[0].data_index = SELENIC_WORLD;
+		solarSys->MoonDesc[0].data_index = *PlanetType::Selenic;
 	}
 
 	return true;
@@ -158,7 +158,7 @@ static bool GenerateColony_generateName(const SolarSystemState* solarSys,
 
 		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
 							sizeof(uqm::gameState().sis().PlanetName),
-							GameString(PLANET_NUMBER_BASE + 33));
+							GameString(GameStringBase::PlanetNumber + 33));
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}

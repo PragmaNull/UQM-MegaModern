@@ -72,7 +72,7 @@ static bool GenerateMelnorme_initNpcs(SolarSystemState* solarSys)
 		uqm::gameState().game().BattleGroupRef = GetMelnormeRef();
 		if (uqm::gameState().game().BattleGroupRef == 0)
 		{
-			CloneShipFragment(MELNORME_SHIP, &uqm::gameState().game().npc_built_ship_q, 0);
+			CloneShipFragment(RaceId::Melnorme, &uqm::gameState().game().npc_built_ship_q, 0);
 			uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
 			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 			SetMelnormeRef(uqm::gameState().game().BattleGroupRef);
@@ -91,7 +91,7 @@ static bool GenerateMelnorme_generatePlanets(SolarSystemState* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (CurStarDescPtr()->Index == MELNORME1_DEFINED)
+	if (CurStarDescPtr()->Index == PlotId::Melnorme1)
 	{
 		pSunDesc->PlanetByte = 2;
 		pSunDesc->MoonByte = 0;
@@ -112,7 +112,7 @@ static bool GenerateMelnorme_generatePlanets(SolarSystemState* solarSys)
 		}
 	}
 
-	if (CurStarDescPtr()->Index == MELNORME7_DEFINED)
+	if (CurStarDescPtr()->Index == PlotId::Melnorme7)
 	{
 		pSunDesc->PlanetByte = 3;
 
@@ -133,12 +133,12 @@ static bool GenerateMelnorme_generateMoons(SolarSystemState* solarSys,
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (IsExtended() && CurStarDescPtr()->Index == MELNORME1_DEFINED
+	if (IsExtended() && CurStarDescPtr()->Index == PlotId::Melnorme1
 		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 
-		solarSys->MoonDesc[MoonByte].data_index = PRECURSOR_STARBASE;
+		solarSys->MoonDesc[MoonByte].data_index = *PlanetType::PrecursorStarbase;
 	}
 
 	return true;
@@ -147,7 +147,7 @@ static bool GenerateMelnorme_generateMoons(SolarSystemState* solarSys,
 static bool GenerateMelnorme_generateOrbital(SolarSystemState* solarSys,
 											 SystemPlanet* world)
 {
-	if (IsExtended() && CurStarDescPtr()->Index == MELNORME1_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
+	if (IsExtended() && CurStarDescPtr()->Index == PlotId::Melnorme1 && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		/* Starbase */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -163,7 +163,7 @@ static bool GenerateMelnorme_generateOrbital(SolarSystemState* solarSys,
 		return true;
 	}
 
-	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
+	if (IsExtended() && CurStarDescPtr()->Index == PlotId::Melnorme7 && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
@@ -180,7 +180,7 @@ static bool GenerateMelnorme_generateOrbital(SolarSystemState* solarSys,
 static uint16_t GenerateMelnorme_generateEnergy(const SolarSystemState* solarSys,
 												const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
-	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED
+	if (IsExtended() && CurStarDescPtr()->Index == PlotId::Melnorme7
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateArtifact(
@@ -193,7 +193,7 @@ static uint16_t GenerateMelnorme_generateEnergy(const SolarSystemState* solarSys
 static bool GenerateMelnorme_pickupEnergy(SolarSystemState* solarSys,
 										  SystemPlanet* world, uint16_t whichNode)
 {
-	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
+	if (IsExtended() && CurStarDescPtr()->Index == PlotId::Melnorme7 && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(whichNode == 0);
 
@@ -209,25 +209,25 @@ static bool GenerateMelnorme_pickupEnergy(SolarSystemState* solarSys,
 
 const char* SelectMelnormeRefVar(void)
 {
-	switch (CurStarDescPtr()->Index)
+	switch (static_cast<PlotId>(CurStarDescPtr()->Index))
 	{
-		case MELNORME0_DEFINED:
+		case PlotId::Melnorme0:
 			return "MELNORME0_GRPOFFS";
-		case MELNORME1_DEFINED:
+		case PlotId::Melnorme1:
 			return "MELNORME1_GRPOFFS";
-		case MELNORME2_DEFINED:
+		case PlotId::Melnorme2:
 			return "MELNORME2_GRPOFFS";
-		case MELNORME3_DEFINED:
+		case PlotId::Melnorme3:
 			return "MELNORME3_GRPOFFS";
-		case MELNORME4_DEFINED:
+		case PlotId::Melnorme4:
 			return "MELNORME4_GRPOFFS";
-		case MELNORME5_DEFINED:
+		case PlotId::Melnorme5:
 			return "MELNORME5_GRPOFFS";
-		case MELNORME6_DEFINED:
+		case PlotId::Melnorme6:
 			return "MELNORME6_GRPOFFS";
-		case MELNORME7_DEFINED:
+		case PlotId::Melnorme7:
 			return "MELNORME7_GRPOFFS";
-		case MELNORME8_DEFINED:
+		case PlotId::Melnorme8:
 			return "MELNORME8_GRPOFFS";
 		default:
 			return "0";

@@ -432,7 +432,7 @@ static void GetSphereRect(FleetInfo* FleetPtr, GfxRect* pRect, GfxRect* pRepairR
 static void GetWarEraSphereRect(FleetInfo* FleetPtr, GfxRect* pRect, GfxRect* pRepairRect)
 {
 	const long diameter = (long)(WarEraStrength(FleetPtr->SpeciesID) * SphereRadiusIncrement);
-	const GfxPoint loc = SeedFleetLocation(FleetPtr, plot_map, WAR_ERA);
+	const GfxPoint loc = SeedFleetLocation(FleetPtr, plot_map, *PlotId::WarEra);
 
 	pRect->extent.width = UniverseToDispx(diameter)
 						- UniverseToDispx(0);
@@ -589,7 +589,7 @@ static void DrawNoReturnZone(void)
 	GfxPoint sis;
 	const double halfFuel = uqm::gameState().sis().FuelOnBoard / 2;
 
-	sol = plot_map[SOL_DEFINED].star_pt;
+	sol = plot_map[*PlotId::Sol].star_pt;
 	sis = GfxPoint {(int16_t)LogxToUniverse(uqm::gameState().sis().log_x),
 					(int16_t)LogyToUniverse(uqm::gameState().sis().log_y)};
 
@@ -789,7 +789,7 @@ static void DrawFuelCircle(bool secondary)
 		{
 			OldColor =
 				SetContextForeGroundColor(StarmapSecondaryRangeColor);
-			if (pointsEqual(corner, plot_map[SOL_DEFINED].star_pt))
+			if (pointsEqual(corner, plot_map[*PlotId::Sol].star_pt))
 			{ // We are at Sol, foci are equal - draw a standard oval
 				GetFuelRect(&r, OnBoardFuel, corner);
 				DrawFilledOval(&r);
@@ -846,136 +846,138 @@ bool isHomeworld(uint8_t Index)
 {
 	bool raceBool = false;
 
-	switch (Index)
+	switch (static_cast<PlotId>(Index))
 	{
-		case CHMMR_DEFINED:
-			if (IsHomeworldKnown(CHMMR_HOME)
-				&& (CheckAlliance(CHMMR_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Chmmr:
+			if (IsHomeworldKnown(*HomeId::Chmmr)
+				&& (CheckAlliance(RaceId::Chmmr) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case ORZ_DEFINED:
-			if (IsHomeworldKnown(ORZ_HOME)
-				&& (CheckAlliance(ORZ_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Orz:
+			if (IsHomeworldKnown(*HomeId::Orz)
+				&& (CheckAlliance(RaceId::Orz) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case PKUNK_DEFINED:
-			if (IsHomeworldKnown(PKUNK_HOME)
-				&& (CheckAlliance(PKUNK_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Pkunk:
+			if (IsHomeworldKnown(*HomeId::Pkunk)
+				&& (CheckAlliance(RaceId::Pkunk) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case SHOFIXTI_DEFINED:
-			if (IsHomeworldKnown(SHOFIXTI_HOME)
-				&& (CheckAlliance(SHOFIXTI_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Shofixti:
+			if (IsHomeworldKnown(*HomeId::Shofixti)
+				&& (CheckAlliance(RaceId::Shofixti) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case SPATHI_DEFINED:
-			if (IsHomeworldKnown(SPATHI_HOME)
-				&& (CheckAlliance(SPATHI_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Spathi:
+			if (IsHomeworldKnown(*HomeId::Spathi)
+				&& (CheckAlliance(RaceId::Spathi) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case SUPOX_DEFINED:
-			if (IsHomeworldKnown(SUPOX_HOME)
-				&& (CheckAlliance(SUPOX_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Supox:
+			if (IsHomeworldKnown(*HomeId::Supox)
+				&& (CheckAlliance(RaceId::Supox) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case THRADD_DEFINED:
-			if (IsHomeworldKnown(THRADDASH_HOME)
-				&& (CheckAlliance(THRADDASH_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Thradd:
+			if (IsHomeworldKnown(*HomeId::Thraddash)
+				&& (CheckAlliance(RaceId::Thraddash) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case UTWIG_DEFINED:
-			if (IsHomeworldKnown(UTWIG_HOME)
-				&& (CheckAlliance(UTWIG_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Utwig:
+			if (IsHomeworldKnown(*HomeId::Utwig)
+				&& (CheckAlliance(RaceId::Utwig) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case VUX_DEFINED:
-			if (IsHomeworldKnown(VUX_HOME)
-				&& (CheckAlliance(VUX_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Vux:
+			if (IsHomeworldKnown(*HomeId::Vux)
+				&& (CheckAlliance(RaceId::Vux) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case YEHAT_DEFINED:
-			if (IsHomeworldKnown(YEHAT_HOME)
-				&& (CheckAlliance(YEHAT_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Yehat:
+			if (IsHomeworldKnown(*HomeId::Yehat)
+				&& (CheckAlliance(RaceId::Yehat) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case DRUUGE_DEFINED:
-			if (IsHomeworldKnown(DRUUGE_HOME)
-				&& (CheckAlliance(DRUUGE_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Druuge:
+			if (IsHomeworldKnown(*HomeId::Druuge)
+				&& (CheckAlliance(RaceId::Druuge) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case ILWRATH_DEFINED:
-			if (IsHomeworldKnown(ILWRATH_HOME)
-				&& (CheckAlliance(ILWRATH_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Ilwrath:
+			if (IsHomeworldKnown(*HomeId::Ilwrath)
+				&& (CheckAlliance(RaceId::Ilwrath) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case MYCON_DEFINED:
-			if (IsHomeworldKnown(MYCON_HOME)
-				&& (CheckAlliance(MYCON_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Mycon:
+			if (IsHomeworldKnown(*HomeId::Mycon)
+				&& (CheckAlliance(RaceId::Mycon) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case SLYLANDRO_DEFINED:
-			if (IsHomeworldKnown(SLYLANDRO_HOME))
+		case PlotId::Slylandro:
+			if (IsHomeworldKnown(*HomeId::Slylandro))
 			{
 				raceBool = true;
 			}
 			break;
 		case UmgahDefined:
-			if (IsHomeworldKnown(UMGAH_HOME)
-				&& (CheckAlliance(UMGAH_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+			if (IsHomeworldKnown(*HomeId::Umgah)
+				&& (CheckAlliance(RaceId::Umgah) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case ZOQFOT_DEFINED:
-			if (IsHomeworldKnown(ZOQFOTPIK_HOME)
-				&& (CheckAlliance(ZOQFOTPIK_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Zoqfot:
+			if (IsHomeworldKnown(*HomeId::Zoqfotpik)
+				&& (CheckAlliance(RaceId::Zoqfotpik) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case SYREEN_DEFINED:
-			if (IsHomeworldKnown(SYREEN_HOME)
-				&& (CheckAlliance(SYREEN_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Syreen:
+			if (IsHomeworldKnown(*HomeId::Syreen)
+				&& (CheckAlliance(RaceId::Syreen) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case ANDROSYNTH_DEFINED:
-			if (IsHomeworldKnown(ANDROSYNTH_HOME)
-				&& (CheckAlliance(ANDROSYNTH_SHIP) != RaceAllegiance::Dead || uqm::isStarSeed()))
+		case PlotId::Androsynth:
+			if (IsHomeworldKnown(*HomeId::Androsynth)
+				&& (CheckAlliance(RaceId::Androsynth) != RaceAllegiance::Dead || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
-		case SOL_DEFINED:
-		case START_COLONY_DEFINED:
+		case PlotId::Sol:
+		case PlotId::StartColony:
 			raceBool = true;
+			break;
+		default:
 			break;
 	}
 
@@ -1287,7 +1289,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 			FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 			hNextShip = _GetSuccLink(FleetPtr);
 
-			if ((FleetPtr->known_strength && which_starmap != StarmapView::WarEraStarmap) || (which_starmap == StarmapView::WarEraStarmap && WarEraStrength(FleetPtr->SpeciesID) && index < NUM_BUILDABLE_SHIPS))
+			if ((FleetPtr->known_strength && which_starmap != StarmapView::WarEraStarmap) || (which_starmap == StarmapView::WarEraStarmap && WarEraStrength(FleetPtr->SpeciesID) && index < RaceId::NumBuildableShips))
 			{
 				GfxRect repair_r;
 
@@ -1350,15 +1352,15 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 					// For drawing War-Era starmap.
 					if (which_starmap == StarmapView::WarEraStarmap)
 					{
-						switch (index)
+						switch (static_cast<RaceId>(index))
 						{
-							case PKUNK_SHIP:
-							case THRADDASH_SHIP:
-							case DRUUGE_SHIP:
-								t.pStr = GameString(STAR_STRING_BASE + 132);
+							case RaceId::Pkunk:
+							case RaceId::Thraddash:
+							case RaceId::Druuge:
+								t.pStr = GameString(GameStringBase::StarString + 132);
 								t.CharCount = (uint16_t)strlen(t.pStr);
 								break;
-							case ANDROSYNTH_SHIP:
+							case RaceId::Androsynth:
 								t.pStr = FleetPtr->race_strings->text(0);
 								t.CharCount = (uint16_t)~0;
 								break;
@@ -1368,7 +1370,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 								break;
 						}
 					}
-					else if (index == YEHAT_REBEL_SHIP && uqm::UQMOptions::read().sphereColors == uqm::SphereOfInfluenceColors::Starseed)
+					else if (index == RaceId::YehatRebel && uqm::UQMOptions::read().sphereColors == uqm::SphereOfInfluenceColors::Starseed)
 					{
 						t.CharCount = 7;
 						t.pStr = yehat_rebels;
@@ -1635,9 +1637,9 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 		}
 		else
 		{
-			for (uint16_t i {RAINBOW0_DEFINED}; i <= RAINBOW9_DEFINED; i++)
+			for (uint16_t i {*PlotId::Rainbow0}; i <= PlotId::Rainbow9; i++)
 			{
-				if (rainbow_mask & (1 << (i - RAINBOW0_DEFINED)))
+				if (rainbow_mask & (1 << (i - *PlotId::Rainbow0)))
 				{
 					DrawMarker(plot_map[i].star_pt, true);
 				}
@@ -1665,19 +1667,19 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 
 			if (uqm::UQMOptions::read().showVisitedStars && isStarMarked(i, "VISITED")
 				&& which_starmap == StarmapView::NormalStarmap
-				&& SDPtr->Index != SOL_DEFINED)
+				&& SDPtr->Index != PlotId::Sol)
 			{
 				s.frame = SetRelFrameIndex(visitedStarsFrame,
-										   StarType(star_type)
-												   * NUM_STAR_COLORS
-											   + StarColor(star_type));
+										   *StarType(star_type)
+												   * *StarBodyColor::Count
+											   + *StarColor(star_type));
 			}
 			else
 			{
 				s.frame = SetRelFrameIndex(star_frame,
-										   StarType(star_type)
-												   * NUM_STAR_COLORS
-											   + StarColor(star_type));
+										   *StarType(star_type)
+												   * *StarBodyColor::Count
+											   + *StarColor(star_type));
 			}
 
 			++i;
@@ -1686,12 +1688,12 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 				 && SDPtr->star_pt.y == ArilouHomeY)
 		{
 			s.frame = SetRelFrameIndex(star_frame,
-									   (int)SUPER_GIANT_STAR * (int)NUM_STAR_COLORS + (int)GREEN_BODY); // TODO PragmaNull: this is weird enum arithmetic. helper function?
+									   (int)StellarSize::SuperGiant * (int)StarBodyColor::Count + (int)StarBodyColor::Green); // TODO PragmaNull: this is weird enum arithmetic. helper function?
 		}
 		else
 		{
 			s.frame = SetRelFrameIndex(star_frame,
-									   (int)GIANT_STAR * (int)NUM_STAR_COLORS + (int)GREEN_BODY); // TODO PragmaNull: this is weird enum arithmetic. helper function?
+									   (int)StellarSize::Giant * (int)StarBodyColor::Count + (int)StarBodyColor::Green); // TODO PragmaNull: this is weird enum arithmetic. helper function?
 		}
 		DrawStamp(&s);
 
@@ -1703,8 +1705,8 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 	{
 		if (which_space <= 1)
 		{
-			s.origin.x = UniverseToDispx(plot_map[ARILOU_DEFINED].star_pt.x);
-			s.origin.y = UniverseToDispy(plot_map[ARILOU_DEFINED].star_pt.y);
+			s.origin.x = UniverseToDispx(plot_map[*PlotId::Arilou].star_pt.x);
+			s.origin.y = UniverseToDispy(plot_map[*PlotId::Arilou].star_pt.y);
 		}
 		else
 		{
@@ -1712,7 +1714,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 			s.origin.y = UniverseToDispy(QuasiSpaceY);
 		}
 		s.frame = SetRelFrameIndex(star_frame,
-								   (int)GIANT_STAR * (int)NUM_STAR_COLORS + (int)GREEN_BODY);
+								   (int)StellarSize::Giant * (int)StarBodyColor::Count + (int)StarBodyColor::Green);
 		DrawStamp(&s);
 	}
 
@@ -1931,12 +1933,12 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 
 	if (which_starmap == StarmapView::NormalStarmap)
 	{ // "(Star Search: F6 | Toggle Maps: F7)"
-		uqm::utf8StringCopy(buf, sizeof(buf), GameString(FEEDBACK_STRING_BASE + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())));
+		uqm::utf8StringCopy(buf, sizeof(buf), GameString(GameStringBase::FeedbackString + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())));
 	}
 	else
 	{
 		uqm::utf8StringCopy(buf, sizeof(buf),
-							GameString(FEEDBACK_STRING_BASE + 3 + which_starmap));
+							GameString(GameStringBase::FeedbackString + 3 + *which_starmap));
 	}
 
 	pt.x = UniverseToDispx(cursorLoc.x);
@@ -1968,7 +1970,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 		{
 			// "UNKNOWN" string
 			uqm::utf8StringCopy(buf, sizeof(buf),
-								GameString(STAR_STRING_BASE + 132));
+								GameString(GameStringBase::StarString + 132));
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) < 2 || whichPortal == NumHyperVortices)
 		{
@@ -2039,7 +2041,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
-			ari_pt = plot_map[ARILOU_DEFINED].star_pt;
+			ari_pt = plot_map[*PlotId::Arilou].star_pt;
 		}
 		else
 		{
@@ -2052,7 +2054,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 		{
 			cursorLoc = ari_pt;
 			uqm::utf8StringCopy(buf, sizeof(buf),
-								GameString(STAR_STRING_BASE + 132));
+								GameString(GameStringBase::StarString + 132));
 		}
 	}
 
@@ -2106,7 +2108,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 			else
 			{ // In QS, don't display star search button - the search is
 				// unusable.
-				const char* sz {GameString(NAVIGATION_STRING_BASE + 1)};
+				const char* sz {GameString(GameStringBase::NavigationString + 1)};
 				uqm::strncpy_safe(buf, sz);
 				DrawSISMessage(buf);
 			}
@@ -2125,7 +2127,7 @@ static void UpdateFuelRequirement(void)
 	const uint16_t fuel_required = FuelRequired();
 
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}.{}",
-					 GameString(NAVIGATION_STRING_BASE + 4),
+					 GameString(GameStringBase::NavigationString + 4),
 					 fuel_required / FuelTankScale,
 					 (fuel_required % FuelTankScale) / 10);
 
@@ -2601,7 +2603,7 @@ void DoBubbleWarp(bool UseFuel)
 		DeltaSISGauges(0, -(int)FuelRequired(), 0);
 	}
 
-	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InInterplanetary)
 	{
 		// We're in a solar system; exit it.
 		uqm::currentActivity() |= EndInterplanetary;
@@ -2935,7 +2937,7 @@ static bool DoMoveCursor(MenuState* pMS)
 
 	flashCurrentLocation(nullptr, false);
 
-	return !(uqm::currentActivity() & CHECK_ABORT);
+	return !(uqm::currentActivity() & ActivityFlag::CheckAbort);
 }
 
 static void RepairMap(uint16_t update_race, GfxRect* pLastRect, GfxRect* pNextRect)
@@ -3251,7 +3253,7 @@ static void DrawStarmapHelper(void)
 
 	BatchGraphics();
 
-	DrawFlagStatDisplay(GameString(STATUS_STRING_BASE + 7));
+	DrawFlagStatDisplay(GameString(GameStringBase::StatusString + 7));
 
 	SetContextFont(TinyFont);
 	GetContextFontLeading(&leading);
@@ -3270,7 +3272,7 @@ static void DrawStarmapHelper(void)
 	t.align = TextAlign::Left;
 	t.baseline.x = r.corner.x + ResScale(12) - ifGamepad(2);
 	t.baseline.y = s.origin.y + leading;
-	t.pStr = GameString(STATUS_STRING_BASE + 12);
+	t.pStr = GameString(GameStringBase::StatusString + 12);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
@@ -3282,7 +3284,7 @@ static void DrawStarmapHelper(void)
 	t.align = TextAlign::Left;
 	t.baseline.x = r.corner.x + ResScale(16) - ifGamepad(6);
 	t.baseline.y = s.origin.y + leading;
-	t.pStr = GameString(STATUS_STRING_BASE + 13);
+	t.pStr = GameString(GameStringBase::StatusString + 13);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
@@ -3311,7 +3313,7 @@ static void DrawStarmapHelper(void)
 
 	t.align = TextAlign::Left;
 	t.baseline.x += ResScale(13);
-	t.pStr = GameString(STATUS_STRING_BASE + 14);
+	t.pStr = GameString(GameStringBase::StatusString + 14);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
@@ -3323,7 +3325,7 @@ static void DrawStarmapHelper(void)
 
 	t.baseline.x = s.origin.x + ResScale(12) + ifGamepad(11);
 	t.baseline.y = s.origin.y + leading + ResScale(5) - ifGamepad(5);
-	t.pStr = GameString(STATUS_STRING_BASE + 15);
+	t.pStr = GameString(GameStringBase::StatusString + 15);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
@@ -3334,7 +3336,7 @@ static void DrawStarmapHelper(void)
 
 	t.baseline.x = s.origin.x + ResScale(30) - ifGamepad(18);
 	t.baseline.y = s.origin.y + leading + ResScale(5);
-	t.pStr = GameString(STATUS_STRING_BASE + 16);
+	t.pStr = GameString(GameStringBase::StatusString + 16);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
@@ -3350,7 +3352,7 @@ static void DrawStarmapHelper(void)
 	t.align = TextAlign::Left;
 	t.baseline.x = r.corner.x + ResScale(2);
 	t.baseline.y = r.corner.y + leading + ResScale(1);
-	t.pStr = GameString(STATUS_STRING_BASE + 8); // FUEL:
+	t.pStr = GameString(GameStringBase::StatusString + 8); // FUEL:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 

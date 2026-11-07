@@ -147,7 +147,7 @@ struct ControllerInputState
 	}
 };
 
-typedef uint8_t BATTLE_INPUT_STATE;
+typedef uint8_t BATTLE_INPUT_STATE; // TODO PragmaNull : replace with falg enum.
 inline constexpr auto BattleLeft {((BATTLE_INPUT_STATE)(1 << 0))};
 inline constexpr auto BattleRight {((BATTLE_INPUT_STATE)(1 << 1))};
 inline constexpr auto BattleThrust {((BATTLE_INPUT_STATE)(1 << 2))};

@@ -26,7 +26,7 @@
 
 static ConversationData supox_desc =
 	{
-		SUPOX_CONVERSATION, /* AlienConv */
+		Conversation::Supox, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -158,7 +158,7 @@ static void ExitConversation(RESPONSE_REF R)
 	else if (PlayerSaid(R, can_you_help))
 	{
 		NPCPhrase(HOW_HELP);
-		if (EscortFeasibilityStudy(SUPOX_SHIP) == 0)
+		if (EscortFeasibilityStudy(RaceId::Supox) == 0)
 		{
 			NPCPhrase(DONT_NEED);
 		}
@@ -167,8 +167,8 @@ static void ExitConversation(RESPONSE_REF R)
 			NPCPhrase(HAVE_4_SHIPS);
 
 			AlienTalkSegue((uint16_t)~0);
-			AddEscortShips(SUPOX_SHIP, difficultyCase(4, 4, 2));
-			PrepareShip(SUPOX_SHIP);
+			AddEscortShips(RaceId::Supox, difficultyCase(4, 4, 2));
+			PrepareShip(RaceId::Supox);
 		}
 	}
 }
@@ -284,7 +284,7 @@ static void AlliedHome(RESPONSE_REF R)
 	{
 		Response(give_info, AlliedHome);
 	}
-	if (IsExtended() && ShipsReady(SUPOX_SHIP))
+	if (IsExtended() && ShipsReady(RaceId::Supox))
 	{
 		Response(can_you_help, ExitConversation);
 	}
@@ -429,7 +429,7 @@ static void NeutralSupox(RESPONSE_REF R)
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(1));
-		StartSphereTracking(UTWIG_SHIP);
+		StartSphereTracking(RaceId::Utwig);
 	}
 	else if (PlayerSaid(R, what_relation_to_utwig))
 	{
@@ -485,7 +485,7 @@ static void NeutralSupox(RESPONSE_REF R)
 
 		if (IsExtended())
 		{
-			StartSphereTracking(DRUUGE_SHIP);
+			StartSphereTracking(RaceId::Druuge);
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(1));
 	}
@@ -593,7 +593,7 @@ static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -618,7 +618,7 @@ static void Intro(void)
 
 		setSegue(Segue::Peace);
 	}
-	else if (CheckAlliance(SUPOX_SHIP) == RaceAllegiance::Good)
+	else if (CheckAlliance(RaceId::Supox) == RaceAllegiance::Good)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
@@ -714,7 +714,7 @@ static void Intro(void)
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
-			SetHomeworldKnown(SUPOX_HOME);
+			SetHomeworldKnown(*HomeId::Supox);
 		}
 		else
 		{
@@ -762,7 +762,7 @@ ConversationData* init_supox_comm(void)
 	supox_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (!uqm::gameState().flag(uqm::GameFlag::SUPOX_HOSTILE)
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

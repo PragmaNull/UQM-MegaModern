@@ -67,8 +67,8 @@ BattleFrameCounter battleFrameCount;
 
 bool RunAwayAllowed(void)
 {
-	return ((uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
-			 || uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+	return ((uqm::activityKind(uqm::currentActivity()) == ActivityKind::InEncounter
+			 || uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 			&& (getNomadMode() == uqm::NomadMode::Easy
 				|| uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 			&& (isDifficulty(uqm::Difficulty::Easy) || !uqm::gameState().flag(uqm::GameFlag::BOMB_CARRIER)));
@@ -238,9 +238,9 @@ static void ProcessInput(void)
 	flushPacketQueues();
 #endif
 
-	if (uqm::currentActivity() & (CHECK_LOAD | CHECK_ABORT))
+	if (uqm::currentActivity() & (ActivityFlag::CheckLoad | ActivityFlag::CheckAbort))
 	{
-		uqm::currentActivity() &= ~IN_BATTLE;
+		uqm::currentActivity() &= ~ActivityFlag::InBattle;
 	}
 }
 
@@ -263,7 +263,7 @@ void BattleSong(bool DoPlay)
 		}
 		else
 		{
-			if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
+			if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 			{
 				BattleRef = LoadMusicInstance(BattleMusicSamatraRes);
 
@@ -325,11 +325,11 @@ static bool DoBattle(BattleState* bs)
 		if (battleFrameCount >= delay
 			&& (battleFrameCount - delay) % NetplayChecksumInterval == 0)
 		{
-			if (!(uqm::currentActivity() & CHECK_ABORT))
+			if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
 			{
 				if (!verifyChecksums(battleFrameCount - delay))
 				{
-					uqm::currentActivity() |= CHECK_ABORT;
+					uqm::currentActivity() |= ActivityFlag::CheckAbort;
 					resetConnections(NetplayResetReason::SyncLoss);
 				}
 			}
@@ -361,7 +361,7 @@ static bool DoBattle(BattleState* bs)
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
 	}
 	UnbatchGraphics();
-	if ((!(uqm::currentActivity() & IN_BATTLE)) || (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+	if ((!(uqm::currentActivity() & ActivityFlag::InBattle)) || (uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
 		return false;
 	}
@@ -379,7 +379,7 @@ static bool DoBattle(BattleState* bs)
 		bs->NextTime = GetTimeCounter();
 	}
 
-	if ((uqm::currentActivity() & IN_BATTLE) == 0)
+	if ((uqm::currentActivity() & ActivityFlag::InBattle) == 0)
 	{
 		return false;
 	}
@@ -432,7 +432,7 @@ static bool selectAllShips(int16_t num_ships)
 
 bool Battle(BattleFrameCallback* callback)
 {
-	if (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE)
+	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::SuperMelee)
 	{
 		// In Supermelee, the RNG is already initialised.
 		uqm::random().reseed(static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count()));
@@ -454,7 +454,7 @@ bool Battle(BattleFrameCallback* callback)
 	{
 		BattleState bs;
 
-		uqm::currentActivity() |= IN_BATTLE;
+		uqm::currentActivity() |= ActivityFlag::InBattle;
 		battle_counter[0] = CountLinks(&race_q[0]);
 		battle_counter[1] = CountLinks(&race_q[1]);
 
@@ -476,7 +476,7 @@ bool Battle(BattleFrameCallback* callback)
 
 		if (!selectAllShips(num_ships))
 		{
-			uqm::currentActivity() |= CHECK_ABORT;
+			uqm::currentActivity() |= ActivityFlag::CheckAbort;
 			goto AbortBattle;
 		}
 
@@ -489,7 +489,7 @@ bool Battle(BattleFrameCallback* callback)
 			const bool allOk = negotiateReadyConnections(true, NetState::InBattle);
 			if (!allOk)
 			{
-				uqm::currentActivity() |= CHECK_ABORT;
+				uqm::currentActivity() |= ActivityFlag::CheckAbort;
 				goto AbortBattle;
 			}
 		}
@@ -506,9 +506,9 @@ bool Battle(BattleFrameCallback* callback)
 		DoInput(&bs, false);
 
 AbortBattle:
-		if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
+		if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::SuperMelee)
 		{
-			if (uqm::currentActivity() & CHECK_ABORT)
+			if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 			{
 				// Do not return to the main menu when a game is aborted,
 				// (just to the supermelee menu).
@@ -519,7 +519,7 @@ AbortBattle:
 				// it will generate a warning in debug mode.
 #endif
 
-				uqm::currentActivity() &= ~CHECK_ABORT;
+				uqm::currentActivity() &= ~ActivityFlag::CheckAbort;
 			}
 			else
 			{

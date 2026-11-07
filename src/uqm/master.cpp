@@ -30,8 +30,8 @@ static int master_ship_seed = 0;
 
 void LoadMasterShipList(void (*YieldProcessing)(void))
 {
-	SPECIES_ID s_id = ARILOU_ID;
-	uint16_t num_entries {LAST_MELEE_ID - ARILOU_ID + 1};
+	SpeciesId s_id = SpeciesId::Arilou;
+	uint16_t num_entries {SpeciesId::LastMelee - SpeciesId::Arilou + 1};
 	InitQueue(&master_q, num_entries, sizeof(MasterShipInfo));
 	while (num_entries--)
 	{
@@ -122,14 +122,14 @@ void ReloadMasterShipList(void (*YieldProcessing)(void))
 	}
 }
 
-HMASTERSHIP FindMasterShip(SPECIES_ID ship_ref)
+HMASTERSHIP FindMasterShip(SpeciesId ship_ref)
 {
 	HMASTERSHIP hStarShip {};
 	HMASTERSHIP hNextShip {};
 
 	for (hStarShip = GetHeadLink(&master_q); hStarShip; hStarShip = hNextShip)
 	{
-		SPECIES_ID ref;
+		SpeciesId ref;
 
 		const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hStarShip)};
 		hNextShip = _GetSuccLink(MasterPtr);
@@ -145,7 +145,7 @@ HMASTERSHIP FindMasterShip(SPECIES_ID ship_ref)
 	return (hStarShip);
 }
 
-int FindMasterShipIndex(SPECIES_ID ship_ref)
+int FindMasterShipIndex(SpeciesId ship_ref)
 {
 	HMASTERSHIP hStarShip {};
 	HMASTERSHIP hNextShip {};
@@ -154,7 +154,7 @@ int FindMasterShipIndex(SPECIES_ID ship_ref)
 	for (index = 0, hStarShip = GetHeadLink(&master_q); hStarShip;
 		 ++index, hStarShip = hNextShip)
 	{
-		SPECIES_ID ref;
+		SpeciesId ref;
 
 		const MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hStarShip)};
 		hNextShip = _GetSuccLink(MasterPtr);

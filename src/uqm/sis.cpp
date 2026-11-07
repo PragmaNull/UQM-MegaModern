@@ -47,7 +47,7 @@
 
 static StatMsgMode curMsgMode = StatMsgMode::Default;
 
-const static char* describeWeapon(uint8_t moduleType);
+const static char* describeWeapon(ModuleType moduleType);
 
 FRAME hdFuelFrame;
 
@@ -204,7 +204,7 @@ void DrawSaveInfo(FlagshipData SisState)
 	if (SisState.SaveVersion > 0)
 	{
 		uqm::utf8StringCopy(TempVer, sizeof(TempVer),
-							GameString(SAVEGAME_STRING_BASE + 4
+							GameString(GameStringBase::SavegameString + 4
 									   + SisState.SaveVersion));
 	}
 
@@ -219,22 +219,22 @@ void DrawSaveInfo(FlagshipData SisState)
 			const static char* const NomadModeSuffix[] {"", "-", "+"};
 
 			fmt::format_to_sz_n(TempNom, "{}{}",
-								GameString(MAINMENU_STRING_BASE + 60),
+								GameString(GameStringBase::MainmenuString + 60),
 								NomadModeSuffix[static_cast<int>(SisState.Nomad)]);
 		}
 
 		if (SisState.Extended)
 		{
 			uqm::utf8StringCopy(TempExt, sizeof(TempExt),
-								GameString(MAINMENU_STRING_BASE + 59));
+								GameString(GameStringBase::MainmenuString + 59));
 		}
 
 		uqm::utf8StringCopy(TempDiff, sizeof(TempDiff),
-							GameString(MAINMENU_STRING_BASE + 56
+							GameString(GameStringBase::MainmenuString + 56
 									   + static_cast<int>(SisState.Difficulty)));
 
 		fmt::format_to_sz_n(buf, "{} {}{}{}",
-							GameString(MAINMENU_STRING_BASE + 55), // Difficulty:
+							GameString(GameStringBase::MainmenuString + 55), // Difficulty:
 							TempDiff, TempExt, TempNom);
 		DrawSISMessage(buf);
 
@@ -271,21 +271,21 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 
 	if (pStr == 0)
 	{
-		switch (uqm::lowByte(uqm::currentActivity()))
+		switch (uqm::activityKind(uqm::currentActivity()))
 		{
 			default:
-			case IN_ENCOUNTER:
+			case ActivityKind::InEncounter:
 				pStr = "";
 				break;
-			case IN_LAST_BATTLE:
-			case IN_INTERPLANETARY:
+			case ActivityKind::InLastBattle:
+			case ActivityKind::InInterplanetary:
 				GetClusterName(CurStarDescPtr(), buf);
 				pStr = buf;
 				break;
-			case IN_HYPERSPACE:
+			case ActivityKind::InHyperspace:
 				if (inHyperSpace())
 				{
-					pStr = GameString(NAVIGATION_STRING_BASE);
+					pStr = GameString(GameStringBase::NavigationString);
 					// "HyperSpace"
 				}
 				else
@@ -294,7 +294,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 						LogxToUniverse(uqm::gameState().sis().log_x),
 						LogyToUniverse(uqm::gameState().sis().log_y));
 
-					pStr = GameString(NAVIGATION_STRING_BASE + 1);
+					pStr = GameString(GameStringBase::NavigationString + 1);
 					// "QuasiSpace"
 
 					if (uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS)
@@ -304,7 +304,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 						uqm::utf8StringCopy(
 							uqm::gameState().sis().PlanetName,
 							sizeof uqm::gameState().sis().PlanetName,
-							GameString(STAR_STRING_BASE + 148));
+							GameString(GameStringBase::StarString + 148));
 						// "Falayalaralfali"
 					}
 				}
@@ -499,7 +499,7 @@ void DateToString(char* buf, size_t bufLen,
 	{
 		case uqm::DateFormat::MMM_dd_yyyy: //MMM dd.yyyy ie: Mar 01.2500
 			fmt::format_to_sz_n(buf, bufLen, "{} {:02}{}{:04}",
-								GameString(MONTHS_STRING_BASE + month_index - 1),
+								GameString(GameStringBase::MonthsString + month_index - 1),
 								day_index, StrMiddleDot, year_index);
 			break;
 		case uqm::DateFormat::MM_dd_yyyy: //MM.dd.yyyy  ie: 03.01.2500
@@ -508,7 +508,7 @@ void DateToString(char* buf, size_t bufLen,
 			break;
 		case uqm::DateFormat::dd_MMM_yyyy: //dd MMM yyyy ie: 01 Mar 2500
 			fmt::format_to_sz_n(buf, bufLen, "{:02} {} {:04}", day_index,
-								GameString(MONTHS_STRING_BASE + month_index - 1),
+								GameString(GameStringBase::MonthsString + month_index - 1),
 								year_index);
 			break;
 		case uqm::DateFormat::dd_MM_yyyy: //dd MM yyyy  ie: 01.03.2500
@@ -558,13 +558,13 @@ void DrawStatusMessage(const char* pStr)
 			{
 				fmt::format_to_sz_n(buf, "{} {}",
 									(isPC(uqm::UQMOptions::read().whichMenu) && isPC(uqm::UQMOptions::read().whichFonts)) ?
-										GameString(STATUS_STRING_BASE + 2) :
-										StrInfinitySign,				 // "UNLIMITED"
-									GameString(STATUS_STRING_BASE + 0)); // "Cr"
+										GameString(GameStringBase::StatusString + 2) :
+										StrInfinitySign,						   // "UNLIMITED"
+									GameString(GameStringBase::StatusString + 0)); // "Cr"
 			}
 			else
 			{
-				fmt::format_to_sz_n(buf, "{} {}", uqm::makeWord(uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0), uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1)), GameString(STATUS_STRING_BASE + 0)); // "Cr"
+				fmt::format_to_sz_n(buf, "{} {}", uqm::makeWord(uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0), uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1)), GameString(GameStringBase::StatusString + 0)); // "Cr"
 			}
 		}
 		else if (curMsgMode == StatMsgMode::ResUnits)
@@ -573,14 +573,14 @@ void DrawStatusMessage(const char* pStr)
 			{
 				fmt::format_to_sz_n(buf, "{} {}",
 									(isPC(uqm::UQMOptions::read().whichMenu) && isPC(uqm::UQMOptions::read().whichFonts)) ?
-										GameString(STATUS_STRING_BASE + 2) :
-										StrInfinitySign,				 // "UNLIMITED"
-									GameString(STATUS_STRING_BASE + 1)); // "RU"
+										GameString(GameStringBase::StatusString + 2) :
+										StrInfinitySign,						   // "UNLIMITED"
+									GameString(GameStringBase::StatusString + 1)); // "RU"
 			}
 			else
 			{
 				fmt::format_to_sz_n(buf, "{} {}", uqm::gameState().sis().ResUnits,
-									GameString(STATUS_STRING_BASE + 1)); // "RU"
+									GameString(GameStringBase::StatusString + 1)); // "RU"
 			}
 		}
 		else
@@ -729,7 +729,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 
 		t.pStr = buf;
 		fmt::format_to_sz_n(buf, "{} {}",
-							GameString(NAMING_STRING_BASE + 1), uqm::gameState().sis().ShipName);
+							GameString(GameStringBase::NamingString + 1), uqm::gameState().sis().ShipName);
 		uqm::utf8StringCopy(buf, sizeof buf, uqm::toUpperUtf8(buf).c_str());
 
 		if (IsHd())
@@ -816,13 +816,13 @@ void DrawFlagshipStats(void)
 	{
 		switch (uqm::gameState().sis().ModuleSlots[i])
 		{
-			case FUEL_TANK:
+			case ModuleType::FuelTank:
 				fuel += FuelTankCapacity;
 				break;
-			case HIGHEFF_FUELSYS:
+			case ModuleType::HigheffFuelsys:
 				fuel += HefuelTankCapacity;
 				break;
-			case DYNAMO_UNIT:
+			case ModuleType::DynamoUnit:
 				energy_wait -= 2;
 				num_dynamos++;
 				if (energy_wait < 4)
@@ -830,16 +830,18 @@ void DrawFlagshipStats(void)
 					energy_wait = 4;
 				}
 				break;
-			case SHIVA_FURNACE:
+			case ModuleType::ShivaFurnace:
 				energy_regeneration++;
 				num_shivas++;
+				break;
+			default:
 				break;
 		}
 	}
 
 	for (i = 0; i < NumDriveSlots; ++i)
 	{
-		if (uqm::gameState().sis().DriveSlots[i] == FUSION_THRUSTER)
+		if (uqm::gameState().sis().DriveSlots[i] == ModuleType::FusionThruster)
 		{
 			max_thrust += 2;
 		}
@@ -847,7 +849,7 @@ void DrawFlagshipStats(void)
 
 	for (i = 0; i < NumJetSlots; ++i)
 	{
-		if (uqm::gameState().sis().JetSlots[i] == TURNING_JETS)
+		if (uqm::gameState().sis().JetSlots[i] == ModuleType::TurningJets)
 		{
 			turn_wait -= 2;
 		}
@@ -881,16 +883,16 @@ void DrawFlagshipStats(void)
 
 	SetContextFontEffect(SetAbsFrameIndex(FontGradFrame, 4));
 
-	t.pStr = GameString(FLAGSHIP_STRING_BASE + 0); // "nose:"
+	t.pStr = GameString(GameStringBase::FlagshipString + 0); // "nose:"
 	font_DrawText(&t);
 	t.baseline.y += leading;
-	t.pStr = GameString(FLAGSHIP_STRING_BASE + 1); // "spread:"
+	t.pStr = GameString(GameStringBase::FlagshipString + 1); // "spread:"
 	font_DrawText(&t);
 	t.baseline.y += leading;
-	t.pStr = GameString(FLAGSHIP_STRING_BASE + 2); // "side:"
+	t.pStr = GameString(GameStringBase::FlagshipString + 2); // "side:"
 	font_DrawText(&t);
 	t.baseline.y += leading;
-	t.pStr = GameString(FLAGSHIP_STRING_BASE + 3); // "tail:"
+	t.pStr = GameString(GameStringBase::FlagshipString + 3); // "tail:"
 	font_DrawText(&t);
 
 	t.baseline.x += ResScale(3);
@@ -920,16 +922,16 @@ void DrawFlagshipStats(void)
 
 	SetContextFontEffect(SetAbsFrameIndex(FontGradFrame, 5));
 
-	t.pStr = GameString(FLAGSHIP_STRING_BASE + 4); // "maximum velocity:"
+	t.pStr = GameString(GameStringBase::FlagshipString + 4); // "maximum velocity:"
 	font_DrawText(&t);
 	t.baseline.y += leading;
-	t.pStr = GameString(FLAGSHIP_STRING_BASE + 5); // "turning rate:"
+	t.pStr = GameString(GameStringBase::FlagshipString + 5); // "turning rate:"
 	font_DrawText(&t);
 	t.baseline.y += leading;
-	t.pStr = GameString(FLAGSHIP_STRING_BASE + 6); // "combat energy:"
+	t.pStr = GameString(GameStringBase::FlagshipString + 6); // "combat energy:"
 	font_DrawText(&t);
 	t.baseline.y += leading;
-	t.pStr = GameString(FLAGSHIP_STRING_BASE + 7); // "maximum fuel:"
+	t.pStr = GameString(GameStringBase::FlagshipString + 7); // "maximum fuel:"
 	font_DrawText(&t);
 
 	t.baseline.x = r.extent.width - ResScale(2);
@@ -965,25 +967,25 @@ void DrawFlagshipStats(void)
 	SetContext(OldContext);
 }
 
-const static char* describeWeapon(uint8_t moduleType)
+const static char* describeWeapon(ModuleType moduleType)
 {
 	switch (moduleType)
 	{
-		case GUN_WEAPON:
-			return GameString(FLAGSHIP_STRING_BASE + 8); // "gun"
-		case BLASTER_WEAPON:
-			return GameString(FLAGSHIP_STRING_BASE + 9); // "blaster"
-		case CANNON_WEAPON:
-			return GameString(FLAGSHIP_STRING_BASE + 10); // "cannon"
-		case BOMB_MODULE_0:
-		case BOMB_MODULE_1:
-		case BOMB_MODULE_2:
-		case BOMB_MODULE_3:
-		case BOMB_MODULE_4:
-		case BOMB_MODULE_5:
-			return GameString(FLAGSHIP_STRING_BASE + 11); // "n/a"
+		case ModuleType::GunWeapon:
+			return GameString(GameStringBase::FlagshipString + 8); // "gun"
+		case ModuleType::BlasterWeapon:
+			return GameString(GameStringBase::FlagshipString + 9); // "blaster"
+		case ModuleType::CannonWeapon:
+			return GameString(GameStringBase::FlagshipString + 10); // "cannon"
+		case ModuleType::BombModule0:
+		case ModuleType::BombModule1:
+		case ModuleType::BombModule2:
+		case ModuleType::BombModule3:
+		case ModuleType::BombModule4:
+		case ModuleType::BombModule5:
+			return GameString(GameStringBase::FlagshipString + 11); // "n/a"
 		default:
-			return GameString(FLAGSHIP_STRING_BASE + 12); // "none"
+			return GameString(GameStringBase::FlagshipString + 12); // "none"
 	}
 }
 
@@ -1041,7 +1043,7 @@ void DrawStorageBays(bool Refresh)
 		r.extent.width = ResScale(2);
 	}
 
-	uint8_t i {(uint8_t)CountSISPieces(STORAGE_BAY)};
+	uint8_t i {(uint8_t)CountSISPieces(*ModuleType::StorageBay)};
 	if (i)
 	{
 		uint16_t j {};
@@ -1171,7 +1173,7 @@ static void Draw_SIS(void)
 	DrawFilledRectangle(&r);
 
 	SetContextFontEffect(SetAbsFrameIndex(FontGradFrame, flat ? 10 : 1));
-	t.pStr = GameString(STATUS_STRING_BASE + (flat ? 17 : 3)); // "FUEL"
+	t.pStr = GameString(GameStringBase::StatusString + (flat ? 17 : 3)); // "FUEL"
 	font_DrawText(&t);
 
 	// Black rectangle behind "CREW" text and crew amount.
@@ -1180,7 +1182,7 @@ static void Draw_SIS(void)
 	DrawFilledRectangle(&r);
 
 	SetContextFontEffect(SetAbsFrameIndex(FontGradFrame, flat ? 11 : 2));
-	t.pStr = GameString(STATUS_STRING_BASE + (flat ? 18 : 4)); // "CREW"
+	t.pStr = GameString(GameStringBase::StatusString + (flat ? 18 : 4)); // "CREW"
 	font_DrawText(&t);
 	SetContextFontEffect(nullptr);
 
@@ -1198,7 +1200,7 @@ static void Draw_SIS(void)
 	SetContextForeGroundColor(flat ? ThreedoCaptainStringTextColor : PcCaptainStringTextColor);
 	t.baseline.y = r.corner.y + ResScale(6);
 	t.baseline.x -= ResScale(1);
-	t.pStr = GameString(STATUS_STRING_BASE + (flat ? 19 : 5));
+	t.pStr = GameString(GameStringBase::StatusString + (flat ? 19 : 5));
 	// "CAPTAIN"
 	font_DrawText(&t);
 }
@@ -1211,7 +1213,7 @@ static void DrawThrusters(void)
 	s.origin.y = 0;
 	for (uint16_t i {0}; i < NumDriveSlots; ++i)
 	{
-		const uint8_t which_piece = uqm::gameState().sis().DriveSlots[i];
+		const ModuleType which_piece {uqm::gameState().sis().DriveSlots[i]};
 		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 0);
@@ -1232,7 +1234,7 @@ static void DrawTurningJets(void)
 	s.origin.y = 0;
 	for (uint16_t i {0}; i < NumJetSlots; ++i)
 	{
-		const uint8_t which_piece = uqm::gameState().sis().JetSlots[i];
+		const ModuleType which_piece {uqm::gameState().sis().JetSlots[i]};
 		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 1);
@@ -1254,7 +1256,7 @@ static void DrawModules(void)
 	s.origin.y = ResScale(1);
 	for (uint16_t i {0}; i < NumModuleSlots; ++i)
 	{
-		const uint8_t which_piece = uqm::gameState().sis().ModuleSlots[i];
+		const ModuleType which_piece {uqm::gameState().sis().ModuleSlots[i]};
 		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 2);
@@ -1530,7 +1532,7 @@ uint16_t GetCrewCount(void)
 // Get the number of crew which fit in a module of a specified type.
 uint16_t GetModuleCrewCapacity(uint8_t moduleType)
 {
-	if (moduleType == CREW_POD)
+	if (moduleType == ModuleType::CrewPod)
 	{
 		return CrewPodCapacity;
 	}
@@ -1545,8 +1547,8 @@ uint16_t GetCrewPodCapacity(void)
 
 	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
 	{
-		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
-		capacity += GetModuleCrewCapacity(moduleType);
+		const ModuleType moduleType {uqm::gameState().sis().ModuleSlots[slotI]};
+		capacity += GetModuleCrewCapacity(*moduleType);
 	}
 
 	return capacity;
@@ -1563,8 +1565,8 @@ static bool GetCrewPodForCrewMember(uint16_t crewNr, uint16_t* slotNr, uint16_t*
 	uint16_t slotI {NumModuleSlots};
 	while (slotI--)
 	{
-		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
-		const uint16_t moduleCapacity = GetModuleCrewCapacity(moduleType);
+		const ModuleType moduleType {uqm::gameState().sis().ModuleSlots[slotI]};
+		const uint16_t moduleCapacity = GetModuleCrewCapacity(*moduleType);
 
 		if (crewNr < capacity + moduleCapacity)
 		{
@@ -1631,7 +1633,7 @@ static uint16_t GetElementMass(void)
 // Get the number of crew which fit in a module of a specified type.
 uint16_t GetModuleStorageCapacity(uint8_t moduleType)
 {
-	if (moduleType == STORAGE_BAY)
+	if (moduleType == ModuleType::StorageBay)
 	{
 		return StorageBayCapacity;
 	}
@@ -1646,8 +1648,8 @@ uint16_t GetStorageBayCapacity(void)
 
 	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
 	{
-		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
-		capacity += GetModuleStorageCapacity(moduleType);
+		const ModuleType moduleType {uqm::gameState().sis().ModuleSlots[slotI]};
+		capacity += GetModuleStorageCapacity(*moduleType);
 	}
 
 	return capacity;
@@ -1664,8 +1666,8 @@ static bool GetStorageCellForMineralUnit(uint16_t unitNr, uint16_t* slotNr, uint
 	uint16_t slotI {NumModuleSlots};
 	while (slotI--)
 	{
-		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
-		const uint16_t moduleCapacity = GetModuleStorageCapacity(moduleType);
+		const ModuleType moduleType {uqm::gameState().sis().ModuleSlots[slotI]};
+		const uint16_t moduleCapacity = GetModuleStorageCapacity(*moduleType);
 
 		if (unitNr <= capacity + moduleCapacity)
 		{
@@ -1732,12 +1734,12 @@ static uint32_t GetFuelTotal(void)
 // Get the amount of fuel which fits in a module of a specified type.
 uint32_t GetModuleFuelCapacity(uint8_t moduleType)
 {
-	if (moduleType == FUEL_TANK)
+	if (moduleType == ModuleType::FuelTank)
 	{
 		return FuelTankCapacity;
 	}
 
-	if (moduleType == HIGHEFF_FUELSYS)
+	if (moduleType == ModuleType::HigheffFuelsys)
 	{
 		return HefuelTankCapacity;
 	}
@@ -1752,8 +1754,8 @@ uint32_t GetFuelTankCapacity(void)
 
 	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
 	{
-		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
-		capacity += GetModuleFuelCapacity(moduleType);
+		const ModuleType moduleType {uqm::gameState().sis().ModuleSlots[slotI]};
+		capacity += GetModuleFuelCapacity(*moduleType);
 	}
 
 	return capacity;
@@ -1773,9 +1775,9 @@ static bool GetFuelTankForFuelUnit(uint32_t unitNr, uint16_t* slotNr, uint32_t* 
 	uint16_t slotI {NumModuleSlots};
 	while (slotI--)
 	{
-		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
+		const ModuleType moduleType {uqm::gameState().sis().ModuleSlots[slotI]};
 
-		capacity += GetModuleFuelCapacity(moduleType);
+		capacity += GetModuleFuelCapacity(*moduleType);
 		if (unitNr < capacity)
 		{
 			*slotNr = slotI;
@@ -1812,7 +1814,7 @@ static uint32_t GetFTankScreenPos(GfxPoint* ppt)
 		return 0;
 	}
 
-	const uint8_t moduleType {uqm::gameState().sis().ModuleSlots[slotNr]};
+	const uint8_t moduleType {*uqm::gameState().sis().ModuleSlots[slotNr]};
 	const uint32_t volume {GetModuleFuelCapacity(moduleType)};
 
 	rowNr = ((volume - compartmentNr) * MaxFuelBars
@@ -1843,7 +1845,7 @@ uint16_t CountSISPieces(uint8_t piece_type)
 	uint16_t i {};
 
 	uint16_t num_pieces {0};
-	if (piece_type == FUSION_THRUSTER)
+	if (piece_type == ModuleType::FusionThruster)
 	{
 		for (i = 0; i < NumDriveSlots; ++i)
 		{
@@ -1853,7 +1855,7 @@ uint16_t CountSISPieces(uint8_t piece_type)
 			}
 		}
 	}
-	else if (piece_type == TURNING_JETS)
+	else if (piece_type == ModuleType::TurningJets)
 	{
 		for (i = 0; i < NumJetSlots; ++i)
 		{
@@ -1893,7 +1895,7 @@ static void AutoPilotTextLogic(void)
 	if (uqm::gameState().sis().FuelOnBoard == 0)
 	{
 		DrawSISMessageEx(
-			GameString(NAVIGATION_STRING_BASE + 2),
+			GameString(GameStringBase::NavigationString + 2),
 			-1, -1, DsmeMycolor); // "OUT OF FUEL"
 		return;
 	}
@@ -1901,7 +1903,7 @@ static void AutoPilotTextLogic(void)
 	if (!uqm::UQMOptions::read().smartAutoPilot)
 	{
 		DrawSISMessageEx(
-			GameString(NAVIGATION_STRING_BASE + 3),
+			GameString(GameStringBase::NavigationString + 3),
 			-1, -1, DsmeMycolor); // "AUTO-PILOT"
 		return;
 	}
@@ -1925,10 +1927,10 @@ static void AutoPilotTextLogic(void)
 		// destination is not a star
 		// AUTO-PILOT to ###.#:###.# - [TargetDistance]
 		fmt::format_to_sz_n(buf, "{} {} {:03}.{:01}:{:03}.{:01} - {:.1}",
-							GameString(NAVIGATION_STRING_BASE + 3), // "AUTO-PILOT"
-							GameString(NAVIGATION_STRING_BASE + 6), // "to"
-							destination.x / 10, destination.x % 10, // X Coordinates
-							destination.y / 10, destination.y % 10, // Y Coordinates
+							GameString(GameStringBase::NavigationString + 3), // "AUTO-PILOT"
+							GameString(GameStringBase::NavigationString + 6), // "to"
+							destination.x / 10, destination.x % 10,			  // X Coordinates
+							destination.y / 10, destination.y % 10,			  // Y Coordinates
 							target_distance);
 
 		DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
@@ -1938,9 +1940,9 @@ static void AutoPilotTextLogic(void)
 	if (pointsEqual(LoadLastLoc(), destination))
 	{
 		fmt::format_to_sz_n(buf, "{} {} {}",
-							GameString(NAVIGATION_STRING_BASE + 3), // "AUTO-PILOT"
-							GameString(NAVIGATION_STRING_BASE + 6), // "to"
-							GameString(NAVIGATION_STRING_BASE)		// "HyperSpace"
+							GameString(GameStringBase::NavigationString + 3), // "AUTO-PILOT"
+							GameString(GameStringBase::NavigationString + 6), // "to"
+							GameString(GameStringBase::NavigationString)	  // "HyperSpace"
 		);
 
 		DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
@@ -1951,8 +1953,8 @@ static void AutoPilotTextLogic(void)
 
 	// AUTO-PILOT to [StarCluster] - [TargetDistance]
 	fmt::format_to_sz_n(buf, "{} {} {} - {:.1}",
-						GameString(NAVIGATION_STRING_BASE + 3), // "AUTO-PILOT"
-						GameString(NAVIGATION_STRING_BASE + 6), // "to"
+						GameString(GameStringBase::NavigationString + 3), // "AUTO-PILOT"
+						GameString(GameStringBase::NavigationString + 6), // "to"
 						star_cluster,
 						target_distance);
 
@@ -1964,7 +1966,7 @@ static void AutoPilotTextLogic(void)
 		// use "->" instead of "AUTO-PILOT"
 		// -> to [StarCluster] - [TargetDistance]
 		fmt::format_to_sz_n(buf, "{} {} - {:.1}",
-							GameString(NAVIGATION_STRING_BASE + 7), // "->"
+							GameString(GameStringBase::NavigationString + 7), // "->"
 							star_cluster,
 							target_distance);
 	}
@@ -1976,7 +1978,7 @@ static void AutoPilotTextLogic(void)
 	{ // If shortened text is *still* too
 		// large then just show distance
 		fmt::format_to_sz_n(buf, "{} - {:.1}",
-							GameString(NAVIGATION_STRING_BASE + 3), // "AUTO-PILOT"
+							GameString(GameStringBase::NavigationString + 3), // "AUTO-PILOT"
 							target_distance);
 	}
 
@@ -2018,7 +2020,7 @@ void DrawAutoPilotMessage(bool Reset)
 		}
 		else if (GetTimeCounter() >= NextTime)
 		{
-			if (!(uqm::currentActivity() & CHECK_ABORT)
+			if (!(uqm::currentActivity() & ActivityFlag::CheckAbort)
 				&& uqm::gameState().sis().CrewEnlisted != (uint16_t)~0)
 			{
 				GFXCONTEXT OldContext {SetContext(OffScreenContext)};

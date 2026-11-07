@@ -28,7 +28,7 @@
 
 static ConversationData arilou_desc =
 	{
-		ARILOU_CONVERSATION, /* AlienConv */
+		Conversation::Arilou, /* AlienConv */
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
@@ -294,14 +294,14 @@ static void ArilouHome(RESPONSE_REF R)
 		NPCPhrase(ABOUT_WAR);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_1, static_cast<uint32_t>(1));
-		SetHomeworldKnown(SHOFIXTI_HOME);
+		SetHomeworldKnown(*HomeId::Shofixti);
 	}
 	else if (PlayerSaid(R, what_about_urquan))
 	{
 		NPCPhrase(ABOUT_URQUAN);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_1, static_cast<uint32_t>(2));
-		SetHomeworldKnown(SYREEN_HOME);
+		SetHomeworldKnown(*HomeId::Syreen);
 	}
 	else if (PlayerSaid(R, tell_arilou_about_tpet))
 	{
@@ -329,7 +329,7 @@ static void ArilouHome(RESPONSE_REF R)
 
 			LastStack = 1;
 
-			SetHomeworldKnown(UMGAH_HOME);
+			SetHomeworldKnown(*HomeId::Umgah);
 		}
 
 		DisablePhrase(learned_about_umgah);
@@ -339,7 +339,7 @@ static void ArilouHome(RESPONSE_REF R)
 		NPCPhrase(WELL_GO_CHECK);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_CHECKED_UMGAH, static_cast<uint32_t>(1));
-		AddEvent(EventType::Relative, 0, 10, 0, ARILOU_UMGAH_CHECK);
+		AddEvent(EventType::Relative, 0, 10, 0, GameEventId::ArilouUmgahCheck);
 		DisablePhrase(umgah_acting_weird);
 	}
 	else if (PlayerSaid(R, what_do_now))
@@ -347,7 +347,7 @@ static void ArilouHome(RESPONSE_REF R)
 		NPCPhrase(GO_FIND_OUT);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_CHECKED_UMGAH, static_cast<uint32_t>(3));
-		SetHomeworldKnown(UMGAH_HOME);
+		SetHomeworldKnown(*HomeId::Umgah);
 	}
 	else if (PlayerSaid(R, what_did_on_earth))
 	{
@@ -713,7 +713,7 @@ static void Intro(void)
 	uint8_t NumVisits {};
 	uint8_t Manner {};
 
-	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -912,7 +912,7 @@ ConversationData* init_arilou_comm(void)
 
 	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1
 		|| uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER) == 3
-		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
+		|| uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
 		setSegue(Segue::Peace);
 	}

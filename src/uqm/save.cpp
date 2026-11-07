@@ -72,7 +72,11 @@ void addArray(yyjson_mut_doc* doc, yyjson_mut_val* obj, const char* key, uqstl::
 	yyjson_mut_val* array {yyjson_mut_obj_add_arr(doc, obj, key)};
 	for (const T value : values)
 	{
-		if constexpr (uqstl::is_signed_v<T>)
+		if constexpr (uqstl::is_enum_v<T>)
+		{
+			yyjson_mut_arr_add_uint(doc, array, static_cast<uqstl::underlying_type_t<T>>(value));
+		}
+		else if constexpr (uqstl::is_signed_v<T>)
 		{
 			yyjson_mut_arr_add_sint(doc, array, value);
 		}
@@ -294,7 +298,7 @@ void SaveGameStateFlags(yyjson_mut_doc* doc, yyjson_mut_val* root, const uqm::Ga
 void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, uqm::GameState& gameState)
 {
 	const GameData& GS {gameState.game()};
-	const uint8_t res_scale {static_cast<uint8_t>(uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY ? resolutionFactor : 0)};
+	const uint8_t res_scale {static_cast<uint8_t>(uqm::activityKind(uqm::currentActivity()) != ActivityKind::InInterplanetary ? resolutionFactor : 0)};
 
 	yyjson_mut_val* state {yyjson_mut_obj_add_obj(doc, root, "globalState")};
 	addInt(doc, state, "glob_flags", uqm::globalFlags());
@@ -332,9 +336,9 @@ void SaveSisState(yyjson_mut_doc* doc, yyjson_mut_val* obj, const FlagshipData& 
 	addInt(doc, sis, "CrewEnlisted", SS.CrewEnlisted);
 	addInt(doc, sis, "TotalElementMass", SS.TotalElementMass);
 	addInt(doc, sis, "TotalBioMass", SS.TotalBioMass);
-	addArray<uint8_t>(doc, sis, "ModuleSlots", SS.ModuleSlots);
-	addArray<uint8_t>(doc, sis, "DriveSlots", SS.DriveSlots);
-	addArray<uint8_t>(doc, sis, "JetSlots", SS.JetSlots);
+	addArray<ModuleType>(doc, sis, "ModuleSlots", SS.ModuleSlots);
+	addArray<ModuleType>(doc, sis, "DriveSlots", SS.DriveSlots);
+	addArray<ModuleType>(doc, sis, "JetSlots", SS.JetSlots);
 	addInt(doc, sis, "NumLanders", SS.NumLanders);
 	addArray<uint16_t>(doc, sis, "ElementAmounts", SS.ElementAmounts);
 	addString(doc, sis, "ShipName", SS.ShipName);
@@ -380,32 +384,34 @@ static void PrepareSummary(SaveSummaryData* SummPtr, const char* name)
 {
 	SummPtr->SS = uqm::gameState().sis();
 
-	SummPtr->Activity = uqm::lowByte(uqm::currentActivity());
+	SummPtr->Activity = uqm::activityKind(uqm::currentActivity());
 	switch (SummPtr->Activity)
 	{
-		case IN_HYPERSPACE:
+		case ActivityKind::InHyperspace:
 			if (inQuasiSpace())
 			{
-				SummPtr->Activity = IN_QUASISPACE;
+				SummPtr->Activity = ActivityKind::InQuasispace;
 			}
 			break;
-		case IN_INTERPLANETARY:
+		case ActivityKind::InInterplanetary:
 			// Get a better planet name for summary
 			GetPlanetOrMoonName(SummPtr->SS.PlanetName,
 								sizeof(SummPtr->SS.PlanetName));
 			if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0)
 			{
-				SummPtr->Activity = IN_STARBASE;
+				SummPtr->Activity = ActivityKind::InStarbase;
 			}
 			else if (uqm::flagship().inOrbit != 0)
 			{
-				SummPtr->Activity = IN_PLANET_ORBIT;
+				SummPtr->Activity = ActivityKind::InPlanetOrbit;
 			}
 			break;
-		case IN_LAST_BATTLE:
+		case ActivityKind::InLastBattle:
 			uqm::utf8StringCopy(SummPtr->SS.PlanetName,
 								sizeof(SummPtr->SS.PlanetName),
-								GameString(PLANET_NUMBER_BASE + 32)); // Sa-Matra
+								GameString(GameStringBase::PlanetNumber + 32)); // Sa-Matra
+			break;
+		default:
 			break;
 	}
 
@@ -459,7 +465,7 @@ static void SaveProblemMessage(GfxStamp* MsgStamp)
 
 	// TODO: This should probably just use DoPopupWindow()
 
-	ppStr[0] = GameString(SAVEGAME_STRING_BASE + 2);
+	ppStr[0] = GameString(GameStringBase::SavegameString + 2);
 
 	SetContextFont(StarConFont);
 
@@ -751,13 +757,13 @@ static MutDocPtr WriteGameDocument(const SaveSummaryData& summary)
 	//   Encounter screen. When the game is loaded, the
 	//   GenerateOrbitalFunction for the current star system
 	//   create the Encounter anew and populate the npc queue.
-	if (!(uqm::currentActivity() & START_INTERPLANETARY))
+	if (!(uqm::currentActivity() & ActivityFlag::StartInterplanetary))
 	{
-		if (uqm::currentActivity() & START_ENCOUNTER)
+		if (uqm::currentActivity() & ActivityFlag::StartEncounter)
 		{
 			SaveShipQueue(doc.get(), root, "npcShipQueue", &uqm::gameState().game().npc_built_ship_q);
 		}
-		else if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
+		else if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InInterplanetary)
 		{
 			// XXX: Technically, this queue does not need to be
 			//   saved/loaded at all. IP groups will be reloaded
@@ -783,9 +789,9 @@ uqstl::optional<uqstl::string> SaveGameJson(SaveSummaryData* SummPtr, const char
 	// XXX: Backup: SaveFlagshipState() overwrites ip_location
 	const GfxPoint pt {uqm::flagship().ipLocation};
 	SaveFlagshipState();
-	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
+	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InInterplanetary
 		&& !(uqm::currentActivity()
-			 & (START_ENCOUNTER | START_INTERPLANETARY)))
+			 & (ActivityFlag::StartEncounter | ActivityFlag::StartInterplanetary)))
 	{
 		PutGroupInfo(GroupsRandom, GroupSaveIp);
 	}

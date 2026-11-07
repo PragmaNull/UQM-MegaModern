@@ -52,19 +52,19 @@ extern void ScanSystem(void);
 extern void RepairBackRect(GfxRect* pRect);
 extern void GeneratePlanetSide(void);
 extern uint16_t callGenerateForScanType(const SolarSystemState*,
-										const SystemPlanet* world, uint16_t node, uint8_t scanType, SurfaceNode*);
+										const SystemPlanet* world, uint16_t node, ScanType scanType, SurfaceNode*);
 // Returns true if the node should be removed from the surface
 extern bool callPickupForScanType(SolarSystemState* solarSys,
-								  SystemPlanet* world, uint16_t node, uint8_t scanType);
+								  SystemPlanet* world, uint16_t node, ScanType scanType);
 
 extern void RedrawSurfaceScan(const GfxPoint* newLoc);
 extern GFXCONTEXT GetScanContext(bool* owner);
 extern void DestroyScanContext(void);
 
-bool isNodeRetrieved(PlanetData* planetInfo, uint8_t scanType, uint8_t nodeNr);
-uint16_t countNodesRetrieved(PlanetData* planetInfo, uint8_t scanType);
-void setNodeRetrieved(PlanetData* planetInfo, uint8_t scanType, uint8_t nodeNr);
-void setNodeNotRetrieved(PlanetData* planetInfo, uint8_t scanType, uint8_t nodeNr);
+bool isNodeRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t nodeNr);
+uint16_t countNodesRetrieved(PlanetData* planetInfo, ScanType scanType);
+void setNodeRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t nodeNr);
+void setNodeNotRetrieved(PlanetData* planetInfo, ScanType scanType, uint8_t nodeNr);
 
 void GetPlanetTitle(uqstl::span<char> buf);
 

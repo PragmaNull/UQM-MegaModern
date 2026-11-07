@@ -31,7 +31,7 @@ void MeleeTeam_init(MeleeTeam* team)
 {
 	for (FleetShipIndex slotI {0}; slotI < MeleeFleetSize; slotI++)
 	{
-		team->ships[slotI] = MELEE_NONE;
+		team->ships[slotI] = MeleeShip::None;
 	}
 
 	team->name[0] = '\0';
@@ -85,7 +85,7 @@ int MeleeTeam_deserialize(MeleeTeam* team, uqm::io::File& stream)
 		}
 		team->ships[slotI] = (MeleeShip)ship;
 
-		if (team->ships[slotI] == MELEE_NONE)
+		if (team->ships[slotI] == MeleeShip::None)
 		{
 			continue;
 		}
@@ -94,7 +94,7 @@ int MeleeTeam_deserialize(MeleeTeam* team, uqm::io::File& stream)
 		{
 			uqm::log::warn("Invalid ship type in loaded team (index {}, ship type is {}, max valid is {}).",
 						   static_cast<int>(slotI), static_cast<int>(team->ships[slotI]), NumMeleeShips - 1);
-			team->ships[slotI] = MELEE_NONE;
+			team->ships[slotI] = MeleeShip::None;
 		}
 	}
 
@@ -195,7 +195,7 @@ static void MeleeSetup_initSentTeam(MeleeSetup* setup, size_t teamNr)
 
 	for (FleetShipIndex slotI {0}; slotI < MeleeFleetSize; slotI++)
 	{
-		MeleeTeam_setShip(team, slotI, MELEE_UNSET);
+		MeleeTeam_setShip(team, slotI, MeleeShip::Unset);
 	}
 
 	setup->haveSentTeamName[teamNr] = false;
@@ -250,16 +250,16 @@ bool MeleeSetup_setShip(MeleeSetup* setup, size_t teamNr, FleetShipIndex slotNr,
 		return false;
 	}
 
-	if (oldShip != MELEE_NONE)
+	if (oldShip != MeleeShip::None)
 	{
-		setup->fleetValue[teamNr] -= GetShipCostFromIndex(oldShip);
+		setup->fleetValue[teamNr] -= GetShipCostFromIndex(*oldShip);
 	}
 
 	MeleeTeam_setShip(team, slotNr, ship);
 
-	if (ship != MELEE_NONE)
+	if (ship != MeleeShip::None)
 	{
-		setup->fleetValue[teamNr] += GetShipCostFromIndex(ship);
+		setup->fleetValue[teamNr] += GetShipCostFromIndex(*ship);
 	}
 
 	return true;

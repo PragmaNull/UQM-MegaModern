@@ -53,9 +53,9 @@ void load_gravity_well(uint8_t selector)
 {
 	uint16_t i {};
 
-	if (selector == SA_MATRA)
+	if (selector == PlanetType::SaMatra)
 	{
-		if (IsExtended() && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
+		if (IsExtended() && uqm::activityKind(uqm::currentActivity()) != ActivityKind::InLastBattle)
 		{
 			planet[0] = CaptureDrawable(
 				LoadGraphic(SceneryMaskPmapAnimRes));
@@ -70,7 +70,7 @@ void load_gravity_well(uint8_t selector)
 	else
 	{
 		const char* ptype {};
-		if (selector & PLANET_SHIELDED)
+		if (selector & *PlanetType::PlanetShielded)
 		{
 			ptype = "slaveshield";
 		}

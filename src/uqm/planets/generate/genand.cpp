@@ -64,14 +64,14 @@ static bool GenerateAndrosynth_generatePlanets(SolarSystemState* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED)
+	if (CurStarDescPtr()->Index == PlotId::Androsynth)
 	{
 		if (uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = 1;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-			pPlanet->data_index = TELLURIC_WORLD;
+			pPlanet->data_index = *PlanetType::Telluric;
 			pPlanet->radius = EarthRadius * 204L / 100;
 			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = Cosine(angle, pPlanet->radius);
@@ -87,7 +87,7 @@ static bool GenerateAndrosynth_generatePlanets(SolarSystemState* solarSys)
 		}
 	}
 
-	if (CurStarDescPtr()->Index == EXCAVATION_SITE_DEFINED)
+	if (CurStarDescPtr()->Index == PlotId::ExcavationSite)
 	{
 		pSunDesc->PlanetByte = 0;
 
@@ -95,7 +95,7 @@ static bool GenerateAndrosynth_generatePlanets(SolarSystemState* solarSys)
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
-			if (pPlanet->data_index > LAST_ROCKY_WORLD)
+			if (pPlanet->data_index > PlanetType::LastRocky)
 			{
 				pPlanet->data_index = GenerateWorlds(AllRocky);
 			}
@@ -108,7 +108,7 @@ static bool GenerateAndrosynth_generatePlanets(SolarSystemState* solarSys)
 static bool GenerateAndrosynth_generateOrbital(SolarSystemState* solarSys,
 											   SystemPlanet* world)
 {
-	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::Androsynth
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		uint16_t visits = 0;
@@ -126,7 +126,7 @@ static bool GenerateAndrosynth_generateOrbital(SolarSystemState* solarSys,
 		for (uint16_t i {16}; i < 32; ++i)
 		{
 			if (isNodeRetrieved(&solarSys->SysInfo.PlanetInfo,
-								ENERGY_SCAN, i))
+								ScanType::Energy, i))
 			{
 				++visits;
 			}
@@ -141,7 +141,7 @@ static bool GenerateAndrosynth_generateOrbital(SolarSystemState* solarSys,
 		}
 	}
 
-	if (CurStarDescPtr()->Index == EXCAVATION_SITE_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::ExcavationSite
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& IsExtended())
 	{
@@ -157,7 +157,7 @@ static bool GenerateAndrosynth_generateOrbital(SolarSystemState* solarSys,
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && uqm::isOriginalSeed())
+		if (CurStarDescPtr()->Index == PlotId::Androsynth && uqm::isOriginalSeed())
 		{
 			solarSys->SysInfo.PlanetInfo.AtmoDensity =
 				EarthAtmosphere * 144 / 100;
@@ -176,17 +176,17 @@ static bool GenerateAndrosynth_generateOrbital(SolarSystemState* solarSys,
 static bool GenerateAndrosynth_pickupEnergy(SolarSystemState* solarSys,
 											SystemPlanet* world, uint16_t whichNode)
 {
-	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
+	if (CurStarDescPtr()->Index == PlotId::Androsynth && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		PlanetData* planetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		// Ruins previously visited are marked in the upper 16 bits
-		if (isNodeRetrieved(planetInfo, ENERGY_SCAN, whichNode + 16))
+		if (isNodeRetrieved(planetInfo, ScanType::Energy, whichNode + 16))
 		{
 			return false; // already visited this ruin, do not remove
 		}
 
-		setNodeRetrieved(planetInfo, ENERGY_SCAN, whichNode + 16);
+		setNodeRetrieved(planetInfo, ScanType::Energy, whichNode + 16);
 		// We set the retrieved bit manually here and need to indicate
 		// the change to the solar system state functions
 		uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
@@ -195,15 +195,15 @@ static bool GenerateAndrosynth_pickupEnergy(SolarSystemState* solarSys,
 		GenerateDefault_landerReportCycle(solarSys);
 
 		// "Kill" the Androsynth once you learn they are gone
-		if (CheckAlliance(ANDROSYNTH_SHIP) != RaceAllegiance::Dead)
+		if (CheckAlliance(RaceId::Androsynth) != RaceAllegiance::Dead)
 		{
-			KillRace(ANDROSYNTH_SHIP);
+			KillRace(RaceId::Androsynth);
 		}
 
 		return false; // do not remove the node from the surface
 	}
 
-	if (CurStarDescPtr()->Index == EXCAVATION_SITE_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::ExcavationSite
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& IsExtended())
 	{
@@ -218,12 +218,12 @@ static bool GenerateAndrosynth_pickupEnergy(SolarSystemState* solarSys,
 static uint16_t GenerateAndrosynth_generateEnergy(const SolarSystemState* solarSys,
 												  const SystemPlanet* world, uint16_t whichNode, SurfaceNode* info)
 {
-	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
+	if (CurStarDescPtr()->Index == PlotId::Androsynth && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
-	if (CurStarDescPtr()->Index == EXCAVATION_SITE_DEFINED
+	if (CurStarDescPtr()->Index == PlotId::ExcavationSite
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& IsExtended())
 	{

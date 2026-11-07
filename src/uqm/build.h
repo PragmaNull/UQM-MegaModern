@@ -36,51 +36,51 @@ inline constexpr auto NumCaptainsNames {16};
 
 constexpr auto PickCaptainName() { return (((uint16_t)uqm::random().next() & (NumCaptainsNames - 1)) + NameOffset); }
 
-extern HLINK Build(Queue* pQueue, SPECIES_ID SpeciesID);
-extern HSHIPFRAG CloneShipFragment(RACE_ID shipIndex, Queue* pDstQueue,
+extern HLINK Build(Queue* pQueue, SpeciesId SpeciesID);
+extern HSHIPFRAG CloneShipFragment(RaceId shipIndex, Queue* pDstQueue,
 								   uint16_t crew_level);
 extern HLINK GetStarShipFromIndex(Queue* pShipQ, uint16_t Index);
 extern HFLEETINFO GetSeededFleetFromIndex(uint16_t Index);
 extern HSHIPFRAG GetEscortByStarShipIndex(uint16_t index);
-extern uint8_t NameCaptain(Queue* pQueue, SPECIES_ID SpeciesID);
+extern uint8_t NameCaptain(Queue* pQueue, SpeciesId SpeciesID);
 
 extern uint16_t GetIndexFromStarShip(Queue* pShipQ, HLINK hStarShip);
-extern int SetEscortCrewComplement(RACE_ID which_ship, uint16_t crew_level,
+extern int SetEscortCrewComplement(RaceId which_ship, uint16_t crew_level,
 								   uint8_t captain);
 
-extern SPECIES_ID ShipIdStrToIndex(const char* shipIdStr);
-extern RACE_ID RaceIdStrToIndex(const char* raceIdStr);
-extern uint16_t AddEscortShips(RACE_ID race, int16_t count);
+extern SpeciesId ShipIdStrToIndex(const char* shipIdStr);
+extern RaceId RaceIdStrToIndex(const char* raceIdStr);
+extern uint16_t AddEscortShips(RaceId race, int16_t count);
 extern uint16_t CalculateEscortsWorth(void);
 extern uint16_t CalculateEscortsPoints(void);
 extern bool CanBuyPoints(HFLEETINFO hFleet);
-extern bool ShipsReady(RACE_ID race);
-extern void PrepareShip(RACE_ID race);
-extern bool SetRaceAllied(RACE_ID race, bool flag);
-extern uint16_t StartSphereTracking(RACE_ID race);
-extern bool CheckSphereTracking(RACE_ID race);
-extern bool KillRace(RACE_ID race);
-extern uint16_t CountEscortShips(RACE_ID race);
-extern bool HaveEscortShip(RACE_ID race);
-extern uint16_t EscortFeasibilityStudy(RACE_ID race);
-extern uint16_t CheckAlliance(RACE_ID race);
-extern bool RaceDead(RACE_ID race);
-extern uint16_t RemoveSomeEscortShips(RACE_ID race, uint16_t count);
-extern uint16_t RemoveEscortShips(RACE_ID race);
+extern bool ShipsReady(RaceId race);
+extern void PrepareShip(RaceId race);
+extern bool SetRaceAllied(RaceId race, bool flag);
+extern uint16_t StartSphereTracking(RaceId race);
+extern bool CheckSphereTracking(RaceId race);
+extern bool KillRace(RaceId race);
+extern uint16_t CountEscortShips(RaceId race);
+extern bool HaveEscortShip(RaceId race);
+extern uint16_t EscortFeasibilityStudy(RaceId race);
+extern uint16_t CheckAlliance(RaceId race);
+extern bool RaceDead(RaceId race);
+extern uint16_t RemoveSomeEscortShips(RaceId race, uint16_t count);
+extern uint16_t RemoveEscortShips(RaceId race);
 
-extern RaceDesc* load_ship(SPECIES_ID SpeciesID, bool LoadBattleData);
+extern RaceDesc* load_ship(SpeciesId SpeciesID, bool LoadBattleData);
 extern void free_ship(RaceDesc* RaceDescPtr, bool FreeIconData,
 					  bool FreeBattleData);
 extern void loadGameCheats(void);
 // WarEraStrength gives the hard coded strength values (formerly an array)
-extern uint16_t WarEraStrength(SPECIES_ID SpeciesID);
+extern uint16_t WarEraStrength(SpeciesId SpeciesID);
 // SeedFleetLocation moves the fleet to the plot location specified in visit.
 extern GfxPoint SeedFleetLocation(FleetInfo* FleetPtr, PlotLocation* plotmap,
 								  uint16_t visit);
 // SeedFleet does initial fleet placement for StarSeed
 extern void SeedFleet(FleetInfo* FleetPtr, PlotLocation* plotmap);
 // SeedShip handles ship seeding, used in build.c to handle the load window
-extern SPECIES_ID SeedShip(SPECIES_ID SpeciesID, bool loadWindow);
+extern SpeciesId SeedShip(SpeciesId SpeciesID, bool loadWindow);
 extern bool legacySave;
 extern uint8_t GTFO;
 

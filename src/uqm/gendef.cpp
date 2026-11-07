@@ -23,104 +23,104 @@
 
 const GenerateFunctions* getGenerateFunctions(uint8_t Index)
 {
-	switch (Index)
+	switch (static_cast<PlotId>(Index))
 	{
-		case SOL_DEFINED:
+		case PlotId::Sol:
 			return &generateSolFunctions;
-		case SHOFIXTI_DEFINED:
+		case PlotId::Shofixti:
 			return &generateShofixtiFunctions;
-		case START_COLONY_DEFINED:
+		case PlotId::StartColony:
 			return &generateColonyFunctions;
-		case ALGOLITES_DEFINED:
-		case SPATHI_MONUMENT_DEFINED:
-		case SPATHI_DEFINED:
+		case PlotId::Algolites:
+		case PlotId::SpathiMonument:
+		case PlotId::Spathi:
 			return &generateSpathiFunctions;
-		case MELNORME0_DEFINED:
-		case MELNORME1_DEFINED:
-		case MELNORME2_DEFINED:
-		case MELNORME3_DEFINED:
-		case MELNORME4_DEFINED:
-		case MELNORME5_DEFINED:
-		case MELNORME6_DEFINED:
-		case MELNORME7_DEFINED:
-		case MELNORME8_DEFINED:
+		case PlotId::Melnorme0:
+		case PlotId::Melnorme1:
+		case PlotId::Melnorme2:
+		case PlotId::Melnorme3:
+		case PlotId::Melnorme4:
+		case PlotId::Melnorme5:
+		case PlotId::Melnorme6:
+		case PlotId::Melnorme7:
+		case PlotId::Melnorme8:
 			return &generateMelnormeFunctions;
-		case TALKING_PET_DEFINED:
+		case PlotId::TalkingPet:
 			return &generateTalkingPetFunctions;
-		case MOTHER_ARK_DEFINED:
-		case CHMMR_DEFINED:
+		case PlotId::MotherArk:
+		case PlotId::Chmmr:
 			return &generateChmmrFunctions;
-		case SYREEN_DEFINED:
+		case PlotId::Syreen:
 			return &generateSyreenFunctions;
-		case MYCON_TRAP_DEFINED:
+		case PlotId::MyconTrap:
 			return &generateTrapFunctions;
-		case BURVIXESE_DEFINED:
+		case PlotId::Burvixese:
 			return &generateBurvixeseFunctions;
-		case SLYLANDRO_DEFINED:
+		case PlotId::Slylandro:
 			return &generateSlylandroFunctions;
-		case DRUUGE_DEFINED:
+		case PlotId::Druuge:
 			return &generateDruugeFunctions;
-		case BOMB_DEFINED:
-		case UTWIG_DEFINED:
+		case PlotId::Bomb:
+		case PlotId::Utwig:
 			return &generateUtwigFunctions;
-		case AQUA_HELIX_DEFINED:
-		case THRADD_DEFINED:
+		case PlotId::AquaHelix:
+		case PlotId::Thradd:
 			return &generateThraddashFunctions;
-		case SUN_DEVICE_DEFINED:
-		case MYCON_DEFINED:
-		case EGG_CASE0_DEFINED:
-		case EGG_CASE1_DEFINED:
-		case EGG_CASE2_DEFINED:
+		case PlotId::SunDevice:
+		case PlotId::Mycon:
+		case PlotId::EggCase0:
+		case PlotId::EggCase1:
+		case PlotId::EggCase2:
 			return &generateMyconFunctions;
-		case ANDROSYNTH_DEFINED:
-		case EXCAVATION_SITE_DEFINED:
+		case PlotId::Androsynth:
+		case PlotId::ExcavationSite:
 			return &generateAndrosynthFunctions;
-		case TAALO_PROTECTOR_DEFINED:
-		case ORZ_DEFINED:
+		case PlotId::TaaloProtector:
+		case PlotId::Orz:
 			return &generateOrzFunctions;
-		case SHIP_VAULT_DEFINED:
+		case PlotId::ShipVault:
 			return &generateVaultFunctions;
-		case URQUAN_WRECK_DEFINED:
+		case PlotId::UrquanWreck:
 			return &generateWreckFunctions;
-		case MAIDENS_DEFINED:
-		case VUX_BEAST_DEFINED:
-		case VUX_DEFINED:
+		case PlotId::Maidens:
+		case PlotId::VuxBeast:
+		case PlotId::Vux:
 			return &generateVuxFunctions;
-		case URQUAN0_DEFINED:
-		case URQUAN1_DEFINED:
-		case URQUAN2_DEFINED:
-		case KOHRAH0_DEFINED:
-		case KOHRAH1_DEFINED:
-		case KOHRAH2_DEFINED:
-		case DESTROYED_STARBASE_DEFINED:
-		case SAMATRA_DEFINED:
+		case PlotId::Urquan0:
+		case PlotId::Urquan1:
+		case PlotId::Urquan2:
+		case PlotId::Kohrah0:
+		case PlotId::Kohrah1:
+		case PlotId::Kohrah2:
+		case PlotId::DestroyedStarbase:
+		case PlotId::Samatra:
 			return &generateSaMatraFunctions;
-		case ZOQFOT_DEFINED:
-		case ZOQ_COLONY0_DEFINED:
-		case ZOQ_COLONY1_DEFINED:
-		case ZOQ_COLONY2_DEFINED:
-		case ZOQ_COLONY3_DEFINED:
+		case PlotId::Zoqfot:
+		case PlotId::ZoqColony0:
+		case PlotId::ZoqColony1:
+		case PlotId::ZoqColony2:
+		case PlotId::ZoqColony3:
 			return &generateZoqFotPikFunctions;
-		case ZOQ_SCOUT_DEFINED:
+		case PlotId::ZoqScout:
 			return &generateZoqFotPikScoutFunctions;
-		case YEHAT_DEFINED:
+		case PlotId::Yehat:
 			return &generateYehatFunctions;
-		case PKUNK_DEFINED:
+		case PlotId::Pkunk:
 			return &generatePkunkFunctions;
-		case SUPOX_DEFINED:
+		case PlotId::Supox:
 			return &generateSupoxFunctions;
-		case RAINBOW0_DEFINED:
-		case RAINBOW1_DEFINED:
-		case RAINBOW2_DEFINED:
-		case RAINBOW3_DEFINED:
-		case RAINBOW4_DEFINED:
-		case RAINBOW5_DEFINED:
-		case RAINBOW6_DEFINED:
-		case RAINBOW7_DEFINED:
-		case RAINBOW8_DEFINED:
-		case RAINBOW9_DEFINED:
+		case PlotId::Rainbow0:
+		case PlotId::Rainbow1:
+		case PlotId::Rainbow2:
+		case PlotId::Rainbow3:
+		case PlotId::Rainbow4:
+		case PlotId::Rainbow5:
+		case PlotId::Rainbow6:
+		case PlotId::Rainbow7:
+		case PlotId::Rainbow8:
+		case PlotId::Rainbow9:
 			return &generateRainbowWorldFunctions;
-		case ILWRATH_DEFINED:
+		case PlotId::Ilwrath:
 			return &generateIlwrathFunctions;
 		default:
 			return &generateDefaultFunctions;

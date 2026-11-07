@@ -198,32 +198,32 @@ HIPGROUP BuildGroup(Queue* pDstQueue, uint8_t race_id)
 }
 
 static constexpr uint8_t HomeworldLoc[] {
-	0,				 /* ARILOU_SHIP */
-	CHMMR_DEFINED,	 /* CHMMR_SHIP */
-	0,				 /* HUMAN_SHIP */
-	ORZ_DEFINED,	 /* ORZ_SHIP */
-	PKUNK_DEFINED,	 /* PKUNK_SHIP */
-	0,				 /* SHOFIXTI_SHIP */
-	SPATHI_DEFINED,	 /* SPATHI_SHIP */
-	SUPOX_DEFINED,	 /* SUPOX_SHIP */
-	THRADD_DEFINED,	 /* THRADDASH_SHIP */
-	UTWIG_DEFINED,	 /* UTWIG_SHIP */
-	VUX_DEFINED,	 /* VUX_SHIP */
-	YEHAT_DEFINED,	 /* YEHAT_SHIP */
-	0,				 /* MELNORME_SHIP */
-	DRUUGE_DEFINED,	 /* DRUUGE_SHIP */
-	ILWRATH_DEFINED, /* ILWRATH_SHIP */
-	MYCON_DEFINED,	 /* MYCON_SHIP */
-	0,				 /* SLYLANDRO_SHIP */
-	UmgahDefined,	 /* UMGAH_SHIP */
-	0,				 /* URQUAN_SHIP */
-	ZOQFOT_DEFINED,	 /* ZOQFOTPIK_SHIP */
-	SYREEN_DEFINED,	 /* SYREEN_SHIP */
-	0,				 /* BLACK_URQUAN_SHIP */
-	0,				 /* ANDROSYNTH_SHIP */
-	0,				 /* CHENJESU_SHIP */
-	0,				 /* MMRNMHRM_SHIP */
-	0,				 /* YEHAT_REBEL_SHIP */
+	0,				  /* ARILOU_SHIP */
+	*PlotId::Chmmr,	  /* CHMMR_SHIP */
+	0,				  /* HUMAN_SHIP */
+	*PlotId::Orz,	  /* ORZ_SHIP */
+	*PlotId::Pkunk,	  /* PKUNK_SHIP */
+	0,				  /* SHOFIXTI_SHIP */
+	*PlotId::Spathi,  /* SPATHI_SHIP */
+	*PlotId::Supox,	  /* SUPOX_SHIP */
+	*PlotId::Thradd,  /* THRADDASH_SHIP */
+	*PlotId::Utwig,	  /* UTWIG_SHIP */
+	*PlotId::Vux,	  /* VUX_SHIP */
+	*PlotId::Yehat,	  /* YEHAT_SHIP */
+	0,				  /* MELNORME_SHIP */
+	*PlotId::Druuge,  /* DRUUGE_SHIP */
+	*PlotId::Ilwrath, /* ILWRATH_SHIP */
+	*PlotId::Mycon,	  /* MYCON_SHIP */
+	0,				  /* SLYLANDRO_SHIP */
+	*UmgahDefined,	  /* UMGAH_SHIP */
+	0,				  /* URQUAN_SHIP */
+	*PlotId::Zoqfot,  /* ZOQFOTPIK_SHIP */
+	*PlotId::Syreen,  /* SYREEN_SHIP */
+	0,				  /* BLACK_URQUAN_SHIP */
+	0,				  /* ANDROSYNTH_SHIP */
+	0,				  /* CHENJESU_SHIP */
+	0,				  /* MMRNMHRM_SHIP */
+	0,				  /* YEHAT_REBEL_SHIP */
 };
 
 void BuildGroups(void)
@@ -238,13 +238,13 @@ void BuildGroups(void)
 	auto HomeWorld {uqstl::to_array(HomeworldLoc)};
 	auto EncounterPercent {uqstl::to_array(RaceInterplanetaryPercent)};
 
-	EncounterPercent[SLYLANDRO_SHIP] *= uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER);
+	EncounterPercent[*RaceId::Slylandro] *= uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER);
 
 	/* make Ur-Quan encounters impossible at the ZFP homeworld,
 	 * like their dialog claims */
-	if (IsExtended() && CurStarDescPtr()->Index == ZOQFOT_DEFINED)
+	if (IsExtended() && CurStarDescPtr()->Index == PlotId::Zoqfot)
 	{
-		EncounterPercent[URQUAN_SHIP] = EncounterPercent[BLACK_URQUAN_SHIP] = 0;
+		EncounterPercent[*RaceId::Urquan] = EncounterPercent[*RaceId::BlackUrquan] = 0;
 	}
 
 	Index = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
@@ -256,8 +256,8 @@ void BuildGroups(void)
 		// would not even be called), but those expire after spending a week
 		// outside of the star system, or when a different star system is
 		// entered.
-		HomeWorld[UTWIG_SHIP] = 0;
-		HomeWorld[SUPOX_SHIP] = 0;
+		HomeWorld[*RaceId::Utwig] = 0;
+		HomeWorld[*RaceId::Supox] = 0;
 	}
 
 	universe = CurStarDescPtr()->star_pt;
@@ -283,7 +283,7 @@ void BuildGroups(void)
 				// the races specified in HomeWorld[] array.
 				BestIndex = Index;
 				BestPercent = 70;
-				if (race_enc == SPATHI_DEFINED || race_enc == SUPOX_DEFINED)
+				if (race_enc == PlotId::Spathi || race_enc == PlotId::Supox)
 				{
 					BestPercent = 2;
 				}
@@ -371,7 +371,7 @@ FoundHome:
 				if (Index <= uqm::lowNibble(EncounterMakeup[BestIndex])
 					|| (uint16_t)uqm::random().next() % 100 < 50)
 				{
-					CloneShipFragment((RACE_ID)BestIndex,
+					CloneShipFragment((RaceId)BestIndex,
 									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
 			}
@@ -396,42 +396,42 @@ void findRaceSOI(void)
 	uint8_t j {};
 	const auto& RaceHasMusic {RaceMusicBool};
 	const auto& HomeWorld {HomeworldLoc};
-	uint8_t WhichHomeWorld = NO_ID;
-	uint8_t SpeciesArr[MaxOverlap] = {NO_ID};
+	uint8_t WhichHomeWorld {*SpeciesId::None};
+	uint8_t SpeciesArr[MaxOverlap] = {*SpeciesId::None};
 	uint16_t RadiusArr[MaxOverlap] = {0};
 
 	if (!SpaceMusicOK)
 	{
-		spaceMusicBySOI = NO_ID;
+		spaceMusicBySOI = *SpeciesId::None;
 		return;
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 	{
-		spaceMusicBySOI = SA_MATRA_ID;
+		spaceMusicBySOI = *SpeciesId::SaMatra;
 		return;
 	}
 
 	for (hFleet = GetHeadLink(&uqm::gameState().game().avail_race_q), Index = 0;
 		 hFleet; hFleet = hNextFleet, ++Index)
 	{
-		SPECIES_ID SpeciesID;
-		RACE_ID RaceID;
+		SpeciesId SpeciesID;
+		RaceId RaceID;
 
 		const FleetInfo* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 		hNextFleet = _GetSuccLink(FleetPtr);
 		SpeciesID = FleetPtr->SpeciesID;
-		RaceID = (RACE_ID)(SpeciesID - 1);
+		RaceID = (RaceId)(SpeciesID - 1);
 
 		if (HomeWorld[Index] && CurStarDescPtr()->Index == HomeWorld[Index]
 			&& !RaceDead(RaceID)
 			&& (uqm::UQMOptions::read().spaceMusic == uqm::SphereOfInfluenceMusic::RaceBeforeDiscovery
-				|| (uqm::UQMOptions::read().spaceMusic == uqm::SphereOfInfluenceMusic::RaceAfterDiscovery && (CheckSphereTracking(RaceID) || IsHomeworldKnown(SpeciesToHomeID(SpeciesID))))))
+				|| (uqm::UQMOptions::read().spaceMusic == uqm::SphereOfInfluenceMusic::RaceAfterDiscovery && (CheckSphereTracking(RaceID) || IsHomeworldKnown(*SpeciesToHomeID(SpeciesID))))))
 		{ // Found a HomeWorld, set the species ID accordingly
 			// If the No Spoilers option is enabled. Only add the
 			// species ID if their SOI is shown on the map or if
 			// their HomeWorld is known
-			WhichHomeWorld = SpeciesID;
+			WhichHomeWorld = *SpeciesID;
 		}
 
 		if (FleetPtr->actual_strength && RaceHasMusic[Index])
@@ -472,7 +472,7 @@ void findRaceSOI(void)
 				if (uqm::UQMOptions::read().spaceMusic == uqm::SphereOfInfluenceMusic::RaceBeforeDiscovery || (uqm::UQMOptions::read().spaceMusic == uqm::SphereOfInfluenceMusic::RaceAfterDiscovery && CheckSphereTracking(RaceID)))
 				{ // If the No Spoilers option is enabled. Only add the
 					// species ID if their SOI is shown on the map.
-					SpeciesArr[i] = SpeciesID;
+					SpeciesArr[i] = *SpeciesID;
 					RadiusArr[i] = encounter_radius;
 					++i;
 				}
@@ -480,7 +480,7 @@ void findRaceSOI(void)
 		}
 	}
 
-	if (WhichHomeWorld != NO_ID)
+	if (WhichHomeWorld != SpeciesId::None)
 	{ // HomeWorlds override all SOI findings
 		spaceMusicBySOI = WhichHomeWorld;
 		return;
@@ -733,18 +733,18 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 			GroupPtr->in_system = 1;
 
 			rand_val = uqm::random().next();
-			task = (uint8_t)(uqm::lowByte(uqm::lowWord(rand_val)) % ON_STATION);
-			if (task == FLEE)
+			task = (uint8_t)(uqm::lowByte(uqm::lowWord(rand_val)) % *GroupTask::OnStation);
+			if (task == GroupTask::Flee)
 			{
-				task = ON_STATION;
+				task = *GroupTask::OnStation;
 			}
 			GroupPtr->orbit_pos = NormalizeFacing(
 				uqm::lowByte(uqm::highWord(rand_val)));
 
 			group_loc = pSolarSysState->SunDesc[0].NumPlanets;
-			if (group_loc == 1 && task == EXPLORE)
+			if (group_loc == 1 && task == GroupTask::Explore)
 			{
-				task = IN_ORBIT;
+				task = *GroupTask::InOrbit;
 			}
 			else
 			{
@@ -755,11 +755,11 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 			GroupPtr->loc.x = (uqm::lowWord(rand_val) % 10000) - 5000;
 			GroupPtr->loc.y = (uqm::highWord(rand_val) % 10000) - 5000;
 			GroupPtr->group_counter = 0;
-			if (task == EXPLORE)
+			if (task == GroupTask::Explore)
 			{
 				GroupPtr->group_counter = ((uint16_t)uqm::random().next() % MaxRevolutions) << FacingShift;
 			}
-			else if (task == ON_STATION)
+			else if (task == GroupTask::OnStation)
 			{
 				uint16_t angle {};
 				GfxPoint org;
@@ -932,7 +932,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 
 			sread_8(fp, &RaceType);
 
-			hStarShip = CloneShipFragment((RACE_ID)RaceType,
+			hStarShip = CloneShipFragment((RaceId)RaceType,
 										  &uqm::gameState().game().npc_built_ship_q, 0);
 
 			ShipFragment* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};

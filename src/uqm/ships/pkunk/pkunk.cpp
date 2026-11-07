@@ -481,7 +481,7 @@ static void pkunk_preprocess(Element* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	PkunkData* pkunkData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 
-	const bool Fwiffo = (StarShipPtr->captains_name_index == NameOffset + NumCaptainsNames && StarShipPtr->SpeciesID == SPATHI_ID);
+	const bool Fwiffo = (StarShipPtr->captains_name_index == NameOffset + NumCaptainsNames && StarShipPtr->SpeciesID == SpeciesId::Spathi);
 	if (Fwiffo && !FwiffoSounds)
 	{
 		FwiffoSounds = uqm::loadSoundBank("ship.spathi.sounds").release();
