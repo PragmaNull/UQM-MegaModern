@@ -370,72 +370,70 @@ static void TFB_DrawCanvas_Fill(SDL_Surface* src, Uint32 fillcolor, SDL_Surface*
 
 	{
 		const uqm::SurfaceLock srcLock {src};
-		{
-			const uqm::SurfaceLock dstLock {dst};
+		const uqm::SurfaceLock dstLock {dst};
 
-			const Uint32* src_p {(Uint32*)src->pixels};
-			Uint32* dst_p {(Uint32*)dst->pixels};
+		const Uint32* src_p {(Uint32*)src->pixels};
+		Uint32* dst_p {(Uint32*)dst->pixels};
 
-			if (dstkey == fillcolor)
-			{ // color collision, must switch colorkey
-				// new colorkey is grey (1/2,1/2,1/2)
-				dstkey = SDL_MapSurfaceRGBA(dst, 127, 127, 127, 0);
-			}
+		if (dstkey == fillcolor)
+		{ // color collision, must switch colorkey
+			// new colorkey is grey (1/2,1/2,1/2)
+			dstkey = SDL_MapSurfaceRGBA(dst, 127, 127, 127, 0);
+		}
 
-			if (srcfmt->Amask)
-			{ // alpha-based fill
-				for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+		if (srcfmt->Amask)
+		{ // alpha-based fill
+			for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+			{
+				for (x = 0; x < width; ++x, ++src_p, ++dst_p)
 				{
-					for (x = 0; x < width; ++x, ++src_p, ++dst_p)
-					{
-						Uint32 p = *src_p & amask;
+					Uint32 p = *src_p & amask;
 
-						if (p == 0)
-						{ // fully transparent pixel
-							*dst_p = dstkey;
-						}
-						else if (alpha == 0xff)
-						{ // not for DRAW_ALPHA; use alpha chan directly
-							*dst_p = p | fillcolor;
-						}
-						else
-						{ // for DRAW_ALPHA; modulate the alpha channel
-							p >>= srcfmt->Ashift;
-							p = (p * alpha) >> 8;
-							p <<= srcfmt->Ashift;
-							*dst_p = p | fillcolor;
-						}
+					if (p == 0)
+					{ // fully transparent pixel
+						*dst_p = dstkey;
+					}
+					else if (alpha == 0xff)
+					{ // not for DRAW_ALPHA; use alpha chan directly
+						*dst_p = p | fillcolor;
+					}
+					else
+					{ // for DRAW_ALPHA; modulate the alpha channel
+						p >>= srcfmt->Ashift;
+						p = (p * alpha) >> 8;
+						p <<= srcfmt->Ashift;
+						*dst_p = p | fillcolor;
 					}
 				}
 			}
-			else if (TFB_GetColorKey(src, &srckey) == 0)
-			{ // colorkey-based fill
-				for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+		}
+		else if (TFB_GetColorKey(src, &srckey) == 0)
+		{ // colorkey-based fill
+			for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+			{
+				for (x = 0; x < width; ++x, ++src_p, ++dst_p)
 				{
-					for (x = 0; x < width; ++x, ++src_p, ++dst_p)
-					{
-						const Uint32 p = *src_p;
+					const Uint32 p = *src_p;
 
-						*dst_p = (p == srckey) ? dstkey : fillcolor;
-					}
+					*dst_p = (p == srckey) ? dstkey : fillcolor;
 				}
 			}
-			else
-			{ // We don't know what is that - just draw the color dammit
-				// Added by Kruzen during HdResolutionFactor filter optimization
-				// Before it couldn't draw some filled stamps because they didn't
-				// have any transparencies and supposedly nothing from existing
-				// before DrawFilledStamp usages cannot reach that
-				for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+		}
+		else
+		{ // We don't know what is that - just draw the color dammit
+			// Added by Kruzen during HdResolutionFactor filter optimization
+			// Before it couldn't draw some filled stamps because they didn't
+			// have any transparencies and supposedly nothing from existing
+			// before DrawFilledStamp usages cannot reach that
+			for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
+			{
+				for (x = 0; x < width; ++x, ++src_p, ++dst_p)
 				{
-					for (x = 0; x < width; ++x, ++src_p, ++dst_p)
-					{
-						*dst_p = fillcolor;
-					}
+					*dst_p = fillcolor;
 				}
-				//log_add (log_Warning, "TFB_DrawCanvas_Fill: Unsupported source"
-				//		"surface format\n");
 			}
+			//log_add (log_Warning, "TFB_DrawCanvas_Fill: Unsupported source"
+			//		"surface format\n");
 		}
 	}
 
