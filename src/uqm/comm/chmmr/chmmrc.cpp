@@ -185,23 +185,23 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue::Peace);
 
-	if (PlayerSaid(R, bye))
+	if (PlayerSaid(R, ChmmrPhrase::Bye))
 	{
-		NPCPhrase(GOODBYE);
+		NPCPhrase(ChmmrPhrase::Goodbye);
 	}
-	else if (PlayerSaid(R, bye_shielded))
+	else if (PlayerSaid(R, ChmmrPhrase::ByeShielded))
 	{
-		NPCPhrase(GOODBYE_SHIELDED);
+		NPCPhrase(ChmmrPhrase::GoodbyeShielded);
 	}
-	else if (PlayerSaid(R, bye_after_bomb))
+	else if (PlayerSaid(R, ChmmrPhrase::ByeAfterBomb))
 	{
-		NPCPhrase(GOODBYE_AFTER_BOMB);
+		NPCPhrase(ChmmrPhrase::GoodbyeAfterBomb);
 	}
-	else if (PlayerSaid(R, proceed))
+	else if (PlayerSaid(R, ChmmrPhrase::Proceed))
 	{
 		int i {};
 
-		NPCPhrase(TAKE_2_WEEKS);
+		NPCPhrase(ChmmrPhrase::Take2Weeks);
 
 		SetRaceAllied(RaceId::Chmmr, true);
 
@@ -311,11 +311,11 @@ static void ExitConversation(RESPONSE_REF R)
 		uqm::gameState().sis().ModuleSlots[8] = ModuleType::BombModule5;
 		uqm::gameState().sis().ModuleSlots[9] = ModuleType::BombModule2;
 	}
-	else if (PlayerSaid(R, perhaps_not_install))
+	else if (PlayerSaid(R, ChmmrPhrase::PerhapsNotInstall))
 	{
-		NPCPhrase(YES);
+		NPCPhrase(ChmmrPhrase::Yes);
 
-		NPCPhrase(GOODBYE);
+		NPCPhrase(ChmmrPhrase::Goodbye);
 	}
 }
 
@@ -323,149 +323,149 @@ static void NotReady(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		NPCPhrase(RETURN_WHEN_READY);
+		NPCPhrase(ChmmrPhrase::ReturnWhenReady);
 	}
-	else if (PlayerSaid(R, further_assistance))
+	else if (PlayerSaid(R, ChmmrPhrase::FurtherAssistance))
 	{
-		NPCPhrase(NO_FURTHER_ASSISTANCE);
+		NPCPhrase(ChmmrPhrase::NoFurtherAssistance);
 
-		DisablePhrase(further_assistance);
+		DisablePhrase(ChmmrPhrase::FurtherAssistance);
 	}
-	else if (PlayerSaid(R, tech_help))
+	else if (PlayerSaid(R, ChmmrPhrase::TechHelp))
 	{
-		NPCPhrase(USE_OUR_SHIPS_BEFORE);
+		NPCPhrase(ChmmrPhrase::UseOurShipsBefore);
 
 		SetRaceAllied(RaceId::Chmmr, true);
 	}
-	else if (PlayerSaid(R, where_weapon))
+	else if (PlayerSaid(R, ChmmrPhrase::WhereWeapon))
 	{
-		NPCPhrase(PRECURSOR_WEAPON);
+		NPCPhrase(ChmmrPhrase::PrecursorWeapon);
 
-		DisablePhrase(where_weapon);
+		DisablePhrase(ChmmrPhrase::WhereWeapon);
 	}
-	else if (PlayerSaid(R, where_distraction))
+	else if (PlayerSaid(R, ChmmrPhrase::WhereDistraction))
 	{
-		NPCPhrase(PSYCHIC_WEAPONRY);
+		NPCPhrase(ChmmrPhrase::PsychicWeaponry);
 
-		DisablePhrase(where_distraction);
+		DisablePhrase(ChmmrPhrase::WhereDistraction);
 	}
 
 	if (CheckAlliance(RaceId::Chmmr) != RaceAllegiance::Good)
 	{
-		Response(tech_help, NotReady);
+		Response(ChmmrPhrase::TechHelp, NotReady);
 	}
-	else if (PhraseEnabled(further_assistance))
+	else if (PhraseEnabled(ChmmrPhrase::FurtherAssistance))
 	{
-		Response(further_assistance, NotReady);
+		Response(ChmmrPhrase::FurtherAssistance, NotReady);
 	}
-	if (PhraseEnabled(where_weapon) && !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
+	if (PhraseEnabled(ChmmrPhrase::WhereWeapon) && !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 	{
-		Response(where_weapon, NotReady);
+		Response(ChmmrPhrase::WhereWeapon, NotReady);
 	}
-	if (PhraseEnabled(where_distraction) && !uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
+	if (PhraseEnabled(ChmmrPhrase::WhereDistraction) && !uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 	{
-		Response(where_distraction, NotReady);
+		Response(ChmmrPhrase::WhereDistraction, NotReady);
 	}
-	Response(bye, ExitConversation);
+	Response(ChmmrPhrase::Bye, ExitConversation);
 }
 
 static void ImproveBomb(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		NPCPhrase(WE_WILL_IMPROVE_BOMB);
+		NPCPhrase(ChmmrPhrase::WeWillImproveBomb);
 	}
-	else if (PlayerSaid(R, what_now))
+	else if (PlayerSaid(R, ChmmrPhrase::WhatNow))
 	{
-		NPCPhrase(MODIFY_VESSEL);
+		NPCPhrase(ChmmrPhrase::ModifyVessel);
 
-		DisablePhrase(what_now);
+		DisablePhrase(ChmmrPhrase::WhatNow);
 	}
-	else if (PlayerSaid(R, wont_hurt_my_ship))
+	else if (PlayerSaid(R, ChmmrPhrase::WontHurtMyShip))
 	{
-		NPCPhrase(WILL_DESTROY_IT);
+		NPCPhrase(ChmmrPhrase::WillDestroyIt);
 
-		DisablePhrase(wont_hurt_my_ship);
+		DisablePhrase(ChmmrPhrase::WontHurtMyShip);
 	}
-	else if (PlayerSaid(R, bummer_about_my_ship))
+	else if (PlayerSaid(R, ChmmrPhrase::BummerAboutMyShip))
 	{
-		NPCPhrase(DEAD_SILENCE);
+		NPCPhrase(ChmmrPhrase::DeadSilence);
 
-		DisablePhrase(bummer_about_my_ship);
+		DisablePhrase(ChmmrPhrase::BummerAboutMyShip);
 	}
-	else if (PlayerSaid(R, other_assistance))
+	else if (PlayerSaid(R, ChmmrPhrase::OtherAssistance))
 	{
-		NPCPhrase(USE_OUR_SHIPS_AFTER);
+		NPCPhrase(ChmmrPhrase::UseOurShipsAfter);
 
 		SetRaceAllied(RaceId::Chmmr, true);
 	}
 
-	if (PhraseEnabled(what_now))
+	if (PhraseEnabled(ChmmrPhrase::WhatNow))
 	{
-		Response(what_now, ImproveBomb);
+		Response(ChmmrPhrase::WhatNow, ImproveBomb);
 	}
-	else if (PhraseEnabled(wont_hurt_my_ship))
+	else if (PhraseEnabled(ChmmrPhrase::WontHurtMyShip))
 	{
-		Response(wont_hurt_my_ship, ImproveBomb);
+		Response(ChmmrPhrase::WontHurtMyShip, ImproveBomb);
 	}
-	else if (PhraseEnabled(bummer_about_my_ship))
+	else if (PhraseEnabled(ChmmrPhrase::BummerAboutMyShip))
 	{
-		Response(bummer_about_my_ship, ImproveBomb);
+		Response(ChmmrPhrase::BummerAboutMyShip, ImproveBomb);
 	}
 	if (CheckAlliance(RaceId::Chmmr) != RaceAllegiance::Good)
 	{
-		Response(other_assistance, ImproveBomb);
+		Response(ChmmrPhrase::OtherAssistance, ImproveBomb);
 	}
-	Response(proceed, ExitConversation);
-	Response(perhaps_not_install, ExitConversation);
+	Response(ChmmrPhrase::Proceed, ExitConversation);
+	Response(ChmmrPhrase::PerhapsNotInstall, ExitConversation);
 }
 
 static void ChmmrFree(RESPONSE_REF R)
 {
 	if (R == 0
-		|| PlayerSaid(R, i_am_captain)
-		|| PlayerSaid(R, i_am_savior)
-		|| PlayerSaid(R, i_am_silly))
+		|| PlayerSaid(R, ChmmrPhrase::IAmCaptain)
+		|| PlayerSaid(R, ChmmrPhrase::IAmSavior)
+		|| PlayerSaid(R, ChmmrPhrase::IAmSilly))
 	{
-		NPCPhrase(WHY_HAVE_YOU_FREED_US);
+		NPCPhrase(ChmmrPhrase::WhyHaveYouFreedUs);
 		AlienTalkSegue((uint16_t)~0);
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_EMERGING, static_cast<uint32_t>(0));
 
-		Response(serious_1, ChmmrFree);
-		Response(serious_2, ChmmrFree);
-		Response(silly, ChmmrFree);
+		Response(ChmmrPhrase::Serious1, ChmmrFree);
+		Response(ChmmrPhrase::Serious2, ChmmrFree);
+		Response(ChmmrPhrase::Silly, ChmmrFree);
 	}
 	else
 	{
-		NPCPhrase(WILL_HELP_ANALYZE_LOGS);
+		NPCPhrase(ChmmrPhrase::WillHelpAnalyzeLogs);
 
 		if (uqm::gameState().flag(uqm::GameFlag::AWARE_OF_SAMATRA))
 		{
-			NPCPhrase(YOU_KNOW_SAMATRA);
+			NPCPhrase(ChmmrPhrase::YouKnowSamatra);
 		}
 		else
 		{
-			NPCPhrase(DONT_KNOW_ABOUT_SAMATRA);
+			NPCPhrase(ChmmrPhrase::DontKnowAboutSamatra);
 
 			uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
 		}
 
 		if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 		{
-			NPCPhrase(HAVE_TALKING_PET);
+			NPCPhrase(ChmmrPhrase::HaveTalkingPet);
 		}
 		else
 		{
-			NPCPhrase(NEED_DISTRACTION);
+			NPCPhrase(ChmmrPhrase::NeedDistraction);
 		}
 
 		if (uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 		{
-			NPCPhrase(HAVE_BOMB);
+			NPCPhrase(ChmmrPhrase::HaveBomb);
 		}
 		else
 		{
-			NPCPhrase(NEED_WEAPON);
+			NPCPhrase(ChmmrPhrase::NeedWeapon);
 		}
 
 		if (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
@@ -484,163 +484,163 @@ static void ChmmrShielded(RESPONSE_REF R);
 
 static void ChmmrAdvice(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, need_advice))
+	if (PlayerSaid(R, ChmmrPhrase::NeedAdvice))
 	{
-		NPCPhrase(WHAT_ADVICE);
+		NPCPhrase(ChmmrPhrase::WhatAdvice);
 	}
-	else if (PlayerSaid(R, how_defeat_urquan))
+	else if (PlayerSaid(R, ChmmrPhrase::HowDefeatUrquan))
 	{
-		NPCPhrase(DEFEAT_LIKE_SO);
+		NPCPhrase(ChmmrPhrase::DefeatLikeSo);
 
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_BOMB_STATE, static_cast<uint32_t>(1));
-		DisablePhrase(how_defeat_urquan);
+		DisablePhrase(ChmmrPhrase::HowDefeatUrquan);
 	}
-	else if (PlayerSaid(R, what_about_tpet))
+	else if (PlayerSaid(R, ChmmrPhrase::WhatAboutTpet))
 	{
-		NPCPhrase(SCARY_BUT_USEFUL);
+		NPCPhrase(ChmmrPhrase::ScaryButUseful);
 
-		DisablePhrase(what_about_tpet);
+		DisablePhrase(ChmmrPhrase::WhatAboutTpet);
 	}
-	else if (PlayerSaid(R, what_about_bomb))
+	else if (PlayerSaid(R, ChmmrPhrase::WhatAboutBomb))
 	{
-		NPCPhrase(ABOUT_BOMB);
+		NPCPhrase(ChmmrPhrase::AboutBomb);
 
-		DisablePhrase(what_about_bomb);
+		DisablePhrase(ChmmrPhrase::WhatAboutBomb);
 	}
-	else if (PlayerSaid(R, what_about_sun_device))
+	else if (PlayerSaid(R, ChmmrPhrase::WhatAboutSunDevice))
 	{
-		NPCPhrase(ABOUT_SUN_DEVICE);
+		NPCPhrase(ChmmrPhrase::AboutSunDevice);
 
-		DisablePhrase(what_about_sun_device);
+		DisablePhrase(ChmmrPhrase::WhatAboutSunDevice);
 	}
-	else if (PlayerSaid(R, what_about_samatra))
+	else if (PlayerSaid(R, ChmmrPhrase::WhatAboutSamatra))
 	{
-		NPCPhrase(ABOUT_SAMATRA);
+		NPCPhrase(ChmmrPhrase::AboutSamatra);
 
-		DisablePhrase(what_about_samatra);
+		DisablePhrase(ChmmrPhrase::WhatAboutSamatra);
 	}
 
 	uint8_t AdviceLeft {0};
-	if (PhraseEnabled(how_defeat_urquan))
+	if (PhraseEnabled(ChmmrPhrase::HowDefeatUrquan))
 	{
-		Response(how_defeat_urquan, ChmmrAdvice);
+		Response(ChmmrPhrase::HowDefeatUrquan, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PhraseEnabled(what_about_tpet) && uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
+	if (PhraseEnabled(ChmmrPhrase::WhatAboutTpet) && uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 	{
-		Response(what_about_tpet, ChmmrAdvice);
+		Response(ChmmrPhrase::WhatAboutTpet, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PhraseEnabled(what_about_bomb) && uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
+	if (PhraseEnabled(ChmmrPhrase::WhatAboutBomb) && uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 	{
-		Response(what_about_bomb, ChmmrAdvice);
+		Response(ChmmrPhrase::WhatAboutBomb, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PhraseEnabled(what_about_sun_device) && uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_ON_SHIP))
+	if (PhraseEnabled(ChmmrPhrase::WhatAboutSunDevice) && uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_ON_SHIP))
 	{
-		Response(what_about_sun_device, ChmmrAdvice);
+		Response(ChmmrPhrase::WhatAboutSunDevice, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PhraseEnabled(what_about_samatra) && uqm::gameState().flag(uqm::GameFlag::AWARE_OF_SAMATRA))
+	if (PhraseEnabled(ChmmrPhrase::WhatAboutSamatra) && uqm::gameState().flag(uqm::GameFlag::AWARE_OF_SAMATRA))
 	{
-		Response(what_about_samatra, ChmmrAdvice);
+		Response(ChmmrPhrase::WhatAboutSamatra, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	Response(enough_advice, ChmmrShielded);
+	Response(ChmmrPhrase::EnoughAdvice, ChmmrShielded);
 
 	if (!AdviceLeft)
 	{
-		DisablePhrase(need_advice);
+		DisablePhrase(ChmmrPhrase::NeedAdvice);
 	}
 }
 
 static void ChmmrShielded(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, find_out_whats_up))
+	if (PlayerSaid(R, ChmmrPhrase::FindOutWhatsUp))
 	{
-		NPCPhrase(HYBRID_PROCESS);
+		NPCPhrase(ChmmrPhrase::HybridProcess);
 
-		DisablePhrase(find_out_whats_up);
+		DisablePhrase(ChmmrPhrase::FindOutWhatsUp);
 	}
-	else if (PlayerSaid(R, need_help))
+	else if (PlayerSaid(R, ChmmrPhrase::NeedHelp))
 	{
-		NPCPhrase(CANT_HELP);
+		NPCPhrase(ChmmrPhrase::CantHelp);
 
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, why_no_help))
+	else if (PlayerSaid(R, ChmmrPhrase::WhyNoHelp))
 	{
-		NPCPhrase(LONG_TIME);
+		NPCPhrase(ChmmrPhrase::LongTime);
 
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, what_if_more_energy))
+	else if (PlayerSaid(R, ChmmrPhrase::WhatIfMoreEnergy))
 	{
-		NPCPhrase(DANGER_TO_US);
+		NPCPhrase(ChmmrPhrase::DangerToUs);
 
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, enough_advice))
+	else if (PlayerSaid(R, ChmmrPhrase::EnoughAdvice))
 	{
-		NPCPhrase(OK_ENOUGH_ADVICE);
+		NPCPhrase(ChmmrPhrase::OkEnoughAdvice);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::CHMMR_STACK))
 	{
 		case 0:
-			Response(need_help, ChmmrShielded);
+			Response(ChmmrPhrase::NeedHelp, ChmmrShielded);
 			break;
 		case 1:
-			Response(why_no_help, ChmmrShielded);
+			Response(ChmmrPhrase::WhyNoHelp, ChmmrShielded);
 			break;
 		case 2:
-			Response(what_if_more_energy, ChmmrShielded);
+			Response(ChmmrPhrase::WhatIfMoreEnergy, ChmmrShielded);
 			break;
 	}
-	if (PhraseEnabled(find_out_whats_up))
+	if (PhraseEnabled(ChmmrPhrase::FindOutWhatsUp))
 	{
-		Response(find_out_whats_up, ChmmrShielded);
+		Response(ChmmrPhrase::FindOutWhatsUp, ChmmrShielded);
 	}
-	if (PhraseEnabled(need_advice))
+	if (PhraseEnabled(ChmmrPhrase::NeedAdvice))
 	{
-		Response(need_advice, ChmmrAdvice);
+		Response(ChmmrPhrase::NeedAdvice, ChmmrAdvice);
 	}
-	Response(bye_shielded, ExitConversation);
+	Response(ChmmrPhrase::ByeShielded, ExitConversation);
 }
 
 static void AfterBomb(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_up_after_bomb))
+	if (PlayerSaid(R, ChmmrPhrase::WhatsUpAfterBomb))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::CHMMR_STACK))
 		{
-			NPCPhrase(GENERAL_INFO_AFTER_BOMB_2);
+			NPCPhrase(ChmmrPhrase::GeneralInfoAfterBomb2);
 		}
 		else
 		{
-			NPCPhrase(GENERAL_INFO_AFTER_BOMB_1);
+			NPCPhrase(ChmmrPhrase::GeneralInfoAfterBomb1);
 
 			uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(1));
 		}
 
-		DisablePhrase(whats_up_after_bomb);
+		DisablePhrase(ChmmrPhrase::WhatsUpAfterBomb);
 	}
-	else if (PlayerSaid(R, what_do_after_bomb))
+	else if (PlayerSaid(R, ChmmrPhrase::WhatDoAfterBomb))
 	{
-		NPCPhrase(DO_AFTER_BOMB);
+		NPCPhrase(ChmmrPhrase::DoAfterBomb);
 
-		DisablePhrase(what_do_after_bomb);
+		DisablePhrase(ChmmrPhrase::WhatDoAfterBomb);
 	}
 
-	if (PhraseEnabled(whats_up_after_bomb))
+	if (PhraseEnabled(ChmmrPhrase::WhatsUpAfterBomb))
 	{
-		Response(whats_up_after_bomb, AfterBomb);
+		Response(ChmmrPhrase::WhatsUpAfterBomb, AfterBomb);
 	}
-	if (PhraseEnabled(what_do_after_bomb))
+	if (PhraseEnabled(ChmmrPhrase::WhatDoAfterBomb))
 	{
-		Response(what_do_after_bomb, AfterBomb);
+		Response(ChmmrPhrase::WhatDoAfterBomb, AfterBomb);
 	}
-	Response(bye_after_bomb, ExitConversation);
+	Response(ChmmrPhrase::ByeAfterBomb, ExitConversation);
 }
 
 static void Intro(void)
@@ -653,10 +653,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HELLO_AFTER_BOMB_1);
+				NPCPhrase(ChmmrPhrase::HelloAfterBomb1);
 				break;
 			case 1:
-				NPCPhrase(HELLO_AFTER_BOMB_2);
+				NPCPhrase(ChmmrPhrase::HelloAfterBomb2);
 				--NumVisits;
 				break;
 		}
@@ -673,7 +673,7 @@ static void Intro(void)
 		}
 		else
 		{
-			NPCPhrase(YOU_ARE_READY);
+			NPCPhrase(ChmmrPhrase::YouAreReady);
 
 			ImproveBomb((RESPONSE_REF)0);
 		}
@@ -694,16 +694,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(WHY_YOU_HERE_1);
+					NPCPhrase(ChmmrPhrase::WhyYouHere1);
 					break;
 				case 1:
-					NPCPhrase(WHY_YOU_HERE_2);
+					NPCPhrase(ChmmrPhrase::WhyYouHere2);
 					break;
 				case 2:
-					NPCPhrase(WHY_YOU_HERE_3);
+					NPCPhrase(ChmmrPhrase::WhyYouHere3);
 					break;
 				case 3:
-					NPCPhrase(WHY_YOU_HERE_4);
+					NPCPhrase(ChmmrPhrase::WhyYouHere4);
 					--NumVisits;
 					break;
 			}
@@ -713,7 +713,7 @@ static void Intro(void)
 		else
 		{
 			SetCommIntroMode(CommIntroMode::FadeInScreen, c_gameSecond * 2);
-			NPCPhrase(WE_ARE_FREE);
+			NPCPhrase(ChmmrPhrase::WeAreFree);
 
 			if (NumVisits)
 			{
@@ -722,11 +722,11 @@ static void Intro(void)
 			}
 			else
 			{
-				NPCPhrase(WHO_ARE_YOU);
+				NPCPhrase(ChmmrPhrase::WhoAreYou);
 
-				Response(i_am_captain, ChmmrFree);
-				Response(i_am_savior, ChmmrFree);
-				Response(i_am_silly, ChmmrFree);
+				Response(ChmmrPhrase::IAmCaptain, ChmmrFree);
+				Response(ChmmrPhrase::IAmSavior, ChmmrFree);
+				Response(ChmmrPhrase::IAmSilly, ChmmrFree);
 			}
 
 			uqm::gameState().setFlag(uqm::GameFlag::CHMMR_UNLEASHED, static_cast<uint32_t>(1));

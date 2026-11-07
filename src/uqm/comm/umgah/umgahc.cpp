@@ -246,52 +246,52 @@ static void CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue::Hostile);
 
-	if (PlayerSaid(R, bye_zombie))
+	if (PlayerSaid(R, UmgahPhrase::ByeZombie))
 	{
-		NPCPhrase(GOODBYE_ZOMBIE);
+		NPCPhrase(UmgahPhrase::GoodbyeZombie);
 
 		setSegue(Segue::Peace);
 	}
-	else if (PlayerSaid(R, bye_pre_zombie))
+	else if (PlayerSaid(R, UmgahPhrase::ByePreZombie))
 	{
-		NPCPhrase(GOODBYE_PRE_ZOMBIE);
+		NPCPhrase(UmgahPhrase::GoodbyePreZombie);
 	}
-	else if (PlayerSaid(R, can_we_be_friends))
+	else if (PlayerSaid(R, UmgahPhrase::CanWeBeFriends))
 	{
-		NPCPhrase(SURE_FRIENDS);
+		NPCPhrase(UmgahPhrase::SureFriends);
 
 		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_MENTIONED_TRICKS, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, evil_blobbies_give_up))
+	else if (PlayerSaid(R, UmgahPhrase::EvilBlobbiesGiveUp))
 	{
-		NPCPhrase(NOT_EVIL_BLOBBIES);
+		NPCPhrase(UmgahPhrase::NotEvilBlobbies);
 
 		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_EVIL_BLOBBIES, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, evil_blobbies_must_die))
+	else if (PlayerSaid(R, UmgahPhrase::EvilBlobbiesMustDie))
 	{
-		NPCPhrase(OH_NO_WE_WONT);
+		NPCPhrase(UmgahPhrase::OhNoWeWont);
 	}
-	else if (PlayerSaid(R, threat))
+	else if (PlayerSaid(R, UmgahPhrase::Threat))
 	{
-		NPCPhrase(NO_THREAT);
+		NPCPhrase(UmgahPhrase::NoThreat);
 	}
-	else if (PlayerSaid(R, dont_believe))
+	else if (PlayerSaid(R, UmgahPhrase::DontBelieve))
 	{
-		NPCPhrase(THEN_DIE);
+		NPCPhrase(UmgahPhrase::ThenDie);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(0));
 	}
-	else if (PlayerSaid(R, bye_unknown))
+	else if (PlayerSaid(R, UmgahPhrase::ByeUnknown))
 	{
-		NPCPhrase(GOODBYE_UNKNOWN);
+		NPCPhrase(UmgahPhrase::GoodbyeUnknown);
 
 		setSegue(Segue::Peace);
 	}
-	else if (PlayerSaid(R, bye_post_zombie))
+	else if (PlayerSaid(R, UmgahPhrase::ByePostZombie))
 	{
-		NPCPhrase(FUNNY_IDEA);
+		NPCPhrase(UmgahPhrase::FunnyIdea);
 
 		AlienTalkSegue((uint16_t)~0);
 		AddEscortShips(RaceId::Umgah, difficultyCase(4, 4, 2));
@@ -303,113 +303,113 @@ static void Zombies(RESPONSE_REF R)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::MET_NORMAL_UMGAH))
 	{
-		if (PlayerSaid(R, whats_up_zombies))
+		if (PlayerSaid(R, UmgahPhrase::WhatsUpZombies))
 		{
-			NPCPhrase(GENERAL_INFO_ZOMBIE);
+			NPCPhrase(UmgahPhrase::GeneralInfoZombie);
 
-			DisablePhrase(whats_up_zombies);
+			DisablePhrase(UmgahPhrase::WhatsUpZombies);
 		}
-		else if (PlayerSaid(R, how_goes_tpet))
+		else if (PlayerSaid(R, UmgahPhrase::HowGoesTpet))
 		{
-			NPCPhrase(WHAT_TPET);
+			NPCPhrase(UmgahPhrase::WhatTpet);
 
-			DisablePhrase(how_goes_tpet);
+			DisablePhrase(UmgahPhrase::HowGoesTpet);
 		}
-		else if (PlayerSaid(R, you_told_us))
+		else if (PlayerSaid(R, UmgahPhrase::YouToldUs))
 		{
-			NPCPhrase(SADLY_IT_DIED);
+			NPCPhrase(UmgahPhrase::SadlyItDied);
 
-			DisablePhrase(you_told_us);
+			DisablePhrase(UmgahPhrase::YouToldUs);
 		}
 
-		if (PhraseEnabled(whats_up_zombies) && PhraseEnabled(how_goes_tpet))
+		if (PhraseEnabled(UmgahPhrase::WhatsUpZombies) && PhraseEnabled(UmgahPhrase::HowGoesTpet))
 		{
-			Response(whats_up_zombies, Zombies);
+			Response(UmgahPhrase::WhatsUpZombies, Zombies);
 		}
-		if (PhraseEnabled(how_goes_tpet))
+		if (PhraseEnabled(UmgahPhrase::HowGoesTpet))
 		{
-			Response(how_goes_tpet, Zombies);
+			Response(UmgahPhrase::HowGoesTpet, Zombies);
 		}
-		else if (PhraseEnabled(you_told_us))
+		else if (PhraseEnabled(UmgahPhrase::YouToldUs))
 		{
-			Response(you_told_us, Zombies);
+			Response(UmgahPhrase::YouToldUs, Zombies);
 		}
 		else
 		{
-			Response(dont_believe, CombatIsInevitable);
+			Response(UmgahPhrase::DontBelieve, CombatIsInevitable);
 		}
-		if (PhraseEnabled(whats_up_zombies) && !PhraseEnabled(how_goes_tpet))
+		if (PhraseEnabled(UmgahPhrase::WhatsUpZombies) && !PhraseEnabled(UmgahPhrase::HowGoesTpet))
 		{
-			Response(whats_up_zombies, Zombies);
+			Response(UmgahPhrase::WhatsUpZombies, Zombies);
 		}
-		Response(threat, CombatIsInevitable);
-		Response(bye_unknown, CombatIsInevitable);
+		Response(UmgahPhrase::Threat, CombatIsInevitable);
+		Response(UmgahPhrase::ByeUnknown, CombatIsInevitable);
 	}
 	else
 	{
-		RESPONSE_REF pStr[4];
+		UmgahPhrase pStr[4];
 
 		uint8_t LastStack {0};
-		pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-		if (PlayerSaid(R, evil_blobbies))
+		pStr[0] = pStr[1] = pStr[2] = pStr[3] = UmgahPhrase::NullPhrase;
+		if (PlayerSaid(R, UmgahPhrase::EvilBlobbies))
 		{
-			NPCPhrase(YES_VERY_EVIL);
+			NPCPhrase(UmgahPhrase::YesVeryEvil);
 
-			DisablePhrase(evil_blobbies);
+			DisablePhrase(UmgahPhrase::EvilBlobbies);
 			LastStack = 0;
 		}
-		else if (PlayerSaid(R, we_vindicator))
+		else if (PlayerSaid(R, UmgahPhrase::WeVindicator))
 		{
-			NPCPhrase(GOOD_FOR_YOU_1);
+			NPCPhrase(UmgahPhrase::GoodForYou1);
 
-			DisablePhrase(we_vindicator);
+			DisablePhrase(UmgahPhrase::WeVindicator);
 			LastStack = 1;
 		}
-		else if (PlayerSaid(R, come_in_peace))
+		else if (PlayerSaid(R, UmgahPhrase::ComeInPeace))
 		{
-			NPCPhrase(GOOD_FOR_YOU_2);
+			NPCPhrase(UmgahPhrase::GoodForYou2);
 
-			DisablePhrase(come_in_peace);
+			DisablePhrase(UmgahPhrase::ComeInPeace);
 			LastStack = 1;
 		}
-		else if (PlayerSaid(R, know_any_jokes))
+		else if (PlayerSaid(R, UmgahPhrase::KnowAnyJokes))
 		{
-			NPCPhrase(JOKE_1);
+			NPCPhrase(UmgahPhrase::Joke1);
 
-			DisablePhrase(know_any_jokes);
+			DisablePhrase(UmgahPhrase::KnowAnyJokes);
 			LastStack = 2;
 		}
-		else if (PlayerSaid(R, better_joke))
+		else if (PlayerSaid(R, UmgahPhrase::BetterJoke))
 		{
-			NPCPhrase(JOKE_2);
+			NPCPhrase(UmgahPhrase::Joke2);
 
-			DisablePhrase(better_joke);
+			DisablePhrase(UmgahPhrase::BetterJoke);
 			LastStack = 2;
 		}
-		else if (PlayerSaid(R, not_very_funny))
+		else if (PlayerSaid(R, UmgahPhrase::NotVeryFunny))
 		{
-			NPCPhrase(YES_WE_ARE);
+			NPCPhrase(UmgahPhrase::YesWeAre);
 
-			DisablePhrase(not_very_funny);
+			DisablePhrase(UmgahPhrase::NotVeryFunny);
 			LastStack = 2;
 		}
-		else if (PlayerSaid(R, what_about_tpet))
+		else if (PlayerSaid(R, UmgahPhrase::WhatAboutTpet))
 		{
-			NPCPhrase(WHAT_TPET);
+			NPCPhrase(UmgahPhrase::WhatTpet);
 
-			DisablePhrase(what_about_tpet);
+			DisablePhrase(UmgahPhrase::WhatAboutTpet);
 			LastStack = 3;
 		}
-		else if (PlayerSaid(R, give_up_or_die))
+		else if (PlayerSaid(R, UmgahPhrase::GiveUpOrDie))
 		{
-			NPCPhrase(NOT_GIVE_UP);
+			NPCPhrase(UmgahPhrase::NotGiveUp);
 
 			setSegue(Segue::Hostile);
 			return;
 		}
-		else if (PlayerSaid(R, arilou_told_us))
+		else if (PlayerSaid(R, UmgahPhrase::ArilouToldUs))
 		{
-			NPCPhrase(THEN_DIE);
+			NPCPhrase(UmgahPhrase::ThenDie);
 
 			setSegue(Segue::Hostile);
 			uqm::gameState().setFlag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES, static_cast<uint32_t>(1));
@@ -417,179 +417,179 @@ static void Zombies(RESPONSE_REF R)
 			return;
 		}
 
-		if (PhraseEnabled(evil_blobbies))
+		if (PhraseEnabled(UmgahPhrase::EvilBlobbies))
 		{
-			pStr[0] = evil_blobbies;
+			pStr[0] = UmgahPhrase::EvilBlobbies;
 		}
 		else
 		{
-			pStr[0] = give_up_or_die;
+			pStr[0] = UmgahPhrase::GiveUpOrDie;
 		}
 
-		if (PhraseEnabled(we_vindicator))
+		if (PhraseEnabled(UmgahPhrase::WeVindicator))
 		{
-			pStr[1] = we_vindicator;
+			pStr[1] = UmgahPhrase::WeVindicator;
 		}
-		else if (PhraseEnabled(come_in_peace))
+		else if (PhraseEnabled(UmgahPhrase::ComeInPeace))
 		{
-			pStr[1] = come_in_peace;
-		}
-
-		if (PhraseEnabled(know_any_jokes))
-		{
-			pStr[2] = know_any_jokes;
-		}
-		else if (PhraseEnabled(better_joke))
-		{
-			pStr[2] = better_joke;
-		}
-		else if (PhraseEnabled(not_very_funny))
-		{
-			pStr[2] = not_very_funny;
+			pStr[1] = UmgahPhrase::ComeInPeace;
 		}
 
-		if (PhraseEnabled(what_about_tpet))
+		if (PhraseEnabled(UmgahPhrase::KnowAnyJokes))
 		{
-			pStr[3] = what_about_tpet;
+			pStr[2] = UmgahPhrase::KnowAnyJokes;
+		}
+		else if (PhraseEnabled(UmgahPhrase::BetterJoke))
+		{
+			pStr[2] = UmgahPhrase::BetterJoke;
+		}
+		else if (PhraseEnabled(UmgahPhrase::NotVeryFunny))
+		{
+			pStr[2] = UmgahPhrase::NotVeryFunny;
+		}
+
+		if (PhraseEnabled(UmgahPhrase::WhatAboutTpet))
+		{
+			pStr[3] = UmgahPhrase::WhatAboutTpet;
 		}
 		else
 		{
-			pStr[3] = arilou_told_us;
+			pStr[3] = UmgahPhrase::ArilouToldUs;
 		}
 
-		if (pStr[LastStack])
+		if (pStr[LastStack] != UmgahPhrase::NullPhrase)
 		{
 			Response(pStr[LastStack], Zombies);
 		}
 		for (uint8_t i {0}; i < 4; ++i)
 		{
-			if (i != LastStack && pStr[i])
+			if (i != LastStack && *pStr[i] != UmgahPhrase::NullPhrase)
 			{
 				Response(pStr[i], Zombies);
 			}
 		}
-		Response(bye_zombie, CombatIsInevitable);
+		Response(UmgahPhrase::ByeZombie, CombatIsInevitable);
 	}
 }
 
 static void NormalUmgah(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_up_pre_zombie))
+	if (PlayerSaid(R, UmgahPhrase::WhatsUpPreZombie))
 	{
-		NPCPhrase(GENERAL_INFO_PRE_ZOMBIE);
+		NPCPhrase(UmgahPhrase::GeneralInfoPreZombie);
 
-		DisablePhrase(whats_up_pre_zombie);
+		DisablePhrase(UmgahPhrase::WhatsUpPreZombie);
 	}
-	else if (PlayerSaid(R, want_to_defeat_urquan))
+	else if (PlayerSaid(R, UmgahPhrase::WantToDefeatUrquan))
 	{
-		NPCPhrase(FINE_BY_US);
+		NPCPhrase(UmgahPhrase::FineByUs);
 
-		DisablePhrase(want_to_defeat_urquan);
+		DisablePhrase(UmgahPhrase::WantToDefeatUrquan);
 	}
 
 	if (!uqm::gameState().flag(uqm::GameFlag::UMGAH_EVIL_BLOBBIES))
 	{
-		Response(evil_blobbies_give_up, CombatIsInevitable);
+		Response(UmgahPhrase::EvilBlobbiesGiveUp, CombatIsInevitable);
 	}
 	else
 	{
-		Response(evil_blobbies_must_die, CombatIsInevitable);
+		Response(UmgahPhrase::EvilBlobbiesMustDie, CombatIsInevitable);
 	}
-	if (PhraseEnabled(whats_up_pre_zombie))
+	if (PhraseEnabled(UmgahPhrase::WhatsUpPreZombie))
 	{
-		Response(whats_up_pre_zombie, NormalUmgah);
+		Response(UmgahPhrase::WhatsUpPreZombie, NormalUmgah);
 	}
-	if (PhraseEnabled(want_to_defeat_urquan))
+	if (PhraseEnabled(UmgahPhrase::WantToDefeatUrquan))
 	{
-		Response(want_to_defeat_urquan, NormalUmgah);
+		Response(UmgahPhrase::WantToDefeatUrquan, NormalUmgah);
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::UMGAH_MENTIONED_TRICKS))
 	{
 		case 0:
-			Response(can_we_be_friends, CombatIsInevitable);
+			Response(UmgahPhrase::CanWeBeFriends, CombatIsInevitable);
 			break;
 	}
-	Response(bye_pre_zombie, CombatIsInevitable);
+	Response(UmgahPhrase::ByePreZombie, CombatIsInevitable);
 }
 
 static void UmgahReward(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, what_before_tpet))
+	if (PlayerSaid(R, UmgahPhrase::WhatBeforeTpet))
 	{
-		NPCPhrase(TRKD_SPATHI_AND_ILWRATH);
+		NPCPhrase(UmgahPhrase::TrkdSpathiAndIlwrath);
 
-		DisablePhrase(what_before_tpet);
+		DisablePhrase(UmgahPhrase::WhatBeforeTpet);
 	}
-	else if (PlayerSaid(R, where_caster))
+	else if (PlayerSaid(R, UmgahPhrase::WhereCaster))
 	{
-		NPCPhrase(SPATHI_TOOK_THEM);
+		NPCPhrase(UmgahPhrase::SpathiTookThem);
 
-		DisablePhrase(where_caster);
+		DisablePhrase(UmgahPhrase::WhereCaster);
 	}
-	else if (PlayerSaid(R, owe_me_big_time))
+	else if (PlayerSaid(R, UmgahPhrase::OweMeBigTime))
 	{
-		NPCPhrase(THANKS);
+		NPCPhrase(UmgahPhrase::Thanks);
 
 		uqm::gameState().sis().TotalBioMass += 1000 / BioCreditValueDefault;
-		DisablePhrase(owe_me_big_time);
-		DisablePhrase(our_largesse);
+		DisablePhrase(UmgahPhrase::OweMeBigTime);
+		DisablePhrase(UmgahPhrase::OurLargesse);
 	}
-	else if (PlayerSaid(R, our_largesse))
+	else if (PlayerSaid(R, UmgahPhrase::OurLargesse))
 	{
-		NPCPhrase(GIVE_LIFEDATA);
+		NPCPhrase(UmgahPhrase::GiveLifedata);
 
 		uqm::gameState().sis().TotalBioMass += 1000 / BioCreditValueDefault;
-		DisablePhrase(our_largesse);
-		DisablePhrase(owe_me_big_time);
+		DisablePhrase(UmgahPhrase::OurLargesse);
+		DisablePhrase(UmgahPhrase::OweMeBigTime);
 	}
-	else if (PlayerSaid(R, what_do_with_tpet))
+	else if (PlayerSaid(R, UmgahPhrase::WhatDoWithTpet))
 	{
-		NPCPhrase(TRICK_URQUAN);
+		NPCPhrase(UmgahPhrase::TrickUrquan);
 
-		DisablePhrase(what_do_with_tpet);
+		DisablePhrase(UmgahPhrase::WhatDoWithTpet);
 	}
-	else if (PlayerSaid(R, any_jokes))
+	else if (PlayerSaid(R, UmgahPhrase::AnyJokes))
 	{
-		NPCPhrase(SURE);
+		NPCPhrase(UmgahPhrase::Sure);
 
-		DisablePhrase(any_jokes);
+		DisablePhrase(UmgahPhrase::AnyJokes);
 	}
-	else if (PlayerSaid(R, so_what_for_now))
+	else if (PlayerSaid(R, UmgahPhrase::SoWhatForNow))
 	{
-		NPCPhrase(DO_THIS_NOW);
+		NPCPhrase(UmgahPhrase::DoThisNow);
 
-		DisablePhrase(so_what_for_now);
+		DisablePhrase(UmgahPhrase::SoWhatForNow);
 	}
 
 	if (!uqm::gameState().flag(uqm::GameFlag::MET_NORMAL_UMGAH))
 	{
-		if (PhraseEnabled(what_before_tpet))
+		if (PhraseEnabled(UmgahPhrase::WhatBeforeTpet))
 		{
-			Response(what_before_tpet, UmgahReward);
+			Response(UmgahPhrase::WhatBeforeTpet, UmgahReward);
 		}
-		else if (PhraseEnabled(where_caster))
+		else if (PhraseEnabled(UmgahPhrase::WhereCaster))
 		{
-			Response(where_caster, UmgahReward);
+			Response(UmgahPhrase::WhereCaster, UmgahReward);
 		}
 	}
-	if (PhraseEnabled(owe_me_big_time))
+	if (PhraseEnabled(UmgahPhrase::OweMeBigTime))
 	{
-		Response(owe_me_big_time, UmgahReward);
-		Response(our_largesse, UmgahReward);
+		Response(UmgahPhrase::OweMeBigTime, UmgahReward);
+		Response(UmgahPhrase::OurLargesse, UmgahReward);
 	}
-	if (PhraseEnabled(what_do_with_tpet))
+	if (PhraseEnabled(UmgahPhrase::WhatDoWithTpet))
 	{
-		Response(what_do_with_tpet, UmgahReward);
+		Response(UmgahPhrase::WhatDoWithTpet, UmgahReward);
 	}
-	else if (PhraseEnabled(any_jokes) && uqm::gameState().flag(uqm::GameFlag::UMGAH_MENTIONED_TRICKS) < 2)
+	else if (PhraseEnabled(UmgahPhrase::AnyJokes) && uqm::gameState().flag(uqm::GameFlag::UMGAH_MENTIONED_TRICKS) < 2)
 	{
-		Response(any_jokes, UmgahReward);
+		Response(UmgahPhrase::AnyJokes, UmgahReward);
 	}
-	if (PhraseEnabled(so_what_for_now))
+	if (PhraseEnabled(UmgahPhrase::SoWhatForNow))
 	{
-		Response(so_what_for_now, UmgahReward);
+		Response(UmgahPhrase::SoWhatForNow, UmgahReward);
 	}
-	Response(bye_post_zombie, CombatIsInevitable);
+	Response(UmgahPhrase::ByePostZombie, CombatIsInevitable);
 }
 
 static void Intro(void)
@@ -599,7 +599,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(UmgahPhrase::OutTakes);
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 		return;
 	}
@@ -609,16 +609,16 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HOSTILE_HELLO_1);
+				NPCPhrase(UmgahPhrase::HostileHello1);
 				break;
 			case 1:
-				NPCPhrase(HOSTILE_HELLO_2);
+				NPCPhrase(UmgahPhrase::HostileHello2);
 				break;
 			case 2:
-				NPCPhrase(HOSTILE_HELLO_3);
+				NPCPhrase(UmgahPhrase::HostileHello3);
 				break;
 			case 3:
-				NPCPhrase(HOSTILE_HELLO_4);
+				NPCPhrase(UmgahPhrase::HostileHello4);
 				--NumVisits;
 				break;
 		}
@@ -634,16 +634,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(DESTROY_INTERFERER_1);
+					NPCPhrase(UmgahPhrase::DestroyInterferer1);
 					break;
 				case 1:
-					NPCPhrase(DESTROY_INTERFERER_2);
+					NPCPhrase(UmgahPhrase::DestroyInterferer2);
 					break;
 				case 2:
-					NPCPhrase(DESTROY_INTERFERER_3);
+					NPCPhrase(UmgahPhrase::DestroyInterferer3);
 					break;
 				case 3:
-					NPCPhrase(DESTROY_INTERFERER_4);
+					NPCPhrase(UmgahPhrase::DestroyInterferer4);
 					--NumVisits;
 					break;
 			}
@@ -655,16 +655,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(REVEALED_ZOMBIE_HELLO_1);
+					NPCPhrase(UmgahPhrase::RevealedZombieHello1);
 					break;
 				case 1:
-					NPCPhrase(REVEALED_ZOMBIE_HELLO_2);
+					NPCPhrase(UmgahPhrase::RevealedZombieHello2);
 					break;
 				case 2:
-					NPCPhrase(REVEALED_ZOMBIE_HELLO_3);
+					NPCPhrase(UmgahPhrase::RevealedZombieHello3);
 					break;
 				case 3:
-					NPCPhrase(REVEALED_ZOMBIE_HELLO_4);
+					NPCPhrase(UmgahPhrase::RevealedZombieHello4);
 					--NumVisits;
 					break;
 			}
@@ -676,16 +676,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(UNKNOWN_ZOMBIE_HELLO_1);
+					NPCPhrase(UmgahPhrase::UnknownZombieHello1);
 					break;
 				case 1:
-					NPCPhrase(UNKNOWN_ZOMBIE_HELLO_2);
+					NPCPhrase(UmgahPhrase::UnknownZombieHello2);
 					break;
 				case 2:
-					NPCPhrase(UNKNOWN_ZOMBIE_HELLO_3);
+					NPCPhrase(UmgahPhrase::UnknownZombieHello3);
 					break;
 				case 3:
-					NPCPhrase(UNKNOWN_ZOMBIE_HELLO_4);
+					NPCPhrase(UmgahPhrase::UnknownZombieHello4);
 					--NumVisits;
 					break;
 			}
@@ -702,16 +702,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(HWLD_PRE_ZOMBIE_HELLO_1);
+					NPCPhrase(UmgahPhrase::HwldPreZombieHello1);
 					break;
 				case 1:
-					NPCPhrase(HWLD_PRE_ZOMBIE_HELLO_2);
+					NPCPhrase(UmgahPhrase::HwldPreZombieHello2);
 					break;
 				case 2:
-					NPCPhrase(HWLD_PRE_ZOMBIE_HELLO_3);
+					NPCPhrase(UmgahPhrase::HwldPreZombieHello3);
 					break;
 				case 3:
-					NPCPhrase(HWLD_PRE_ZOMBIE_HELLO_4);
+					NPCPhrase(UmgahPhrase::HwldPreZombieHello4);
 					--NumVisits;
 					break;
 			}
@@ -725,16 +725,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(SPACE_PRE_ZOMBIE_HELLO_1);
+					NPCPhrase(UmgahPhrase::SpacePreZombieHello1);
 					break;
 				case 1:
-					NPCPhrase(SPACE_PRE_ZOMBIE_HELLO_2);
+					NPCPhrase(UmgahPhrase::SpacePreZombieHello2);
 					break;
 				case 2:
-					NPCPhrase(SPACE_PRE_ZOMBIE_HELLO_3);
+					NPCPhrase(UmgahPhrase::SpacePreZombieHello3);
 					break;
 				case 3:
-					NPCPhrase(SPACE_PRE_ZOMBIE_HELLO_4);
+					NPCPhrase(UmgahPhrase::SpacePreZombieHello4);
 					--NumVisits;
 					break;
 			}
@@ -747,7 +747,7 @@ static void Intro(void)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NPCPhrase(POST_ZOMBIE_HWLD_HELLO);
+			NPCPhrase(UmgahPhrase::PostZombieHwldHello);
 
 			SetHomeworldKnown(*HomeId::Umgah);
 			UmgahReward((RESPONSE_REF)0);
@@ -758,10 +758,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(REWARD_AT_HOMEWORLD_1);
+					NPCPhrase(UmgahPhrase::RewardAtHomeworld1);
 					break;
 				case 1:
-					NPCPhrase(REWARD_AT_HOMEWORLD_2);
+					NPCPhrase(UmgahPhrase::RewardAtHomeworld2);
 					--NumVisits;
 					break;
 			}

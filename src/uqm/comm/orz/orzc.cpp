@@ -236,51 +236,51 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue::Peace);
 
-	if (PlayerSaid(R, bye_ally))
+	if (PlayerSaid(R, OrzPhrase::ByeAlly))
 	{
-		NPCPhrase(GOODBYE_ALLY);
+		NPCPhrase(OrzPhrase::GoodbyeAlly);
 	}
-	else if (PlayerSaid(R, bye_neutral))
+	else if (PlayerSaid(R, OrzPhrase::ByeNeutral))
 	{
-		NPCPhrase(GOODBYE_NEUTRAL);
+		NPCPhrase(OrzPhrase::GoodbyeNeutral);
 	}
-	else if (PlayerSaid(R, bye_angry))
+	else if (PlayerSaid(R, OrzPhrase::ByeAngry))
 	{
-		NPCPhrase(GOODBYE_ANGRY);
+		NPCPhrase(OrzPhrase::GoodbyeAngry);
 	}
-	else if (PlayerSaid(R, bye_taalo))
+	else if (PlayerSaid(R, OrzPhrase::ByeTaalo))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER) == 1)
 		{
-			NPCPhrase(ANGRY_TAALO_GOODBYE);
+			NPCPhrase(OrzPhrase::AngryTaaloGoodbye);
 		}
 		else
 		{
-			NPCPhrase(FRIENDLY_TAALO_GOODBYE);
+			NPCPhrase(OrzPhrase::FriendlyTaaloGoodbye);
 		}
 	}
-	else if (PlayerSaid(R, hostile_2))
+	else if (PlayerSaid(R, OrzPhrase::Hostile2))
 	{
-		NPCPhrase(HOSTILITY_IS_BAD_2);
+		NPCPhrase(OrzPhrase::HostilityIsBad2);
 
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, may_we_land))
+	else if (PlayerSaid(R, OrzPhrase::MayWeLand))
 	{
-		NPCPhrase(SURE_LAND);
+		NPCPhrase(OrzPhrase::SureLand);
 
 		uqm::gameState().setFlag(uqm::GameFlag::TAALO_UNPROTECTED, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, yes_alliance)
-			 || PlayerSaid(R, were_sorry))
+	else if (PlayerSaid(R, OrzPhrase::YesAlliance)
+			 || PlayerSaid(R, OrzPhrase::WereSorry))
 	{
-		if (PlayerSaid(R, yes_alliance))
+		if (PlayerSaid(R, OrzPhrase::YesAlliance))
 		{
-			NPCPhrase(GREAT);
+			NPCPhrase(OrzPhrase::Great);
 		}
 		else
 		{
-			NPCPhrase(APOLOGY_ACCEPTED);
+			NPCPhrase(OrzPhrase::ApologyAccepted);
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(0));
@@ -289,14 +289,14 @@ static void ExitConversation(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(3));
 		SetRaceAllied(RaceId::Orz, true);
 	}
-	else if (PlayerSaid(R, demand_to_land))
+	else if (PlayerSaid(R, OrzPhrase::DemandToLand))
 	{
-		NPCPhrase(NO_DEMAND);
+		NPCPhrase(OrzPhrase::NoDemand);
 
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, about_andro_3)
-			 || PlayerSaid(R, must_know_about_androsyn))
+	else if (PlayerSaid(R, OrzPhrase::AboutAndro3)
+			 || PlayerSaid(R, OrzPhrase::MustKnowAboutAndrosyn))
 	{
 		// Run filter for HdResolutionFactor
 		if (IsHd())
@@ -307,19 +307,19 @@ static void ExitConversation(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond / 2);
 
-		if (PlayerSaid(R, about_andro_3))
+		if (PlayerSaid(R, OrzPhrase::AboutAndro3))
 		{
-			NPCPhrase(BLEW_IT);
+			NPCPhrase(OrzPhrase::BlewIt);
 		}
 		else
 		{
-			NPCPhrase(KNOW_TOO_MUCH);
+			NPCPhrase(OrzPhrase::KnowTooMuch);
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(2));
 		setSegue(Segue::Hostile);
-		if (PlayerSaid(R, about_andro_3))
+		if (PlayerSaid(R, OrzPhrase::AboutAndro3))
 		{
 			SetRaceAllied(RaceId::Orz, false);
 			RemoveEscortShips(RaceId::Orz);
@@ -333,20 +333,20 @@ static void ExitConversation(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(INSULTED_1);
+				NPCPhrase(OrzPhrase::Insulted1);
 				break;
 			case 1:
-				NPCPhrase(INSULTED_2);
+				NPCPhrase(OrzPhrase::Insulted2);
 				break;
 			case 2:
-				NPCPhrase(INSULTED_3);
+				NPCPhrase(OrzPhrase::Insulted3);
 				setSegue(Segue::Hostile);
 				break;
 			case 7:
 				--NumVisits;
 				FALLTHROUGH;
 			default:
-				NPCPhrase(INSULTED_4);
+				NPCPhrase(OrzPhrase::Insulted4);
 				setSegue(Segue::Hostile);
 				break;
 		}
@@ -360,184 +360,184 @@ static void TaaloWorld(RESPONSE_REF R)
 	uint8_t Manner {};
 
 	Manner = uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER);
-	if (PlayerSaid(R, demand_to_land))
+	if (PlayerSaid(R, OrzPhrase::DemandToLand))
 	{
-		NPCPhrase(ASK_NICELY);
+		NPCPhrase(OrzPhrase::AskNicely);
 
-		DisablePhrase(demand_to_land);
+		DisablePhrase(OrzPhrase::DemandToLand);
 	}
-	else if (PlayerSaid(R, why_you_here))
+	else if (PlayerSaid(R, OrzPhrase::WhyYouHere))
 	{
 		if (Manner != 1)
 		{
-			NPCPhrase(FRIENDLY_EXPLANATION);
+			NPCPhrase(OrzPhrase::FriendlyExplanation);
 		}
 		else
 		{
-			NPCPhrase(ANGRY_EXPLANATION);
+			NPCPhrase(OrzPhrase::AngryExplanation);
 		}
 
-		DisablePhrase(why_you_here);
+		DisablePhrase(OrzPhrase::WhyYouHere);
 	}
-	else if (PlayerSaid(R, what_is_this_place))
+	else if (PlayerSaid(R, OrzPhrase::WhatIsThisPlace))
 	{
 		if (Manner != 1)
 		{
-			NPCPhrase(FRIENDLY_PLACE);
+			NPCPhrase(OrzPhrase::FriendlyPlace);
 		}
 		else
 		{
-			NPCPhrase(ANGRY_PLACE);
+			NPCPhrase(OrzPhrase::AngryPlace);
 			SetHomeworldKnown(*HomeId::Orz);
 		}
 
-		DisablePhrase(what_is_this_place);
+		DisablePhrase(OrzPhrase::WhatIsThisPlace);
 	}
-	else if (PlayerSaid(R, may_we_land))
+	else if (PlayerSaid(R, OrzPhrase::MayWeLand))
 	{
-		NPCPhrase(ALLIES_CAN_VISIT);
+		NPCPhrase(OrzPhrase::AlliesCanVisit);
 
-		DisablePhrase(may_we_land);
+		DisablePhrase(OrzPhrase::MayWeLand);
 	}
-	else if (PlayerSaid(R, make_alliance))
+	else if (PlayerSaid(R, OrzPhrase::MakeAlliance))
 	{
-		NPCPhrase(CANT_ALLY_HERE);
+		NPCPhrase(OrzPhrase::CantAllyHere);
 		SetHomeworldKnown(*HomeId::Orz);
 
-		DisablePhrase(make_alliance);
+		DisablePhrase(OrzPhrase::MakeAlliance);
 	}
-	else if (PlayerSaid(R, why_busy))
+	else if (PlayerSaid(R, OrzPhrase::WhyBusy))
 	{
-		NPCPhrase(BUSY_BECAUSE);
+		NPCPhrase(OrzPhrase::BusyBecause);
 
-		DisablePhrase(why_busy);
+		DisablePhrase(OrzPhrase::WhyBusy);
 	}
 
-	if (PhraseEnabled(may_we_land))
+	if (PhraseEnabled(OrzPhrase::MayWeLand))
 	{
 		if (Manner == 3 && CheckAlliance(RaceId::Orz) == RaceAllegiance::Good)
 		{
-			Response(may_we_land, ExitConversation);
+			Response(OrzPhrase::MayWeLand, ExitConversation);
 		}
 		else
 		{
-			Response(may_we_land, TaaloWorld);
+			Response(OrzPhrase::MayWeLand, TaaloWorld);
 		}
 	}
-	else if (PhraseEnabled(make_alliance))
+	else if (PhraseEnabled(OrzPhrase::MakeAlliance))
 	{
-		Response(make_alliance, TaaloWorld);
+		Response(OrzPhrase::MakeAlliance, TaaloWorld);
 	}
-	else if (PhraseEnabled(why_busy))
+	else if (PhraseEnabled(OrzPhrase::WhyBusy))
 	{
-		Response(why_busy, TaaloWorld);
+		Response(OrzPhrase::WhyBusy, TaaloWorld);
 	}
-	if (PhraseEnabled(demand_to_land))
+	if (PhraseEnabled(OrzPhrase::DemandToLand))
 	{
 		if (Manner == 1)
 		{
-			Response(demand_to_land, ExitConversation);
+			Response(OrzPhrase::DemandToLand, ExitConversation);
 		}
 		else
 		{
-			Response(demand_to_land, TaaloWorld);
+			Response(OrzPhrase::DemandToLand, TaaloWorld);
 		}
 	}
-	if (PhraseEnabled(why_you_here))
+	if (PhraseEnabled(OrzPhrase::WhyYouHere))
 	{
-		Response(why_you_here, TaaloWorld);
+		Response(OrzPhrase::WhyYouHere, TaaloWorld);
 	}
-	if (PhraseEnabled(what_is_this_place))
+	if (PhraseEnabled(OrzPhrase::WhatIsThisPlace))
 	{
-		Response(what_is_this_place, TaaloWorld);
+		Response(OrzPhrase::WhatIsThisPlace, TaaloWorld);
 	}
-	Response(bye_taalo, ExitConversation);
+	Response(OrzPhrase::ByeTaalo, ExitConversation);
 }
 
 static void OrzAllied(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, whats_up_ally))
+	if (PlayerSaid(R, OrzPhrase::WhatsUpAlly))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_GENERAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_ALLY_1);
+				NPCPhrase(OrzPhrase::GeneralInfoAlly1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_ALLY_2);
+				NPCPhrase(OrzPhrase::GeneralInfoAlly2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_ALLY_3);
+				NPCPhrase(OrzPhrase::GeneralInfoAlly3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_ALLY_4);
+				NPCPhrase(OrzPhrase::GeneralInfoAlly4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_ally);
+		DisablePhrase(OrzPhrase::WhatsUpAlly);
 	}
-	else if (PlayerSaid(R, more_about_you))
+	else if (PlayerSaid(R, OrzPhrase::MoreAboutYou))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_PERSONAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(ABOUT_US_1);
+				NPCPhrase(OrzPhrase::AboutUs1);
 				break;
 			case 1:
-				NPCPhrase(ABOUT_US_2);
+				NPCPhrase(OrzPhrase::AboutUs2);
 				break;
 			case 2:
-				NPCPhrase(ABOUT_US_3);
+				NPCPhrase(OrzPhrase::AboutUs3);
 				break;
 			case 3:
-				NPCPhrase(ABOUT_US_4);
+				NPCPhrase(OrzPhrase::AboutUs4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(more_about_you);
+		DisablePhrase(OrzPhrase::MoreAboutYou);
 	}
-	else if (PlayerSaid(R, about_andro_1))
+	else if (PlayerSaid(R, OrzPhrase::AboutAndro1))
 	{
-		NPCPhrase(FORGET_ANDRO_1);
+		NPCPhrase(OrzPhrase::ForgetAndro1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, about_andro_2))
+	else if (PlayerSaid(R, OrzPhrase::AboutAndro2))
 	{
-		NPCPhrase(FORGET_ANDRO_2);
+		NPCPhrase(OrzPhrase::ForgetAndro2);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(2));
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 0)
 	{
-		Response(about_andro_1, OrzAllied);
+		Response(OrzPhrase::AboutAndro1, OrzAllied);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 1)
 	{
-		Response(about_andro_2, OrzAllied);
+		Response(OrzPhrase::AboutAndro2, OrzAllied);
 	}
 	else
 	{
-		Response(about_andro_3, ExitConversation);
+		Response(OrzPhrase::AboutAndro3, ExitConversation);
 	}
-	if (PhraseEnabled(whats_up_ally))
+	if (PhraseEnabled(OrzPhrase::WhatsUpAlly))
 	{
-		Response(whats_up_ally, OrzAllied);
+		Response(OrzPhrase::WhatsUpAlly, OrzAllied);
 	}
-	if (PhraseEnabled(more_about_you))
+	if (PhraseEnabled(OrzPhrase::MoreAboutYou))
 	{
-		Response(more_about_you, OrzAllied);
+		Response(OrzPhrase::MoreAboutYou, OrzAllied);
 	}
-	Response(bye_ally, ExitConversation);
+	Response(OrzPhrase::ByeAlly, ExitConversation);
 }
 
 static void OrzNeutral(RESPONSE_REF R);
@@ -545,101 +545,101 @@ static void OrzNeutral(RESPONSE_REF R);
 static void WhereAndrosyn(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	NPCPhrase(DISEMBLE_ABOUT_ANDROSYN);
-	DisablePhrase(where_androsyn);
+	NPCPhrase(OrzPhrase::DisembleAboutAndrosyn);
+	DisablePhrase(OrzPhrase::WhereAndrosyn);
 
-	Response(must_know_about_androsyn, ExitConversation);
-	Response(dont_really_care, OrzNeutral);
+	Response(OrzPhrase::MustKnowAboutAndrosyn, ExitConversation);
+	Response(OrzPhrase::DontReallyCare, OrzNeutral);
 }
 
 static void OfferAlliance(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, seem_like_nice_guys))
+	if (PlayerSaid(R, OrzPhrase::SeemLikeNiceGuys))
 	{
-		NPCPhrase(ARE_NICE_WANT_ALLY);
+		NPCPhrase(OrzPhrase::AreNiceWantAlly);
 	}
-	else if (PlayerSaid(R, talk_about_alliance))
+	else if (PlayerSaid(R, OrzPhrase::TalkAboutAlliance))
 	{
-		NPCPhrase(OK_TALK_ALLIANCE);
+		NPCPhrase(OrzPhrase::OkTalkAlliance);
 	}
-	else if (PlayerSaid(R, why_so_trusting))
+	else if (PlayerSaid(R, OrzPhrase::WhySoTrusting))
 	{
-		NPCPhrase(TRUSTING_BECAUSE);
+		NPCPhrase(OrzPhrase::TrustingBecause);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_STACK1, static_cast<uint32_t>(1));
 	}
 
-	Response(no_alliance, OrzNeutral);
-	Response(decide_later, OrzNeutral);
+	Response(OrzPhrase::NoAlliance, OrzNeutral);
+	Response(OrzPhrase::DecideLater, OrzNeutral);
 	if (uqm::gameState().flag(uqm::GameFlag::ORZ_STACK1) == 0)
 	{
-		Response(why_so_trusting, OfferAlliance);
+		Response(OrzPhrase::WhySoTrusting, OfferAlliance);
 	}
-	Response(yes_alliance, ExitConversation);
+	Response(OrzPhrase::YesAlliance, ExitConversation);
 }
 
 static void OrzNeutral(RESPONSE_REF R)
 {
-	RESPONSE_REF pStr[3];
+	OrzPhrase pStr[3];
 
 	uint8_t LastStack {0};
-	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PlayerSaid(R, hostile_1))
+	pStr[0] = pStr[1] = pStr[2] = OrzPhrase::NullPhrase;
+	if (PlayerSaid(R, OrzPhrase::Hostile1))
 	{
-		NPCPhrase(HOSTILITY_IS_BAD_1);
+		NPCPhrase(OrzPhrase::HostilityIsBad1);
 
-		DisablePhrase(hostile_1);
+		DisablePhrase(OrzPhrase::Hostile1);
 		LastStack = 2;
 	}
-	else if (PlayerSaid(R, we_are_vindicator))
+	else if (PlayerSaid(R, OrzPhrase::WeAreVindicator))
 	{
-		NPCPhrase(NICE_TO_MEET_YOU);
+		NPCPhrase(OrzPhrase::NiceToMeetYou);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_STACK0, static_cast<uint32_t>(1));
 		LastStack = 1;
 	}
-	else if (PlayerSaid(R, who_you))
+	else if (PlayerSaid(R, OrzPhrase::WhoYou))
 	{
-		NPCPhrase(WE_ARE_ORZ);
+		NPCPhrase(OrzPhrase::WeAreOrz);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, why_here))
+	else if (PlayerSaid(R, OrzPhrase::WhyHere))
 	{
-		NPCPhrase(HERE_BECAUSE);
+		NPCPhrase(OrzPhrase::HereBecause);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, no_alliance))
+	else if (PlayerSaid(R, OrzPhrase::NoAlliance))
 	{
-		NPCPhrase(MAYBE_LATER);
+		NPCPhrase(OrzPhrase::MaybeLater);
 
-		DisablePhrase(talk_about_alliance);
+		DisablePhrase(OrzPhrase::TalkAboutAlliance);
 		uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, decide_later))
+	else if (PlayerSaid(R, OrzPhrase::DecideLater))
 	{
-		NPCPhrase(OK_LATER);
+		NPCPhrase(OrzPhrase::OkLater);
 
-		DisablePhrase(talk_about_alliance);
+		DisablePhrase(OrzPhrase::TalkAboutAlliance);
 		uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, dont_really_care))
+	else if (PlayerSaid(R, OrzPhrase::DontReallyCare))
 	{
-		NPCPhrase(YOU_ARE_OUR_FRIENDS);
+		NPCPhrase(OrzPhrase::YouAreOurFriends);
 	}
-	else if (PlayerSaid(R, where_androsyn))
+	else if (PlayerSaid(R, OrzPhrase::WhereAndrosyn))
 	{
 		WhereAndrosyn(R);
 		return;
 	}
-	else if (PlayerSaid(R, talk_about_alliance)
-			 || PlayerSaid(R, seem_like_nice_guys))
+	else if (PlayerSaid(R, OrzPhrase::TalkAboutAlliance)
+			 || PlayerSaid(R, OrzPhrase::SeemLikeNiceGuys))
 	{
 		OfferAlliance(R);
 		return;
 	}
-	else if (PlayerSaid(R, hostile_2))
+	else if (PlayerSaid(R, OrzPhrase::Hostile2))
 	{
 		ExitConversation(R);
 		return;
@@ -647,58 +647,58 @@ static void OrzNeutral(RESPONSE_REF R)
 
 	if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 0)
 	{
-		pStr[0] = who_you;
+		pStr[0] = OrzPhrase::WhoYou;
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 1)
 	{
-		pStr[0] = why_here;
+		pStr[0] = OrzPhrase::WhyHere;
 	}
-	else if (PhraseEnabled(where_androsyn) && uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 2)
+	else if (PhraseEnabled(OrzPhrase::WhereAndrosyn) && uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 2)
 	{
-		pStr[0] = where_androsyn;
+		pStr[0] = OrzPhrase::WhereAndrosyn;
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE))
 	{
-		if (PhraseEnabled(talk_about_alliance))
+		if (PhraseEnabled(OrzPhrase::TalkAboutAlliance))
 		{
-			pStr[1] = talk_about_alliance;
+			pStr[1] = OrzPhrase::TalkAboutAlliance;
 		}
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::ORZ_STACK0) == 0)
 	{
-		pStr[1] = we_are_vindicator;
+		pStr[1] = OrzPhrase::WeAreVindicator;
 	}
 	else
 	{
-		pStr[1] = seem_like_nice_guys;
+		pStr[1] = OrzPhrase::SeemLikeNiceGuys;
 	}
-	if (PhraseEnabled(hostile_1))
+	if (PhraseEnabled(OrzPhrase::Hostile1))
 	{
-		pStr[2] = hostile_1;
+		pStr[2] = OrzPhrase::Hostile1;
 	}
 	else
 	{
-		pStr[2] = hostile_2;
+		pStr[2] = OrzPhrase::Hostile2;
 	}
 
-	if (pStr[LastStack])
+	if (pStr[LastStack] != OrzPhrase::NullPhrase)
 	{
 		Response(pStr[LastStack], OrzNeutral);
 	}
 
 	for (uint8_t i {0}; i < 3; ++i)
 	{
-		if (i != LastStack && pStr[i])
+		if (i != LastStack && *pStr[i] != OrzPhrase::NullPhrase)
 		{
 			Response(pStr[i], OrzNeutral);
 		}
 	}
-	Response(bye_neutral, ExitConversation);
+	Response(OrzPhrase::ByeNeutral, ExitConversation);
 }
 
 static void OrzAngry(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_up_angry))
+	if (PlayerSaid(R, OrzPhrase::WhatsUpAngry))
 	{
 		uint8_t NumVisits {};
 
@@ -706,51 +706,51 @@ static void OrzAngry(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_ANGRY_1);
+				NPCPhrase(OrzPhrase::GeneralInfoAngry1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_ANGRY_2);
+				NPCPhrase(OrzPhrase::GeneralInfoAngry2);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_angry);
+		DisablePhrase(OrzPhrase::WhatsUpAngry);
 	}
 
-	if (PhraseEnabled(whats_up_angry))
+	if (PhraseEnabled(OrzPhrase::WhatsUpAngry))
 	{
-		Response(whats_up_angry, OrzAngry);
+		Response(OrzPhrase::WhatsUpAngry, OrzAngry);
 	}
-	Response(were_sorry, ExitConversation);
+	Response(OrzPhrase::WereSorry, ExitConversation);
 	switch (uqm::gameState().flag(uqm::GameFlag::ORZ_PERSONAL_INFO))
 	{
 		case 0:
-			Response(insult_1, ExitConversation);
+			Response(OrzPhrase::Insult1, ExitConversation);
 			break;
 		case 1:
-			Response(insult_2, ExitConversation);
+			Response(OrzPhrase::Insult2, ExitConversation);
 			break;
 		case 2:
-			Response(insult_3, ExitConversation);
+			Response(OrzPhrase::Insult3, ExitConversation);
 			break;
 		case 3:
-			Response(insult_4, ExitConversation);
+			Response(OrzPhrase::Insult4, ExitConversation);
 			break;
 		case 4:
-			Response(insult_5, ExitConversation);
+			Response(OrzPhrase::Insult5, ExitConversation);
 			break;
 		case 5:
-			Response(insult_6, ExitConversation);
+			Response(OrzPhrase::Insult6, ExitConversation);
 			break;
 		case 6:
-			Response(insult_7, ExitConversation);
+			Response(OrzPhrase::Insult7, ExitConversation);
 			break;
 		case 7:
-			Response(insult_8, ExitConversation);
+			Response(OrzPhrase::Insult8, ExitConversation);
 			break;
 	}
-	Response(bye_angry, ExitConversation);
+	Response(OrzPhrase::ByeAngry, ExitConversation);
 }
 
 static void Intro(void)
@@ -760,7 +760,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(OrzPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -768,7 +768,7 @@ static void Intro(void)
 
 	if (!uqm::gameState().flag(uqm::GameFlag::MET_ORZ_BEFORE))
 	{
-		NPCPhrase(INIT_HELLO);
+		NPCPhrase(OrzPhrase::InitHello);
 	}
 
 	Manner = uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER);
@@ -790,10 +790,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HOSTILE_HELLO_1);
+				NPCPhrase(OrzPhrase::HostileHello1);
 				break;
 			case 1:
-				NPCPhrase(HOSTILE_HELLO_2);
+				NPCPhrase(OrzPhrase::HostileHello2);
 				--NumVisits;
 				break;
 		}
@@ -809,10 +809,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(FRIENDLY_ALLIED_TAALO_HELLO_1);
+					NPCPhrase(OrzPhrase::FriendlyAlliedTaaloHello1);
 					break;
 				case 1:
-					NPCPhrase(FRIENDLY_ALLIED_TAALO_HELLO_2);
+					NPCPhrase(OrzPhrase::FriendlyAlliedTaaloHello2);
 					--NumVisits;
 					break;
 			}
@@ -822,10 +822,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ANGRY_TAALO_HELLO_1);
+					NPCPhrase(OrzPhrase::AngryTaaloHello1);
 					break;
 				case 1:
-					NPCPhrase(ANGRY_TAALO_HELLO_2);
+					NPCPhrase(OrzPhrase::AngryTaaloHello2);
 					--NumVisits;
 					break;
 			}
@@ -842,16 +842,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_1);
+					NPCPhrase(OrzPhrase::AlliedHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_2);
+					NPCPhrase(OrzPhrase::AlliedHomeworldHello2);
 					break;
 				case 2:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_3);
+					NPCPhrase(OrzPhrase::AlliedHomeworldHello3);
 					break;
 				case 3:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_4);
+					NPCPhrase(OrzPhrase::AlliedHomeworldHello4);
 					--NumVisits;
 					break;
 			}
@@ -863,16 +863,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ALLIED_SPACE_HELLO_1);
+					NPCPhrase(OrzPhrase::AlliedSpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(ALLIED_SPACE_HELLO_2);
+					NPCPhrase(OrzPhrase::AlliedSpaceHello2);
 					break;
 				case 2:
-					NPCPhrase(ALLIED_SPACE_HELLO_3);
+					NPCPhrase(OrzPhrase::AlliedSpaceHello3);
 					break;
 				case 3:
-					NPCPhrase(ALLIED_SPACE_HELLO_4);
+					NPCPhrase(OrzPhrase::AlliedSpaceHello4);
 					--NumVisits;
 					break;
 			}
@@ -889,16 +889,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_1);
+					NPCPhrase(OrzPhrase::NeutralHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_2);
+					NPCPhrase(OrzPhrase::NeutralHomeworldHello2);
 					break;
 				case 2:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_3);
+					NPCPhrase(OrzPhrase::NeutralHomeworldHello3);
 					break;
 				case 3:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_4);
+					NPCPhrase(OrzPhrase::NeutralHomeworldHello4);
 					--NumVisits;
 					break;
 			}
@@ -910,16 +910,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_1);
+					NPCPhrase(OrzPhrase::NeutralSpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_2);
+					NPCPhrase(OrzPhrase::NeutralSpaceHello2);
 					break;
 				case 2:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_3);
+					NPCPhrase(OrzPhrase::NeutralSpaceHello3);
 					break;
 				case 3:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_4);
+					NPCPhrase(OrzPhrase::NeutralSpaceHello4);
 					--NumVisits;
 					break;
 			}
@@ -936,10 +936,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ANGRY_HOMEWORLD_HELLO_1);
+					NPCPhrase(OrzPhrase::AngryHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(ANGRY_HOMEWORLD_HELLO_2);
+					NPCPhrase(OrzPhrase::AngryHomeworldHello2);
 					--NumVisits;
 					break;
 			}
@@ -951,10 +951,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ANGRY_SPACE_HELLO_1);
+					NPCPhrase(OrzPhrase::AngrySpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(ANGRY_SPACE_HELLO_2);
+					NPCPhrase(OrzPhrase::AngrySpaceHello2);
 					--NumVisits;
 					break;
 			}

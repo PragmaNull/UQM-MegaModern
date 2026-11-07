@@ -204,69 +204,69 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue::Peace);
 
-	if (PlayerSaid(R, bye_homeworld))
+	if (PlayerSaid(R, ZoqFotPikPhrase::ByeHomeworld))
 	{
-		NPCPhrase_cb(GOODBYE_HOME0, &SelectAlienZOQ);
-		NPCPhrase_cb(GOODBYE_HOME1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::GoodbyeHome0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::GoodbyeHome1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 	}
-	else if (PlayerSaid(R, decide_later))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::DecideLater))
 	{
-		NPCPhrase_cb(PLEASE_HURRY0, &SelectAlienZOQ);
-		NPCPhrase_cb(PLEASE_HURRY1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::PleaseHurry0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::PleaseHurry1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 	}
-	else if (PlayerSaid(R, valuable_info))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::ValuableInfo))
 	{
-		NPCPhrase_cb(GOODBYE0, &SelectAlienZOQ);
-		NPCPhrase_cb(GOODBYE1, &SelectAlienPIK);
-		NPCPhrase_cb(GOODBYE2, &SelectAlienZOQ);
-		NPCPhrase_cb(GOODBYE3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Goodbye0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Goodbye1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Goodbye2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Goodbye3, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 	}
-	else if (PlayerSaid(R, how_can_i_help))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::HowCanIHelp))
 	{
-		NPCPhrase_cb(EMMISSARIES0, &SelectAlienZOQ);
-		NPCPhrase_cb(EMMISSARIES1, &SelectAlienPIK);
-		NPCPhrase_cb(EMMISSARIES2, &SelectAlienZOQ);
-		NPCPhrase_cb(EMMISSARIES3, &SelectAlienPIK);
-		NPCPhrase_cb(EMMISSARIES4, &SelectAlienZOQ);
-		NPCPhrase_cb(EMMISSARIES5, &SelectAlienPIK);
-		NPCPhrase_cb(EMMISSARIES6, &SelectAlienZOQ);
-		NPCPhrase_cb(EMMISSARIES7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Emmissaries0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Emmissaries1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Emmissaries2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Emmissaries3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Emmissaries4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Emmissaries5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Emmissaries6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Emmissaries7, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
 		SetHomeworldKnown(*HomeId::Zoqfotpik);
 	}
-	else if (PlayerSaid(R, sure))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::Sure))
 	{
-		NPCPhrase_cb(WE_ALLY0, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_ALLY1, &SelectAlienPIK);
-		NPCPhrase_cb(WE_ALLY2, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_ALLY3, &SelectAlienPIK);
-		NPCPhrase_cb(WE_ALLY4, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_ALLY5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAlly0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAlly1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAlly2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAlly3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAlly4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAlly5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 		SetRaceAllied(RaceId::Zoqfotpik, true);
 		AddEvent(EventType::Relative, 3, 0, 0, GameEventId::ZoqfotDistressEvent);
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
 	}
-	else if (PlayerSaid(R, all_very_interesting))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::AllVeryInteresting))
 	{
-		NPCPhrase_cb(SEE_TOLD_YOU0, &SelectAlienZOQ);
-		NPCPhrase_cb(SEE_TOLD_YOU1, &SelectAlienPIK);
-		NPCPhrase_cb(SEE_TOLD_YOU2, &SelectAlienZOQ);
-		NPCPhrase_cb(SEE_TOLD_YOU3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::SeeToldYou0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::SeeToldYou1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::SeeToldYou2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::SeeToldYou3, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOSTILE, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, never))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::Never))
 	{
-		NPCPhrase_cb(WE_ENEMIES0, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_ENEMIES1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeEnemies0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeEnemies1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
@@ -278,307 +278,307 @@ static void ExitConversation(RESPONSE_REF R)
 static void FormAlliance(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	NPCPhrase_cb(ALLY_WITH_US0, &SelectAlienZOQ);
-	NPCPhrase_cb(ALLY_WITH_US1, &SelectAlienPIK);
-	NPCPhrase_cb(ALLY_WITH_US2, &SelectAlienZOQ);
-	NPCPhrase_cb(ALLY_WITH_US3, &SelectAlienPIK);
-	NPCPhrase_cb(ALLY_WITH_US4, &SelectAlienZOQ);
-	NPCPhrase_cb(ALLY_WITH_US5, &SelectAlienPIK);
+	NPCPhrase_cb(ZoqFotPikPhrase::AllyWithUs0, &SelectAlienZOQ);
+	NPCPhrase_cb(ZoqFotPikPhrase::AllyWithUs1, &SelectAlienPIK);
+	NPCPhrase_cb(ZoqFotPikPhrase::AllyWithUs2, &SelectAlienZOQ);
+	NPCPhrase_cb(ZoqFotPikPhrase::AllyWithUs3, &SelectAlienPIK);
+	NPCPhrase_cb(ZoqFotPikPhrase::AllyWithUs4, &SelectAlienZOQ);
+	NPCPhrase_cb(ZoqFotPikPhrase::AllyWithUs5, &SelectAlienPIK);
 	ZFPTalkSegue((uint16_t)~0);
 
-	Response(sure, ExitConversation);
-	Response(never, ExitConversation);
-	Response(decide_later, ExitConversation);
+	Response(ZoqFotPikPhrase::Sure, ExitConversation);
+	Response(ZoqFotPikPhrase::Never, ExitConversation);
+	Response(ZoqFotPikPhrase::DecideLater, ExitConversation);
 }
 
 static void ZoqFotIntro(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, we_are_vindicator))
+	if (PlayerSaid(R, ZoqFotPikPhrase::WeAreVindicator))
 	{
-		NPCPhrase_cb(WE_GLAD0, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_GLAD1, &SelectAlienPIK);
-		NPCPhrase_cb(WE_GLAD2, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_GLAD3, &SelectAlienPIK);
-		NPCPhrase_cb(WE_GLAD4, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_GLAD5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeGlad0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeGlad1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeGlad2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeGlad3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeGlad4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeGlad5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(we_are_vindicator);
+		DisablePhrase(ZoqFotPikPhrase::WeAreVindicator);
 	}
-	else if (PlayerSaid(R, your_race))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::YourRace))
 	{
-		NPCPhrase_cb(YEARS_AGO0, &SelectAlienZOQ);
-		NPCPhrase_cb(YEARS_AGO1, &SelectAlienPIK);
-		NPCPhrase_cb(YEARS_AGO2, &SelectAlienZOQ);
-		NPCPhrase_cb(YEARS_AGO3, &SelectAlienPIK);
-		NPCPhrase_cb(YEARS_AGO4, &SelectAlienZOQ);
-		NPCPhrase_cb(YEARS_AGO5, &SelectAlienPIK);
-		NPCPhrase_cb(YEARS_AGO6, &SelectAlienZOQ);
-		NPCPhrase_cb(YEARS_AGO7, &SelectAlienPIK);
-		NPCPhrase_cb(YEARS_AGO8, &SelectAlienZOQ);
-		NPCPhrase_cb(YEARS_AGO9, &SelectAlienPIK);
-		NPCPhrase_cb(YEARS_AGO10, &SelectAlienZOQ);
-		NPCPhrase_cb(YEARS_AGO11, &SelectAlienPIK);
-		NPCPhrase_cb(YEARS_AGO12, &SelectAlienZOQ);
-		NPCPhrase_cb(YEARS_AGO13, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo8, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo9, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo10, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo11, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo12, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::YearsAgo13, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(your_race);
+		DisablePhrase(ZoqFotPikPhrase::YourRace);
 	}
-	else if (PlayerSaid(R, where_from))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::WhereFrom))
 	{
-		NPCPhrase_cb(TRAVELED_FAR0, &SelectAlienZOQ);
-		NPCPhrase_cb(TRAVELED_FAR1, &SelectAlienPIK);
-		NPCPhrase_cb(TRAVELED_FAR2, &SelectAlienZOQ);
-		NPCPhrase_cb(TRAVELED_FAR3, &SelectAlienPIK);
-		NPCPhrase_cb(TRAVELED_FAR4, &SelectAlienZOQ);
-		NPCPhrase_cb(TRAVELED_FAR5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::TraveledFar0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::TraveledFar1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::TraveledFar2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::TraveledFar3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::TraveledFar4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::TraveledFar5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(where_from);
+		DisablePhrase(ZoqFotPikPhrase::WhereFrom);
 	}
-	else if (PlayerSaid(R, what_emergency))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::WhatEmergency))
 	{
-		NPCPhrase_cb(UNDER_ATTACK0, &SelectAlienZOQ);
-		NPCPhrase_cb(UNDER_ATTACK1, &SelectAlienPIK);
-		NPCPhrase_cb(UNDER_ATTACK2, &SelectAlienZOQ);
-		NPCPhrase_cb(UNDER_ATTACK3, &SelectAlienPIK);
-		NPCPhrase_cb(UNDER_ATTACK4, &SelectAlienZOQ);
-		NPCPhrase_cb(UNDER_ATTACK5, &SelectAlienPIK);
-		NPCPhrase_cb(UNDER_ATTACK6, &SelectAlienZOQ);
-		NPCPhrase_cb(UNDER_ATTACK7, &SelectAlienPIK);
-		NPCPhrase_cb(UNDER_ATTACK8, &SelectAlienZOQ);
-		NPCPhrase_cb(UNDER_ATTACK9, &SelectAlienPIK);
-		NPCPhrase_cb(UNDER_ATTACK10, &SelectAlienZOQ);
-		NPCPhrase_cb(UNDER_ATTACK11, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack8, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack9, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack10, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::UnderAttack11, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(what_emergency);
+		DisablePhrase(ZoqFotPikPhrase::WhatEmergency);
 	}
-	else if (PlayerSaid(R, tough_luck))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::ToughLuck))
 	{
-		NPCPhrase_cb(NOT_HELPFUL0, &SelectAlienZOQ);
-		NPCPhrase_cb(NOT_HELPFUL1, &SelectAlienPIK);
-		NPCPhrase_cb(NOT_HELPFUL2, &SelectAlienZOQ);
-		NPCPhrase_cb(NOT_HELPFUL3, &SelectAlienPIK);
-		NPCPhrase_cb(NOT_HELPFUL4, &SelectAlienZOQ);
-		NPCPhrase_cb(NOT_HELPFUL5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::NotHelpful0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::NotHelpful1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::NotHelpful2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::NotHelpful3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::NotHelpful4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::NotHelpful5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(tough_luck);
+		DisablePhrase(ZoqFotPikPhrase::ToughLuck);
 	}
-	else if (PlayerSaid(R, what_look_like))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::WhatLookLike))
 	{
-		NPCPhrase_cb(LOOK_LIKE0, &SelectAlienZOQ);
-		NPCPhrase_cb(LOOK_LIKE1, &SelectAlienPIK);
-		NPCPhrase_cb(LOOK_LIKE2, &SelectAlienZOQ);
-		NPCPhrase_cb(LOOK_LIKE3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::LookLike0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::LookLike1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::LookLike2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::LookLike3, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(what_look_like);
+		DisablePhrase(ZoqFotPikPhrase::WhatLookLike);
 	}
 
-	if (PhraseEnabled(your_race)
-		|| PhraseEnabled(where_from)
-		|| PhraseEnabled(what_emergency))
+	if (PhraseEnabled(ZoqFotPikPhrase::YourRace)
+		|| PhraseEnabled(ZoqFotPikPhrase::WhereFrom)
+		|| PhraseEnabled(ZoqFotPikPhrase::WhatEmergency))
 	{
-		if (PhraseEnabled(your_race))
+		if (PhraseEnabled(ZoqFotPikPhrase::YourRace))
 		{
-			Response(your_race, ZoqFotIntro);
+			Response(ZoqFotPikPhrase::YourRace, ZoqFotIntro);
 		}
-		if (PhraseEnabled(where_from))
+		if (PhraseEnabled(ZoqFotPikPhrase::WhereFrom))
 		{
-			Response(where_from, ZoqFotIntro);
+			Response(ZoqFotPikPhrase::WhereFrom, ZoqFotIntro);
 		}
-		if (PhraseEnabled(what_emergency))
+		if (PhraseEnabled(ZoqFotPikPhrase::WhatEmergency))
 		{
-			Response(what_emergency, ZoqFotIntro);
+			Response(ZoqFotPikPhrase::WhatEmergency, ZoqFotIntro);
 		}
 	}
 	else
 	{
-		if (PhraseEnabled(tough_luck))
+		if (PhraseEnabled(ZoqFotPikPhrase::ToughLuck))
 		{
-			Response(tough_luck, ZoqFotIntro);
+			Response(ZoqFotPikPhrase::ToughLuck, ZoqFotIntro);
 		}
-		if (PhraseEnabled(what_look_like))
+		if (PhraseEnabled(ZoqFotPikPhrase::WhatLookLike))
 		{
-			Response(what_look_like, ZoqFotIntro);
+			Response(ZoqFotPikPhrase::WhatLookLike, ZoqFotIntro);
 		}
-		Response(all_very_interesting, ExitConversation);
+		Response(ZoqFotPikPhrase::AllVeryInteresting, ExitConversation);
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			Response(how_can_i_help, FormAlliance);
+			Response(ZoqFotPikPhrase::HowCanIHelp, FormAlliance);
 		}
 		else
 		{
-			Response(how_can_i_help, ExitConversation);
+			Response(ZoqFotPikPhrase::HowCanIHelp, ExitConversation);
 		}
-		Response(valuable_info, ExitConversation);
+		Response(ZoqFotPikPhrase::ValuableInfo, ExitConversation);
 	}
 }
 
 static void AquaintZoqFot(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, which_fot))
+	if (PlayerSaid(R, ZoqFotPikPhrase::WhichFot))
 	{
-		NPCPhrase_cb(HE_IS0, &SelectAlienZOQ);
-		NPCPhrase_cb(HE_IS1, &SelectAlienPIK);
-		NPCPhrase_cb(HE_IS2, &SelectAlienZOQ);
-		NPCPhrase_cb(HE_IS3, &SelectAlienPIK);
-		NPCPhrase_cb(HE_IS4, &SelectAlienZOQ);
-		NPCPhrase_cb(HE_IS5, &SelectAlienPIK);
-		NPCPhrase_cb(HE_IS6, &SelectAlienZOQ);
-		NPCPhrase_cb(HE_IS7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::HeIs0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::HeIs1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::HeIs2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::HeIs3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::HeIs4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::HeIs5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::HeIs6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::HeIs7, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(which_fot);
+		DisablePhrase(ZoqFotPikPhrase::WhichFot);
 	}
-	else if (PlayerSaid(R, quiet_toadies))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::QuietToadies))
 	{
-		NPCPhrase_cb(TOLD_YOU0, &SelectAlienZOQ);
-		NPCPhrase_cb(TOLD_YOU1, &SelectAlienPIK);
-		NPCPhrase_cb(TOLD_YOU2, &SelectAlienZOQ);
-		NPCPhrase_cb(TOLD_YOU3, &SelectAlienPIK);
-		NPCPhrase_cb(TOLD_YOU4, &SelectAlienZOQ);
-		NPCPhrase_cb(TOLD_YOU5, &SelectAlienPIK);
-		NPCPhrase_cb(TOLD_YOU6, &SelectAlienZOQ);
-		NPCPhrase_cb(TOLD_YOU7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::ToldYou0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::ToldYou1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::ToldYou2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::ToldYou3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::ToldYou4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::ToldYou5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::ToldYou6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::ToldYou7, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(quiet_toadies);
+		DisablePhrase(ZoqFotPikPhrase::QuietToadies);
 	}
 
-	if (PhraseEnabled(which_fot))
+	if (PhraseEnabled(ZoqFotPikPhrase::WhichFot))
 	{
-		Response(which_fot, AquaintZoqFot);
+		Response(ZoqFotPikPhrase::WhichFot, AquaintZoqFot);
 	}
-	if (PhraseEnabled(we_are_vindicator))
+	if (PhraseEnabled(ZoqFotPikPhrase::WeAreVindicator))
 	{
-		Response(we_are_vindicator, ZoqFotIntro);
+		Response(ZoqFotPikPhrase::WeAreVindicator, ZoqFotIntro);
 	}
-	if (PhraseEnabled(quiet_toadies))
+	if (PhraseEnabled(ZoqFotPikPhrase::QuietToadies))
 	{
-		Response(quiet_toadies, AquaintZoqFot);
+		Response(ZoqFotPikPhrase::QuietToadies, AquaintZoqFot);
 	}
-	Response(all_very_interesting, ExitConversation);
-	Response(valuable_info, ExitConversation);
+	Response(ZoqFotPikPhrase::AllVeryInteresting, ExitConversation);
+	Response(ZoqFotPikPhrase::ValuableInfo, ExitConversation);
 }
 
 static void ZoqFotHome(RESPONSE_REF R);
 
 static void ZoqFotInfo(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, want_specific_info))
+	if (PlayerSaid(R, ZoqFotPikPhrase::WantSpecificInfo))
 	{
-		NPCPhrase_cb(WHAT_SPECIFIC_INFO0, &SelectAlienZOQ);
-		NPCPhrase_cb(WHAT_SPECIFIC_INFO1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WhatSpecificInfo0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WhatSpecificInfo1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 	}
-	else if (PlayerSaid(R, what_about_others))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::WhatAboutOthers))
 	{
-		NPCPhrase_cb(ABOUT_OTHERS0, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_OTHERS1, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_OTHERS2, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_OTHERS3, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_OTHERS4, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_OTHERS5, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_OTHERS6, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_OTHERS7, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_OTHERS8, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_OTHERS9, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_OTHERS10, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_OTHERS11, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_OTHERS12, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_OTHERS13, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers8, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers9, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers10, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers11, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers12, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutOthers13, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(what_about_others);
+		DisablePhrase(ZoqFotPikPhrase::WhatAboutOthers);
 	}
-	else if (PlayerSaid(R, what_about_zebranky))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::WhatAboutZebranky))
 	{
-		NPCPhrase_cb(ABOUT_ZEBRANKY0, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_ZEBRANKY1, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_ZEBRANKY2, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_ZEBRANKY3, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_ZEBRANKY4, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_ZEBRANKY5, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_ZEBRANKY6, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_ZEBRANKY7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutZebranky0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutZebranky1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutZebranky2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutZebranky3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutZebranky4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutZebranky5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutZebranky6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutZebranky7, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(what_about_zebranky);
+		DisablePhrase(ZoqFotPikPhrase::WhatAboutZebranky);
 	}
-	else if (PlayerSaid(R, what_about_stinger))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::WhatAboutStinger))
 	{
-		NPCPhrase_cb(ABOUT_STINGER0, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_STINGER1, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_STINGER2, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_STINGER3, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_STINGER4, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_STINGER5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutStinger0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutStinger1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutStinger2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutStinger3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutStinger4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutStinger5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(what_about_stinger);
+		DisablePhrase(ZoqFotPikPhrase::WhatAboutStinger);
 	}
-	else if (PlayerSaid(R, what_about_guy_in_back))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::WhatAboutGuyInBack))
 	{
-		NPCPhrase_cb(ABOUT_GUY0, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_GUY1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutGuy0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutGuy1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(what_about_guy_in_back);
+		DisablePhrase(ZoqFotPikPhrase::WhatAboutGuyInBack);
 	}
-	else if (PlayerSaid(R, what_about_past))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::WhatAboutPast))
 	{
-		NPCPhrase_cb(ABOUT_PAST0, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_PAST1, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_PAST2, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_PAST3, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_PAST4, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_PAST5, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_PAST6, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_PAST7, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_PAST8, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_PAST9, &SelectAlienPIK);
-		NPCPhrase_cb(ABOUT_PAST10, &SelectAlienZOQ);
-		NPCPhrase_cb(ABOUT_PAST11, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast8, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast9, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast10, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::AboutPast11, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DisablePhrase(what_about_past);
+		DisablePhrase(ZoqFotPikPhrase::WhatAboutPast);
 	}
 
 	uint8_t InfoLeft {false};
-	if (PhraseEnabled(what_about_others))
+	if (PhraseEnabled(ZoqFotPikPhrase::WhatAboutOthers))
 	{
-		Response(what_about_others, ZoqFotInfo);
+		Response(ZoqFotPikPhrase::WhatAboutOthers, ZoqFotInfo);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_zebranky))
+	if (PhraseEnabled(ZoqFotPikPhrase::WhatAboutZebranky))
 	{
-		Response(what_about_zebranky, ZoqFotInfo);
+		Response(ZoqFotPikPhrase::WhatAboutZebranky, ZoqFotInfo);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_stinger))
+	if (PhraseEnabled(ZoqFotPikPhrase::WhatAboutStinger))
 	{
-		Response(what_about_stinger, ZoqFotInfo);
+		Response(ZoqFotPikPhrase::WhatAboutStinger, ZoqFotInfo);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_guy_in_back))
+	if (PhraseEnabled(ZoqFotPikPhrase::WhatAboutGuyInBack))
 	{
-		Response(what_about_guy_in_back, ZoqFotInfo);
+		Response(ZoqFotPikPhrase::WhatAboutGuyInBack, ZoqFotInfo);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_past))
+	if (PhraseEnabled(ZoqFotPikPhrase::WhatAboutPast))
 	{
-		Response(what_about_past, ZoqFotInfo);
+		Response(ZoqFotPikPhrase::WhatAboutPast, ZoqFotInfo);
 		InfoLeft = true;
 	}
-	Response(enough_info, ZoqFotHome);
+	Response(ZoqFotPikPhrase::EnoughInfo, ZoqFotHome);
 
 	if (!InfoLeft)
 	{
-		DisablePhrase(want_specific_info);
+		DisablePhrase(ZoqFotPikPhrase::WantSpecificInfo);
 	}
 }
 
@@ -592,60 +592,60 @@ static void ZoqFotHome(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, whats_up_homeworld))
+	if (PlayerSaid(R, ZoqFotPikPhrase::WhatsUpHomeworld))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase_cb(GENERAL_INFO_10, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_11, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_12, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_13, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo10, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo11, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo12, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo13, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 				break;
 			case 1:
-				NPCPhrase_cb(GENERAL_INFO_20, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_21, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_22, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_23, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_24, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_25, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_26, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_27, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo20, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo21, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo22, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo23, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo24, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo25, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo26, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo27, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 				break;
 			case 2:
-				NPCPhrase_cb(GENERAL_INFO_30, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_31, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_32, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_33, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_34, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_35, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo30, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo31, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo32, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo33, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo34, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo35, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 				break;
 			case 3:
-				NPCPhrase_cb(GENERAL_INFO_40, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_41, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_42, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_43, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_44, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_45, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_46, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_47, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_48, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_49, &SelectAlienPIK);
-				NPCPhrase_cb(GENERAL_INFO_410, &SelectAlienZOQ);
-				NPCPhrase_cb(GENERAL_INFO_411, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo40, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo41, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo42, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo43, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo44, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo45, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo46, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo47, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo48, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo49, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo410, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::GeneralInfo411, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_homeworld);
+		DisablePhrase(ZoqFotPikPhrase::WhatsUpHomeworld);
 	}
-	else if (PlayerSaid(R, any_war_news))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::AnyWarNews))
 	{
 		uint8_t KnowMask {};
 
@@ -653,18 +653,18 @@ static void ZoqFotHome(RESPONSE_REF R)
 		KnowMask = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_KNOW_MASK);
 		if (!(KnowMask & KohrAhKill) && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 		{
-			NPCPhrase_cb(KOHRAH_FRENZY0, &SelectAlienZOQ);
-			NPCPhrase_cb(KOHRAH_FRENZY1, &SelectAlienPIK);
-			NPCPhrase_cb(KOHRAH_FRENZY2, &SelectAlienZOQ);
-			NPCPhrase_cb(KOHRAH_FRENZY3, &SelectAlienPIK);
-			NPCPhrase_cb(KOHRAH_FRENZY4, &SelectAlienZOQ);
-			NPCPhrase_cb(KOHRAH_FRENZY5, &SelectAlienPIK);
-			NPCPhrase_cb(KOHRAH_FRENZY6, &SelectAlienZOQ);
-			NPCPhrase_cb(KOHRAH_FRENZY7, &SelectAlienPIK);
-			NPCPhrase_cb(KOHRAH_FRENZY8, &SelectAlienZOQ);
-			NPCPhrase_cb(KOHRAH_FRENZY9, &SelectAlienPIK);
-			NPCPhrase_cb(KOHRAH_FRENZY10, &SelectAlienZOQ);
-			NPCPhrase_cb(KOHRAH_FRENZY11, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy0, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy1, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy2, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy3, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy4, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy5, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy6, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy7, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy8, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy9, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy10, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::KohrahFrenzy11, &SelectAlienPIK);
 			ZFPTalkSegue((uint16_t)~0);
 
 			KnowMask = KnowAll;
@@ -672,20 +672,20 @@ static void ZoqFotHome(RESPONSE_REF R)
 		else if (!(KnowMask & UtwigBuyTime)
 				 && NumVisits > 0 && NumVisits < 5)
 		{
-			NPCPhrase_cb(UTWIG_DELAY0, &SelectAlienZOQ);
-			NPCPhrase_cb(UTWIG_DELAY1, &SelectAlienPIK);
-			NPCPhrase_cb(UTWIG_DELAY2, &SelectAlienZOQ);
-			NPCPhrase_cb(UTWIG_DELAY3, &SelectAlienPIK);
-			NPCPhrase_cb(UTWIG_DELAY4, &SelectAlienZOQ);
-			NPCPhrase_cb(UTWIG_DELAY5, &SelectAlienPIK);
-			NPCPhrase_cb(UTWIG_DELAY6, &SelectAlienZOQ);
-			NPCPhrase_cb(UTWIG_DELAY7, &SelectAlienPIK);
-			NPCPhrase_cb(UTWIG_DELAY8, &SelectAlienZOQ);
-			NPCPhrase_cb(UTWIG_DELAY9, &SelectAlienPIK);
-			NPCPhrase_cb(UTWIG_DELAY10, &SelectAlienZOQ);
-			NPCPhrase_cb(UTWIG_DELAY11, &SelectAlienPIK);
-			NPCPhrase_cb(UTWIG_DELAY12, &SelectAlienZOQ);
-			NPCPhrase_cb(UTWIG_DELAY13, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay0, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay1, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay2, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay3, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay4, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay5, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay6, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay7, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay8, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay9, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay10, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay11, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay12, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::UtwigDelay13, &SelectAlienPIK);
 			ZFPTalkSegue((uint16_t)~0);
 
 			KnowMask |= UtwigBuyTime;
@@ -706,83 +706,83 @@ static void ZoqFotHome(RESPONSE_REF R)
 			}
 			if (!(KnowMask & UrquanLose) && i <= 0)
 			{
-				NPCPhrase_cb(URQUAN_NEARLY_GONE0, &SelectAlienZOQ);
-				NPCPhrase_cb(URQUAN_NEARLY_GONE1, &SelectAlienPIK);
-				NPCPhrase_cb(URQUAN_NEARLY_GONE2, &SelectAlienZOQ);
-				NPCPhrase_cb(URQUAN_NEARLY_GONE3, &SelectAlienPIK);
-				NPCPhrase_cb(URQUAN_NEARLY_GONE4, &SelectAlienZOQ);
-				NPCPhrase_cb(URQUAN_NEARLY_GONE5, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::UrquanNearlyGone0, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::UrquanNearlyGone1, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::UrquanNearlyGone2, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::UrquanNearlyGone3, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::UrquanNearlyGone4, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::UrquanNearlyGone5, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 
 				KnowMask |= KohrAhWin | UrquanLose;
 			}
 			else if (!(KnowMask & KohrAhWin) && i == 1)
 			{
-				NPCPhrase_cb(KOHRAH_WINNING0, &SelectAlienZOQ);
-				NPCPhrase_cb(KOHRAH_WINNING1, &SelectAlienPIK);
-				NPCPhrase_cb(KOHRAH_WINNING2, &SelectAlienZOQ);
-				NPCPhrase_cb(KOHRAH_WINNING3, &SelectAlienPIK);
-				NPCPhrase_cb(KOHRAH_WINNING4, &SelectAlienZOQ);
-				NPCPhrase_cb(KOHRAH_WINNING5, &SelectAlienPIK);
-				NPCPhrase_cb(KOHRAH_WINNING6, &SelectAlienZOQ);
-				NPCPhrase_cb(KOHRAH_WINNING7, &SelectAlienPIK);
-				NPCPhrase_cb(KOHRAH_WINNING8, &SelectAlienZOQ);
-				NPCPhrase_cb(KOHRAH_WINNING9, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning0, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning1, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning2, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning3, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning4, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning5, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning6, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning7, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning8, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::KohrahWinning9, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 
 				KnowMask |= KohrAhWin;
 			}
 			else
 			{
-				NPCPhrase_cb(NO_WAR_NEWS0, &SelectAlienZOQ);
-				NPCPhrase_cb(NO_WAR_NEWS1, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::NoWarNews0, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::NoWarNews1, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 			}
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_KNOW_MASK, static_cast<uint32_t>(KnowMask));
 
-		DisablePhrase(any_war_news);
+		DisablePhrase(ZoqFotPikPhrase::AnyWarNews);
 	}
-	else if (PlayerSaid(R, i_want_alliance))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::IWantAlliance))
 	{
-		NPCPhrase_cb(GOOD0, &SelectAlienZOQ);
-		NPCPhrase_cb(GOOD1, &SelectAlienPIK);
-		NPCPhrase_cb(GOOD2, &SelectAlienZOQ);
-		NPCPhrase_cb(GOOD3, &SelectAlienPIK);
-		NPCPhrase_cb(GOOD4, &SelectAlienZOQ);
-		NPCPhrase_cb(GOOD5, &SelectAlienPIK);
-		NPCPhrase_cb(GOOD6, &SelectAlienZOQ);
-		NPCPhrase_cb(GOOD7, &SelectAlienPIK);
-		NPCPhrase_cb(GOOD8, &SelectAlienZOQ);
-		NPCPhrase_cb(GOOD9, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good8, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::Good9, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
 		SetRaceAllied(RaceId::Zoqfotpik, true);
 		AddEvent(EventType::Relative, 3, 0, 0, GameEventId::ZoqfotDistressEvent);
 	}
-	else if (PlayerSaid(R, enough_info))
+	else if (PlayerSaid(R, ZoqFotPikPhrase::EnoughInfo))
 	{
-		NPCPhrase_cb(OK_ENOUGH_INFO, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::OkEnoughInfo, &SelectAlienZOQ);
 		ZFPTalkSegue((uint16_t)~0);
 	}
 
-	if (PhraseEnabled(whats_up_homeworld))
+	if (PhraseEnabled(ZoqFotPikPhrase::WhatsUpHomeworld))
 	{
-		Response(whats_up_homeworld, ZoqFotHome);
+		Response(ZoqFotPikPhrase::WhatsUpHomeworld, ZoqFotHome);
 	}
-	if (PhraseEnabled(any_war_news))
+	if (PhraseEnabled(ZoqFotPikPhrase::AnyWarNews))
 	{
-		Response(any_war_news, ZoqFotHome);
+		Response(ZoqFotPikPhrase::AnyWarNews, ZoqFotHome);
 	}
 	if (CheckAlliance(RaceId::Zoqfotpik) != RaceAllegiance::Good)
 	{
-		Response(i_want_alliance, ZoqFotHome);
+		Response(ZoqFotPikPhrase::IWantAlliance, ZoqFotHome);
 	}
-	else if (PhraseEnabled(want_specific_info))
+	else if (PhraseEnabled(ZoqFotPikPhrase::WantSpecificInfo))
 	{
-		Response(want_specific_info, ZoqFotInfo);
+		Response(ZoqFotPikPhrase::WantSpecificInfo, ZoqFotInfo);
 	}
-	Response(bye_homeworld, ExitConversation);
+	Response(ZoqFotPikPhrase::ByeHomeworld, ExitConversation);
 }
 
 static void Intro(void)
@@ -793,20 +793,20 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase_cb(OUT_TAKES0, &SelectAlienZOQ);
-		NPCPhrase_cb(OUT_TAKES1, &SelectAlienPIK);
-		NPCPhrase_cb(OUT_TAKES2, &SelectAlienZOQ);
-		NPCPhrase_cb(OUT_TAKES3, &SelectAlienPIK);
-		NPCPhrase_cb(OUT_TAKES4, &SelectAlienZOQ);
-		NPCPhrase_cb(OUT_TAKES5, &SelectAlienPIK);
-		NPCPhrase_cb(OUT_TAKES6, &SelectAlienZOQ);
-		NPCPhrase_cb(OUT_TAKES7, &SelectAlienPIK);
-		NPCPhrase_cb(OUT_TAKES8, &SelectAlienZOQ);
-		NPCPhrase_cb(OUT_TAKES9, &SelectAlienPIK);
-		NPCPhrase_cb(OUT_TAKES10, &SelectAlienZOQ);
-		NPCPhrase_cb(OUT_TAKES11, &SelectAlienPIK);
-		NPCPhrase_cb(OUT_TAKES12, &SelectAlienZOQ);
-		NPCPhrase_cb(OUT_TAKES13, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes8, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes9, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes10, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes11, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes12, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::OutTakes13, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 		setSegue(Segue::Peace);
 		return;
@@ -818,27 +818,27 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase_cb(HOSTILE_HELLO_10, &SelectAlienZOQ);
-				NPCPhrase_cb(HOSTILE_HELLO_11, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello10, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello11, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 				break;
 			case 1:
-				NPCPhrase_cb(HOSTILE_HELLO_20, &SelectAlienZOQ);
-				NPCPhrase_cb(HOSTILE_HELLO_21, &SelectAlienPIK);
-				NPCPhrase_cb(HOSTILE_HELLO_22, &SelectAlienZOQ);
-				NPCPhrase_cb(HOSTILE_HELLO_23, &SelectAlienPIK);
-				NPCPhrase_cb(HOSTILE_HELLO_24, &SelectAlienZOQ);
-				NPCPhrase_cb(HOSTILE_HELLO_25, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello20, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello21, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello22, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello23, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello24, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello25, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 				break;
 			case 2:
-				NPCPhrase_cb(HOSTILE_HELLO_30, &SelectAlienZOQ);
-				NPCPhrase_cb(HOSTILE_HELLO_31, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello30, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello31, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 				break;
 			case 3:
-				NPCPhrase_cb(HOSTILE_HELLO_40, &SelectAlienZOQ);
-				NPCPhrase_cb(HOSTILE_HELLO_41, &SelectAlienPIK);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello40, &SelectAlienZOQ);
+				NPCPhrase_cb(ZoqFotPikPhrase::HostileHello41, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 				--NumVisits;
 				break;
@@ -851,28 +851,28 @@ static void Intro(void)
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MET_ZOQFOT, static_cast<uint32_t>(1));
 
-		NPCPhrase_cb(WE_ARE0, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_ARE1, &SelectAlienPIK);
-		NPCPhrase_cb(WE_ARE2, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_ARE3, &SelectAlienPIK);
-		NPCPhrase_cb(WE_ARE4, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_ARE5, &SelectAlienPIK);
-		NPCPhrase_cb(WE_ARE6, &SelectAlienZOQ);
-		NPCPhrase_cb(WE_ARE7, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAre0, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAre1, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAre2, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAre3, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAre4, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAre5, &SelectAlienPIK);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAre6, &SelectAlienZOQ);
+		NPCPhrase_cb(ZoqFotPikPhrase::WeAre7, &SelectAlienPIK);
 
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NPCPhrase_cb(INIT_HOME_HELLO0, &SelectAlienZOQ);
-			NPCPhrase_cb(INIT_HOME_HELLO1, &SelectAlienPIK);
-			NPCPhrase_cb(INIT_HOME_HELLO2, &SelectAlienZOQ);
-			NPCPhrase_cb(INIT_HOME_HELLO3, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::InitHomeHello0, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::InitHomeHello1, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::InitHomeHello2, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::InitHomeHello3, &SelectAlienPIK);
 		}
 		else
 		{
-			NPCPhrase_cb(SCOUT_HELLO0, &SelectAlienZOQ);
-			NPCPhrase_cb(SCOUT_HELLO1, &SelectAlienPIK);
-			NPCPhrase_cb(SCOUT_HELLO2, &SelectAlienZOQ);
-			NPCPhrase_cb(SCOUT_HELLO3, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::ScoutHello0, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::ScoutHello1, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::ScoutHello2, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::ScoutHello3, &SelectAlienPIK);
 		}
 
 		ZFPTalkSegue((uint16_t)~0);
@@ -883,18 +883,18 @@ static void Intro(void)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS))
 		{
-			NPCPhrase_cb(THANKS_FOR_RESCUE0, &SelectAlienZOQ);
-			NPCPhrase_cb(THANKS_FOR_RESCUE1, &SelectAlienPIK);
-			NPCPhrase_cb(THANKS_FOR_RESCUE2, &SelectAlienZOQ);
-			NPCPhrase_cb(THANKS_FOR_RESCUE3, &SelectAlienPIK);
-			NPCPhrase_cb(THANKS_FOR_RESCUE4, &SelectAlienZOQ);
-			NPCPhrase_cb(THANKS_FOR_RESCUE5, &SelectAlienPIK);
-			NPCPhrase_cb(THANKS_FOR_RESCUE6, &SelectAlienZOQ);
-			NPCPhrase_cb(THANKS_FOR_RESCUE7, &SelectAlienPIK);
-			NPCPhrase_cb(THANKS_FOR_RESCUE8, &SelectAlienZOQ);
-			NPCPhrase_cb(THANKS_FOR_RESCUE9, &SelectAlienPIK);
-			NPCPhrase_cb(THANKS_FOR_RESCUE10, &SelectAlienZOQ);
-			NPCPhrase_cb(THANKS_FOR_RESCUE11, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue0, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue1, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue2, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue3, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue4, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue5, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue6, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue7, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue8, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue9, &SelectAlienPIK);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue10, &SelectAlienZOQ);
+			NPCPhrase_cb(ZoqFotPikPhrase::ThanksForRescue11, &SelectAlienPIK);
 			ZFPTalkSegue((uint16_t)~0);
 
 			uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_DISTRESS, static_cast<uint32_t>(0));
@@ -908,16 +908,16 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase_cb(NEUTRAL_HOME_HELLO_10, &SelectAlienZOQ);
-						NPCPhrase_cb(NEUTRAL_HOME_HELLO_11, &SelectAlienPIK);
-						NPCPhrase_cb(NEUTRAL_HOME_HELLO_12, &SelectAlienZOQ);
-						NPCPhrase_cb(NEUTRAL_HOME_HELLO_13, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::NeutralHomeHello10, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::NeutralHomeHello11, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::NeutralHomeHello12, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::NeutralHomeHello13, &SelectAlienPIK);
 						break;
 					case 1:
-						NPCPhrase_cb(NEUTRAL_HOME_HELLO_20, &SelectAlienZOQ);
-						NPCPhrase_cb(NEUTRAL_HOME_HELLO_21, &SelectAlienPIK);
-						NPCPhrase_cb(NEUTRAL_HOME_HELLO_22, &SelectAlienZOQ);
-						NPCPhrase_cb(NEUTRAL_HOME_HELLO_23, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::NeutralHomeHello20, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::NeutralHomeHello21, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::NeutralHomeHello22, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::NeutralHomeHello23, &SelectAlienPIK);
 						--NumVisits;
 						break;
 				}
@@ -928,31 +928,31 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase_cb(ALLIED_HOME_HELLO_10, &SelectAlienZOQ);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_11, &SelectAlienPIK);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_12, &SelectAlienZOQ);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_13, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello10, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello11, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello12, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello13, &SelectAlienPIK);
 						ZFPTalkSegue((uint16_t)~0);
 						break;
 					case 1:
-						NPCPhrase_cb(ALLIED_HOME_HELLO_20, &SelectAlienZOQ);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_21, &SelectAlienPIK);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_22, &SelectAlienZOQ);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_23, &SelectAlienPIK);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_24, &SelectAlienZOQ);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_25, &SelectAlienPIK);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_26, &SelectAlienZOQ);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_27, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello20, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello21, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello22, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello23, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello24, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello25, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello26, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello27, &SelectAlienPIK);
 						ZFPTalkSegue((uint16_t)~0);
 						break;
 					case 2:
-						NPCPhrase_cb(ALLIED_HOME_HELLO_30, &SelectAlienZOQ);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_31, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello30, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello31, &SelectAlienPIK);
 						ZFPTalkSegue((uint16_t)~0);
 						break;
 					case 3:
-						NPCPhrase_cb(ALLIED_HOME_HELLO_40, &SelectAlienZOQ);
-						NPCPhrase_cb(ALLIED_HOME_HELLO_41, &SelectAlienPIK);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello40, &SelectAlienZOQ);
+						NPCPhrase_cb(ZoqFotPikPhrase::AlliedHomeHello41, &SelectAlienPIK);
 						ZFPTalkSegue((uint16_t)~0);
 						--NumVisits;
 						break;

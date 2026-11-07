@@ -148,104 +148,104 @@ static void DoRamble(RESPONSE_REF R)
 	switch (Counter++)
 	{
 		case 0:
-			NPCPhrase(RAMBLE_1);
+			NPCPhrase(MyconPhrase::Ramble1);
 			break;
 		case 1:
-			NPCPhrase(RAMBLE_2);
+			NPCPhrase(MyconPhrase::Ramble2);
 			break;
 		case 2:
-			NPCPhrase(RAMBLE_3);
+			NPCPhrase(MyconPhrase::Ramble3);
 			break;
 		case 3:
-			NPCPhrase(RAMBLE_4);
+			NPCPhrase(MyconPhrase::Ramble4);
 			break;
 		case 4:
-			NPCPhrase(RAMBLE_5);
+			NPCPhrase(MyconPhrase::Ramble5);
 			break;
 		case 5:
-			NPCPhrase(RAMBLE_6);
+			NPCPhrase(MyconPhrase::Ramble6);
 			break;
 		case 6:
-			NPCPhrase(RAMBLE_7);
+			NPCPhrase(MyconPhrase::Ramble7);
 			break;
 		case 7:
-			NPCPhrase(RAMBLE_8);
+			NPCPhrase(MyconPhrase::Ramble8);
 			break;
 		case 8:
-			NPCPhrase(RAMBLE_9);
+			NPCPhrase(MyconPhrase::Ramble9);
 			break;
 		case 9:
-			NPCPhrase(RAMBLE_10);
+			NPCPhrase(MyconPhrase::Ramble10);
 			break;
 		case 10:
-			NPCPhrase(RAMBLE_11);
+			NPCPhrase(MyconPhrase::Ramble11);
 			break;
 		case 11:
-			NPCPhrase(RAMBLE_12);
+			NPCPhrase(MyconPhrase::Ramble12);
 			break;
 		case 12:
-			NPCPhrase(RAMBLE_13);
+			NPCPhrase(MyconPhrase::Ramble13);
 			break;
 		case 13:
-			NPCPhrase(RAMBLE_14);
+			NPCPhrase(MyconPhrase::Ramble14);
 			break;
 		case 14:
-			NPCPhrase(RAMBLE_15);
+			NPCPhrase(MyconPhrase::Ramble15);
 			break;
 		case 15:
-			NPCPhrase(RAMBLE_16);
+			NPCPhrase(MyconPhrase::Ramble16);
 			break;
 		case 16:
-			NPCPhrase(RAMBLE_17);
+			NPCPhrase(MyconPhrase::Ramble17);
 			break;
 		case 17:
-			NPCPhrase(RAMBLE_18);
+			NPCPhrase(MyconPhrase::Ramble18);
 			break;
 		case 18:
-			NPCPhrase(RAMBLE_19);
+			NPCPhrase(MyconPhrase::Ramble19);
 			break;
 		case 19:
-			NPCPhrase(RAMBLE_20);
+			NPCPhrase(MyconPhrase::Ramble20);
 			break;
 		case 20:
-			NPCPhrase(RAMBLE_21);
+			NPCPhrase(MyconPhrase::Ramble21);
 			break;
 		case 21:
-			NPCPhrase(RAMBLE_22);
+			NPCPhrase(MyconPhrase::Ramble22);
 			break;
 		case 22:
-			NPCPhrase(RAMBLE_23);
+			NPCPhrase(MyconPhrase::Ramble23);
 			break;
 		case 23:
-			NPCPhrase(RAMBLE_24);
+			NPCPhrase(MyconPhrase::Ramble24);
 			break;
 		case 24:
-			NPCPhrase(RAMBLE_25);
+			NPCPhrase(MyconPhrase::Ramble25);
 			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
 			{
 				uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 			}
 			break;
 		case 25:
-			NPCPhrase(RAMBLE_26);
+			NPCPhrase(MyconPhrase::Ramble26);
 			break;
 		case 26:
-			NPCPhrase(RAMBLE_27);
+			NPCPhrase(MyconPhrase::Ramble27);
 			break;
 		case 27:
-			NPCPhrase(RAMBLE_28);
+			NPCPhrase(MyconPhrase::Ramble28);
 			break;
 		case 28:
-			NPCPhrase(RAMBLE_29);
+			NPCPhrase(MyconPhrase::Ramble29);
 			break;
 		case 29:
-			NPCPhrase(RAMBLE_30);
+			NPCPhrase(MyconPhrase::Ramble30);
 			break;
 		case 30:
-			NPCPhrase(RAMBLE_31);
+			NPCPhrase(MyconPhrase::Ramble31);
 			break;
 		case 31:
-			NPCPhrase(RAMBLE_32);
+			NPCPhrase(MyconPhrase::Ramble32);
 			Counter = 0;
 			break;
 	}
@@ -253,17 +253,17 @@ static void DoRamble(RESPONSE_REF R)
 
 	if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 	{
-		if (!PlayerSaid(R, come_in_peace)
-			&& !PlayerSaid(R, gonna_die))
+		if (!PlayerSaid(R, MyconPhrase::ComeInPeace)
+			&& !PlayerSaid(R, MyconPhrase::GonnaDie))
 		{
 			Counter = (uqm::gameState().flag(uqm::GameFlag::MYCON_INSULTS) + 1) & 7;
 			uqm::gameState().setFlag(uqm::GameFlag::MYCON_INSULTS, static_cast<uint32_t>(Counter));
 			MadeChoice = 1;
 		}
 	}
-	else if (!PlayerSaid(R, lets_be_friends)
-			 && !PlayerSaid(R, came_to_homeworld)
-			 && !PlayerSaid(R, submit_to_us))
+	else if (!PlayerSaid(R, MyconPhrase::LetsBeFriends)
+			 && !PlayerSaid(R, MyconPhrase::CameToHomeworld)
+			 && !PlayerSaid(R, MyconPhrase::SubmitToUs))
 	{
 		Counter = (uqm::gameState().flag(uqm::GameFlag::MYCON_INFO) + 1) & 15;
 		uqm::gameState().setFlag(uqm::GameFlag::MYCON_INFO, static_cast<uint32_t>(Counter));
@@ -275,21 +275,21 @@ static void CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue::Hostile);
 
-	if (PlayerSaid(R, bye_space))
+	if (PlayerSaid(R, MyconPhrase::ByeSpace))
 	{
-		NPCPhrase(BYE_AND_DIE_SPACE);
+		NPCPhrase(MyconPhrase::ByeAndDieSpace);
 	}
-	else if (PlayerSaid(R, bye_homeworld))
+	else if (PlayerSaid(R, MyconPhrase::ByeHomeworld))
 	{
-		NPCPhrase(BYE_AND_DIE_HOMEWORLD);
+		NPCPhrase(MyconPhrase::ByeAndDieHomeworld);
 	}
-	else if (PlayerSaid(R, like_to_land))
+	else if (PlayerSaid(R, MyconPhrase::LikeToLand))
 	{
-		NPCPhrase(NEVER_LET_LAND);
+		NPCPhrase(MyconPhrase::NeverLetLand);
 	}
-	else if (PlayerSaid(R, bye_sun_device))
+	else if (PlayerSaid(R, MyconPhrase::ByeSunDevice))
 	{
-		NPCPhrase(GOODBYE_SUN_DEVICE);
+		NPCPhrase(MyconPhrase::GoodbyeSunDevice);
 
 		setSegue(Segue::Peace);
 	}
@@ -298,11 +298,11 @@ static void CombatIsInevitable(RESPONSE_REF R)
 		DoRamble(R);
 		if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 		{
-			NPCPhrase(BYE_AND_DIE_SPACE);
+			NPCPhrase(MyconPhrase::ByeAndDieSpace);
 		}
 		else
 		{
-			NPCPhrase(BYE_AND_DIE_HOMEWORLD);
+			NPCPhrase(MyconPhrase::ByeAndDieHomeworld);
 		}
 	}
 	MadeChoice = 0;
@@ -310,77 +310,77 @@ static void CombatIsInevitable(RESPONSE_REF R)
 
 static void SunDevice(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_up_sun_device))
+	if (PlayerSaid(R, MyconPhrase::WhatsUpSunDevice))
 	{
-		NPCPhrase(GENERAL_INFO_SUN_DEVICE);
+		NPCPhrase(MyconPhrase::GeneralInfoSunDevice);
 
-		DisablePhrase(whats_up_sun_device);
+		DisablePhrase(MyconPhrase::WhatsUpSunDevice);
 	}
-	else if (PlayerSaid(R, how_goes_implanting))
+	else if (PlayerSaid(R, MyconPhrase::HowGoesImplanting))
 	{
-		NPCPhrase(UNFORSEEN_DELAYS);
+		NPCPhrase(MyconPhrase::UnforseenDelays);
 
-		DisablePhrase(how_goes_implanting);
+		DisablePhrase(MyconPhrase::HowGoesImplanting);
 	}
-	else if (PlayerSaid(R, i_have_a_cunning_plan))
+	else if (PlayerSaid(R, MyconPhrase::IHaveACunningPlan))
 	{
-		NPCPhrase(WONT_FALL_FOR_TRICK);
+		NPCPhrase(MyconPhrase::WontFallForTrick);
 
 		uqm::gameState().setFlag(uqm::GameFlag::NO_TRICK_AT_SUN, static_cast<uint32_t>(1));
 	}
 
-	if (PhraseEnabled(whats_up_sun_device))
+	if (PhraseEnabled(MyconPhrase::WhatsUpSunDevice))
 	{
-		Response(whats_up_sun_device, SunDevice);
+		Response(MyconPhrase::WhatsUpSunDevice, SunDevice);
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 	{
-		if (PhraseEnabled(how_goes_implanting) && uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
+		if (PhraseEnabled(MyconPhrase::HowGoesImplanting) && uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 		{
-			Response(how_goes_implanting, SunDevice);
+			Response(MyconPhrase::HowGoesImplanting, SunDevice);
 		}
-		Response(like_to_land, CombatIsInevitable);
+		Response(MyconPhrase::LikeToLand, CombatIsInevitable);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_AMBUSH)
 			 && !uqm::gameState().flag(uqm::GameFlag::NO_TRICK_AT_SUN))
 	{
-		Response(i_have_a_cunning_plan, SunDevice);
+		Response(MyconPhrase::IHaveACunningPlan, SunDevice);
 	}
-	Response(bye_sun_device, CombatIsInevitable);
+	Response(MyconPhrase::ByeSunDevice, CombatIsInevitable);
 }
 
 static void TrickMycon(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, i_have_a_cunning_plan))
+	if (PlayerSaid(R, MyconPhrase::IHaveACunningPlan))
 	{
-		NPCPhrase(TELL_US_ABOUT_WORLD);
+		NPCPhrase(MyconPhrase::TellUsAboutWorld);
 
-		DisablePhrase(i_have_a_cunning_plan);
+		DisablePhrase(MyconPhrase::IHaveACunningPlan);
 	}
-	else if (PlayerSaid(R, clue_1))
+	else if (PlayerSaid(R, MyconPhrase::Clue1))
 	{
-		NPCPhrase(RESPONSE_1);
+		NPCPhrase(MyconPhrase::Response1);
 
-		DisablePhrase(clue_1);
+		DisablePhrase(MyconPhrase::Clue1);
 	}
-	else if (PlayerSaid(R, clue_2))
+	else if (PlayerSaid(R, MyconPhrase::Clue2))
 	{
-		NPCPhrase(RESPONSE_2);
+		NPCPhrase(MyconPhrase::Response2);
 
-		DisablePhrase(clue_2);
+		DisablePhrase(MyconPhrase::Clue2);
 	}
-	else if (PlayerSaid(R, clue_3))
+	else if (PlayerSaid(R, MyconPhrase::Clue3))
 	{
-		NPCPhrase(RESPONSE_3);
+		NPCPhrase(MyconPhrase::Response3);
 
-		DisablePhrase(clue_3);
+		DisablePhrase(MyconPhrase::Clue3);
 	}
 
-	if (PhraseEnabled(clue_1) == 0
-		&& PhraseEnabled(clue_2) == 0
-		&& PhraseEnabled(clue_3) == 0)
+	if (PhraseEnabled(MyconPhrase::Clue1) == 0
+		&& PhraseEnabled(MyconPhrase::Clue2) == 0
+		&& PhraseEnabled(MyconPhrase::Clue3) == 0)
 	{
-		NPCPhrase(WE_GO_TO_IMPLANT);
+		NPCPhrase(MyconPhrase::WeGoToImplant);
 
 		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH, static_cast<uint32_t>(1));
@@ -388,20 +388,20 @@ static void TrickMycon(RESPONSE_REF R)
 	}
 	else
 	{
-		NPCPhrase(AMBUSH_TAIL);
+		NPCPhrase(MyconPhrase::AmbushTail);
 	}
 
-	if (PhraseEnabled(clue_1))
+	if (PhraseEnabled(MyconPhrase::Clue1))
 	{
-		Response(clue_1, TrickMycon);
+		Response(MyconPhrase::Clue1, TrickMycon);
 	}
-	if (PhraseEnabled(clue_2))
+	if (PhraseEnabled(MyconPhrase::Clue2))
 	{
-		Response(clue_2, TrickMycon);
+		Response(MyconPhrase::Clue2, TrickMycon);
 	}
-	if (PhraseEnabled(clue_3))
+	if (PhraseEnabled(MyconPhrase::Clue3))
 	{
-		Response(clue_3, TrickMycon);
+		Response(MyconPhrase::Clue3, TrickMycon);
 	}
 }
 
@@ -409,16 +409,16 @@ static void NormalMycon(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
-	if (PlayerSaid(R, what_about_shattered))
+	if (PlayerSaid(R, MyconPhrase::WhatAboutShattered))
 	{
-		NPCPhrase(ABOUT_SHATTERED);
+		NPCPhrase(MyconPhrase::AboutShattered);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 	}
 	else if (R)
 	{
 		DoRamble(R);
-		NPCPhrase(RAMBLE_TAIL);
+		NPCPhrase(MyconPhrase::RambleTail);
 
 		DisablePhrase(R);
 	}
@@ -433,45 +433,45 @@ static void NormalMycon(RESPONSE_REF R)
 	}
 	if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 	{
-		if (PhraseEnabled(come_in_peace))
+		if (PhraseEnabled(MyconPhrase::ComeInPeace))
 		{
-			Response(come_in_peace, RespFunc);
+			Response(MyconPhrase::ComeInPeace, RespFunc);
 		}
-		if (PhraseEnabled(gonna_die))
+		if (PhraseEnabled(MyconPhrase::GonnaDie))
 		{
-			Response(gonna_die, RespFunc);
+			Response(MyconPhrase::GonnaDie, RespFunc);
 		}
 		if (!MadeChoice)
 		{
 			switch (uqm::gameState().flag(uqm::GameFlag::MYCON_INSULTS))
 			{
 				case 0:
-					Response(insult_1, RespFunc);
+					Response(MyconPhrase::Insult1, RespFunc);
 					break;
 				case 1:
-					Response(insult_2, RespFunc);
+					Response(MyconPhrase::Insult2, RespFunc);
 					break;
 				case 2:
-					Response(insult_3, RespFunc);
+					Response(MyconPhrase::Insult3, RespFunc);
 					break;
 				case 3:
-					Response(insult_4, RespFunc);
+					Response(MyconPhrase::Insult4, RespFunc);
 					break;
 				case 4:
-					Response(insult_5, RespFunc);
+					Response(MyconPhrase::Insult5, RespFunc);
 					break;
 				case 5:
-					Response(insult_6, RespFunc);
+					Response(MyconPhrase::Insult6, RespFunc);
 					break;
 				case 6:
-					Response(insult_7, RespFunc);
+					Response(MyconPhrase::Insult7, RespFunc);
 					break;
 				case 7:
-					Response(insult_8, RespFunc);
+					Response(MyconPhrase::Insult8, RespFunc);
 					break;
 			}
 		}
-		Response(bye_space, CombatIsInevitable);
+		Response(MyconPhrase::ByeSpace, CombatIsInevitable);
 	}
 	else
 	{
@@ -480,79 +480,79 @@ static void NormalMycon(RESPONSE_REF R)
 			switch (uqm::gameState().flag(uqm::GameFlag::MYCON_INFO))
 			{
 				case 0:
-					Response(question_1, RespFunc);
+					Response(MyconPhrase::Question1, RespFunc);
 					break;
 				case 1:
-					Response(question_2, RespFunc);
+					Response(MyconPhrase::Question2, RespFunc);
 					break;
 				case 2:
-					Response(question_3, RespFunc);
+					Response(MyconPhrase::Question3, RespFunc);
 					break;
 				case 3:
-					Response(question_4, RespFunc);
+					Response(MyconPhrase::Question4, RespFunc);
 					break;
 				case 4:
-					Response(question_5, RespFunc);
+					Response(MyconPhrase::Question5, RespFunc);
 					break;
 				case 5:
-					Response(question_6, RespFunc);
+					Response(MyconPhrase::Question6, RespFunc);
 					break;
 				case 6:
-					Response(question_7, RespFunc);
+					Response(MyconPhrase::Question7, RespFunc);
 					break;
 				case 7:
-					Response(question_8, RespFunc);
+					Response(MyconPhrase::Question8, RespFunc);
 					break;
 				case 8:
-					Response(question_9, RespFunc);
+					Response(MyconPhrase::Question9, RespFunc);
 					break;
 				case 9:
-					Response(question_10, RespFunc);
+					Response(MyconPhrase::Question10, RespFunc);
 					break;
 				case 10:
-					Response(question_11, RespFunc);
+					Response(MyconPhrase::Question11, RespFunc);
 					break;
 				case 11:
-					Response(question_12, RespFunc);
+					Response(MyconPhrase::Question12, RespFunc);
 					break;
 				case 12:
-					Response(question_13, RespFunc);
+					Response(MyconPhrase::Question13, RespFunc);
 					break;
 				case 13:
-					Response(question_14, RespFunc);
+					Response(MyconPhrase::Question14, RespFunc);
 					break;
 				case 14:
-					Response(question_15, RespFunc);
+					Response(MyconPhrase::Question15, RespFunc);
 					break;
 				case 15:
-					Response(question_16, RespFunc);
+					Response(MyconPhrase::Question16, RespFunc);
 					break;
 			}
 		}
-		if (PhraseEnabled(lets_be_friends))
+		if (PhraseEnabled(MyconPhrase::LetsBeFriends))
 		{
-			Response(lets_be_friends, RespFunc);
+			Response(MyconPhrase::LetsBeFriends, RespFunc);
 		}
-		if (PhraseEnabled(came_to_homeworld))
+		if (PhraseEnabled(MyconPhrase::CameToHomeworld))
 		{
-			Response(came_to_homeworld, RespFunc);
+			Response(MyconPhrase::CameToHomeworld, RespFunc);
 		}
-		if (PhraseEnabled(submit_to_us))
+		if (PhraseEnabled(MyconPhrase::SubmitToUs))
 		{
-			Response(submit_to_us, RespFunc);
+			Response(MyconPhrase::SubmitToUs, RespFunc);
 		}
 		if (!uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 		{
 			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) == 1)
 			{
-				Response(what_about_shattered, NormalMycon);
+				Response(MyconPhrase::WhatAboutShattered, NormalMycon);
 			}
 			if (uqm::gameState().flag(uqm::GameFlag::MYCON_AMBUSH))
 			{
-				Response(i_have_a_cunning_plan, TrickMycon);
+				Response(MyconPhrase::IHaveACunningPlan, TrickMycon);
 			}
 		}
-		Response(bye_homeworld, CombatIsInevitable);
+		Response(MyconPhrase::ByeHomeworld, CombatIsInevitable);
 	}
 }
 
@@ -566,10 +566,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(DIE_THIEF);
+				NPCPhrase(MyconPhrase::DieThief);
 				break;
 			case 1:
-				NPCPhrase(DIE_THIEF_AGAIN);
+				NPCPhrase(MyconPhrase::DieThiefAgain);
 				--NumVisits;
 				break;
 		}
@@ -579,7 +579,7 @@ static void Intro(void)
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_KNOW_AMBUSH))
 	{
-		NPCPhrase(DIE_LIAR);
+		NPCPhrase(MyconPhrase::DieLiar);
 
 		setSegue(Segue::Hostile);
 	}
@@ -589,11 +589,11 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HELLO_SUN_DEVICE_WORLD_1);
+				NPCPhrase(MyconPhrase::HelloSunDeviceWorld1);
 				SetHomeworldKnown(*HomeId::Mycon);
 				break;
 			case 1:
-				NPCPhrase(HELLO_SUN_DEVICE_WORLD_2);
+				NPCPhrase(MyconPhrase::HelloSunDeviceWorld2);
 				--NumVisits;
 				break;
 		}
@@ -607,28 +607,28 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HELLO_HOMEWORLD_1);
+				NPCPhrase(MyconPhrase::HelloHomeworld1);
 				break;
 			case 1:
-				NPCPhrase(HELLO_HOMEWORLD_2);
+				NPCPhrase(MyconPhrase::HelloHomeworld2);
 				break;
 			case 2:
-				NPCPhrase(HELLO_HOMEWORLD_3);
+				NPCPhrase(MyconPhrase::HelloHomeworld3);
 				break;
 			case 3:
-				NPCPhrase(HELLO_HOMEWORLD_4);
+				NPCPhrase(MyconPhrase::HelloHomeworld4);
 				break;
 			case 4:
-				NPCPhrase(HELLO_HOMEWORLD_5);
+				NPCPhrase(MyconPhrase::HelloHomeworld5);
 				break;
 			case 5:
-				NPCPhrase(HELLO_HOMEWORLD_6);
+				NPCPhrase(MyconPhrase::HelloHomeworld6);
 				break;
 			case 6:
-				NPCPhrase(HELLO_HOMEWORLD_7);
+				NPCPhrase(MyconPhrase::HelloHomeworld7);
 				break;
 			case 7:
-				NPCPhrase(HELLO_HOMEWORLD_8);
+				NPCPhrase(MyconPhrase::HelloHomeworld8);
 				--NumVisits;
 				break;
 		}
@@ -642,29 +642,29 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HELLO_SPACE_1);
+				NPCPhrase(MyconPhrase::HelloSpace1);
 				SetHomeworldKnown(*HomeId::Mycon);
 				break;
 			case 1:
-				NPCPhrase(HELLO_SPACE_2);
+				NPCPhrase(MyconPhrase::HelloSpace2);
 				break;
 			case 2:
-				NPCPhrase(HELLO_SPACE_3);
+				NPCPhrase(MyconPhrase::HelloSpace3);
 				break;
 			case 3:
-				NPCPhrase(HELLO_SPACE_4);
+				NPCPhrase(MyconPhrase::HelloSpace4);
 				break;
 			case 4:
-				NPCPhrase(HELLO_SPACE_5);
+				NPCPhrase(MyconPhrase::HelloSpace5);
 				break;
 			case 5:
-				NPCPhrase(HELLO_SPACE_6);
+				NPCPhrase(MyconPhrase::HelloSpace6);
 				break;
 			case 6:
-				NPCPhrase(HELLO_SPACE_7);
+				NPCPhrase(MyconPhrase::HelloSpace7);
 				break;
 			case 7:
-				NPCPhrase(HELLO_SPACE_8);
+				NPCPhrase(MyconPhrase::HelloSpace8);
 				--NumVisits;
 				break;
 		}

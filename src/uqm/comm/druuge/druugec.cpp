@@ -206,7 +206,7 @@ static bool AttemptedSalvage = false;
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, bye))
+	if (PlayerSaid(R, DruugePhrase::Bye))
 	{
 		setSegue(Segue::Peace);
 
@@ -243,27 +243,27 @@ static void ExitConversation(RESPONSE_REF R)
 			switch (uqm::gameState().flag(uqm::GameFlag::DRUUGE_HOME_VISITS))
 			{
 				case 1:
-					NPCPhrase(BYE_FROM_TRADE_WORLD_1);
+					NPCPhrase(DruugePhrase::ByeFromTradeWorld1);
 					break;
 				default:
-					NPCPhrase(BYE_FROM_TRADE_WORLD_2);
+					NPCPhrase(DruugePhrase::ByeFromTradeWorld2);
 					break;
 			}
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		{
-			NPCPhrase(GOODBYE_FROM_BOMB_PLANET);
+			NPCPhrase(DruugePhrase::GoodbyeFromBombPlanet);
 		}
 		else
 		{
-			NPCPhrase(GOODBYE_FROM_SPACE);
+			NPCPhrase(DruugePhrase::GoodbyeFromSpace);
 		}
 	}
-	else /* if (R == then_we_take_bomb) */
+	else /* if (R == DruugePhrase::ThenWeTakeBomb) */
 	{
 		setSegue(Segue::Hostile);
 
-		NPCPhrase(FIGHT_FOR_BOMB);
+		NPCPhrase(DruugePhrase::FightForBomb);
 	}
 }
 
@@ -276,35 +276,35 @@ static constexpr auto FuelCrewCost {10};
 
 static void Buy(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, want_to_buy)
-		|| PlayerSaid(R, im_ready_to_buy))
+	if (PlayerSaid(R, DruugePhrase::WantToBuy)
+		|| PlayerSaid(R, DruugePhrase::ImReadyToBuy))
 	{
-		NPCPhrase(READY_TO_SELL);
+		NPCPhrase(DruugePhrase::ReadyToSell);
 		if (!uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 		{
-			NPCPhrase(HAVE_SPHERE);
+			NPCPhrase(DruugePhrase::HaveSphere);
 		}
 		if (!uqm::gameState().flag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP))
 		{
-			NPCPhrase(HAVE_ART_1);
+			NPCPhrase(DruugePhrase::HaveArt1);
 		}
 		if (!uqm::gameState().flag(uqm::GameFlag::GLOWING_ROD_ON_SHIP))
 		{
-			NPCPhrase(HAVE_ART_2);
+			NPCPhrase(DruugePhrase::HaveArt2);
 		}
-		NPCPhrase(SHIPS_AND_FUEL);
+		NPCPhrase(DruugePhrase::ShipsAndFuel);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, buy_druuge_ship))
+	else if (PlayerSaid(R, DruugePhrase::BuyDruugeShip))
 	{
 		if (uqm::gameState().sis().CrewEnlisted < ShipCrewCost)
 		{
-			NPCPhrase(NOT_ENOUGH_CREW);
+			NPCPhrase(DruugePhrase::NotEnoughCrew);
 		}
 		else if (EscortFeasibilityStudy(RaceId::Druuge) == 0)
 		{
-			NPCPhrase(NOT_ENOUGH_ROOM);
+			NPCPhrase(DruugePhrase::NotEnoughRoom);
 		}
 		else
 		{
@@ -312,14 +312,14 @@ static void Buy(RESPONSE_REF R)
 			SlaveryCount += ShipCrewCost;
 			AddEscortShips(RaceId::Druuge, 1);
 
-			NPCPhrase(BOUGHT_SHIP);
+			NPCPhrase(DruugePhrase::BoughtShip);
 		}
 	}
-	else if (PlayerSaid(R, buy_rosy_sphere))
+	else if (PlayerSaid(R, DruugePhrase::BuyRosySphere))
 	{
 		if (uqm::gameState().sis().CrewEnlisted < ArtifactCrewCost)
 		{
-			NPCPhrase(NOT_ENOUGH_CREW);
+			NPCPhrase(DruugePhrase::NotEnoughCrew);
 		}
 		else
 		{
@@ -328,14 +328,14 @@ static void Buy(RESPONSE_REF R)
 			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(1));
 			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE, static_cast<uint32_t>(1));
 
-			NPCPhrase(BOUGHT_SPHERE);
+			NPCPhrase(DruugePhrase::BoughtSphere);
 		}
 	}
-	else if (PlayerSaid(R, buy_art_1))
+	else if (PlayerSaid(R, DruugePhrase::BuyArt1))
 	{
 		if (uqm::gameState().sis().CrewEnlisted < ArtifactCrewCost)
 		{
-			NPCPhrase(NOT_ENOUGH_CREW);
+			NPCPhrase(DruugePhrase::NotEnoughCrew);
 		}
 		else
 		{
@@ -343,14 +343,14 @@ static void Buy(RESPONSE_REF R)
 			SlaveryCount += ArtifactCrewCost;
 			uqm::gameState().setFlag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP, static_cast<uint32_t>(1));
 
-			NPCPhrase(BOUGHT_ART_1);
+			NPCPhrase(DruugePhrase::BoughtArt1);
 		}
 	}
-	else if (PlayerSaid(R, buy_art_2))
+	else if (PlayerSaid(R, DruugePhrase::BuyArt2))
 	{
 		if (uqm::gameState().sis().CrewEnlisted < ArtifactCrewCost)
 		{
-			NPCPhrase(NOT_ENOUGH_CREW);
+			NPCPhrase(DruugePhrase::NotEnoughCrew);
 		}
 		else
 		{
@@ -358,14 +358,14 @@ static void Buy(RESPONSE_REF R)
 			SlaveryCount += ArtifactCrewCost;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOWING_ROD_ON_SHIP, static_cast<uint32_t>(1));
 
-			NPCPhrase(BOUGHT_ART_2);
+			NPCPhrase(DruugePhrase::BoughtArt2);
 		}
 	}
-	else if (PlayerSaid(R, buy_fuel))
+	else if (PlayerSaid(R, DruugePhrase::BuyFuel))
 	{
 		if (uqm::gameState().sis().CrewEnlisted < FuelCrewCost)
 		{
-			NPCPhrase(NOT_ENOUGH_CREW);
+			NPCPhrase(DruugePhrase::NotEnoughCrew);
 		}
 		else
 		{
@@ -373,25 +373,25 @@ static void Buy(RESPONSE_REF R)
 						   FuelCrewCost * FuelTankScale, 0);
 			SlaveryCount += FuelCrewCost;
 
-			NPCPhrase(BOUGHT_FUEL);
+			NPCPhrase(DruugePhrase::BoughtFuel);
 		}
 	}
 
-	Response(buy_druuge_ship, Buy);
+	Response(DruugePhrase::BuyDruugeShip, Buy);
 	if (!uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 	{
-		Response(buy_rosy_sphere, Buy);
+		Response(DruugePhrase::BuyRosySphere, Buy);
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP))
 	{
-		Response(buy_art_1, Buy);
+		Response(DruugePhrase::BuyArt1, Buy);
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::GLOWING_ROD_ON_SHIP))
 	{
-		Response(buy_art_2, Buy);
+		Response(DruugePhrase::BuyArt2, Buy);
 	}
-	Response(buy_fuel, Buy);
-	Response(done_buying, TradeWorld);
+	Response(DruugePhrase::BuyFuel, Buy);
+	Response(DruugePhrase::DoneBuying, TradeWorld);
 }
 
 static void Sell(RESPONSE_REF R);
@@ -400,33 +400,33 @@ static RESPONSE_REF LastResponse = 0;
 
 static void Trade(RESPONSE_REF R)
 {
-	if (!PlayerSaid(R, whats_the_sphere_again))
+	if (!PlayerSaid(R, DruugePhrase::WhatsTheSphereAgain))
 	{
-		NPCPhrase(TRADE_FOR_SPHERE);
+		NPCPhrase(DruugePhrase::TradeForSphere);
 		LastResponse = R;
 	}
 	else
 	{
-		NPCPhrase(SPHERE_IS);
+		NPCPhrase(DruugePhrase::SphereIs);
 
-		DisablePhrase(whats_the_sphere_again);
+		DisablePhrase(DruugePhrase::WhatsTheSphereAgain);
 	}
 
-	Response(no_way, Sell);
-	Response(way, Sell);
-	if (PhraseEnabled(whats_the_sphere_again))
+	Response(DruugePhrase::NoWay, Sell);
+	Response(DruugePhrase::Way, Sell);
+	if (PhraseEnabled(DruugePhrase::WhatsTheSphereAgain))
 	{
-		Response(whats_the_sphere_again, Trade);
+		Response(DruugePhrase::WhatsTheSphereAgain, Trade);
 	}
 }
 
 static void DoTransaction(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, sell_maidens))
+	if (PlayerSaid(R, DruugePhrase::SellMaidens))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MAIDENS_ON_SHIP, static_cast<uint32_t>(0));
 	}
-	else if (PlayerSaid(R, sell_fragments))
+	else if (PlayerSaid(R, DruugePhrase::SellFragments))
 	{
 		uint8_t num_frags {};
 
@@ -446,11 +446,11 @@ static void DoTransaction(RESPONSE_REF R)
 		num_frags = uqm::gameState().flag(uqm::GameFlag::FRAGMENTS_BOUGHT) + 1;
 		uqm::gameState().setFlag(uqm::GameFlag::FRAGMENTS_BOUGHT, static_cast<uint32_t>(num_frags));
 	}
-	else if (PlayerSaid(R, sell_caster))
+	else if (PlayerSaid(R, DruugePhrase::SellCaster))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(0));
 	}
-	else if (PlayerSaid(R, sell_spawner))
+	else if (PlayerSaid(R, DruugePhrase::SellSpawner))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP, static_cast<uint32_t>(0));
 	}
@@ -478,50 +478,50 @@ static void DoTransaction(RESPONSE_REF R)
 		uint8_t trade_gas {0};
 		uint8_t ships_to_trade {0};
 		ship_slots = EscortFeasibilityStudy(RaceId::Druuge);
-		if (PlayerSaid(R, sell_maidens))
+		if (PlayerSaid(R, DruugePhrase::SellMaidens))
 		{
-			NPCPhrase(BOUGHT_MAIDENS);
+			NPCPhrase(DruugePhrase::BoughtMaidens);
 			ships_to_trade = 6;
 		}
-		else if (PlayerSaid(R, sell_fragments))
+		else if (PlayerSaid(R, DruugePhrase::SellFragments))
 		{
-			NPCPhrase(BOUGHT_FRAGMENTS);
+			NPCPhrase(DruugePhrase::BoughtFragments);
 			ships_to_trade = 1;
 		}
-		else if (PlayerSaid(R, sell_caster))
+		else if (PlayerSaid(R, DruugePhrase::SellCaster))
 		{
-			NPCPhrase(BOUGHT_CASTER);
+			NPCPhrase(DruugePhrase::BoughtCaster);
 			ships_to_trade = 0;
 			trade_gas = 1;
 		}
-		else if (PlayerSaid(R, sell_spawner))
+		else if (PlayerSaid(R, DruugePhrase::SellSpawner))
 		{
-			NPCPhrase(BOUGHT_SPAWNER);
+			NPCPhrase(DruugePhrase::BoughtSpawner);
 			ships_to_trade = 3;
 			trade_gas = 1;
 		}
 
-		NPCPhrase(YOU_GET);
+		NPCPhrase(DruugePhrase::YouGet);
 		if (ships_to_trade)
 		{
 			AddEscortShips(RaceId::Druuge, ships_to_trade);
 
 			if (ship_slots >= ships_to_trade)
 			{
-				NPCPhrase(DEAL_FOR_STATED_SHIPS);
+				NPCPhrase(DruugePhrase::DealForStatedShips);
 			}
 			else if (ship_slots == 0)
 			{
-				NPCPhrase(DEAL_FOR_NO_SHIPS);
+				NPCPhrase(DruugePhrase::DealForNoShips);
 			}
 			else
 			{
-				NPCPhrase(DEAL_FOR_LESS_SHIPS);
+				NPCPhrase(DruugePhrase::DealForLessShips);
 			}
 
 			if (trade_gas)
 			{
-				NPCPhrase(YOU_ALSO_GET);
+				NPCPhrase(DruugePhrase::YouAlsoGet);
 			}
 		}
 
@@ -561,29 +561,29 @@ static void DoTransaction(RESPONSE_REF R)
 
 			DeltaSISGauges(0, capacity, 0);
 
-			NPCPhrase(FUEL0);
+			NPCPhrase(DruugePhrase::Fuel0);
 			NPCNumber(f, nullptr);
-			NPCPhrase(FUEL1);
+			NPCPhrase(DruugePhrase::Fuel1);
 
 			if (f >= 250)
 			{
-				NPCPhrase(HIDEOUS_DEAL);
+				NPCPhrase(DruugePhrase::HideousDeal);
 			}
 			else if (f >= 100)
 			{
-				NPCPhrase(BAD_DEAL);
+				NPCPhrase(DruugePhrase::BadDeal);
 			}
 			else if (f >= 50)
 			{
-				NPCPhrase(FAIR_DEAL);
+				NPCPhrase(DruugePhrase::FairDeal);
 			}
 			else if (f >= 10)
 			{
-				NPCPhrase(GOOD_DEAL);
+				NPCPhrase(DruugePhrase::GoodDeal);
 			}
 			else
 			{
-				NPCPhrase(FINE_DEAL);
+				NPCPhrase(DruugePhrase::FineDeal);
 			}
 		}
 	}
@@ -593,30 +593,30 @@ static void Sell(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
-	if (PlayerSaid(R, want_to_sell))
+	if (PlayerSaid(R, DruugePhrase::WantToSell))
 	{
-		NPCPhrase(READY_TO_BUY);
+		NPCPhrase(DruugePhrase::ReadyToBuy);
 	}
-	else if (PlayerSaid(R, no_way)
-			 || PlayerSaid(R, way))
+	else if (PlayerSaid(R, DruugePhrase::NoWay)
+			 || PlayerSaid(R, DruugePhrase::Way))
 	{
-		if (PlayerSaid(R, no_way))
+		if (PlayerSaid(R, DruugePhrase::NoWay))
 		{
-			NPCPhrase(OK_REGULAR_DEAL);
+			NPCPhrase(DruugePhrase::OkRegularDeal);
 		}
 		else
 		{
-			NPCPhrase(OK_HERES_SPHERE);
+			NPCPhrase(DruugePhrase::OkHeresSphere);
 
 			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(1));
 		}
 
 		DoTransaction(LastResponse);
 	}
-	else if (PlayerSaid(R, sell_maidens)
-			 || PlayerSaid(R, sell_fragments)
-			 || PlayerSaid(R, sell_caster)
-			 || PlayerSaid(R, sell_spawner))
+	else if (PlayerSaid(R, DruugePhrase::SellMaidens)
+			 || PlayerSaid(R, DruugePhrase::SellFragments)
+			 || PlayerSaid(R, DruugePhrase::SellCaster)
+			 || PlayerSaid(R, DruugePhrase::SellSpawner))
 	{
 		DoTransaction(R);
 	}
@@ -638,41 +638,41 @@ static void Sell(RESPONSE_REF R)
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP))
 	{
-		Response(sell_maidens, RespFunc);
+		Response(DruugePhrase::SellMaidens, RespFunc);
 	}
 	if ((uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP)
 		 || uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP)
 		 || uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP))
 		&& uqm::gameState().flag(uqm::GameFlag::FRAGMENTS_BOUGHT) < 2)
 	{
-		Response(sell_fragments, RespFunc);
+		Response(DruugePhrase::SellFragments, RespFunc);
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP))
 	{
-		Response(sell_caster, RespFunc);
+		Response(DruugePhrase::SellCaster, RespFunc);
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP))
 	{
-		Response(sell_spawner, RespFunc);
+		Response(DruugePhrase::SellSpawner, RespFunc);
 	}
-	Response(done_selling, TradeWorld);
+	Response(DruugePhrase::DoneSelling, TradeWorld);
 }
 
 static void ExplainSlaveTrade(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, want_to_buy))
+	if (PlayerSaid(R, DruugePhrase::WantToBuy))
 	{
-		NPCPhrase(WE_SELL_FOR_CREW);
+		NPCPhrase(DruugePhrase::WeSellForCrew);
 	}
-	else if (PlayerSaid(R, isnt_this_slave_trading))
+	else if (PlayerSaid(R, DruugePhrase::IsntThisSlaveTrading))
 	{
-		NPCPhrase(NO_SLAVE_TRADE);
+		NPCPhrase(DruugePhrase::NoSlaveTrade);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, what_do_with_crew))
+	else if (PlayerSaid(R, DruugePhrase::WhatDoWithCrew))
 	{
-		NPCPhrase(HAVE_FUN);
+		NPCPhrase(DruugePhrase::HaveFun);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS, static_cast<uint32_t>(2));
 	}
@@ -680,19 +680,19 @@ static void ExplainSlaveTrade(RESPONSE_REF R)
 	switch (uqm::gameState().flag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS))
 	{
 		case 0:
-			Response(isnt_this_slave_trading, ExplainSlaveTrade);
+			Response(DruugePhrase::IsntThisSlaveTrading, ExplainSlaveTrade);
 			break;
 		case 1:
-			Response(what_do_with_crew, ExplainSlaveTrade);
+			Response(DruugePhrase::WhatDoWithCrew, ExplainSlaveTrade);
 			break;
 	}
-	Response(i_will_never_trade_crew, TradeWorld);
-	Response(im_ready_to_buy, Buy);
+	Response(DruugePhrase::IWillNeverTradeCrew, TradeWorld);
+	Response(DruugePhrase::ImReadyToBuy, Buy);
 }
 
 static void TradeWorld(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_up_at_trade_world))
+	if (PlayerSaid(R, DruugePhrase::WhatsUpAtTradeWorld))
 	{
 		uint8_t NumVisits {};
 
@@ -700,86 +700,86 @@ static void TradeWorld(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GEN_INFO_AT_TRADE_WORLD_1);
+				NPCPhrase(DruugePhrase::GenInfoAtTradeWorld1);
 				break;
 			case 1:
-				NPCPhrase(GEN_INFO_AT_TRADE_WORLD_2);
+				NPCPhrase(DruugePhrase::GenInfoAtTradeWorld2);
 				break;
 			case 2:
-				NPCPhrase(GEN_INFO_AT_TRADE_WORLD_3);
+				NPCPhrase(DruugePhrase::GenInfoAtTradeWorld3);
 				if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
 				{
 					uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 				}
 				break;
 			case 3:
-				NPCPhrase(GEN_INFO_AT_TRADE_WORLD_4);
+				NPCPhrase(DruugePhrase::GenInfoAtTradeWorld4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_HOME_INFO, static_cast<uint32_t>(NumVisits));
-		DisablePhrase(whats_up_at_trade_world);
+		DisablePhrase(DruugePhrase::WhatsUpAtTradeWorld);
 	}
-	else if (PlayerSaid(R, done_selling))
+	else if (PlayerSaid(R, DruugePhrase::DoneSelling))
 	{
-		NPCPhrase(OK_DONE_SELLING);
+		NPCPhrase(DruugePhrase::OkDoneSelling);
 	}
-	else if (PlayerSaid(R, done_buying))
+	else if (PlayerSaid(R, DruugePhrase::DoneBuying))
 	{
-		NPCPhrase(OK_DONE_BUYING);
+		NPCPhrase(DruugePhrase::OkDoneBuying);
 	}
-	else if (PlayerSaid(R, i_will_never_trade_crew))
+	else if (PlayerSaid(R, DruugePhrase::IWillNeverTradeCrew))
 	{
-		NPCPhrase(YOUR_LOSS);
+		NPCPhrase(DruugePhrase::YourLoss);
 	}
 
-	if (PhraseEnabled(whats_up_at_trade_world))
+	if (PhraseEnabled(DruugePhrase::WhatsUpAtTradeWorld))
 	{
-		Response(whats_up_at_trade_world, TradeWorld);
+		Response(DruugePhrase::WhatsUpAtTradeWorld, TradeWorld);
 	}
-	Response(want_to_sell, Sell);
+	Response(DruugePhrase::WantToSell, Sell);
 	if (uqm::gameState().flag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS) == 3)
 	{
-		Response(want_to_buy, Buy);
+		Response(DruugePhrase::WantToBuy, Buy);
 	}
 	else
 	{
-		Response(want_to_buy, ExplainSlaveTrade);
+		Response(DruugePhrase::WantToBuy, ExplainSlaveTrade);
 	}
-	Response(bye, ExitConversation);
+	Response(DruugePhrase::Bye, ExitConversation);
 }
 
 static void BombAmbush(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_up_at_bomb_planet))
+	if (PlayerSaid(R, DruugePhrase::WhatsUpAtBombPlanet))
 	{
-		NPCPhrase(GEN_INFO_AT_BOMB_PLANET);
+		NPCPhrase(DruugePhrase::GenInfoAtBombPlanet);
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, we_get_bomb))
+	else if (PlayerSaid(R, DruugePhrase::WeGetBomb))
 	{
-		NPCPhrase(NOT_GET_BOMB);
+		NPCPhrase(DruugePhrase::NotGetBomb);
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(3));
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::BOMB_VISITS))
 	{
 		case 1:
-			Response(whats_up_at_bomb_planet, BombAmbush);
+			Response(DruugePhrase::WhatsUpAtBombPlanet, BombAmbush);
 			break;
 		case 2:
-			Response(we_get_bomb, BombAmbush);
+			Response(DruugePhrase::WeGetBomb, BombAmbush);
 			break;
 		default:
-			Response(then_we_take_bomb, ExitConversation);
+			Response(DruugePhrase::ThenWeTakeBomb, ExitConversation);
 			break;
 	}
-	Response(bye, ExitConversation);
+	Response(DruugePhrase::Bye, ExitConversation);
 }
 
 static void Space(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_up_in_space))
+	if (PlayerSaid(R, DruugePhrase::WhatsUpInSpace))
 	{
 		uint8_t NumVisits {};
 
@@ -787,29 +787,29 @@ static void Space(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_IN_SPACE_1);
+				NPCPhrase(DruugePhrase::GeneralInfoInSpace1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_IN_SPACE_2);
+				NPCPhrase(DruugePhrase::GeneralInfoInSpace2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_IN_SPACE_3);
+				NPCPhrase(DruugePhrase::GeneralInfoInSpace3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_IN_SPACE_4);
+				NPCPhrase(DruugePhrase::GeneralInfoInSpace4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_SPACE_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_in_space);
+		DisablePhrase(DruugePhrase::WhatsUpInSpace);
 	}
 
-	if (PhraseEnabled(whats_up_in_space))
+	if (PhraseEnabled(DruugePhrase::WhatsUpInSpace))
 	{
-		Response(whats_up_in_space, Space);
+		Response(DruugePhrase::WhatsUpInSpace, Space);
 	}
-	Response(bye, ExitConversation);
+	Response(DruugePhrase::Bye, ExitConversation);
 }
 
 static void Intro(void)
@@ -818,7 +818,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(DruugePhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -832,10 +832,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(HSTL_TRADE_WORLD_HELLO_1);
+					NPCPhrase(DruugePhrase::HstlTradeWorldHello1);
 					break;
 				case 1:
-					NPCPhrase(HSTL_TRADE_WORLD_HELLO_2);
+					NPCPhrase(DruugePhrase::HstlTradeWorldHello2);
 					--NumVisits;
 					break;
 			}
@@ -847,10 +847,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(HOSTILE_SPACE_HELLO_1);
+					NPCPhrase(DruugePhrase::HostileSpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(HOSTILE_SPACE_HELLO_2);
+					NPCPhrase(DruugePhrase::HostileSpaceHello2);
 					--NumVisits;
 					break;
 			}
@@ -866,19 +866,19 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(INITIAL_TRADE_WORLD_HELLO);
+					NPCPhrase(DruugePhrase::InitialTradeWorldHello);
 					break;
 				case 1:
-					NPCPhrase(SSQ_TRADE_WORLD_HELLO_1);
+					NPCPhrase(DruugePhrase::SsqTradeWorldHello1);
 					break;
 				case 2:
-					NPCPhrase(SSQ_TRADE_WORLD_HELLO_2);
+					NPCPhrase(DruugePhrase::SsqTradeWorldHello2);
 					break;
 				case 3:
-					NPCPhrase(SSQ_TRADE_WORLD_HELLO_3);
+					NPCPhrase(DruugePhrase::SsqTradeWorldHello3);
 					break;
 				case 4:
-					NPCPhrase(SSQ_TRADE_WORLD_HELLO_4);
+					NPCPhrase(DruugePhrase::SsqTradeWorldHello4);
 					--NumVisits;
 					break;
 			}
@@ -895,7 +895,7 @@ static void Intro(void)
 		if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP)
 			&& !uqm::gameState().flag(uqm::GameFlag::SCANNED_MAIDENS))
 		{
-			NPCPhrase(SCAN_MAIDENS);
+			NPCPhrase(DruugePhrase::ScanMaidens);
 			uqm::gameState().setFlag(uqm::GameFlag::SCANNED_MAIDENS, static_cast<uint32_t>(1));
 		}
 		if ((uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP)
@@ -905,24 +905,24 @@ static void Intro(void)
 		{
 			if (uqm::gameState().flag(uqm::GameFlag::FRAGMENTS_BOUGHT) < 2)
 			{
-				NPCPhrase(SCAN_FRAGMENTS);
+				NPCPhrase(DruugePhrase::ScanFragments);
 			}
 			else
 			{
-				NPCPhrase(ENOUGH_FRAGMENTS);
+				NPCPhrase(DruugePhrase::EnoughFragments);
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::SCANNED_FRAGMENTS, static_cast<uint32_t>(1));
 		}
 		if (uqm::gameState().flag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP)
 			&& !uqm::gameState().flag(uqm::GameFlag::SCANNED_CASTER))
 		{
-			NPCPhrase(SCAN_DRUUGE_CASTER);
+			NPCPhrase(DruugePhrase::ScanDruugeCaster);
 			uqm::gameState().setFlag(uqm::GameFlag::SCANNED_CASTER, static_cast<uint32_t>(1));
 		}
 		if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP)
 			&& !uqm::gameState().flag(uqm::GameFlag::SCANNED_SPAWNER))
 		{
-			NPCPhrase(SCAN_ARILOU_SPAWNER);
+			NPCPhrase(DruugePhrase::ScanArilouSpawner);
 			uqm::gameState().setFlag(uqm::GameFlag::SCANNED_SPAWNER, static_cast<uint32_t>(1));
 		}
 
@@ -932,11 +932,11 @@ static void Intro(void)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::BOMB_VISITS))
 		{
-			NPCPhrase(SUBSEQ_BOMB_WORLD_HELLO);
+			NPCPhrase(DruugePhrase::SubseqBombWorldHello);
 		}
 		else
 		{
-			NPCPhrase(INIT_BOMB_WORLD_HELLO);
+			NPCPhrase(DruugePhrase::InitBombWorldHello);
 			uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(1));
 		}
 
@@ -948,10 +948,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HOSTILE_SPACE_HELLO_1);
+				NPCPhrase(DruugePhrase::HostileSpaceHello1);
 				break;
 			case 1:
-				NPCPhrase(HOSTILE_SPACE_HELLO_2);
+				NPCPhrase(DruugePhrase::HostileSpaceHello2);
 				--NumVisits;
 				break;
 		}
@@ -982,10 +982,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(SALVAGE_YOUR_SHIP_1);
+					NPCPhrase(DruugePhrase::SalvageYourShip1);
 					break;
 				case 1:
-					NPCPhrase(SALVAGE_YOUR_SHIP_2);
+					NPCPhrase(DruugePhrase::SalvageYourShip2);
 					--NumVisits;
 					break;
 			}
@@ -1000,11 +1000,11 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(INIT_SPACE_HELLO);
+					NPCPhrase(DruugePhrase::InitSpaceHello);
 					SetHomeworldKnown(*HomeId::Druuge);
 					break;
 				case 1:
-					NPCPhrase(SUBSEQUENT_SPACE_HELLO);
+					NPCPhrase(DruugePhrase::SubsequentSpaceHello);
 					--NumVisits;
 					break;
 			}

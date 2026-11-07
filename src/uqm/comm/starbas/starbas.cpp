@@ -8,7 +8,7 @@
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS StarbasePhrase::For A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
@@ -292,9 +292,9 @@ static uint16_t DoSellMinerals(void)
 	return total;
 }
 
-static RESPONSE_REF EveryOnesACritic(uint16_t total)
+static StarbasePhrase EveryOnesACritic(uint16_t total)
 {
-	RESPONSE_REF pStr = LIGHT_LOAD_A;
+	StarbasePhrase pStr {StarbasePhrase::LightLoadA};
 
 	if (total < 1000)
 	{
@@ -302,28 +302,28 @@ static RESPONSE_REF EveryOnesACritic(uint16_t total)
 		switch (total++)
 		{
 			case 0:
-				pStr = LIGHT_LOAD_A;
+				pStr = StarbasePhrase::LightLoadA;
 				break;
 			case 1:
-				pStr = LIGHT_LOAD_B;
+				pStr = StarbasePhrase::LightLoadB;
 				break;
 			case 2:
 				// There are two separate sound samples in this case.
-				pStr = LIGHT_LOAD_C0;
-				//pStr2 = LIGHT_LOAD_C1; Kruzen: processed outside this func now
+				pStr = StarbasePhrase::LightLoadC0;
+				//pStr2 = StarbasePhrase::LightLoadC1; Kruzen: processed outside this func now
 				break;
 			case 3:
-				pStr = LIGHT_LOAD_D;
+				pStr = StarbasePhrase::LightLoadD;
 				break;
 			case 4:
-				pStr = LIGHT_LOAD_E;
+				pStr = StarbasePhrase::LightLoadE;
 				break;
 			case 5:
-				pStr = LIGHT_LOAD_F;
+				pStr = StarbasePhrase::LightLoadF;
 				break;
 			case 6:
 				--total;
-				pStr = LIGHT_LOAD_G;
+				pStr = StarbasePhrase::LightLoadG;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::LIGHT_MINERAL_LOAD, static_cast<uint32_t>(total));
@@ -334,26 +334,26 @@ static RESPONSE_REF EveryOnesACritic(uint16_t total)
 		switch (total++)
 		{
 			case 0:
-				pStr = MEDIUM_LOAD_A;
+				pStr = StarbasePhrase::MediumLoadA;
 				break;
 			case 1:
-				pStr = MEDIUM_LOAD_B;
+				pStr = StarbasePhrase::MediumLoadB;
 				break;
 			case 2:
-				pStr = MEDIUM_LOAD_C;
+				pStr = StarbasePhrase::MediumLoadC;
 				break;
 			case 3:
-				pStr = MEDIUM_LOAD_D;
+				pStr = StarbasePhrase::MediumLoadD;
 				break;
 			case 4:
-				pStr = MEDIUM_LOAD_E;
+				pStr = StarbasePhrase::MediumLoadE;
 				break;
 			case 5:
-				pStr = MEDIUM_LOAD_F;
+				pStr = StarbasePhrase::MediumLoadF;
 				break;
 			case 6:
 				--total;
-				pStr = MEDIUM_LOAD_G;
+				pStr = StarbasePhrase::MediumLoadG;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::MEDIUM_MINERAL_LOAD, static_cast<uint32_t>(total));
@@ -364,26 +364,26 @@ static RESPONSE_REF EveryOnesACritic(uint16_t total)
 		switch (total++)
 		{
 			case 0:
-				pStr = HEAVY_LOAD_A;
+				pStr = StarbasePhrase::HeavyLoadA;
 				break;
 			case 1:
-				pStr = HEAVY_LOAD_B;
+				pStr = StarbasePhrase::HeavyLoadB;
 				break;
 			case 2:
-				pStr = HEAVY_LOAD_C;
+				pStr = StarbasePhrase::HeavyLoadC;
 				break;
 			case 3:
-				pStr = HEAVY_LOAD_D;
+				pStr = StarbasePhrase::HeavyLoadD;
 				break;
 			case 4:
-				pStr = HEAVY_LOAD_E;
+				pStr = StarbasePhrase::HeavyLoadE;
 				break;
 			case 5:
-				pStr = HEAVY_LOAD_F;
+				pStr = StarbasePhrase::HeavyLoadF;
 				break;
 			case 6:
 				--total;
-				pStr = HEAVY_LOAD_G;
+				pStr = StarbasePhrase::HeavyLoadG;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::HEAVY_MINERAL_LOAD, static_cast<uint32_t>(total));
@@ -402,37 +402,37 @@ static void ByeBye(RESPONSE_REF R)
 	/* if (R == goodbye_starbase_commander) */
 	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) >= 2)
 	{
-		NPCPhrase(GOOD_LUCK_AGAIN);
+		NPCPhrase(StarbasePhrase::GoodLuckAgain);
 	}
 	else
 	{
-		RESPONSE_REF pStr = 0;
+		StarbasePhrase pStr {};
 
 		switch ((uint8_t)uqm::random().next() & 7)
 		{
 			case 0:
-				pStr = NORMAL_GOODBYE_A;
+				pStr = StarbasePhrase::NormalGoodbyeA;
 				break;
 			case 1:
-				pStr = NORMAL_GOODBYE_B;
+				pStr = StarbasePhrase::NormalGoodbyeB;
 				break;
 			case 2:
-				pStr = NORMAL_GOODBYE_C;
+				pStr = StarbasePhrase::NormalGoodbyeC;
 				break;
 			case 3:
-				pStr = NORMAL_GOODBYE_D;
+				pStr = StarbasePhrase::NormalGoodbyeD;
 				break;
 			case 4:
-				pStr = NORMAL_GOODBYE_E;
+				pStr = StarbasePhrase::NormalGoodbyeE;
 				break;
 			case 5:
-				pStr = NORMAL_GOODBYE_F;
+				pStr = StarbasePhrase::NormalGoodbyeF;
 				break;
 			case 6:
-				pStr = NORMAL_GOODBYE_G;
+				pStr = StarbasePhrase::NormalGoodbyeG;
 				break;
 			case 7:
-				pStr = NORMAL_GOODBYE_H;
+				pStr = StarbasePhrase::NormalGoodbyeH;
 				break;
 		}
 
@@ -460,68 +460,68 @@ static void AllianceInfo(RESPONSE_REF R)
 {
 	static uint8_t AllianceMask = 0;
 
-	if (PlayerSaid(R, what_about_alliance))
+	if (PlayerSaid(R, StarbasePhrase::WhatAboutAlliance))
 	{
-		NPCPhrase(WHICH_ALLIANCE);
+		NPCPhrase(StarbasePhrase::WhichAlliance);
 		AllianceMask = 0;
 	}
-	else if (PlayerSaid(R, shofixti))
+	else if (PlayerSaid(R, StarbasePhrase::Shofixti))
 	{
-		NPCPhrase(ABOUT_SHOFIXTI);
+		NPCPhrase(StarbasePhrase::AboutShofixti);
 		AllianceMask |= AllianceShofixti;
 		SetHomeworldKnown(*HomeId::Shofixti);
 	}
-	else if (PlayerSaid(R, yehat))
+	else if (PlayerSaid(R, StarbasePhrase::Yehat))
 	{
-		NPCPhrase(ABOUT_YEHAT);
+		NPCPhrase(StarbasePhrase::AboutYehat);
 		AllianceMask |= AllianceYehat;
 	}
-	else if (PlayerSaid(R, arilou))
+	else if (PlayerSaid(R, StarbasePhrase::Arilou))
 	{
-		NPCPhrase(ABOUT_ARILOU);
+		NPCPhrase(StarbasePhrase::AboutArilou);
 		AllianceMask |= AllianceArilou;
 	}
-	else if (PlayerSaid(R, chenjesu))
+	else if (PlayerSaid(R, StarbasePhrase::Chenjesu))
 	{
-		NPCPhrase(ABOUT_CHENJESU);
+		NPCPhrase(StarbasePhrase::AboutChenjesu);
 		AllianceMask |= AllianceChenjesu;
 	}
-	else if (PlayerSaid(R, mmrnmhrm))
+	else if (PlayerSaid(R, StarbasePhrase::Mmrnmhrm))
 	{
-		NPCPhrase(ABOUT_MMRNMHRM);
+		NPCPhrase(StarbasePhrase::AboutMmrnmhrm);
 		AllianceMask |= AllianceMmrnmhrm;
 	}
-	else if (PlayerSaid(R, syreen))
+	else if (PlayerSaid(R, StarbasePhrase::Syreen))
 	{
-		NPCPhrase(ABOUT_SYREEN);
+		NPCPhrase(StarbasePhrase::AboutSyreen);
 		AllianceMask |= AllianceSyreen;
 	}
 
 	if (!(AllianceMask & AllianceShofixti))
 	{
-		Response(shofixti, AllianceInfo);
+		Response(StarbasePhrase::Shofixti, AllianceInfo);
 	}
 	if (!(AllianceMask & AllianceYehat))
 	{
-		Response(yehat, AllianceInfo);
+		Response(StarbasePhrase::Yehat, AllianceInfo);
 	}
 	if (!(AllianceMask & AllianceArilou))
 	{
-		Response(arilou, AllianceInfo);
+		Response(StarbasePhrase::Arilou, AllianceInfo);
 	}
 	if (!(AllianceMask & AllianceChenjesu))
 	{
-		Response(chenjesu, AllianceInfo);
+		Response(StarbasePhrase::Chenjesu, AllianceInfo);
 	}
 	if (!(AllianceMask & AllianceMmrnmhrm))
 	{
-		Response(mmrnmhrm, AllianceInfo);
+		Response(StarbasePhrase::Mmrnmhrm, AllianceInfo);
 	}
 	if (!(AllianceMask & AllianceSyreen))
 	{
-		Response(syreen, AllianceInfo);
+		Response(StarbasePhrase::Syreen, AllianceInfo);
 	}
-	Response(enough_alliance, AlienRaces);
+	Response(StarbasePhrase::EnoughAlliance, AlienRaces);
 }
 
 static constexpr auto HierarchyMycon {(1 << 0)};
@@ -536,77 +536,77 @@ static void HierarchyInfo(RESPONSE_REF R)
 {
 	static uint8_t HierarchyMask = 0;
 
-	if (PlayerSaid(R, what_about_hierarchy))
+	if (PlayerSaid(R, StarbasePhrase::WhatAboutHierarchy))
 	{
-		NPCPhrase(WHICH_HIERARCHY);
+		NPCPhrase(StarbasePhrase::WhichHierarchy);
 		HierarchyMask = 0;
 	}
-	else if (PlayerSaid(R, urquan))
+	else if (PlayerSaid(R, StarbasePhrase::Urquan))
 	{
-		NPCPhrase(ABOUT_URQUAN);
+		NPCPhrase(StarbasePhrase::AboutUrquan);
 		HierarchyMask |= HierarchyUrquan;
 	}
-	else if (PlayerSaid(R, mycon))
+	else if (PlayerSaid(R, StarbasePhrase::Mycon))
 	{
-		NPCPhrase(ABOUT_MYCON);
+		NPCPhrase(StarbasePhrase::AboutMycon);
 		HierarchyMask |= HierarchyMycon;
 	}
-	else if (PlayerSaid(R, spathi))
+	else if (PlayerSaid(R, StarbasePhrase::Spathi))
 	{
-		NPCPhrase(ABOUT_SPATHI);
+		NPCPhrase(StarbasePhrase::AboutSpathi);
 		HierarchyMask |= HierarchySpathi;
 	}
-	else if (PlayerSaid(R, umgah))
+	else if (PlayerSaid(R, StarbasePhrase::Umgah))
 	{
-		NPCPhrase(ABOUT_UMGAH);
+		NPCPhrase(StarbasePhrase::AboutUmgah);
 		HierarchyMask |= HierarchyUmgah;
 	}
-	else if (PlayerSaid(R, androsynth))
+	else if (PlayerSaid(R, StarbasePhrase::Androsynth))
 	{
-		NPCPhrase(ABOUT_ANDROSYNTH);
+		NPCPhrase(StarbasePhrase::AboutAndrosynth);
 		HierarchyMask |= HierarchyAndrosynth;
 		SetHomeworldKnown(*HomeId::Androsynth);
 	}
-	else if (PlayerSaid(R, ilwrath))
+	else if (PlayerSaid(R, StarbasePhrase::Ilwrath))
 	{
-		NPCPhrase(ABOUT_ILWRATH);
+		NPCPhrase(StarbasePhrase::AboutIlwrath);
 		HierarchyMask |= HierarchyIlwrath;
 	}
-	else if (PlayerSaid(R, vux))
+	else if (PlayerSaid(R, StarbasePhrase::Vux))
 	{
-		NPCPhrase(ABOUT_VUX);
+		NPCPhrase(StarbasePhrase::AboutVux);
 		HierarchyMask |= HierarchyVux;
 	}
 
 	if (!(HierarchyMask & HierarchyUrquan))
 	{
-		Response(urquan, HierarchyInfo);
+		Response(StarbasePhrase::Urquan, HierarchyInfo);
 	}
 	if (!(HierarchyMask & HierarchyMycon))
 	{
-		Response(mycon, HierarchyInfo);
+		Response(StarbasePhrase::Mycon, HierarchyInfo);
 	}
 	if (!(HierarchyMask & HierarchySpathi))
 	{
-		Response(spathi, HierarchyInfo);
+		Response(StarbasePhrase::Spathi, HierarchyInfo);
 	}
 	if (!(HierarchyMask & HierarchyUmgah))
 	{
-		Response(umgah, HierarchyInfo);
+		Response(StarbasePhrase::Umgah, HierarchyInfo);
 	}
 	if (!(HierarchyMask & HierarchyAndrosynth))
 	{
-		Response(androsynth, HierarchyInfo);
+		Response(StarbasePhrase::Androsynth, HierarchyInfo);
 	}
 	if (!(HierarchyMask & HierarchyIlwrath))
 	{
-		Response(ilwrath, HierarchyInfo);
+		Response(StarbasePhrase::Ilwrath, HierarchyInfo);
 	}
 	if (!(HierarchyMask & HierarchyVux))
 	{
-		Response(vux, HierarchyInfo);
+		Response(StarbasePhrase::Vux, HierarchyInfo);
 	}
-	Response(enough_hierarchy, AlienRaces);
+	Response(StarbasePhrase::EnoughHierarchy, AlienRaces);
 }
 
 static constexpr auto RacesAlliance {(1 << 0)};
@@ -617,40 +617,40 @@ static void AlienRaces(RESPONSE_REF R)
 {
 	static uint8_t RacesMask = 0;
 
-	if (PlayerSaid(R, alien_races))
+	if (PlayerSaid(R, StarbasePhrase::AlienRaces))
 	{
-		NPCPhrase(WHICH_ALIEN);
+		NPCPhrase(StarbasePhrase::WhichAlien);
 		RacesMask = 0;
 	}
-	else if (PlayerSaid(R, enough_alliance))
+	else if (PlayerSaid(R, StarbasePhrase::EnoughAlliance))
 	{
-		NPCPhrase(OK_ENOUGH_ALLIANCE);
+		NPCPhrase(StarbasePhrase::OkEnoughAlliance);
 		RacesMask |= RacesAlliance;
 	}
-	else if (PlayerSaid(R, enough_hierarchy))
+	else if (PlayerSaid(R, StarbasePhrase::EnoughHierarchy))
 	{
-		NPCPhrase(OK_ENOUGH_HIERARCHY);
+		NPCPhrase(StarbasePhrase::OkEnoughHierarchy);
 		RacesMask |= RacesHierarchy;
 	}
-	else if (PlayerSaid(R, what_about_other))
+	else if (PlayerSaid(R, StarbasePhrase::WhatAboutOther))
 	{
-		NPCPhrase(ABOUT_OTHER);
+		NPCPhrase(StarbasePhrase::AboutOther);
 		RacesMask |= RacesOther;
 	}
 
 	if (!(RacesMask & RacesAlliance))
 	{
-		Response(what_about_alliance, AllianceInfo);
+		Response(StarbasePhrase::WhatAboutAlliance, AllianceInfo);
 	}
 	if (!(RacesMask & RacesHierarchy))
 	{
-		Response(what_about_hierarchy, HierarchyInfo);
+		Response(StarbasePhrase::WhatAboutHierarchy, HierarchyInfo);
 	}
 	if (!(RacesMask & RacesOther))
 	{
-		Response(what_about_other, AlienRaces);
+		Response(StarbasePhrase::WhatAboutOther, AlienRaces);
 	}
-	Response(enough_aliens, TellHistory);
+	Response(StarbasePhrase::EnoughAliens, TellHistory);
 }
 
 static constexpr auto WarStarted {(1 << 0)};
@@ -662,49 +662,49 @@ static void WarInfo(RESPONSE_REF R)
 {
 	static uint8_t WarMask = 0;
 
-	if (PlayerSaid(R, the_war))
+	if (PlayerSaid(R, StarbasePhrase::TheWar))
 	{
-		NPCPhrase(WHICH_WAR);
+		NPCPhrase(StarbasePhrase::WhichWar);
 		WarMask = 0;
 	}
-	else if (PlayerSaid(R, what_started_war))
+	else if (PlayerSaid(R, StarbasePhrase::WhatStartedWar))
 	{
-		NPCPhrase(URQUAN_STARTED_WAR);
+		NPCPhrase(StarbasePhrase::UrquanStartedWar);
 		WarMask |= WarStarted;
 	}
-	else if (PlayerSaid(R, what_was_war_like))
+	else if (PlayerSaid(R, StarbasePhrase::WhatWasWarLike))
 	{
-		NPCPhrase(WAR_WAS_LIKE_SO);
+		NPCPhrase(StarbasePhrase::WarWasLikeSo);
 		WarMask |= WarWasLike;
 	}
-	else if (PlayerSaid(R, why_lose_war))
+	else if (PlayerSaid(R, StarbasePhrase::WhyLoseWar))
 	{
-		NPCPhrase(LOST_WAR_BECAUSE);
+		NPCPhrase(StarbasePhrase::LostWarBecause);
 		WarMask |= WarLost;
 	}
-	else if (PlayerSaid(R, what_after_war))
+	else if (PlayerSaid(R, StarbasePhrase::WhatAfterWar))
 	{
-		NPCPhrase(AFTER_WAR);
+		NPCPhrase(StarbasePhrase::AfterWar);
 		WarMask |= WarAftermath;
 	}
 
 	if (!(WarMask & WarStarted))
 	{
-		Response(what_started_war, WarInfo);
+		Response(StarbasePhrase::WhatStartedWar, WarInfo);
 	}
 	if (!(WarMask & WarWasLike))
 	{
-		Response(what_was_war_like, WarInfo);
+		Response(StarbasePhrase::WhatWasWarLike, WarInfo);
 	}
 	if (!(WarMask & WarLost))
 	{
-		Response(why_lose_war, WarInfo);
+		Response(StarbasePhrase::WhyLoseWar, WarInfo);
 	}
 	if (!(WarMask & WarAftermath))
 	{
-		Response(what_after_war, WarInfo);
+		Response(StarbasePhrase::WhatAfterWar, WarInfo);
 	}
-	Response(enough_war, TellHistory);
+	Response(StarbasePhrase::EnoughWar, TellHistory);
 }
 
 static constexpr auto AncientPrecursors {(1 << 0)};
@@ -715,68 +715,68 @@ static void AncientHistory(RESPONSE_REF R)
 {
 	static uint8_t AncientMask = 0;
 
-	if (PlayerSaid(R, ancient_history))
+	if (PlayerSaid(R, StarbasePhrase::AncientHistory))
 	{
-		NPCPhrase(WHICH_ANCIENT);
+		NPCPhrase(StarbasePhrase::WhichAncient);
 		AncientMask = 0;
 	}
-	else if (PlayerSaid(R, precursors))
+	else if (PlayerSaid(R, StarbasePhrase::Precursors))
 	{
-		NPCPhrase(ABOUT_PRECURSORS);
+		NPCPhrase(StarbasePhrase::AboutPrecursors);
 		AncientMask |= AncientPrecursors;
 	}
-	else if (PlayerSaid(R, old_races))
+	else if (PlayerSaid(R, StarbasePhrase::OldRaces))
 	{
-		NPCPhrase(ABOUT_OLD_RACES);
+		NPCPhrase(StarbasePhrase::AboutOldRaces);
 		AncientMask |= AncientRaces;
 	}
-	else if (PlayerSaid(R, aliens_on_earth))
+	else if (PlayerSaid(R, StarbasePhrase::AliensOnEarth))
 	{
-		NPCPhrase(ABOUT_ALIENS_ON_EARTH);
+		NPCPhrase(StarbasePhrase::AboutAliensOnEarth);
 		AncientMask |= AncientEarth;
 	}
 
 	if (!(AncientMask & AncientPrecursors))
 	{
-		Response(precursors, AncientHistory);
+		Response(StarbasePhrase::Precursors, AncientHistory);
 	}
 	if (!(AncientMask & AncientRaces))
 	{
-		Response(old_races, AncientHistory);
+		Response(StarbasePhrase::OldRaces, AncientHistory);
 	}
 	if (!(AncientMask & AncientEarth))
 	{
-		Response(aliens_on_earth, AncientHistory);
+		Response(StarbasePhrase::AliensOnEarth, AncientHistory);
 	}
-	Response(enough_ancient, TellHistory);
+	Response(StarbasePhrase::EnoughAncient, TellHistory);
 }
 
 static void TellHistory(RESPONSE_REF R)
 {
-	RESPONSE_REF pstack[3];
+	StarbasePhrase pstack[3];
 
-	if (PlayerSaid(R, history))
+	if (PlayerSaid(R, StarbasePhrase::History))
 	{
-		NPCPhrase(WHICH_HISTORY);
+		NPCPhrase(StarbasePhrase::WhichHistory);
 		stack0 = 0;
 		stack1 = 0;
 		stack2 = 0;
 	}
-	else if (PlayerSaid(R, enough_aliens))
+	else if (PlayerSaid(R, StarbasePhrase::EnoughAliens))
 	{
-		NPCPhrase(OK_ENOUGH_ALIENS);
+		NPCPhrase(StarbasePhrase::OkEnoughAliens);
 
 		stack0 = 1;
 	}
-	else if (PlayerSaid(R, enough_war))
+	else if (PlayerSaid(R, StarbasePhrase::EnoughWar))
 	{
-		NPCPhrase(OK_ENOUGH_WAR);
+		NPCPhrase(StarbasePhrase::OkEnoughWar);
 
 		stack1 = 1;
 	}
-	else if (PlayerSaid(R, enough_ancient))
+	else if (PlayerSaid(R, StarbasePhrase::EnoughAncient))
 	{
-		NPCPhrase(OK_ENOUGH_ANCIENT);
+		NPCPhrase(StarbasePhrase::OkEnoughAncient);
 
 		stack2 = 1;
 	}
@@ -784,44 +784,44 @@ static void TellHistory(RESPONSE_REF R)
 	switch (stack0)
 	{
 		case 0:
-			pstack[0] = alien_races;
+			pstack[0] = StarbasePhrase::AlienRaces;
 			break;
 		default:
-			pstack[0] = 0;
+			pstack[0] = StarbasePhrase::NullPhrase;
 			break;
 	}
 	switch (stack1)
 	{
 		case 0:
-			pstack[1] = the_war;
+			pstack[1] = StarbasePhrase::TheWar;
 			break;
 		default:
-			pstack[1] = 0;
+			pstack[1] = StarbasePhrase::NullPhrase;
 			break;
 	}
 	switch (stack2)
 	{
 		case 0:
-			pstack[2] = ancient_history;
+			pstack[2] = StarbasePhrase::AncientHistory;
 			break;
 		default:
-			pstack[2] = 0;
+			pstack[2] = StarbasePhrase::NullPhrase;
 			break;
 	}
 
-	if (pstack[0])
+	if (pstack[0] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[0], AlienRaces);
 	}
-	if (pstack[1])
+	if (pstack[1] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[1], WarInfo);
 	}
-	if (pstack[2])
+	if (pstack[2] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[2], AncientHistory);
 	}
-	Response(enough_history, NeedInfo);
+	Response(StarbasePhrase::EnoughHistory, NeedInfo);
 }
 
 static constexpr auto HowFindUrquan {(1 << 0)};
@@ -833,49 +833,49 @@ static void DefeatUrquan(RESPONSE_REF R)
 {
 	static uint8_t DefeatMask = 0;
 
-	if (PlayerSaid(R, how_defeat))
+	if (PlayerSaid(R, StarbasePhrase::HowDefeat))
 	{
-		NPCPhrase(DEFEAT_LIKE_SO);
+		NPCPhrase(StarbasePhrase::DefeatLikeSo);
 		DefeatMask = 0;
 	}
-	else if (PlayerSaid(R, how_find_urquan))
+	else if (PlayerSaid(R, StarbasePhrase::HowFindUrquan))
 	{
-		NPCPhrase(FIND_URQUAN);
+		NPCPhrase(StarbasePhrase::FindUrquan);
 		DefeatMask |= HowFindUrquan;
 	}
-	else if (PlayerSaid(R, how_fight_urquan))
+	else if (PlayerSaid(R, StarbasePhrase::HowFightUrquan))
 	{
-		NPCPhrase(FIGHT_URQUAN);
+		NPCPhrase(StarbasePhrase::FightUrquan);
 		DefeatMask |= HowFightUrquan;
 	}
-	else if (PlayerSaid(R, how_ally))
+	else if (PlayerSaid(R, StarbasePhrase::HowAlly))
 	{
-		NPCPhrase(ALLY_LIKE_SO);
+		NPCPhrase(StarbasePhrase::AllyLikeSo);
 		DefeatMask |= HowAllyAgainstUrquan;
 	}
-	else if (PlayerSaid(R, how_get_strong))
+	else if (PlayerSaid(R, StarbasePhrase::HowGetStrong))
 	{
-		NPCPhrase(STRONG_LIKE_SO);
+		NPCPhrase(StarbasePhrase::StrongLikeSo);
 		DefeatMask |= HowStrongAgainstUrquan;
 	}
 
 	if (!(DefeatMask & HowFindUrquan))
 	{
-		Response(how_find_urquan, DefeatUrquan);
+		Response(StarbasePhrase::HowFindUrquan, DefeatUrquan);
 	}
 	if (!(DefeatMask & HowFightUrquan))
 	{
-		Response(how_fight_urquan, DefeatUrquan);
+		Response(StarbasePhrase::HowFightUrquan, DefeatUrquan);
 	}
 	if (!(DefeatMask & HowAllyAgainstUrquan))
 	{
-		Response(how_ally, DefeatUrquan);
+		Response(StarbasePhrase::HowAlly, DefeatUrquan);
 	}
 	if (!(DefeatMask & HowStrongAgainstUrquan))
 	{
-		Response(how_get_strong, DefeatUrquan);
+		Response(StarbasePhrase::HowGetStrong, DefeatUrquan);
 	}
-	Response(enough_defeat, TellMission);
+	Response(StarbasePhrase::EnoughDefeat, TellMission);
 }
 
 static void AnalyzeCondition(void)
@@ -942,50 +942,50 @@ static void AnalyzeCondition(void)
 				  && uqm::gameState().sis().FuelOnBoard >= FuelTankCapacity
 				  && num_bays >= 1 && uqm::gameState().sis().NumLanders
 				  && num_batts >= 1 && num_guns >= 2);
-	NPCPhrase(LETS_SEE);
+	NPCPhrase(StarbasePhrase::LetsSee);
 	if (!HasMinimum && uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2)
 	{
-		NPCPhrase(IMPROVE_1);
+		NPCPhrase(StarbasePhrase::Improve1);
 		if (num_thrusters < 7)
 		{
-			NPCPhrase(NEED_THRUSTERS_1);
+			NPCPhrase(StarbasePhrase::NeedThrusters1);
 		}
 		if (num_jets < 5)
 		{
-			NPCPhrase(NEED_TURN_1);
+			NPCPhrase(StarbasePhrase::NeedTurn1);
 		}
 		if (num_guns < 2)
 		{
-			NPCPhrase(NEED_GUNS_1);
+			NPCPhrase(StarbasePhrase::NeedGuns1);
 		}
 		if (uqm::gameState().sis().CrewEnlisted < CrewPodCapacity)
 		{
-			NPCPhrase(NEED_CREW_1);
+			NPCPhrase(StarbasePhrase::NeedCrew1);
 		}
 		if (uqm::gameState().sis().FuelOnBoard < FuelTankCapacity)
 		{
-			NPCPhrase(NEED_FUEL_1);
+			NPCPhrase(StarbasePhrase::NeedFuel1);
 		}
 		if (num_bays < 1)
 		{
-			NPCPhrase(NEED_STORAGE_1);
+			NPCPhrase(StarbasePhrase::NeedStorage1);
 		}
 		if (uqm::gameState().sis().NumLanders == 0)
 		{
-			NPCPhrase(NEED_LANDERS_2);
+			NPCPhrase(StarbasePhrase::NeedLanders2);
 		}
 		if (num_batts < 1)
 		{
-			NPCPhrase(NEED_DYNAMOS_1);
+			NPCPhrase(StarbasePhrase::NeedDynamos1);
 		}
 
 		if (uqm::gameState().sis().ResUnits >= 3000)
 		{
-			NPCPhrase(IMPROVE_FLAGSHIP_WITH_RU);
+			NPCPhrase(StarbasePhrase::ImproveFlagshipWithRu);
 		}
 		else
 		{
-			NPCPhrase(GO_GET_MINERALS);
+			NPCPhrase(StarbasePhrase::GoGetMinerals);
 		}
 	}
 	else
@@ -1010,104 +1010,104 @@ static void AnalyzeCondition(void)
 					  && num_batts >= 4 && num_guns >= 7 && num_defense >= 2);
 		if (!HasMaximum && uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2)
 		{
-			NPCPhrase(GOT_OK_FLAGSHIP);
+			NPCPhrase(StarbasePhrase::GotOkFlagship);
 		}
 		else
 		{
-			NPCPhrase(GOT_AWESOME_FLAGSHIP);
+			NPCPhrase(StarbasePhrase::GotAwesomeFlagship);
 		}
 
 		if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) >= 2)
 		{
-			NPCPhrase(CHMMR_IMPROVED_BOMB);
+			NPCPhrase(StarbasePhrase::ChmmrImprovedBomb);
 			if (FleetStrength < 20000)
 			{
-				NPCPhrase(MUST_ACQUIRE_AWESOME_FLEET);
+				NPCPhrase(StarbasePhrase::MustAcquireAwesomeFleet);
 			}
 			else
 			{
-				NPCPhrase(GOT_AWESOME_FLEET);
+				NPCPhrase(StarbasePhrase::GotAwesomeFleet);
 				if (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 				{
-					NPCPhrase(MUST_ELIMINATE_URQUAN_GUARDS);
+					NPCPhrase(StarbasePhrase::MustEliminateUrquanGuards);
 				}
 				else
 				{
-					NPCPhrase(GO_DESTROY_SAMATRA);
+					NPCPhrase(StarbasePhrase::GoDestroySamatra);
 				}
 			}
 		}
 		else if (num_aliens < 2)
 		{
-			NPCPhrase(GO_ALLY_WITH_ALIENS);
+			NPCPhrase(StarbasePhrase::GoAllyWithAliens);
 		}
 		else
 		{
-			NPCPhrase(MADE_SOME_ALLIES);
+			NPCPhrase(StarbasePhrase::MadeSomeAllies);
 			if (FleetStrength < 6000)
 			{
 				if (uqm::gameState().sis().ResUnits >= 3000)
 				{
-					NPCPhrase(BUY_COMBAT_SHIPS);
+					NPCPhrase(StarbasePhrase::BuyCombatShips);
 				}
 				else
 				{
-					NPCPhrase(GET_SHIPS_BY_MINING_OR_ALLIANCE);
+					NPCPhrase(StarbasePhrase::GetShipsByMiningOrAlliance);
 				}
 			}
 			else
 			{
-				NPCPhrase(GOT_OK_FLEET);
+				NPCPhrase(StarbasePhrase::GotOkFleet);
 				if (!HasMaximum)
 				{
-					NPCPhrase(IMPROVE_2);
+					NPCPhrase(StarbasePhrase::Improve2);
 					if (num_thrusters < NumDriveSlots)
 					{
-						NPCPhrase(NEED_THRUSTERS_2);
+						NPCPhrase(StarbasePhrase::NeedThrusters2);
 					}
 					if (num_jets < NumJetSlots)
 					{
-						NPCPhrase(NEED_TURN_2);
+						NPCPhrase(StarbasePhrase::NeedTurn2);
 					}
 					if (num_guns < 7)
 					{
-						NPCPhrase(NEED_GUNS_2);
+						NPCPhrase(StarbasePhrase::NeedGuns2);
 					}
 					if (uqm::gameState().sis().CrewEnlisted < CrewPodCapacity * 3)
 					{
-						NPCPhrase(NEED_CREW_2);
+						NPCPhrase(StarbasePhrase::NeedCrew2);
 					}
 					if (uqm::gameState().sis().FuelOnBoard < FuelTankCapacity * 3)
 					{
-						NPCPhrase(NEED_FUEL_2);
+						NPCPhrase(StarbasePhrase::NeedFuel2);
 					}
 					if (uqm::gameState().sis().NumLanders < 3)
 					{
-						NPCPhrase(NEED_LANDERS_1);
+						NPCPhrase(StarbasePhrase::NeedLanders1);
 					}
 					if (num_batts < 4)
 					{
-						NPCPhrase(NEED_DYNAMOS_2);
+						NPCPhrase(StarbasePhrase::NeedDynamos2);
 					}
 					if (num_defense < 2)
 					{
-						NPCPhrase(NEED_POINT);
+						NPCPhrase(StarbasePhrase::NeedPoint);
 					}
 				}
 				else if (!uqm::gameState().flag(uqm::GameFlag::AWARE_OF_SAMATRA))
 				{
-					NPCPhrase(GO_LEARN_ABOUT_URQUAN);
+					NPCPhrase(StarbasePhrase::GoLearnAboutUrquan);
 				}
 				else
 				{
-					NPCPhrase(KNOW_ABOUT_SAMATRA);
+					NPCPhrase(StarbasePhrase::KnowAboutSamatra);
 					if (!uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB))
 					{
-						NPCPhrase(FIND_WAY_TO_DESTROY_SAMATRA);
+						NPCPhrase(StarbasePhrase::FindWayToDestroySamatra);
 					}
 					else if (uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 					{
-						NPCPhrase(MUST_INCREASE_BOMB_STRENGTH);
+						NPCPhrase(StarbasePhrase::MustIncreaseBombStrength);
 					}
 				}
 			}
@@ -1117,43 +1117,43 @@ static void AnalyzeCondition(void)
 
 static void TellMission(RESPONSE_REF R)
 {
-	RESPONSE_REF pstack[4];
+	StarbasePhrase pstack[4];
 
-	if (PlayerSaid(R, our_mission))
+	if (PlayerSaid(R, StarbasePhrase::OurMission))
 	{
-		NPCPhrase(WHICH_MISSION);
+		NPCPhrase(StarbasePhrase::WhichMission);
 		stack0 = 0;
 		stack1 = 0;
 		stack2 = 0;
 		stack3 = 0;
 	}
-	else if (PlayerSaid(R, where_get_minerals))
+	else if (PlayerSaid(R, StarbasePhrase::WhereGetMinerals))
 	{
-		NPCPhrase(GET_MINERALS);
+		NPCPhrase(StarbasePhrase::GetMinerals);
 
 		stack0 = 1;
 	}
-	else if (PlayerSaid(R, what_about_aliens))
+	else if (PlayerSaid(R, StarbasePhrase::WhatAboutAliens))
 	{
-		NPCPhrase(ABOUT_ALIENS);
+		NPCPhrase(StarbasePhrase::AboutAliens);
 
 		stack1 = 1;
 	}
-	else if (PlayerSaid(R, what_do_now))
+	else if (PlayerSaid(R, StarbasePhrase::WhatDoNow))
 	{
 		AnalyzeCondition();
 
 		stack2 = 1;
 	}
-	else if (PlayerSaid(R, what_about_urquan))
+	else if (PlayerSaid(R, StarbasePhrase::WhatAboutUrquan))
 	{
-		NPCPhrase(MUST_DEFEAT);
+		NPCPhrase(StarbasePhrase::MustDefeat);
 
 		stack3 = 1;
 	}
-	else if (PlayerSaid(R, enough_defeat))
+	else if (PlayerSaid(R, StarbasePhrase::EnoughDefeat))
 	{
-		NPCPhrase(OK_ENOUGH_DEFEAT);
+		NPCPhrase(StarbasePhrase::OkEnoughDefeat);
 
 		stack3 = 2;
 	}
@@ -1161,56 +1161,56 @@ static void TellMission(RESPONSE_REF R)
 	switch (stack0)
 	{
 		case 0:
-			pstack[0] = where_get_minerals;
+			pstack[0] = StarbasePhrase::WhereGetMinerals;
 			break;
 		default:
-			pstack[0] = 0;
+			pstack[0] = StarbasePhrase::NullPhrase;
 			break;
 	}
 	switch (stack1)
 	{
 		case 0:
-			pstack[1] = what_about_aliens;
+			pstack[1] = StarbasePhrase::WhatAboutAliens;
 			break;
 		default:
-			pstack[1] = 0;
+			pstack[1] = StarbasePhrase::NullPhrase;
 			break;
 	}
 	switch (stack2)
 	{
 		case 0:
-			pstack[2] = what_do_now;
+			pstack[2] = StarbasePhrase::WhatDoNow;
 			break;
 		default:
-			pstack[2] = 0;
+			pstack[2] = StarbasePhrase::NullPhrase;
 			break;
 	}
 	switch (stack3)
 	{
 		case 0:
-			pstack[3] = what_about_urquan;
+			pstack[3] = StarbasePhrase::WhatAboutUrquan;
 			break;
 		case 1:
-			pstack[3] = how_defeat;
+			pstack[3] = StarbasePhrase::HowDefeat;
 			break;
 		default:
-			pstack[3] = 0;
+			pstack[3] = StarbasePhrase::NullPhrase;
 			break;
 	}
 
-	if (pstack[0])
+	if (pstack[0] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[0], TellMission);
 	}
-	if (pstack[1])
+	if (pstack[1] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[1], TellMission);
 	}
-	if (pstack[2])
+	if (pstack[2] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[2], TellMission);
 	}
-	if (pstack[3])
+	if (pstack[3] != StarbasePhrase::NullPhrase)
 	{
 		if (stack3 == 1)
 		{
@@ -1222,60 +1222,60 @@ static void TellMission(RESPONSE_REF R)
 		}
 	}
 
-	Response(enough_mission, NeedInfo);
+	Response(StarbasePhrase::EnoughMission, NeedInfo);
 }
 
 static void TellStarBase(RESPONSE_REF R)
 {
-	RESPONSE_REF pstack[4];
+	StarbasePhrase pstack[4];
 
-	if (PlayerSaid(R, starbase_functions))
+	if (PlayerSaid(R, StarbasePhrase::StarbaseFunctions))
 	{
-		NPCPhrase(WHICH_FUNCTION);
+		NPCPhrase(StarbasePhrase::WhichFunction);
 		stack0 = 0;
 		stack1 = 0;
 		stack2 = 0;
 		stack3 = 0;
 	}
-	else if (PlayerSaid(R, tell_me_about_fuel))
+	else if (PlayerSaid(R, StarbasePhrase::TellMeAboutFuel))
 	{
-		NPCPhrase(ABOUT_FUEL);
+		NPCPhrase(StarbasePhrase::AboutFuel);
 
 		stack1 = 1;
 	}
-	else if (PlayerSaid(R, tell_me_about_crew))
+	else if (PlayerSaid(R, StarbasePhrase::TellMeAboutCrew))
 	{
-		NPCPhrase(ABOUT_CREW);
+		NPCPhrase(StarbasePhrase::AboutCrew);
 
 		stack2 = 2;
 	}
-	else if (PlayerSaid(R, tell_me_about_modules))
+	else if (PlayerSaid(R, StarbasePhrase::TellMeAboutModules))
 	{
-		NPCPhrase(ABOUT_MODULES);
+		NPCPhrase(StarbasePhrase::AboutModules);
 
 		stack0 = 1;
 	}
-	else if (PlayerSaid(R, tell_me_about_ships))
+	else if (PlayerSaid(R, StarbasePhrase::TellMeAboutShips))
 	{
-		NPCPhrase(ABOUT_SHIPS);
+		NPCPhrase(StarbasePhrase::AboutShips);
 
 		stack2 = 1;
 	}
-	else if (PlayerSaid(R, tell_me_about_ru))
+	else if (PlayerSaid(R, StarbasePhrase::TellMeAboutRu))
 	{
-		NPCPhrase(ABOUT_RU);
+		NPCPhrase(StarbasePhrase::AboutRu);
 
 		stack3 = 1;
 	}
-	else if (PlayerSaid(R, tell_me_about_minerals))
+	else if (PlayerSaid(R, StarbasePhrase::TellMeAboutMinerals))
 	{
-		NPCPhrase(ABOUT_MINERALS);
+		NPCPhrase(StarbasePhrase::AboutMinerals);
 
 		stack3 = 2;
 	}
-	else if (PlayerSaid(R, tell_me_about_life))
+	else if (PlayerSaid(R, StarbasePhrase::TellMeAboutLife))
 	{
-		NPCPhrase(ABOUT_LIFE);
+		NPCPhrase(StarbasePhrase::AboutLife);
 
 		stack3 = 3;
 	}
@@ -1283,94 +1283,94 @@ static void TellStarBase(RESPONSE_REF R)
 	switch (stack0)
 	{
 		case 0:
-			pstack[0] = tell_me_about_modules;
+			pstack[0] = StarbasePhrase::TellMeAboutModules;
 			break;
 		default:
-			pstack[0] = 0;
+			pstack[0] = StarbasePhrase::NullPhrase;
 			break;
 	}
 	switch (stack1)
 	{
 		case 0:
-			pstack[1] = tell_me_about_fuel;
+			pstack[1] = StarbasePhrase::TellMeAboutFuel;
 			break;
 		default:
-			pstack[1] = 0;
+			pstack[1] = StarbasePhrase::NullPhrase;
 			break;
 	}
 	switch (stack2)
 	{
 		case 0:
-			pstack[2] = tell_me_about_ships;
+			pstack[2] = StarbasePhrase::TellMeAboutShips;
 			break;
 		case 1:
-			pstack[2] = tell_me_about_crew;
+			pstack[2] = StarbasePhrase::TellMeAboutCrew;
 			break;
 		default:
-			pstack[2] = 0;
+			pstack[2] = StarbasePhrase::NullPhrase;
 			break;
 	}
 	switch (stack3)
 	{
 		case 0:
-			pstack[3] = tell_me_about_ru;
+			pstack[3] = StarbasePhrase::TellMeAboutRu;
 			break;
 		case 1:
-			pstack[3] = tell_me_about_minerals;
+			pstack[3] = StarbasePhrase::TellMeAboutMinerals;
 			break;
 		case 2:
-			pstack[3] = tell_me_about_life;
+			pstack[3] = StarbasePhrase::TellMeAboutLife;
 			break;
 		default:
-			pstack[3] = 0;
+			pstack[3] = StarbasePhrase::NullPhrase;
 			break;
 	}
 
-	if (pstack[0])
+	if (pstack[0] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[0], TellStarBase);
 	}
-	if (pstack[1])
+	if (pstack[1] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[1], TellStarBase);
 	}
-	if (pstack[2])
+	if (pstack[2] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[2], TellStarBase);
 	}
-	if (pstack[3])
+	if (pstack[3] != StarbasePhrase::NullPhrase)
 	{
 		Response(pstack[3], TellStarBase);
 	}
 
-	Response(enough_starbase, NeedInfo);
+	Response(StarbasePhrase::EnoughStarbase, NeedInfo);
 }
 
 static void NormalStarbase(RESPONSE_REF R);
 
 static void NeedInfo(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, need_info))
+	if (PlayerSaid(R, StarbasePhrase::NeedInfo))
 	{
-		NPCPhrase(WHAT_KIND_OF_INFO);
+		NPCPhrase(StarbasePhrase::WhatKindOfInfo);
 	}
-	else if (PlayerSaid(R, enough_starbase))
+	else if (PlayerSaid(R, StarbasePhrase::EnoughStarbase))
 	{
-		NPCPhrase(OK_ENOUGH_STARBASE);
+		NPCPhrase(StarbasePhrase::OkEnoughStarbase);
 	}
-	else if (PlayerSaid(R, enough_history))
+	else if (PlayerSaid(R, StarbasePhrase::EnoughHistory))
 	{
-		NPCPhrase(OK_ENOUGH_HISTORY);
+		NPCPhrase(StarbasePhrase::OkEnoughHistory);
 	}
-	else if (PlayerSaid(R, enough_mission))
+	else if (PlayerSaid(R, StarbasePhrase::EnoughMission))
 	{
-		NPCPhrase(OK_ENOUGH_MISSION);
+		NPCPhrase(StarbasePhrase::OkEnoughMission);
 	}
 
-	Response(starbase_functions, TellStarBase);
-	Response(history, TellHistory);
-	Response(our_mission, TellMission);
-	Response(no_need_info, NormalStarbase);
+	Response(StarbasePhrase::StarbaseFunctions, TellStarBase);
+	Response(StarbasePhrase::History, TellHistory);
+	Response(StarbasePhrase::OurMission, TellMission);
+	Response(StarbasePhrase::NoNeedInfo, NormalStarbase);
 }
 
 static bool DiscussDevices(bool TalkAbout)
@@ -1379,7 +1379,7 @@ static bool DiscussDevices(bool TalkAbout)
 
 	if (TalkAbout)
 	{
-		NPCPhrase(DEVICE_HEAD);
+		NPCPhrase(StarbasePhrase::DeviceHead);
 	}
 	uint16_t PhraseIndex {2};
 
@@ -1387,14 +1387,14 @@ static bool DiscussDevices(bool TalkAbout)
 	//Undiscussed = false; unused
 	for (Device i {}; i < Device::NumDevices; ++i)
 	{
-		RESPONSE_REF pStr {0};
+		StarbasePhrase pStr {0};
 		switch (i)
 		{
 			case Device::RosySphere:
 				if (uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ROSY_SPHERE))
 				{
-					pStr = ABOUT_SPHERE;
+					pStr = StarbasePhrase::AboutSphere;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ROSY_SPHERE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1402,7 +1402,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_WIMBLIS_TRIDENT))
 				{
-					pStr = ABOUT_WIMBLIS_TRIDENT;
+					pStr = StarbasePhrase::AboutWimblisTrident;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_WIMBLIS_TRIDENT, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1410,7 +1410,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::GLOWING_ROD_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_GLOWING_ROD))
 				{
-					pStr = ABOUT_GLOWING_ROD;
+					pStr = StarbasePhrase::AboutGlowingRod;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_GLOWING_ROD, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1418,7 +1418,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_SUN_EFFICIENCY))
 				{
-					pStr = ABOUT_SUN;
+					pStr = StarbasePhrase::AboutSun;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_SUN_EFFICIENCY, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1426,7 +1426,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_UTWIG_BOMB))
 				{
-					pStr = ABOUT_BOMB;
+					pStr = StarbasePhrase::AboutBomb;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_UTWIG_BOMB, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1434,7 +1434,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 1
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
-					pStr = ABOUT_ULTRON_0;
+					pStr = StarbasePhrase::AboutUltron0;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1442,7 +1442,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 2
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
-					pStr = ABOUT_ULTRON_1;
+					pStr = StarbasePhrase::AboutUltron1;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1450,7 +1450,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 3
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
-					pStr = ABOUT_ULTRON_2;
+					pStr = StarbasePhrase::AboutUltron2;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1458,7 +1458,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 4
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
-					pStr = ABOUT_ULTRON_3;
+					pStr = StarbasePhrase::AboutUltron3;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1466,7 +1466,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_MAIDENS))
 				{
-					pStr = ABOUT_MAIDENS;
+					pStr = StarbasePhrase::AboutMaidens;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_MAIDENS, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1474,7 +1474,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_TALKING_PET))
 				{
-					pStr = ABOUT_TALKPET;
+					pStr = StarbasePhrase::AboutTalkpet;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_TALKING_PET, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1482,7 +1482,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_AQUA_HELIX))
 				{
-					pStr = ABOUT_HELIX;
+					pStr = StarbasePhrase::AboutHelix;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_AQUA_HELIX, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1490,7 +1490,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_CLEAR_SPINDLE))
 				{
-					pStr = ABOUT_SPINDLE;
+					pStr = StarbasePhrase::AboutSpindle;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_CLEAR_SPINDLE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1498,7 +1498,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::UMGAH_BROADCASTERS_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_UMGAH_HYPERWAVE))
 				{
-					pStr = ABOUT_UCASTER;
+					pStr = StarbasePhrase::AboutUcaster;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_UMGAH_HYPERWAVE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1532,7 +1532,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_TAALO_PROTECTOR))
 				{
-					pStr = ABOUT_SHIELD;
+					pStr = StarbasePhrase::AboutShield;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_TAALO_PROTECTOR, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1540,7 +1540,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_EGG_CASING0))
 				{
-					pStr = ABOUT_EGGCASE_0;
+					pStr = StarbasePhrase::AboutEggcase0;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING0, static_cast<uint32_t>(TalkAbout));
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING1, static_cast<uint32_t>(TalkAbout));
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING2, static_cast<uint32_t>(TalkAbout));
@@ -1550,7 +1550,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_EGG_CASING1))
 				{
-					pStr = ABOUT_EGGCASE_0;
+					pStr = StarbasePhrase::AboutEggcase0;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING0, static_cast<uint32_t>(TalkAbout));
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING1, static_cast<uint32_t>(TalkAbout));
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING2, static_cast<uint32_t>(TalkAbout));
@@ -1560,7 +1560,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_EGG_CASING2))
 				{
-					pStr = ABOUT_EGGCASE_0;
+					pStr = StarbasePhrase::AboutEggcase0;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING0, static_cast<uint32_t>(TalkAbout));
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING1, static_cast<uint32_t>(TalkAbout));
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING2, static_cast<uint32_t>(TalkAbout));
@@ -1570,7 +1570,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_SYREEN_SHUTTLE))
 				{
-					pStr = ABOUT_SHUTTLE;
+					pStr = StarbasePhrase::AboutShuttle;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_SYREEN_SHUTTLE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1578,7 +1578,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::VUX_BEAST_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_VUX_BEAST))
 				{
-					pStr = ABOUT_VUXBEAST0;
+					pStr = StarbasePhrase::AboutVuxbeast0;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_VUX_BEAST, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1586,7 +1586,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_DESTRUCT_CODE))
 				{
-					pStr = ABOUT_DESTRUCT;
+					pStr = StarbasePhrase::AboutDestruct;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_DESTRUCT_CODE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1594,7 +1594,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_PORTAL_SPAWNER))
 				{
-					pStr = ABOUT_PORTAL;
+					pStr = StarbasePhrase::AboutPortal;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_PORTAL_SPAWNER, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1602,7 +1602,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::PORTAL_KEY_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_URQUAN_WARP))
 				{
-					pStr = ABOUT_WARPPOD;
+					pStr = StarbasePhrase::AboutWarppod;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_URQUAN_WARP, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1610,7 +1610,7 @@ static bool DiscussDevices(bool TalkAbout)
 				if (uqm::gameState().flag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP)
 					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_BURVIX_HYPERWAVE))
 				{
-					pStr = ABOUT_BCASTER;
+					pStr = StarbasePhrase::AboutBcaster;
 					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_BURVIX_HYPERWAVE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
@@ -1618,19 +1618,19 @@ static bool DiscussDevices(bool TalkAbout)
 				break;
 		}
 
-		if (pStr)
+		if (pStr != StarbasePhrase::NullPhrase)
 		{
 			if (TalkAbout)
 			{
 				if (PhraseIndex > 2)
 				{
-					NPCPhrase(BETWEEN_DEVICES);
+					NPCPhrase(StarbasePhrase::BetweenDevices);
 				}
 				NPCPhrase(pStr);
-				if (pStr == ABOUT_VUXBEAST0)
+				if (pStr == StarbasePhrase::AboutVuxbeast0)
 				{
 					VuxBeastIndex = ++PhraseIndex;
-					NPCPhrase(ABOUT_VUXBEAST1);
+					NPCPhrase(StarbasePhrase::AboutVuxbeast1);
 				}
 			}
 			PhraseIndex += 2;
@@ -1639,7 +1639,7 @@ static bool DiscussDevices(bool TalkAbout)
 
 	if (TalkAbout)
 	{
-		NPCPhrase(DEVICE_TAIL);
+		NPCPhrase(StarbasePhrase::DeviceTail);
 
 		if (VuxBeastIndex)
 		{
@@ -1715,42 +1715,42 @@ static void CheckBulletins(bool Repeat)
 		BulletinMask = uqm::gameState().flag(uqm::GameFlag::STARBASE_BULLETS);
 	}
 
-	RESPONSE_REF pIntro {0};
+	StarbasePhrase pIntro {};
 	for (uint8_t b0 {0}; b0 < 32; ++b0)
 	{
 		if (!(BulletinMask & (1L << b0)))
 		{
-			RESPONSE_REF pStr {0};
+			StarbasePhrase pStr {0};
 			switch (b0)
 			{
 				case 0:
 					if (CheckAlliance(RaceId::Spathi) == RaceAllegiance::Good)
 					{
-						pStr = STARBASE_BULLETIN_1;
+						pStr = StarbasePhrase::StarbaseBulletin1;
 					}
 					break;
 				case 1:
 					if (CheckAlliance(RaceId::Zoqfotpik) == RaceAllegiance::Good)
 					{
-						pStr = STARBASE_BULLETIN_2;
+						pStr = StarbasePhrase::StarbaseBulletin2;
 					}
 					break;
 				case 2:
 					if (CheckAlliance(RaceId::Supox) == RaceAllegiance::Good)
 					{
-						pStr = STARBASE_BULLETIN_3;
+						pStr = StarbasePhrase::StarbaseBulletin3;
 					}
 					break;
 				case 3:
 					if (CheckAlliance(RaceId::Utwig) == RaceAllegiance::Good)
 					{
-						pStr = STARBASE_BULLETIN_4;
+						pStr = StarbasePhrase::StarbaseBulletin4;
 					}
 					break;
 				case 4:
 					if (CheckAlliance(RaceId::Orz) == RaceAllegiance::Good)
 					{
-						pStr = STARBASE_BULLETIN_5;
+						pStr = StarbasePhrase::StarbaseBulletin5;
 					}
 					break;
 				case 5:
@@ -1761,7 +1761,7 @@ static void CheckBulletins(bool Repeat)
 					else if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER)
 							 && (Repeat || EscortFeasibilityStudy(RaceId::Arilou)))
 					{
-						pStr = STARBASE_BULLETIN_6;
+						pStr = StarbasePhrase::StarbaseBulletin6;
 						if (!Repeat)
 						{
 							AddEscortShips(RaceId::Arilou, NumGiftArilous);
@@ -1771,7 +1771,7 @@ static void CheckBulletins(bool Repeat)
 				case 6:
 					if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS) == 1)
 					{
-						pStr = STARBASE_BULLETIN_7;
+						pStr = StarbasePhrase::StarbaseBulletin7;
 					}
 					break;
 				case 7:
@@ -1781,7 +1781,7 @@ static void CheckBulletins(bool Repeat)
 					}
 					else if (CheckTiming(ifEasyDifficulty(1, 3), 0))
 					{
-						pStr = STARBASE_BULLETIN_8;
+						pStr = StarbasePhrase::StarbaseBulletin8;
 					}
 					break;
 				case 8:
@@ -1791,7 +1791,7 @@ static void CheckBulletins(bool Repeat)
 					}
 					else if (CheckTiming(ifEasyDifficulty(3, 6), 0))
 					{
-						pStr = STARBASE_BULLETIN_9;
+						pStr = StarbasePhrase::StarbaseBulletin9;
 					}
 					break;
 				case 9:
@@ -1801,13 +1801,13 @@ static void CheckBulletins(bool Repeat)
 					}
 					else if (CheckTiming(0, 7))
 					{
-						pStr = STARBASE_BULLETIN_10;
+						pStr = StarbasePhrase::StarbaseBulletin10;
 					}
 					break;
 				case 10:
 					if (uqm::gameState().flag(uqm::GameFlag::SPATHI_SHIELDED_SELVES))
 					{
-						pStr = STARBASE_BULLETIN_11;
+						pStr = StarbasePhrase::StarbaseBulletin11;
 					}
 					break;
 				case 11:
@@ -1818,25 +1818,25 @@ static void CheckBulletins(bool Repeat)
 					}
 					else if (CheckTiming(0, ifEasyDifficulty(21, 42)))
 					{
-						pStr = STARBASE_BULLETIN_12;
+						pStr = StarbasePhrase::StarbaseBulletin12;
 					}
 					break;
 				case 12:
 					if (CheckAlliance(RaceId::Chmmr) == RaceAllegiance::Good)
 					{
-						pStr = STARBASE_BULLETIN_13;
+						pStr = StarbasePhrase::StarbaseBulletin13;
 					}
 					break;
 				case 13:
 					if (CheckAlliance(RaceId::Shofixti) == RaceAllegiance::Good)
 					{
-						pStr = STARBASE_BULLETIN_14;
+						pStr = StarbasePhrase::StarbaseBulletin14;
 					}
 					break;
 				case 14:
 					if (uqm::gameState().flag(uqm::GameFlag::PKUNK_MISSION))
 					{
-						pStr = STARBASE_BULLETIN_15;
+						pStr = StarbasePhrase::StarbaseBulletin15;
 					}
 					break;
 				case 15:
@@ -1846,7 +1846,7 @@ static void CheckBulletins(bool Repeat)
 					}
 					else if (CheckTiming(7, 0))
 					{
-						pStr = STARBASE_BULLETIN_16;
+						pStr = StarbasePhrase::StarbaseBulletin16;
 					}
 					break;
 				case 16:
@@ -1854,13 +1854,13 @@ static void CheckBulletins(bool Repeat)
 				case 17:
 					if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 					{
-						pStr = STARBASE_BULLETIN_18;
+						pStr = StarbasePhrase::StarbaseBulletin18;
 					}
 					break;
 				case 18:
 					if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 					{
-						pStr = STARBASE_BULLETIN_19;
+						pStr = StarbasePhrase::StarbaseBulletin19;
 					}
 					break;
 				case 19:
@@ -1870,7 +1870,7 @@ static void CheckBulletins(bool Repeat)
 				case 21:
 					if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS) == 2)
 					{
-						pStr = STARBASE_BULLETIN_22;
+						pStr = StarbasePhrase::StarbaseBulletin22;
 					}
 					break;
 				case 22:
@@ -1891,7 +1891,7 @@ static void CheckBulletins(bool Repeat)
 						}
 						else if (crew_sold)
 						{
-							pStr = STARBASE_BULLETIN_27;
+							pStr = StarbasePhrase::StarbaseBulletin27;
 						}
 						break;
 					}
@@ -1905,7 +1905,7 @@ static void CheckBulletins(bool Repeat)
 						}
 						else if (crew_sold > MinSold())
 						{
-							pStr = STARBASE_BULLETIN_28;
+							pStr = StarbasePhrase::StarbaseBulletin28;
 						}
 						break;
 					}
@@ -1918,14 +1918,14 @@ static void CheckBulletins(bool Repeat)
 							uqm::gameState().flag(uqm::GameFlag::CREW_PURCHASED1));
 						if (crew_bought >= CrewExpenseThreshold)
 						{
-							pStr = STARBASE_BULLETIN_29;
+							pStr = StarbasePhrase::StarbaseBulletin29;
 						}
 						break;
 					}
 				case 29:
 					if (CrewSold > MaxSold())
 					{
-						pStr = STARBASE_BULLETIN_30;
+						pStr = StarbasePhrase::StarbaseBulletin30;
 					}
 					break;
 				case 30:
@@ -1934,40 +1934,40 @@ static void CheckBulletins(bool Repeat)
 					break;
 			}
 
-			if (pStr)
+			if (pStr != StarbasePhrase::NullPhrase)
 			{
-				if (pIntro)
+				if (pIntro != StarbasePhrase::NullPhrase)
 				{
-					NPCPhrase(BETWEEN_BULLETINS);
+					NPCPhrase(StarbasePhrase::BetweenBulletins);
 				}
 				else if (Repeat)
 				{
-					pIntro = BEFORE_WE_GO_ON_1;
+					pIntro = StarbasePhrase::BeforeWeGoOn1;
 				}
 				else
 				{
 					switch ((uint8_t)uqm::random().next() % 7)
 					{
 						case 0:
-							pIntro = BEFORE_WE_GO_ON_1;
+							pIntro = StarbasePhrase::BeforeWeGoOn1;
 							break;
 						case 1:
-							pIntro = BEFORE_WE_GO_ON_2;
+							pIntro = StarbasePhrase::BeforeWeGoOn2;
 							break;
 						case 2:
-							pIntro = BEFORE_WE_GO_ON_3;
+							pIntro = StarbasePhrase::BeforeWeGoOn3;
 							break;
 						case 3:
-							pIntro = BEFORE_WE_GO_ON_4;
+							pIntro = StarbasePhrase::BeforeWeGoOn4;
 							break;
 						case 4:
-							pIntro = BEFORE_WE_GO_ON_5;
+							pIntro = StarbasePhrase::BeforeWeGoOn5;
 							break;
 						case 5:
-							pIntro = BEFORE_WE_GO_ON_6;
+							pIntro = StarbasePhrase::BeforeWeGoOn6;
 							break;
 						default:
-							pIntro = BEFORE_WE_GO_ON_7;
+							pIntro = StarbasePhrase::BeforeWeGoOn7;
 							break;
 					}
 
@@ -1982,7 +1982,7 @@ static void CheckBulletins(bool Repeat)
 
 	if (pIntro == 0 && uqm::gameState().flag(uqm::GameFlag::STARBASE_VISITED))
 	{
-		NPCPhrase(RETURN_HELLO);
+		NPCPhrase(StarbasePhrase::ReturnHello);
 	}
 	else if (!Repeat)
 	{
@@ -1992,15 +1992,15 @@ static void CheckBulletins(bool Repeat)
 
 static void NormalStarbase(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, no_need_info))
+	if (PlayerSaid(R, StarbasePhrase::NoNeedInfo))
 	{
-		NPCPhrase(OK_NO_NEED_INFO);
+		NPCPhrase(StarbasePhrase::OkNoNeedInfo);
 	}
-	else if (PlayerSaid(R, new_devices))
+	else if (PlayerSaid(R, StarbasePhrase::NewDevices))
 	{
 		DiscussDevices(true);
 	}
-	else if (PlayerSaid(R, repeat_bulletins))
+	else if (PlayerSaid(R, StarbasePhrase::RepeatBulletins))
 	{
 		CheckBulletins(true);
 	}
@@ -2008,7 +2008,7 @@ static void NormalStarbase(RESPONSE_REF R)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::MOONBASE_ON_SHIP))
 		{
-			NPCPhrase(STARBASE_IS_READY);
+			NPCPhrase(StarbasePhrase::StarbaseIsReady);
 			DeltaSISGauges(0, 0, 2500);
 			if (uqm::UQMOptions::read().infiniteRU)
 			{
@@ -2024,33 +2024,33 @@ static void NormalStarbase(RESPONSE_REF R)
 		else
 		{
 			// XXX TODO: This can be simplified now.
-			RESPONSE_REF pStr = 0;
+			StarbasePhrase pStr {};
 
 			switch ((uint8_t)uqm::random().next() & 7)
 			{
 				case 0:
-					pStr = NORMAL_HELLO_A;
+					pStr = StarbasePhrase::NormalHelloA;
 					break;
 				case 1:
-					pStr = NORMAL_HELLO_B;
+					pStr = StarbasePhrase::NormalHelloB;
 					break;
 				case 2:
-					pStr = NORMAL_HELLO_C;
+					pStr = StarbasePhrase::NormalHelloC;
 					break;
 				case 3:
-					pStr = NORMAL_HELLO_D;
+					pStr = StarbasePhrase::NormalHelloD;
 					break;
 				case 4:
-					pStr = NORMAL_HELLO_E;
+					pStr = StarbasePhrase::NormalHelloE;
 					break;
 				case 5:
-					pStr = NORMAL_HELLO_F;
+					pStr = StarbasePhrase::NormalHelloF;
 					break;
 				case 6:
-					pStr = NORMAL_HELLO_G;
+					pStr = StarbasePhrase::NormalHelloG;
 					break;
 				case 7:
-					pStr = NORMAL_HELLO_H;
+					pStr = StarbasePhrase::NormalHelloH;
 					break;
 			}
 			NPCPhrase(pStr);
@@ -2062,24 +2062,24 @@ static void NormalStarbase(RESPONSE_REF R)
 
 	if (uqm::gameState().sis().TotalElementMass)
 	{
-		Response(have_minerals, SellMinerals);
+		Response(StarbasePhrase::HaveMinerals, SellMinerals);
 	}
 	if (DiscussDevices(false))
 	{
-		Response(new_devices, NormalStarbase);
+		Response(StarbasePhrase::NewDevices, NormalStarbase);
 	}
 	if (CurBulletinMask)
 	{
-		Response(repeat_bulletins, NormalStarbase);
+		Response(StarbasePhrase::RepeatBulletins, NormalStarbase);
 	}
-	Response(need_info, NeedInfo);
-	Response(goodbye_commander, ByeBye);
+	Response(StarbasePhrase::NeedInfo, NeedInfo);
+	Response(StarbasePhrase::GoodbyeCommander, ByeBye);
 }
 
 static void SellMinerals(RESPONSE_REF R)
 {
 	uint16_t total = 0;
-	RESPONSE_REF pStr = 0;
+	StarbasePhrase pStr {};
 
 	if (uqm::UQMOptions::read().useSpeech)
 	{
@@ -2088,9 +2088,9 @@ static void SellMinerals(RESPONSE_REF R)
 		pStr = EveryOnesACritic(total);
 
 		NPCPhrase(pStr);
-		if (pStr == LIGHT_LOAD_C0)
+		if (pStr == StarbasePhrase::LightLoadC0)
 		{
-			NPCPhrase(LIGHT_LOAD_C1);
+			NPCPhrase(StarbasePhrase::LightLoadC1);
 		}
 	}
 	else
@@ -2100,7 +2100,7 @@ static void SellMinerals(RESPONSE_REF R)
 		uint16_t seg = 0;
 		uint16_t count = 0;
 
-		NPCPhrase(CARGO_LIST);
+		NPCPhrase(StarbasePhrase::CargoList);
 		for (uint16_t i {0}; i < MineralCategory::NumElementCategories; ++i)
 		{
 			if ((amount[seg] = uqm::gameState().sis().ElementAmounts[i]) != 0)
@@ -2108,18 +2108,18 @@ static void SellMinerals(RESPONSE_REF R)
 				Ru[seg] = amount[seg] * uqm::gameState().game().ElementWorth[i];
 				if (count > 0)
 				{
-					NPCPhrase(ELLIPSES);
+					NPCPhrase(StarbasePhrase::Ellipses);
 				}
 				else
 				{
-					NPCPhrase(BLANK);
+					NPCPhrase(StarbasePhrase::Blank);
 				}
 				NPCNumber(amount[seg], nullptr);
-				NPCPhrase_splice(KILOTONS_OF);
-				NPCPhrase_splice(COMMONR + i);
-				NPCPhrase_splice(FOR);
+				NPCPhrase_splice(StarbasePhrase::KilotonsOf);
+				NPCPhrase_splice(StarbasePhrase::Commonr + i);
+				NPCPhrase_splice(StarbasePhrase::For);
 				NPCNumber(Ru[seg], nullptr);
-				NPCPhrase(RESUNITS);
+				NPCPhrase(StarbasePhrase::Resunits);
 				total += Ru[seg];
 				seg++;
 				uqm::gameState().sis().ElementAmounts[i] = 0;
@@ -2130,9 +2130,9 @@ static void SellMinerals(RESPONSE_REF R)
 		pStr = EveryOnesACritic(total);
 
 		NPCPhrase(pStr);
-		if (pStr == LIGHT_LOAD_C0)
+		if (pStr == StarbasePhrase::LightLoadC0)
 		{
-			NPCPhrase(LIGHT_LOAD_C1);
+			NPCPhrase(StarbasePhrase::LightLoadC1);
 		}
 
 		for (uint16_t sseg {1}; sseg < seg + 1; sseg++)

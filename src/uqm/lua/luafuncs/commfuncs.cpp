@@ -42,7 +42,7 @@
 #include "uqm/random/UQMRandom.h"
 
 
-extern uint16_t RoboTrack[];
+extern RobotPhrase RoboTrack[];
 const static char npcPhraseCallbackRegistryKey[] =
 	"uqm_comm_npcPhraseCallback";
 // Key in the registry storing the callback function for
@@ -422,17 +422,17 @@ static int luaUqm_comm_getPoint(lua_State* luaState)
 						(float)plot_map[plot_id].star_pt.x / 10,
 						(float)plot_map[plot_id].star_pt.y / 10);
 	lua_pushstring(luaState, dialog);
-	RoboTrack[0] = ROBOT_DIGIT_0 + plot_map[plot_id].star_pt.x / 1000;
-	RoboTrack[1] = ROBOT_DIGIT_0 + plot_map[plot_id].star_pt.x / 100 % 10;
-	RoboTrack[2] = ROBOT_DIGIT_0 + plot_map[plot_id].star_pt.x / 10 % 10;
-	RoboTrack[3] = ROBOT_POINT;
-	RoboTrack[4] = ROBOT_DIGIT_0 + plot_map[plot_id].star_pt.x % 10;
-	RoboTrack[5] = ROBOT_BY;
-	RoboTrack[6] = ROBOT_DIGIT_0 + plot_map[plot_id].star_pt.y / 1000;
-	RoboTrack[7] = ROBOT_DIGIT_0 + plot_map[plot_id].star_pt.y / 100 % 10;
-	RoboTrack[8] = ROBOT_DIGIT_0 + plot_map[plot_id].star_pt.y / 10 % 10;
-	RoboTrack[9] = ROBOT_POINT;
-	RoboTrack[10] = ROBOT_DIGIT_0 + plot_map[plot_id].star_pt.y % 10;
+	RoboTrack[0] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.x / 1000;
+	RoboTrack[1] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.x / 100 % 10;
+	RoboTrack[2] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.x / 10 % 10;
+	RoboTrack[3] = RobotPhrase::Point;
+	RoboTrack[4] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.x % 10;
+	RoboTrack[5] = RobotPhrase::By;
+	RoboTrack[6] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.y / 1000;
+	RoboTrack[7] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.y / 100 % 10;
+	RoboTrack[8] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.y / 10 % 10;
+	RoboTrack[9] = RobotPhrase::Point;
+	RoboTrack[10] = RobotPhrase::Digit0 + plot_map[plot_id].star_pt.y % 10;
 	return 1;
 }
 
@@ -486,12 +486,12 @@ static int luaUqm_comm_getStarName(lua_State* luaState)
 	lua_pushstring(luaState, dialog);
 	if (plot_map[plot_id].star->Prefix > 0)
 	{
-		RoboTrack[0] = ROBOT_PREFIX_0 + plot_map[plot_id].star->Prefix;
-		RoboTrack[1] = ROBOT_POSTFIX_0 + plot_map[plot_id].star->Postfix;
+		RoboTrack[0] = RobotPhrase::Prefix0 + plot_map[plot_id].star->Prefix;
+		RoboTrack[1] = RobotPhrase::Postfix0 + plot_map[plot_id].star->Postfix;
 	}
 	else
 	{
-		RoboTrack[0] = ROBOT_POSTFIX_0 + plot_map[plot_id].star->Postfix;
+		RoboTrack[0] = RobotPhrase::Postfix0 + plot_map[plot_id].star->Postfix;
 	}
 	return 1;
 }
@@ -526,7 +526,7 @@ static int luaUqm_comm_getConstellation(lua_State* luaState)
 						GameString(SDPtr->Postfix));
 	CheckCase(prime_text, dialog);
 	lua_pushstring(luaState, dialog);
-	RoboTrack[0] = ROBOT_POSTFIX_0 + SDPtr->Postfix;
+	RoboTrack[0] = RobotPhrase::Postfix0 + SDPtr->Postfix;
 	return 1;
 }
 
@@ -560,42 +560,42 @@ static int luaUqm_comm_getColor(lua_State* luaState)
 		case StarBodyColor::Red:
 			dialog = "red";
 			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
-							   ILWRATH_COLOR_RED :
-							   ROBOT_COLOR_RED;
+							   RobotPhrase::IlwrathColorRed :
+							   RobotPhrase::ColorRed;
 			break;
 		case StarBodyColor::Orange:
 			dialog = "orange";
 			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
-							   ILWRATH_COLOR_ORANGE :
-							   ROBOT_COLOR_ORANGE;
+							   RobotPhrase::IlwrathColorOrange :
+							   RobotPhrase::ColorOrange;
 			break;
 		case StarBodyColor::Yellow:
 			dialog = "yellow";
 			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
-							   ILWRATH_COLOR_YELLOW :
-							   ROBOT_COLOR_YELLOW;
+							   RobotPhrase::IlwrathColorYellow :
+							   RobotPhrase::ColorYellow;
 			break;
 		case StarBodyColor::Green:
 			dialog = "green";
 			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
-							   ILWRATH_COLOR_GREEN :
-							   ROBOT_COLOR_GREEN;
+							   RobotPhrase::IlwrathColorGreen :
+							   RobotPhrase::ColorGreen;
 			break;
 		case StarBodyColor::Blue:
 			dialog = "blue";
 			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
-							   ILWRATH_COLOR_BLUE :
-							   ROBOT_COLOR_BLUE;
+							   RobotPhrase::IlwrathColorBlue :
+							   RobotPhrase::ColorBlue;
 			break;
 		case StarBodyColor::White:
 			dialog = "white";
 			RoboTrack[0] = (plot_id == PlotId::Ilwrath) ?
-							   ILWRATH_COLOR_WHITE :
-							   ROBOT_COLOR_WHITE;
+							   RobotPhrase::IlwrathColorWhite :
+							   RobotPhrase::ColorWhite;
 			break;
 		default:
 			dialog = "unknown";
-			RoboTrack[0] = ROBOT_NULL_PHRASE;
+			RoboTrack[0] = RobotPhrase::NullPhrase;
 			break;
 	}
 	CheckCase(prime_text, dialog.data());
@@ -620,6 +620,6 @@ static int luaUqm_comm_swapIfSeeded(lua_State* luaState)
 	fmt::print(stderr, "Swap If Seeded called ({} {})\n", prime_text, seed_text);
 #endif
 	lua_pushstring(luaState, seed_text);
-	RoboTrack[0] = (uint16_t)~0;
+	RoboTrack[0] = RobotPhrase::SubClip;
 	return 1;
 }

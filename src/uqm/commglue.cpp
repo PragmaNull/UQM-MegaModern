@@ -33,7 +33,7 @@
 #include "libs/math/Random.h"
 #include "uqm/random/UQMRandom.h"
 
-uint16_t RoboTrack[NumRoboTracks];
+RobotPhrase RoboTrack[NumRoboTracks];
 
 static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack);
 
@@ -202,9 +202,9 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 
 	// From here on, we are doing StarSeed robo-interpolation.
 	const static uqm::StringTablePtr RoboPhrases {uqm::loadStringTable("comm.robot.dialogue")};
-	for (i = 0; RoboTrack[i] && i < NumRoboTracks; i++)
+	for (i = 0; RoboTrack[i] != RobotPhrase::NullPhrase && i < NumRoboTracks; i++)
 	{
-		RoboTrack[i] = 0;
+		RoboTrack[i] = RobotPhrase::NullPhrase;
 	}
 #ifdef DEBUG_STARSEED_TRACE_TIMESTAMP
 	// This code will roll the "SENSE_KOHRAH_VICTORY" dialog and timestamps
@@ -248,7 +248,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Chunk\n<<{}>>\n", str_buf);
 #endif
-		if (!RoboTrack[0])
+		if (RoboTrack[0] == RobotPhrase::NullPhrase)
 		{
 			if (clip_number == 0 && !pStr)
 			{
@@ -289,9 +289,9 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 			//{ [0 ... NumRoboTracks] = nullptr };
 			const char* tracks[NumRoboTracks + 1] = {nullptr}; // NOLINT(misc-const-correctness)
 			char subClips[NumRoboTracks][MaxClipname] {};
-			for (i = 0; i < NumRoboTracks && RoboTrack[i]; i++)
+			for (i = 0; i < NumRoboTracks && RoboTrack[i] != RobotPhrase::NullPhrase; i++)
 			{
-				if (RoboTrack[i] == (uint16_t)~0)
+				if (RoboTrack[i] == RobotPhrase::SubClip)
 				{
 					// ~0 is a subclip whose name is based off the primary clip
 					// We need to allocate a temp buffer and clean it up later
@@ -305,10 +305,10 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 #endif
 					clip_number++;
 				}
-				else if (RoboTrack[i] > 0)
+				else if (RoboTrack[i] != RobotPhrase::NullPhrase)
 				{
 					// Otherwise the robo-track is an index into robo-phrases
-					tracks[i] = RoboPhrases->soundClip(RoboTrack[i] - 1);
+					tracks[i] = RoboPhrases->soundClip(*RoboTrack[i] - 1);
 #ifdef DEBUG_STARSEED
 					fmt::print(stderr, "RoboTrack[{}] = <<{}>>.\n", i, tracks[i]);
 #endif
@@ -322,10 +322,10 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 			fmt::print(stderr, "Splice Multitrack string <<{}>>.\n", str_buf);
 #endif
 			SpliceMultiTrack(tracks, str_buf);
-			for (i = 0; i < NumRoboTracks && RoboTrack[i]; i++)
+			for (i = 0; i < NumRoboTracks && RoboTrack[i] != RobotPhrase::NullPhrase; i++)
 			{
 				tracks[i] = nullptr;
-				RoboTrack[i] = 0;
+				RoboTrack[i] = RobotPhrase::NullPhrase;
 			}
 		}
 	} while (pStr);

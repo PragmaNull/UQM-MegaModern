@@ -29,44 +29,44 @@
 
 static uint16_t probe_digit_names[] =
 	{
-		ENUMERATE_ZERO,
-		ENUMERATE_ONE,
-		ENUMERATE_TWO,
-		ENUMERATE_THREE,
-		ENUMERATE_FOUR,
-		ENUMERATE_FIVE,
-		ENUMERATE_SIX,
-		ENUMERATE_SEVEN,
-		ENUMERATE_EIGHT,
-		ENUMERATE_NINE,
+		*SlylandroPhrase::EnumerateZero,
+		*SlylandroPhrase::EnumerateOne,
+		*SlylandroPhrase::EnumerateTwo,
+		*SlylandroPhrase::EnumerateThree,
+		*SlylandroPhrase::EnumerateFour,
+		*SlylandroPhrase::EnumerateFive,
+		*SlylandroPhrase::EnumerateSix,
+		*SlylandroPhrase::EnumerateSeven,
+		*SlylandroPhrase::EnumerateEight,
+		*SlylandroPhrase::EnumerateNine,
 };
 
 static uint16_t probe_teen_names[] =
 	{
-		ENUMERATE_TEN,
-		ENUMERATE_ELEVEN,
-		ENUMERATE_TWELVE,
-		ENUMERATE_THIRTEEN,
-		ENUMERATE_FOURTEEN,
-		ENUMERATE_FIFTEEN,
-		ENUMERATE_SIXTEEN,
-		ENUMERATE_SEVENTEEN,
-		ENUMERATE_EIGHTEEN,
-		ENUMERATE_NINETEEN,
+		*SlylandroPhrase::EnumerateTen,
+		*SlylandroPhrase::EnumerateEleven,
+		*SlylandroPhrase::EnumerateTwelve,
+		*SlylandroPhrase::EnumerateThirteen,
+		*SlylandroPhrase::EnumerateFourteen,
+		*SlylandroPhrase::EnumerateFifteen,
+		*SlylandroPhrase::EnumerateSixteen,
+		*SlylandroPhrase::EnumerateSeventeen,
+		*SlylandroPhrase::EnumerateEighteen,
+		*SlylandroPhrase::EnumerateNineteen,
 };
 
 static uint16_t probe_tens_names[] =
 	{
 		0, /* invalid */
 		0, /* skip digit */
-		ENUMERATE_TWENTY,
-		ENUMERATE_THIRTY,
-		ENUMERATE_FOURTY,
-		ENUMERATE_FIFTY,
-		ENUMERATE_SIXTY,
-		ENUMERATE_SEVENTY,
-		ENUMERATE_EIGHTY,
-		ENUMERATE_NINETY,
+		*SlylandroPhrase::EnumerateTwenty,
+		*SlylandroPhrase::EnumerateThirty,
+		*SlylandroPhrase::EnumerateFourty,
+		*SlylandroPhrase::EnumerateFifty,
+		*SlylandroPhrase::EnumerateSixty,
+		*SlylandroPhrase::EnumerateSeventy,
+		*SlylandroPhrase::EnumerateEighty,
+		*SlylandroPhrase::EnumerateNinety,
 };
 
 const static NumberSpeechDesc probe_numbers_english =
@@ -75,19 +75,19 @@ const static NumberSpeechDesc probe_numbers_english =
 		{
 						  {
 				/* 1000-999999 */
-				1000,			   /* Divider */
-				0,				   /* Subtrahend */
-				nullptr,		   /* StrDigits - recurse */
-				nullptr,		   /* Names - not used */
-				ENUMERATE_THOUSAND /* CommonIndex */
+				1000,								/* Divider */
+				0,									/* Subtrahend */
+				nullptr,							/* StrDigits - recurse */
+				nullptr,							/* Names - not used */
+				*SlylandroPhrase::EnumerateThousand /* CommonIndex */
 			},
 						  {
 				/* 100-999 */
-				100,			   /* Divider */
-				0,				   /* Subtrahend */
-				probe_digit_names, /* StrDigits */
-				nullptr,		   /* Names - not used */
-				ENUMERATE_HUNDRED  /* CommonIndex */
+				100,							   /* Divider */
+				0,								   /* Subtrahend */
+				probe_digit_names,				   /* StrDigits */
+				nullptr,						   /* Names - not used */
+				*SlylandroPhrase::EnumerateHundred /* CommonIndex */
 			},
 						  {
 				/* 20-99 */
@@ -243,7 +243,7 @@ static uint32_t random_ramble[] =
 		1337};
 
 
-static RESPONSE_REF threat,
+static SlylandroPhrase threat,
 	something_wrong,
 	we_are_us,
 	why_attack,
@@ -253,9 +253,9 @@ static void sayCoord(int coord)
 {
 	const int ac {abs(coord)};
 
-	NPCPhrase_splice(coord < 0 ? COORD_MINUS : COORD_PLUS);
+	NPCPhrase_splice(coord < 0 ? SlylandroPhrase::CoordMinus : SlylandroPhrase::CoordPlus);
 	NPCNumber(ac / 10, "{:03}");
-	NPCPhrase_splice(COORD_POINT);
+	NPCPhrase_splice(SlylandroPhrase::CoordPoint);
 	NPCNumber(ac % 10, nullptr);
 }
 
@@ -265,92 +265,92 @@ static void CombatIsInevitable(RESPONSE_REF R)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP))
 		{
-			Response(destruct_code, CombatIsInevitable);
+			Response(SlylandroPhrase::DestructCode, CombatIsInevitable);
 		}
 		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_THREAT))
 		{
 			case 0:
-				threat = threat_1;
+				threat = SlylandroPhrase::Threat1;
 				break;
 			case 1:
-				threat = threat_2;
+				threat = SlylandroPhrase::Threat2;
 				break;
 			case 2:
-				threat = threat_3;
+				threat = SlylandroPhrase::Threat3;
 				break;
 			default:
-				threat = threat_4;
+				threat = SlylandroPhrase::Threat4;
 				break;
 		}
 		Response(threat, CombatIsInevitable);
 		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_WRONG))
 		{
 			case 0:
-				something_wrong = something_wrong_1;
+				something_wrong = SlylandroPhrase::SomethingWrong1;
 				break;
 			case 1:
-				something_wrong = something_wrong_2;
+				something_wrong = SlylandroPhrase::SomethingWrong2;
 				break;
 			case 2:
-				something_wrong = something_wrong_3;
+				something_wrong = SlylandroPhrase::SomethingWrong3;
 				break;
 			default:
-				something_wrong = something_wrong_4;
+				something_wrong = SlylandroPhrase::SomethingWrong4;
 				break;
 		}
 		Response(something_wrong, CombatIsInevitable);
 		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_ID))
 		{
 			case 0:
-				we_are_us = we_are_us_1;
+				we_are_us = SlylandroPhrase::WeAreUs1;
 				break;
 			case 1:
-				we_are_us = we_are_us_2;
+				we_are_us = SlylandroPhrase::WeAreUs2;
 				break;
 			case 2:
-				we_are_us = we_are_us_3;
+				we_are_us = SlylandroPhrase::WeAreUs3;
 				break;
 			default:
-				we_are_us = we_are_us_4;
+				we_are_us = SlylandroPhrase::WeAreUs4;
 				break;
 		}
 		Response(we_are_us, CombatIsInevitable);
 		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_INFO))
 		{
 			case 0:
-				why_attack = why_attack_1;
+				why_attack = SlylandroPhrase::WhyAttack1;
 				break;
 			case 1:
-				why_attack = why_attack_2;
+				why_attack = SlylandroPhrase::WhyAttack2;
 				break;
 			case 2:
-				why_attack = why_attack_3;
+				why_attack = SlylandroPhrase::WhyAttack3;
 				break;
 			default:
-				why_attack = why_attack_4;
+				why_attack = SlylandroPhrase::WhyAttack4;
 				break;
 		}
 		Response(why_attack, CombatIsInevitable);
 		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_EXIT))
 		{
 			case 0:
-				bye = bye_1;
+				bye = SlylandroPhrase::Bye1;
 				break;
 			case 1:
-				bye = bye_2;
+				bye = SlylandroPhrase::Bye2;
 				break;
 			case 2:
-				bye = bye_3;
+				bye = SlylandroPhrase::Bye3;
 				break;
 			default:
-				bye = bye_4;
+				bye = SlylandroPhrase::Bye4;
 				break;
 		}
 		Response(bye, CombatIsInevitable);
 	}
-	else if (PlayerSaid(R, destruct_code))
+	else if (PlayerSaid(R, SlylandroPhrase::DestructCode))
 	{
-		NPCPhrase(DESTRUCT_SEQUENCE);
+		NPCPhrase(SlylandroPhrase::DestructSequence);
 		setSegue(Segue::Victory);
 	}
 	else
@@ -363,16 +363,16 @@ static void CombatIsInevitable(RESPONSE_REF R)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(PROGRAMMED_TO_DEFEND_1);
+					NPCPhrase(SlylandroPhrase::ProgrammedToDefend1);
 					break;
 				case 1:
-					NPCPhrase(PROGRAMMED_TO_DEFEND_2);
+					NPCPhrase(SlylandroPhrase::ProgrammedToDefend2);
 					break;
 				case 2:
-					NPCPhrase(PROGRAMMED_TO_DEFEND_3);
+					NPCPhrase(SlylandroPhrase::ProgrammedToDefend3);
 					break;
 				case 3:
-					NPCPhrase(PROGRAMMED_TO_DEFEND_4);
+					NPCPhrase(SlylandroPhrase::ProgrammedToDefend4);
 					--NumVisits;
 					break;
 			}
@@ -384,16 +384,16 @@ static void CombatIsInevitable(RESPONSE_REF R)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(NOMINAL_FUNCTION_1);
+					NPCPhrase(SlylandroPhrase::NominalFunction1);
 					break;
 				case 1:
-					NPCPhrase(NOMINAL_FUNCTION_2);
+					NPCPhrase(SlylandroPhrase::NominalFunction2);
 					break;
 				case 2:
-					NPCPhrase(NOMINAL_FUNCTION_3);
+					NPCPhrase(SlylandroPhrase::NominalFunction3);
 					break;
 				case 3:
-					NPCPhrase(NOMINAL_FUNCTION_4);
+					NPCPhrase(SlylandroPhrase::NominalFunction4);
 					--NumVisits;
 					break;
 			}
@@ -405,13 +405,13 @@ static void CombatIsInevitable(RESPONSE_REF R)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(THIS_IS_PROBE_1);
+					NPCPhrase(SlylandroPhrase::ThisIsProbe1);
 					break;
 				case 1:
-					NPCPhrase(THIS_IS_PROBE_2);
+					NPCPhrase(SlylandroPhrase::ThisIsProbe2);
 					break;
 				case 2:
-					NPCPhrase(THIS_IS_PROBE_3);
+					NPCPhrase(SlylandroPhrase::ThisIsProbe3);
 					break;
 				case 3:
 					{
@@ -424,11 +424,11 @@ static void CombatIsInevitable(RESPONSE_REF R)
 						dx = (plot_map[*PlotId::Slylandro].star_pt.x - LogxToUniverse(uqm::gameState().sis().log_x)) * (plot_map[*PlotId::Slylandro].star_pt.x > 5000 ? 1 : -1);
 						dy = (plot_map[*PlotId::Slylandro].star_pt.y - LogyToUniverse(uqm::gameState().sis().log_y)) * (plot_map[*PlotId::Slylandro].star_pt.y > 5000 ? 1 : -1);
 
-						NPCPhrase(THIS_IS_PROBE_40);
+						NPCPhrase(SlylandroPhrase::ThisIsProbe40);
 						sayCoord(dy);
-						NPCPhrase_splice(THIS_IS_PROBE_41);
+						NPCPhrase_splice(SlylandroPhrase::ThisIsProbe41);
 						sayCoord(dx);
-						NPCPhrase(THIS_IS_PROBE_42);
+						NPCPhrase(SlylandroPhrase::ThisIsProbe42);
 
 						--NumVisits;
 						break;
@@ -442,16 +442,16 @@ static void CombatIsInevitable(RESPONSE_REF R)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(PEACEFUL_MISSION_1);
+					NPCPhrase(SlylandroPhrase::PeacefulMission1);
 					break;
 				case 1:
-					NPCPhrase(PEACEFUL_MISSION_2);
+					NPCPhrase(SlylandroPhrase::PeacefulMission2);
 					break;
 				case 2:
-					NPCPhrase(PEACEFUL_MISSION_3);
+					NPCPhrase(SlylandroPhrase::PeacefulMission3);
 					break;
 				case 3:
-					NPCPhrase(PEACEFUL_MISSION_4);
+					NPCPhrase(SlylandroPhrase::PeacefulMission4);
 					--NumVisits;
 					break;
 			}
@@ -463,23 +463,23 @@ static void CombatIsInevitable(RESPONSE_REF R)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(GOODBYE_1);
+					NPCPhrase(SlylandroPhrase::Goodbye1);
 					break;
 				case 1:
-					NPCPhrase(GOODBYE_2);
+					NPCPhrase(SlylandroPhrase::Goodbye2);
 					break;
 				case 2:
-					NPCPhrase(GOODBYE_3);
+					NPCPhrase(SlylandroPhrase::Goodbye3);
 					break;
 				case 3:
-					NPCPhrase(GOODBYE_4);
+					NPCPhrase(SlylandroPhrase::Goodbye4);
 					--NumVisits;
 					break;
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_PROBE_EXIT, static_cast<uint32_t>(NumVisits));
 		}
 
-		NPCPhrase(HOSTILE);
+		NPCPhrase(SlylandroPhrase::Hostile);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PROBE_EXHIBITED_BUG, static_cast<uint32_t>(1));
 		setSegue(Segue::Hostile);
@@ -490,15 +490,15 @@ static void Intro(void)
 {
 	if (isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		NPCPhrase(COORD_POINT);
+		NPCPhrase(SlylandroPhrase::CoordPoint);
 		for (uint16_t i {0}; i < 16; i++)
 		{
 			NPCNumber(random_ramble[i], "{} ");
 		}
 		NPCNumber(random_ramble[16], "{}");
-		NPCPhrase(COORD_POINT);
+		NPCPhrase(SlylandroPhrase::CoordPoint);
 
-		NPCPhrase(HOSTILE);
+		NPCPhrase(SlylandroPhrase::Hostile);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PROBE_EXHIBITED_BUG, static_cast<uint32_t>(1));
 		setSegue(Segue::Hostile);
@@ -511,28 +511,28 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(WE_COME_IN_PEACE_1);
+				NPCPhrase(SlylandroPhrase::WeComeInPeace1);
 				break;
 			case 1:
-				NPCPhrase(WE_COME_IN_PEACE_2);
+				NPCPhrase(SlylandroPhrase::WeComeInPeace2);
 				break;
 			case 2:
-				NPCPhrase(WE_COME_IN_PEACE_3);
+				NPCPhrase(SlylandroPhrase::WeComeInPeace3);
 				break;
 			case 3:
-				NPCPhrase(WE_COME_IN_PEACE_4);
+				NPCPhrase(SlylandroPhrase::WeComeInPeace4);
 				break;
 			case 4:
-				NPCPhrase(WE_COME_IN_PEACE_5);
+				NPCPhrase(SlylandroPhrase::WeComeInPeace5);
 				break;
 			case 5:
-				NPCPhrase(WE_COME_IN_PEACE_6);
+				NPCPhrase(SlylandroPhrase::WeComeInPeace6);
 				break;
 			case 6:
-				NPCPhrase(WE_COME_IN_PEACE_7);
+				NPCPhrase(SlylandroPhrase::WeComeInPeace7);
 				break;
 			case 7:
-				NPCPhrase(WE_COME_IN_PEACE_8);
+				NPCPhrase(SlylandroPhrase::WeComeInPeace8);
 				--NumVisits;
 				break;
 		}

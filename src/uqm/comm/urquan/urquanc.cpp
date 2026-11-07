@@ -173,14 +173,14 @@ static void CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue::Hostile);
 
-	if (PlayerSaid(R, you_must_surrender))
+	if (PlayerSaid(R, UrquanPhrase::YouMustSurrender))
 	{
-		NPCPhrase(NOPE);
+		NPCPhrase(UrquanPhrase::Nope);
 	}
-	else if (PlayerSaid(R, whats_up_1)
-			 || PlayerSaid(R, whats_up_2)
-			 || PlayerSaid(R, whats_up_3)
-			 || PlayerSaid(R, whats_up_4))
+	else if (PlayerSaid(R, UrquanPhrase::WhatsUp1)
+			 || PlayerSaid(R, UrquanPhrase::WhatsUp2)
+			 || PlayerSaid(R, UrquanPhrase::WhatsUp3)
+			 || PlayerSaid(R, UrquanPhrase::WhatsUp4))
 	{
 		uint8_t NumVisits {};
 
@@ -188,63 +188,63 @@ static void CombatIsInevitable(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_1);
+				NPCPhrase(UrquanPhrase::GeneralInfo1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_2);
+				NPCPhrase(UrquanPhrase::GeneralInfo2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_3);
+				NPCPhrase(UrquanPhrase::GeneralInfo3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_4);
+				NPCPhrase(UrquanPhrase::GeneralInfo4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_INFO, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, i_wont_surrender))
+	else if (PlayerSaid(R, UrquanPhrase::IWontSurrender))
 	{
-		NPCPhrase(BAD_CHOICE);
+		NPCPhrase(UrquanPhrase::BadChoice);
 	}
-	else if (PlayerSaid(R, i_will_surrender))
+	else if (PlayerSaid(R, UrquanPhrase::IWillSurrender))
 	{
-		NPCPhrase(GOOD_CHOICE);
+		NPCPhrase(UrquanPhrase::GoodChoice);
 
 		setSegue(Segue::Defeat);
 	}
-	else if (PlayerSaid(R, like_to_leave))
+	else if (PlayerSaid(R, UrquanPhrase::LikeToLeave))
 	{
-		NPCPhrase(INDEPENDENCE_IS_BAD);
+		NPCPhrase(UrquanPhrase::IndependenceIsBad);
 	}
-	else if (PlayerSaid(R, bye_wars_over))
+	else if (PlayerSaid(R, UrquanPhrase::ByeWarsOver))
 	{
-		NPCPhrase(GOODBYE_WARS_OVER);
+		NPCPhrase(UrquanPhrase::GoodbyeWarsOver);
 
 		setSegue(Segue::Peace);
 	}
-	else if (PlayerSaid(R, bye_sub_hypno))
+	else if (PlayerSaid(R, UrquanPhrase::ByeSubHypno))
 	{
-		NPCPhrase(GOODBYE_AND_DIE_SUB_HYPNO);
+		NPCPhrase(UrquanPhrase::GoodbyeAndDieSubHypno);
 	}
-	else if (PlayerSaid(R, bye_init_hypno))
+	else if (PlayerSaid(R, UrquanPhrase::ByeInitHypno))
 	{
-		NPCPhrase(GOODBYE_AND_DIE_INIT_HYPNO);
+		NPCPhrase(UrquanPhrase::GoodbyeAndDieInitHypno);
 
 		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, terran_amphibian)
-			 || PlayerSaid(R, talking_pet_on_steroids))
+	else if (PlayerSaid(R, UrquanPhrase::TerranAmphibian)
+			 || PlayerSaid(R, UrquanPhrase::TalkingPetOnSteroids))
 	{
-		NPCPhrase(BAD_NEWS);
+		NPCPhrase(UrquanPhrase::BadNews);
 
 		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, falling_asleep)
-			 || PlayerSaid(R, someone_else_controlled))
+	else if (PlayerSaid(R, UrquanPhrase::FallingAsleep)
+			 || PlayerSaid(R, UrquanPhrase::SomeoneElseControlled))
 	{
-		NPCPhrase(SOUNDS_FAMILIAR);
+		NPCPhrase(UrquanPhrase::SoundsFamiliar);
 
 		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
@@ -253,76 +253,76 @@ static void CombatIsInevitable(RESPONSE_REF R)
 
 static void DescribePet(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, wascally_little_guy))
+	if (PlayerSaid(R, UrquanPhrase::WascallyLittleGuy))
 	{
-		NPCPhrase(WHAT_IT_LOOK_LIKE);
+		NPCPhrase(UrquanPhrase::WhatItLookLike);
 	}
-	else if (PlayerSaid(R, turd_and_toad))
+	else if (PlayerSaid(R, UrquanPhrase::TurdAndToad))
 	{
-		NPCPhrase(WHAT_IS_TURD_AND_TOAD);
+		NPCPhrase(UrquanPhrase::WhatIsTurdAndToad);
 
-		DisablePhrase(turd_and_toad);
+		DisablePhrase(UrquanPhrase::TurdAndToad);
 	}
 
-	Response(terran_amphibian, CombatIsInevitable);
-	Response(talking_pet_on_steroids, CombatIsInevitable);
-	if (PhraseEnabled(turd_and_toad))
+	Response(UrquanPhrase::TerranAmphibian, CombatIsInevitable);
+	Response(UrquanPhrase::TalkingPetOnSteroids, CombatIsInevitable);
+	if (PhraseEnabled(UrquanPhrase::TurdAndToad))
 	{
-		Response(turd_and_toad, DescribePet);
+		Response(UrquanPhrase::TurdAndToad, DescribePet);
 	}
 }
 
 static void DescribeCompulsion(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, alien_mind_control))
+	if (PlayerSaid(R, UrquanPhrase::AlienMindControl))
 	{
-		NPCPhrase(WHAT_FELT_LIKE);
+		NPCPhrase(UrquanPhrase::WhatFeltLike);
 	}
-	else if (PlayerSaid(R, before_coffee))
+	else if (PlayerSaid(R, UrquanPhrase::BeforeCoffee))
 	{
-		NPCPhrase(EXPLAIN);
+		NPCPhrase(UrquanPhrase::Explain);
 
-		DisablePhrase(before_coffee);
+		DisablePhrase(UrquanPhrase::BeforeCoffee);
 	}
 
-	Response(falling_asleep, CombatIsInevitable);
-	Response(someone_else_controlled, CombatIsInevitable);
-	if (PhraseEnabled(before_coffee))
+	Response(UrquanPhrase::FallingAsleep, CombatIsInevitable);
+	Response(UrquanPhrase::SomeoneElseControlled, CombatIsInevitable);
+	if (PhraseEnabled(UrquanPhrase::BeforeCoffee))
 	{
-		Response(before_coffee, DescribeCompulsion);
+		Response(UrquanPhrase::BeforeCoffee, DescribeCompulsion);
 	}
 }
 
 static void MentionCompulsion(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, compulsion))
+	if (PlayerSaid(R, UrquanPhrase::Compulsion))
 	{
-		NPCPhrase(WHAT_COMPULSION);
+		NPCPhrase(UrquanPhrase::WhatCompulsion);
 
 		uqm::gameState().setFlag(uqm::GameFlag::MENTIONED_PET_COMPULSION, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, possessed_by_devil))
+	else if (PlayerSaid(R, UrquanPhrase::PossessedByDevil))
 	{
-		NPCPhrase(STUPID_DEVIL);
+		NPCPhrase(UrquanPhrase::StupidDevil);
 
-		DisablePhrase(possessed_by_devil);
+		DisablePhrase(UrquanPhrase::PossessedByDevil);
 	}
-	else if (PlayerSaid(R, why_explain))
+	else if (PlayerSaid(R, UrquanPhrase::WhyExplain))
 	{
-		NPCPhrase(MUST_EXPLAIN);
+		NPCPhrase(UrquanPhrase::MustExplain);
 
-		DisablePhrase(why_explain);
+		DisablePhrase(UrquanPhrase::WhyExplain);
 	}
 
-	Response(wascally_little_guy, DescribePet);
-	Response(alien_mind_control, DescribeCompulsion);
-	if (PhraseEnabled(possessed_by_devil))
+	Response(UrquanPhrase::WascallyLittleGuy, DescribePet);
+	Response(UrquanPhrase::AlienMindControl, DescribeCompulsion);
+	if (PhraseEnabled(UrquanPhrase::PossessedByDevil))
 	{
-		Response(possessed_by_devil, MentionCompulsion);
+		Response(UrquanPhrase::PossessedByDevil, MentionCompulsion);
 	}
-	if (PhraseEnabled(why_explain))
+	if (PhraseEnabled(UrquanPhrase::WhyExplain))
 	{
-		Response(why_explain, MentionCompulsion);
+		Response(UrquanPhrase::WhyExplain, MentionCompulsion);
 	}
 }
 
@@ -332,154 +332,154 @@ static void UrquanHypno(RESPONSE_REF R)
 	{
 		if (R == 0)
 		{
-			NPCPhrase(INIT_URQUAN_WAKE_UP);
+			NPCPhrase(UrquanPhrase::InitUrquanWakeUp);
 		}
-		else if (PlayerSaid(R, where_am_i))
+		else if (PlayerSaid(R, UrquanPhrase::WhereAmI))
 		{
-			NPCPhrase(YOU_ARE_HERE);
+			NPCPhrase(UrquanPhrase::YouAreHere);
 
-			DisablePhrase(where_am_i);
+			DisablePhrase(UrquanPhrase::WhereAmI);
 		}
-		else if (PlayerSaid(R, why_does_my_head_hurt))
+		else if (PlayerSaid(R, UrquanPhrase::WhyDoesMyHeadHurt))
 		{
-			NPCPhrase(HURTS_BECAUSE);
+			NPCPhrase(UrquanPhrase::HurtsBecause);
 
-			DisablePhrase(why_does_my_head_hurt);
+			DisablePhrase(UrquanPhrase::WhyDoesMyHeadHurt);
 		}
-		else if (PlayerSaid(R, what_about_2_weeks))
+		else if (PlayerSaid(R, UrquanPhrase::WhatAbout2Weeks))
 		{
-			NPCPhrase(ABOUT_2_WEEKS);
+			NPCPhrase(UrquanPhrase::About2Weeks);
 
-			DisablePhrase(what_about_2_weeks);
+			DisablePhrase(UrquanPhrase::WhatAbout2Weeks);
 		}
 
-		if (PhraseEnabled(where_am_i))
+		if (PhraseEnabled(UrquanPhrase::WhereAmI))
 		{
-			Response(where_am_i, UrquanHypno);
+			Response(UrquanPhrase::WhereAmI, UrquanHypno);
 		}
-		if (PhraseEnabled(why_does_my_head_hurt))
+		if (PhraseEnabled(UrquanPhrase::WhyDoesMyHeadHurt))
 		{
-			Response(why_does_my_head_hurt, UrquanHypno);
+			Response(UrquanPhrase::WhyDoesMyHeadHurt, UrquanHypno);
 		}
-		if (PhraseEnabled(what_about_2_weeks))
+		if (PhraseEnabled(UrquanPhrase::WhatAbout2Weeks))
 		{
-			Response(what_about_2_weeks, UrquanHypno);
+			Response(UrquanPhrase::WhatAbout2Weeks, UrquanHypno);
 		}
-		Response(compulsion, MentionCompulsion);
-		Response(bye_init_hypno, CombatIsInevitable);
+		Response(UrquanPhrase::Compulsion, MentionCompulsion);
+		Response(UrquanPhrase::ByeInitHypno, CombatIsInevitable);
 	}
 	else
 	{
 		if (R == 0)
 		{
-			NPCPhrase(SUBSEQUENT_URQUAN_WAKE_UP);
+			NPCPhrase(UrquanPhrase::SubsequentUrquanWakeUp);
 		}
-		else if (PlayerSaid(R, uh_oh))
+		else if (PlayerSaid(R, UrquanPhrase::UhOh))
 		{
-			NPCPhrase(NO_UH_OH);
+			NPCPhrase(UrquanPhrase::NoUhOh);
 
-			DisablePhrase(uh_oh);
+			DisablePhrase(UrquanPhrase::UhOh);
 		}
-		else if (PlayerSaid(R, stop_meeting))
+		else if (PlayerSaid(R, UrquanPhrase::StopMeeting))
 		{
-			NPCPhrase(NO_STOP_MEETING);
+			NPCPhrase(UrquanPhrase::NoStopMeeting);
 
-			DisablePhrase(stop_meeting);
+			DisablePhrase(UrquanPhrase::StopMeeting);
 		}
 
-		if (PhraseEnabled(uh_oh))
+		if (PhraseEnabled(UrquanPhrase::UhOh))
 		{
-			Response(uh_oh, UrquanHypno);
+			Response(UrquanPhrase::UhOh, UrquanHypno);
 		}
-		if (PhraseEnabled(stop_meeting))
+		if (PhraseEnabled(UrquanPhrase::StopMeeting))
 		{
-			Response(stop_meeting, UrquanHypno);
+			Response(UrquanPhrase::StopMeeting, UrquanHypno);
 		}
 		if (!uqm::gameState().flag(uqm::GameFlag::MENTIONED_PET_COMPULSION))
 		{
-			Response(compulsion, MentionCompulsion);
+			Response(UrquanPhrase::Compulsion, MentionCompulsion);
 		}
-		Response(bye_sub_hypno, CombatIsInevitable);
+		Response(UrquanPhrase::ByeSubHypno, CombatIsInevitable);
 	}
 }
 
 static void NormalUrquan(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, i_surrender))
+	if (PlayerSaid(R, UrquanPhrase::ISurrender))
 	{
-		NPCPhrase(DISOBEDIENCE_PUNISHED);
+		NPCPhrase(UrquanPhrase::DisobediencePunished);
 
-		Response(i_wont_surrender, CombatIsInevitable);
-		Response(i_will_surrender, CombatIsInevitable);
+		Response(UrquanPhrase::IWontSurrender, CombatIsInevitable);
+		Response(UrquanPhrase::IWillSurrender, CombatIsInevitable);
 	}
 	else
 	{
-		if (PlayerSaid(R, key_phrase))
+		if (PlayerSaid(R, UrquanPhrase::KeyPhrase))
 		{
-			NPCPhrase(URQUAN_STORY);
+			NPCPhrase(UrquanPhrase::UrquanStory);
 
 			uqm::gameState().setFlag(uqm::GameFlag::KNOW_URQUAN_STORY, static_cast<uint32_t>(2));
 		}
 
-		Response(you_must_surrender, CombatIsInevitable);
+		Response(UrquanPhrase::YouMustSurrender, CombatIsInevitable);
 		if (uqm::gameState().flag(uqm::GameFlag::KNOW_URQUAN_STORY) == 1)
 		{
-			Response(key_phrase, NormalUrquan);
+			Response(UrquanPhrase::KeyPhrase, NormalUrquan);
 		}
 		switch (uqm::gameState().flag(uqm::GameFlag::URQUAN_INFO))
 		{
 			case 0:
-				Response(whats_up_1, CombatIsInevitable);
+				Response(UrquanPhrase::WhatsUp1, CombatIsInevitable);
 				break;
 			case 1:
-				Response(whats_up_2, CombatIsInevitable);
+				Response(UrquanPhrase::WhatsUp2, CombatIsInevitable);
 				break;
 			case 2:
-				Response(whats_up_3, CombatIsInevitable);
+				Response(UrquanPhrase::WhatsUp3, CombatIsInevitable);
 				break;
 			case 3:
-				Response(whats_up_4, CombatIsInevitable);
+				Response(UrquanPhrase::WhatsUp4, CombatIsInevitable);
 				break;
 		}
-		Response(i_surrender, NormalUrquan);
-		Response(like_to_leave, CombatIsInevitable);
+		Response(UrquanPhrase::ISurrender, NormalUrquan);
+		Response(UrquanPhrase::LikeToLeave, CombatIsInevitable);
 	}
 }
 
 static void LoserUrquan(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, why_flee))
+	if (PlayerSaid(R, UrquanPhrase::WhyFlee))
 	{
-		NPCPhrase(FLEE_BECAUSE);
+		NPCPhrase(UrquanPhrase::FleeBecause);
 
-		DisablePhrase(why_flee);
+		DisablePhrase(UrquanPhrase::WhyFlee);
 	}
-	else if (PlayerSaid(R, what_happens_now))
+	else if (PlayerSaid(R, UrquanPhrase::WhatHappensNow))
 	{
-		NPCPhrase(HAPPENS_NOW);
+		NPCPhrase(UrquanPhrase::HappensNow);
 
-		DisablePhrase(what_happens_now);
+		DisablePhrase(UrquanPhrase::WhatHappensNow);
 	}
-	else if (PlayerSaid(R, what_about_you))
+	else if (PlayerSaid(R, UrquanPhrase::WhatAboutYou))
 	{
-		NPCPhrase(ABOUT_US);
+		NPCPhrase(UrquanPhrase::AboutUs);
 
-		DisablePhrase(what_about_you);
+		DisablePhrase(UrquanPhrase::WhatAboutYou);
 	}
 
-	if (PhraseEnabled(why_flee))
+	if (PhraseEnabled(UrquanPhrase::WhyFlee))
 	{
-		Response(why_flee, LoserUrquan);
+		Response(UrquanPhrase::WhyFlee, LoserUrquan);
 	}
-	if (PhraseEnabled(what_happens_now))
+	if (PhraseEnabled(UrquanPhrase::WhatHappensNow))
 	{
-		Response(what_happens_now, LoserUrquan);
+		Response(UrquanPhrase::WhatHappensNow, LoserUrquan);
 	}
-	if (PhraseEnabled(what_about_you))
+	if (PhraseEnabled(UrquanPhrase::WhatAboutYou))
 	{
-		Response(what_about_you, LoserUrquan);
+		Response(UrquanPhrase::WhatAboutYou, LoserUrquan);
 	}
-	Response(bye_wars_over, CombatIsInevitable);
+	Response(UrquanPhrase::ByeWarsOver, CombatIsInevitable);
 }
 
 static void Intro(void)
@@ -492,7 +492,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(UrquanPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -503,7 +503,7 @@ static void Intro(void)
 		&& uqm::gameState().game().BattleGroupRef
 		&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 	{
-		NPCPhrase(SEND_MESSAGE);
+		NPCPhrase(UrquanPhrase::SendMessage);
 		uqm::gameState().setFlag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED, static_cast<uint32_t>(1));
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED))
@@ -518,7 +518,7 @@ static void Intro(void)
 		if (!uqm::gameState().flag(uqm::GameFlag::URQUAN_SENSES_EVIL)
 			&& uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 		{
-			NPCPhrase(SENSE_EVIL);
+			NPCPhrase(UrquanPhrase::SenseEvil);
 			uqm::gameState().setFlag(uqm::GameFlag::URQUAN_SENSES_EVIL, static_cast<uint32_t>(1));
 		}
 
@@ -527,7 +527,7 @@ static void Intro(void)
 			&& uqm::gameState().game().BattleGroupRef
 			&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 		{
-			NPCPhrase(CAUGHT_YA);
+			NPCPhrase(UrquanPhrase::CaughtYa);
 
 			setSegue(Segue::Hostile);
 			return;
@@ -538,7 +538,7 @@ static void Intro(void)
 			&& uqm::gameState().game().BattleGroupRef
 			&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 		{
-			NPCPhrase(HELLO_SAMATRA);
+			NPCPhrase(UrquanPhrase::HelloSamatra);
 
 			uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
 			setSegue(Segue::Hostile);
@@ -551,19 +551,19 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(INIT_HELLO);
+						NPCPhrase(UrquanPhrase::InitHello);
 						break;
 					case 1:
-						NPCPhrase(SUBSEQUENT_HELLO_1);
+						NPCPhrase(UrquanPhrase::SubsequentHello1);
 						break;
 					case 2:
-						NPCPhrase(SUBSEQUENT_HELLO_2);
+						NPCPhrase(UrquanPhrase::SubsequentHello2);
 						break;
 					case 3:
-						NPCPhrase(SUBSEQUENT_HELLO_3);
+						NPCPhrase(UrquanPhrase::SubsequentHello3);
 						break;
 					case 4:
-						NPCPhrase(SUBSEQUENT_HELLO_4);
+						NPCPhrase(UrquanPhrase::SubsequentHello4);
 						--NumVisits;
 						break;
 				}
@@ -575,11 +575,11 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(INIT_FLEE_HUMAN);
+						NPCPhrase(UrquanPhrase::InitFleeHuman);
 						LoserUrquan((RESPONSE_REF)0);
 						break;
 					case 1:
-						NPCPhrase(SUBSEQUENT_FLEE_HUMAN);
+						NPCPhrase(UrquanPhrase::SubsequentFleeHuman);
 						setSegue(Segue::Peace);
 						--NumVisits;
 						break;

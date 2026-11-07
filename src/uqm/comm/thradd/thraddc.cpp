@@ -164,20 +164,20 @@ static ConversationData thradd_desc =
 		nullptr,
 };
 
-static int GetCultureName(void)
+static ThraddashPhrase GetCultureName(void)
 {
-	int culture = 0;
+	ThraddashPhrase culture {ThraddashPhrase::NullPhrase};
 
 	switch (uqm::gameState().flag(uqm::GameFlag::THRADD_CULTURE))
 	{
 		case 1:
-			culture = CULTURE;
+			culture = ThraddashPhrase::Culture;
 			break;
 		case 2:
-			culture = FAT_JERKS;
+			culture = ThraddashPhrase::FatJerks;
 			break;
 		case 3:
-			culture = SLAVE_EMPIRE;
+			culture = ThraddashPhrase::SlaveEmpire;
 			break;
 		default:
 			assert(0 && "Unknown culture");
@@ -191,16 +191,16 @@ static void PolitePhrase(uint8_t which_phrase)
 	switch (which_phrase)
 	{
 		case 0:
-			NPCPhrase(HELLO_POLITE_1);
+			NPCPhrase(ThraddashPhrase::HelloPolite1);
 			break;
 		case 1:
-			NPCPhrase(HELLO_POLITE_2);
+			NPCPhrase(ThraddashPhrase::HelloPolite2);
 			break;
 		case 2:
-			NPCPhrase(HELLO_POLITE_3);
+			NPCPhrase(ThraddashPhrase::HelloPolite3);
 			break;
 		case 3:
-			NPCPhrase(HELLO_POLITE_4);
+			NPCPhrase(ThraddashPhrase::HelloPolite4);
 			break;
 	}
 }
@@ -210,16 +210,16 @@ static void RhymePhrase(uint8_t which_phrase)
 	switch (which_phrase)
 	{
 		case 0:
-			NPCPhrase(HELLO_RHYME_1);
+			NPCPhrase(ThraddashPhrase::HelloRhyme1);
 			break;
 		case 1:
-			NPCPhrase(HELLO_RHYME_2);
+			NPCPhrase(ThraddashPhrase::HelloRhyme2);
 			break;
 		case 2:
-			NPCPhrase(HELLO_RHYME_3);
+			NPCPhrase(ThraddashPhrase::HelloRhyme3);
 			break;
 		case 3:
-			NPCPhrase(HELLO_RHYME_4);
+			NPCPhrase(ThraddashPhrase::HelloRhyme4);
 			break;
 	}
 }
@@ -229,16 +229,16 @@ static void PigLatinPhrase(uint8_t which_phrase)
 	switch (which_phrase)
 	{
 		case 0:
-			NPCPhrase(HELLO_PIG_LATIN_1);
+			NPCPhrase(ThraddashPhrase::HelloPigLatin1);
 			break;
 		case 1:
-			NPCPhrase(HELLO_PIG_LATIN_2);
+			NPCPhrase(ThraddashPhrase::HelloPigLatin2);
 			break;
 		case 2:
-			NPCPhrase(HELLO_PIG_LATIN_3);
+			NPCPhrase(ThraddashPhrase::HelloPigLatin3);
 			break;
 		case 3:
-			NPCPhrase(HELLO_PIG_LATIN_4);
+			NPCPhrase(ThraddashPhrase::HelloPigLatin4);
 			break;
 	}
 }
@@ -248,16 +248,16 @@ static void LikeYouPhrase(uint8_t which_phrase)
 	switch (which_phrase)
 	{
 		case 0:
-			NPCPhrase(HELLO_LIKE_YOU_1);
+			NPCPhrase(ThraddashPhrase::HelloLikeYou1);
 			break;
 		case 1:
-			NPCPhrase(HELLO_LIKE_YOU_2);
+			NPCPhrase(ThraddashPhrase::HelloLikeYou2);
 			break;
 		case 2:
-			NPCPhrase(HELLO_LIKE_YOU_3);
+			NPCPhrase(ThraddashPhrase::HelloLikeYou3);
 			break;
 		case 3:
-			NPCPhrase(HELLO_LIKE_YOU_4);
+			NPCPhrase(ThraddashPhrase::HelloLikeYou4);
 			break;
 	}
 }
@@ -266,39 +266,39 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue::Hostile);
 
-	if (PlayerSaid(R, bye_hostile_2))
+	if (PlayerSaid(R, ThraddashPhrase::ByeHostile2))
 	{
-		NPCPhrase(GOODBYE_HOSTILE_2);
+		NPCPhrase(ThraddashPhrase::GoodbyeHostile2);
 	}
-	else if (PlayerSaid(R, bye_hostile_1))
+	else if (PlayerSaid(R, ThraddashPhrase::ByeHostile1))
 	{
-		NPCPhrase(GOODBYE_HOSTILE_1);
+		NPCPhrase(ThraddashPhrase::GoodbyeHostile1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_HOSTILE_STACK_5, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, submit_1))
+	else if (PlayerSaid(R, ThraddashPhrase::Submit1))
 	{
-		NPCPhrase(NO_SUBMIT_1);
+		NPCPhrase(ThraddashPhrase::NoSubmit1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_HOSTILE_STACK_2, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, submit_2))
+	else if (PlayerSaid(R, ThraddashPhrase::Submit2))
 	{
-		NPCPhrase(NO_SUBMIT_2);
+		NPCPhrase(ThraddashPhrase::NoSubmit2);
 	}
-	else if (PlayerSaid(R, got_idea))
+	else if (PlayerSaid(R, ThraddashPhrase::GotIdea))
 	{
-		NPCPhrase(GOOD_IDEA);
+		NPCPhrase(ThraddashPhrase::GoodIdea);
 
 		setSegue(Segue::Peace);
 		AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvanceThraddMission);
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(5));
 	}
-	else if (PlayerSaid(R, bye_hostile_helix))
+	else if (PlayerSaid(R, ThraddashPhrase::ByeHostileHelix))
 	{
-		NPCPhrase(GOODBYE_HOSTILE_HELIX);
+		NPCPhrase(ThraddashPhrase::GoodbyeHostileHelix);
 	}
-	else if (PlayerSaid(R, bye_ally))
+	else if (PlayerSaid(R, ThraddashPhrase::ByeAlly))
 	{
 		uint8_t NumVisits {};
 
@@ -306,64 +306,64 @@ static void ExitConversation(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GOODBYE_ALLY_1);
+				NPCPhrase(ThraddashPhrase::GoodbyeAlly1);
 				break;
 			case 1:
-				NPCPhrase(GOODBYE_ALLY_2);
+				NPCPhrase(ThraddashPhrase::GoodbyeAlly2);
 				break;
 			case 2:
-				NPCPhrase(GOODBYE_ALLY_3);
+				NPCPhrase(ThraddashPhrase::GoodbyeAlly3);
 				break;
 			case 3:
-				NPCPhrase(GOODBYE_ALLY_4);
+				NPCPhrase(ThraddashPhrase::GoodbyeAlly4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(NumVisits));
 		setSegue(Segue::Peace);
 	}
-	else if (PlayerSaid(R, may_i_land))
+	else if (PlayerSaid(R, ThraddashPhrase::MayILand))
 	{
-		NPCPhrase(SURE_LAND);
+		NPCPhrase(ThraddashPhrase::SureLand);
 
 		uqm::gameState().setFlag(uqm::GameFlag::HELIX_UNPROTECTED, static_cast<uint32_t>(1));
 		setSegue(Segue::Peace);
 	}
-	else if (PlayerSaid(R, demand_to_land))
+	else if (PlayerSaid(R, ThraddashPhrase::DemandToLand))
 	{
-		NPCPhrase(NO_DEMAND);
+		NPCPhrase(ThraddashPhrase::NoDemand);
 	}
-	else if (PlayerSaid(R, i_need_to_land_lie))
+	else if (PlayerSaid(R, ThraddashPhrase::INeedToLandLie))
 	{
-		NPCPhrase(CAUGHT_LIE);
+		NPCPhrase(ThraddashPhrase::CaughtLie);
 	}
 	else
 	{
-		if (PlayerSaid(R, contemplative))
+		if (PlayerSaid(R, ThraddashPhrase::Contemplative))
 		{
-			NPCPhrase(OK_CONTEMPLATIVE);
+			NPCPhrase(ThraddashPhrase::OkContemplative);
 
 			uqm::gameState().setFlag(uqm::GameFlag::THRADD_DEMEANOR, static_cast<uint32_t>(0));
 		}
-		else if (PlayerSaid(R, friendly))
+		else if (PlayerSaid(R, ThraddashPhrase::Friendly))
 		{
-			NPCPhrase(OK_FRIENDLY);
+			NPCPhrase(ThraddashPhrase::OkFriendly);
 
 			uqm::gameState().setFlag(uqm::GameFlag::THRADD_DEMEANOR, static_cast<uint32_t>(1));
 		}
-		else if (PlayerSaid(R, wacky))
+		else if (PlayerSaid(R, ThraddashPhrase::Wacky))
 		{
-			NPCPhrase(OK_WACKY);
+			NPCPhrase(ThraddashPhrase::OkWacky);
 
 			uqm::gameState().setFlag(uqm::GameFlag::THRADD_DEMEANOR, static_cast<uint32_t>(2));
 		}
-		else if (PlayerSaid(R, just_like_us))
+		else if (PlayerSaid(R, ThraddashPhrase::JustLikeUs))
 		{
-			NPCPhrase(OK_JUST_LIKE_YOU);
+			NPCPhrase(ThraddashPhrase::OkJustLikeYou);
 
 			uqm::gameState().setFlag(uqm::GameFlag::THRADD_DEMEANOR, static_cast<uint32_t>(3));
 		}
-		NPCPhrase(WORK_TO_DO);
+		NPCPhrase(ThraddashPhrase::WorkToDo);
 
 		setSegue(Segue::Peace);
 	}
@@ -373,42 +373,42 @@ static void ThraddAllies(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, why_you_here_ally))
+	if (PlayerSaid(R, ThraddashPhrase::WhyYouHereAlly))
 	{
-		NPCPhrase(GUARDING_HELIX_ALLY);
+		NPCPhrase(ThraddashPhrase::GuardingHelixAlly);
 
-		DisablePhrase(why_you_here_ally);
+		DisablePhrase(ThraddashPhrase::WhyYouHereAlly);
 	}
-	else if (PlayerSaid(R, whats_helix_ally))
+	else if (PlayerSaid(R, ThraddashPhrase::WhatsHelixAlly))
 	{
-		NPCPhrase(HELIX_IS_ALLY);
+		NPCPhrase(ThraddashPhrase::HelixIsAlly);
 
-		DisablePhrase(whats_helix_ally);
+		DisablePhrase(ThraddashPhrase::WhatsHelixAlly);
 	}
-	else if (PlayerSaid(R, whats_up_ally))
+	else if (PlayerSaid(R, ThraddashPhrase::WhatsUpAlly))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::THRADD_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_ALLY_1);
+				NPCPhrase(ThraddashPhrase::GeneralInfoAlly1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_ALLY_2);
+				NPCPhrase(ThraddashPhrase::GeneralInfoAlly2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_ALLY_3);
+				NPCPhrase(ThraddashPhrase::GeneralInfoAlly3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_ALLY_4);
+				NPCPhrase(ThraddashPhrase::GeneralInfoAlly4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_ally);
+		DisablePhrase(ThraddashPhrase::WhatsUpAlly);
 	}
-	else if (PlayerSaid(R, how_goes_culture))
+	else if (PlayerSaid(R, ThraddashPhrase::HowGoesCulture))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::THRADD_DEMEANOR);
 		switch (NumVisits & ((1 << 2) - 1))
@@ -416,135 +416,135 @@ static void ThraddAllies(RESPONSE_REF R)
 			case 0:
 				if (!(NumVisits & ~((1 << 2) - 1)))
 				{
-					NPCPhrase(CONTEMP_GOES_1);
+					NPCPhrase(ThraddashPhrase::ContempGoes1);
 				}
 				else
 				{
-					NPCPhrase(CONTEMP_GOES_2);
+					NPCPhrase(ThraddashPhrase::ContempGoes2);
 				}
 				break;
 			case 1:
 				if (!(NumVisits & ~((1 << 2) - 1)))
 				{
-					NPCPhrase(FRIENDLY_GOES_1);
+					NPCPhrase(ThraddashPhrase::FriendlyGoes1);
 				}
 				else
 				{
-					NPCPhrase(FRIENDLY_GOES_2);
+					NPCPhrase(ThraddashPhrase::FriendlyGoes2);
 				}
 				break;
 			case 2:
 				if (!(NumVisits & ~((1 << 2) - 1)))
 				{
-					NPCPhrase(WACKY_GOES_1);
+					NPCPhrase(ThraddashPhrase::WackyGoes1);
 				}
 				else
 				{
-					NPCPhrase(WACKY_GOES_2);
+					NPCPhrase(ThraddashPhrase::WackyGoes2);
 				}
 				break;
 			case 3:
 				if (!(NumVisits & ~((1 << 2) - 1)))
 				{
-					NPCPhrase(LIKE_YOU_GOES_1);
+					NPCPhrase(ThraddashPhrase::LikeYouGoes1);
 				}
 				else
 				{
-					NPCPhrase(LIKE_YOU_GOES_2);
+					NPCPhrase(ThraddashPhrase::LikeYouGoes2);
 				}
 				break;
 		}
 		NumVisits |= 1 << 2;
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_DEMEANOR, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(how_goes_culture);
+		DisablePhrase(ThraddashPhrase::HowGoesCulture);
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		if (PhraseEnabled(why_you_here_ally))
+		if (PhraseEnabled(ThraddashPhrase::WhyYouHereAlly))
 		{
-			Response(why_you_here_ally, ThraddAllies);
+			Response(ThraddashPhrase::WhyYouHereAlly, ThraddAllies);
 		}
 		else
 		{
-			if (PhraseEnabled(whats_helix_ally))
+			if (PhraseEnabled(ThraddashPhrase::WhatsHelixAlly))
 			{
-				Response(whats_helix_ally, ThraddAllies);
+				Response(ThraddashPhrase::WhatsHelixAlly, ThraddAllies);
 			}
-			Response(may_i_land, ExitConversation);
+			Response(ThraddashPhrase::MayILand, ExitConversation);
 		}
 	}
-	if (PhraseEnabled(whats_up_ally))
+	if (PhraseEnabled(ThraddashPhrase::WhatsUpAlly))
 	{
-		Response(whats_up_ally, ThraddAllies);
+		Response(ThraddashPhrase::WhatsUpAlly, ThraddAllies);
 	}
-	if (PhraseEnabled(how_goes_culture))
+	if (PhraseEnabled(ThraddashPhrase::HowGoesCulture))
 	{
-		Response(how_goes_culture, ThraddAllies);
+		Response(ThraddashPhrase::HowGoesCulture, ThraddAllies);
 	}
-	Response(bye_ally, ExitConversation);
+	Response(ThraddashPhrase::ByeAlly, ExitConversation);
 }
 
 static void ThraddDemeanor(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, you_decide))
+	if (PlayerSaid(R, ThraddashPhrase::YouDecide))
 	{
-		NPCPhrase(OK_CULTURE_20);
+		NPCPhrase(ThraddashPhrase::OkCulture20);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_CULTURE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, fat))
+	else if (PlayerSaid(R, ThraddashPhrase::Fat))
 	{
-		NPCPhrase(OK_FAT);
+		NPCPhrase(ThraddashPhrase::OkFat);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_CULTURE, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, the_slave_empire))
+	else if (PlayerSaid(R, ThraddashPhrase::TheSlaveEmpire))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_CULTURE, static_cast<uint32_t>(3));
 
-		NPCPhrase(OK_SLAVE);
+		NPCPhrase(ThraddashPhrase::OkSlave);
 	}
 
-	NPCPhrase(HOW_SHOULD_WE_ACT);
-	Response(contemplative, ExitConversation);
-	Response(friendly, ExitConversation);
-	Response(wacky, ExitConversation);
-	Response(just_like_us, ExitConversation);
+	NPCPhrase(ThraddashPhrase::HowShouldWeAct);
+	Response(ThraddashPhrase::Contemplative, ExitConversation);
+	Response(ThraddashPhrase::Friendly, ExitConversation);
+	Response(ThraddashPhrase::Wacky, ExitConversation);
+	Response(ThraddashPhrase::JustLikeUs, ExitConversation);
 }
 
 static void ThraddCulture(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, be_polite))
+	if (PlayerSaid(R, ThraddashPhrase::BePolite))
 	{
-		NPCPhrase(OK_POLITE);
+		NPCPhrase(ThraddashPhrase::OkPolite);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INTRO, static_cast<uint32_t>(0));
 	}
-	else if (PlayerSaid(R, use_rhymes))
+	else if (PlayerSaid(R, ThraddashPhrase::UseRhymes))
 	{
-		NPCPhrase(OK_RHYMES);
+		NPCPhrase(ThraddashPhrase::OkRhymes);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INTRO, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, speak_pig_latin))
+	else if (PlayerSaid(R, ThraddashPhrase::SpeakPigLatin))
 	{
-		NPCPhrase(OK_PIG_LATIN);
+		NPCPhrase(ThraddashPhrase::OkPigLatin);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INTRO, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, just_the_way_we_do))
+	else if (PlayerSaid(R, ThraddashPhrase::JustTheWayWeDo))
 	{
-		NPCPhrase(OK_WAY_YOU_DO);
+		NPCPhrase(ThraddashPhrase::OkWayYouDo);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INTRO, static_cast<uint32_t>(3));
 	}
-	NPCPhrase(WHAT_NAME_FOR_CULTURE);
+	NPCPhrase(ThraddashPhrase::WhatNameForCulture);
 
-	Response(you_decide, ThraddDemeanor);
-	Response(fat, ThraddDemeanor);
-	Response(the_slave_empire, ThraddDemeanor);
+	Response(ThraddashPhrase::YouDecide, ThraddDemeanor);
+	Response(ThraddashPhrase::Fat, ThraddDemeanor);
+	Response(ThraddashPhrase::TheSlaveEmpire, ThraddDemeanor);
 }
 
 static void ThraddWorship(RESPONSE_REF R)
@@ -555,73 +555,73 @@ static void ThraddWorship(RESPONSE_REF R)
 	uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(0));
 	SetRaceAllied(RaceId::Thraddash, true);
 
-	Response(be_polite, ThraddCulture);
-	Response(speak_pig_latin, ThraddCulture);
-	Response(use_rhymes, ThraddCulture);
-	Response(just_the_way_we_do, ThraddCulture);
+	Response(ThraddashPhrase::BePolite, ThraddCulture);
+	Response(ThraddashPhrase::SpeakPigLatin, ThraddCulture);
+	Response(ThraddashPhrase::UseRhymes, ThraddCulture);
+	Response(ThraddashPhrase::JustTheWayWeDo, ThraddCulture);
 }
 
 static void HelixWorld(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, why_you_here_hostile))
+	if (PlayerSaid(R, ThraddashPhrase::WhyYouHereHostile))
 	{
-		NPCPhrase(NONE_OF_YOUR_CONCERN);
+		NPCPhrase(ThraddashPhrase::NoneOfYourConcern);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_CULTURE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, what_about_this_world))
+	else if (PlayerSaid(R, ThraddashPhrase::WhatAboutThisWorld))
 	{
-		NPCPhrase(BLUE_HELIX);
+		NPCPhrase(ThraddashPhrase::BlueHelix);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INTRO, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, whats_helix_hostile))
+	else if (PlayerSaid(R, ThraddashPhrase::WhatsHelixHostile))
 	{
-		NPCPhrase(HELIX_IS_HOSTILE);
+		NPCPhrase(ThraddashPhrase::HelixIsHostile);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INTRO, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, i_need_to_land_lie))
+	else if (PlayerSaid(R, ThraddashPhrase::INeedToLandLie))
 	{
-		NPCPhrase(CAUGHT_LIE);
+		NPCPhrase(ThraddashPhrase::CaughtLie);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_DEMEANOR, static_cast<uint32_t>(1));
 	}
 
 	if (!uqm::gameState().flag(uqm::GameFlag::THRADD_CULTURE))
 	{
-		Response(why_you_here_hostile, HelixWorld);
+		Response(ThraddashPhrase::WhyYouHereHostile, HelixWorld);
 	}
 	else
 	{
-		Response(demand_to_land, ExitConversation);
+		Response(ThraddashPhrase::DemandToLand, ExitConversation);
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::THRADD_INTRO))
 	{
 		case 0:
-			Response(what_about_this_world, HelixWorld);
+			Response(ThraddashPhrase::WhatAboutThisWorld, HelixWorld);
 			break;
 		case 1:
-			Response(whats_helix_hostile, HelixWorld);
+			Response(ThraddashPhrase::WhatsHelixHostile, HelixWorld);
 			break;
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::THRADD_DEMEANOR))
 	{
-		Response(i_need_to_land_lie, ExitConversation);
+		Response(ThraddashPhrase::INeedToLandLie, ExitConversation);
 	}
-	Response(bye_hostile_helix, ExitConversation);
+	Response(ThraddashPhrase::ByeHostileHelix, ExitConversation);
 }
 
 static void ThraddHostile(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_up_hostile_1))
+	if (PlayerSaid(R, ThraddashPhrase::WhatsUpHostile1))
 	{
-		NPCPhrase(GENERAL_INFO_HOSTILE_1);
+		NPCPhrase(ThraddashPhrase::GeneralInfoHostile1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INFO, static_cast<uint32_t>(1));
-		DisablePhrase(whats_up_hostile_2);
+		DisablePhrase(ThraddashPhrase::WhatsUpHostile2);
 	}
-	else if (PlayerSaid(R, whats_up_hostile_2))
+	else if (PlayerSaid(R, ThraddashPhrase::WhatsUpHostile2))
 	{
 		uint8_t NumVisits {};
 
@@ -629,94 +629,94 @@ static void ThraddHostile(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 1:
-				NPCPhrase(GENERAL_INFO_HOSTILE_2);
+				NPCPhrase(ThraddashPhrase::GeneralInfoHostile2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_HOSTILE_3);
+				NPCPhrase(ThraddashPhrase::GeneralInfoHostile3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_HOSTILE_4);
+				NPCPhrase(ThraddashPhrase::GeneralInfoHostile4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_hostile_2);
+		DisablePhrase(ThraddashPhrase::WhatsUpHostile2);
 	}
-	else if (PlayerSaid(R, what_about_you_1))
+	else if (PlayerSaid(R, ThraddashPhrase::WhatAboutYou1))
 	{
-		NPCPhrase(ABOUT_US_1);
+		NPCPhrase(ThraddashPhrase::AboutUs1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, what_about_you_2))
+	else if (PlayerSaid(R, ThraddashPhrase::WhatAboutYou2))
 	{
-		NPCPhrase(ABOUT_US_2);
+		NPCPhrase(ThraddashPhrase::AboutUs2);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, what_about_urquan_1))
+	else if (PlayerSaid(R, ThraddashPhrase::WhatAboutUrquan1))
 	{
-		NPCPhrase(ABOUT_URQUAN_1);
+		NPCPhrase(ThraddashPhrase::AboutUrquan1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, what_about_urquan_2))
+	else if (PlayerSaid(R, ThraddashPhrase::WhatAboutUrquan2))
 	{
-		NPCPhrase(ABOUT_URQUAN_2);
+		NPCPhrase(ThraddashPhrase::AboutUrquan2);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_STACK_1, static_cast<uint32_t>(4));
 	}
-	else if (PlayerSaid(R, be_friends_1))
+	else if (PlayerSaid(R, ThraddashPhrase::BeFriends1))
 	{
-		NPCPhrase(NO_FRIENDS_1);
+		NPCPhrase(ThraddashPhrase::NoFriends1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_HOSTILE_STACK_3, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, be_friends_2))
+	else if (PlayerSaid(R, ThraddashPhrase::BeFriends2))
 	{
-		NPCPhrase(NO_FRIENDS_2);
-		DisablePhrase(be_friends_2);
+		NPCPhrase(ThraddashPhrase::NoFriends2);
+		DisablePhrase(ThraddashPhrase::BeFriends2);
 	}
-	else if (PlayerSaid(R, how_impressed_urquan_1))
+	else if (PlayerSaid(R, ThraddashPhrase::HowImpressedUrquan1))
 	{
-		NPCPhrase(IMPRESSED_LIKE_SO_1);
+		NPCPhrase(ThraddashPhrase::ImpressedLikeSo1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_HOSTILE_STACK_4, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, how_impressed_urquan_2))
+	else if (PlayerSaid(R, ThraddashPhrase::HowImpressedUrquan2))
 	{
-		NPCPhrase(IMPRESSED_LIKE_SO_2);
+		NPCPhrase(ThraddashPhrase::ImpressedLikeSo2);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_MISSION, static_cast<uint32_t>(5));
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::THRADD_INFO) == 0)
 	{
-		Response(whats_up_hostile_1, ThraddHostile);
+		Response(ThraddashPhrase::WhatsUpHostile1, ThraddHostile);
 	}
-	else if (PhraseEnabled(whats_up_hostile_2))
+	else if (PhraseEnabled(ThraddashPhrase::WhatsUpHostile2))
 	{
-		Response(whats_up_hostile_2, ThraddHostile);
+		Response(ThraddashPhrase::WhatsUpHostile2, ThraddHostile);
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::THRADD_STACK_1))
 	{
 		case 0:
-			Response(what_about_you_1, ThraddHostile);
+			Response(ThraddashPhrase::WhatAboutYou1, ThraddHostile);
 			break;
 		case 1:
-			Response(what_about_you_2, ThraddHostile);
+			Response(ThraddashPhrase::WhatAboutYou2, ThraddHostile);
 			break;
 		case 2:
-			Response(what_about_urquan_1, ThraddHostile);
+			Response(ThraddashPhrase::WhatAboutUrquan1, ThraddHostile);
 			break;
 		case 3:
-			Response(what_about_urquan_2, ThraddHostile);
+			Response(ThraddashPhrase::WhatAboutUrquan2, ThraddHostile);
 			break;
 		case 4:
 			if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 			{
-				Response(got_idea, ExitConversation);
+				Response(ThraddashPhrase::GotIdea, ExitConversation);
 			}
 			else
 			{
@@ -726,38 +726,38 @@ static void ThraddHostile(RESPONSE_REF R)
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::THRADD_HOSTILE_STACK_2) == 0)
 	{
-		Response(submit_1, ExitConversation);
+		Response(ThraddashPhrase::Submit1, ExitConversation);
 	}
 	else
 	{
-		Response(submit_2, ExitConversation);
+		Response(ThraddashPhrase::Submit2, ExitConversation);
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::THRADD_HOSTILE_STACK_3) == 0)
 	{
-		Response(be_friends_1, ThraddHostile);
+		Response(ThraddashPhrase::BeFriends1, ThraddHostile);
 	}
-	else if (PhraseEnabled(be_friends_2))
+	else if (PhraseEnabled(ThraddashPhrase::BeFriends2))
 	{
-		Response(be_friends_2, ThraddHostile);
+		Response(ThraddashPhrase::BeFriends2, ThraddHostile);
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION) == 4)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::THRADD_HOSTILE_STACK_4) == 0)
 		{
-			Response(how_impressed_urquan_1, ThraddHostile);
+			Response(ThraddashPhrase::HowImpressedUrquan1, ThraddHostile);
 		}
 		else
 		{
-			Response(how_impressed_urquan_2, ThraddHostile);
+			Response(ThraddashPhrase::HowImpressedUrquan2, ThraddHostile);
 		}
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::THRADD_HOSTILE_STACK_5) == 0)
 	{
-		Response(bye_hostile_1, ExitConversation);
+		Response(ThraddashPhrase::ByeHostile1, ExitConversation);
 	}
 	else
 	{
-		Response(bye_hostile_2, ExitConversation);
+		Response(ThraddashPhrase::ByeHostile2, ExitConversation);
 	}
 }
 
@@ -769,7 +769,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(ThraddashPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -781,10 +781,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(DIE_THIEF_1);
+				NPCPhrase(ThraddashPhrase::DieThief1);
 				break;
 			case 1:
-				NPCPhrase(DIE_THIEF_2);
+				NPCPhrase(ThraddashPhrase::DieThief2);
 				--NumVisits;
 				break;
 		}
@@ -796,13 +796,13 @@ static void Intro(void)
 	{
 		if (isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		{
-			RESPONSE_REF pStr0 {};
-			RESPONSE_REF pStr1 {};
+			ThraddashPhrase pStr0 {};
+			ThraddashPhrase pStr1 {};
 
 			if (uqm::gameState().flag(uqm::GameFlag::THRADD_MANNER))
 			{
-				pStr0 = WELCOME_HELIX0;
-				pStr1 = WELCOME_HELIX1;
+				pStr0 = ThraddashPhrase::WelcomeHelix0;
+				pStr1 = ThraddashPhrase::WelcomeHelix1;
 
 				NPCPhrase(pStr0);
 				NPCPhrase_splice(GetCultureName());
@@ -816,10 +816,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HOSTILE_HELIX_HELLO_1);
+						NPCPhrase(ThraddashPhrase::HostileHelixHello1);
 						break;
 					case 1:
-						NPCPhrase(HOSTILE_HELIX_HELLO_2);
+						NPCPhrase(ThraddashPhrase::HostileHelixHello2);
 						--NumVisits;
 						break;
 				}
@@ -838,10 +838,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HAVING_FUN_WITH_ILWRATH_1);
+						NPCPhrase(ThraddashPhrase::HavingFunWithIlwrath1);
 						break;
 					case 1:
-						NPCPhrase(HAVING_FUN_WITH_ILWRATH_2);
+						NPCPhrase(ThraddashPhrase::HavingFunWithIlwrath2);
 						--NumVisits;
 						break;
 				}
@@ -851,10 +851,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(GO_AWAY_FIGHTING_ILWRATH_1);
+						NPCPhrase(ThraddashPhrase::GoAwayFightingIlwrath1);
 						break;
 					case 1:
-						NPCPhrase(GO_AWAY_FIGHTING_ILWRATH_2);
+						NPCPhrase(ThraddashPhrase::GoAwayFightingIlwrath2);
 						--NumVisits;
 						break;
 				}
@@ -866,8 +866,8 @@ static void Intro(void)
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::THRADD_MANNER))
 	{
-		RESPONSE_REF pStr0 {};
-		RESPONSE_REF pStr1 {};
+		ThraddashPhrase pStr0 {};
+		ThraddashPhrase pStr1 {};
 
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::THRADD_VISITS);
 		switch (uqm::gameState().flag(uqm::GameFlag::THRADD_INTRO))
@@ -892,19 +892,19 @@ static void Intro(void)
 
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		{
-			pStr0 = WELCOME_HELIX0;
-			pStr1 = WELCOME_HELIX1;
+			pStr0 = ThraddashPhrase::WelcomeHelix0;
+			pStr1 = ThraddashPhrase::WelcomeHelix1;
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			pStr0 = WELCOME_HOMEWORLD0;
-			pStr1 = WELCOME_HOMEWORLD1;
+			pStr0 = ThraddashPhrase::WelcomeHomeworld0;
+			pStr1 = ThraddashPhrase::WelcomeHomeworld1;
 			SetHomeworldKnown(*HomeId::Thraddash);
 		}
 		else
 		{
-			pStr0 = WELCOME_SPACE0;
-			pStr1 = WELCOME_SPACE1;
+			pStr0 = ThraddashPhrase::WelcomeSpace0;
+			pStr1 = ThraddashPhrase::WelcomeSpace1;
 		}
 		NPCPhrase(pStr0);
 		NPCPhrase_splice(GetCultureName());
@@ -918,10 +918,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HOSTILE_HELIX_HELLO_1);
+				NPCPhrase(ThraddashPhrase::HostileHelixHello1);
 				break;
 			case 1:
-				NPCPhrase(HOSTILE_HELIX_HELLO_2);
+				NPCPhrase(ThraddashPhrase::HostileHelixHello2);
 				--NumVisits;
 				break;
 		}
@@ -932,7 +932,7 @@ static void Intro(void)
 	else if (uqm::gameState().flag(uqm::GameFlag::THRADDASH_BODY_COUNT)
 			 >= (uint8_t)THRADDASH_BODY_THRESHOLD)
 	{
-		NPCPhrase(AMAZING_PERFORMANCE);
+		NPCPhrase(ThraddashPhrase::AmazingPerformance);
 
 		ThraddWorship((RESPONSE_REF)0);
 	}
@@ -943,13 +943,13 @@ static void Intro(void)
 			&& uqm::gameState().flag(uqm::GameFlag::THRADD_BODY_LEVEL) == 1)
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::THRADD_BODY_LEVEL, static_cast<uint32_t>(2));
-			NPCPhrase(IMPRESSIVE_PERFORMANCE);
+			NPCPhrase(ThraddashPhrase::ImpressivePerformance);
 		}
 		else if (NumVisits >= 8
 				 && uqm::gameState().flag(uqm::GameFlag::THRADD_BODY_LEVEL) == 0)
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::THRADD_BODY_LEVEL, static_cast<uint32_t>(1));
-			NPCPhrase(ADEQUATE_PERFORMANCE);
+			NPCPhrase(ThraddashPhrase::AdequatePerformance);
 		}
 
 		{
@@ -959,16 +959,16 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HOSTILE_HOMEWORLD_HELLO_1);
+						NPCPhrase(ThraddashPhrase::HostileHomeworldHello1);
 						break;
 					case 1:
-						NPCPhrase(HOSTILE_HOMEWORLD_HELLO_2);
+						NPCPhrase(ThraddashPhrase::HostileHomeworldHello2);
 						break;
 					case 2:
-						NPCPhrase(HOSTILE_HOMEWORLD_HELLO_3);
+						NPCPhrase(ThraddashPhrase::HostileHomeworldHello3);
 						break;
 					case 3:
-						NPCPhrase(HOSTILE_HOMEWORLD_HELLO_4);
+						NPCPhrase(ThraddashPhrase::HostileHomeworldHello4);
 						--NumVisits;
 						break;
 				}
@@ -982,16 +982,16 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HOSTILE_SPACE_HELLO_1);
+						NPCPhrase(ThraddashPhrase::HostileSpaceHello1);
 						break;
 					case 1:
-						NPCPhrase(HOSTILE_SPACE_HELLO_2);
+						NPCPhrase(ThraddashPhrase::HostileSpaceHello2);
 						break;
 					case 2:
-						NPCPhrase(HOSTILE_SPACE_HELLO_3);
+						NPCPhrase(ThraddashPhrase::HostileSpaceHello3);
 						break;
 					case 3:
-						NPCPhrase(HOSTILE_SPACE_HELLO_4);
+						NPCPhrase(ThraddashPhrase::HostileSpaceHello4);
 						--NumVisits;
 						break;
 				}
@@ -1004,31 +1004,31 @@ static void Intro(void)
 					case 1:
 						if (uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION_VISITS) == 0)
 						{
-							NPCPhrase(WE_GO_TO_IMPRESS_URQUAN_1);
+							NPCPhrase(ThraddashPhrase::WeGoToImpressUrquan1);
 						}
 						else
 						{
-							NPCPhrase(WE_GO_TO_IMPRESS_URQUAN_2);
+							NPCPhrase(ThraddashPhrase::WeGoToImpressUrquan2);
 						}
 						break;
 					case 2:
 						if (uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION_VISITS) == 0)
 						{
-							NPCPhrase(WE_IMPRESSING_URQUAN_1);
+							NPCPhrase(ThraddashPhrase::WeImpressingUrquan1);
 						}
 						else
 						{
-							NPCPhrase(WE_IMPRESSING_URQUAN_2);
+							NPCPhrase(ThraddashPhrase::WeImpressingUrquan2);
 						}
 						break;
 					case 3:
 						if (uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION_VISITS) == 0)
 						{
-							NPCPhrase(WE_IMPRESSED_URQUAN_1);
+							NPCPhrase(ThraddashPhrase::WeImpressedUrquan1);
 						}
 						else
 						{
-							NPCPhrase(WE_IMPRESSED_URQUAN_2);
+							NPCPhrase(ThraddashPhrase::WeImpressedUrquan2);
 						}
 						break;
 				}

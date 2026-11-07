@@ -178,157 +178,157 @@ static void CombatIsInevitable(RESPONSE_REF R)
 
 	setSegue(Segue::Hostile);
 
-	if (PlayerSaid(R, bye))
+	if (PlayerSaid(R, KohrAhPhrase::Bye))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_BYES) == 0)
 		{
-			NPCPhrase(GOODBYE_AND_DIE);
+			NPCPhrase(KohrAhPhrase::GoodbyeAndDie);
 		}
 		else
 		{
-			NPCPhrase(DIE_HUMAN /* GOODBYE_AND_DIE_2 */);
+			NPCPhrase(KohrAhPhrase::DieHuman /* GOODBYE_AND_DIE_2 */);
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_BYES, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, guess_thats_all))
+	else if (PlayerSaid(R, KohrAhPhrase::GuessThatsAll))
 	{
-		NPCPhrase(THEN_DIE);
+		NPCPhrase(KohrAhPhrase::ThenDie);
 	}
-	else if (PlayerSaid(R, what_are_you_hovering_over))
+	else if (PlayerSaid(R, KohrAhPhrase::WhatAreYouHoveringOver))
 	{
-		NPCPhrase(BONE_PILE);
+		NPCPhrase(KohrAhPhrase::BonePile);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, you_sure_are_creepy))
+	else if (PlayerSaid(R, KohrAhPhrase::YouSureAreCreepy))
 	{
-		NPCPhrase(YES_CREEPY);
+		NPCPhrase(KohrAhPhrase::YesCreepy);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, stop_that_gross_blinking))
+	else if (PlayerSaid(R, KohrAhPhrase::StopThatGrossBlinking))
 	{
-		NPCPhrase(DIE_HUMAN);
+		NPCPhrase(KohrAhPhrase::DieHuman);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, threat_1)
-			 || PlayerSaid(R, threat_2)
-			 || PlayerSaid(R, threat_3)
-			 || PlayerSaid(R, threat_4))
+	else if (PlayerSaid(R, KohrAhPhrase::Threat1)
+			 || PlayerSaid(R, KohrAhPhrase::Threat2)
+			 || PlayerSaid(R, KohrAhPhrase::Threat3)
+			 || PlayerSaid(R, KohrAhPhrase::Threat4))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(RESISTANCE_IS_USELESS_1);
+				NPCPhrase(KohrAhPhrase::ResistanceIsUseless1);
 				break;
 			case 1:
-				NPCPhrase(RESISTANCE_IS_USELESS_2);
+				NPCPhrase(KohrAhPhrase::ResistanceIsUseless2);
 				break;
 			case 2:
-				NPCPhrase(RESISTANCE_IS_USELESS_3);
+				NPCPhrase(KohrAhPhrase::ResistanceIsUseless3);
 				break;
 			case 3:
-				NPCPhrase(RESISTANCE_IS_USELESS_4);
+				NPCPhrase(KohrAhPhrase::ResistanceIsUseless4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_REASONS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, plead_1)
-			 || PlayerSaid(R, plead_2)
-			 || PlayerSaid(R, plead_3)
-			 || PlayerSaid(R, plead_4))
+	else if (PlayerSaid(R, KohrAhPhrase::Plead1)
+			 || PlayerSaid(R, KohrAhPhrase::Plead2)
+			 || PlayerSaid(R, KohrAhPhrase::Plead3)
+			 || PlayerSaid(R, KohrAhPhrase::Plead4))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(PLEADING_IS_USELESS_1);
+				NPCPhrase(KohrAhPhrase::PleadingIsUseless1);
 				break;
 			case 1:
-				NPCPhrase(PLEADING_IS_USELESS_2);
+				NPCPhrase(KohrAhPhrase::PleadingIsUseless2);
 				break;
 			case 2:
 				// This response disabled due to lack of a speech file.
-				// NPCPhrase (PLEADING_IS_USELESS_3);
+				// NPCPhrase (KohrAhPhrase::PleadingIsUseless3);
 				// break;
 			case 3:
-				NPCPhrase(PLEADING_IS_USELESS_4);
+				NPCPhrase(KohrAhPhrase::PleadingIsUseless4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_PLEAD, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, why_kill_all_1)
-			 || PlayerSaid(R, why_kill_all_2)
-			 || PlayerSaid(R, why_kill_all_3)
-			 || PlayerSaid(R, why_kill_all_4))
+	else if (PlayerSaid(R, KohrAhPhrase::WhyKillAll1)
+			 || PlayerSaid(R, KohrAhPhrase::WhyKillAll2)
+			 || PlayerSaid(R, KohrAhPhrase::WhyKillAll3)
+			 || PlayerSaid(R, KohrAhPhrase::WhyKillAll4))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(KILL_BECAUSE_1);
+				NPCPhrase(KohrAhPhrase::KillBecause1);
 				break;
 			case 1:
-				NPCPhrase(KILL_BECAUSE_2);
+				NPCPhrase(KohrAhPhrase::KillBecause2);
 				break;
 			case 2:
-				NPCPhrase(KILL_BECAUSE_3);
+				NPCPhrase(KohrAhPhrase::KillBecause3);
 				break;
 			case 3:
-				NPCPhrase(KILL_BECAUSE_4);
+				NPCPhrase(KohrAhPhrase::KillBecause4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_REASONS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, please_dont_kill_1)
-			 || PlayerSaid(R, please_dont_kill_2)
-			 || PlayerSaid(R, please_dont_kill_3)
-			 || PlayerSaid(R, please_dont_kill_4))
+	else if (PlayerSaid(R, KohrAhPhrase::PleaseDontKill1)
+			 || PlayerSaid(R, KohrAhPhrase::PleaseDontKill2)
+			 || PlayerSaid(R, KohrAhPhrase::PleaseDontKill3)
+			 || PlayerSaid(R, KohrAhPhrase::PleaseDontKill4))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(WILL_KILL_1);
+				NPCPhrase(KohrAhPhrase::WillKill1);
 				break;
 			case 1:
-				NPCPhrase(WILL_KILL_2);
+				NPCPhrase(KohrAhPhrase::WillKill2);
 				break;
 			case 2:
-				NPCPhrase(WILL_KILL_3);
+				NPCPhrase(KohrAhPhrase::WillKill3);
 				break;
 			case 3:
-				NPCPhrase(WILL_KILL_4);
+				NPCPhrase(KohrAhPhrase::WillKill4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_PLEAD, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, bye_frenzy_1)
-			 || PlayerSaid(R, bye_frenzy_2)
-			 || PlayerSaid(R, bye_frenzy_3)
-			 || PlayerSaid(R, bye_frenzy_4))
+	else if (PlayerSaid(R, KohrAhPhrase::ByeFrenzy1)
+			 || PlayerSaid(R, KohrAhPhrase::ByeFrenzy2)
+			 || PlayerSaid(R, KohrAhPhrase::ByeFrenzy3)
+			 || PlayerSaid(R, KohrAhPhrase::ByeFrenzy4))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GOODBYE_AND_DIE_FRENZY_1);
+				NPCPhrase(KohrAhPhrase::GoodbyeAndDieFrenzy1);
 				break;
 			case 1:
-				NPCPhrase(GOODBYE_AND_DIE_FRENZY_2);
+				NPCPhrase(KohrAhPhrase::GoodbyeAndDieFrenzy2);
 				break;
 			case 2:
-				NPCPhrase(GOODBYE_AND_DIE_FRENZY_3);
+				NPCPhrase(KohrAhPhrase::GoodbyeAndDieFrenzy3);
 				break;
 			case 3:
-				NPCPhrase(GOODBYE_AND_DIE_FRENZY_4);
+				NPCPhrase(KohrAhPhrase::GoodbyeAndDieFrenzy4);
 				--NumVisits;
 				break;
 		}
@@ -342,100 +342,100 @@ static void Frenzy(RESPONSE_REF R)
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
 	{
 		case 0:
-			Response(why_kill_all_1, CombatIsInevitable);
+			Response(KohrAhPhrase::WhyKillAll1, CombatIsInevitable);
 			break;
 		case 1:
-			Response(why_kill_all_2, CombatIsInevitable);
+			Response(KohrAhPhrase::WhyKillAll2, CombatIsInevitable);
 			break;
 		case 2:
-			Response(why_kill_all_3, CombatIsInevitable);
+			Response(KohrAhPhrase::WhyKillAll3, CombatIsInevitable);
 			break;
 		case 3:
-			Response(why_kill_all_4, CombatIsInevitable);
+			Response(KohrAhPhrase::WhyKillAll4, CombatIsInevitable);
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD))
 	{
 		case 0:
-			Response(please_dont_kill_1, CombatIsInevitable);
+			Response(KohrAhPhrase::PleaseDontKill1, CombatIsInevitable);
 			break;
 		case 1:
-			Response(please_dont_kill_2, CombatIsInevitable);
+			Response(KohrAhPhrase::PleaseDontKill2, CombatIsInevitable);
 			break;
 		case 2:
-			Response(please_dont_kill_3, CombatIsInevitable);
+			Response(KohrAhPhrase::PleaseDontKill3, CombatIsInevitable);
 			break;
 		case 3:
-			Response(please_dont_kill_4, CombatIsInevitable);
+			Response(KohrAhPhrase::PleaseDontKill4, CombatIsInevitable);
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_INFO))
 	{
 		case 0:
-			Response(bye_frenzy_1, CombatIsInevitable);
+			Response(KohrAhPhrase::ByeFrenzy1, CombatIsInevitable);
 			break;
 		case 1:
-			Response(bye_frenzy_2, CombatIsInevitable);
+			Response(KohrAhPhrase::ByeFrenzy2, CombatIsInevitable);
 			break;
 		case 2:
-			Response(bye_frenzy_3, CombatIsInevitable);
+			Response(KohrAhPhrase::ByeFrenzy3, CombatIsInevitable);
 			break;
 		case 3:
-			Response(bye_frenzy_4, CombatIsInevitable);
+			Response(KohrAhPhrase::ByeFrenzy4, CombatIsInevitable);
 			break;
 	}
 }
 
 static void KohrAhStory(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, key_phrase))
+	if (PlayerSaid(R, KohrAhPhrase::KeyPhrase))
 	{
-		NPCPhrase(RESPONSE_TO_KEY_PHRASE);
+		NPCPhrase(KohrAhPhrase::ResponseToKeyPhrase);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_KOHR_AH_STORY, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, why_do_you_destroy))
+	else if (PlayerSaid(R, KohrAhPhrase::WhyDoYouDestroy))
 	{
-		NPCPhrase(WE_WERE_SLAVES);
+		NPCPhrase(KohrAhPhrase::WeWereSlaves);
 
-		DisablePhrase(why_do_you_destroy);
+		DisablePhrase(KohrAhPhrase::WhyDoYouDestroy);
 	}
-	else if (PlayerSaid(R, relationship_with_urquan))
+	else if (PlayerSaid(R, KohrAhPhrase::RelationshipWithUrquan))
 	{
-		NPCPhrase(WE_ARE_URQUAN_TOO);
+		NPCPhrase(KohrAhPhrase::WeAreUrquanToo);
 
-		DisablePhrase(relationship_with_urquan);
+		DisablePhrase(KohrAhPhrase::RelationshipWithUrquan);
 	}
-	else if (PlayerSaid(R, what_about_culture))
+	else if (PlayerSaid(R, KohrAhPhrase::WhatAboutCulture))
 	{
-		NPCPhrase(BONE_GARDENS);
+		NPCPhrase(KohrAhPhrase::BoneGardens);
 
-		DisablePhrase(what_about_culture);
+		DisablePhrase(KohrAhPhrase::WhatAboutCulture);
 	}
-	else if (PlayerSaid(R, how_leave_me_alone))
+	else if (PlayerSaid(R, KohrAhPhrase::HowLeaveMeAlone))
 	{
-		NPCPhrase(YOU_DIE);
+		NPCPhrase(KohrAhPhrase::YouDie);
 
-		DisablePhrase(how_leave_me_alone);
+		DisablePhrase(KohrAhPhrase::HowLeaveMeAlone);
 	}
 
-	if (PhraseEnabled(why_do_you_destroy))
+	if (PhraseEnabled(KohrAhPhrase::WhyDoYouDestroy))
 	{
-		Response(why_do_you_destroy, KohrAhStory);
+		Response(KohrAhPhrase::WhyDoYouDestroy, KohrAhStory);
 	}
-	if (PhraseEnabled(relationship_with_urquan))
+	if (PhraseEnabled(KohrAhPhrase::RelationshipWithUrquan))
 	{
-		Response(relationship_with_urquan, KohrAhStory);
+		Response(KohrAhPhrase::RelationshipWithUrquan, KohrAhStory);
 	}
-	if (PhraseEnabled(what_about_culture))
+	if (PhraseEnabled(KohrAhPhrase::WhatAboutCulture))
 	{
-		Response(what_about_culture, KohrAhStory);
+		Response(KohrAhPhrase::WhatAboutCulture, KohrAhStory);
 	}
-	if (PhraseEnabled(how_leave_me_alone))
+	if (PhraseEnabled(KohrAhPhrase::HowLeaveMeAlone))
 	{
-		Response(how_leave_me_alone, KohrAhStory);
+		Response(KohrAhPhrase::HowLeaveMeAlone, KohrAhStory);
 	}
-	Response(guess_thats_all, CombatIsInevitable);
+	Response(KohrAhPhrase::GuessThatsAll, CombatIsInevitable);
 }
 
 static void DieHuman(RESPONSE_REF R)
@@ -444,58 +444,58 @@ static void DieHuman(RESPONSE_REF R)
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
 	{
 		case 0:
-			Response(threat_1, CombatIsInevitable);
+			Response(KohrAhPhrase::Threat1, CombatIsInevitable);
 			break;
 		case 1:
-			Response(threat_2, CombatIsInevitable);
+			Response(KohrAhPhrase::Threat2, CombatIsInevitable);
 			break;
 		case 2:
-			Response(threat_3, CombatIsInevitable);
+			Response(KohrAhPhrase::Threat3, CombatIsInevitable);
 			break;
 		case 3:
-			Response(threat_4, CombatIsInevitable);
+			Response(KohrAhPhrase::Threat4, CombatIsInevitable);
 			break;
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::KNOW_KOHR_AH_STORY) == 1)
 	{
-		Response(key_phrase, KohrAhStory);
+		Response(KohrAhPhrase::KeyPhrase, KohrAhStory);
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_INFO))
 	{
 		case 0:
-			Response(what_are_you_hovering_over, CombatIsInevitable);
+			Response(KohrAhPhrase::WhatAreYouHoveringOver, CombatIsInevitable);
 			break;
 		case 1:
-			Response(you_sure_are_creepy, CombatIsInevitable);
+			Response(KohrAhPhrase::YouSureAreCreepy, CombatIsInevitable);
 			break;
 		case 2:
-			Response(stop_that_gross_blinking, CombatIsInevitable);
+			Response(KohrAhPhrase::StopThatGrossBlinking, CombatIsInevitable);
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD))
 	{
 		case 0:
-			Response(plead_1, CombatIsInevitable);
+			Response(KohrAhPhrase::Plead1, CombatIsInevitable);
 			break;
 		case 1:
-			Response(plead_2, CombatIsInevitable);
+			Response(KohrAhPhrase::Plead2, CombatIsInevitable);
 			break;
 		case 2:
 			// This response disabled due to lack of a speech file.
-			// Response (plead_3, CombatIsInevitable);
+			// Response (KohrAhPhrase::Plead3, CombatIsInevitable);
 			// break;
 		case 3:
-			Response(plead_4, CombatIsInevitable);
+			Response(KohrAhPhrase::Plead4, CombatIsInevitable);
 			break;
 	}
-	Response(bye, CombatIsInevitable);
+	Response(KohrAhPhrase::Bye, CombatIsInevitable);
 }
 
 static void Intro(void)
 {
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(KohrAhPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -503,7 +503,7 @@ static void Intro(void)
 
 	if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL))
 	{
-		NPCPhrase(GAME_OVER_DUDE);
+		NPCPhrase(KohrAhPhrase::GameOverDude);
 
 		setSegue(Segue::Peace);
 		return;
@@ -512,7 +512,7 @@ static void Intro(void)
 	if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_SENSES_EVIL)
 		&& uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 	{
-		NPCPhrase(SENSE_EVIL);
+		NPCPhrase(KohrAhPhrase::SenseEvil);
 		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_SENSES_EVIL, static_cast<uint32_t>(1));
 	}
 
@@ -521,7 +521,7 @@ static void Intro(void)
 		&& uqm::gameState().game().BattleGroupRef
 		&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 	{
-		NPCPhrase(HELLO_SAMATRA);
+		NPCPhrase(KohrAhPhrase::HelloSamatra);
 
 		uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
 		setSegue(Segue::Hostile);
@@ -536,16 +536,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(WE_KILL_ALL_1);
+					NPCPhrase(KohrAhPhrase::WeKillAll1);
 					break;
 				case 1:
-					NPCPhrase(WE_KILL_ALL_2);
+					NPCPhrase(KohrAhPhrase::WeKillAll2);
 					break;
 				case 2:
-					NPCPhrase(WE_KILL_ALL_3);
+					NPCPhrase(KohrAhPhrase::WeKillAll3);
 					break;
 				case 3:
-					NPCPhrase(WE_KILL_ALL_4);
+					NPCPhrase(KohrAhPhrase::WeKillAll4);
 					--NumVisits;
 					break;
 			}
@@ -557,16 +557,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(HELLO_AND_DIE_1);
+					NPCPhrase(KohrAhPhrase::HelloAndDie1);
 					break;
 				case 1:
-					NPCPhrase(HELLO_AND_DIE_2);
+					NPCPhrase(KohrAhPhrase::HelloAndDie2);
 					break;
 				case 2:
-					NPCPhrase(HELLO_AND_DIE_3);
+					NPCPhrase(KohrAhPhrase::HelloAndDie3);
 					break;
 				case 3:
-					NPCPhrase(HELLO_AND_DIE_4);
+					NPCPhrase(KohrAhPhrase::HelloAndDie4);
 					--NumVisits;
 					break;
 			}

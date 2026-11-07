@@ -124,34 +124,34 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue::Peace);
 
-	if (PlayerSaid(R, friendly_bye_space))
+	if (PlayerSaid(R, PkunkPhrase::FriendlyByeSpace))
 	{
-		NPCPhrase(FRIENDLY_GOODBYE_SPACE);
+		NPCPhrase(PkunkPhrase::FriendlyGoodbyeSpace);
 	}
-	else if (PlayerSaid(R, neutral_bye_space))
+	else if (PlayerSaid(R, PkunkPhrase::NeutralByeSpace))
 	{
-		NPCPhrase(NEUTRAL_GOODBYE_SPACE);
+		NPCPhrase(PkunkPhrase::NeutralGoodbyeSpace);
 	}
-	else if (PlayerSaid(R, bye_angry))
+	else if (PlayerSaid(R, PkunkPhrase::ByeAngry))
 	{
-		NPCPhrase(GOODBYE_ANGRY);
+		NPCPhrase(PkunkPhrase::GoodbyeAngry);
 	}
-	else if (PlayerSaid(R, bye_friendly))
+	else if (PlayerSaid(R, PkunkPhrase::ByeFriendly))
 	{
-		NPCPhrase(GOODBYE_FRIENDLY);
+		NPCPhrase(PkunkPhrase::GoodbyeFriendly);
 	}
-	else if (PlayerSaid(R, we_here_to_help)
-			 || PlayerSaid(R, we_need_help))
+	else if (PlayerSaid(R, PkunkPhrase::WeHereToHelp)
+			 || PlayerSaid(R, PkunkPhrase::WeNeedHelp))
 	{
-		if (PlayerSaid(R, we_here_to_help))
+		if (PlayerSaid(R, PkunkPhrase::WeHereToHelp))
 		{
-			NPCPhrase(NEED_HELP);
+			NPCPhrase(PkunkPhrase::NeedHelp);
 		}
 		else
 		{
-			NPCPhrase(GIVE_HELP);
+			NPCPhrase(PkunkPhrase::GiveHelp);
 		}
-		NPCPhrase(ALMOST_ALLIANCE);
+		NPCPhrase(PkunkPhrase::AlmostAlliance);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(3));
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(0));
@@ -162,11 +162,11 @@ static void ExitConversation(RESPONSE_REF R)
 
 		if (EscortFeasibilityStudy(RaceId::Pkunk) == 0)
 		{
-			NPCPhrase(INIT_NO_ROOM);
+			NPCPhrase(PkunkPhrase::InitNoRoom);
 		}
 		else
 		{
-			NPCPhrase(INIT_SHIP_GIFT);
+			NPCPhrase(PkunkPhrase::InitShipGift);
 			AlienTalkSegue((uint16_t)~0);
 			if (AddEscortShips(RaceId::Pkunk, difficultyCase(4, 4, 2)))
 			{
@@ -174,66 +174,66 @@ static void ExitConversation(RESPONSE_REF R)
 			}
 		}
 	}
-	else if (PlayerSaid(R, try_to_be_nicer))
+	else if (PlayerSaid(R, PkunkPhrase::TryToBeNicer))
 	{
-		NPCPhrase(CANT_ASK_FOR_MORE);
-		NPCPhrase(VISIT_OUR_HOMEWORLD);
+		NPCPhrase(PkunkPhrase::CantAskForMore);
+		NPCPhrase(PkunkPhrase::VisitOurHomeworld);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(3));
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_INFO, static_cast<uint32_t>(0));
 	}
-	else if (PlayerSaid(R, must_conquer)
-			 || PlayerSaid(R, obey))
+	else if (PlayerSaid(R, PkunkPhrase::MustConquer)
+			 || PlayerSaid(R, PkunkPhrase::Obey))
 	{
-		if (PlayerSaid(R, obey))
+		if (PlayerSaid(R, PkunkPhrase::Obey))
 		{
-			NPCPhrase(NO_OBEY);
+			NPCPhrase(PkunkPhrase::NoObey);
 		}
 		else
 		{
-			NPCPhrase(BAD_IDEA);
+			NPCPhrase(PkunkPhrase::BadIdea);
 
 			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(2));
 		}
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, die_idiot_fools))
+	else if (PlayerSaid(R, PkunkPhrase::DieIdiotFools))
 	{
-		NPCPhrase(VERY_WELL);
+		NPCPhrase(PkunkPhrase::VeryWell);
 
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, suit_yourself))
+	else if (PlayerSaid(R, PkunkPhrase::SuitYourself))
 	{
-		NPCPhrase(GOODBYE_MIGRATION);
+		NPCPhrase(PkunkPhrase::GoodbyeMigration);
 	}
 	else
 	{
 		uint8_t ReasonMask {};
 
 		ReasonMask = uqm::gameState().flag(uqm::GameFlag::PKUNK_REASONS);
-		if (PlayerSaid(R, good_reason_1))
+		if (PlayerSaid(R, PkunkPhrase::GoodReason1))
 		{
-			NPCPhrase(WE_GO_HOME_1);
+			NPCPhrase(PkunkPhrase::WeGoHome1);
 			ReasonMask |= GoodReason1;
 			AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvancePkunkMission);
 		}
-		else if (PlayerSaid(R, good_reason_2))
+		else if (PlayerSaid(R, PkunkPhrase::GoodReason2))
 		{
-			NPCPhrase(WE_GO_HOME_2);
+			NPCPhrase(PkunkPhrase::WeGoHome2);
 			ReasonMask |= GoodReason2;
 			AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvancePkunkMission);
 		}
-		else if (PlayerSaid(R, bad_reason_1))
+		else if (PlayerSaid(R, PkunkPhrase::BadReason1))
 		{
-			NPCPhrase(NO_GO_HOME_1);
+			NPCPhrase(PkunkPhrase::NoGoHome1);
 			ReasonMask |= BadReason1;
 		}
-		else if (PlayerSaid(R, bad_reason_2))
+		else if (PlayerSaid(R, PkunkPhrase::BadReason2))
 		{
-			NPCPhrase(NO_GO_HOME_2);
+			NPCPhrase(PkunkPhrase::NoGoHome2);
 			ReasonMask |= BadReason2;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_REASONS, static_cast<uint32_t>(ReasonMask));
@@ -244,262 +244,262 @@ static void PkunkHome(RESPONSE_REF R);
 
 static void PkunkAngry(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, why_insults))
+	if (PlayerSaid(R, PkunkPhrase::WhyInsults))
 	{
-		NPCPhrase(RELEASE_TENSION);
+		NPCPhrase(PkunkPhrase::ReleaseTension);
 
-		DisablePhrase(why_insults);
+		DisablePhrase(PkunkPhrase::WhyInsults);
 	}
-	else if (PlayerSaid(R, what_about_you))
+	else if (PlayerSaid(R, PkunkPhrase::WhatAboutYou))
 	{
-		NPCPhrase(ABOUT_US);
+		NPCPhrase(PkunkPhrase::AboutUs);
 
-		DisablePhrase(what_about_you);
+		DisablePhrase(PkunkPhrase::WhatAboutYou);
 	}
-	else if (PlayerSaid(R, should_be_friends))
+	else if (PlayerSaid(R, PkunkPhrase::ShouldBeFriends))
 	{
-		NPCPhrase(YES_FRIENDS);
+		NPCPhrase(PkunkPhrase::YesFriends);
 
-		DisablePhrase(should_be_friends);
+		DisablePhrase(PkunkPhrase::ShouldBeFriends);
 	}
 
-	if (PhraseEnabled(should_be_friends))
+	if (PhraseEnabled(PkunkPhrase::ShouldBeFriends))
 	{
-		Response(should_be_friends, PkunkAngry);
+		Response(PkunkPhrase::ShouldBeFriends, PkunkAngry);
 	}
 	else
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			Response(try_to_be_nicer, PkunkHome);
+			Response(PkunkPhrase::TryToBeNicer, PkunkHome);
 		}
 		else
 		{
-			Response(try_to_be_nicer, ExitConversation);
+			Response(PkunkPhrase::TryToBeNicer, ExitConversation);
 		}
 	}
-	Response(die_idiot_fools, ExitConversation);
-	if (PhraseEnabled(why_insults))
+	Response(PkunkPhrase::DieIdiotFools, ExitConversation);
+	if (PhraseEnabled(PkunkPhrase::WhyInsults))
 	{
-		Response(why_insults, PkunkAngry);
+		Response(PkunkPhrase::WhyInsults, PkunkAngry);
 	}
-	if (PhraseEnabled(what_about_you))
+	if (PhraseEnabled(PkunkPhrase::WhatAboutYou))
 	{
-		Response(what_about_you, PkunkAngry);
+		Response(PkunkPhrase::WhatAboutYou, PkunkAngry);
 	}
-	Response(bye_angry, ExitConversation);
+	Response(PkunkPhrase::ByeAngry, ExitConversation);
 }
 
 static void DiscussConquer(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, we_conquer))
+	if (PlayerSaid(R, PkunkPhrase::WeConquer))
 	{
-		NPCPhrase(WHY_CONQUER);
+		NPCPhrase(PkunkPhrase::WhyConquer);
 
-		DisablePhrase(we_conquer);
+		DisablePhrase(PkunkPhrase::WeConquer);
 	}
-	else if (PlayerSaid(R, conquer_because_1))
+	else if (PlayerSaid(R, PkunkPhrase::ConquerBecause1))
 	{
 #if 0
-		NPCPhrase (NOT_CONQUER_10);
-		NPCPhrase (GLOBAL_ALLIANCE_NAME + name_1);
-		NPCPhrase (NOT_CONQUER_11);
-		NPCPhrase (GLOBAL_ALLIANCE_NAME + name_1);
-		NPCPhrase (NOT_CONQUER_12);
+		NPCPhrase (PkunkPhrase::NotConquer10);
+		NPCPhrase (GLOBAL_ALLIANCE_NAME + PkunkPhrase::Name1);
+		NPCPhrase (PkunkPhrase::NotConquer11);
+		NPCPhrase (GLOBAL_ALLIANCE_NAME + PkunkPhrase::Name1);
+		NPCPhrase (PkunkPhrase::NotConquer12);
 #endif
-		NPCPhrase(NOT_CONQUER_1);
+		NPCPhrase(PkunkPhrase::NotConquer1);
 
-		DisablePhrase(conquer_because_1);
+		DisablePhrase(PkunkPhrase::ConquerBecause1);
 	}
-	else if (PlayerSaid(R, conquer_because_2))
+	else if (PlayerSaid(R, PkunkPhrase::ConquerBecause2))
 	{
-		NPCPhrase(NOT_CONQUER_2);
+		NPCPhrase(PkunkPhrase::NotConquer2);
 
-		DisablePhrase(conquer_because_2);
+		DisablePhrase(PkunkPhrase::ConquerBecause2);
 	}
 
-	if (PhraseEnabled(conquer_because_1))
+	if (PhraseEnabled(PkunkPhrase::ConquerBecause1))
 	{
 #if 0
 		char buf[ALLIANCE_NAME_BUFSIZE];
 
-		GetAllianceName (buf, name_1);
+		GetAllianceName (buf, PkunkPhrase::Name1);
 		construct_response (
 				shared_phrase_buf,
-				conquer_because_1,
+				PkunkPhrase::ConquerBecause1,
 				buf,
 				(RESPONSE_REF)-1);
-		DoResponsePhrase (conquer_because_1, DiscussConquer, shared_phrase_buf);
+		DoResponsePhrase (PkunkPhrase::ConquerBecause1, DiscussConquer, shared_phrase_buf);
 #endif
-		Response(conquer_because_1, DiscussConquer);
+		Response(PkunkPhrase::ConquerBecause1, DiscussConquer);
 	}
-	if (PhraseEnabled(conquer_because_2))
+	if (PhraseEnabled(PkunkPhrase::ConquerBecause2))
 	{
-		Response(conquer_because_2, DiscussConquer);
+		Response(PkunkPhrase::ConquerBecause2, DiscussConquer);
 	}
-	Response(must_conquer, ExitConversation);
-	Response(no_conquest, PkunkHome);
+	Response(PkunkPhrase::MustConquer, ExitConversation);
+	Response(PkunkPhrase::NoConquest, PkunkHome);
 }
 
 static void OfferAlliance(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, we_are_vindicator))
+	if (PlayerSaid(R, PkunkPhrase::WeAreVindicator))
 	{
-		NPCPhrase(WHY_YOU_HERE);
+		NPCPhrase(PkunkPhrase::WhyYouHere);
 	}
-	else if (PlayerSaid(R, exploring_universe))
+	else if (PlayerSaid(R, PkunkPhrase::ExploringUniverse))
 	{
-		NPCPhrase(SENSE_DEEPER_CONFLICT);
+		NPCPhrase(PkunkPhrase::SenseDeeperConflict);
 
-		DisablePhrase(exploring_universe);
+		DisablePhrase(PkunkPhrase::ExploringUniverse);
 	}
-	else if (PlayerSaid(R, fun_cruise))
+	else if (PlayerSaid(R, PkunkPhrase::FunCruise))
 	{
-		NPCPhrase(REPRESS);
+		NPCPhrase(PkunkPhrase::Repress);
 
-		DisablePhrase(fun_cruise);
+		DisablePhrase(PkunkPhrase::FunCruise);
 	}
 
-	Response(we_here_to_help, ExitConversation);
-	Response(we_need_help, ExitConversation);
-	if (PhraseEnabled(exploring_universe))
+	Response(PkunkPhrase::WeHereToHelp, ExitConversation);
+	Response(PkunkPhrase::WeNeedHelp, ExitConversation);
+	if (PhraseEnabled(PkunkPhrase::ExploringUniverse))
 	{
-		Response(exploring_universe, OfferAlliance);
+		Response(PkunkPhrase::ExploringUniverse, OfferAlliance);
 	}
-	if (PhraseEnabled(fun_cruise))
+	if (PhraseEnabled(PkunkPhrase::FunCruise))
 	{
-		Response(fun_cruise, OfferAlliance);
+		Response(PkunkPhrase::FunCruise, OfferAlliance);
 	}
 }
 
 static void AboutPkunk(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
-	if (PlayerSaid(R, what_about_you))
+	if (PlayerSaid(R, PkunkPhrase::WhatAboutYou))
 	{
-		NPCPhrase(ABOUT_US);
+		NPCPhrase(PkunkPhrase::AboutUs);
 	}
-	else if (PlayerSaid(R, what_about_history))
+	else if (PlayerSaid(R, PkunkPhrase::WhatAboutHistory))
 	{
-		NPCPhrase(ABOUT_HISTORY);
+		NPCPhrase(PkunkPhrase::AboutHistory);
 
-		DisablePhrase(what_about_history);
+		DisablePhrase(PkunkPhrase::WhatAboutHistory);
 	}
-	else if (PlayerSaid(R, what_about_yehat))
+	else if (PlayerSaid(R, PkunkPhrase::WhatAboutYehat))
 	{
-		NPCPhrase(ABOUT_YEHAT);
+		NPCPhrase(PkunkPhrase::AboutYehat);
 
-		DisablePhrase(what_about_yehat);
+		DisablePhrase(PkunkPhrase::WhatAboutYehat);
 	}
-	else if (PlayerSaid(R, what_about_culture))
+	else if (PlayerSaid(R, PkunkPhrase::WhatAboutCulture))
 	{
-		NPCPhrase(ABOUT_CULTURE);
+		NPCPhrase(PkunkPhrase::AboutCulture);
 
-		DisablePhrase(what_about_culture);
+		DisablePhrase(PkunkPhrase::WhatAboutCulture);
 	}
-	else if (PlayerSaid(R, elaborate_culture))
+	else if (PlayerSaid(R, PkunkPhrase::ElaborateCulture))
 	{
-		NPCPhrase(OK_ELABORATE_CULTURE);
+		NPCPhrase(PkunkPhrase::OkElaborateCulture);
 
-		DisablePhrase(elaborate_culture);
+		DisablePhrase(PkunkPhrase::ElaborateCulture);
 	}
-	else if (PlayerSaid(R, what_about_future))
+	else if (PlayerSaid(R, PkunkPhrase::WhatAboutFuture))
 	{
-		NPCPhrase(ABOUT_FUTURE);
+		NPCPhrase(PkunkPhrase::AboutFuture);
 
-		DisablePhrase(what_about_future);
+		DisablePhrase(PkunkPhrase::WhatAboutFuture);
 	}
 
-	if (PhraseEnabled(what_about_history))
+	if (PhraseEnabled(PkunkPhrase::WhatAboutHistory))
 	{
-		Response(what_about_history, AboutPkunk);
+		Response(PkunkPhrase::WhatAboutHistory, AboutPkunk);
 		InfoLeft = true;
 	}
-	else if (PhraseEnabled(what_about_yehat))
+	else if (PhraseEnabled(PkunkPhrase::WhatAboutYehat))
 	{
-		Response(what_about_yehat, AboutPkunk);
+		Response(PkunkPhrase::WhatAboutYehat, AboutPkunk);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_culture))
+	if (PhraseEnabled(PkunkPhrase::WhatAboutCulture))
 	{
-		Response(what_about_culture, AboutPkunk);
+		Response(PkunkPhrase::WhatAboutCulture, AboutPkunk);
 		InfoLeft = true;
 	}
-	else if (PhraseEnabled(elaborate_culture))
+	else if (PhraseEnabled(PkunkPhrase::ElaborateCulture))
 	{
-		Response(elaborate_culture, AboutPkunk);
+		Response(PkunkPhrase::ElaborateCulture, AboutPkunk);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_future))
+	if (PhraseEnabled(PkunkPhrase::WhatAboutFuture))
 	{
-		Response(what_about_future, AboutPkunk);
+		Response(PkunkPhrase::WhatAboutFuture, AboutPkunk);
 		InfoLeft = true;
 	}
-	Response(enough_about_you, PkunkHome);
+	Response(PkunkPhrase::EnoughAboutYou, PkunkHome);
 
 	if (!InfoLeft)
 	{
-		DisablePhrase(what_about_you);
+		DisablePhrase(PkunkPhrase::WhatAboutYou);
 	}
 }
 
 static void AboutIlwrath(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
-	if (PlayerSaid(R, what_about_ilwrath))
+	if (PlayerSaid(R, PkunkPhrase::WhatAboutIlwrath))
 	{
-		NPCPhrase(ABOUT_ILWRATH);
+		NPCPhrase(PkunkPhrase::AboutIlwrath);
 	}
-	else if (PlayerSaid(R, why_ilwrath_fight))
+	else if (PlayerSaid(R, PkunkPhrase::WhyIlwrathFight))
 	{
-		NPCPhrase(ILWRATH_FIGHT_BECAUSE);
+		NPCPhrase(PkunkPhrase::IlwrathFightBecause);
 
-		DisablePhrase(why_ilwrath_fight);
+		DisablePhrase(PkunkPhrase::WhyIlwrathFight);
 	}
-	else if (PlayerSaid(R, when_fight_start))
+	else if (PlayerSaid(R, PkunkPhrase::WhenFightStart))
 	{
-		NPCPhrase(FIGHT_START_WHEN);
+		NPCPhrase(PkunkPhrase::FightStartWhen);
 
-		DisablePhrase(when_fight_start);
+		DisablePhrase(PkunkPhrase::WhenFightStart);
 	}
-	else if (PlayerSaid(R, how_goes_fight))
+	else if (PlayerSaid(R, PkunkPhrase::HowGoesFight))
 	{
-		NPCPhrase(FIGHT_GOES);
+		NPCPhrase(PkunkPhrase::FightGoes);
 
-		DisablePhrase(how_goes_fight);
+		DisablePhrase(PkunkPhrase::HowGoesFight);
 	}
-	else if (PlayerSaid(R, how_stop_fight))
+	else if (PlayerSaid(R, PkunkPhrase::HowStopFight))
 	{
-		NPCPhrase(STOP_FIGHT_LIKE_SO);
+		NPCPhrase(PkunkPhrase::StopFightLikeSo);
 
-		DisablePhrase(how_stop_fight);
+		DisablePhrase(PkunkPhrase::HowStopFight);
 	}
 
-	if (PhraseEnabled(why_ilwrath_fight))
+	if (PhraseEnabled(PkunkPhrase::WhyIlwrathFight))
 	{
-		Response(why_ilwrath_fight, AboutIlwrath);
+		Response(PkunkPhrase::WhyIlwrathFight, AboutIlwrath);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(when_fight_start))
+	if (PhraseEnabled(PkunkPhrase::WhenFightStart))
 	{
-		Response(when_fight_start, AboutIlwrath);
+		Response(PkunkPhrase::WhenFightStart, AboutIlwrath);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(how_goes_fight))
+	if (PhraseEnabled(PkunkPhrase::HowGoesFight))
 	{
-		Response(how_goes_fight, AboutIlwrath);
+		Response(PkunkPhrase::HowGoesFight, AboutIlwrath);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(how_stop_fight))
+	if (PhraseEnabled(PkunkPhrase::HowStopFight))
 	{
-		Response(how_stop_fight, AboutIlwrath);
+		Response(PkunkPhrase::HowStopFight, AboutIlwrath);
 		InfoLeft = true;
 	}
-	Response(enough_ilwrath, PkunkHome);
+	Response(PkunkPhrase::EnoughIlwrath, PkunkHome);
 
 	if (!InfoLeft)
 	{
-		DisablePhrase(what_about_ilwrath);
+		DisablePhrase(PkunkPhrase::WhatAboutIlwrath);
 	}
 }
 
@@ -507,21 +507,21 @@ static void PkunkHome(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, no_conquest))
+	if (PlayerSaid(R, PkunkPhrase::NoConquest))
 	{
-		NPCPhrase(GOOD_IDEA);
+		NPCPhrase(PkunkPhrase::GoodIdea);
 	}
-	else if (PlayerSaid(R, enough_ilwrath))
+	else if (PlayerSaid(R, PkunkPhrase::EnoughIlwrath))
 	{
-		NPCPhrase(OK_ENOUGH_ILWRATH);
+		NPCPhrase(PkunkPhrase::OkEnoughIlwrath);
 	}
-	else if (PlayerSaid(R, enough_about_you))
+	else if (PlayerSaid(R, PkunkPhrase::EnoughAboutYou))
 	{
-		NPCPhrase(OK_ENOUGH_ABOUT_US);
+		NPCPhrase(PkunkPhrase::OkEnoughAboutUs);
 	}
-	else if (PlayerSaid(R, where_fleet_1)
-			 || PlayerSaid(R, where_fleet_2)
-			 || PlayerSaid(R, where_fleet_3))
+	else if (PlayerSaid(R, PkunkPhrase::WhereFleet1)
+			 || PlayerSaid(R, PkunkPhrase::WhereFleet2)
+			 || PlayerSaid(R, PkunkPhrase::WhereFleet3))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_SWITCH, static_cast<uint32_t>(1));
 		if (!(uqm::gameState().flag(uqm::GameFlag::PKUNK_MISSION) & 1))
@@ -530,10 +530,10 @@ static void PkunkHome(RESPONSE_REF R)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(RETURNING_FROM_YEHAT_1);
+					NPCPhrase(PkunkPhrase::ReturningFromYehat1);
 					break;
 				case 1:
-					NPCPhrase(RETURNING_FROM_YEHAT_2);
+					NPCPhrase(PkunkPhrase::ReturningFromYehat2);
 					--NumVisits;
 					break;
 			}
@@ -545,13 +545,13 @@ static void PkunkHome(RESPONSE_REF R)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(MIGRATING_HOMEWORLD_1);
+					NPCPhrase(PkunkPhrase::MigratingHomeworld1);
 					break;
 				case 1:
-					NPCPhrase(MIGRATING_HOMEWORLD_2);
+					NPCPhrase(PkunkPhrase::MigratingHomeworld2);
 					break;
 				case 2:
-					NPCPhrase(MIGRATING_HOMEWORLD_3);
+					NPCPhrase(PkunkPhrase::MigratingHomeworld3);
 					--NumVisits;
 					break;
 			}
@@ -561,124 +561,124 @@ static void PkunkHome(RESPONSE_REF R)
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_FLEET) + 1;
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_FLEET, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(where_fleet_1);
+		DisablePhrase(PkunkPhrase::WhereFleet1);
 	}
-	else if (PlayerSaid(R, am_worried_1)
-			 || PlayerSaid(R, am_worried_2)
-			 || PlayerSaid(R, am_worried_3))
+	else if (PlayerSaid(R, PkunkPhrase::AmWorried1)
+			 || PlayerSaid(R, PkunkPhrase::AmWorried2)
+			 || PlayerSaid(R, PkunkPhrase::AmWorried3))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_WORRY);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(DONT_WORRY_1);
+				NPCPhrase(PkunkPhrase::DontWorry1);
 				break;
 			case 1:
-				NPCPhrase(DONT_WORRY_2);
+				NPCPhrase(PkunkPhrase::DontWorry2);
 				break;
 			case 2:
-				NPCPhrase(DONT_WORRY_3);
+				NPCPhrase(PkunkPhrase::DontWorry3);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_WORRY, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(am_worried_1);
+		DisablePhrase(PkunkPhrase::AmWorried1);
 	}
-	else if (PlayerSaid(R, try_to_be_nicer))
+	else if (PlayerSaid(R, PkunkPhrase::TryToBeNicer))
 	{
-		NPCPhrase(CANT_ASK_FOR_MORE);
+		NPCPhrase(PkunkPhrase::CantAskForMore);
 		if (!uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE))
 		{
-			NPCPhrase(GIVE_SPINDLE);
+			NPCPhrase(PkunkPhrase::GiveSpindle);
 
 			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE, static_cast<uint32_t>(1));
 			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(1));
 		}
-		NPCPhrase(CAN_BE_FRIENDS);
+		NPCPhrase(PkunkPhrase::CanBeFriends);
 		SetHomeworldKnown(*HomeId::Pkunk);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(3));
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(0));
 	}
-	else if (PlayerSaid(R, what_about_ilwrath))
+	else if (PlayerSaid(R, PkunkPhrase::WhatAboutIlwrath))
 	{
-		NPCPhrase(ABOUT_ILWRATH /* ILWRATH_GONE */);
+		NPCPhrase(PkunkPhrase::AboutIlwrath /* ILWRATH_GONE */);
 
-		DisablePhrase(what_about_ilwrath);
+		DisablePhrase(PkunkPhrase::WhatAboutIlwrath);
 	}
 
-	if (PhraseEnabled(we_conquer) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 0)
+	if (PhraseEnabled(PkunkPhrase::WeConquer) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 0)
 	{
-		Response(we_conquer, DiscussConquer);
+		Response(PkunkPhrase::WeConquer, DiscussConquer);
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::PKUNK_ON_THE_MOVE))
 	{
-		if (PhraseEnabled(where_fleet_1) && !uqm::gameState().flag(uqm::GameFlag::PKUNK_SWITCH))
+		if (PhraseEnabled(PkunkPhrase::WhereFleet1) && !uqm::gameState().flag(uqm::GameFlag::PKUNK_SWITCH))
 		{
 			switch (uqm::gameState().flag(uqm::GameFlag::PKUNK_FLEET))
 			{
 				case 0:
-					Response(where_fleet_1, PkunkHome);
+					Response(PkunkPhrase::WhereFleet1, PkunkHome);
 					break;
 				case 1:
-					Response(where_fleet_2, PkunkHome);
+					Response(PkunkPhrase::WhereFleet2, PkunkHome);
 					break;
 				case 2:
-					Response(where_fleet_3, PkunkHome);
+					Response(PkunkPhrase::WhereFleet3, PkunkHome);
 					break;
 			}
 		}
-		else if (!PhraseEnabled(where_fleet_1)
-				 && PhraseEnabled(am_worried_1)
+		else if (!PhraseEnabled(PkunkPhrase::WhereFleet1)
+				 && PhraseEnabled(PkunkPhrase::AmWorried1)
 				 && (uqm::gameState().flag(uqm::GameFlag::PKUNK_MISSION) & 1))
 		{
 			switch (uqm::gameState().flag(uqm::GameFlag::PKUNK_WORRY))
 			{
 				case 0:
-					Response(am_worried_1, PkunkHome);
+					Response(PkunkPhrase::AmWorried1, PkunkHome);
 					break;
 				case 1:
-					Response(am_worried_2, PkunkHome);
+					Response(PkunkPhrase::AmWorried2, PkunkHome);
 					break;
 				case 2:
-					Response(am_worried_3, PkunkHome);
+					Response(PkunkPhrase::AmWorried3, PkunkHome);
 					break;
 			}
 		}
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::PKUNK_SHIP_MONTH))
 	{
-		Response(we_are_vindicator, OfferAlliance);
+		Response(PkunkPhrase::WeAreVindicator, OfferAlliance);
 	}
-	if (PhraseEnabled(what_about_you))
+	if (PhraseEnabled(PkunkPhrase::WhatAboutYou))
 	{
-		Response(what_about_you, AboutPkunk);
+		Response(PkunkPhrase::WhatAboutYou, AboutPkunk);
 	}
-	if (PhraseEnabled(what_about_ilwrath))
+	if (PhraseEnabled(PkunkPhrase::WhatAboutIlwrath))
 	{
 		if (!uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 		{
-			Response(what_about_ilwrath, AboutIlwrath);
+			Response(PkunkPhrase::WhatAboutIlwrath, AboutIlwrath);
 		}
 		else
 		{
-			Response(what_about_ilwrath, PkunkHome);
+			Response(PkunkPhrase::WhatAboutIlwrath, PkunkHome);
 		}
 	}
-	Response(bye_friendly, ExitConversation);
+	Response(PkunkPhrase::ByeFriendly, ExitConversation);
 }
 
 static void PkunkFriendlySpace(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, whats_up_space))
+	if (PlayerSaid(R, PkunkPhrase::WhatsUpSpace))
 	{
 		if (ShipsReady(RaceId::Pkunk) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 3)
 		{
-			NPCPhrase(SHIPS_AT_HOME);
+			NPCPhrase(PkunkPhrase::ShipsAtHome);
 		}
 		else
 		{
@@ -686,182 +686,182 @@ static void PkunkFriendlySpace(RESPONSE_REF R)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(GENERAL_INFO_SPACE_1);
+					NPCPhrase(PkunkPhrase::GeneralInfoSpace1);
 					break;
 				case 1:
-					NPCPhrase(GENERAL_INFO_SPACE_2);
+					NPCPhrase(PkunkPhrase::GeneralInfoSpace2);
 					break;
 				case 2:
-					NPCPhrase(GENERAL_INFO_SPACE_3);
+					NPCPhrase(PkunkPhrase::GeneralInfoSpace3);
 					break;
 				case 3:
-					NPCPhrase(GENERAL_INFO_SPACE_4);
+					NPCPhrase(PkunkPhrase::GeneralInfoSpace4);
 					break;
 				case 4:
-					NPCPhrase(GENERAL_INFO_SPACE_5);
+					NPCPhrase(PkunkPhrase::GeneralInfoSpace5);
 					break;
 				case 5:
-					NPCPhrase(GENERAL_INFO_SPACE_6);
+					NPCPhrase(PkunkPhrase::GeneralInfoSpace6);
 					break;
 				case 6:
-					NPCPhrase(GENERAL_INFO_SPACE_7);
+					NPCPhrase(PkunkPhrase::GeneralInfoSpace7);
 					break;
 				case 7:
-					NPCPhrase(GENERAL_INFO_SPACE_8);
+					NPCPhrase(PkunkPhrase::GeneralInfoSpace8);
 					--NumVisits;
 					break;
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_INFO, static_cast<uint32_t>(NumVisits));
 		}
 
-		DisablePhrase(whats_up_space);
+		DisablePhrase(PkunkPhrase::WhatsUpSpace);
 	}
-	else if (PlayerSaid(R, how_goes_war))
+	else if (PlayerSaid(R, PkunkPhrase::HowGoesWar))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_WAR);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(WAR_GOES_1);
+				NPCPhrase(PkunkPhrase::WarGoes1);
 				uqm::gameState().setFlag(uqm::GameFlag::KNOW_URQUAN_STORY, static_cast<uint32_t>(1));
 				uqm::gameState().setFlag(uqm::GameFlag::KNOW_KOHR_AH_STORY, static_cast<uint32_t>(1));
 				break;
 			case 1:
-				NPCPhrase(WAR_GOES_2);
+				NPCPhrase(PkunkPhrase::WarGoes2);
 				break;
 			case 2:
-				NPCPhrase(WAR_GOES_3);
+				NPCPhrase(PkunkPhrase::WarGoes3);
 				break;
 			case 3:
-				NPCPhrase(WAR_GOES_4);
+				NPCPhrase(PkunkPhrase::WarGoes4);
 				uqm::gameState().setFlag(uqm::GameFlag::PKUNK_DONE_WAR, static_cast<uint32_t>(1));
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_WAR, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(how_goes_war);
+		DisablePhrase(PkunkPhrase::HowGoesWar);
 	}
-	else if (PlayerSaid(R, tell_my_fortune))
+	else if (PlayerSaid(R, PkunkPhrase::TellMyFortune))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_FORTUNE);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(FORTUNE_IS_1);
+				NPCPhrase(PkunkPhrase::FortuneIs1);
 				break;
 			case 1:
-				NPCPhrase(FORTUNE_IS_2);
+				NPCPhrase(PkunkPhrase::FortuneIs2);
 				break;
 			case 2:
-				NPCPhrase(FORTUNE_IS_3);
+				NPCPhrase(PkunkPhrase::FortuneIs3);
 				break;
 			case 3:
-				NPCPhrase(FORTUNE_IS_4);
+				NPCPhrase(PkunkPhrase::FortuneIs4);
 				break;
 			case 4:
-				NPCPhrase(FORTUNE_IS_5);
+				NPCPhrase(PkunkPhrase::FortuneIs5);
 				break;
 			case 5:
-				NPCPhrase(FORTUNE_IS_6);
+				NPCPhrase(PkunkPhrase::FortuneIs6);
 				break;
 			case 6:
-				NPCPhrase(FORTUNE_IS_7);
+				NPCPhrase(PkunkPhrase::FortuneIs7);
 				break;
 			case 7:
-				NPCPhrase(FORTUNE_IS_8);
+				NPCPhrase(PkunkPhrase::FortuneIs8);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_FORTUNE, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(tell_my_fortune);
+		DisablePhrase(PkunkPhrase::TellMyFortune);
 	}
 
-	if (PhraseEnabled(whats_up_space))
+	if (PhraseEnabled(PkunkPhrase::WhatsUpSpace))
 	{
-		Response(whats_up_space, PkunkFriendlySpace);
+		Response(PkunkPhrase::WhatsUpSpace, PkunkFriendlySpace);
 	}
-	if (!uqm::gameState().flag(uqm::GameFlag::PKUNK_DONE_WAR) && PhraseEnabled(how_goes_war))
+	if (!uqm::gameState().flag(uqm::GameFlag::PKUNK_DONE_WAR) && PhraseEnabled(PkunkPhrase::HowGoesWar))
 	{
-		Response(how_goes_war, PkunkFriendlySpace);
+		Response(PkunkPhrase::HowGoesWar, PkunkFriendlySpace);
 	}
-	if (PhraseEnabled(tell_my_fortune))
+	if (PhraseEnabled(PkunkPhrase::TellMyFortune))
 	{
-		Response(tell_my_fortune, PkunkFriendlySpace);
+		Response(PkunkPhrase::TellMyFortune, PkunkFriendlySpace);
 	}
-	Response(friendly_bye_space, ExitConversation);
+	Response(PkunkPhrase::FriendlyByeSpace, ExitConversation);
 }
 
 static void PkunkNeutralSpace(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, form_alliance))
+	if (PlayerSaid(R, PkunkPhrase::FormAlliance))
 	{
-		NPCPhrase(GO_TO_HOMEWORLD);
+		NPCPhrase(PkunkPhrase::GoToHomeworld);
 		SetHomeworldKnown(*HomeId::Pkunk);
 
-		DisablePhrase(form_alliance);
+		DisablePhrase(PkunkPhrase::FormAlliance);
 	}
-	else if (PlayerSaid(R, can_you_help))
+	else if (PlayerSaid(R, PkunkPhrase::CanYouHelp))
 	{
-		NPCPhrase(GO_TO_HOMEWORLD_AGAIN);
+		NPCPhrase(PkunkPhrase::GoToHomeworldAgain);
 		SetHomeworldKnown(*HomeId::Pkunk);
 
-		DisablePhrase(can_you_help);
+		DisablePhrase(PkunkPhrase::CanYouHelp);
 	}
-	else if (PlayerSaid(R, hostile_greeting))
+	else if (PlayerSaid(R, PkunkPhrase::HostileGreeting))
 	{
-		NPCPhrase(DONT_BE_HOSTILE);
+		NPCPhrase(PkunkPhrase::DontBeHostile);
 
-		DisablePhrase(hostile_greeting);
+		DisablePhrase(PkunkPhrase::HostileGreeting);
 	}
-	else if (PlayerSaid(R, whats_up_neutral))
+	else if (PlayerSaid(R, PkunkPhrase::WhatsUpNeutral))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_SPACE_1);
+				NPCPhrase(PkunkPhrase::GeneralInfoSpace1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_SPACE_2);
+				NPCPhrase(PkunkPhrase::GeneralInfoSpace2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_SPACE_6 /* was 3 */);
+				NPCPhrase(PkunkPhrase::GeneralInfoSpace6 /* was 3 */);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_SPACE_7 /* was 4 */);
+				NPCPhrase(PkunkPhrase::GeneralInfoSpace7 /* was 4 */);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_neutral);
+		DisablePhrase(PkunkPhrase::WhatsUpNeutral);
 	}
 
-	if (PhraseEnabled(form_alliance))
+	if (PhraseEnabled(PkunkPhrase::FormAlliance))
 	{
-		Response(form_alliance, PkunkNeutralSpace);
+		Response(PkunkPhrase::FormAlliance, PkunkNeutralSpace);
 	}
-	else if (PhraseEnabled(can_you_help))
+	else if (PhraseEnabled(PkunkPhrase::CanYouHelp))
 	{
-		Response(can_you_help, PkunkNeutralSpace);
+		Response(PkunkPhrase::CanYouHelp, PkunkNeutralSpace);
 	}
-	if (PhraseEnabled(hostile_greeting))
+	if (PhraseEnabled(PkunkPhrase::HostileGreeting))
 	{
-		Response(hostile_greeting, PkunkNeutralSpace);
+		Response(PkunkPhrase::HostileGreeting, PkunkNeutralSpace);
 	}
 	else
 	{
-		Response(obey, ExitConversation);
+		Response(PkunkPhrase::Obey, ExitConversation);
 	}
-	if (PhraseEnabled(whats_up_neutral))
+	if (PhraseEnabled(PkunkPhrase::WhatsUpNeutral))
 	{
-		Response(whats_up_neutral, PkunkNeutralSpace);
+		Response(PkunkPhrase::WhatsUpNeutral, PkunkNeutralSpace);
 	}
-	Response(neutral_bye_space, ExitConversation);
+	Response(PkunkPhrase::NeutralByeSpace, ExitConversation);
 }
 
 static void PkunkMigrate(RESPONSE_REF R)
@@ -872,21 +872,21 @@ static void PkunkMigrate(RESPONSE_REF R)
 	ReasonMask = uqm::gameState().flag(uqm::GameFlag::PKUNK_REASONS);
 	if (!(ReasonMask & GoodReason1))
 	{
-		Response(good_reason_1, ExitConversation);
+		Response(PkunkPhrase::GoodReason1, ExitConversation);
 	}
 	if (!(ReasonMask & BadReason1))
 	{
-		Response(bad_reason_1, ExitConversation);
+		Response(PkunkPhrase::BadReason1, ExitConversation);
 	}
 	if (!(ReasonMask & GoodReason2))
 	{
-		Response(good_reason_2, ExitConversation);
+		Response(PkunkPhrase::GoodReason2, ExitConversation);
 	}
 	if (!(ReasonMask & BadReason2))
 	{
-		Response(bad_reason_2, ExitConversation);
+		Response(PkunkPhrase::BadReason2, ExitConversation);
 	}
-	Response(suit_yourself, ExitConversation);
+	Response(PkunkPhrase::SuitYourself, ExitConversation);
 }
 
 static void Intro(void)
@@ -896,7 +896,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(PkunkPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -910,16 +910,16 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HATE_YOU_FOREVER_1);
+				NPCPhrase(PkunkPhrase::HateYouForever1);
 				break;
 			case 1:
-				NPCPhrase(HATE_YOU_FOREVER_2);
+				NPCPhrase(PkunkPhrase::HateYouForever2);
 				break;
 			case 2:
-				NPCPhrase(HATE_YOU_FOREVER_3);
+				NPCPhrase(PkunkPhrase::HateYouForever3);
 				break;
 			case 3:
-				NPCPhrase(HATE_YOU_FOREVER_4);
+				NPCPhrase(PkunkPhrase::HateYouForever4);
 				--NumVisits;
 				break;
 		}
@@ -934,16 +934,16 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(SPIRITUAL_PROBLEMS_1);
+				NPCPhrase(PkunkPhrase::SpiritualProblems1);
 				break;
 			case 1:
-				NPCPhrase(SPIRITUAL_PROBLEMS_2);
+				NPCPhrase(PkunkPhrase::SpiritualProblems2);
 				break;
 			case 2:
-				NPCPhrase(SPIRITUAL_PROBLEMS_3);
+				NPCPhrase(PkunkPhrase::SpiritualProblems3);
 				break;
 			case 3:
-				NPCPhrase(SPIRITUAL_PROBLEMS_4);
+				NPCPhrase(PkunkPhrase::SpiritualProblems4);
 				--NumVisits;
 				break;
 		}
@@ -956,7 +956,7 @@ static void Intro(void)
 		// Encountering the Pkunk at their home world.
 		if (!uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE))
 		{
-			NPCPhrase(GIVE_SPINDLE);
+			NPCPhrase(PkunkPhrase::GiveSpindle);
 
 			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE, static_cast<uint32_t>(1));
 			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(1));
@@ -965,7 +965,7 @@ static void Intro(void)
 				 && uqm::gameState().clock().year() > StartYear
 				 && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 		{
-			NPCPhrase(SENSE_KOHRAH_VICTORY);
+			NPCPhrase(PkunkPhrase::SenseKohrahVictory);
 
 			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_SENSE_VICTOR, static_cast<uint32_t>(1));
 		}
@@ -976,16 +976,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_1);
+					NPCPhrase(PkunkPhrase::NeutralHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_2);
+					NPCPhrase(PkunkPhrase::NeutralHomeworldHello2);
 					break;
 				case 2:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_3);
+					NPCPhrase(PkunkPhrase::NeutralHomeworldHello3);
 					break;
 				case 3:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_4);
+					NPCPhrase(PkunkPhrase::NeutralHomeworldHello4);
 					--NumVisits;
 					break;
 			}
@@ -996,11 +996,11 @@ static void Intro(void)
 			{
 				if (EscortFeasibilityStudy(RaceId::Pkunk) == 0)
 				{
-					NPCPhrase(NO_ROOM);
+					NPCPhrase(PkunkPhrase::NoRoom);
 				}
 				else
 				{
-					NPCPhrase(SHIP_GIFT);
+					NPCPhrase(PkunkPhrase::ShipGift);
 					if (AddEscortShips(RaceId::Pkunk, difficultyCase(4, 4, 2)))
 					{
 						PrepareShip(RaceId::Pkunk);
@@ -1012,28 +1012,28 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(FRIENDLY_HOMEWORLD_HELLO_1);
+						NPCPhrase(PkunkPhrase::FriendlyHomeworldHello1);
 						break;
 					case 1:
-						NPCPhrase(FRIENDLY_HOMEWORLD_HELLO_2);
+						NPCPhrase(PkunkPhrase::FriendlyHomeworldHello2);
 						break;
 					case 2:
-						NPCPhrase(FRIENDLY_HOMEWORLD_HELLO_3);
+						NPCPhrase(PkunkPhrase::FriendlyHomeworldHello3);
 						break;
 					case 3:
-						NPCPhrase(FRIENDLY_HOMEWORLD_HELLO_4);
+						NPCPhrase(PkunkPhrase::FriendlyHomeworldHello4);
 						break;
 					case 4:
-						NPCPhrase(FRIENDLY_HOMEWORLD_HELLO_5);
+						NPCPhrase(PkunkPhrase::FriendlyHomeworldHello5);
 						break;
 					case 5:
-						NPCPhrase(FRIENDLY_HOMEWORLD_HELLO_6);
+						NPCPhrase(PkunkPhrase::FriendlyHomeworldHello6);
 						break;
 					case 6:
-						NPCPhrase(FRIENDLY_HOMEWORLD_HELLO_7);
+						NPCPhrase(PkunkPhrase::FriendlyHomeworldHello7);
 						break;
 					case 7:
-						NPCPhrase(FRIENDLY_HOMEWORLD_HELLO_8);
+						NPCPhrase(PkunkPhrase::FriendlyHomeworldHello8);
 						--NumVisits;
 						break;
 				}
@@ -1054,28 +1054,28 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_1);
+					NPCPhrase(PkunkPhrase::FriendlySpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_2);
+					NPCPhrase(PkunkPhrase::FriendlySpaceHello2);
 					break;
 				case 2:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_3);
+					NPCPhrase(PkunkPhrase::FriendlySpaceHello3);
 					break;
 				case 3:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_4);
+					NPCPhrase(PkunkPhrase::FriendlySpaceHello4);
 					break;
 				case 4:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_5);
+					NPCPhrase(PkunkPhrase::FriendlySpaceHello5);
 					break;
 				case 5:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_6);
+					NPCPhrase(PkunkPhrase::FriendlySpaceHello6);
 					break;
 				case 6:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_7);
+					NPCPhrase(PkunkPhrase::FriendlySpaceHello7);
 					break;
 				case 7:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_8);
+					NPCPhrase(PkunkPhrase::FriendlySpaceHello8);
 					--NumVisits;
 					break;
 			}
@@ -1087,16 +1087,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_1);
+					NPCPhrase(PkunkPhrase::NeutralSpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_2);
+					NPCPhrase(PkunkPhrase::NeutralSpaceHello2);
 					break;
 				case 2:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_3);
+					NPCPhrase(PkunkPhrase::NeutralSpaceHello3);
 					break;
 				case 3:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_4);
+					NPCPhrase(PkunkPhrase::NeutralSpaceHello4);
 					SetHomeworldKnown(*HomeId::Pkunk);
 					--NumVisits;
 					break;
@@ -1114,28 +1114,28 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(MIGRATING_SPACE_1);
+				NPCPhrase(PkunkPhrase::MigratingSpace1);
 				break;
 			case 1:
-				NPCPhrase(MIGRATING_SPACE_2);
+				NPCPhrase(PkunkPhrase::MigratingSpace2);
 				break;
 			case 2:
-				NPCPhrase(MIGRATING_SPACE_3);
+				NPCPhrase(PkunkPhrase::MigratingSpace3);
 				break;
 			case 3:
-				NPCPhrase(MIGRATING_SPACE_4);
+				NPCPhrase(PkunkPhrase::MigratingSpace4);
 				break;
 			case 4:
-				NPCPhrase(MIGRATING_SPACE_5);
+				NPCPhrase(PkunkPhrase::MigratingSpace5);
 				break;
 			case 5:
-				NPCPhrase(MIGRATING_SPACE_6);
+				NPCPhrase(PkunkPhrase::MigratingSpace6);
 				break;
 			case 6:
-				NPCPhrase(MIGRATING_SPACE_7);
+				NPCPhrase(PkunkPhrase::MigratingSpace7);
 				break;
 			case 7:
-				NPCPhrase(MIGRATING_SPACE_8);
+				NPCPhrase(PkunkPhrase::MigratingSpace8);
 				--NumVisits;
 				break;
 		}

@@ -284,36 +284,36 @@ static void ExitConversation(RESPONSE_REF R)
 	setSegue(Segue::Peace);
 	uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(0));
 
-	if (PlayerSaid(R, compel_urquan))
+	if (PlayerSaid(R, TalkingPetPhrase::CompelUrquan))
 	{
-		NPCPhrase(HERE_WE_GO);
+		NPCPhrase(TalkingPetPhrase::HereWeGo);
 
 		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_MESSED_UP, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, wish_to_go_now))
+	else if (PlayerSaid(R, TalkingPetPhrase::WishToGoNow))
 	{
-		NPCPhrase(EXCELLENT_IDEA);
+		NPCPhrase(TalkingPetPhrase::ExcellentIdea);
 	}
-	else if (PlayerSaid(R, bye_onboard))
+	else if (PlayerSaid(R, TalkingPetPhrase::ByeOnboard))
 	{
-		NPCPhrase(GOODBYE_ONBOARD);
+		NPCPhrase(TalkingPetPhrase::GoodbyeOnboard);
 	}
-	else if (PlayerSaid(R, compel_that_ship))
+	else if (PlayerSaid(R, TalkingPetPhrase::CompelThatShip))
 	{
-		NPCPhrase(SAVING_MY_POWER);
+		NPCPhrase(TalkingPetPhrase::SavingMyPower);
 	}
-	else if (PlayerSaid(R, ok_lets_do_it)
-			 || PlayerSaid(R, want_kill_1)
-			 || PlayerSaid(R, want_kill_2)
-			 || PlayerSaid(R, want_kill_3))
+	else if (PlayerSaid(R, TalkingPetPhrase::OkLetsDoIt)
+			 || PlayerSaid(R, TalkingPetPhrase::WantKill1)
+			 || PlayerSaid(R, TalkingPetPhrase::WantKill2)
+			 || PlayerSaid(R, TalkingPetPhrase::WantKill3))
 	{
-		if (PlayerSaid(R, ok_lets_do_it))
+		if (PlayerSaid(R, TalkingPetPhrase::OkLetsDoIt))
 		{
-			NPCPhrase(COMING_ABOARD);
+			NPCPhrase(TalkingPetPhrase::ComingAboard);
 		}
 		else
 		{
-			NPCPhrase(GLAD_YOU_WONT_KILL);
+			NPCPhrase(TalkingPetPhrase::GladYouWontKill);
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET, static_cast<uint32_t>(1));
@@ -327,28 +327,28 @@ static void ExitConversation(RESPONSE_REF R)
 
 static void MindFuckUrquan(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, what_now))
+	if (PlayerSaid(R, TalkingPetPhrase::WhatNow))
 	{
-		NPCPhrase(DO_THIS);
+		NPCPhrase(TalkingPetPhrase::DoThis);
 
-		DisablePhrase(what_now);
+		DisablePhrase(TalkingPetPhrase::WhatNow);
 	}
-	else if (PlayerSaid(R, im_scared))
+	else if (PlayerSaid(R, TalkingPetPhrase::ImScared))
 	{
-		NPCPhrase(STUPID_FOP);
+		NPCPhrase(TalkingPetPhrase::StupidFop);
 
-		DisablePhrase(im_scared);
+		DisablePhrase(TalkingPetPhrase::ImScared);
 	}
 
-	if (PhraseEnabled(what_now))
+	if (PhraseEnabled(TalkingPetPhrase::WhatNow))
 	{
-		Response(what_now, MindFuckUrquan);
+		Response(TalkingPetPhrase::WhatNow, MindFuckUrquan);
 	}
-	if (PhraseEnabled(im_scared))
+	if (PhraseEnabled(TalkingPetPhrase::ImScared))
 	{
-		Response(im_scared, MindFuckUrquan);
+		Response(TalkingPetPhrase::ImScared, MindFuckUrquan);
 	}
-	Response(compel_urquan, ExitConversation);
+	Response(TalkingPetPhrase::CompelUrquan, ExitConversation);
 }
 
 static void PetDevice(RESPONSE_REF R);
@@ -368,19 +368,19 @@ static void MindControl(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
-	if (PlayerSaid(R, what_about_powers))
+	if (PlayerSaid(R, TalkingPetPhrase::WhatAboutPowers))
 	{
-		NPCPhrase(NOT_POWERS_BUT_FLOWERS);
+		NPCPhrase(TalkingPetPhrase::NotPowersButFlowers);
 
 		RespFunc = (RESPONSE_FUNC)MindControl;
-		R = yes_flowers;
+		R = *TalkingPetPhrase::YesFlowers;
 	}
-	else /* if (R == yes_flowers) */
+	else /* if (R == TalkingPetPhrase::YesFlowers) */
 	{
-		NPCPhrase(GOOD_HUMAN);
+		NPCPhrase(TalkingPetPhrase::GoodHuman);
 
 		RespFunc = (RESPONSE_FUNC)ExitConversation;
-		R = wish_to_go_now;
+		R = *TalkingPetPhrase::WishToGoNow;
 	}
 
 	AlienTalkSegue((uint16_t)~0);
@@ -391,206 +391,206 @@ static void MindControl(RESPONSE_REF R)
 
 static void PetInfo(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, about_your_race))
+	if (PlayerSaid(R, TalkingPetPhrase::AboutYourRace))
 	{
-		NPCPhrase(WHAT_ABOUT_RACE);
+		NPCPhrase(TalkingPetPhrase::WhatAboutRace);
 	}
-	else if (PlayerSaid(R, what_about_physiology))
+	else if (PlayerSaid(R, TalkingPetPhrase::WhatAboutPhysiology))
 	{
-		NPCPhrase(NO_TALK_ABOUT_SELF);
+		NPCPhrase(TalkingPetPhrase::NoTalkAboutSelf);
 
-		DisablePhrase(what_about_physiology);
+		DisablePhrase(TalkingPetPhrase::WhatAboutPhysiology);
 	}
-	else if (PlayerSaid(R, what_about_your_history))
+	else if (PlayerSaid(R, TalkingPetPhrase::WhatAboutYourHistory))
 	{
-		NPCPhrase(ABOUT_HISTORY);
+		NPCPhrase(TalkingPetPhrase::AboutHistory);
 
-		DisablePhrase(what_about_your_history);
+		DisablePhrase(TalkingPetPhrase::WhatAboutYourHistory);
 	}
-	else if (PlayerSaid(R, sentient_milieu))
+	else if (PlayerSaid(R, TalkingPetPhrase::SentientMilieu))
 	{
-		NPCPhrase(ABOUT_SENTIENT_MILIEU);
+		NPCPhrase(TalkingPetPhrase::AboutSentientMilieu);
 
-		DisablePhrase(sentient_milieu);
+		DisablePhrase(TalkingPetPhrase::SentientMilieu);
 	}
-	else if (PlayerSaid(R, what_about_war))
+	else if (PlayerSaid(R, TalkingPetPhrase::WhatAboutWar))
 	{
-		NPCPhrase(ABOUT_WAR);
+		NPCPhrase(TalkingPetPhrase::AboutWar);
 
-		DisablePhrase(what_about_war);
+		DisablePhrase(TalkingPetPhrase::WhatAboutWar);
 	}
 
-	if (PhraseEnabled(what_about_physiology))
+	if (PhraseEnabled(TalkingPetPhrase::WhatAboutPhysiology))
 	{
-		Response(what_about_physiology, PetInfo);
+		Response(TalkingPetPhrase::WhatAboutPhysiology, PetInfo);
 	}
 	else
 	{
-		Response(what_about_powers, MindControl);
+		Response(TalkingPetPhrase::WhatAboutPowers, MindControl);
 	}
-	if (PhraseEnabled(what_about_your_history))
+	if (PhraseEnabled(TalkingPetPhrase::WhatAboutYourHistory))
 	{
-		Response(what_about_your_history, PetInfo);
+		Response(TalkingPetPhrase::WhatAboutYourHistory, PetInfo);
 	}
-	else if (PhraseEnabled(sentient_milieu))
+	else if (PhraseEnabled(TalkingPetPhrase::SentientMilieu))
 	{
-		Response(sentient_milieu, PetInfo);
+		Response(TalkingPetPhrase::SentientMilieu, PetInfo);
 	}
-	else if (PhraseEnabled(what_about_war))
+	else if (PhraseEnabled(TalkingPetPhrase::WhatAboutWar))
 	{
-		Response(what_about_war, PetInfo);
+		Response(TalkingPetPhrase::WhatAboutWar, PetInfo);
 	}
-	Response(enough_info, PetDevice);
+	Response(TalkingPetPhrase::EnoughInfo, PetDevice);
 }
 
 static void PetDevice(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, whats_up_onboard))
+	if (PlayerSaid(R, TalkingPetPhrase::WhatsUpOnboard))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::TALKING_PET_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_ONBOARD_1);
+				NPCPhrase(TalkingPetPhrase::GeneralInfoOnboard1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_ONBOARD_2);
+				NPCPhrase(TalkingPetPhrase::GeneralInfoOnboard2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_ONBOARD_3);
+				NPCPhrase(TalkingPetPhrase::GeneralInfoOnboard3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_ONBOARD_4);
+				NPCPhrase(TalkingPetPhrase::GeneralInfoOnboard4);
 				break;
 			case 4:
-				NPCPhrase(GENERAL_INFO_ONBOARD_5);
+				NPCPhrase(TalkingPetPhrase::GeneralInfoOnboard5);
 				break;
 			case 5:
-				NPCPhrase(GENERAL_INFO_ONBOARD_6);
+				NPCPhrase(TalkingPetPhrase::GeneralInfoOnboard6);
 				break;
 			case 6:
-				NPCPhrase(GENERAL_INFO_ONBOARD_7);
+				NPCPhrase(TalkingPetPhrase::GeneralInfoOnboard7);
 				break;
 			case 7:
-				NPCPhrase(GENERAL_INFO_ONBOARD_8);
+				NPCPhrase(TalkingPetPhrase::GeneralInfoOnboard8);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_onboard);
+		DisablePhrase(TalkingPetPhrase::WhatsUpOnboard);
 	}
-	else if (PlayerSaid(R, any_suggestions))
+	else if (PlayerSaid(R, TalkingPetPhrase::AnySuggestions))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::TALKING_PET_SUGGESTIONS);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(SUGGESTION_1);
+				NPCPhrase(TalkingPetPhrase::Suggestion1);
 				break;
 			case 1:
-				NPCPhrase(SUGGESTION_2);
+				NPCPhrase(TalkingPetPhrase::Suggestion2);
 				break;
 			case 2:
-				NPCPhrase(SUGGESTION_3);
+				NPCPhrase(TalkingPetPhrase::Suggestion3);
 				break;
 			case 3:
-				NPCPhrase(SUGGESTION_4);
+				NPCPhrase(TalkingPetPhrase::Suggestion4);
 				break;
 			case 4:
-				NPCPhrase(SUGGESTION_5);
+				NPCPhrase(TalkingPetPhrase::Suggestion5);
 				break;
 			case 5:
-				NPCPhrase(SUGGESTION_6);
+				NPCPhrase(TalkingPetPhrase::Suggestion6);
 				break;
 			case 6:
-				NPCPhrase(SUGGESTION_7);
+				NPCPhrase(TalkingPetPhrase::Suggestion7);
 				break;
 			case 7:
-				NPCPhrase(SUGGESTION_8);
+				NPCPhrase(TalkingPetPhrase::Suggestion8);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_SUGGESTIONS, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(any_suggestions);
+		DisablePhrase(TalkingPetPhrase::AnySuggestions);
 	}
-	else if (PlayerSaid(R, enough_info))
+	else if (PlayerSaid(R, TalkingPetPhrase::EnoughInfo))
 	{
-		NPCPhrase(OK_ENOUGH_INFO);
+		NPCPhrase(TalkingPetPhrase::OkEnoughInfo);
 	}
-	else if (PlayerSaid(R, you_lied))
+	else if (PlayerSaid(R, TalkingPetPhrase::YouLied))
 	{
-		NPCPhrase(SO_WHAT);
+		NPCPhrase(TalkingPetPhrase::SoWhat);
 
 		uqm::gameState().setFlag(uqm::GameFlag::DNYARRI_LIED, static_cast<uint32_t>(0));
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::SHIP_TO_COMPEL))
 	{
-		Response(compel_that_ship, ExitConversation);
+		Response(TalkingPetPhrase::CompelThatShip, ExitConversation);
 	}
-	if (PhraseEnabled(whats_up_onboard))
+	if (PhraseEnabled(TalkingPetPhrase::WhatsUpOnboard))
 	{
-		Response(whats_up_onboard, PetDevice);
+		Response(TalkingPetPhrase::WhatsUpOnboard, PetDevice);
 	}
-	if (PhraseEnabled(any_suggestions))
+	if (PhraseEnabled(TalkingPetPhrase::AnySuggestions))
 	{
-		Response(any_suggestions, PetDevice);
+		Response(TalkingPetPhrase::AnySuggestions, PetDevice);
 	}
-	Response(about_your_race, PetInfo);
+	Response(TalkingPetPhrase::AboutYourRace, PetInfo);
 	if (uqm::gameState().flag(uqm::GameFlag::DNYARRI_LIED) && uqm::gameState().flag(uqm::GameFlag::LEARNED_TALKING_PET))
 	{
-		Response(you_lied, PetDevice);
+		Response(TalkingPetPhrase::YouLied, PetDevice);
 	}
-	Response(bye_onboard, ExitConversation);
+	Response(TalkingPetPhrase::ByeOnboard, ExitConversation);
 }
 
 static void CompelPlayer(RESPONSE_REF R)
 {
-	RESPONSE_REF pStr[3];
+	TalkingPetPhrase pStr[3];
 
 	uint8_t LastStack {0};
-	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PlayerSaid(R, what_are_you))
+	pStr[0] = pStr[1] = pStr[2] = TalkingPetPhrase::NullPhrase;
+	if (PlayerSaid(R, TalkingPetPhrase::WhatAreYou))
 	{
-		NPCPhrase(JUST_TALKING_PET);
+		NPCPhrase(TalkingPetPhrase::JustTalkingPet);
 
-		DisablePhrase(what_are_you);
+		DisablePhrase(TalkingPetPhrase::WhatAreYou);
 	}
-	else if (PlayerSaid(R, what_do_to_umgah))
+	else if (PlayerSaid(R, TalkingPetPhrase::WhatDoToUmgah))
 	{
-		NPCPhrase(DID_NOTHING);
+		NPCPhrase(TalkingPetPhrase::DidNothing);
 
-		DisablePhrase(what_do_to_umgah);
+		DisablePhrase(TalkingPetPhrase::WhatDoToUmgah);
 		LastStack = 1;
 	}
-	else if (PlayerSaid(R, we_are_vindicator))
+	else if (PlayerSaid(R, TalkingPetPhrase::WeAreVindicator))
 	{
-		NPCPhrase(GOOD_FOR_YOU);
+		NPCPhrase(TalkingPetPhrase::GoodForYou);
 
-		DisablePhrase(we_are_vindicator);
+		DisablePhrase(TalkingPetPhrase::WeAreVindicator);
 		LastStack = 2;
 	}
 	else if (R != 0)
 	{
-		if (PlayerSaid(R, bye_at_umgah))
+		if (PlayerSaid(R, TalkingPetPhrase::ByeAtUmgah))
 		{
-			NPCPhrase(GOODBYE_AT_UMGAH);
+			NPCPhrase(TalkingPetPhrase::GoodbyeAtUmgah);
 		}
-		else if (PlayerSaid(R, must_explain_presence))
+		else if (PlayerSaid(R, TalkingPetPhrase::MustExplainPresence))
 		{
-			NPCPhrase(EXPLAIN_NOTHING_MONKEY_BOY);
+			NPCPhrase(TalkingPetPhrase::ExplainNothingMonkeyBoy);
 		}
-		else if (PlayerSaid(R, umgah_zombies))
+		else if (PlayerSaid(R, TalkingPetPhrase::UmgahZombies))
 		{
-			NPCPhrase(WORKS_LIKE_THIS);
+			NPCPhrase(TalkingPetPhrase::WorksLikeThis);
 		}
-		else if (PlayerSaid(R, talking_pets_dumb))
+		else if (PlayerSaid(R, TalkingPetPhrase::TalkingPetsDumb))
 		{
-			NPCPhrase(OH_NO_YOU_DONT);
+			NPCPhrase(TalkingPetPhrase::OhNoYouDont);
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES, static_cast<uint32_t>(1));
@@ -600,7 +600,7 @@ static void CompelPlayer(RESPONSE_REF R)
 		}
 		else
 		{
-			NPCPhrase(CANT_COMPEL);
+			NPCPhrase(TalkingPetPhrase::CantCompel);
 
 			setSegue(Segue::Hostile);
 		}
@@ -608,149 +608,149 @@ static void CompelPlayer(RESPONSE_REF R)
 		return;
 	}
 
-	if (PhraseEnabled(what_are_you))
+	if (PhraseEnabled(TalkingPetPhrase::WhatAreYou))
 	{
-		pStr[0] = what_are_you;
+		pStr[0] = TalkingPetPhrase::WhatAreYou;
 	}
 	else
 	{
-		pStr[0] = talking_pets_dumb;
+		pStr[0] = TalkingPetPhrase::TalkingPetsDumb;
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES))
 	{
-		if (PhraseEnabled(what_do_to_umgah))
+		if (PhraseEnabled(TalkingPetPhrase::WhatDoToUmgah))
 		{
-			pStr[1] = what_do_to_umgah;
+			pStr[1] = TalkingPetPhrase::WhatDoToUmgah;
 		}
 		else
 		{
-			pStr[1] = umgah_zombies;
+			pStr[1] = TalkingPetPhrase::UmgahZombies;
 		}
 	}
-	if (PhraseEnabled(we_are_vindicator))
+	if (PhraseEnabled(TalkingPetPhrase::WeAreVindicator))
 	{
-		pStr[2] = we_are_vindicator;
+		pStr[2] = TalkingPetPhrase::WeAreVindicator;
 	}
 	else
 	{
-		pStr[2] = must_explain_presence;
+		pStr[2] = TalkingPetPhrase::MustExplainPresence;
 	}
 
-	if (pStr[LastStack])
+	if (pStr[LastStack] != TalkingPetPhrase::NullPhrase)
 	{
 		Response(pStr[LastStack], CompelPlayer);
 	}
 	for (uint8_t i {0}; i < 3; ++i)
 	{
-		if (i != LastStack && pStr[i])
+		if (i != LastStack && *pStr[i] != TalkingPetPhrase::NullPhrase)
 		{
 			Response(pStr[i], CompelPlayer);
 		}
 	}
-	Response(bye_at_umgah, CompelPlayer);
+	Response(TalkingPetPhrase::ByeAtUmgah, CompelPlayer);
 }
 
 static void PetDeal(RESPONSE_REF R);
 
 static void KillPet(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, must_kill))
+	if (PlayerSaid(R, TalkingPetPhrase::MustKill))
 	{
-		NPCPhrase(DONT_KILL);
+		NPCPhrase(TalkingPetPhrase::DontKill);
 		AlienTalkSegue((uint16_t)~0);
 
 		MindControlStrobe();
 	}
 
-	Response(want_kill_1, ExitConversation);
-	Response(want_kill_2, ExitConversation);
-	Response(want_kill_3, ExitConversation);
+	Response(TalkingPetPhrase::WantKill1, ExitConversation);
+	Response(TalkingPetPhrase::WantKill2, ExitConversation);
+	Response(TalkingPetPhrase::WantKill3, ExitConversation);
 }
 
 static void PetDeal(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, what_kind_of_deal))
+	if (PlayerSaid(R, TalkingPetPhrase::WhatKindOfDeal))
 	{
-		NPCPhrase(HELP_DEFEAT_URQUAN);
+		NPCPhrase(TalkingPetPhrase::HelpDefeatUrquan);
 
-		DisablePhrase(what_kind_of_deal);
+		DisablePhrase(TalkingPetPhrase::WhatKindOfDeal);
 	}
-	else if (PlayerSaid(R, how_trust))
+	else if (PlayerSaid(R, TalkingPetPhrase::HowTrust))
 	{
-		NPCPhrase(TRUST);
+		NPCPhrase(TalkingPetPhrase::Trust);
 
-		DisablePhrase(how_trust);
+		DisablePhrase(TalkingPetPhrase::HowTrust);
 	}
-	else if (PlayerSaid(R, boneless_dweeb))
+	else if (PlayerSaid(R, TalkingPetPhrase::BonelessDweeb))
 	{
-		NPCPhrase(YOUR_BONELESS_DWEEB);
+		NPCPhrase(TalkingPetPhrase::YourBonelessDweeb);
 
-		DisablePhrase(boneless_dweeb);
+		DisablePhrase(TalkingPetPhrase::BonelessDweeb);
 	}
-	else if (PlayerSaid(R, what_are_you_really))
+	else if (PlayerSaid(R, TalkingPetPhrase::WhatAreYouReally))
 	{
-		NPCPhrase(POOR_DNYARRI);
+		NPCPhrase(TalkingPetPhrase::PoorDnyarri);
 
-		DisablePhrase(what_are_you_really);
+		DisablePhrase(TalkingPetPhrase::WhatAreYouReally);
 	}
-	else if (PlayerSaid(R, hard_to_believe))
+	else if (PlayerSaid(R, TalkingPetPhrase::HardToBelieve))
 	{
-		NPCPhrase(ITS_TRUE);
+		NPCPhrase(TalkingPetPhrase::ItsTrue);
 
 		uqm::gameState().setFlag(uqm::GameFlag::DNYARRI_LIED, static_cast<uint32_t>(1));
-		DisablePhrase(hard_to_believe);
+		DisablePhrase(TalkingPetPhrase::HardToBelieve);
 	}
-	else if (PlayerSaid(R, bullshit))
+	else if (PlayerSaid(R, TalkingPetPhrase::Bullshit))
 	{
-		NPCPhrase(WORTH_A_TRY);
+		NPCPhrase(TalkingPetPhrase::WorthATry);
 
-		DisablePhrase(bullshit);
+		DisablePhrase(TalkingPetPhrase::Bullshit);
 	}
-	else if (PlayerSaid(R, kill_you))
+	else if (PlayerSaid(R, TalkingPetPhrase::KillYou))
 	{
-		NPCPhrase(PLEASE_DONT);
+		NPCPhrase(TalkingPetPhrase::PleaseDont);
 
-		DisablePhrase(kill_you);
+		DisablePhrase(TalkingPetPhrase::KillYou);
 	}
 
-	if (PhraseEnabled(what_kind_of_deal))
+	if (PhraseEnabled(TalkingPetPhrase::WhatKindOfDeal))
 	{
-		Response(what_kind_of_deal, PetDeal);
+		Response(TalkingPetPhrase::WhatKindOfDeal, PetDeal);
 	}
 	else
 	{
-		if (PhraseEnabled(how_trust))
+		if (PhraseEnabled(TalkingPetPhrase::HowTrust))
 		{
-			Response(how_trust, PetDeal);
+			Response(TalkingPetPhrase::HowTrust, PetDeal);
 		}
-		else if (PhraseEnabled(boneless_dweeb))
+		else if (PhraseEnabled(TalkingPetPhrase::BonelessDweeb))
 		{
-			Response(boneless_dweeb, PetDeal);
+			Response(TalkingPetPhrase::BonelessDweeb, PetDeal);
 		}
-		Response(ok_lets_do_it, ExitConversation);
+		Response(TalkingPetPhrase::OkLetsDoIt, ExitConversation);
 	}
-	if (PhraseEnabled(what_are_you_really))
+	if (PhraseEnabled(TalkingPetPhrase::WhatAreYouReally))
 	{
-		Response(what_are_you_really, PetDeal);
+		Response(TalkingPetPhrase::WhatAreYouReally, PetDeal);
 	}
 	else
 	{
-		if (PhraseEnabled(hard_to_believe) && !uqm::gameState().flag(uqm::GameFlag::LEARNED_TALKING_PET))
+		if (PhraseEnabled(TalkingPetPhrase::HardToBelieve) && !uqm::gameState().flag(uqm::GameFlag::LEARNED_TALKING_PET))
 		{
-			Response(hard_to_believe, PetDeal);
+			Response(TalkingPetPhrase::HardToBelieve, PetDeal);
 		}
-		else if (PhraseEnabled(bullshit) && uqm::gameState().flag(uqm::GameFlag::LEARNED_TALKING_PET))
+		else if (PhraseEnabled(TalkingPetPhrase::Bullshit) && uqm::gameState().flag(uqm::GameFlag::LEARNED_TALKING_PET))
 		{
-			Response(bullshit, PetDeal);
+			Response(TalkingPetPhrase::Bullshit, PetDeal);
 		}
 	}
-	if (PhraseEnabled(kill_you))
+	if (PhraseEnabled(TalkingPetPhrase::KillYou))
 	{
-		Response(kill_you, PetDeal);
+		Response(TalkingPetPhrase::KillYou, PetDeal);
 	}
-	else if (PhraseEnabled(must_kill))
+	else if (PhraseEnabled(TalkingPetPhrase::MustKill))
 	{
-		Response(must_kill, KillPet);
+		Response(TalkingPetPhrase::MustKill, KillPet);
 	}
 }
 
@@ -760,7 +760,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(TalkingPetPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -772,11 +772,11 @@ static void Intro(void)
 		setSegue(Segue::Hostile);
 		if (!(uqm::globalFlags() & CyborgEnabled))
 		{
-			NPCPhrase(HUMAN_PEP_TALK);
+			NPCPhrase(TalkingPetPhrase::HumanPepTalk);
 		}
 		else
 		{
-			NPCPhrase(CYBORG_PEP_TALK);
+			NPCPhrase(TalkingPetPhrase::CyborgPepTalk);
 		}
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::READY_TO_CONFUSE_URQUAN))
@@ -786,27 +786,27 @@ static void Intro(void)
 		uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
 		if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) != 3)
 		{
-			NPCPhrase(HAVENT_GOT_EVERYTHING);
+			NPCPhrase(TalkingPetPhrase::HaventGotEverything);
 			if (!uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 			{
-				NPCPhrase(NEED_BOMB);
+				NPCPhrase(TalkingPetPhrase::NeedBomb);
 			}
 			else
 			{
-				NPCPhrase(SOUP_UP_BOMB);
+				NPCPhrase(TalkingPetPhrase::SoupUpBomb);
 			}
 
 			setSegue(Segue::Peace);
 		}
 		else if (uqm::gameState().flag(uqm::GameFlag::URQUAN_MESSED_UP))
 		{
-			NPCPhrase(HELLO_AFTER_COMPEL_URQUAN);
+			NPCPhrase(TalkingPetPhrase::HelloAfterCompelUrquan);
 
 			setSegue(Segue::Peace);
 		}
 		else
 		{
-			NPCPhrase(I_SENSE_MY_SLAVES);
+			NPCPhrase(TalkingPetPhrase::ISenseMySlaves);
 
 			MindFuckUrquan((RESPONSE_REF)0);
 		}
@@ -818,37 +818,37 @@ static void Intro(void)
 		// You can acquire the Talking Pet without having Taalo Shield after
 		// the Kohr-Ah wipe out the Umgah. In that case, the Pet will join
 		// you willingly, but his complaints about the Taalo shield as in
-		// HELLO_AS_DEVICE_1 do not make any sense.
+		// TalkingPetPhrase::HelloAsDevice1 do not make any sense.
 		if (!uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP) && NumVisits == 0)
 		{
-			++NumVisits; // skip HELLO_AS_DEVICE_1
+			++NumVisits; // skip TalkingPetPhrase::HelloAsDevice1
 		}
 
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HELLO_AS_DEVICE_1);
+				NPCPhrase(TalkingPetPhrase::HelloAsDevice1);
 				break;
 			case 1:
-				NPCPhrase(HELLO_AS_DEVICE_2);
+				NPCPhrase(TalkingPetPhrase::HelloAsDevice2);
 				break;
 			case 2:
-				NPCPhrase(HELLO_AS_DEVICE_3);
+				NPCPhrase(TalkingPetPhrase::HelloAsDevice3);
 				break;
 			case 3:
-				NPCPhrase(HELLO_AS_DEVICE_4);
+				NPCPhrase(TalkingPetPhrase::HelloAsDevice4);
 				break;
 			case 4:
-				NPCPhrase(HELLO_AS_DEVICE_5);
+				NPCPhrase(TalkingPetPhrase::HelloAsDevice5);
 				break;
 			case 5:
-				NPCPhrase(HELLO_AS_DEVICE_6);
+				NPCPhrase(TalkingPetPhrase::HelloAsDevice6);
 				break;
 			case 6:
-				NPCPhrase(HELLO_AS_DEVICE_7);
+				NPCPhrase(TalkingPetPhrase::HelloAsDevice7);
 				break;
 			case 7:
-				NPCPhrase(HELLO_AS_DEVICE_8);
+				NPCPhrase(TalkingPetPhrase::HelloAsDevice8);
 				--NumVisits;
 				break;
 		}
@@ -863,19 +863,19 @@ static void Intro(void)
 		{
 			case 0:
 				uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(0));
-				NPCPhrase(HELLO_AT_UMGAH);
+				NPCPhrase(TalkingPetPhrase::HelloAtUmgah);
 				break;
 			case 1:
-				NPCPhrase(HYPNOTIZE_AGAIN_1);
+				NPCPhrase(TalkingPetPhrase::HypnotizeAgain1);
 				break;
 			case 2:
-				NPCPhrase(HYPNOTIZE_AGAIN_2);
+				NPCPhrase(TalkingPetPhrase::HypnotizeAgain2);
 				break;
 			case 3:
-				NPCPhrase(HYPNOTIZE_AGAIN_3);
+				NPCPhrase(TalkingPetPhrase::HypnotizeAgain3);
 				break;
 			case 4:
-				NPCPhrase(HYPNOTIZE_AGAIN_4);
+				NPCPhrase(TalkingPetPhrase::HypnotizeAgain4);
 				--NumVisits;
 				break;
 		}
@@ -893,7 +893,7 @@ static void Intro(void)
 		}
 		else
 		{
-			NPCPhrase(CANT_COMPEL);
+			NPCPhrase(TalkingPetPhrase::CantCompel);
 
 			setSegue(Segue::Hostile);
 		}
@@ -902,18 +902,18 @@ static void Intro(void)
 	{
 		if (StartSphereTracking(RaceId::Umgah))
 		{
-			NPCPhrase(LETS_MAKE_A_DEAL);
+			NPCPhrase(TalkingPetPhrase::LetsMakeADeal);
 		}
 		else
 		{
-			NPCPhrase(UMGAH_ALL_GONE);
+			NPCPhrase(TalkingPetPhrase::UmgahAllGone);
 
 			if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_HOME_VISITS) == 0
 				|| !uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP))
-			{ // The how_trust-TRUST exchange only makes sense when the
+			{ // The TalkingPetPhrase::HowTrust-TalkingPetPhrase::Trust exchange only makes sense when the
 				// player visited the Talking Pet before so he tried to
 				// kill the player *and* the player has the Taalo shield.
-				DisablePhrase(how_trust);
+				DisablePhrase(TalkingPetPhrase::HowTrust);
 			}
 		}
 

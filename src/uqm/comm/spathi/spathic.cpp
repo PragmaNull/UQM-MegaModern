@@ -179,66 +179,66 @@ static void ExitConversation(RESPONSE_REF Response)
 	const uint8_t SpaCrew = ifEasyDifficulty(MaxCrewSize, 1);
 	setSegue(Segue::Peace);
 
-	if (PlayerSaid(Response, bye_ally_space))
+	if (PlayerSaid(Response, SpathiPhrase::ByeAllySpace))
 	{
-		NPCPhrase(GOODBYE_ALLY_SPACE);
+		NPCPhrase(SpathiPhrase::GoodbyeAllySpace);
 	}
-	else if (PlayerSaid(Response, bye_friendly_space))
+	else if (PlayerSaid(Response, SpathiPhrase::ByeFriendlySpace))
 	{
-		NPCPhrase(GOODBYE_FRIENDLY_SPACE);
+		NPCPhrase(SpathiPhrase::GoodbyeFriendlySpace);
 	}
-	else if (PlayerSaid(Response, part_in_peace))
+	else if (PlayerSaid(Response, SpathiPhrase::PartInPeace))
 	{
-		NPCPhrase(KEEP_IT_SECRET);
+		NPCPhrase(SpathiPhrase::KeepItSecret);
 	}
-	else if (PlayerSaid(Response, we_sorry_space))
+	else if (PlayerSaid(Response, SpathiPhrase::WeSorrySpace))
 	{
-		NPCPhrase(APOLOGIZE_AT_HOMEWORLD);
+		NPCPhrase(SpathiPhrase::ApologizeAtHomeworld);
 	}
-	else if (PlayerSaid(Response, give_info_space))
+	else if (PlayerSaid(Response, SpathiPhrase::GiveInfoSpace))
 	{
-		NPCPhrase(HERES_SOME_INFO);
+		NPCPhrase(SpathiPhrase::HeresSomeInfo);
 	}
-	else if (PlayerSaid(Response, bye_angry_space))
+	else if (PlayerSaid(Response, SpathiPhrase::ByeAngrySpace))
 	{
-		NPCPhrase(GOODBYE_ANGRY_SPACE);
+		NPCPhrase(SpathiPhrase::GoodbyeAngrySpace);
 	}
-	else if (PlayerSaid(Response, attack_you_now))
+	else if (PlayerSaid(Response, SpathiPhrase::AttackYouNow))
 	{
-		NPCPhrase(YIPES);
+		NPCPhrase(SpathiPhrase::Yipes);
 
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(Response, we_fight_again_space))
+	else if (PlayerSaid(Response, SpathiPhrase::WeFightAgainSpace))
 	{
-		NPCPhrase(OK_FIGHT_AGAIN_SPACE);
+		NPCPhrase(SpathiPhrase::OkFightAgainSpace);
 
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(Response, die_slugboy)
-			 || PlayerSaid(Response, we_fight_1)
-			 || PlayerSaid(Response, we_fight_2)
-			 || PlayerSaid(Response, pay_for_crimes)
-			 || PlayerSaid(Response, tell_me_coordinates)
-			 || PlayerSaid(Response, changed_mind))
+	else if (PlayerSaid(Response, SpathiPhrase::DieSlugboy)
+			 || PlayerSaid(Response, SpathiPhrase::WeFight1)
+			 || PlayerSaid(Response, SpathiPhrase::WeFight2)
+			 || PlayerSaid(Response, SpathiPhrase::PayForCrimes)
+			 || PlayerSaid(Response, SpathiPhrase::TellMeCoordinates)
+			 || PlayerSaid(Response, SpathiPhrase::ChangedMind))
 	{
-		if (PlayerSaid(Response, tell_me_coordinates))
+		if (PlayerSaid(Response, SpathiPhrase::TellMeCoordinates))
 		{
-			NPCPhrase(FAKE_COORDINATES);
+			NPCPhrase(SpathiPhrase::FakeCoordinates);
 		}
-		NPCPhrase(OK_WE_FIGHT_AT_PLUTO);
+		NPCPhrase(SpathiPhrase::OkWeFightAtPluto);
 
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(Response, join_us))
+	else if (PlayerSaid(Response, SpathiPhrase::JoinUs))
 	{
 		if (EscortFeasibilityStudy(RaceId::Spathi) == 0)
 		{
-			NPCPhrase(TOO_SCARY);
+			NPCPhrase(SpathiPhrase::TooScary);
 		}
 		else
 		{
-			NPCPhrase(WILL_JOIN);
+			NPCPhrase(SpathiPhrase::WillJoin);
 
 			AlienTalkSegue((uint16_t)~0);
 			AddEscortShips(RaceId::Spathi, 1);
@@ -247,16 +247,16 @@ static void ExitConversation(RESPONSE_REF Response)
 									NameOffset + NumCaptainsNames);
 		}
 	}
-	else if (PlayerSaid(Response, join_us_nomad))
+	else if (PlayerSaid(Response, SpathiPhrase::JoinUsNomad))
 	{
 		if ((EscortFeasibilityStudy(RaceId::Spathi) == 0
 			 || CountEscortShips(RaceId::Spathi) > 2))
 		{
-			NPCPhrase(TOO_SCARY);
+			NPCPhrase(SpathiPhrase::TooScary);
 		}
 		else
 		{
-			NPCPhrase(WILL_JOIN);
+			NPCPhrase(SpathiPhrase::WillJoin);
 
 			AlienTalkSegue((uint16_t)~0);
 			AddEscortShips(RaceId::Spathi, 1);
@@ -268,266 +268,266 @@ static uint8_t join_us_refusals;
 
 static void SpathiOnPluto(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, hi_there))
+	if (PlayerSaid(R, SpathiPhrase::HiThere))
 	{
-		NPCPhrase(ARE_YOU_SURE);
+		NPCPhrase(SpathiPhrase::AreYouSure);
 	}
-	else if (PlayerSaid(R, dont_kill))
+	else if (PlayerSaid(R, SpathiPhrase::DontKill))
 	{
-		NPCPhrase(OK_WONT);
+		NPCPhrase(SpathiPhrase::OkWont);
 	}
-	else if (PlayerSaid(R, youre_forgiven))
+	else if (PlayerSaid(R, SpathiPhrase::YoureForgiven))
 	{
-		NPCPhrase(THANKS_FOR_FORGIVENESS);
+		NPCPhrase(SpathiPhrase::ThanksForForgiveness);
 	}
-	else if (PlayerSaid(R, you_wont_die_yet))
+	else if (PlayerSaid(R, SpathiPhrase::YouWontDieYet))
 	{
-		NPCPhrase(ETERNAL_GRATITUDE);
+		NPCPhrase(SpathiPhrase::EternalGratitude);
 	}
-	else if (PlayerSaid(R, you_may_live))
+	else if (PlayerSaid(R, SpathiPhrase::YouMayLive))
 	{
-		NPCPhrase(GEE_THANKS);
+		NPCPhrase(SpathiPhrase::GeeThanks);
 	}
-	else if (PlayerSaid(R, youve_got_me_all_wrong))
+	else if (PlayerSaid(R, SpathiPhrase::YouveGotMeAllWrong))
 	{
-		NPCPhrase(SORRY_NO_COORDS);
+		NPCPhrase(SpathiPhrase::SorryNoCoords);
 	}
-	else if (PlayerSaid(R, what_doing_on_pluto_1))
+	else if (PlayerSaid(R, SpathiPhrase::WhatDoingOnPluto1))
 	{
-		NPCPhrase(ABOUT_20_YEARS_AGO);
+		NPCPhrase(SpathiPhrase::About20YearsAgo);
 
-		DisablePhrase(what_doing_on_pluto_1);
+		DisablePhrase(SpathiPhrase::WhatDoingOnPluto1);
 	}
-	else if (PlayerSaid(R, what_doing_on_pluto_2))
+	else if (PlayerSaid(R, SpathiPhrase::WhatDoingOnPluto2))
 	{
-		NPCPhrase(WHEN_URQUAN_ARRIVED);
+		NPCPhrase(SpathiPhrase::WhenUrquanArrived);
 
-		DisablePhrase(what_doing_on_pluto_2);
+		DisablePhrase(SpathiPhrase::WhatDoingOnPluto2);
 	}
-	else if (PlayerSaid(R, what_doing_on_pluto_3))
+	else if (PlayerSaid(R, SpathiPhrase::WhatDoingOnPluto3))
 	{
-		NPCPhrase(STATIONED_ON_EARTH_MOON);
+		NPCPhrase(SpathiPhrase::StationedOnEarthMoon);
 
-		DisablePhrase(what_doing_on_pluto_3);
+		DisablePhrase(SpathiPhrase::WhatDoingOnPluto3);
 	}
-	else if (PlayerSaid(R, what_about_ilwrath))
+	else if (PlayerSaid(R, SpathiPhrase::WhatAboutIlwrath))
 	{
-		NPCPhrase(ABOUT_ILWRATH);
+		NPCPhrase(SpathiPhrase::AboutIlwrath);
 
-		DisablePhrase(what_about_ilwrath);
+		DisablePhrase(SpathiPhrase::WhatAboutIlwrath);
 	}
-	else if (PlayerSaid(R, when_ilwrath))
+	else if (PlayerSaid(R, SpathiPhrase::WhenIlwrath))
 	{
-		NPCPhrase(THEN_ILWRATH);
+		NPCPhrase(SpathiPhrase::ThenIlwrath);
 
-		DisablePhrase(when_ilwrath);
+		DisablePhrase(SpathiPhrase::WhenIlwrath);
 	}
-	else if (PlayerSaid(R, what_about_moonbase))
+	else if (PlayerSaid(R, SpathiPhrase::WhatAboutMoonbase))
 	{
-		NPCPhrase(SET_UP_BASE);
+		NPCPhrase(SpathiPhrase::SetUpBase);
 
-		DisablePhrase(what_about_moonbase);
+		DisablePhrase(SpathiPhrase::WhatAboutMoonbase);
 	}
-	else if (PlayerSaid(R, what_about_other_spathi))
+	else if (PlayerSaid(R, SpathiPhrase::WhatAboutOtherSpathi))
 	{
-		NPCPhrase(SPATHI_ARE);
+		NPCPhrase(SpathiPhrase::SpathiAre);
 
-		DisablePhrase(what_about_other_spathi);
+		DisablePhrase(SpathiPhrase::WhatAboutOtherSpathi);
 	}
-	else if (PlayerSaid(R, what_about_other_spathi))
+	else if (PlayerSaid(R, SpathiPhrase::WhatAboutOtherSpathi))
 	{
-		NPCPhrase(THEN_ILWRATH);
+		NPCPhrase(SpathiPhrase::ThenIlwrath);
 
-		DisablePhrase(what_about_other_spathi);
+		DisablePhrase(SpathiPhrase::WhatAboutOtherSpathi);
 	}
-	else if (PlayerSaid(R, how_many_crew))
+	else if (PlayerSaid(R, SpathiPhrase::HowManyCrew))
 	{
-		NPCPhrase(THOUSANDS);
+		NPCPhrase(SpathiPhrase::Thousands);
 
-		DisablePhrase(how_many_crew);
+		DisablePhrase(SpathiPhrase::HowManyCrew);
 	}
-	else if (PlayerSaid(R, really_thousands))
+	else if (PlayerSaid(R, SpathiPhrase::ReallyThousands))
 	{
-		NPCPhrase(JUST_ME);
+		NPCPhrase(SpathiPhrase::JustMe);
 
-		DisablePhrase(really_thousands);
+		DisablePhrase(SpathiPhrase::ReallyThousands);
 	}
-	else if (PlayerSaid(R, full_of_monsters))
+	else if (PlayerSaid(R, SpathiPhrase::FullOfMonsters))
 	{
-		NPCPhrase(HOW_TRUE);
+		NPCPhrase(SpathiPhrase::HowTrue);
 
-		DisablePhrase(full_of_monsters);
+		DisablePhrase(SpathiPhrase::FullOfMonsters);
 	}
-	else if (PlayerSaid(R, what_enemy))
+	else if (PlayerSaid(R, SpathiPhrase::WhatEnemy))
 	{
-		NPCPhrase(ENEMY_IS);
+		NPCPhrase(SpathiPhrase::EnemyIs);
 
-		DisablePhrase(what_enemy);
+		DisablePhrase(SpathiPhrase::WhatEnemy);
 	}
-	else if (PlayerSaid(R, why_you_here))
+	else if (PlayerSaid(R, SpathiPhrase::WhyYouHere))
 	{
-		NPCPhrase(DREW_SHORT_STRAW);
+		NPCPhrase(SpathiPhrase::DrewShortStraw);
 
-		DisablePhrase(why_you_here);
+		DisablePhrase(SpathiPhrase::WhyYouHere);
 	}
-	else if (PlayerSaid(R, where_are_urquan))
+	else if (PlayerSaid(R, SpathiPhrase::WhereAreUrquan))
 	{
-		NPCPhrase(URQUAN_LEFT);
+		NPCPhrase(SpathiPhrase::UrquanLeft);
 
-		DisablePhrase(where_are_urquan);
+		DisablePhrase(SpathiPhrase::WhereAreUrquan);
 	}
-	else if (PlayerSaid(R, what_about_other_races))
+	else if (PlayerSaid(R, SpathiPhrase::WhatAboutOtherRaces))
 	{
-		NPCPhrase(ABOUT_OTHER_RACES);
+		NPCPhrase(SpathiPhrase::AboutOtherRaces);
 
-		DisablePhrase(what_about_other_races);
+		DisablePhrase(SpathiPhrase::WhatAboutOtherRaces);
 	}
-	else if (PlayerSaid(R, what_blaze_of_glory))
+	else if (PlayerSaid(R, SpathiPhrase::WhatBlazeOfGlory))
 	{
-		NPCPhrase(BLAZE_IS);
+		NPCPhrase(SpathiPhrase::BlazeIs);
 
-		DisablePhrase(what_blaze_of_glory);
+		DisablePhrase(SpathiPhrase::WhatBlazeOfGlory);
 	}
-	else if (PlayerSaid(R, what_about_yourself))
+	else if (PlayerSaid(R, SpathiPhrase::WhatAboutYourself))
 	{
-		NPCPhrase(ABOUT_MYSELF);
+		NPCPhrase(SpathiPhrase::AboutMyself);
 
-		DisablePhrase(what_about_yourself);
+		DisablePhrase(SpathiPhrase::WhatAboutYourself);
 	}
-	else if (PlayerSaid(R, join_us))
+	else if (PlayerSaid(R, SpathiPhrase::JoinUs))
 	{
 		if (join_us_refusals == 0)
 		{
-			NPCPhrase(WONT_JOIN_1);
+			NPCPhrase(SpathiPhrase::WontJoin1);
 			++join_us_refusals;
 		}
 		else if (join_us_refusals == 1)
 		{
-			NPCPhrase(WONT_JOIN_2);
+			NPCPhrase(SpathiPhrase::WontJoin2);
 			++join_us_refusals;
 		}
 		else
 		{
-			NPCPhrase(WONT_JOIN_3);
+			NPCPhrase(SpathiPhrase::WontJoin3);
 		}
 	}
 
-	if (PhraseEnabled(what_doing_on_pluto_1))
+	if (PhraseEnabled(SpathiPhrase::WhatDoingOnPluto1))
 	{
-		Response(what_doing_on_pluto_1, SpathiOnPluto);
+		Response(SpathiPhrase::WhatDoingOnPluto1, SpathiOnPluto);
 	}
-	else if (PhraseEnabled(what_doing_on_pluto_2))
+	else if (PhraseEnabled(SpathiPhrase::WhatDoingOnPluto2))
 	{
-		Response(what_doing_on_pluto_2, SpathiOnPluto);
+		Response(SpathiPhrase::WhatDoingOnPluto2, SpathiOnPluto);
 	}
-	else if (PhraseEnabled(what_doing_on_pluto_3))
+	else if (PhraseEnabled(SpathiPhrase::WhatDoingOnPluto3))
 	{
-		Response(what_doing_on_pluto_3, SpathiOnPluto);
+		Response(SpathiPhrase::WhatDoingOnPluto3, SpathiOnPluto);
 	}
 	else
 	{
-		if (PhraseEnabled(what_about_ilwrath))
+		if (PhraseEnabled(SpathiPhrase::WhatAboutIlwrath))
 		{
-			Response(what_about_ilwrath, SpathiOnPluto);
+			Response(SpathiPhrase::WhatAboutIlwrath, SpathiOnPluto);
 		}
-		else if (PhraseEnabled(when_ilwrath))
+		else if (PhraseEnabled(SpathiPhrase::WhenIlwrath))
 		{
-			Response(when_ilwrath, SpathiOnPluto);
+			Response(SpathiPhrase::WhenIlwrath, SpathiOnPluto);
 		}
 
-		if (PhraseEnabled(what_about_moonbase))
+		if (PhraseEnabled(SpathiPhrase::WhatAboutMoonbase))
 		{
-			Response(what_about_moonbase, SpathiOnPluto);
+			Response(SpathiPhrase::WhatAboutMoonbase, SpathiOnPluto);
 		}
-		else if (PhraseEnabled(what_about_other_spathi))
+		else if (PhraseEnabled(SpathiPhrase::WhatAboutOtherSpathi))
 		{
-			Response(what_about_other_spathi, SpathiOnPluto);
+			Response(SpathiPhrase::WhatAboutOtherSpathi, SpathiOnPluto);
 		}
 		else
 		{
-			if (PhraseEnabled(how_many_crew))
+			if (PhraseEnabled(SpathiPhrase::HowManyCrew))
 			{
-				Response(how_many_crew, SpathiOnPluto);
+				Response(SpathiPhrase::HowManyCrew, SpathiOnPluto);
 			}
-			else if (PhraseEnabled(really_thousands))
+			else if (PhraseEnabled(SpathiPhrase::ReallyThousands))
 			{
-				Response(really_thousands, SpathiOnPluto);
+				Response(SpathiPhrase::ReallyThousands, SpathiOnPluto);
 			}
-			else if (PhraseEnabled(full_of_monsters))
+			else if (PhraseEnabled(SpathiPhrase::FullOfMonsters))
 			{
-				Response(full_of_monsters, SpathiOnPluto);
+				Response(SpathiPhrase::FullOfMonsters, SpathiOnPluto);
 			}
 
-			if (PhraseEnabled(what_enemy))
+			if (PhraseEnabled(SpathiPhrase::WhatEnemy))
 			{
-				Response(what_enemy, SpathiOnPluto);
+				Response(SpathiPhrase::WhatEnemy, SpathiOnPluto);
 			}
-			else if (PhraseEnabled(why_you_here))
+			else if (PhraseEnabled(SpathiPhrase::WhyYouHere))
 			{
-				Response(why_you_here, SpathiOnPluto);
+				Response(SpathiPhrase::WhyYouHere, SpathiOnPluto);
 			}
 		}
 	}
-	if (PhraseEnabled(where_are_urquan))
+	if (PhraseEnabled(SpathiPhrase::WhereAreUrquan))
 	{
-		Response(where_are_urquan, SpathiOnPluto);
+		Response(SpathiPhrase::WhereAreUrquan, SpathiOnPluto);
 	}
-	else if (PhraseEnabled(what_about_other_races))
+	else if (PhraseEnabled(SpathiPhrase::WhatAboutOtherRaces))
 	{
-		Response(what_about_other_races, SpathiOnPluto);
+		Response(SpathiPhrase::WhatAboutOtherRaces, SpathiOnPluto);
 	}
-	else if (PhraseEnabled(what_blaze_of_glory))
+	else if (PhraseEnabled(SpathiPhrase::WhatBlazeOfGlory))
 	{
-		Response(what_blaze_of_glory, SpathiOnPluto);
+		Response(SpathiPhrase::WhatBlazeOfGlory, SpathiOnPluto);
 	}
-	else if (PhraseEnabled(what_about_yourself))
+	else if (PhraseEnabled(SpathiPhrase::WhatAboutYourself))
 	{
-		Response(what_about_yourself, SpathiOnPluto);
+		Response(SpathiPhrase::WhatAboutYourself, SpathiOnPluto);
 	}
 
-	if (!PhraseEnabled(full_of_monsters))
+	if (!PhraseEnabled(SpathiPhrase::FullOfMonsters))
 	{
-		Response(join_us, ExitConversation);
+		Response(SpathiPhrase::JoinUs, ExitConversation);
 	}
 	else
 	{
-		Response(join_us, SpathiOnPluto);
+		Response(SpathiPhrase::JoinUs, SpathiOnPluto);
 	}
-	Response(changed_mind, ExitConversation);
+	Response(SpathiPhrase::ChangedMind, ExitConversation);
 }
 
 static void SpathiMustGrovel(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, identify))
+	if (PlayerSaid(R, SpathiPhrase::Identify))
 	{
-		NPCPhrase(I_FWIFFO);
+		NPCPhrase(SpathiPhrase::IFwiffo);
 
-		Response(do_cultural, SpathiMustGrovel);
-		Response(youre_forgiven, SpathiOnPluto);
-		Response(die_slugboy, ExitConversation);
+		Response(SpathiPhrase::DoCultural, SpathiMustGrovel);
+		Response(SpathiPhrase::YoureForgiven, SpathiOnPluto);
+		Response(SpathiPhrase::DieSlugboy, ExitConversation);
 	}
-	else if (PlayerSaid(R, do_cultural))
+	else if (PlayerSaid(R, SpathiPhrase::DoCultural))
 	{
-		NPCPhrase(WEZZY_WEZZAH);
+		NPCPhrase(SpathiPhrase::WezzyWezzah);
 
-		Response(begin_ritual, SpathiMustGrovel);
-		Response(you_wont_die_yet, SpathiOnPluto);
-		Response(we_fight_2, ExitConversation);
+		Response(SpathiPhrase::BeginRitual, SpathiMustGrovel);
+		Response(SpathiPhrase::YouWontDieYet, SpathiOnPluto);
+		Response(SpathiPhrase::WeFight2, ExitConversation);
 	}
-	else if (PlayerSaid(R, begin_ritual))
+	else if (PlayerSaid(R, SpathiPhrase::BeginRitual))
 	{
-		NPCPhrase(MUST_DO_RITUAL_AT_HOME);
+		NPCPhrase(SpathiPhrase::MustDoRitualAtHome);
 
-		Response(you_may_live, SpathiOnPluto);
-		Response(pay_for_crimes, ExitConversation);
-		Response(what_are_coordinates, SpathiMustGrovel);
+		Response(SpathiPhrase::YouMayLive, SpathiOnPluto);
+		Response(SpathiPhrase::PayForCrimes, ExitConversation);
+		Response(SpathiPhrase::WhatAreCoordinates, SpathiMustGrovel);
 	}
-	else /* if (R == what_are_coordinates) */
+	else /* if (R == SpathiPhrase::WhatAreCoordinates) */
 	{
-		NPCPhrase(COORDINATES_ARE);
+		NPCPhrase(SpathiPhrase::CoordinatesAre);
 
-		Response(youve_got_me_all_wrong, SpathiOnPluto);
-		Response(tell_me_coordinates, ExitConversation);
+		Response(SpathiPhrase::YouveGotMeAllWrong, SpathiOnPluto);
+		Response(SpathiPhrase::TellMeCoordinates, ExitConversation);
 	}
 }
 
@@ -541,61 +541,61 @@ static void SpathiAllies(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(INIT_ALLIED_HELLO_SPACE);
+				NPCPhrase(SpathiPhrase::InitAlliedHelloSpace);
 				break;
 			case 1:
-				NPCPhrase(SUBSEQUENT_ALLIED_HELLO_SPACE);
+				NPCPhrase(SpathiPhrase::SubsequentAlliedHelloSpace);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, whats_up_space_2))
+	else if (PlayerSaid(R, SpathiPhrase::WhatsUpSpace2))
 	{
-		NPCPhrase(GENERAL_INFO_SPACE_2);
+		NPCPhrase(SpathiPhrase::GeneralInfoSpace2);
 
-		DisablePhrase(whats_up_space_2);
+		DisablePhrase(SpathiPhrase::WhatsUpSpace2);
 	}
-	else if (PlayerSaid(R, give_us_info_from_space))
+	else if (PlayerSaid(R, SpathiPhrase::GiveUsInfoFromSpace))
 	{
-		NPCPhrase(GET_INFO_FROM_SPATHIWA);
+		NPCPhrase(SpathiPhrase::GetInfoFromSpathiwa);
 
-		DisablePhrase(give_us_info_from_space);
+		DisablePhrase(SpathiPhrase::GiveUsInfoFromSpace);
 	}
-	else if (PlayerSaid(R, give_us_resources_space))
+	else if (PlayerSaid(R, SpathiPhrase::GiveUsResourcesSpace))
 	{
-		NPCPhrase(GET_RESOURCES_FROM_SPATHIWA);
+		NPCPhrase(SpathiPhrase::GetResourcesFromSpathiwa);
 
-		DisablePhrase(give_us_resources_space);
+		DisablePhrase(SpathiPhrase::GiveUsResourcesSpace);
 	}
-	else if (PlayerSaid(R, what_do_for_fun))
+	else if (PlayerSaid(R, SpathiPhrase::WhatDoForFun))
 	{
-		NPCPhrase(DO_THIS_FOR_FUN);
+		NPCPhrase(SpathiPhrase::DoThisForFun);
 
-		DisablePhrase(what_do_for_fun);
+		DisablePhrase(SpathiPhrase::WhatDoForFun);
 	}
 
-	if (PhraseEnabled(whats_up_space_2))
+	if (PhraseEnabled(SpathiPhrase::WhatsUpSpace2))
 	{
-		Response(whats_up_space_2, SpathiAllies);
+		Response(SpathiPhrase::WhatsUpSpace2, SpathiAllies);
 	}
-	if (PhraseEnabled(give_us_info_from_space))
+	if (PhraseEnabled(SpathiPhrase::GiveUsInfoFromSpace))
 	{
-		Response(give_us_info_from_space, SpathiAllies);
+		Response(SpathiPhrase::GiveUsInfoFromSpace, SpathiAllies);
 	}
-	if (PhraseEnabled(give_us_resources_space))
+	if (PhraseEnabled(SpathiPhrase::GiveUsResourcesSpace))
 	{
-		Response(give_us_resources_space, SpathiAllies);
+		Response(SpathiPhrase::GiveUsResourcesSpace, SpathiAllies);
 	}
-	if (PhraseEnabled(what_do_for_fun))
+	if (PhraseEnabled(SpathiPhrase::WhatDoForFun))
 	{
-		Response(what_do_for_fun, SpathiAllies);
+		Response(SpathiPhrase::WhatDoForFun, SpathiAllies);
 	}
 	if (getNomadMode() == uqm::NomadMode::Easy)
 	{
-		Response(join_us_nomad, ExitConversation);
+		Response(SpathiPhrase::JoinUsNomad, ExitConversation);
 	}
-	Response(bye_ally_space, ExitConversation);
+	Response(SpathiPhrase::ByeAllySpace, ExitConversation);
 }
 
 static void SpathiFriendly(RESPONSE_REF R)
@@ -608,115 +608,115 @@ static void SpathiFriendly(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(INIT_FRIENDLY_HELLO_SPACE);
+				NPCPhrase(SpathiPhrase::InitFriendlyHelloSpace);
 				break;
 			case 1:
-				NPCPhrase(SUBSEQUENT_FRIENDLY_HELLO_SPACE);
+				NPCPhrase(SpathiPhrase::SubsequentFriendlyHelloSpace);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, since_friendly_give_stuff))
+	else if (PlayerSaid(R, SpathiPhrase::SinceFriendlyGiveStuff))
 	{
-		NPCPhrase(GIVE_ADVICE);
+		NPCPhrase(SpathiPhrase::GiveAdvice);
 
-		DisablePhrase(since_friendly_give_stuff);
+		DisablePhrase(SpathiPhrase::SinceFriendlyGiveStuff);
 	}
-	else if (PlayerSaid(R, whats_up_space_1))
+	else if (PlayerSaid(R, SpathiPhrase::WhatsUpSpace1))
 	{
-		NPCPhrase(GENERAL_INFO_SPACE_1);
+		NPCPhrase(SpathiPhrase::GeneralInfoSpace1);
 
-		DisablePhrase(whats_up_space_1);
+		DisablePhrase(SpathiPhrase::WhatsUpSpace1);
 	}
 
-	if (PhraseEnabled(whats_up_space_1))
+	if (PhraseEnabled(SpathiPhrase::WhatsUpSpace1))
 	{
-		Response(whats_up_space_1, SpathiFriendly);
+		Response(SpathiPhrase::WhatsUpSpace1, SpathiFriendly);
 	}
-	if (PhraseEnabled(since_friendly_give_stuff))
+	if (PhraseEnabled(SpathiPhrase::SinceFriendlyGiveStuff))
 	{
-		Response(since_friendly_give_stuff, SpathiFriendly);
+		Response(SpathiPhrase::SinceFriendlyGiveStuff, SpathiFriendly);
 	}
-	Response(bye_friendly_space, ExitConversation);
+	Response(SpathiPhrase::ByeFriendlySpace, ExitConversation);
 }
 
 static void SpathiNeutral(RESPONSE_REF R);
 
 static void SpathiBefriend(RESPONSE_REF R)
 {
-	RESPONSE_REF pStr[2];
+	SpathiPhrase pStr[2];
 
 	uint8_t InfoLeft {false};
 	uint8_t LastStack {0};
-	pStr[0] = pStr[1] = 0;
-	if (PlayerSaid(R, come_in_peace))
+	pStr[0] = pStr[1] = SpathiPhrase::NullPhrase;
+	if (PlayerSaid(R, SpathiPhrase::ComeInPeace))
 	{
-		NPCPhrase(AGAINST_NATURE);
+		NPCPhrase(SpathiPhrase::AgainstNature);
 	}
-	else if (PlayerSaid(R, looking_for_a_few_good_squids))
+	else if (PlayerSaid(R, SpathiPhrase::LookingForAFewGoodSquids))
 	{
-		NPCPhrase(URQUAN_SLAVES);
+		NPCPhrase(SpathiPhrase::UrquanSlaves);
 
-		DisablePhrase(looking_for_a_few_good_squids);
+		DisablePhrase(SpathiPhrase::LookingForAFewGoodSquids);
 	}
-	else if (PlayerSaid(R, why_slaves))
+	else if (PlayerSaid(R, SpathiPhrase::WhySlaves))
 	{
-		NPCPhrase(UMGAH_TRICK);
+		NPCPhrase(SpathiPhrase::UmgahTrick);
 
-		DisablePhrase(why_slaves);
+		DisablePhrase(SpathiPhrase::WhySlaves);
 	}
-	else if (PlayerSaid(R, tell_us_about_you))
+	else if (PlayerSaid(R, SpathiPhrase::TellUsAboutYou))
 	{
-		NPCPhrase(ABOUT_US);
+		NPCPhrase(SpathiPhrase::AboutUs);
 
-		DisablePhrase(tell_us_about_you);
+		DisablePhrase(SpathiPhrase::TellUsAboutYou);
 		LastStack = 1;
 	}
-	else if (PlayerSaid(R, what_you_really_want))
+	else if (PlayerSaid(R, SpathiPhrase::WhatYouReallyWant))
 	{
-		NPCPhrase(WANT_THIS);
+		NPCPhrase(SpathiPhrase::WantThis);
 
-		DisablePhrase(what_you_really_want);
+		DisablePhrase(SpathiPhrase::WhatYouReallyWant);
 	}
-	else if (PlayerSaid(R, how_about_alliance))
+	else if (PlayerSaid(R, SpathiPhrase::HowAboutAlliance))
 	{
-		NPCPhrase(SURE);
+		NPCPhrase(SpathiPhrase::Sure);
 
-		DisablePhrase(how_about_alliance);
+		DisablePhrase(SpathiPhrase::HowAboutAlliance);
 	}
 
-	if (PhraseEnabled(looking_for_a_few_good_squids))
+	if (PhraseEnabled(SpathiPhrase::LookingForAFewGoodSquids))
 	{
-		pStr[0] = looking_for_a_few_good_squids;
+		pStr[0] = SpathiPhrase::LookingForAFewGoodSquids;
 	}
-	else if (PhraseEnabled(why_slaves))
+	else if (PhraseEnabled(SpathiPhrase::WhySlaves))
 	{
-		pStr[0] = why_slaves;
+		pStr[0] = SpathiPhrase::WhySlaves;
 	}
-	if (PhraseEnabled(tell_us_about_you))
+	if (PhraseEnabled(SpathiPhrase::TellUsAboutYou))
 	{
-		pStr[1] = tell_us_about_you;
+		pStr[1] = SpathiPhrase::TellUsAboutYou;
 	}
-	else if (PhraseEnabled(what_you_really_want))
+	else if (PhraseEnabled(SpathiPhrase::WhatYouReallyWant))
 	{
-		pStr[1] = what_you_really_want;
+		pStr[1] = SpathiPhrase::WhatYouReallyWant;
 	}
-	if (pStr[LastStack])
+	if (pStr[LastStack] != SpathiPhrase::NullPhrase)
 	{
 		InfoLeft = true;
 		Response(pStr[LastStack], SpathiBefriend);
 	}
 	LastStack ^= 1;
-	if (pStr[LastStack])
+	if (pStr[LastStack] != SpathiPhrase::NullPhrase)
 	{
 		InfoLeft = true;
 		Response(pStr[LastStack], SpathiBefriend);
 	}
-	if (PhraseEnabled(how_about_alliance))
+	if (PhraseEnabled(SpathiPhrase::HowAboutAlliance))
 	{
 		InfoLeft = true;
-		Response(how_about_alliance, SpathiBefriend);
+		Response(SpathiPhrase::HowAboutAlliance, SpathiBefriend);
 	}
 
 	if (!InfoLeft)
@@ -728,54 +728,54 @@ static void SpathiBefriend(RESPONSE_REF R)
 
 static void SpathiAntagonize(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, prepare_to_die))
+	if (PlayerSaid(R, SpathiPhrase::PrepareToDie))
 	{
-		NPCPhrase(ALWAYS_PREPARED);
+		NPCPhrase(SpathiPhrase::AlwaysPrepared);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK2, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, heard_youre_cowards))
+	else if (PlayerSaid(R, SpathiPhrase::HeardYoureCowards))
 	{
-		NPCPhrase(DARN_TOOTIN);
+		NPCPhrase(SpathiPhrase::DarnTootin);
 
-		DisablePhrase(heard_youre_cowards);
+		DisablePhrase(SpathiPhrase::HeardYoureCowards);
 	}
-	else if (PlayerSaid(R, wanna_fight))
+	else if (PlayerSaid(R, SpathiPhrase::WannaFight))
 	{
-		NPCPhrase(YES_WE_DO);
+		NPCPhrase(SpathiPhrase::YesWeDo);
 
-		DisablePhrase(wanna_fight);
+		DisablePhrase(SpathiPhrase::WannaFight);
 	}
-	else if (PlayerSaid(R, so_lets_fight))
+	else if (PlayerSaid(R, SpathiPhrase::SoLetsFight))
 	{
-		NPCPhrase(OK_LETS_FIGHT);
+		NPCPhrase(SpathiPhrase::OkLetsFight);
 
-		DisablePhrase(so_lets_fight);
+		DisablePhrase(SpathiPhrase::SoLetsFight);
 	}
-	else if (PlayerSaid(R, so_lets_fight_already))
+	else if (PlayerSaid(R, SpathiPhrase::SoLetsFightAlready))
 	{
-		NPCPhrase(DONT_REALLY_WANT_TO_FIGHT);
+		NPCPhrase(SpathiPhrase::DontReallyWantToFight);
 
-		DisablePhrase(so_lets_fight_already);
+		DisablePhrase(SpathiPhrase::SoLetsFightAlready);
 	}
 
-	if (PhraseEnabled(wanna_fight))
+	if (PhraseEnabled(SpathiPhrase::WannaFight))
 	{
-		Response(wanna_fight, SpathiAntagonize);
+		Response(SpathiPhrase::WannaFight, SpathiAntagonize);
 	}
-	else if (PhraseEnabled(so_lets_fight))
+	else if (PhraseEnabled(SpathiPhrase::SoLetsFight))
 	{
-		Response(so_lets_fight, SpathiAntagonize);
+		Response(SpathiPhrase::SoLetsFight, SpathiAntagonize);
 	}
-	else if (PhraseEnabled(so_lets_fight_already))
+	else if (PhraseEnabled(SpathiPhrase::SoLetsFightAlready))
 	{
-		Response(so_lets_fight_already, SpathiAntagonize);
+		Response(SpathiPhrase::SoLetsFightAlready, SpathiAntagonize);
 	}
-	if (PhraseEnabled(heard_youre_cowards))
+	if (PhraseEnabled(SpathiPhrase::HeardYoureCowards))
 	{
-		Response(heard_youre_cowards, SpathiAntagonize);
+		Response(SpathiPhrase::HeardYoureCowards, SpathiAntagonize);
 	}
-	Response(attack_you_now, ExitConversation);
+	Response(SpathiPhrase::AttackYouNow, ExitConversation);
 }
 
 static void SpathiNeutral(RESPONSE_REF R)
@@ -788,24 +788,24 @@ static void SpathiNeutral(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(INIT_NEUTRAL_HELLO_SPACE);
+				NPCPhrase(SpathiPhrase::InitNeutralHelloSpace);
 				break;
 			case 1:
-				NPCPhrase(SUBSEQUENT_NEUTRAL_HELLO_SPACE);
+				NPCPhrase(SpathiPhrase::SubsequentNeutralHelloSpace);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, look_weird))
+	else if (PlayerSaid(R, SpathiPhrase::LookWeird))
 	{
-		NPCPhrase(YOU_LOOK_WEIRD);
+		NPCPhrase(SpathiPhrase::YouLookWeird);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK0, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, no_look_really_weird))
+	else if (PlayerSaid(R, SpathiPhrase::NoLookReallyWeird))
 	{
-		NPCPhrase(NO_YOU_LOOK_REALLY_WEIRD);
+		NPCPhrase(SpathiPhrase::NoYouLookReallyWeird);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK0, static_cast<uint32_t>(2));
 	}
@@ -813,25 +813,25 @@ static void SpathiNeutral(RESPONSE_REF R)
 	switch (uqm::gameState().flag(uqm::GameFlag::SPATHI_STACK0))
 	{
 		case 0:
-			Response(look_weird, SpathiNeutral);
+			Response(SpathiPhrase::LookWeird, SpathiNeutral);
 			break;
 		case 1:
-			Response(no_look_really_weird, SpathiNeutral);
+			Response(SpathiPhrase::NoLookReallyWeird, SpathiNeutral);
 			break;
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_STACK1) == 0)
 	{
-		Response(come_in_peace, SpathiBefriend);
+		Response(SpathiPhrase::ComeInPeace, SpathiBefriend);
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_STACK2) == 0)
 	{
-		Response(prepare_to_die, SpathiAntagonize);
+		Response(SpathiPhrase::PrepareToDie, SpathiAntagonize);
 	}
 	else
 	{
-		Response(attack_you_now, ExitConversation);
+		Response(SpathiPhrase::AttackYouNow, ExitConversation);
 	}
-	Response(part_in_peace, ExitConversation);
+	Response(SpathiPhrase::PartInPeace, ExitConversation);
 }
 
 static void Intro(void)
@@ -843,7 +843,7 @@ static void Intro(void)
 	{
 		join_us_refusals = 0;
 
-		NPCPhrase(SORRY_ABOUT_THAT);
+		NPCPhrase(SpathiPhrase::SorryAboutThat);
 
 		/* if already know password from Melnorme,
 			 * but haven't visited Spathiwa yet . . .
@@ -855,14 +855,14 @@ static void Intro(void)
 		}
 		SetHomeworldKnown(*HomeId::Spathi);
 
-		Response(identify, SpathiMustGrovel);
-		Response(hi_there, SpathiOnPluto);
-		Response(dont_kill, SpathiOnPluto);
-		Response(we_fight_1, ExitConversation);
+		Response(SpathiPhrase::Identify, SpathiMustGrovel);
+		Response(SpathiPhrase::HiThere, SpathiOnPluto);
+		Response(SpathiPhrase::DontKill, SpathiOnPluto);
+		Response(SpathiPhrase::WeFight1, ExitConversation);
 	}
 	else if (Manner == 2)
 	{
-		NPCPhrase(HATE_YOU_FOREVER_SPACE);
+		NPCPhrase(SpathiPhrase::HateYouForeverSpace);
 		setSegue(Segue::Hostile);
 	}
 	else if (Manner == 1)
@@ -873,19 +873,19 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(INIT_ANGRY_HELLO_SPACE);
+				NPCPhrase(SpathiPhrase::InitAngryHelloSpace);
 				break;
 			case 1:
-				NPCPhrase(SUBSEQUENT_ANGRY_HELLO_SPACE);
+				NPCPhrase(SpathiPhrase::SubsequentAngryHelloSpace);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 
-		Response(give_info_space, ExitConversation);
-		Response(we_sorry_space, ExitConversation);
-		Response(we_fight_again_space, ExitConversation);
-		Response(bye_angry_space, ExitConversation);
+		Response(SpathiPhrase::GiveInfoSpace, ExitConversation);
+		Response(SpathiPhrase::WeSorrySpace, ExitConversation);
+		Response(SpathiPhrase::WeFightAgainSpace, ExitConversation);
+		Response(SpathiPhrase::ByeAngrySpace, ExitConversation);
 	}
 	else if (CheckAlliance(RaceId::Spathi) == RaceAllegiance::Good)
 	{

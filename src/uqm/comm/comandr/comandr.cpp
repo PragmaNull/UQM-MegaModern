@@ -181,102 +181,102 @@ static void RaveParty(void)
 
 static void ByeBye(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, ok_i_will_get_radios))
+	if (PlayerSaid(R, CommanderPhrase::OkIWillGetRadios))
 	{
-		NPCPhrase(THANKS_FOR_HELPING);
+		NPCPhrase(CommanderPhrase::ThanksForHelping);
 	}
-	else if (PlayerSaid(R, well_go_get_them_now))
+	else if (PlayerSaid(R, CommanderPhrase::WellGoGetThemNow))
 	{
-		NPCPhrase(GLAD_WHEN_YOU_COME_BACK);
+		NPCPhrase(CommanderPhrase::GladWhenYouComeBack);
 	}
-	else if (PlayerSaid(R, we_will_take_care_of_base))
+	else if (PlayerSaid(R, CommanderPhrase::WeWillTakeCareOfBase))
 	{
-		NPCPhrase(GOOD_LUCK_WITH_BASE);
+		NPCPhrase(CommanderPhrase::GoodLuckWithBase);
 
 		uqm::gameState().setFlag(uqm::GameFlag::WILL_DESTROY_BASE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, take_care_of_base_again))
+	else if (PlayerSaid(R, CommanderPhrase::TakeCareOfBaseAgain))
 	{
-		NPCPhrase(GOOD_LUCK_AGAIN);
+		NPCPhrase(CommanderPhrase::GoodLuckAgain);
 	}
-	else if (PlayerSaid(R, base_was_abandoned)
-			 || PlayerSaid(R, i_lied_it_was_abandoned))
+	else if (PlayerSaid(R, CommanderPhrase::BaseWasAbandoned)
+			 || PlayerSaid(R, CommanderPhrase::ILiedItWasAbandoned))
 	{
-		NPCPhrase(IT_WAS_ABANDONED);
-		NPCPhrase(HERE_COMES_ILWRATH);
+		NPCPhrase(CommanderPhrase::ItWasAbandoned);
+		NPCPhrase(CommanderPhrase::HereComesIlwrath);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, oh_yes_big_fight))
+	else if (PlayerSaid(R, CommanderPhrase::OhYesBigFight))
 	{
-		NPCPhrase(IM_GLAD_YOU_WON);
-		NPCPhrase(HERE_COMES_ILWRATH);
+		NPCPhrase(CommanderPhrase::ImGladYouWon);
+		NPCPhrase(CommanderPhrase::HereComesIlwrath);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, i_cant_talk_about_it))
+	else if (PlayerSaid(R, CommanderPhrase::ICantTalkAboutIt))
 	{
-		NPCPhrase(IM_SURE_IT_WAS_DIFFICULT);
-		NPCPhrase(HERE_COMES_ILWRATH);
+		NPCPhrase(CommanderPhrase::ImSureItWasDifficult);
+		NPCPhrase(CommanderPhrase::HereComesIlwrath);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, cook_their_butts)
-			 || PlayerSaid(R, overthrow_evil_aliens)
-			 || PlayerSaid(R, annihilate_those_monsters))
+	else if (PlayerSaid(R, CommanderPhrase::CookTheirButts)
+			 || PlayerSaid(R, CommanderPhrase::OverthrowEvilAliens)
+			 || PlayerSaid(R, CommanderPhrase::AnnihilateThoseMonsters))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER, static_cast<uint32_t>(0));
 
-		if (PlayerSaid(R, cook_their_butts))
+		if (PlayerSaid(R, CommanderPhrase::CookTheirButts))
 		{
-			NPCPhrase(COOK_BUTTS);
+			NPCPhrase(CommanderPhrase::CookButts);
 		}
-		else if (PlayerSaid(R, overthrow_evil_aliens))
+		else if (PlayerSaid(R, CommanderPhrase::OverthrowEvilAliens))
 		{
-			NPCPhrase(OVERTHROW_ALIENS);
+			NPCPhrase(CommanderPhrase::OverthrowAliens);
 		}
-		else /* if (R == annihilate_those_monsters) */
+		else /* if (R == CommanderPhrase::AnnihilateThoseMonsters) */
 		{
-			NPCPhrase(KILL_MONSTERS);
+			NPCPhrase(CommanderPhrase::KillMonsters);
 		}
 
-		NPCPhrase(THIS_MAY_SEEM_SILLY);
+		NPCPhrase(CommanderPhrase::ThisMaySeemSilly);
 
-		Response(name_1, ByeBye);
-		Response(name_2, ByeBye);
-		Response(name_3, ByeBye);
-		Response(name_4, ByeBye);
+		Response(CommanderPhrase::Name1, ByeBye);
+		Response(CommanderPhrase::Name2, ByeBye);
+		Response(CommanderPhrase::Name3, ByeBye);
+		Response(CommanderPhrase::Name4, ByeBye);
 
 		uqm::gameState().setFlag(uqm::GameFlag::STARBASE_AVAILABLE, static_cast<uint32_t>(1));
 	}
 	else
 	{
-		if (PlayerSaid(R, name_1))
+		if (PlayerSaid(R, CommanderPhrase::Name1))
 		{
-			NPCPhrase(OK_THE_NAFS);
+			NPCPhrase(CommanderPhrase::OkTheNafs);
 
 			uqm::gameState().setFlag(uqm::GameFlag::NEW_ALLIANCE_NAME, static_cast<uint32_t>(0));
 		}
-		else if (PlayerSaid(R, name_2))
+		else if (PlayerSaid(R, CommanderPhrase::Name2))
 		{
-			NPCPhrase(OK_THE_CAN);
+			NPCPhrase(CommanderPhrase::OkTheCan);
 
 			uqm::gameState().setFlag(uqm::GameFlag::NEW_ALLIANCE_NAME, static_cast<uint32_t>(1));
 		}
-		else if (PlayerSaid(R, name_3))
+		else if (PlayerSaid(R, CommanderPhrase::Name3))
 		{
-			NPCPhrase(OK_THE_UFW);
+			NPCPhrase(CommanderPhrase::OkTheUfw);
 
 			uqm::gameState().setFlag(uqm::GameFlag::NEW_ALLIANCE_NAME, static_cast<uint32_t>(2));
 		}
-		else /* if (PlayerSaid (R, name_4)) */
+		else /* if (PlayerSaid (R, CommanderPhrase::Name4)) */
 		{
-			NPCPhrase(OK_THE_NAME_IS_EMPIRE);
+			NPCPhrase(CommanderPhrase::OkTheNameIsEmpire);
 
 			uqm::gameState().setFlag(uqm::GameFlag::NEW_ALLIANCE_NAME, static_cast<uint32_t>(3));
 		}
 
-		NPCPhrase(STARBASE_WILL_BE_READY);
+		NPCPhrase(CommanderPhrase::StarbaseWillBeReady);
 	}
 }
 
@@ -284,9 +284,9 @@ static void GiveRadios(RESPONSE_REF R);
 
 static void NoRadioactives(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, yes_this_is_supply_ship))
+	if (PlayerSaid(R, CommanderPhrase::YesThisIsSupplyShip))
 	{
-		NPCPhrase(ABOUT_TIME);
+		NPCPhrase(CommanderPhrase::AboutTime);
 
 		if (uqm::gameState().sis().ElementAmounts[*MineralCategory::Radioactive])
 		{
@@ -294,57 +294,57 @@ static void NoRadioactives(RESPONSE_REF R)
 		}
 		else
 		{
-			Response(i_lied, NoRadioactives);
-			Response(plumb_out, NoRadioactives);
+			Response(CommanderPhrase::ILied, NoRadioactives);
+			Response(CommanderPhrase::PlumbOut, NoRadioactives);
 		}
 	}
 	else
 	{
-		if (PlayerSaid(R, where_can_i_get_radios))
+		if (PlayerSaid(R, CommanderPhrase::WhereCanIGetRadios))
 		{
-			NPCPhrase(RADIOS_ON_MERCURY);
+			NPCPhrase(CommanderPhrase::RadiosOnMercury);
 
-			DisablePhrase(where_can_i_get_radios);
+			DisablePhrase(CommanderPhrase::WhereCanIGetRadios);
 		}
-		else if (PlayerSaid(R, no_but_well_help))
+		else if (PlayerSaid(R, CommanderPhrase::NoButWellHelp))
 		{
-			NPCPhrase(THE_WHAT_FROM_WHERE);
+			NPCPhrase(CommanderPhrase::TheWhatFromWhere);
 		}
-		else if (PlayerSaid(R, what_slave_planet)
-				 || PlayerSaid(R, i_lied))
+		else if (PlayerSaid(R, CommanderPhrase::WhatSlavePlanet)
+				 || PlayerSaid(R, CommanderPhrase::ILied))
 		{
-			NPCPhrase(DONT_KNOW_WHO_YOU_ARE);
+			NPCPhrase(CommanderPhrase::DontKnowWhoYouAre);
 		}
-		else if (PlayerSaid(R, plumb_out))
+		else if (PlayerSaid(R, CommanderPhrase::PlumbOut))
 		{
-			NPCPhrase(WHAT_KIND_OF_IDIOT);
+			NPCPhrase(CommanderPhrase::WhatKindOfIdiot);
 		}
-		else if (PlayerSaid(R, i_lost_my_lander))
+		else if (PlayerSaid(R, CommanderPhrase::ILostMyLander))
 		{
-			NPCPhrase(HERE_IS_A_NEW_LANDER);
+			NPCPhrase(CommanderPhrase::HereIsANewLander);
 			++uqm::gameState().sis().NumLanders;
 			DrawLanders();
 			DeltaSISGauges(4, 0, 0);
 
 			uqm::gameState().setFlag(uqm::GameFlag::LANDERS_LOST, static_cast<uint32_t>(1));
 		}
-		else if (PlayerSaid(R, i_lost_another_lander))
+		else if (PlayerSaid(R, CommanderPhrase::ILostAnotherLander))
 		{
-			NPCPhrase(HERE_IS_ANOTHER_LANDER);
+			NPCPhrase(CommanderPhrase::HereIsAnotherLander);
 			++uqm::gameState().sis().NumLanders;
 			DrawLanders();
 			DeltaSISGauges(4, 0, 0);
 		}
-		else if (PlayerSaid(R, need_fuel_mercury) || PlayerSaid(R, need_fuel_luna))
+		else if (PlayerSaid(R, CommanderPhrase::NeedFuelMercury) || PlayerSaid(R, CommanderPhrase::NeedFuelLuna))
 		{
-			NPCPhrase(GIVE_FUEL);
+			NPCPhrase(CommanderPhrase::GiveFuel);
 			DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
 			uqm::gameState().setFlag(uqm::GameFlag::GIVEN_FUEL_BEFORE, static_cast<uint32_t>(1));
 		}
-		else if (PlayerSaid(R, need_fuel_again))
+		else if (PlayerSaid(R, CommanderPhrase::NeedFuelAgain))
 		{
-			NPCPhrase(GIVE_FUEL_AGAIN);
+			NPCPhrase(CommanderPhrase::GiveFuelAgain);
 			DeltaSISGauges(0, 5 * FuelTankScale, 0);
 		}
 
@@ -359,29 +359,29 @@ static void NoRadioactives(RESPONSE_REF R)
 			{
 				if (uqm::gameState().flag(uqm::GameFlag::LANDERS_LOST))
 				{
-					Response(i_lost_another_lander, NoRadioactives);
+					Response(CommanderPhrase::ILostAnotherLander, NoRadioactives);
 				}
 				else
 				{
-					Response(i_lost_my_lander, NoRadioactives);
+					Response(CommanderPhrase::ILostMyLander, NoRadioactives);
 				}
 			}
 			if (uqm::gameState().sis().FuelOnBoard < 2 * FuelTankScale)
 			{
 				if (uqm::gameState().flag(uqm::GameFlag::GIVEN_FUEL_BEFORE))
 				{
-					Response(need_fuel_again, NoRadioactives);
+					Response(CommanderPhrase::NeedFuelAgain, NoRadioactives);
 				}
 				else
 				{
-					Response(need_fuel_mercury, NoRadioactives);
+					Response(CommanderPhrase::NeedFuelMercury, NoRadioactives);
 				}
 			}
 
-			Response(ok_i_will_get_radios, ByeBye);
-			if (PhraseEnabled(where_can_i_get_radios))
+			Response(CommanderPhrase::OkIWillGetRadios, ByeBye);
+			if (PhraseEnabled(CommanderPhrase::WhereCanIGetRadios))
 			{
-				Response(where_can_i_get_radios, NoRadioactives);
+				Response(CommanderPhrase::WhereCanIGetRadios, NoRadioactives);
 			}
 		}
 	}
@@ -389,39 +389,39 @@ static void NoRadioactives(RESPONSE_REF R)
 
 static void AskAfterRadios(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, i_lost_my_lander))
+	if (PlayerSaid(R, CommanderPhrase::ILostMyLander))
 	{
-		NPCPhrase(HERE_IS_A_NEW_LANDER);
+		NPCPhrase(CommanderPhrase::HereIsANewLander);
 		++uqm::gameState().sis().NumLanders;
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 
 		uqm::gameState().setFlag(uqm::GameFlag::LANDERS_LOST, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, i_lost_another_lander))
+	else if (PlayerSaid(R, CommanderPhrase::ILostAnotherLander))
 	{
-		NPCPhrase(HERE_IS_ANOTHER_LANDER);
+		NPCPhrase(CommanderPhrase::HereIsAnotherLander);
 		++uqm::gameState().sis().NumLanders;
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 	}
-	else if (PlayerSaid(R, need_fuel_mercury) || PlayerSaid(R, need_fuel_luna))
+	else if (PlayerSaid(R, CommanderPhrase::NeedFuelMercury) || PlayerSaid(R, CommanderPhrase::NeedFuelLuna))
 	{
-		NPCPhrase(GIVE_FUEL);
+		NPCPhrase(CommanderPhrase::GiveFuel);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
 		uqm::gameState().setFlag(uqm::GameFlag::GIVEN_FUEL_BEFORE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, need_fuel_again))
+	else if (PlayerSaid(R, CommanderPhrase::NeedFuelAgain))
 	{
-		NPCPhrase(GIVE_FUEL_AGAIN);
+		NPCPhrase(CommanderPhrase::GiveFuelAgain);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 	}
-	else if (PlayerSaid(R, where_get_radios))
+	else if (PlayerSaid(R, CommanderPhrase::WhereGetRadios))
 	{
-		NPCPhrase(RADIOS_ON_MERCURY);
+		NPCPhrase(CommanderPhrase::RadiosOnMercury);
 
-		DisablePhrase(where_get_radios);
+		DisablePhrase(CommanderPhrase::WhereGetRadios);
 	}
 
 	{
@@ -430,55 +430,55 @@ static void AskAfterRadios(RESPONSE_REF R)
 		{
 			if (uqm::gameState().flag(uqm::GameFlag::LANDERS_LOST))
 			{
-				Response(i_lost_another_lander, AskAfterRadios);
+				Response(CommanderPhrase::ILostAnotherLander, AskAfterRadios);
 			}
 			else
 			{
-				Response(i_lost_my_lander, AskAfterRadios);
+				Response(CommanderPhrase::ILostMyLander, AskAfterRadios);
 			}
 		}
 		if (uqm::gameState().sis().FuelOnBoard < 2 * FuelTankScale)
 		{
 			if (uqm::gameState().flag(uqm::GameFlag::GIVEN_FUEL_BEFORE))
 			{
-				Response(need_fuel_again, AskAfterRadios);
+				Response(CommanderPhrase::NeedFuelAgain, AskAfterRadios);
 			}
 			else
 			{
-				Response(need_fuel_mercury, AskAfterRadios);
+				Response(CommanderPhrase::NeedFuelMercury, AskAfterRadios);
 			}
 		}
-		Response(well_go_get_them_now, ByeBye);
-		if (PhraseEnabled(where_get_radios))
+		Response(CommanderPhrase::WellGoGetThemNow, ByeBye);
+		if (PhraseEnabled(CommanderPhrase::WhereGetRadios))
 		{
-			Response(where_get_radios, AskAfterRadios);
+			Response(CommanderPhrase::WhereGetRadios, AskAfterRadios);
 		}
 	}
 }
 
 static void BaseDestroyed(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, we_fought_them))
+	if (PlayerSaid(R, CommanderPhrase::WeFoughtThem))
 	{
-		NPCPhrase(YOU_REALLY_FOUGHT_BASE);
+		NPCPhrase(CommanderPhrase::YouReallyFoughtBase);
 
-		Response(oh_yes_big_fight, ByeBye);
-		Response(i_lied_it_was_abandoned, ByeBye);
-		Response(i_cant_talk_about_it, ByeBye);
+		Response(CommanderPhrase::OhYesBigFight, ByeBye);
+		Response(CommanderPhrase::ILiedItWasAbandoned, ByeBye);
+		Response(CommanderPhrase::ICantTalkAboutIt, ByeBye);
 	}
 	else
 	{
-		if (PlayerSaid(R, we_are_here_to_help))
+		if (PlayerSaid(R, CommanderPhrase::WeAreHereToHelp))
 		{
-			NPCPhrase(BASE_ON_MOON);
+			NPCPhrase(CommanderPhrase::BaseOnMoon);
 		}
 		else
 		{
-			NPCPhrase(DEALT_WITH_BASE_YET);
+			NPCPhrase(CommanderPhrase::DealtWithBaseYet);
 		}
 
-		Response(base_was_abandoned, ByeBye);
-		Response(we_fought_them, BaseDestroyed);
+		Response(CommanderPhrase::BaseWasAbandoned, ByeBye);
+		Response(CommanderPhrase::WeFoughtThem, BaseDestroyed);
 	}
 }
 
@@ -486,49 +486,49 @@ static void TellMoonBase(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		NPCPhrase(DEALT_WITH_BASE_YET);
+		NPCPhrase(CommanderPhrase::DealtWithBaseYet);
 	}
-	else if (PlayerSaid(R, i_lost_my_lander))
+	else if (PlayerSaid(R, CommanderPhrase::ILostMyLander))
 	{
-		NPCPhrase(HERE_IS_A_NEW_LANDER);
+		NPCPhrase(CommanderPhrase::HereIsANewLander);
 		++uqm::gameState().sis().NumLanders;
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 
 		uqm::gameState().setFlag(uqm::GameFlag::LANDERS_LOST, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, i_lost_another_lander))
+	else if (PlayerSaid(R, CommanderPhrase::ILostAnotherLander))
 	{
-		NPCPhrase(HERE_IS_ANOTHER_LANDER);
+		NPCPhrase(CommanderPhrase::HereIsAnotherLander);
 		++uqm::gameState().sis().NumLanders;
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 	}
-	else if (PlayerSaid(R, need_fuel_mercury) || PlayerSaid(R, need_fuel_luna))
+	else if (PlayerSaid(R, CommanderPhrase::NeedFuelMercury) || PlayerSaid(R, CommanderPhrase::NeedFuelLuna))
 	{
-		NPCPhrase(GIVE_FUEL);
+		NPCPhrase(CommanderPhrase::GiveFuel);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
 		uqm::gameState().setFlag(uqm::GameFlag::GIVEN_FUEL_BEFORE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, need_fuel_again))
+	else if (PlayerSaid(R, CommanderPhrase::NeedFuelAgain))
 	{
-		NPCPhrase(GIVE_FUEL_AGAIN);
+		NPCPhrase(CommanderPhrase::GiveFuelAgain);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 	}
-	else if (PlayerSaid(R, we_are_here_to_help))
+	else if (PlayerSaid(R, CommanderPhrase::WeAreHereToHelp))
 	{
-		NPCPhrase(BASE_ON_MOON);
+		NPCPhrase(CommanderPhrase::BaseOnMoon);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::STARBASE_YACK_STACK1) == 0)
 	{
-		NPCPhrase(ABOUT_BASE);
+		NPCPhrase(CommanderPhrase::AboutBase);
 
 		uqm::gameState().setFlag(uqm::GameFlag::STARBASE_YACK_STACK1, static_cast<uint32_t>(1));
 	}
 	else
 	{
-		NPCPhrase(ABOUT_BASE_AGAIN);
+		NPCPhrase(CommanderPhrase::AboutBaseAgain);
 	}
 
 	if (uqm::gameState().sis().NumLanders == 0
@@ -536,39 +536,39 @@ static void TellMoonBase(RESPONSE_REF R)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::LANDERS_LOST))
 		{
-			Response(i_lost_another_lander, TellMoonBase);
+			Response(CommanderPhrase::ILostAnotherLander, TellMoonBase);
 		}
 		else
 		{
-			Response(i_lost_my_lander, TellMoonBase);
+			Response(CommanderPhrase::ILostMyLander, TellMoonBase);
 		}
 	}
 	if (uqm::gameState().sis().FuelOnBoard < 2 * FuelTankScale)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GIVEN_FUEL_BEFORE))
 		{
-			Response(need_fuel_again, TellMoonBase);
+			Response(CommanderPhrase::NeedFuelAgain, TellMoonBase);
 		}
 		else
 		{
-			Response(need_fuel_luna, TellMoonBase);
+			Response(CommanderPhrase::NeedFuelLuna, TellMoonBase);
 		}
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::WILL_DESTROY_BASE) == 0)
 	{
-		Response(we_will_take_care_of_base, ByeBye);
+		Response(CommanderPhrase::WeWillTakeCareOfBase, ByeBye);
 	}
 	else
 	{
-		Response(take_care_of_base_again, ByeBye);
+		Response(CommanderPhrase::TakeCareOfBaseAgain, ByeBye);
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::STARBASE_YACK_STACK1) == 0)
 	{
-		Response(tell_me_about_base, TellMoonBase);
+		Response(CommanderPhrase::TellMeAboutBase, TellMoonBase);
 	}
 	else
 	{
-		Response(tell_me_again, TellMoonBase);
+		Response(CommanderPhrase::TellMeAgain, TellMoonBase);
 	}
 }
 
@@ -577,114 +577,114 @@ static void RevealSelf(RESPONSE_REF R);
 static void TellProbe(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	NPCPhrase(THAT_WAS_PROBE);
-	DisablePhrase(what_was_red_thing);
+	NPCPhrase(CommanderPhrase::ThatWasProbe);
+	DisablePhrase(CommanderPhrase::WhatWasRedThing);
 
-	Response(it_went_away, RevealSelf);
-	Response(we_destroyed_it, RevealSelf);
-	Response(what_probe, RevealSelf);
+	Response(CommanderPhrase::ItWentAway, RevealSelf);
+	Response(CommanderPhrase::WeDestroyedIt, RevealSelf);
+	Response(CommanderPhrase::WhatProbe, RevealSelf);
 }
 
 static void RevealSelf(RESPONSE_REF R)
 {
 	uint8_t stack {0};
-	if (PlayerSaid(R, we_are_vindicator))
+	if (PlayerSaid(R, CommanderPhrase::WeAreVindicator))
 	{
-		NPCPhrase(THATS_IMPOSSIBLE);
+		NPCPhrase(CommanderPhrase::ThatsImpossible);
 
-		DisablePhrase(we_are_vindicator);
+		DisablePhrase(CommanderPhrase::WeAreVindicator);
 	}
-	else if (PlayerSaid(R, our_mission_was_secret))
+	else if (PlayerSaid(R, CommanderPhrase::OurMissionWasSecret))
 	{
-		NPCPhrase(ACKNOWLEDGE_SECRET);
+		NPCPhrase(CommanderPhrase::AcknowledgeSecret);
 
-		DisablePhrase(our_mission_was_secret);
+		DisablePhrase(CommanderPhrase::OurMissionWasSecret);
 	}
-	else if (PlayerSaid(R, first_give_info))
+	else if (PlayerSaid(R, CommanderPhrase::FirstGiveInfo))
 	{
-		NPCPhrase(ASK_AWAY);
-
-		stack = 1;
-		DisablePhrase(first_give_info);
-	}
-	else if (PlayerSaid(R, whats_this_starbase))
-	{
-		NPCPhrase(STARBASE_IS);
+		NPCPhrase(CommanderPhrase::AskAway);
 
 		stack = 1;
-		DisablePhrase(whats_this_starbase);
+		DisablePhrase(CommanderPhrase::FirstGiveInfo);
 	}
-	else if (PlayerSaid(R, what_about_earth))
+	else if (PlayerSaid(R, CommanderPhrase::WhatsThisStarbase))
 	{
-		NPCPhrase(HAPPENED_TO_EARTH);
+		NPCPhrase(CommanderPhrase::StarbaseIs);
 
 		stack = 1;
-		DisablePhrase(what_about_earth);
+		DisablePhrase(CommanderPhrase::WhatsThisStarbase);
 	}
-	else if (PlayerSaid(R, where_are_urquan))
+	else if (PlayerSaid(R, CommanderPhrase::WhatAboutEarth))
 	{
-		NPCPhrase(URQUAN_LEFT);
+		NPCPhrase(CommanderPhrase::HappenedToEarth);
 
 		stack = 1;
-		DisablePhrase(where_are_urquan);
+		DisablePhrase(CommanderPhrase::WhatAboutEarth);
 	}
-	else if (PlayerSaid(R, it_went_away))
+	else if (PlayerSaid(R, CommanderPhrase::WhereAreUrquan))
 	{
-		NPCPhrase(DEEP_TROUBLE);
+		NPCPhrase(CommanderPhrase::UrquanLeft);
+
+		stack = 1;
+		DisablePhrase(CommanderPhrase::WhereAreUrquan);
 	}
-	else if (PlayerSaid(R, we_destroyed_it))
+	else if (PlayerSaid(R, CommanderPhrase::ItWentAway))
 	{
-		NPCPhrase(GOOD_NEWS);
+		NPCPhrase(CommanderPhrase::DeepTrouble);
 	}
-	else if (PlayerSaid(R, what_probe))
+	else if (PlayerSaid(R, CommanderPhrase::WeDestroyedIt))
 	{
-		NPCPhrase(SURE_HOPE);
+		NPCPhrase(CommanderPhrase::GoodNews);
+	}
+	else if (PlayerSaid(R, CommanderPhrase::WhatProbe))
+	{
+		NPCPhrase(CommanderPhrase::SureHope);
 	}
 
 	for (uint8_t i {0}; i < 2; ++i, stack ^= 1)
 	{
 		if (stack == 1)
 		{
-			if (PhraseEnabled(first_give_info))
+			if (PhraseEnabled(CommanderPhrase::FirstGiveInfo))
 			{
-				Response(first_give_info, RevealSelf);
+				Response(CommanderPhrase::FirstGiveInfo, RevealSelf);
 			}
-			else if (PhraseEnabled(whats_this_starbase))
+			else if (PhraseEnabled(CommanderPhrase::WhatsThisStarbase))
 			{
-				Response(whats_this_starbase, RevealSelf);
+				Response(CommanderPhrase::WhatsThisStarbase, RevealSelf);
 			}
-			else if (PhraseEnabled(what_about_earth))
+			else if (PhraseEnabled(CommanderPhrase::WhatAboutEarth))
 			{
-				Response(what_about_earth, RevealSelf);
+				Response(CommanderPhrase::WhatAboutEarth, RevealSelf);
 			}
-			else if (PhraseEnabled(where_are_urquan))
+			else if (PhraseEnabled(CommanderPhrase::WhereAreUrquan))
 			{
-				Response(where_are_urquan, RevealSelf);
+				Response(CommanderPhrase::WhereAreUrquan, RevealSelf);
 			}
-			else if (PhraseEnabled(what_was_red_thing))
+			else if (PhraseEnabled(CommanderPhrase::WhatWasRedThing))
 			{
-				Response(what_was_red_thing, TellProbe);
+				Response(CommanderPhrase::WhatWasRedThing, TellProbe);
 			}
 		}
 		else
 		{
-			if (PhraseEnabled(we_are_vindicator))
+			if (PhraseEnabled(CommanderPhrase::WeAreVindicator))
 			{
-				Response(we_are_vindicator, RevealSelf);
+				Response(CommanderPhrase::WeAreVindicator, RevealSelf);
 			}
-			else if (PhraseEnabled(our_mission_was_secret))
+			else if (PhraseEnabled(CommanderPhrase::OurMissionWasSecret))
 			{
-				Response(our_mission_was_secret, RevealSelf);
+				Response(CommanderPhrase::OurMissionWasSecret, RevealSelf);
 			}
 			else
 			{
 				if (uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED) == 0)
 				{
-					Response(we_are_here_to_help, TellMoonBase);
+					Response(CommanderPhrase::WeAreHereToHelp, TellMoonBase);
 				}
 				else
 				{
-					Response(we_are_here_to_help, BaseDestroyed);
+					Response(CommanderPhrase::WeAreHereToHelp, BaseDestroyed);
 				}
 			}
 		}
@@ -693,12 +693,12 @@ static void RevealSelf(RESPONSE_REF R)
 
 static void GiveRadios(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, we_will_transfer_now))
+	if (PlayerSaid(R, CommanderPhrase::WeWillTransferNow))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::RADIOACTIVES_PROVIDED, static_cast<uint32_t>(1));
 
-		NPCPhrase(FUEL_UP0);
-		NPCPhrase(FUEL_UP1);
+		NPCPhrase(CommanderPhrase::FuelUp0);
+		NPCPhrase(CommanderPhrase::FuelUp1);
 		AlienTalkSegue(1);
 
 		CommData.AlienAmbientArray[2].AnimFlags |= AnimDisabled;
@@ -747,18 +747,18 @@ static void GiveRadios(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PlayerSaid(R, what_will_you_give_us))
+		if (PlayerSaid(R, CommanderPhrase::WhatWillYouGiveUs))
 		{
-			NPCPhrase(MESSAGE_GARBLED_1);
+			NPCPhrase(CommanderPhrase::MessageGarbled1);
 		}
-		else if (PlayerSaid(R, before_radios_we_need_info))
+		else if (PlayerSaid(R, CommanderPhrase::BeforeRadiosWeNeedInfo))
 		{
-			NPCPhrase(MESSAGE_GARBLED_2);
+			NPCPhrase(CommanderPhrase::MessageGarbled2);
 		}
 
-		Response(we_will_transfer_now, GiveRadios);
-		Response(what_will_you_give_us, GiveRadios);
-		Response(before_radios_we_need_info, GiveRadios);
+		Response(CommanderPhrase::WeWillTransferNow, GiveRadios);
+		Response(CommanderPhrase::WhatWillYouGiveUs, GiveRadios);
+		Response(CommanderPhrase::BeforeRadiosWeNeedInfo, GiveRadios);
 	}
 }
 
@@ -771,11 +771,11 @@ static void Intro(void)
 
 	if (uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER))
 	{
-		NPCPhrase(VERY_IMPRESSIVE);
+		NPCPhrase(CommanderPhrase::VeryImpressive);
 
-		Response(cook_their_butts, ByeBye);
-		Response(overthrow_evil_aliens, ByeBye);
-		Response(annihilate_those_monsters, ByeBye);
+		Response(CommanderPhrase::CookTheirButts, ByeBye);
+		Response(CommanderPhrase::OverthrowEvilAliens, ByeBye);
+		Response(CommanderPhrase::AnnihilateThoseMonsters, ByeBye);
 	}
 	else if (uqm::gameState().flag(uqm::GameFlag::STARBASE_VISITED))
 	{
@@ -794,7 +794,7 @@ static void Intro(void)
 		{
 			RaveParty();
 
-			NPCPhrase(DO_YOU_HAVE_RADIO_THIS_TIME);
+			NPCPhrase(CommanderPhrase::DoYouHaveRadioThisTime);
 
 			if (uqm::gameState().sis().ElementAmounts[*MineralCategory::Radioactive])
 			{
@@ -812,10 +812,10 @@ static void Intro(void)
 
 		uqm::gameState().setFlag(uqm::GameFlag::STARBASE_VISITED, static_cast<uint32_t>(1));
 
-		NPCPhrase(ARE_YOU_SUPPLY_SHIP);
-		Response(no_but_well_help, NoRadioactives);
-		Response(yes_this_is_supply_ship, NoRadioactives);
-		Response(what_slave_planet, NoRadioactives);
+		NPCPhrase(CommanderPhrase::AreYouSupplyShip);
+		Response(CommanderPhrase::NoButWellHelp, NoRadioactives);
+		Response(CommanderPhrase::YesThisIsSupplyShip, NoRadioactives);
+		Response(CommanderPhrase::WhatSlavePlanet, NoRadioactives);
 	}
 }
 

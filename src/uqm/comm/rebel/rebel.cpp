@@ -243,9 +243,9 @@ static ConversationData yehat_desc =
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, bye_rebel))
+	if (PlayerSaid(R, YehatRebelPhrase::ByeRebel))
 	{
-		NPCPhrase(GOODBYE_REBEL);
+		NPCPhrase(YehatRebelPhrase::GoodbyeRebel);
 	}
 }
 
@@ -254,72 +254,72 @@ static void Rebels(RESPONSE_REF R);
 static void RebelInfo(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
-	if (PlayerSaid(R, give_info_rebels))
+	if (PlayerSaid(R, YehatRebelPhrase::GiveInfoRebels))
 	{
-		NPCPhrase(WHAT_INFO);
+		NPCPhrase(YehatRebelPhrase::WhatInfo);
 	}
-	else if (PlayerSaid(R, what_about_urquan))
+	else if (PlayerSaid(R, YehatRebelPhrase::WhatAboutUrquan))
 	{
-		NPCPhrase(ABOUT_URQUAN);
+		NPCPhrase(YehatRebelPhrase::AboutUrquan);
 
-		DisablePhrase(what_about_urquan);
+		DisablePhrase(YehatRebelPhrase::WhatAboutUrquan);
 	}
-	else if (PlayerSaid(R, what_about_royalty))
+	else if (PlayerSaid(R, YehatRebelPhrase::WhatAboutRoyalty))
 	{
-		NPCPhrase(ABOUT_ROYALTY);
+		NPCPhrase(YehatRebelPhrase::AboutRoyalty);
 
-		DisablePhrase(what_about_royalty);
+		DisablePhrase(YehatRebelPhrase::WhatAboutRoyalty);
 	}
-	else if (PlayerSaid(R, what_about_war))
+	else if (PlayerSaid(R, YehatRebelPhrase::WhatAboutWar))
 	{
-		NPCPhrase(ABOUT_WAR);
+		NPCPhrase(YehatRebelPhrase::AboutWar);
 		SetHomeworldKnown(*HomeId::Shofixti);
 
-		DisablePhrase(what_about_war);
+		DisablePhrase(YehatRebelPhrase::WhatAboutWar);
 	}
-	else if (PlayerSaid(R, what_about_vux))
+	else if (PlayerSaid(R, YehatRebelPhrase::WhatAboutVux))
 	{
-		NPCPhrase(ABOUT_VUX);
+		NPCPhrase(YehatRebelPhrase::AboutVux);
 
-		DisablePhrase(what_about_vux);
+		DisablePhrase(YehatRebelPhrase::WhatAboutVux);
 	}
-	else if (PlayerSaid(R, what_about_clue))
+	else if (PlayerSaid(R, YehatRebelPhrase::WhatAboutClue))
 	{
-		NPCPhrase(ABOUT_CLUE);
+		NPCPhrase(YehatRebelPhrase::AboutClue);
 
-		DisablePhrase(what_about_clue);
+		DisablePhrase(YehatRebelPhrase::WhatAboutClue);
 	}
 
-	if (PhraseEnabled(what_about_urquan))
+	if (PhraseEnabled(YehatRebelPhrase::WhatAboutUrquan))
 	{
-		Response(what_about_urquan, RebelInfo);
+		Response(YehatRebelPhrase::WhatAboutUrquan, RebelInfo);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_royalty))
+	if (PhraseEnabled(YehatRebelPhrase::WhatAboutRoyalty))
 	{
-		Response(what_about_royalty, RebelInfo);
+		Response(YehatRebelPhrase::WhatAboutRoyalty, RebelInfo);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_war))
+	if (PhraseEnabled(YehatRebelPhrase::WhatAboutWar))
 	{
-		Response(what_about_war, RebelInfo);
+		Response(YehatRebelPhrase::WhatAboutWar, RebelInfo);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_vux))
+	if (PhraseEnabled(YehatRebelPhrase::WhatAboutVux))
 	{
-		Response(what_about_vux, RebelInfo);
+		Response(YehatRebelPhrase::WhatAboutVux, RebelInfo);
 		InfoLeft = true;
 	}
-	if (PhraseEnabled(what_about_clue))
+	if (PhraseEnabled(YehatRebelPhrase::WhatAboutClue))
 	{
-		Response(what_about_clue, RebelInfo);
+		Response(YehatRebelPhrase::WhatAboutClue, RebelInfo);
 		InfoLeft = true;
 	}
-	Response(enough_info, Rebels);
+	Response(YehatRebelPhrase::EnoughInfo, Rebels);
 
 	if (!InfoLeft)
 	{
-		DisablePhrase(give_info_rebels);
+		DisablePhrase(YehatRebelPhrase::GiveInfoRebels);
 	}
 }
 
@@ -327,38 +327,38 @@ static void Rebels(RESPONSE_REF R)
 {
 	uint16_t NumVisits {};
 
-	if (PlayerSaid(R, how_goes_revolution))
+	if (PlayerSaid(R, YehatRebelPhrase::HowGoesRevolution))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(REBEL_REVOLUTION_1);
+				NPCPhrase(YehatRebelPhrase::RebelRevolution1);
 				break;
 			case 1:
-				NPCPhrase(REBEL_REVOLUTION_2);
+				NPCPhrase(YehatRebelPhrase::RebelRevolution2);
 				break;
 			case 2:
-				NPCPhrase(REBEL_REVOLUTION_3);
+				NPCPhrase(YehatRebelPhrase::RebelRevolution3);
 				break;
 			case 3:
-				NPCPhrase(REBEL_REVOLUTION_4);
+				NPCPhrase(YehatRebelPhrase::RebelRevolution4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(how_goes_revolution);
+		DisablePhrase(YehatRebelPhrase::HowGoesRevolution);
 	}
-	else if (PlayerSaid(R, any_ships))
+	else if (PlayerSaid(R, YehatRebelPhrase::AnyShips))
 	{
 		if (!ShipsReady(RaceId::Yehat))
 		{
-			NPCPhrase(NO_SHIPS_YET);
+			NPCPhrase(YehatRebelPhrase::NoShipsYet);
 		}
 		else if ((NumVisits = EscortFeasibilityStudy(RaceId::Yehat)) == 0)
 		{
-			NPCPhrase(NO_ROOM);
+			NPCPhrase(YehatRebelPhrase::NoRoom);
 		}
 		else
 		{
@@ -366,12 +366,12 @@ static void Rebels(RESPONSE_REF R)
 
 			if (NumVisits < numYehatShips)
 			{
-				NPCPhrase(HAVE_FEW_SHIPS);
+				NPCPhrase(YehatRebelPhrase::HaveFewShips);
 			}
 			else
 			{
 				NumVisits = numYehatShips;
-				NPCPhrase(HAVE_ALL_SHIPS);
+				NPCPhrase(YehatRebelPhrase::HaveAllShips);
 			}
 
 			AlienTalkSegue((uint16_t)~0);
@@ -379,45 +379,45 @@ static void Rebels(RESPONSE_REF R)
 			PrepareShip(RaceId::Yehat);
 		}
 
-		DisablePhrase(any_ships);
+		DisablePhrase(YehatRebelPhrase::AnyShips);
 	}
-	else if (PlayerSaid(R, what_about_pkunk_rebel))
+	else if (PlayerSaid(R, YehatRebelPhrase::WhatAboutPkunkRebel))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 		{
-			NPCPhrase(PKUNK_ABSORBED_REBEL);
+			NPCPhrase(YehatRebelPhrase::PkunkAbsorbedRebel);
 		}
 		else
 		{
-			NPCPhrase(HATE_PKUNK_REBEL);
+			NPCPhrase(YehatRebelPhrase::HatePkunkRebel);
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, enough_info))
+	else if (PlayerSaid(R, YehatRebelPhrase::EnoughInfo))
 	{
-		NPCPhrase(OK_ENOUGH_INFO);
+		NPCPhrase(YehatRebelPhrase::OkEnoughInfo);
 	}
 
-	if (PhraseEnabled(how_goes_revolution))
+	if (PhraseEnabled(YehatRebelPhrase::HowGoesRevolution))
 	{
-		Response(how_goes_revolution, Rebels);
+		Response(YehatRebelPhrase::HowGoesRevolution, Rebels);
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_TOLD_PKUNK)
 		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS)
 		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_HOME_VISITS))
 	{
-		Response(what_about_pkunk_rebel, Rebels);
+		Response(YehatRebelPhrase::WhatAboutPkunkRebel, Rebels);
 	}
-	if (PhraseEnabled(any_ships))
+	if (PhraseEnabled(YehatRebelPhrase::AnyShips))
 	{
-		Response(any_ships, Rebels);
+		Response(YehatRebelPhrase::AnyShips, Rebels);
 	}
-	if (PhraseEnabled(give_info_rebels))
+	if (PhraseEnabled(YehatRebelPhrase::GiveInfoRebels))
 	{
-		Response(give_info_rebels, RebelInfo);
+		Response(YehatRebelPhrase::GiveInfoRebels, RebelInfo);
 	}
-	Response(bye_rebel, ExitConversation);
+	Response(YehatRebelPhrase::ByeRebel, ExitConversation);
 }
 
 static void Intro(void)
@@ -427,7 +427,7 @@ static void Intro(void)
 	setSegue(Segue::Peace);
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::InLastBattle)
 	{
-		NPCPhrase(YEHAT_CAVALRY);
+		NPCPhrase(YehatRebelPhrase::YehatCavalry);
 		AlienTalkSegue((uint16_t)~0);
 
 		NumVisits = (uint8_t)EscortFeasibilityStudy(RaceId::YehatRebel);
@@ -444,16 +444,16 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(REBEL_HELLO_1);
+				NPCPhrase(YehatRebelPhrase::RebelHello1);
 				break;
 			case 1:
-				NPCPhrase(REBEL_HELLO_2);
+				NPCPhrase(YehatRebelPhrase::RebelHello2);
 				break;
 			case 2:
-				NPCPhrase(REBEL_HELLO_3);
+				NPCPhrase(YehatRebelPhrase::RebelHello3);
 				break;
 			case 3:
-				NPCPhrase(REBEL_HELLO_4);
+				NPCPhrase(YehatRebelPhrase::RebelHello4);
 				--NumVisits;
 				break;
 		}

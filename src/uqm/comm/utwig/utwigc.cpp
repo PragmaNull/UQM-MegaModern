@@ -248,38 +248,38 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue::Peace);
 
-	if (PlayerSaid(R, bye_neutral))
+	if (PlayerSaid(R, UtwigPhrase::ByeNeutral))
 	{
-		NPCPhrase(GOODBYE_NEUTRAL);
+		NPCPhrase(UtwigPhrase::GoodbyeNeutral);
 	}
-	else if (PlayerSaid(R, bye_after_space))
+	else if (PlayerSaid(R, UtwigPhrase::ByeAfterSpace))
 	{
-		NPCPhrase(GOODBYE_AFTER_SPACE);
+		NPCPhrase(UtwigPhrase::GoodbyeAfterSpace);
 	}
-	else if (PlayerSaid(R, bye_before_space))
+	else if (PlayerSaid(R, UtwigPhrase::ByeBeforeSpace))
 	{
-		NPCPhrase(GOODBYE_BEFORE_SPACE);
+		NPCPhrase(UtwigPhrase::GoodbyeBeforeSpace);
 	}
-	else if (PlayerSaid(R, bye_allied_homeworld))
+	else if (PlayerSaid(R, UtwigPhrase::ByeAlliedHomeworld))
 	{
-		NPCPhrase(GOODBYE_ALLIED_HOMEWORLD);
+		NPCPhrase(UtwigPhrase::GoodbyeAlliedHomeworld);
 	}
-	else if (PlayerSaid(R, bye_bomb))
+	else if (PlayerSaid(R, UtwigPhrase::ByeBomb))
 	{
-		NPCPhrase(GOODBYE_BOMB);
+		NPCPhrase(UtwigPhrase::GoodbyeBomb);
 	}
-	else if (PlayerSaid(R, demand_bomb))
+	else if (PlayerSaid(R, UtwigPhrase::DemandBomb))
 	{
-		NPCPhrase(GUARDS_FIGHT);
+		NPCPhrase(UtwigPhrase::GuardsFight);
 
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, got_ultron)
-			 || PlayerSaid(R, hey_wait_got_ultron))
+	else if (PlayerSaid(R, UtwigPhrase::GotUltron)
+			 || PlayerSaid(R, UtwigPhrase::HeyWaitGotUltron))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		{
-			NPCPhrase(NO_ULTRON_AT_BOMB);
+			NPCPhrase(UtwigPhrase::NoUltronAtBomb);
 
 			uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ULTRON_AT_BOMB, static_cast<uint32_t>(1));
 
@@ -287,38 +287,38 @@ static void ExitConversation(RESPONSE_REF R)
 		}
 		else
 		{
-			if (PlayerSaid(R, got_ultron))
+			if (PlayerSaid(R, UtwigPhrase::GotUltron))
 			{
-				NPCPhrase(DONT_WANT_TO_LOOK);
+				NPCPhrase(UtwigPhrase::DontWantToLook);
 			}
 			else
 			{
-				NPCPhrase(TAUNT_US_BUT_WE_LOOK);
+				NPCPhrase(UtwigPhrase::TauntUsButWeLook);
 			}
 			if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) < 4)
 			{
 				switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_INFO))
 				{
 					case 0:
-						if (PlayerSaid(R, got_ultron))
+						if (PlayerSaid(R, UtwigPhrase::GotUltron))
 						{
-							NPCPhrase(SICK_TRICK_1);
+							NPCPhrase(UtwigPhrase::SickTrick1);
 						}
 						else
 						{
-							NPCPhrase(TRICKED_US_1);
+							NPCPhrase(UtwigPhrase::TrickedUs1);
 
 							setSegue(Segue::Hostile);
 						}
 						break;
 					case 1:
-						if (PlayerSaid(R, got_ultron))
+						if (PlayerSaid(R, UtwigPhrase::GotUltron))
 						{
-							NPCPhrase(SICK_TRICK_2);
+							NPCPhrase(UtwigPhrase::SickTrick2);
 						}
 						else
 						{
-							NPCPhrase(TRICKED_US_2);
+							NPCPhrase(UtwigPhrase::TrickedUs2);
 
 							setSegue(Segue::Hostile);
 						}
@@ -328,14 +328,14 @@ static void ExitConversation(RESPONSE_REF R)
 			}
 			else
 			{
-				NPCPhrase(HAPPY_DAYS);
+				NPCPhrase(UtwigPhrase::HappyDays);
 				if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 				{
-					NPCPhrase(TOO_LATE);
+					NPCPhrase(UtwigPhrase::TooLate);
 				}
 				else
 				{
-					NPCPhrase(OK_ATTACK_KOHRAH);
+					NPCPhrase(UtwigPhrase::OkAttackKohrah);
 
 					AddEvent(EventType::Relative, 0, 0, 0, GameEventId::AdvanceUtwigSupoxMission);
 				}
@@ -361,16 +361,16 @@ static void ExitConversation(RESPONSE_REF R)
 			}
 		}
 	}
-	else if (PlayerSaid(R, can_you_help))
+	else if (PlayerSaid(R, UtwigPhrase::CanYouHelp))
 	{
-		NPCPhrase(HOW_HELP);
+		NPCPhrase(UtwigPhrase::HowHelp);
 		if (EscortFeasibilityStudy(RaceId::Utwig) == 0)
 		{
-			NPCPhrase(DONT_NEED);
+			NPCPhrase(UtwigPhrase::DontNeed);
 		}
 		else
 		{
-			NPCPhrase(HAVE_4_SHIPS);
+			NPCPhrase(UtwigPhrase::Have4Ships);
 
 			AlienTalkSegue((uint16_t)~0);
 			AddEscortShips(RaceId::Utwig, difficultyCase(4, 4, 2));
@@ -388,17 +388,17 @@ static void AlliedHome(RESPONSE_REF R)
 
 	News = uqm::gameState().flag(uqm::GameFlag::UTWIG_WAR_NEWS);
 	NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
-	if (PlayerSaid(R, how_went_war))
+	if (PlayerSaid(R, UtwigPhrase::HowWentWar))
 	{
-		NPCPhrase(ABOUT_BATTLE);
+		NPCPhrase(UtwigPhrase::AboutBattle);
 
 		News |= (1 << 0);
 	}
-	else if (PlayerSaid(R, how_goes_war))
+	else if (PlayerSaid(R, UtwigPhrase::HowGoesWar))
 	{
 		if (NumVisits == 1)
 		{
-			NPCPhrase(FLEET_ON_WAY);
+			NPCPhrase(UtwigPhrase::FleetOnWay);
 
 			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(1));
 		}
@@ -407,51 +407,51 @@ static void AlliedHome(RESPONSE_REF R)
 			switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_WAR_NEWS))
 			{
 				case 0:
-					NPCPhrase(BATTLE_HAPPENS_1);
+					NPCPhrase(UtwigPhrase::BattleHappens1);
 					News = 1;
 					break;
 				case 1:
-					NPCPhrase(BATTLE_HAPPENS_2);
+					NPCPhrase(UtwigPhrase::BattleHappens2);
 					News = 2;
 					break;
 			}
 		}
 
-		DisablePhrase(how_goes_war);
+		DisablePhrase(UtwigPhrase::HowGoesWar);
 	}
-	else if (PlayerSaid(R, learn_new_info))
+	else if (PlayerSaid(R, UtwigPhrase::LearnNewInfo))
 	{
 		if (NumVisits < 5)
 		{
-			NPCPhrase(NO_NEW_INFO);
+			NPCPhrase(UtwigPhrase::NoNewInfo);
 		}
 		else
 		{
-			NPCPhrase(SAMATRA);
+			NPCPhrase(UtwigPhrase::Samatra);
 
 			News |= (1 << 1);
 		}
 
-		DisablePhrase(learn_new_info);
+		DisablePhrase(UtwigPhrase::LearnNewInfo);
 	}
-	else if (PlayerSaid(R, what_now_homeworld))
+	else if (PlayerSaid(R, UtwigPhrase::WhatNowHomeworld))
 	{
 		if (NumVisits < 5)
 		{
-			NPCPhrase(UP_TO_YOU);
+			NPCPhrase(UtwigPhrase::UpToYou);
 		}
 		else
 		{
-			NPCPhrase(HOPE_KILL_EACH_OTHER);
+			NPCPhrase(UtwigPhrase::HopeKillEachOther);
 		}
 
-		DisablePhrase(what_now_homeworld);
+		DisablePhrase(UtwigPhrase::WhatNowHomeworld);
 	}
-	else if (PlayerSaid(R, how_is_ultron))
+	else if (PlayerSaid(R, UtwigPhrase::HowIsUltron))
 	{
-		NPCPhrase(ULTRON_IS_GREAT);
+		NPCPhrase(UtwigPhrase::UltronIsGreat);
 
-		DisablePhrase(how_is_ultron);
+		DisablePhrase(UtwigPhrase::HowIsUltron);
 	}
 	uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(News));
 
@@ -459,140 +459,140 @@ static void AlliedHome(RESPONSE_REF R)
 	{
 		if (!(News & (1 << 0)))
 		{
-			Response(how_went_war, AlliedHome);
+			Response(UtwigPhrase::HowWentWar, AlliedHome);
 		}
 	}
-	else if (PhraseEnabled(how_goes_war)
+	else if (PhraseEnabled(UtwigPhrase::HowGoesWar)
 			 && ((NumVisits == 1 && News == 0)
 				 || (NumVisits && News < 2)))
 	{
-		Response(how_goes_war, AlliedHome);
+		Response(UtwigPhrase::HowGoesWar, AlliedHome);
 	}
-	if (PhraseEnabled(learn_new_info))
+	if (PhraseEnabled(UtwigPhrase::LearnNewInfo))
 	{
-		Response(learn_new_info, AlliedHome);
+		Response(UtwigPhrase::LearnNewInfo, AlliedHome);
 	}
-	if (PhraseEnabled(what_now_homeworld))
+	if (PhraseEnabled(UtwigPhrase::WhatNowHomeworld))
 	{
-		Response(what_now_homeworld, AlliedHome);
+		Response(UtwigPhrase::WhatNowHomeworld, AlliedHome);
 	}
-	if (PhraseEnabled(how_is_ultron))
+	if (PhraseEnabled(UtwigPhrase::HowIsUltron))
 	{
-		Response(how_is_ultron, AlliedHome);
+		Response(UtwigPhrase::HowIsUltron, AlliedHome);
 	}
 	if (IsExtended() && ShipsReady(RaceId::Utwig))
 	{
-		Response(can_you_help, ExitConversation);
+		Response(UtwigPhrase::CanYouHelp, ExitConversation);
 	}
-	Response(bye_allied_homeworld, ExitConversation);
+	Response(UtwigPhrase::ByeAlliedHomeworld, ExitConversation);
 }
 
 static void BeforeKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, whats_up_before_space))
+	if (PlayerSaid(R, UtwigPhrase::WhatsUpBeforeSpace))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_BEFORE_SPACE_1);
+				NPCPhrase(UtwigPhrase::GeneralInfoBeforeSpace1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_BEFORE_SPACE_2);
+				NPCPhrase(UtwigPhrase::GeneralInfoBeforeSpace2);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_before_space);
+		DisablePhrase(UtwigPhrase::WhatsUpBeforeSpace);
 	}
-	else if (PlayerSaid(R, what_now_before_space))
+	else if (PlayerSaid(R, UtwigPhrase::WhatNowBeforeSpace))
 	{
-		NPCPhrase(DO_THIS_BEFORE_SPACE);
+		NPCPhrase(UtwigPhrase::DoThisBeforeSpace);
 
-		DisablePhrase(what_now_before_space);
+		DisablePhrase(UtwigPhrase::WhatNowBeforeSpace);
 	}
 
-	if (PhraseEnabled(whats_up_before_space))
+	if (PhraseEnabled(UtwigPhrase::WhatsUpBeforeSpace))
 	{
-		Response(whats_up_before_space, BeforeKohrAh);
+		Response(UtwigPhrase::WhatsUpBeforeSpace, BeforeKohrAh);
 	}
-	if (PhraseEnabled(what_now_before_space))
+	if (PhraseEnabled(UtwigPhrase::WhatNowBeforeSpace))
 	{
-		Response(what_now_before_space, BeforeKohrAh);
+		Response(UtwigPhrase::WhatNowBeforeSpace, BeforeKohrAh);
 	}
-	Response(bye_before_space, ExitConversation);
+	Response(UtwigPhrase::ByeBeforeSpace, ExitConversation);
 }
 
 static void AfterKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, whats_up_after_space))
+	if (PlayerSaid(R, UtwigPhrase::WhatsUpAfterSpace))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_AFTER_SPACE_1);
+				NPCPhrase(UtwigPhrase::GeneralInfoAfterSpace1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_AFTER_SPACE_2);
+				NPCPhrase(UtwigPhrase::GeneralInfoAfterSpace2);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_after_space);
+		DisablePhrase(UtwigPhrase::WhatsUpAfterSpace);
 	}
-	else if (PlayerSaid(R, what_now_after_space))
+	else if (PlayerSaid(R, UtwigPhrase::WhatNowAfterSpace))
 	{
-		NPCPhrase(DO_THIS_AFTER_SPACE);
+		NPCPhrase(UtwigPhrase::DoThisAfterSpace);
 
-		DisablePhrase(what_now_after_space);
+		DisablePhrase(UtwigPhrase::WhatNowAfterSpace);
 	}
 
-	if (PhraseEnabled(whats_up_after_space))
+	if (PhraseEnabled(UtwigPhrase::WhatsUpAfterSpace))
 	{
-		Response(whats_up_after_space, AfterKohrAh);
+		Response(UtwigPhrase::WhatsUpAfterSpace, AfterKohrAh);
 	}
-	if (PhraseEnabled(what_now_after_space))
+	if (PhraseEnabled(UtwigPhrase::WhatNowAfterSpace))
 	{
-		Response(what_now_after_space, AfterKohrAh);
+		Response(UtwigPhrase::WhatNowAfterSpace, AfterKohrAh);
 	}
-	Response(bye_after_space, ExitConversation);
+	Response(UtwigPhrase::ByeAfterSpace, ExitConversation);
 }
 
 static void NeutralUtwig(RESPONSE_REF R)
 {
 	uint8_t i {};
-	RESPONSE_REF pStr[4];
+	UtwigPhrase pStr[4];
 
 	uint8_t LastStack {0};
-	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-	if (PlayerSaid(R, we_are_vindicator))
+	pStr[0] = pStr[1] = pStr[2] = pStr[3] = UtwigPhrase::NullPhrase;
+	if (PlayerSaid(R, UtwigPhrase::WeAreVindicator))
 	{
-		NPCPhrase(WOULD_BE_HAPPY_BUT);
+		NPCPhrase(UtwigPhrase::WouldBeHappyBut);
 
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, why_sad))
+	else if (PlayerSaid(R, UtwigPhrase::WhySad))
 	{
-		NPCPhrase(ULTRON_BROKE);
+		NPCPhrase(UtwigPhrase::UltronBroke);
 
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, what_ultron))
+	else if (PlayerSaid(R, UtwigPhrase::WhatUltron))
 	{
-		NPCPhrase(GLORIOUS_ULTRON);
+		NPCPhrase(UtwigPhrase::GloriousUltron);
 
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, dont_be_babies))
+	else if (PlayerSaid(R, UtwigPhrase::DontBeBabies))
 	{
-		NPCPhrase(MOCK_OUR_PAIN);
+		NPCPhrase(UtwigPhrase::MockOurPain);
 
 		setSegue(Segue::Hostile);
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(4));
@@ -603,45 +603,45 @@ static void NeutralUtwig(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(0));
 		return;
 	}
-	else if (PlayerSaid(R, real_sorry_about_ultron))
+	else if (PlayerSaid(R, UtwigPhrase::RealSorryAboutUltron))
 	{
-		NPCPhrase(APPRECIATE_SYMPATHY);
+		NPCPhrase(UtwigPhrase::AppreciateSympathy);
 
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(4));
 		return;
 	}
-	else if (PlayerSaid(R, what_about_you_1))
+	else if (PlayerSaid(R, UtwigPhrase::WhatAboutYou1))
 	{
-		NPCPhrase(ABOUT_US_1);
+		NPCPhrase(UtwigPhrase::AboutUs1);
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, what_about_you_2))
+	else if (PlayerSaid(R, UtwigPhrase::WhatAboutYou2))
 	{
-		NPCPhrase(ABOUT_US_2);
+		NPCPhrase(UtwigPhrase::AboutUs2);
 
 		LastStack = 2;
 		StartSphereTracking(RaceId::Supox);
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, what_about_you_3))
+	else if (PlayerSaid(R, UtwigPhrase::WhatAboutYou3))
 	{
-		NPCPhrase(ABOUT_US_3);
+		NPCPhrase(UtwigPhrase::AboutUs3);
 
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(3));
 		SetHomeworldKnown(*HomeId::Supox);
 	}
-	else if (PlayerSaid(R, what_about_urquan_1))
+	else if (PlayerSaid(R, UtwigPhrase::WhatAboutUrquan1))
 	{
-		NPCPhrase(ABOUT_URQUAN_1);
+		NPCPhrase(UtwigPhrase::AboutUrquan1);
 
 		LastStack = 3;
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK2, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, what_about_urquan_2))
+	else if (PlayerSaid(R, UtwigPhrase::WhatAboutUrquan2))
 	{
-		NPCPhrase(ABOUT_URQUAN_2);
+		NPCPhrase(UtwigPhrase::AboutUrquan2);
 
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK2, static_cast<uint32_t>(2));
 	}
@@ -649,86 +649,86 @@ static void NeutralUtwig(RESPONSE_REF R)
 	switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_STACK1))
 	{
 		case 0:
-			pStr[0] = we_are_vindicator;
+			pStr[0] = UtwigPhrase::WeAreVindicator;
 			break;
 		case 1:
-			pStr[0] = why_sad;
+			pStr[0] = UtwigPhrase::WhySad;
 			break;
 		case 2:
-			pStr[0] = what_ultron;
+			pStr[0] = UtwigPhrase::WhatUltron;
 			break;
 		case 3:
-			pStr[0] = dont_be_babies;
-			pStr[1] = real_sorry_about_ultron;
+			pStr[0] = UtwigPhrase::DontBeBabies;
+			pStr[1] = UtwigPhrase::RealSorryAboutUltron;
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_WAR_NEWS))
 	{
 		case 0:
-			pStr[2] = what_about_you_1;
+			pStr[2] = UtwigPhrase::WhatAboutYou1;
 			break;
 		case 1:
-			pStr[2] = what_about_you_2;
+			pStr[2] = UtwigPhrase::WhatAboutYou2;
 			break;
 		case 2:
-			pStr[2] = what_about_you_3;
+			pStr[2] = UtwigPhrase::WhatAboutYou3;
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_STACK2))
 	{
 		case 0:
-			pStr[2] = what_about_urquan_1;
+			pStr[2] = UtwigPhrase::WhatAboutUrquan1;
 			break;
 		case 1:
-			pStr[2] = what_about_urquan_2;
+			pStr[2] = UtwigPhrase::WhatAboutUrquan2;
 			break;
 	}
 
-	if (pStr[LastStack])
+	if (pStr[LastStack] != UtwigPhrase::NullPhrase)
 	{
 		Response(pStr[LastStack], NeutralUtwig);
 	}
 	for (i = 0; i < 4; ++i)
 	{
-		if (i != LastStack && pStr[i])
+		if (i != LastStack && pStr[i] != UtwigPhrase::NullPhrase)
 		{
 			Response(pStr[i], NeutralUtwig);
 		}
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION))
 	{
-		Response(got_ultron, ExitConversation);
+		Response(UtwigPhrase::GotUltron, ExitConversation);
 	}
-	Response(bye_neutral, ExitConversation);
+	Response(UtwigPhrase::ByeNeutral, ExitConversation);
 }
 
 static void BombWorld(RESPONSE_REF R)
 {
-	RESPONSE_REF pStr[2];
+	UtwigPhrase pStr[2];
 
 	uint8_t LastStack {0};
-	pStr[0] = pStr[1] = 0;
-	if (PlayerSaid(R, why_you_here))
+	pStr[0] = pStr[1] = UtwigPhrase::NullPhrase;
+	if (PlayerSaid(R, UtwigPhrase::WhyYouHere))
 	{
-		NPCPhrase(WE_GUARD_BOMB);
+		NPCPhrase(UtwigPhrase::WeGuardBomb);
 
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK1, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, what_about_bomb))
+	else if (PlayerSaid(R, UtwigPhrase::WhatAboutBomb))
 	{
-		NPCPhrase(ABOUT_BOMB);
+		NPCPhrase(UtwigPhrase::AboutBomb);
 
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK1, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, give_us_bomb_or_die))
+	else if (PlayerSaid(R, UtwigPhrase::GiveUsBombOrDie))
 	{
-		NPCPhrase(GUARDS_WARN);
+		NPCPhrase(UtwigPhrase::GuardsWarn);
 
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK1, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, demand_bomb))
+	else if (PlayerSaid(R, UtwigPhrase::DemandBomb))
 	{
-		NPCPhrase(GUARDS_FIGHT);
+		NPCPhrase(UtwigPhrase::GuardsFight);
 
 		setSegue(Segue::Hostile);
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOSTILE, static_cast<uint32_t>(1));
@@ -738,90 +738,90 @@ static void BombWorld(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(0));
 		return;
 	}
-	else if (PlayerSaid(R, may_we_have_bomb))
+	else if (PlayerSaid(R, UtwigPhrase::MayWeHaveBomb))
 	{
-		NPCPhrase(NO_BOMB);
+		NPCPhrase(UtwigPhrase::NoBomb);
 
 		LastStack = 1;
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK2, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, please))
+	else if (PlayerSaid(R, UtwigPhrase::Please))
 	{
-		NPCPhrase(SORRY_NO_BOMB);
+		NPCPhrase(UtwigPhrase::SorryNoBomb);
 
 		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK2, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, whats_up_bomb))
+	else if (PlayerSaid(R, UtwigPhrase::WhatsUpBomb))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::BOMB_INFO))
 		{
-			NPCPhrase(GENERAL_INFO_BOMB_2);
+			NPCPhrase(UtwigPhrase::GeneralInfoBomb2);
 		}
 		else
 		{
-			NPCPhrase(GENERAL_INFO_BOMB_1);
+			NPCPhrase(UtwigPhrase::GeneralInfoBomb1);
 
 			uqm::gameState().setFlag(uqm::GameFlag::BOMB_INFO, static_cast<uint32_t>(1));
 		}
 
-		DisablePhrase(whats_up_bomb);
+		DisablePhrase(UtwigPhrase::WhatsUpBomb);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::BOMB_STACK2))
 	{
 		case 0:
-			pStr[1] = may_we_have_bomb;
+			pStr[1] = UtwigPhrase::MayWeHaveBomb;
 			break;
 		case 1:
-			pStr[1] = please;
+			pStr[1] = UtwigPhrase::Please;
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::BOMB_STACK1))
 	{
 		case 0:
-			pStr[0] = why_you_here;
-			pStr[1] = 0;
+			pStr[0] = UtwigPhrase::WhyYouHere;
+			pStr[1] = UtwigPhrase::NullPhrase;
 			break;
 		case 1:
-			pStr[0] = what_about_bomb;
-			pStr[1] = 0;
+			pStr[0] = UtwigPhrase::WhatAboutBomb;
+			pStr[1] = UtwigPhrase::NullPhrase;
 			break;
 		case 2:
-			pStr[0] = give_us_bomb_or_die;
+			pStr[0] = UtwigPhrase::GiveUsBombOrDie;
 			break;
 		case 3:
-			pStr[0] = demand_bomb;
+			pStr[0] = UtwigPhrase::DemandBomb;
 			break;
 	}
 
-	if (pStr[LastStack])
+	if (pStr[LastStack] != UtwigPhrase::NullPhrase)
 	{
 		Response(pStr[LastStack], BombWorld);
 	}
 	LastStack ^= 1;
-	if (pStr[LastStack])
+	if (pStr[LastStack] != UtwigPhrase::NullPhrase)
 	{
 		Response(pStr[LastStack], BombWorld);
 	}
 
-	if (PhraseEnabled(whats_up_bomb) && (uqm::gameState().flag(uqm::GameFlag::BOMB_STACK1) > 1))
+	if (PhraseEnabled(UtwigPhrase::WhatsUpBomb) && (uqm::gameState().flag(uqm::GameFlag::BOMB_STACK1) > 1))
 	{
-		Response(whats_up_bomb, BombWorld);
+		Response(UtwigPhrase::WhatsUpBomb, BombWorld);
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION)
 		&& !uqm::gameState().flag(uqm::GameFlag::REFUSED_ULTRON_AT_BOMB))
 	{
-		Response(got_ultron, ExitConversation);
+		Response(UtwigPhrase::GotUltron, ExitConversation);
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::BOMB_INFO))
 	{
-		Response(bye_bomb, ExitConversation);
+		Response(UtwigPhrase::ByeBomb, ExitConversation);
 	}
 	else
 	{
-		Response(bye_neutral, ExitConversation);
+		Response(UtwigPhrase::ByeNeutral, ExitConversation);
 	}
 }
 
@@ -831,7 +831,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(UtwigPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -845,10 +845,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(HOSTILE_BOMB_HELLO_1);
+					NPCPhrase(UtwigPhrase::HostileBombHello1);
 					break;
 				case 1:
-					NPCPhrase(HOSTILE_BOMB_HELLO_2);
+					NPCPhrase(UtwigPhrase::HostileBombHello2);
 					--NumVisits;
 					break;
 			}
@@ -860,10 +860,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(HOSTILE_HOMEWORLD_HELLO_1);
+					NPCPhrase(UtwigPhrase::HostileHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(HOSTILE_HOMEWORLD_HELLO_2);
+					NPCPhrase(UtwigPhrase::HostileHomeworldHello2);
 					--NumVisits;
 					break;
 			}
@@ -875,10 +875,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(HOSTILE_SPACE_HELLO_1);
+					NPCPhrase(UtwigPhrase::HostileSpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(HOSTILE_SPACE_HELLO_2);
+					NPCPhrase(UtwigPhrase::HostileSpaceHello2);
 					--NumVisits;
 					break;
 			}
@@ -892,7 +892,7 @@ static void Intro(void)
 		}
 		else
 		{
-			Response(hey_wait_got_ultron, ExitConversation);
+			Response(UtwigPhrase::HeyWaitGotUltron, ExitConversation);
 		}
 	}
 	else if (CheckAlliance(RaceId::Utwig) == RaceAllegiance::Good)
@@ -903,16 +903,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_1);
+					NPCPhrase(UtwigPhrase::AlliedHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_2);
+					NPCPhrase(UtwigPhrase::AlliedHomeworldHello2);
 					break;
 				case 2:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_3);
+					NPCPhrase(UtwigPhrase::AlliedHomeworldHello3);
 					break;
 				case 3:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_4);
+					NPCPhrase(UtwigPhrase::AlliedHomeworldHello4);
 					--NumVisits;
 					break;
 			}
@@ -929,10 +929,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HELLO_BEFORE_KOHRAH_SPACE_1);
+						NPCPhrase(UtwigPhrase::HelloBeforeKohrahSpace1);
 						break;
 					case 1:
-						NPCPhrase(HELLO_BEFORE_KOHRAH_SPACE_2);
+						NPCPhrase(UtwigPhrase::HelloBeforeKohrahSpace2);
 						--NumVisits;
 						break;
 				}
@@ -946,10 +946,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HELLO_DURING_KOHRAH_SPACE_1);
+						NPCPhrase(UtwigPhrase::HelloDuringKohrahSpace1);
 						break;
 					case 1:
-						NPCPhrase(HELLO_DURING_KOHRAH_SPACE_2);
+						NPCPhrase(UtwigPhrase::HelloDuringKohrahSpace2);
 						--NumVisits;
 						break;
 				}
@@ -961,10 +961,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HELLO_AFTER_KOHRAH_SPACE_1);
+						NPCPhrase(UtwigPhrase::HelloAfterKohrahSpace1);
 						break;
 					case 1:
-						NPCPhrase(HELLO_AFTER_KOHRAH_SPACE_2);
+						NPCPhrase(UtwigPhrase::HelloAfterKohrahSpace2);
 						--NumVisits;
 						break;
 				}
@@ -980,10 +980,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(BOMB_WORLD_HELLO_1);
+				NPCPhrase(UtwigPhrase::BombWorldHello1);
 				break;
 			case 1:
-				NPCPhrase(BOMB_WORLD_HELLO_2);
+				NPCPhrase(UtwigPhrase::BombWorldHello2);
 				--NumVisits;
 				break;
 		}
@@ -999,16 +999,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_1);
+					NPCPhrase(UtwigPhrase::NeutralHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_2);
+					NPCPhrase(UtwigPhrase::NeutralHomeworldHello2);
 					break;
 				case 2:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_3);
+					NPCPhrase(UtwigPhrase::NeutralHomeworldHello3);
 					break;
 				case 3:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_4);
+					NPCPhrase(UtwigPhrase::NeutralHomeworldHello4);
 					--NumVisits;
 					break;
 			}
@@ -1020,10 +1020,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_1);
+					NPCPhrase(UtwigPhrase::NeutralSpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_2);
+					NPCPhrase(UtwigPhrase::NeutralSpaceHello2);
 					--NumVisits;
 					break;
 			}

@@ -247,50 +247,50 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue::Hostile);
 
-	if (PlayerSaid(R, bye_homeworld))
+	if (PlayerSaid(R, YehatPhrase::ByeHomeworld))
 	{
-		NPCPhrase(GOODBYE_AND_DIE_HOMEWORLD);
+		NPCPhrase(YehatPhrase::GoodbyeAndDieHomeworld);
 	}
-	else if (PlayerSaid(R, bye_royalist))
+	else if (PlayerSaid(R, YehatPhrase::ByeRoyalist))
 	{
-		NPCPhrase(GOODBYE_AND_DIE_ROYALIST);
+		NPCPhrase(YehatPhrase::GoodbyeAndDieRoyalist);
 	}
-	else if (PlayerSaid(R, i_demand_you_ally_homeworld))
+	else if (PlayerSaid(R, YehatPhrase::IDemandYouAllyHomeworld))
 	{
-		NPCPhrase(ENEMY_MUST_DIE);
+		NPCPhrase(YehatPhrase::EnemyMustDie);
 
 		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_ALLY_HOME, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, bye_space))
+	else if (PlayerSaid(R, YehatPhrase::ByeSpace))
 	{
 		if ((uint8_t)uqm::random().next() & 1)
 		{
-			NPCPhrase(GOODBYE_AND_DIE_SPACE);
+			NPCPhrase(YehatPhrase::GoodbyeAndDieSpace);
 		}
 		else
 		{
-			NPCPhrase(GO_IN_PEACE);
+			NPCPhrase(YehatPhrase::GoInPeace);
 
 			setSegue(Segue::Peace);
 		}
 	}
-	else if (PlayerSaid(R, not_here)
-			 || PlayerSaid(R, not_send))
+	else if (PlayerSaid(R, YehatPhrase::NotHere)
+			 || PlayerSaid(R, YehatPhrase::NotSend))
 	{
 		switch (uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_VISITS))
 		{
 			case 0:
-				NPCPhrase(JUST_A_TRICK_1);
+				NPCPhrase(YehatPhrase::JustATrick1);
 				break;
 			case 1:
-				NPCPhrase(JUST_A_TRICK_2);
+				NPCPhrase(YehatPhrase::JustATrick2);
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_VISITS, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, ok_send))
+	else if (PlayerSaid(R, YehatPhrase::OkSend))
 	{
-		NPCPhrase(WE_REVOLT);
+		NPCPhrase(YehatPhrase::WeRevolt);
 
 		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_CIVIL_WAR, static_cast<uint32_t>(1));
@@ -318,7 +318,7 @@ static void ExitConversation(RESPONSE_REF R)
 
 static void Royalists(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, how_is_rebellion))
+	if (PlayerSaid(R, YehatPhrase::HowIsRebellion))
 	{
 		uint8_t NumVisits {};
 
@@ -326,76 +326,76 @@ static void Royalists(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(ROYALIST_REBELLION_1);
+				NPCPhrase(YehatPhrase::RoyalistRebellion1);
 				break;
 			case 1:
-				NPCPhrase(ROYALIST_REBELLION_2);
+				NPCPhrase(YehatPhrase::RoyalistRebellion2);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(how_is_rebellion);
+		DisablePhrase(YehatPhrase::HowIsRebellion);
 	}
-	else if (PlayerSaid(R, what_about_pkunk_royalist))
+	else if (PlayerSaid(R, YehatPhrase::WhatAboutPkunkRoyalist))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 		{
-			NPCPhrase(PKUNK_ABSORBED_ROYALIST);
+			NPCPhrase(YehatPhrase::PkunkAbsorbedRoyalist);
 		}
 		else
 		{
-			NPCPhrase(HATE_PKUNK_ROYALIST);
+			NPCPhrase(YehatPhrase::HatePkunkRoyalist);
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, sorry_about_revolution))
+	else if (PlayerSaid(R, YehatPhrase::SorryAboutRevolution))
 	{
-		NPCPhrase(ALL_YOUR_FAULT);
+		NPCPhrase(YehatPhrase::AllYourFault);
 
 		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_INFO, static_cast<uint32_t>(1));
 	}
 
-	if (PhraseEnabled(how_is_rebellion))
+	if (PhraseEnabled(YehatPhrase::HowIsRebellion))
 	{
-		Response(how_is_rebellion, Royalists);
+		Response(YehatPhrase::HowIsRebellion, Royalists);
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK)
 		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS)
 		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_HOME_VISITS))
 	{
-		Response(what_about_pkunk_royalist, Royalists);
+		Response(YehatPhrase::WhatAboutPkunkRoyalist, Royalists);
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_INFO))
 	{
-		Response(sorry_about_revolution, Royalists);
+		Response(YehatPhrase::SorryAboutRevolution, Royalists);
 	}
-	Response(bye_royalist, ExitConversation);
+	Response(YehatPhrase::ByeRoyalist, ExitConversation);
 }
 
 static void StartRevolt(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, shofixti_alive_1))
+	if (PlayerSaid(R, YehatPhrase::ShofixtiAlive1))
 	{
-		NPCPhrase(SEND_HIM_OVER_1);
+		NPCPhrase(YehatPhrase::SendHimOver1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, shofixti_alive_2))
+	else if (PlayerSaid(R, YehatPhrase::ShofixtiAlive2))
 	{
-		NPCPhrase(SEND_HIM_OVER_2);
+		NPCPhrase(YehatPhrase::SendHimOver2);
 	}
 
 	if (HaveEscortShip(RaceId::Shofixti))
 	{
-		Response(ok_send, ExitConversation);
+		Response(YehatPhrase::OkSend, ExitConversation);
 	}
 	else
 	{
-		Response(not_here, ExitConversation);
+		Response(YehatPhrase::NotHere, ExitConversation);
 	}
-	Response(not_send, ExitConversation);
+	Response(YehatPhrase::NotSend, ExitConversation);
 }
 
 static void YehatHome(RESPONSE_REF R)
@@ -403,7 +403,7 @@ static void YehatHome(RESPONSE_REF R)
 
 	SetHomeworldKnown(*HomeId::Yehat);
 
-	if (PlayerSaid(R, whats_up_homeworld))
+	if (PlayerSaid(R, YehatPhrase::WhatsUpHomeworld))
 	{
 		uint8_t NumVisits {};
 
@@ -411,79 +411,79 @@ static void YehatHome(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_HOMEWORLD_1);
+				NPCPhrase(YehatPhrase::GeneralInfoHomeworld1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_HOMEWORLD_2);
+				NPCPhrase(YehatPhrase::GeneralInfoHomeworld2);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_homeworld);
+		DisablePhrase(YehatPhrase::WhatsUpHomeworld);
 	}
-	else if (PlayerSaid(R, at_least_help_us_homeworld))
+	else if (PlayerSaid(R, YehatPhrase::AtLeastHelpUsHomeworld))
 	{
-		NPCPhrase(NO_HELP_ENEMY);
+		NPCPhrase(YehatPhrase::NoHelpEnemy);
 
 		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_HELP_HOME, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, give_info))
+	else if (PlayerSaid(R, YehatPhrase::GiveInfo))
 	{
-		NPCPhrase(NO_INFO_FOR_ENEMY);
+		NPCPhrase(YehatPhrase::NoInfoForEnemy);
 
 		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_INFO, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, what_about_pkunk_royalist))
+	else if (PlayerSaid(R, YehatPhrase::WhatAboutPkunkRoyalist))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 		{
-			NPCPhrase(PKUNK_ABSORBED_ROYALIST);
+			NPCPhrase(YehatPhrase::PkunkAbsorbedRoyalist);
 		}
 		else
 		{
-			NPCPhrase(HATE_PKUNK_ROYALIST);
+			NPCPhrase(YehatPhrase::HatePkunkRoyalist);
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
 
-	if (PhraseEnabled(whats_up_homeworld))
+	if (PhraseEnabled(YehatPhrase::WhatsUpHomeworld))
 	{
-		Response(whats_up_homeworld, YehatHome);
+		Response(YehatPhrase::WhatsUpHomeworld, YehatHome);
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK)
 		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS)
 		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_HOME_VISITS))
 	{
-		Response(what_about_pkunk_royalist, YehatHome);
+		Response(YehatPhrase::WhatAboutPkunkRoyalist, YehatHome);
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_HELP_HOME))
 	{
-		Response(at_least_help_us_homeworld, YehatHome);
+		Response(YehatPhrase::AtLeastHelpUsHomeworld, YehatHome);
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_INFO))
 	{
-		Response(give_info, YehatHome);
+		Response(YehatPhrase::GiveInfo, YehatHome);
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_ALLY_HOME))
 	{
-		Response(i_demand_you_ally_homeworld, ExitConversation);
+		Response(YehatPhrase::IDemandYouAllyHomeworld, ExitConversation);
 	}
-	Response(bye_homeworld, ExitConversation);
+	Response(YehatPhrase::ByeHomeworld, ExitConversation);
 }
 
 static void YehatSpace(RESPONSE_REF R)
 {
 	uint8_t i {};
-	RESPONSE_REF pStr[3];
+	YehatPhrase pStr[3];
 
 	uint8_t LastStack {0};
-	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PlayerSaid(R, whats_up_space_1)
-		|| PlayerSaid(R, whats_up_space_2)
-		|| PlayerSaid(R, whats_up_space_3)
-		|| PlayerSaid(R, whats_up_space_4))
+	pStr[0] = pStr[1] = pStr[2] = YehatPhrase::NullPhrase;
+	if (PlayerSaid(R, YehatPhrase::WhatsUpSpace1)
+		|| PlayerSaid(R, YehatPhrase::WhatsUpSpace2)
+		|| PlayerSaid(R, YehatPhrase::WhatsUpSpace3)
+		|| PlayerSaid(R, YehatPhrase::WhatsUpSpace4))
 	{
 		uint8_t NumVisits {};
 
@@ -491,114 +491,114 @@ static void YehatSpace(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_SPACE_1);
+				NPCPhrase(YehatPhrase::GeneralInfoSpace1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_SPACE_2);
+				NPCPhrase(YehatPhrase::GeneralInfoSpace2);
 				SetHomeworldKnown(*HomeId::Yehat);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_SPACE_3);
+				NPCPhrase(YehatPhrase::GeneralInfoSpace3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_SPACE_4);
+				NPCPhrase(YehatPhrase::GeneralInfoSpace4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_space_1);
+		DisablePhrase(YehatPhrase::WhatsUpSpace1);
 	}
-	else if (PlayerSaid(R, i_demand_you_ally_space))
+	else if (PlayerSaid(R, YehatPhrase::IDemandYouAllySpace))
 	{
-		NPCPhrase(WE_CANNOT_1);
+		NPCPhrase(YehatPhrase::WeCannot1);
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_ALLY_SPACE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, obligation))
+	else if (PlayerSaid(R, YehatPhrase::Obligation))
 	{
-		NPCPhrase(WE_CANNOT_2);
+		NPCPhrase(YehatPhrase::WeCannot2);
 
 		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_ALLY_SPACE, static_cast<uint32_t>(2));
 
 		return;
 	}
-	else if (PlayerSaid(R, at_least_help_us_space))
+	else if (PlayerSaid(R, YehatPhrase::AtLeastHelpUsSpace))
 	{
-		NPCPhrase(SORRY_CANNOT);
+		NPCPhrase(YehatPhrase::SorryCannot);
 
 		LastStack = 1;
 		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_HELP_SPACE, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, dishonor))
+	else if (PlayerSaid(R, YehatPhrase::Dishonor))
 	{
-		NPCPhrase(HERES_A_HINT);
+		NPCPhrase(YehatPhrase::HeresAHint);
 
 		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_HELP_SPACE, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, what_about_pkunk_royalist))
+	else if (PlayerSaid(R, YehatPhrase::WhatAboutPkunkRoyalist))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 		{
-			NPCPhrase(PKUNK_ABSORBED_ROYALIST);
+			NPCPhrase(YehatPhrase::PkunkAbsorbedRoyalist);
 		}
 		else
 		{
-			NPCPhrase(HATE_PKUNK_ROYALIST);
+			NPCPhrase(YehatPhrase::HatePkunkRoyalist);
 		}
 
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
 
 	// SET_FUNCPTR (&PtrDesc, YehatSpace);
-	if (PhraseEnabled(whats_up_space_1))
+	if (PhraseEnabled(YehatPhrase::WhatsUpSpace1))
 	{
 		switch (uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_INFO))
 		{
 			case 0:
-				pStr[0] = whats_up_space_1;
+				pStr[0] = YehatPhrase::WhatsUpSpace1;
 				break;
 			case 1:
-				pStr[0] = whats_up_space_2;
+				pStr[0] = YehatPhrase::WhatsUpSpace2;
 				break;
 			case 2:
-				pStr[0] = whats_up_space_3;
+				pStr[0] = YehatPhrase::WhatsUpSpace3;
 				break;
 			case 3:
-				pStr[0] = whats_up_space_4;
+				pStr[0] = YehatPhrase::WhatsUpSpace4;
 				break;
 		}
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_HELP_SPACE))
 	{
 		case 0:
-			pStr[1] = at_least_help_us_space;
+			pStr[1] = YehatPhrase::AtLeastHelpUsSpace;
 			break;
 		case 1:
-			pStr[1] = dishonor;
+			pStr[1] = YehatPhrase::Dishonor;
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_ALLY_SPACE))
 	{
 		case 0:
 			{
-				pStr[2] = i_demand_you_ally_space;
+				pStr[2] = YehatPhrase::IDemandYouAllySpace;
 				break;
 			}
 		case 1:
-			pStr[2] = obligation;
+			pStr[2] = YehatPhrase::Obligation;
 			break;
 	}
 
-	if (pStr[LastStack])
+	if (pStr[LastStack] != YehatPhrase::NullPhrase)
 	{
 		Response(pStr[LastStack], YehatSpace);
 	}
 	for (i = 0; i < 3; ++i)
 	{
-		if (i != LastStack && pStr[i])
+		if (i != LastStack && *pStr[i] != YehatPhrase::NullPhrase)
 		{
 			Response(pStr[i], YehatSpace);
 		}
@@ -607,21 +607,21 @@ static void YehatSpace(RESPONSE_REF R)
 		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS)
 		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_HOME_VISITS))
 	{
-		Response(what_about_pkunk_royalist, YehatSpace);
+		Response(YehatPhrase::WhatAboutPkunkRoyalist, YehatSpace);
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_VISITS))
 	{
 		switch (uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_TOLD_PKUNK))
 		{
 			case 0:
-				Response(shofixti_alive_1, StartRevolt);
+				Response(YehatPhrase::ShofixtiAlive1, StartRevolt);
 				break;
 			case 1:
-				Response(shofixti_alive_2, StartRevolt);
+				Response(YehatPhrase::ShofixtiAlive2, StartRevolt);
 				break;
 		}
 	}
-	Response(bye_space, ExitConversation);
+	Response(YehatPhrase::ByeSpace, ExitConversation);
 }
 
 static void Intro(void)
@@ -630,7 +630,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(YehatPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -644,10 +644,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ROYALIST_HOMEWORLD_HELLO_1);
+					NPCPhrase(YehatPhrase::RoyalistHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(ROYALIST_HOMEWORLD_HELLO_2);
+					NPCPhrase(YehatPhrase::RoyalistHomeworldHello2);
 					--NumVisits;
 					break;
 			}
@@ -659,10 +659,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ROYALIST_SPACE_HELLO_1);
+					NPCPhrase(YehatPhrase::RoyalistSpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(ROYALIST_SPACE_HELLO_2);
+					NPCPhrase(YehatPhrase::RoyalistSpaceHello2);
 					--NumVisits;
 					break;
 			}
@@ -677,10 +677,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HOMEWORLD_HELLO_1);
+				NPCPhrase(YehatPhrase::HomeworldHello1);
 				break;
 			case 1:
-				NPCPhrase(HOMEWORLD_HELLO_2);
+				NPCPhrase(YehatPhrase::HomeworldHello2);
 				--NumVisits;
 				break;
 		}
@@ -694,16 +694,16 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(SPACE_HELLO_1);
+				NPCPhrase(YehatPhrase::SpaceHello1);
 				break;
 			case 1:
-				NPCPhrase(SPACE_HELLO_2);
+				NPCPhrase(YehatPhrase::SpaceHello2);
 				break;
 			case 2:
-				NPCPhrase(SPACE_HELLO_3);
+				NPCPhrase(YehatPhrase::SpaceHello3);
 				break;
 			case 3:
-				NPCPhrase(SPACE_HELLO_4);
+				NPCPhrase(YehatPhrase::SpaceHello4);
 				--NumVisits;
 				break;
 		}

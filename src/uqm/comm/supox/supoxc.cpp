@@ -127,44 +127,44 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue::Peace);
 
-	if (PlayerSaid(R, bye_neutral))
+	if (PlayerSaid(R, SupoxPhrase::ByeNeutral))
 	{
-		NPCPhrase(GOODBYE_NEUTRAL);
+		NPCPhrase(SupoxPhrase::GoodbyeNeutral);
 	}
-	else if (PlayerSaid(R, what_do_i_do_now))
+	else if (PlayerSaid(R, SupoxPhrase::WhatDoIDoNow))
 	{
-		NPCPhrase(FIX_IT);
+		NPCPhrase(SupoxPhrase::FixIt);
 	}
-	else if (PlayerSaid(R, thanks_now_we_eat_you))
+	else if (PlayerSaid(R, SupoxPhrase::ThanksNowWeEatYou))
 	{
-		NPCPhrase(HIDEOUS_MONSTERS);
+		NPCPhrase(SupoxPhrase::HideousMonsters);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOSTILE, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOME_VISITS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(0));
 	}
-	else if (PlayerSaid(R, bye_after_space))
+	else if (PlayerSaid(R, SupoxPhrase::ByeAfterSpace))
 	{
-		NPCPhrase(GOODBYE_AFTER_SPACE);
+		NPCPhrase(SupoxPhrase::GoodbyeAfterSpace);
 	}
-	else if (PlayerSaid(R, bye_before_space))
+	else if (PlayerSaid(R, SupoxPhrase::ByeBeforeSpace))
 	{
-		NPCPhrase(GOODBYE_BEFORE_SPACE);
+		NPCPhrase(SupoxPhrase::GoodbyeBeforeSpace);
 	}
-	else if (PlayerSaid(R, bye_allied_homeworld))
+	else if (PlayerSaid(R, SupoxPhrase::ByeAlliedHomeworld))
 	{
-		NPCPhrase(GOODBYE_ALLIED_HOMEWORLD);
+		NPCPhrase(SupoxPhrase::GoodbyeAlliedHomeworld);
 	}
-	else if (PlayerSaid(R, can_you_help))
+	else if (PlayerSaid(R, SupoxPhrase::CanYouHelp))
 	{
-		NPCPhrase(HOW_HELP);
+		NPCPhrase(SupoxPhrase::HowHelp);
 		if (EscortFeasibilityStudy(RaceId::Supox) == 0)
 		{
-			NPCPhrase(DONT_NEED);
+			NPCPhrase(SupoxPhrase::DontNeed);
 		}
 		else
 		{
-			NPCPhrase(HAVE_4_SHIPS);
+			NPCPhrase(SupoxPhrase::Have4Ships);
 
 			AlienTalkSegue((uint16_t)~0);
 			AddEscortShips(RaceId::Supox, difficultyCase(4, 4, 2));
@@ -182,17 +182,17 @@ static void AlliedHome(RESPONSE_REF R)
 
 	News = uqm::gameState().flag(uqm::GameFlag::SUPOX_WAR_NEWS);
 	NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
-	if (PlayerSaid(R, how_went_war))
+	if (PlayerSaid(R, SupoxPhrase::HowWentWar))
 	{
-		NPCPhrase(ABOUT_BATTLE);
+		NPCPhrase(SupoxPhrase::AboutBattle);
 
 		News |= (1 << 0);
 	}
-	else if (PlayerSaid(R, how_goes_war))
+	else if (PlayerSaid(R, SupoxPhrase::HowGoesWar))
 	{
 		if (NumVisits == 1)
 		{
-			NPCPhrase(FLEET_ON_WAY);
+			NPCPhrase(SupoxPhrase::FleetOnWay);
 
 			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(1));
 		}
@@ -201,57 +201,57 @@ static void AlliedHome(RESPONSE_REF R)
 			switch (uqm::gameState().flag(uqm::GameFlag::SUPOX_WAR_NEWS))
 			{
 				case 0:
-					NPCPhrase(BATTLE_HAPPENS_1);
+					NPCPhrase(SupoxPhrase::BattleHappens1);
 					News = 1;
 					break;
 				case 1:
-					NPCPhrase(BATTLE_HAPPENS_2);
+					NPCPhrase(SupoxPhrase::BattleHappens2);
 					News = 2;
 					break;
 			}
 		}
 
-		DisablePhrase(how_goes_war);
+		DisablePhrase(SupoxPhrase::HowGoesWar);
 	}
-	else if (PlayerSaid(R, learn_new_info))
+	else if (PlayerSaid(R, SupoxPhrase::LearnNewInfo))
 	{
 		if (NumVisits < 5)
 		{
-			NPCPhrase(NO_NEW_INFO);
+			NPCPhrase(SupoxPhrase::NoNewInfo);
 		}
 		else
 		{
-			NPCPhrase(SAMATRA);
+			NPCPhrase(SupoxPhrase::Samatra);
 
 			News |= (1 << 1);
 		}
 
-		DisablePhrase(learn_new_info);
+		DisablePhrase(SupoxPhrase::LearnNewInfo);
 	}
-	else if (PlayerSaid(R, what_now_homeworld))
+	else if (PlayerSaid(R, SupoxPhrase::WhatNowHomeworld))
 	{
 		if (NumVisits < 5)
 		{
-			NPCPhrase(UP_TO_YOU);
+			NPCPhrase(SupoxPhrase::UpToYou);
 		}
 		else
 		{
-			NPCPhrase(HOPE_KILL_EACH_OTHER);
+			NPCPhrase(SupoxPhrase::HopeKillEachOther);
 		}
 
-		DisablePhrase(what_now_homeworld);
+		DisablePhrase(SupoxPhrase::WhatNowHomeworld);
 	}
-	else if (PlayerSaid(R, how_is_ultron))
+	else if (PlayerSaid(R, SupoxPhrase::HowIsUltron))
 	{
-		NPCPhrase(ULTRON_IS_GREAT);
+		NPCPhrase(SupoxPhrase::UltronIsGreat);
 
-		DisablePhrase(how_is_ultron);
+		DisablePhrase(SupoxPhrase::HowIsUltron);
 	}
-	else if (IsExtended() && PlayerSaid(R, give_info))
+	else if (IsExtended() && PlayerSaid(R, SupoxPhrase::GiveInfo))
 	{
-		NPCPhrase(GOOD_HINTS);
+		NPCPhrase(SupoxPhrase::GoodHints);
 
-		DisablePhrase(give_info);
+		DisablePhrase(SupoxPhrase::GiveInfo);
 	}
 	uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(News));
 
@@ -259,229 +259,229 @@ static void AlliedHome(RESPONSE_REF R)
 	{
 		if (!(News & (1 << 0)))
 		{
-			Response(how_went_war, AlliedHome);
+			Response(SupoxPhrase::HowWentWar, AlliedHome);
 		}
 	}
-	else if (PhraseEnabled(how_goes_war)
+	else if (PhraseEnabled(SupoxPhrase::HowGoesWar)
 			 && ((NumVisits == 1 && News == 0)
 				 || (NumVisits && News < 2)))
 	{
-		Response(how_goes_war, AlliedHome);
+		Response(SupoxPhrase::HowGoesWar, AlliedHome);
 	}
-	if (PhraseEnabled(learn_new_info))
+	if (PhraseEnabled(SupoxPhrase::LearnNewInfo))
 	{
-		Response(learn_new_info, AlliedHome);
+		Response(SupoxPhrase::LearnNewInfo, AlliedHome);
 	}
-	if (PhraseEnabled(what_now_homeworld))
+	if (PhraseEnabled(SupoxPhrase::WhatNowHomeworld))
 	{
-		Response(what_now_homeworld, AlliedHome);
+		Response(SupoxPhrase::WhatNowHomeworld, AlliedHome);
 	}
-	if (PhraseEnabled(how_is_ultron))
+	if (PhraseEnabled(SupoxPhrase::HowIsUltron))
 	{
-		Response(how_is_ultron, AlliedHome);
+		Response(SupoxPhrase::HowIsUltron, AlliedHome);
 	}
-	if (IsExtended() && PhraseEnabled(give_info))
+	if (IsExtended() && PhraseEnabled(SupoxPhrase::GiveInfo))
 	{
-		Response(give_info, AlliedHome);
+		Response(SupoxPhrase::GiveInfo, AlliedHome);
 	}
 	if (IsExtended() && ShipsReady(RaceId::Supox))
 	{
-		Response(can_you_help, ExitConversation);
+		Response(SupoxPhrase::CanYouHelp, ExitConversation);
 	}
-	Response(bye_allied_homeworld, ExitConversation);
+	Response(SupoxPhrase::ByeAlliedHomeworld, ExitConversation);
 }
 
 static void BeforeKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, whats_up_before_space))
+	if (PlayerSaid(R, SupoxPhrase::WhatsUpBeforeSpace))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_BEFORE_SPACE_1);
+				NPCPhrase(SupoxPhrase::GeneralInfoBeforeSpace1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_BEFORE_SPACE_2);
+				NPCPhrase(SupoxPhrase::GeneralInfoBeforeSpace2);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_before_space);
+		DisablePhrase(SupoxPhrase::WhatsUpBeforeSpace);
 	}
-	else if (PlayerSaid(R, what_now_before_space))
+	else if (PlayerSaid(R, SupoxPhrase::WhatNowBeforeSpace))
 	{
-		NPCPhrase(DO_THIS_BEFORE_SPACE);
+		NPCPhrase(SupoxPhrase::DoThisBeforeSpace);
 
-		DisablePhrase(what_now_before_space);
+		DisablePhrase(SupoxPhrase::WhatNowBeforeSpace);
 	}
 
-	if (PhraseEnabled(whats_up_before_space))
+	if (PhraseEnabled(SupoxPhrase::WhatsUpBeforeSpace))
 	{
-		Response(whats_up_before_space, BeforeKohrAh);
+		Response(SupoxPhrase::WhatsUpBeforeSpace, BeforeKohrAh);
 	}
-	if (PhraseEnabled(what_now_before_space))
+	if (PhraseEnabled(SupoxPhrase::WhatNowBeforeSpace))
 	{
-		Response(what_now_before_space, BeforeKohrAh);
+		Response(SupoxPhrase::WhatNowBeforeSpace, BeforeKohrAh);
 	}
-	Response(bye_before_space, ExitConversation);
+	Response(SupoxPhrase::ByeBeforeSpace, ExitConversation);
 }
 
 static void AfterKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, whats_up_after_space))
+	if (PlayerSaid(R, SupoxPhrase::WhatsUpAfterSpace))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_AFTER_SPACE_1);
+				NPCPhrase(SupoxPhrase::GeneralInfoAfterSpace1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_AFTER_SPACE_2);
+				NPCPhrase(SupoxPhrase::GeneralInfoAfterSpace2);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_after_space);
+		DisablePhrase(SupoxPhrase::WhatsUpAfterSpace);
 	}
-	else if (PlayerSaid(R, what_now_after_space))
+	else if (PlayerSaid(R, SupoxPhrase::WhatNowAfterSpace))
 	{
-		NPCPhrase(DO_THIS_AFTER_SPACE);
+		NPCPhrase(SupoxPhrase::DoThisAfterSpace);
 
-		DisablePhrase(what_now_after_space);
+		DisablePhrase(SupoxPhrase::WhatNowAfterSpace);
 	}
 
-	if (PhraseEnabled(whats_up_after_space))
+	if (PhraseEnabled(SupoxPhrase::WhatsUpAfterSpace))
 	{
-		Response(whats_up_after_space, AfterKohrAh);
+		Response(SupoxPhrase::WhatsUpAfterSpace, AfterKohrAh);
 	}
-	if (PhraseEnabled(what_now_after_space))
+	if (PhraseEnabled(SupoxPhrase::WhatNowAfterSpace))
 	{
-		Response(what_now_after_space, AfterKohrAh);
+		Response(SupoxPhrase::WhatNowAfterSpace, AfterKohrAh);
 	}
-	Response(bye_after_space, ExitConversation);
+	Response(SupoxPhrase::ByeAfterSpace, ExitConversation);
 }
 
 static void NeutralSupox(RESPONSE_REF R)
 {
 	uint8_t i {};
 	uint8_t NumVisits {};
-	RESPONSE_REF pStr[3];
+	SupoxPhrase pStr[3];
 
 	uint8_t LastStack {0};
-	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PlayerSaid(R, i_am))
+	pStr[0] = pStr[1] = pStr[2] = SupoxPhrase::NullPhrase;
+	if (PlayerSaid(R, SupoxPhrase::IAm))
 	{
-		NPCPhrase(WE_ARE_SUPOX);
+		NPCPhrase(SupoxPhrase::WeAreSupox);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(1));
-		DisablePhrase(i_am);
+		DisablePhrase(SupoxPhrase::IAm);
 	}
-	else if (PlayerSaid(R, my_ship))
+	else if (PlayerSaid(R, SupoxPhrase::MyShip))
 	{
-		NPCPhrase(OUR_SHIP);
+		NPCPhrase(SupoxPhrase::OurShip);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(2));
-		DisablePhrase(my_ship);
+		DisablePhrase(SupoxPhrase::MyShip);
 	}
-	else if (PlayerSaid(R, from_alliance))
+	else if (PlayerSaid(R, SupoxPhrase::FromAlliance))
 	{
-		NPCPhrase(FROM_SUPOX);
+		NPCPhrase(SupoxPhrase::FromSupox);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(3));
-		DisablePhrase(from_alliance);
+		DisablePhrase(SupoxPhrase::FromAlliance);
 	}
-	else if (PlayerSaid(R, are_you_copying))
+	else if (PlayerSaid(R, SupoxPhrase::AreYouCopying))
 	{
-		NPCPhrase(YEAH_SORRY);
+		NPCPhrase(SupoxPhrase::YeahSorry);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(4));
 	}
-	else if (PlayerSaid(R, why_copy))
+	else if (PlayerSaid(R, SupoxPhrase::WhyCopy))
 	{
-		NPCPhrase(SYMBIOTS);
+		NPCPhrase(SupoxPhrase::Symbiots);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(5));
 	}
-	else if (PlayerSaid(R, tell_us_of_your_species))
+	else if (PlayerSaid(R, SupoxPhrase::TellUsOfYourSpecies))
 	{
-		NPCPhrase(OUR_SPECIES);
+		NPCPhrase(SupoxPhrase::OurSpecies);
 
 		LastStack = 1;
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK2, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, plants_arent_intelligent))
+	else if (PlayerSaid(R, SupoxPhrase::PlantsArentIntelligent))
 	{
-		NPCPhrase(PROVES_WERE_SPECIAL);
+		NPCPhrase(SupoxPhrase::ProvesWereSpecial);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK2, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, anyone_around_here))
+	else if (PlayerSaid(R, SupoxPhrase::AnyoneAroundHere))
 	{
-		NPCPhrase(UTWIG_NEARBY);
+		NPCPhrase(SupoxPhrase::UtwigNearby);
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(1));
 		StartSphereTracking(RaceId::Utwig);
 	}
-	else if (PlayerSaid(R, what_relation_to_utwig))
+	else if (PlayerSaid(R, SupoxPhrase::WhatRelationToUtwig))
 	{
-		NPCPhrase(UTWIG_ALLIES);
+		NPCPhrase(SupoxPhrase::UtwigAllies);
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, whats_wrong_with_utwig))
+	else if (PlayerSaid(R, SupoxPhrase::WhatsWrongWithUtwig))
 	{
-		NPCPhrase(BROKE_ULTRON);
+		NPCPhrase(SupoxPhrase::BrokeUltron);
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, whats_ultron))
+	else if (PlayerSaid(R, SupoxPhrase::WhatsUltron))
 	{
-		NPCPhrase(TAKE_ULTRON);
+		NPCPhrase(SupoxPhrase::TakeUltron);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(1));
 
-		Response(what_do_i_do_now, (IsExtended() ? NeutralSupox : ExitConversation));
-		Response(thanks_now_we_eat_you, ExitConversation);
+		Response(SupoxPhrase::WhatDoIDoNow, (IsExtended() ? NeutralSupox : ExitConversation));
+		Response(SupoxPhrase::ThanksNowWeEatYou, ExitConversation);
 
 		return;
 	}
-	else if (PlayerSaid(R, what_do_i_do_now))
+	else if (PlayerSaid(R, SupoxPhrase::WhatDoIDoNow))
 	{
-		NPCPhrase(FIX_IT);
+		NPCPhrase(SupoxPhrase::FixIt);
 	}
-	else if (PlayerSaid(R, got_fixed_ultron))
+	else if (PlayerSaid(R, SupoxPhrase::GotFixedUltron))
 	{
-		NPCPhrase(GOOD_GIVE_TO_UTWIG);
+		NPCPhrase(SupoxPhrase::GoodGiveToUtwig);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, look_i_repaired_lots))
+	else if (PlayerSaid(R, SupoxPhrase::LookIRepairedLots))
 	{
-		NPCPhrase(ALMOST_THERE);
+		NPCPhrase(SupoxPhrase::AlmostThere);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, look_i_slightly_repaired))
+	else if (PlayerSaid(R, SupoxPhrase::LookISlightlyRepaired))
 	{
-		NPCPhrase(GREAT_DO_MORE);
+		NPCPhrase(SupoxPhrase::GreatDoMore);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, where_get_repairs))
+	else if (PlayerSaid(R, SupoxPhrase::WhereGetRepairs))
 	{
-		NPCPhrase(ANCIENT_RHYME);
+		NPCPhrase(SupoxPhrase::AncientRhyme);
 
 		if (IsExtended())
 		{
@@ -489,43 +489,43 @@ static void NeutralSupox(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, give_info))
+	else if (PlayerSaid(R, SupoxPhrase::GiveInfo))
 	{
-		NPCPhrase(GOOD_HINTS);
+		NPCPhrase(SupoxPhrase::GoodHints);
 
-		DisablePhrase(give_info);
+		DisablePhrase(SupoxPhrase::GiveInfo);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::SUPOX_STACK2))
 	{
 		case 0:
-			pStr[1] = tell_us_of_your_species;
+			pStr[1] = SupoxPhrase::TellUsOfYourSpecies;
 			break;
 		case 1:
-			pStr[1] = plants_arent_intelligent;
+			pStr[1] = SupoxPhrase::PlantsArentIntelligent;
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::SUPOX_STACK1))
 	{
 		case 0:
-			pStr[0] = i_am;
-			pStr[1] = 0;
+			pStr[0] = SupoxPhrase::IAm;
+			pStr[1] = SupoxPhrase::NullPhrase;
 			break;
 		case 1:
-			pStr[0] = my_ship;
-			pStr[1] = 0;
+			pStr[0] = SupoxPhrase::MyShip;
+			pStr[1] = SupoxPhrase::NullPhrase;
 			break;
 		case 2:
-			pStr[0] = from_alliance;
-			pStr[1] = 0;
+			pStr[0] = SupoxPhrase::FromAlliance;
+			pStr[1] = SupoxPhrase::NullPhrase;
 			break;
 		case 3:
-			pStr[0] = are_you_copying;
-			pStr[1] = 0;
+			pStr[0] = SupoxPhrase::AreYouCopying;
+			pStr[1] = SupoxPhrase::NullPhrase;
 			break;
 		case 4:
-			pStr[0] = why_copy;
-			pStr[1] = 0;
+			pStr[0] = SupoxPhrase::WhyCopy;
+			pStr[1] = SupoxPhrase::NullPhrase;
 			break;
 	}
 	NumVisits = uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION);
@@ -538,28 +538,28 @@ static void NeutralSupox(RESPONSE_REF R)
 					|| uqm::gameState().flag(uqm::GameFlag::UTWIG_HOME_VISITS)
 					|| uqm::gameState().flag(uqm::GameFlag::BOMB_VISITS))
 				{
-					pStr[2] = what_relation_to_utwig;
+					pStr[2] = SupoxPhrase::WhatRelationToUtwig;
 				}
 				else
 				{
-					pStr[2] = anyone_around_here;
+					pStr[2] = SupoxPhrase::AnyoneAroundHere;
 				}
 				break;
 			case 1:
-				pStr[2] = whats_wrong_with_utwig;
+				pStr[2] = SupoxPhrase::WhatsWrongWithUtwig;
 				break;
 			case 2:
-				pStr[2] = whats_ultron;
+				pStr[2] = SupoxPhrase::WhatsUltron;
 				break;
 		}
 	}
-	if (pStr[LastStack])
+	if (pStr[LastStack] != SupoxPhrase::NullPhrase)
 	{
 		Response(pStr[LastStack], NeutralSupox);
 	}
 	for (i = 0; i < 3; ++i)
 	{
-		if (i != LastStack && pStr[i])
+		if (i != LastStack && *pStr[i] != SupoxPhrase::NullPhrase)
 		{
 			Response(pStr[i], NeutralSupox);
 		}
@@ -569,24 +569,24 @@ static void NeutralSupox(RESPONSE_REF R)
 		switch (NumVisits)
 		{
 			case 1:
-				Response(where_get_repairs, NeutralSupox);
+				Response(SupoxPhrase::WhereGetRepairs, NeutralSupox);
 				break;
 			case 2:
-				Response(look_i_slightly_repaired, NeutralSupox);
+				Response(SupoxPhrase::LookISlightlyRepaired, NeutralSupox);
 				break;
 			case 3:
-				Response(look_i_repaired_lots, NeutralSupox);
+				Response(SupoxPhrase::LookIRepairedLots, NeutralSupox);
 				break;
 			case 4:
-				Response(got_fixed_ultron, NeutralSupox);
+				Response(SupoxPhrase::GotFixedUltron, NeutralSupox);
 				break;
 		}
 	}
-	if (IsExtended() && NumVisits && PhraseEnabled(give_info))
+	if (IsExtended() && NumVisits && PhraseEnabled(SupoxPhrase::GiveInfo))
 	{
-		Response(give_info, NeutralSupox);
+		Response(SupoxPhrase::GiveInfo, NeutralSupox);
 	}
-	Response(bye_neutral, ExitConversation);
+	Response(SupoxPhrase::ByeNeutral, ExitConversation);
 }
 
 static void Intro(void)
@@ -595,7 +595,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(SupoxPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -607,10 +607,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HOSTILE_SPACE_HELLO_1);
+				NPCPhrase(SupoxPhrase::HostileSpaceHello1);
 				break;
 			case 1:
-				NPCPhrase(HOSTILE_SPACE_HELLO_2);
+				NPCPhrase(SupoxPhrase::HostileSpaceHello2);
 				--NumVisits;
 				break;
 		}
@@ -626,16 +626,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_1);
+					NPCPhrase(SupoxPhrase::AlliedHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_2);
+					NPCPhrase(SupoxPhrase::AlliedHomeworldHello2);
 					break;
 				case 2:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_3);
+					NPCPhrase(SupoxPhrase::AlliedHomeworldHello3);
 					break;
 				case 3:
-					NPCPhrase(ALLIED_HOMEWORLD_HELLO_4);
+					NPCPhrase(SupoxPhrase::AlliedHomeworldHello4);
 					--NumVisits;
 					break;
 			}
@@ -652,10 +652,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HELLO_BEFORE_KOHRAH_SPACE_1);
+						NPCPhrase(SupoxPhrase::HelloBeforeKohrahSpace1);
 						break;
 					case 1:
-						NPCPhrase(HELLO_BEFORE_KOHRAH_SPACE_2);
+						NPCPhrase(SupoxPhrase::HelloBeforeKohrahSpace2);
 						--NumVisits;
 						break;
 				}
@@ -669,10 +669,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HELLO_DURING_KOHRAH_SPACE_1);
+						NPCPhrase(SupoxPhrase::HelloDuringKohrahSpace1);
 						break;
 					case 1:
-						NPCPhrase(HELLO_DURING_KOHRAH_SPACE_2);
+						NPCPhrase(SupoxPhrase::HelloDuringKohrahSpace2);
 						--NumVisits;
 						break;
 				}
@@ -684,10 +684,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(HELLO_AFTER_KOHRAH_SPACE_1);
+						NPCPhrase(SupoxPhrase::HelloAfterKohrahSpace1);
 						break;
 					case 1:
-						NPCPhrase(HELLO_AFTER_KOHRAH_SPACE_2);
+						NPCPhrase(SupoxPhrase::HelloAfterKohrahSpace2);
 						--NumVisits;
 						break;
 				}
@@ -705,10 +705,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_1);
+					NPCPhrase(SupoxPhrase::NeutralHomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(NEUTRAL_HOMEWORLD_HELLO_2);
+					NPCPhrase(SupoxPhrase::NeutralHomeworldHello2);
 					--NumVisits;
 					break;
 			}
@@ -722,10 +722,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_1);
+					NPCPhrase(SupoxPhrase::NeutralSpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(NEUTRAL_SPACE_HELLO_2);
+					NPCPhrase(SupoxPhrase::NeutralSpaceHello2);
 					--NumVisits;
 					break;
 			}

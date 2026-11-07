@@ -325,10 +325,10 @@ static void CombatIsInevitable(RESPONSE_REF R)
 
 	setSegue(Segue::Hostile);
 
-	if (PlayerSaid(R, ok_take_beast))
+	if (PlayerSaid(R, VuxPhrase::OkTakeBeast))
 	{
-		NPCPhrase(FOOL_AIEE0);
-		NPCPhrase(FOOL_AIEE1);
+		NPCPhrase(VuxPhrase::FoolAiee0);
+		NPCPhrase(VuxPhrase::FoolAiee1);
 
 		AlienTalkSegue(1);
 
@@ -340,18 +340,18 @@ static void CombatIsInevitable(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::ZEX_IS_DEAD, static_cast<uint32_t>(1));
 		setSegue(Segue::Peace);
 	}
-	else if (PlayerSaid(R, try_any_way))
+	else if (PlayerSaid(R, VuxPhrase::TryAnyWay))
 	{
-		NPCPhrase(NOPE);
+		NPCPhrase(VuxPhrase::Nope);
 
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(4));
 	}
-	else if (PlayerSaid(R, kill_you_squids_1)
-			 || PlayerSaid(R, kill_you_squids_2)
-			 || PlayerSaid(R, kill_you_squids_3)
-			 || PlayerSaid(R, kill_you_squids_4))
+	else if (PlayerSaid(R, VuxPhrase::KillYouSquids1)
+			 || PlayerSaid(R, VuxPhrase::KillYouSquids2)
+			 || PlayerSaid(R, VuxPhrase::KillYouSquids3)
+			 || PlayerSaid(R, VuxPhrase::KillYouSquids4))
 	{
-		NPCPhrase(WE_FIGHT);
+		NPCPhrase(VuxPhrase::WeFight);
 
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_2) + 1;
 		if (NumVisits <= 3)
@@ -359,54 +359,54 @@ static void CombatIsInevitable(RESPONSE_REF R)
 			uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_2, static_cast<uint32_t>(NumVisits));
 		}
 	}
-	else if (PlayerSaid(R, cant_we_be_friends_1)
-			 || PlayerSaid(R, cant_we_be_friends_2)
-			 || PlayerSaid(R, cant_we_be_friends_3)
-			 || PlayerSaid(R, cant_we_be_friends_4))
+	else if (PlayerSaid(R, VuxPhrase::CantWeBeFriends1)
+			 || PlayerSaid(R, VuxPhrase::CantWeBeFriends2)
+			 || PlayerSaid(R, VuxPhrase::CantWeBeFriends3)
+			 || PlayerSaid(R, VuxPhrase::CantWeBeFriends4))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_3);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(NEVER_UGLY_HUMANS_1);
+				NPCPhrase(VuxPhrase::NeverUglyHumans1);
 				break;
 			case 1:
-				NPCPhrase(NEVER_UGLY_HUMANS_2);
+				NPCPhrase(VuxPhrase::NeverUglyHumans2);
 				break;
 			case 2:
-				NPCPhrase(NEVER_UGLY_HUMANS_3);
+				NPCPhrase(VuxPhrase::NeverUglyHumans3);
 				break;
 			case 3:
-				NPCPhrase(NEVER_UGLY_HUMANS_4);
+				NPCPhrase(VuxPhrase::NeverUglyHumans4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_3, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, bye_hostile_space))
+	else if (PlayerSaid(R, VuxPhrase::ByeHostileSpace))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_4);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GOODBYE_AND_DIE_HOSTILE_SPACE_1);
+				NPCPhrase(VuxPhrase::GoodbyeAndDieHostileSpace1);
 				break;
 			case 1:
-				NPCPhrase(GOODBYE_AND_DIE_HOSTILE_SPACE_2);
+				NPCPhrase(VuxPhrase::GoodbyeAndDieHostileSpace2);
 				break;
 			case 2:
-				NPCPhrase(GOODBYE_AND_DIE_HOSTILE_SPACE_3);
+				NPCPhrase(VuxPhrase::GoodbyeAndDieHostileSpace3);
 				break;
 			case 3:
-				NPCPhrase(GOODBYE_AND_DIE_HOSTILE_SPACE_4);
+				NPCPhrase(VuxPhrase::GoodbyeAndDieHostileSpace4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_4, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PlayerSaid(R, bye_zex))
+	else if (PlayerSaid(R, VuxPhrase::ByeZex))
 	{
-		NPCPhrase(GOODBYE_ZEX);
+		NPCPhrase(VuxPhrase::GoodbyeZex);
 
 		setSegue(Segue::Peace);
 	}
@@ -416,34 +416,34 @@ static void CombatIsInevitable(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 4:
-				NPCPhrase(NOT_ACCEPTED_1);
+				NPCPhrase(VuxPhrase::NotAccepted1);
 				break;
 			case 5:
-				NPCPhrase(NOT_ACCEPTED_2);
+				NPCPhrase(VuxPhrase::NotAccepted2);
 				break;
 			case 6:
-				NPCPhrase(NOT_ACCEPTED_3);
+				NPCPhrase(VuxPhrase::NotAccepted3);
 				break;
 			case 7:
-				NPCPhrase(NOT_ACCEPTED_4);
+				NPCPhrase(VuxPhrase::NotAccepted4);
 				break;
 			case 8:
-				NPCPhrase(NOT_ACCEPTED_5);
+				NPCPhrase(VuxPhrase::NotAccepted5);
 				break;
 			case 9:
-				NPCPhrase(NOT_ACCEPTED_6);
+				NPCPhrase(VuxPhrase::NotAccepted6);
 				break;
 			case 10:
-				NPCPhrase(NOT_ACCEPTED_7);
+				NPCPhrase(VuxPhrase::NotAccepted7);
 				break;
 			case 11:
-				NPCPhrase(NOT_ACCEPTED_8);
+				NPCPhrase(VuxPhrase::NotAccepted8);
 				break;
 			case 12:
-				NPCPhrase(NOT_ACCEPTED_9);
+				NPCPhrase(VuxPhrase::NotAccepted9);
 				break;
 			case 13:
-				NPCPhrase(TRUTH);
+				NPCPhrase(VuxPhrase::Truth);
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(NumVisits));
@@ -454,59 +454,59 @@ static void Menagerie(RESPONSE_REF R)
 {
 	uint8_t i {};
 	uint8_t LastStack {};
-	RESPONSE_REF pStr[3];
+	VuxPhrase pStr[3];
 
-	if (PlayerSaid(R, i_have_beast)
-		|| PlayerSaid(R, why_trust_1)
-		|| PlayerSaid(R, why_trust_2)
-		|| PlayerSaid(R, why_trust_3))
+	if (PlayerSaid(R, VuxPhrase::IHaveBeast)
+		|| PlayerSaid(R, VuxPhrase::WhyTrust1)
+		|| PlayerSaid(R, VuxPhrase::WhyTrust2)
+		|| PlayerSaid(R, VuxPhrase::WhyTrust3))
 	{
-		if (PlayerSaid(R, i_have_beast))
+		if (PlayerSaid(R, VuxPhrase::IHaveBeast))
 		{
-			NPCPhrase(GIVE_BEAST);
+			NPCPhrase(VuxPhrase::GiveBeast);
 		}
-		else if (PlayerSaid(R, why_trust_1))
+		else if (PlayerSaid(R, VuxPhrase::WhyTrust1))
 		{
-			NPCPhrase(TRUST_1);
+			NPCPhrase(VuxPhrase::Trust1);
 
-			DisablePhrase(why_trust_1);
+			DisablePhrase(VuxPhrase::WhyTrust1);
 		}
-		else if (PlayerSaid(R, why_trust_2))
+		else if (PlayerSaid(R, VuxPhrase::WhyTrust2))
 		{
-			NPCPhrase(TRUST_2);
+			NPCPhrase(VuxPhrase::Trust2);
 
-			DisablePhrase(why_trust_2);
+			DisablePhrase(VuxPhrase::WhyTrust2);
 		}
-		else if (PlayerSaid(R, why_trust_3))
+		else if (PlayerSaid(R, VuxPhrase::WhyTrust3))
 		{
-			NPCPhrase(TRUST_3);
+			NPCPhrase(VuxPhrase::Trust3);
 
-			DisablePhrase(why_trust_3);
+			DisablePhrase(VuxPhrase::WhyTrust3);
 		}
 
-		if (PhraseEnabled(why_trust_1))
+		if (PhraseEnabled(VuxPhrase::WhyTrust1))
 		{
-			Response(why_trust_1, Menagerie);
+			Response(VuxPhrase::WhyTrust1, Menagerie);
 		}
-		else if (PhraseEnabled(why_trust_2))
+		else if (PhraseEnabled(VuxPhrase::WhyTrust2))
 		{
-			Response(why_trust_2, Menagerie);
+			Response(VuxPhrase::WhyTrust2, Menagerie);
 		}
-		else if (PhraseEnabled(why_trust_3))
+		else if (PhraseEnabled(VuxPhrase::WhyTrust3))
 		{
-			Response(why_trust_3, Menagerie);
+			Response(VuxPhrase::WhyTrust3, Menagerie);
 		}
-		Response(ok_take_beast, CombatIsInevitable);
+		Response(VuxPhrase::OkTakeBeast, CombatIsInevitable);
 	}
-	else if (PlayerSaid(R, kill_you))
+	else if (PlayerSaid(R, VuxPhrase::KillYou))
 	{
-		NPCPhrase(FIGHT_AGAIN);
+		NPCPhrase(VuxPhrase::FightAgain);
 
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, regardless))
+	else if (PlayerSaid(R, VuxPhrase::Regardless))
 	{
-		NPCPhrase(THEN_FIGHT);
+		NPCPhrase(VuxPhrase::ThenFight);
 
 		setSegue(Segue::Hostile);
 		uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(2));
@@ -515,7 +515,7 @@ static void Menagerie(RESPONSE_REF R)
 	else
 	{
 		LastStack = 0;
-		pStr[0] = pStr[1] = pStr[2] = 0;
+		pStr[0] = pStr[1] = pStr[2] = VuxPhrase::NullPhrase;
 		if (R == 0)
 		{
 			uint8_t NumVisits {};
@@ -526,10 +526,10 @@ static void Menagerie(RESPONSE_REF R)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(FIGHT_OR_TRADE_1);
+						NPCPhrase(VuxPhrase::FightOrTrade1);
 						break;
 					case 1:
-						NPCPhrase(FIGHT_OR_TRADE_2);
+						NPCPhrase(VuxPhrase::FightOrTrade2);
 						--NumVisits;
 						break;
 				}
@@ -539,80 +539,80 @@ static void Menagerie(RESPONSE_REF R)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(ZEX_HELLO_1);
+						NPCPhrase(VuxPhrase::ZexHello1);
 						break;
 					case 1:
-						NPCPhrase(ZEX_HELLO_2);
+						NPCPhrase(VuxPhrase::ZexHello2);
 						break;
 					case 2:
-						NPCPhrase(ZEX_HELLO_3);
+						NPCPhrase(VuxPhrase::ZexHello3);
 						break;
 					case 3:
-						NPCPhrase(ZEX_HELLO_4);
+						NPCPhrase(VuxPhrase::ZexHello4);
 						--NumVisits;
 						break;
 				}
 			}
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_VISITS, static_cast<uint32_t>(NumVisits));
 		}
-		else if (PlayerSaid(R, what_you_do_here))
+		else if (PlayerSaid(R, VuxPhrase::WhatYouDoHere))
 		{
-			NPCPhrase(MY_MENAGERIE);
+			NPCPhrase(VuxPhrase::MyMenagerie);
 
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(1));
 		}
-		else if (PlayerSaid(R, what_about_menagerie))
+		else if (PlayerSaid(R, VuxPhrase::WhatAboutMenagerie))
 		{
-			NPCPhrase(NEED_NEW_CREATURE);
+			NPCPhrase(VuxPhrase::NeedNewCreature);
 
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(2));
 		}
-		else if (PlayerSaid(R, what_about_creature))
+		else if (PlayerSaid(R, VuxPhrase::WhatAboutCreature))
 		{
-			NPCPhrase(ABOUT_CREATURE);
+			NPCPhrase(VuxPhrase::AboutCreature);
 
 			uqm::gameState().setFlag(uqm::GameFlag::KNOW_ZEX_WANTS_MONSTER, static_cast<uint32_t>(1));
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(3));
 
-			R = about_creature_again;
-			DisablePhrase(what_about_creature);
+			R = *VuxPhrase::AboutCreatureAgain;
+			DisablePhrase(VuxPhrase::WhatAboutCreature);
 		}
-		else if (PlayerSaid(R, about_creature_again))
+		else if (PlayerSaid(R, VuxPhrase::AboutCreatureAgain))
 		{
-			NPCPhrase(CREATURE_AGAIN);
+			NPCPhrase(VuxPhrase::CreatureAgain);
 
-			DisablePhrase(about_creature_again);
+			DisablePhrase(VuxPhrase::AboutCreatureAgain);
 		}
-		else if (PlayerSaid(R, why_dont_you_attack))
+		else if (PlayerSaid(R, VuxPhrase::WhyDontYouAttack))
 		{
-			NPCPhrase(LIKE_YOU);
+			NPCPhrase(VuxPhrase::LikeYou);
 
 			LastStack = 1;
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_2, static_cast<uint32_t>(1));
 		}
-		else if (PlayerSaid(R, why_like_me))
+		else if (PlayerSaid(R, VuxPhrase::WhyLikeMe))
 		{
-			NPCPhrase(LIKE_BECAUSE);
+			NPCPhrase(VuxPhrase::LikeBecause);
 
 			LastStack = 1;
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_2, static_cast<uint32_t>(2));
 		}
-		else if (PlayerSaid(R, are_you_a_pervert))
+		else if (PlayerSaid(R, VuxPhrase::AreYouAPervert))
 		{
-			NPCPhrase(CALL_ME_WHAT_YOU_WISH);
+			NPCPhrase(VuxPhrase::CallMeWhatYouWish);
 
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_2, static_cast<uint32_t>(3));
 		}
-		else if (PlayerSaid(R, take_by_force))
+		else if (PlayerSaid(R, VuxPhrase::TakeByForce))
 		{
-			NPCPhrase(PRECURSOR_DEVICE);
+			NPCPhrase(VuxPhrase::PrecursorDevice);
 
 			LastStack = 2;
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(1));
 		}
-		else if (PlayerSaid(R, you_lied))
+		else if (PlayerSaid(R, VuxPhrase::YouLied))
 		{
-			NPCPhrase(YUP_LIED);
+			NPCPhrase(VuxPhrase::YupLied);
 
 			LastStack = 2;
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(3));
@@ -621,25 +621,25 @@ static void Menagerie(RESPONSE_REF R)
 		if (uqm::gameState().flag(uqm::GameFlag::KNOW_ZEX_WANTS_MONSTER)
 			&& uqm::gameState().flag(uqm::GameFlag::VUX_BEAST_ON_SHIP))
 		{
-			pStr[0] = i_have_beast;
+			pStr[0] = VuxPhrase::IHaveBeast;
 		}
 		else
 		{
 			switch (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_1))
 			{
 				case 0:
-					pStr[0] = what_you_do_here;
+					pStr[0] = VuxPhrase::WhatYouDoHere;
 					break;
 				case 1:
-					pStr[0] = what_about_menagerie;
+					pStr[0] = VuxPhrase::WhatAboutMenagerie;
 					break;
 				case 2:
-					pStr[0] = what_about_creature;
+					pStr[0] = VuxPhrase::WhatAboutCreature;
 					break;
 				case 3:
-					if (PhraseEnabled(about_creature_again))
+					if (PhraseEnabled(VuxPhrase::AboutCreatureAgain))
 					{
-						pStr[0] = about_creature_again;
+						pStr[0] = VuxPhrase::AboutCreatureAgain;
 					}
 					break;
 			}
@@ -647,67 +647,67 @@ static void Menagerie(RESPONSE_REF R)
 		switch (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_2))
 		{
 			case 0:
-				pStr[1] = why_dont_you_attack;
+				pStr[1] = VuxPhrase::WhyDontYouAttack;
 				break;
 			case 1:
-				pStr[1] = why_like_me;
+				pStr[1] = VuxPhrase::WhyLikeMe;
 				break;
 			case 2:
-				pStr[1] = are_you_a_pervert;
+				pStr[1] = VuxPhrase::AreYouAPervert;
 				break;
 		}
 		switch (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_3))
 		{
 			case 0:
-				pStr[2] = take_by_force;
+				pStr[2] = VuxPhrase::TakeByForce;
 				break;
 			case 1:
-				pStr[2] = regardless;
+				pStr[2] = VuxPhrase::Regardless;
 				break;
 			case 2:
-				pStr[2] = you_lied;
+				pStr[2] = VuxPhrase::YouLied;
 				break;
 			case 3:
-				pStr[2] = kill_you;
+				pStr[2] = VuxPhrase::KillYou;
 				break;
 		}
 
-		if (pStr[LastStack])
+		if (pStr[LastStack] != VuxPhrase::NullPhrase)
 		{
 			Response(pStr[LastStack], Menagerie);
 		}
 		for (i = 0; i < 3; ++i)
 		{
-			if (i != LastStack && pStr[i])
+			if (i != LastStack && *pStr[i] != VuxPhrase::NullPhrase)
 			{
 				Response(pStr[i], Menagerie);
 			}
 		}
-		Response(bye_zex, CombatIsInevitable);
+		Response(VuxPhrase::ByeZex, CombatIsInevitable);
 	}
 }
 
 static void NormalVux(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, why_so_mean))
+	if (PlayerSaid(R, VuxPhrase::WhySoMean))
 	{
-		NPCPhrase(URQUAN_SLAVES);
+		NPCPhrase(VuxPhrase::UrquanSlaves);
 
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, deeper_reason))
+	else if (PlayerSaid(R, VuxPhrase::DeeperReason))
 	{
-		NPCPhrase(OLD_INSULT);
+		NPCPhrase(VuxPhrase::OldInsult);
 
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, if_we_apologize))
+	else if (PlayerSaid(R, VuxPhrase::IfWeApologize))
 	{
-		NPCPhrase(PROBABLY_NOT);
+		NPCPhrase(VuxPhrase::ProbablyNot);
 
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, whats_up_hostile))
+	else if (PlayerSaid(R, VuxPhrase::WhatsUpHostile))
 	{
 		uint8_t NumVisits {};
 
@@ -715,89 +715,89 @@ static void NormalVux(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_HOSTILE_1);
+				NPCPhrase(VuxPhrase::GeneralInfoHostile1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_HOSTILE_2);
+				NPCPhrase(VuxPhrase::GeneralInfoHostile2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_HOSTILE_3);
+				NPCPhrase(VuxPhrase::GeneralInfoHostile3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_HOSTILE_4);
+				NPCPhrase(VuxPhrase::GeneralInfoHostile4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_hostile);
+		DisablePhrase(VuxPhrase::WhatsUpHostile);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_1))
 	{
 		case 0:
-			Response(why_so_mean, NormalVux);
+			Response(VuxPhrase::WhySoMean, NormalVux);
 			break;
 		case 1:
-			Response(deeper_reason, NormalVux);
+			Response(VuxPhrase::DeeperReason, NormalVux);
 			break;
 		case 2:
-			Response(if_we_apologize, NormalVux);
+			Response(VuxPhrase::IfWeApologize, NormalVux);
 			break;
 		case 3:
-			Response(try_any_way, CombatIsInevitable);
+			Response(VuxPhrase::TryAnyWay, CombatIsInevitable);
 			break;
 		case 4:
-			Response(apology_1, CombatIsInevitable);
+			Response(VuxPhrase::Apology1, CombatIsInevitable);
 			break;
 		case 5:
-			Response(apology_2, CombatIsInevitable);
+			Response(VuxPhrase::Apology2, CombatIsInevitable);
 			break;
 		case 6:
-			Response(apology_3, CombatIsInevitable);
+			Response(VuxPhrase::Apology3, CombatIsInevitable);
 			break;
 		case 7:
-			Response(apology_4, CombatIsInevitable);
+			Response(VuxPhrase::Apology4, CombatIsInevitable);
 			break;
 		case 8:
-			Response(apology_5, CombatIsInevitable);
+			Response(VuxPhrase::Apology5, CombatIsInevitable);
 			break;
 		case 9:
-			Response(apology_6, CombatIsInevitable);
+			Response(VuxPhrase::Apology6, CombatIsInevitable);
 			break;
 		case 10:
-			Response(apology_7, CombatIsInevitable);
+			Response(VuxPhrase::Apology7, CombatIsInevitable);
 			break;
 		case 11:
-			Response(apology_8, CombatIsInevitable);
+			Response(VuxPhrase::Apology8, CombatIsInevitable);
 			break;
 		case 12:
-			Response(apology_9, CombatIsInevitable);
+			Response(VuxPhrase::Apology9, CombatIsInevitable);
 			break;
 		case 13:
-			Response(apology_10, CombatIsInevitable);
+			Response(VuxPhrase::Apology10, CombatIsInevitable);
 			break;
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_2))
 	{
 		case 0:
-			Response(kill_you_squids_1, CombatIsInevitable);
+			Response(VuxPhrase::KillYouSquids1, CombatIsInevitable);
 			break;
 		case 1:
-			Response(kill_you_squids_2, CombatIsInevitable);
+			Response(VuxPhrase::KillYouSquids2, CombatIsInevitable);
 			break;
 		case 2:
-			Response(kill_you_squids_3, CombatIsInevitable);
+			Response(VuxPhrase::KillYouSquids3, CombatIsInevitable);
 			break;
 		case 3:
-			Response(kill_you_squids_4, CombatIsInevitable);
+			Response(VuxPhrase::KillYouSquids4, CombatIsInevitable);
 			break;
 	}
 
-	if (PhraseEnabled(whats_up_hostile))
+	if (PhraseEnabled(VuxPhrase::WhatsUpHostile))
 	{
-		Response(whats_up_hostile, NormalVux);
+		Response(VuxPhrase::WhatsUpHostile, NormalVux);
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_1) > 13)
@@ -805,21 +805,21 @@ static void NormalVux(RESPONSE_REF R)
 		switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_3))
 		{
 			case 0:
-				Response(cant_we_be_friends_1, CombatIsInevitable);
+				Response(VuxPhrase::CantWeBeFriends1, CombatIsInevitable);
 				break;
 			case 1:
-				Response(cant_we_be_friends_2, CombatIsInevitable);
+				Response(VuxPhrase::CantWeBeFriends2, CombatIsInevitable);
 				break;
 			case 2:
-				Response(cant_we_be_friends_3, CombatIsInevitable);
+				Response(VuxPhrase::CantWeBeFriends3, CombatIsInevitable);
 				break;
 			case 3:
-				Response(cant_we_be_friends_4, CombatIsInevitable);
+				Response(VuxPhrase::CantWeBeFriends4, CombatIsInevitable);
 				break;
 		}
 	}
 
-	Response(bye_hostile_space, CombatIsInevitable);
+	Response(VuxPhrase::ByeHostileSpace, CombatIsInevitable);
 }
 
 static void Intro(void)
@@ -831,7 +831,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(VuxPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -851,16 +851,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(HOMEWORLD_HELLO_1);
+					NPCPhrase(VuxPhrase::HomeworldHello1);
 					break;
 				case 1:
-					NPCPhrase(HOMEWORLD_HELLO_2);
+					NPCPhrase(VuxPhrase::HomeworldHello2);
 					break;
 				case 2:
-					NPCPhrase(HOMEWORLD_HELLO_3);
+					NPCPhrase(VuxPhrase::HomeworldHello3);
 					break;
 				case 3:
-					NPCPhrase(HOMEWORLD_HELLO_4);
+					NPCPhrase(VuxPhrase::HomeworldHello4);
 					--NumVisits;
 					break;
 			}
@@ -874,16 +874,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(SPACE_HELLO_1);
+					NPCPhrase(VuxPhrase::SpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(SPACE_HELLO_2);
+					NPCPhrase(VuxPhrase::SpaceHello2);
 					break;
 				case 2:
-					NPCPhrase(SPACE_HELLO_3);
+					NPCPhrase(VuxPhrase::SpaceHello3);
 					break;
 				case 3:
-					NPCPhrase(SPACE_HELLO_4);
+					NPCPhrase(VuxPhrase::SpaceHello4);
 					--NumVisits;
 					break;
 			}

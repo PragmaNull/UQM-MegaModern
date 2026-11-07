@@ -255,49 +255,49 @@ static void FriendlyExit(RESPONSE_REF R)
 {
 	setSegue(Segue::Peace);
 
-	if (PlayerSaid(R, bye))
+	if (PlayerSaid(R, SyreenPhrase::Bye))
 	{
-		NPCPhrase(GOODBYE);
+		NPCPhrase(SyreenPhrase::Goodbye);
 	}
-	else if (PlayerSaid(R, im_on_my_way)
-			 || PlayerSaid(R, doing_this_for_you)
-			 || PlayerSaid(R, if_i_die))
+	else if (PlayerSaid(R, SyreenPhrase::ImOnMyWay)
+			 || PlayerSaid(R, SyreenPhrase::DoingThisForYou)
+			 || PlayerSaid(R, SyreenPhrase::IfIDie))
 	{
-		NPCPhrase(GOOD_LUCK);
+		NPCPhrase(SyreenPhrase::GoodLuck);
 	}
-	else if (PlayerSaid(R, bye_before_vault))
+	else if (PlayerSaid(R, SyreenPhrase::ByeBeforeVault))
 	{
-		NPCPhrase(GOODBYE_BEFORE_VAULT);
+		NPCPhrase(SyreenPhrase::GoodbyeBeforeVault);
 	}
-	else if (PlayerSaid(R, bye_after_vault))
+	else if (PlayerSaid(R, SyreenPhrase::ByeAfterVault))
 	{
-		NPCPhrase(GOODBYE_AFTER_VAULT);
+		NPCPhrase(SyreenPhrase::GoodbyeAfterVault);
 	}
-	else if (PlayerSaid(R, bye_before_ambush))
+	else if (PlayerSaid(R, SyreenPhrase::ByeBeforeAmbush))
 	{
-		NPCPhrase(GOODBYE_BEFORE_AMBUSH);
+		NPCPhrase(SyreenPhrase::GoodbyeBeforeAmbush);
 	}
-	else if (PlayerSaid(R, bye_after_ambush))
+	else if (PlayerSaid(R, SyreenPhrase::ByeAfterAmbush))
 	{
-		NPCPhrase(GOODBYE_AFTER_AMBUSH);
+		NPCPhrase(SyreenPhrase::GoodbyeAfterAmbush);
 	}
 	else
 	{
-		if (PlayerSaid(R, hands_off))
+		if (PlayerSaid(R, SyreenPhrase::HandsOff))
 		{
 			SetCustomBaseLine(3, MAKE_POINT(108, 81), TextAlign::Center);
 			SetCustomBaseLine(4, MAKE_POINT(80, 49), TextAlign::Center);
 			SetCustomBaseLine(5, MAKE_POINT(121, 27), TextAlign::Center);
 
-			NPCPhrase(OK_WONT_USE_HANDS);
+			NPCPhrase(SyreenPhrase::OkWontUseHands);
 		}
-		else if (PlayerSaid(R, not_much_more_to_say))
+		else if (PlayerSaid(R, SyreenPhrase::NotMuchMoreToSay))
 		{
-			NPCPhrase(THEN_STOP_TALKING);
+			NPCPhrase(SyreenPhrase::ThenStopTalking);
 		}
 
-		NPCPhrase(LATER);
-		NPCPhrase(SEX_GOODBYE);
+		NPCPhrase(SyreenPhrase::Later);
+		NPCPhrase(SyreenPhrase::SexGoodbye);
 
 
 		AlienTalkSegue(1);
@@ -336,15 +336,15 @@ static void FriendlyExit(RESPONSE_REF R)
 
 static void Sex(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, in_the_spirit))
+	if (PlayerSaid(R, SyreenPhrase::InTheSpirit))
 	{
 		SetCustomBaseLine(3, MAKE_POINT(98, 21), TextAlign::Center);
 		SetCustomBaseLine(4, MAKE_POINT(156, 51), TextAlign::Center);
 		SetCustomBaseLine(5, MAKE_POINT(169, 79), TextAlign::Center);
 
-		NPCPhrase(OK_SPIRIT);
+		NPCPhrase(SyreenPhrase::OkSpirit);
 	}
-	else if (PlayerSaid(R, what_in_mind))
+	else if (PlayerSaid(R, SyreenPhrase::WhatInMind))
 	{
 		SetCustomBaseLine(0, MAKE_POINT(3, 0), TextAlign::Left);
 		SetCustomBaseLine(1, MAKE_POINT(3, 0), TextAlign::Left);
@@ -353,68 +353,68 @@ static void Sex(RESPONSE_REF R)
 		SetCustomBaseLine(4, MAKE_POINT(240, 10), TextAlign::Right);
 		SetCustomBaseLine(5, MAKE_POINT(240, 10), TextAlign::Right);
 
-		NPCPhrase(SOMETHING_LIKE_THIS);
+		NPCPhrase(SyreenPhrase::SomethingLikeThis);
 	}
-	else if (PlayerSaid(R, disease))
+	else if (PlayerSaid(R, SyreenPhrase::Disease))
 	{
-		NPCPhrase(JUST_RELAX);
+		NPCPhrase(SyreenPhrase::JustRelax);
 	}
-	else if (PlayerSaid(R, what_happens_if_i_touch_this))
+	else if (PlayerSaid(R, SyreenPhrase::WhatHappensIfITouchThis))
 	{
-		NPCPhrase(THIS_HAPPENS);
+		NPCPhrase(SyreenPhrase::ThisHappens);
 
-		DisablePhrase(what_happens_if_i_touch_this);
+		DisablePhrase(SyreenPhrase::WhatHappensIfITouchThis);
 	}
-	else if (PlayerSaid(R, are_you_sure_this_is_ok))
+	else if (PlayerSaid(R, SyreenPhrase::AreYouSureThisIsOk))
 	{
-		NPCPhrase(YES_SURE);
+		NPCPhrase(SyreenPhrase::YesSure);
 
-		DisablePhrase(are_you_sure_this_is_ok);
+		DisablePhrase(SyreenPhrase::AreYouSureThisIsOk);
 	}
-	else if (PlayerSaid(R, boy_they_never_taught))
+	else if (PlayerSaid(R, SyreenPhrase::BoyTheyNeverTaught))
 	{
-		NPCPhrase(THEN_LET_ME_TEACH);
+		NPCPhrase(SyreenPhrase::ThenLetMeTeach);
 
-		DisablePhrase(boy_they_never_taught);
+		DisablePhrase(SyreenPhrase::BoyTheyNeverTaught);
 	}
 
-	if (!PhraseEnabled(what_happens_if_i_touch_this)
-		&& !PhraseEnabled(are_you_sure_this_is_ok)
-		&& !PhraseEnabled(boy_they_never_taught))
+	if (!PhraseEnabled(SyreenPhrase::WhatHappensIfITouchThis)
+		&& !PhraseEnabled(SyreenPhrase::AreYouSureThisIsOk)
+		&& !PhraseEnabled(SyreenPhrase::BoyTheyNeverTaught))
 	{
-		Response(not_much_more_to_say, FriendlyExit);
+		Response(SyreenPhrase::NotMuchMoreToSay, FriendlyExit);
 	}
 	else
 	{
-		if (PhraseEnabled(what_happens_if_i_touch_this))
+		if (PhraseEnabled(SyreenPhrase::WhatHappensIfITouchThis))
 		{
-			Response(what_happens_if_i_touch_this, Sex);
+			Response(SyreenPhrase::WhatHappensIfITouchThis, Sex);
 		}
-		if (PhraseEnabled(are_you_sure_this_is_ok))
+		if (PhraseEnabled(SyreenPhrase::AreYouSureThisIsOk))
 		{
-			Response(are_you_sure_this_is_ok, Sex);
+			Response(SyreenPhrase::AreYouSureThisIsOk, Sex);
 		}
-		if (PhraseEnabled(boy_they_never_taught))
+		if (PhraseEnabled(SyreenPhrase::BoyTheyNeverTaught))
 		{
-			Response(boy_they_never_taught, Sex);
+			Response(SyreenPhrase::BoyTheyNeverTaught, Sex);
 		}
 	}
 }
 
 static void Foreplay(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_my_reward)
-		|| PlayerSaid(R, what_about_us))
+	if (PlayerSaid(R, SyreenPhrase::WhatsMyReward)
+		|| PlayerSaid(R, SyreenPhrase::WhatAboutUs))
 	{
-		if (PlayerSaid(R, whats_my_reward))
+		if (PlayerSaid(R, SyreenPhrase::WhatsMyReward))
 		{
-			NPCPhrase(HERES_REWARD);
+			NPCPhrase(SyreenPhrase::HeresReward);
 		}
 		else
 		{
-			NPCPhrase(ABOUT_US);
+			NPCPhrase(SyreenPhrase::AboutUs);
 		}
-		NPCPhrase(MORE_COMFORTABLE);
+		NPCPhrase(SyreenPhrase::MoreComfortable);
 
 		cwLock = true;
 
@@ -443,55 +443,55 @@ static void Foreplay(RESPONSE_REF R)
 		AlienTalkSegue((uint16_t)~0);
 		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HAVING_SEX, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, why_lights_off))
+	else if (PlayerSaid(R, SyreenPhrase::WhyLightsOff))
 	{
 		SetCustomBaseLine(1, MAKE_POINT(60, 41), TextAlign::Center);
 		SetCustomBaseLine(2, MAKE_POINT(180, 41), TextAlign::Center);
 		SetCustomBaseLine(3, MAKE_POINT(120, 81), TextAlign::Center);
 
-		NPCPhrase(LIGHTS_OFF_BECAUSE);
+		NPCPhrase(SyreenPhrase::LightsOffBecause);
 
-		DisablePhrase(why_lights_off);
+		DisablePhrase(SyreenPhrase::WhyLightsOff);
 	}
-	else if (PlayerSaid(R, evil_monster))
+	else if (PlayerSaid(R, SyreenPhrase::EvilMonster))
 	{
-		NPCPhrase(NOT_EVIL_MONSTER);
+		NPCPhrase(SyreenPhrase::NotEvilMonster);
 
-		DisablePhrase(evil_monster);
+		DisablePhrase(SyreenPhrase::EvilMonster);
 	}
 
-	if (PhraseEnabled(why_lights_off))
+	if (PhraseEnabled(SyreenPhrase::WhyLightsOff))
 	{
-		Response(why_lights_off, Foreplay);
+		Response(SyreenPhrase::WhyLightsOff, Foreplay);
 	}
-	else if (PhraseEnabled(evil_monster))
+	else if (PhraseEnabled(SyreenPhrase::EvilMonster))
 	{
-		Response(evil_monster, Foreplay);
+		Response(SyreenPhrase::EvilMonster, Foreplay);
 	}
 	else
 	{
-		Response(disease, Sex);
+		Response(SyreenPhrase::Disease, Sex);
 	}
-	Response(in_the_spirit, Sex);
-	Response(what_in_mind, Sex);
-	Response(hands_off, FriendlyExit);
+	Response(SyreenPhrase::InTheSpirit, Sex);
+	Response(SyreenPhrase::WhatInMind, Sex);
+	Response(SyreenPhrase::HandsOff, FriendlyExit);
 }
 
 static void AfterAmbush(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, what_now_after_ambush))
+	if (PlayerSaid(R, SyreenPhrase::WhatNowAfterAmbush))
 	{
-		NPCPhrase(DO_THIS_AFTER_AMBUSH);
+		NPCPhrase(SyreenPhrase::DoThisAfterAmbush);
 
-		DisablePhrase(what_now_after_ambush);
+		DisablePhrase(SyreenPhrase::WhatNowAfterAmbush);
 	}
-	else if (PlayerSaid(R, what_about_you))
+	else if (PlayerSaid(R, SyreenPhrase::WhatAboutYou))
 	{
-		NPCPhrase(ABOUT_ME);
+		NPCPhrase(SyreenPhrase::AboutMe);
 
-		DisablePhrase(what_about_you);
+		DisablePhrase(SyreenPhrase::WhatAboutYou);
 	}
-	else if (PlayerSaid(R, whats_up_after_ambush))
+	else if (PlayerSaid(R, SyreenPhrase::WhatsUpAfterAmbush))
 	{
 		uint8_t NumVisits {};
 
@@ -499,241 +499,241 @@ static void AfterAmbush(RESPONSE_REF R)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_AFTER_AMBUSH_1);
+				NPCPhrase(SyreenPhrase::GeneralInfoAfterAmbush1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_AFTER_AMBUSH_2);
+				NPCPhrase(SyreenPhrase::GeneralInfoAfterAmbush2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_AFTER_AMBUSH_3);
+				NPCPhrase(SyreenPhrase::GeneralInfoAfterAmbush3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_AFTER_AMBUSH_4);
+				NPCPhrase(SyreenPhrase::GeneralInfoAfterAmbush4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_after_ambush);
+		DisablePhrase(SyreenPhrase::WhatsUpAfterAmbush);
 	}
 
-	if (PhraseEnabled(what_about_you))
+	if (PhraseEnabled(SyreenPhrase::WhatAboutYou))
 	{
-		Response(what_about_you, AfterAmbush);
+		Response(SyreenPhrase::WhatAboutYou, AfterAmbush);
 	}
 	else if (!uqm::gameState().flag(uqm::GameFlag::PLAYER_HAD_SEX))
 	{
-		Response(what_about_us, Foreplay);
+		Response(SyreenPhrase::WhatAboutUs, Foreplay);
 	}
-	if (PhraseEnabled(what_now_after_ambush))
+	if (PhraseEnabled(SyreenPhrase::WhatNowAfterAmbush))
 	{
-		Response(what_now_after_ambush, AfterAmbush);
+		Response(SyreenPhrase::WhatNowAfterAmbush, AfterAmbush);
 	}
-	if (PhraseEnabled(whats_up_after_ambush))
+	if (PhraseEnabled(SyreenPhrase::WhatsUpAfterAmbush))
 	{
-		Response(whats_up_after_ambush, AfterAmbush);
+		Response(SyreenPhrase::WhatsUpAfterAmbush, AfterAmbush);
 	}
-	Response(bye_after_ambush, FriendlyExit);
+	Response(SyreenPhrase::ByeAfterAmbush, FriendlyExit);
 }
 
 static void AmbushReady(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, repeat_plan))
+	if (PlayerSaid(R, SyreenPhrase::RepeatPlan))
 	{
-		NPCPhrase(OK_REPEAT_PLAN);
+		NPCPhrase(SyreenPhrase::OkRepeatPlan);
 
-		DisablePhrase(repeat_plan);
+		DisablePhrase(SyreenPhrase::RepeatPlan);
 	}
 
-	if (PhraseEnabled(repeat_plan))
+	if (PhraseEnabled(SyreenPhrase::RepeatPlan))
 	{
-		Response(repeat_plan, AmbushReady);
+		Response(SyreenPhrase::RepeatPlan, AmbushReady);
 	}
-	Response(bye_before_ambush, FriendlyExit);
+	Response(SyreenPhrase::ByeBeforeAmbush, FriendlyExit);
 }
 
 static void SyreenShuttle(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, whats_next_step))
+	if (PlayerSaid(R, SyreenPhrase::WhatsNextStep))
 	{
-		NPCPhrase(OPEN_VAULT);
+		NPCPhrase(SyreenPhrase::OpenVault);
 
-		DisablePhrase(whats_next_step);
+		DisablePhrase(SyreenPhrase::WhatsNextStep);
 	}
-	else if (PlayerSaid(R, what_do_i_get_for_this))
+	else if (PlayerSaid(R, SyreenPhrase::WhatDoIGetForThis))
 	{
-		NPCPhrase(GRATITUDE);
+		NPCPhrase(SyreenPhrase::Gratitude);
 
-		DisablePhrase(what_do_i_get_for_this);
+		DisablePhrase(SyreenPhrase::WhatDoIGetForThis);
 	}
-	else if (PlayerSaid(R, not_sure))
+	else if (PlayerSaid(R, SyreenPhrase::NotSure))
 	{
-		NPCPhrase(PLEASE);
+		NPCPhrase(SyreenPhrase::Please);
 
-		DisablePhrase(not_sure);
+		DisablePhrase(SyreenPhrase::NotSure);
 	}
-	else if (PlayerSaid(R, where_is_it))
+	else if (PlayerSaid(R, SyreenPhrase::WhereIsIt))
 	{
-		NPCPhrase(DONT_KNOW_WHERE);
-		NPCPhrase(GIVE_SHUTTLE);
+		NPCPhrase(SyreenPhrase::DontKnowWhere);
+		NPCPhrase(SyreenPhrase::GiveShuttle);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
 
-		DisablePhrase(where_is_it);
+		DisablePhrase(SyreenPhrase::WhereIsIt);
 	}
-	else if (PlayerSaid(R, been_there))
+	else if (PlayerSaid(R, SyreenPhrase::BeenThere))
 	{
-		NPCPhrase(GREAT);
-		NPCPhrase(GIVE_SHUTTLE);
+		NPCPhrase(SyreenPhrase::Great);
+		NPCPhrase(SyreenPhrase::GiveShuttle);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
 
-		DisablePhrase(been_there);
+		DisablePhrase(SyreenPhrase::BeenThere);
 	}
 
-	if (PhraseEnabled(whats_next_step))
+	if (PhraseEnabled(SyreenPhrase::WhatsNextStep))
 	{
-		Response(whats_next_step, SyreenShuttle);
+		Response(SyreenPhrase::WhatsNextStep, SyreenShuttle);
 	}
 	else
 	{
 		if (!uqm::gameState().flag(uqm::GameFlag::KNOW_SYREEN_VAULT))
 		{
-			if (PhraseEnabled(where_is_it))
+			if (PhraseEnabled(SyreenPhrase::WhereIsIt))
 			{
-				Response(where_is_it, SyreenShuttle);
+				Response(SyreenPhrase::WhereIsIt, SyreenShuttle);
 			}
 		}
 		else
 		{
-			if (PhraseEnabled(been_there))
+			if (PhraseEnabled(SyreenPhrase::BeenThere))
 			{
-				Response(been_there, SyreenShuttle);
+				Response(SyreenPhrase::BeenThere, SyreenShuttle);
 			}
 		}
-		if (!PhraseEnabled(where_is_it)
-			|| !PhraseEnabled(been_there))
+		if (!PhraseEnabled(SyreenPhrase::WhereIsIt)
+			|| !PhraseEnabled(SyreenPhrase::BeenThere))
 		{
-			Response(im_on_my_way, FriendlyExit);
-			Response(doing_this_for_you, FriendlyExit);
-			Response(if_i_die, FriendlyExit);
+			Response(SyreenPhrase::ImOnMyWay, FriendlyExit);
+			Response(SyreenPhrase::DoingThisForYou, FriendlyExit);
+			Response(SyreenPhrase::IfIDie, FriendlyExit);
 		}
 	}
-	if (PhraseEnabled(what_do_i_get_for_this))
+	if (PhraseEnabled(SyreenPhrase::WhatDoIGetForThis))
 	{
-		Response(what_do_i_get_for_this, SyreenShuttle);
+		Response(SyreenPhrase::WhatDoIGetForThis, SyreenShuttle);
 	}
-	if (PhraseEnabled(not_sure))
+	if (PhraseEnabled(SyreenPhrase::NotSure))
 	{
-		Response(not_sure, SyreenShuttle);
+		Response(SyreenPhrase::NotSure, SyreenShuttle);
 	}
 }
 
 static void NormalSyreen(RESPONSE_REF R)
 {
 	uint8_t i {};
-	RESPONSE_REF pStr[4];
+	SyreenPhrase pStr[4];
 
 	uint8_t LastStack {0};
-	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-	if (PlayerSaid(R, we_here_to_help))
+	pStr[0] = pStr[1] = pStr[2] = pStr[3] = SyreenPhrase::NullPhrase;
+	if (PlayerSaid(R, SyreenPhrase::WeHereToHelp))
 	{
-		NPCPhrase(NO_NEED_HELP);
+		NPCPhrase(SyreenPhrase::NoNeedHelp);
 	}
-	else if (PlayerSaid(R, we_need_help))
+	else if (PlayerSaid(R, SyreenPhrase::WeNeedHelp))
 	{
-		NPCPhrase(CANT_GIVE_HELP);
+		NPCPhrase(SyreenPhrase::CantGiveHelp);
 	}
-	else if (PlayerSaid(R, know_about_deep_children))
+	else if (PlayerSaid(R, SyreenPhrase::KnowAboutDeepChildren))
 	{
-		NPCPhrase(WHAT_ABOUT_DEEP_CHILDREN);
+		NPCPhrase(SyreenPhrase::WhatAboutDeepChildren);
 
-		DisablePhrase(know_about_deep_children);
+		DisablePhrase(SyreenPhrase::KnowAboutDeepChildren);
 	}
-	else if (PlayerSaid(R, mycons_involved))
+	else if (PlayerSaid(R, SyreenPhrase::MyconsInvolved))
 	{
-		NPCPhrase(WHAT_PROOF);
+		NPCPhrase(SyreenPhrase::WhatProof);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, have_no_proof))
+	else if (PlayerSaid(R, SyreenPhrase::HaveNoProof))
 	{
-		NPCPhrase(NEED_PROOF);
+		NPCPhrase(SyreenPhrase::NeedProof);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_WANT_PROOF, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, have_proof))
+	else if (PlayerSaid(R, SyreenPhrase::HaveProof))
 	{
-		NPCPhrase(SEE_PROOF);
+		NPCPhrase(SyreenPhrase::SeeProof);
 
-		DisablePhrase(have_proof);
+		DisablePhrase(SyreenPhrase::HaveProof);
 	}
-	else if (PlayerSaid(R, what_doing_here))
+	else if (PlayerSaid(R, SyreenPhrase::WhatDoingHere))
 	{
-		NPCPhrase(OUR_NEW_WORLD);
+		NPCPhrase(SyreenPhrase::OurNewWorld);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK0, static_cast<uint32_t>(1));
 		LastStack = 1;
 	}
-	else if (PlayerSaid(R, what_about_war))
+	else if (PlayerSaid(R, SyreenPhrase::WhatAboutWar))
 	{
-		NPCPhrase(ABOUT_WAR);
+		NPCPhrase(SyreenPhrase::AboutWar);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK0, static_cast<uint32_t>(2));
 		LastStack = 1;
 	}
-	else if (PlayerSaid(R, help_us))
+	else if (PlayerSaid(R, SyreenPhrase::HelpUs))
 	{
-		NPCPhrase(WONT_HELP);
+		NPCPhrase(SyreenPhrase::WontHelp);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK0, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, what_about_history))
+	else if (PlayerSaid(R, SyreenPhrase::WhatAboutHistory))
 	{
-		NPCPhrase(BEFORE_WAR);
+		NPCPhrase(SyreenPhrase::BeforeWar);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK1, static_cast<uint32_t>(1));
 		LastStack = 2;
 	}
-	else if (PlayerSaid(R, what_about_homeworld))
+	else if (PlayerSaid(R, SyreenPhrase::WhatAboutHomeworld))
 	{
-		NPCPhrase(ABOUT_HOMEWORLD);
+		NPCPhrase(SyreenPhrase::AboutHomeworld);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK1, static_cast<uint32_t>(2));
 		LastStack = 2;
 	}
-	else if (PlayerSaid(R, what_happened))
+	else if (PlayerSaid(R, SyreenPhrase::WhatHappened))
 	{
-		NPCPhrase(DONT_KNOW_HOW);
+		NPCPhrase(SyreenPhrase::DontKnowHow);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK1, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, what_about_outfit))
+	else if (PlayerSaid(R, SyreenPhrase::WhatAboutOutfit))
 	{
-		NPCPhrase(HOPE_YOU_LIKE_IT);
+		NPCPhrase(SyreenPhrase::HopeYouLikeIt);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK2, static_cast<uint32_t>(1));
 		LastStack = 3;
 	}
-	else if (PlayerSaid(R, where_mates))
+	else if (PlayerSaid(R, SyreenPhrase::WhereMates))
 	{
-		NPCPhrase(MATES_KILLED);
+		NPCPhrase(SyreenPhrase::MatesKilled);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK2, static_cast<uint32_t>(2));
 		LastStack = 3;
 	}
-	else if (PlayerSaid(R, get_lonely))
+	else if (PlayerSaid(R, SyreenPhrase::GetLonely))
 	{
-		NPCPhrase(MAKE_OUT_ALL_RIGHT);
+		NPCPhrase(SyreenPhrase::MakeOutAllRight);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK2, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, look_at_egg_sacks))
+	else if (PlayerSaid(R, SyreenPhrase::LookAtEggSacks))
 	{
-		NPCPhrase(HORRIBLE_TRUTH);
+		NPCPhrase(SyreenPhrase::HorribleTruth);
 
 		setSegue(Segue::Peace);
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(0));
@@ -751,13 +751,13 @@ static void NormalSyreen(RESPONSE_REF R)
 		if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) == 2
 			&& uqm::gameState().flag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED))
 		{
-			if (PhraseEnabled(know_about_deep_children))
+			if (PhraseEnabled(SyreenPhrase::KnowAboutDeepChildren))
 			{
-				pStr[0] = know_about_deep_children;
+				pStr[0] = SyreenPhrase::KnowAboutDeepChildren;
 			}
 			else
 			{
-				pStr[0] = mycons_involved;
+				pStr[0] = SyreenPhrase::MyconsInvolved;
 			}
 		}
 	}
@@ -767,123 +767,123 @@ static void NormalSyreen(RESPONSE_REF R)
 			|| uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP)
 			|| uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP))
 		{
-			if (PhraseEnabled(have_proof))
+			if (PhraseEnabled(SyreenPhrase::HaveProof))
 			{
-				pStr[0] = have_proof;
+				pStr[0] = SyreenPhrase::HaveProof;
 			}
 			else
 			{
-				pStr[0] = look_at_egg_sacks;
+				pStr[0] = SyreenPhrase::LookAtEggSacks;
 			}
 		}
 		else if (!uqm::gameState().flag(uqm::GameFlag::SYREEN_WANT_PROOF))
 		{
-			pStr[0] = have_no_proof;
+			pStr[0] = SyreenPhrase::HaveNoProof;
 		}
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::SYREEN_STACK0))
 	{
 		case 0:
-			pStr[1] = what_doing_here;
+			pStr[1] = SyreenPhrase::WhatDoingHere;
 			break;
 		case 1:
-			pStr[1] = what_about_war;
+			pStr[1] = SyreenPhrase::WhatAboutWar;
 			break;
 		case 2:
-			pStr[1] = help_us;
+			pStr[1] = SyreenPhrase::HelpUs;
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::SYREEN_STACK1))
 	{
 		case 0:
-			pStr[2] = what_about_history;
+			pStr[2] = SyreenPhrase::WhatAboutHistory;
 			break;
 		case 1:
-			pStr[2] = what_about_homeworld;
+			pStr[2] = SyreenPhrase::WhatAboutHomeworld;
 			break;
 		case 2:
-			pStr[2] = what_happened;
+			pStr[2] = SyreenPhrase::WhatHappened;
 			break;
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::SYREEN_STACK2))
 	{
 		case 0:
-			pStr[3] = what_about_outfit;
+			pStr[3] = SyreenPhrase::WhatAboutOutfit;
 			break;
 		case 1:
-			pStr[3] = where_mates;
+			pStr[3] = SyreenPhrase::WhereMates;
 			break;
 		case 2:
-			pStr[3] = get_lonely;
+			pStr[3] = SyreenPhrase::GetLonely;
 			break;
 	}
-	if (pStr[LastStack])
+	if (pStr[LastStack] != SyreenPhrase::NullPhrase)
 	{
 		Response(pStr[LastStack], NormalSyreen);
 	}
 	for (i = 0; i < 4; ++i)
 	{
-		if (i != LastStack && pStr[i])
+		if (i != LastStack && *pStr[i] != SyreenPhrase::NullPhrase)
 		{
 			Response(pStr[i], NormalSyreen);
 		}
 	}
-	Response(bye, FriendlyExit);
+	Response(SyreenPhrase::Bye, FriendlyExit);
 }
 
 static void InitialSyreen(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, we_are_vice_squad))
+	if (PlayerSaid(R, SyreenPhrase::WeAreViceSquad))
 	{
-		NPCPhrase(OK_VICE);
-		NPCPhrase(HOW_CAN_YOU_BE_HERE);
+		NPCPhrase(SyreenPhrase::OkVice);
+		NPCPhrase(SyreenPhrase::HowCanYouBeHere);
 	}
-	else if (PlayerSaid(R, we_are_the_one_for_you_baby))
+	else if (PlayerSaid(R, SyreenPhrase::WeAreTheOneForYouBaby))
 	{
-		NPCPhrase(MAYBE_CAPTAIN);
-		NPCPhrase(HOW_CAN_YOU_BE_HERE);
+		NPCPhrase(SyreenPhrase::MaybeCaptain);
+		NPCPhrase(SyreenPhrase::HowCanYouBeHere);
 	}
-	else if (PlayerSaid(R, we_are_vindicator))
+	else if (PlayerSaid(R, SyreenPhrase::WeAreVindicator))
 	{
-		NPCPhrase(WELCOME_VINDICATOR);
-		NPCPhrase(HOW_CAN_YOU_BE_HERE);
+		NPCPhrase(SyreenPhrase::WelcomeVindicator);
+		NPCPhrase(SyreenPhrase::HowCanYouBeHere);
 	}
-	else if (PlayerSaid(R, we_are_impressed))
+	else if (PlayerSaid(R, SyreenPhrase::WeAreImpressed))
 	{
-		NPCPhrase(SO_AM_I_CAPTAIN);
-		NPCPhrase(HOW_CAN_YOU_BE_HERE);
+		NPCPhrase(SyreenPhrase::SoAmICaptain);
+		NPCPhrase(SyreenPhrase::HowCanYouBeHere);
 	}
-	else if (PlayerSaid(R, i_need_you))
+	else if (PlayerSaid(R, SyreenPhrase::INeedYou))
 	{
-		NPCPhrase(OK_NEED);
+		NPCPhrase(SyreenPhrase::OkNeed);
 
-		DisablePhrase(i_need_you);
-		DisablePhrase(i_need_touch_o_vision);
+		DisablePhrase(SyreenPhrase::INeedYou);
+		DisablePhrase(SyreenPhrase::INeedTouchOVision);
 	}
-	else if (PlayerSaid(R, i_need_touch_o_vision))
+	else if (PlayerSaid(R, SyreenPhrase::INeedTouchOVision))
 	{
-		NPCPhrase(TOUCH_O_VISION);
+		NPCPhrase(SyreenPhrase::TouchOVision);
 
-		DisablePhrase(i_need_you);
-		DisablePhrase(i_need_touch_o_vision);
+		DisablePhrase(SyreenPhrase::INeedYou);
+		DisablePhrase(SyreenPhrase::INeedTouchOVision);
 	}
 
-	Response(we_here_to_help, NormalSyreen);
-	Response(we_need_help, NormalSyreen);
-	if (PhraseEnabled(i_need_you))
+	Response(SyreenPhrase::WeHereToHelp, NormalSyreen);
+	Response(SyreenPhrase::WeNeedHelp, NormalSyreen);
+	if (PhraseEnabled(SyreenPhrase::INeedYou))
 	{
-		Response(i_need_you, InitialSyreen);
+		Response(SyreenPhrase::INeedYou, InitialSyreen);
 	}
-	if (PhraseEnabled(i_need_touch_o_vision))
+	if (PhraseEnabled(SyreenPhrase::INeedTouchOVision))
 	{
-		Response(i_need_touch_o_vision, InitialSyreen);
+		Response(SyreenPhrase::INeedTouchOVision, InitialSyreen);
 	}
 }
 
 static void PlanAmbush(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	NPCPhrase(OK_FOUND_VAULT);
+	NPCPhrase(SyreenPhrase::OkFoundVault);
 
 	uqm::gameState().setFlag(uqm::GameFlag::MYCON_AMBUSH, static_cast<uint32_t>(1));
 	// This is redundant but left here for clarity
@@ -911,24 +911,24 @@ static void PlanAmbush(RESPONSE_REF R)
 		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
 	}
 
-	Response(whats_my_reward, Foreplay);
-	Response(bye_after_vault, FriendlyExit);
+	Response(SyreenPhrase::WhatsMyReward, Foreplay);
+	Response(SyreenPhrase::ByeAfterVault, FriendlyExit);
 }
 
 static void SyreenVault(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, vault_hint))
+	if (PlayerSaid(R, SyreenPhrase::VaultHint))
 	{
-		NPCPhrase(OK_HINT);
+		NPCPhrase(SyreenPhrase::OkHint);
 
-		DisablePhrase(vault_hint);
+		DisablePhrase(SyreenPhrase::VaultHint);
 	}
 
-	if (PhraseEnabled(vault_hint))
+	if (PhraseEnabled(SyreenPhrase::VaultHint))
 	{
-		Response(vault_hint, SyreenVault);
+		Response(SyreenPhrase::VaultHint, SyreenVault);
 	}
-	Response(bye_before_vault, FriendlyExit);
+	Response(SyreenPhrase::ByeBeforeVault, FriendlyExit);
 }
 
 static void Intro(void)
@@ -939,7 +939,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(SyreenPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -951,17 +951,17 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HELLO_AFTER_AMBUSH_1);
+				NPCPhrase(SyreenPhrase::HelloAfterAmbush1);
 				SetRaceAllied(RaceId::Syreen, true);
 				break;
 			case 1:
-				NPCPhrase(HELLO_AFTER_AMBUSH_2);
+				NPCPhrase(SyreenPhrase::HelloAfterAmbush2);
 				break;
 			case 2:
-				NPCPhrase(HELLO_AFTER_AMBUSH_3);
+				NPCPhrase(SyreenPhrase::HelloAfterAmbush3);
 				break;
 			case 3:
-				NPCPhrase(HELLO_AFTER_AMBUSH_3);
+				NPCPhrase(SyreenPhrase::HelloAfterAmbush3);
 				--NumVisits;
 				break;
 		}
@@ -973,7 +973,7 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(READY_FOR_AMBUSH);
+				NPCPhrase(SyreenPhrase::ReadyForAmbush);
 				--NumVisits;
 				break;
 		}
@@ -985,16 +985,16 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HELLO_BEFORE_AMBUSH_1);
+				NPCPhrase(SyreenPhrase::HelloBeforeAmbush1);
 				break;
 			case 1:
-				NPCPhrase(HELLO_BEFORE_AMBUSH_2);
+				NPCPhrase(SyreenPhrase::HelloBeforeAmbush2);
 				break;
 			case 2:
-				NPCPhrase(HELLO_BEFORE_AMBUSH_3);
+				NPCPhrase(SyreenPhrase::HelloBeforeAmbush3);
 				break;
 			case 3:
-				NPCPhrase(HELLO_BEFORE_AMBUSH_4);
+				NPCPhrase(SyreenPhrase::HelloBeforeAmbush4);
 				--NumVisits;
 				break;
 		}
@@ -1005,10 +1005,10 @@ static void Intro(void)
 		}
 		else
 		{
-			Response(we_are_vice_squad, InitialSyreen);
-			Response(we_are_the_one_for_you_baby, InitialSyreen);
-			Response(we_are_vindicator, InitialSyreen);
-			Response(we_are_impressed, InitialSyreen);
+			Response(SyreenPhrase::WeAreViceSquad, InitialSyreen);
+			Response(SyreenPhrase::WeAreTheOneForYouBaby, InitialSyreen);
+			Response(SyreenPhrase::WeAreVindicator, InitialSyreen);
+			Response(SyreenPhrase::WeAreImpressed, InitialSyreen);
 		}
 	}
 
@@ -1017,7 +1017,7 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(MUST_ACT);
+				NPCPhrase(SyreenPhrase::MustAct);
 				--NumVisits;
 				break;
 		}
@@ -1040,10 +1040,10 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(FOUND_VAULT_YET_1);
+				NPCPhrase(SyreenPhrase::FoundVaultYet1);
 				break;
 			case 1:
-				NPCPhrase(FOUND_VAULT_YET_2);
+				NPCPhrase(SyreenPhrase::FoundVaultYet2);
 				--NumVisits;
 				break;
 		}

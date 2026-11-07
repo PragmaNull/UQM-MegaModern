@@ -236,31 +236,31 @@ static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue::Peace);
 
-	if (PlayerSaid(R, bye_angry_space))
+	if (PlayerSaid(R, ArilouPhrase::ByeAngrySpace))
 	{
-		NPCPhrase(GOODBYE_ANGRY_SPACE);
+		NPCPhrase(ArilouPhrase::GoodbyeAngrySpace);
 	}
-	else if (PlayerSaid(R, bye_friendly_space))
+	else if (PlayerSaid(R, ArilouPhrase::ByeFriendlySpace))
 	{
-		NPCPhrase(GOODBYE_FRIENDLY_SPACE);
+		NPCPhrase(ArilouPhrase::GoodbyeFriendlySpace);
 	}
-	else if (PlayerSaid(R, bye_friendly_homeworld))
+	else if (PlayerSaid(R, ArilouPhrase::ByeFriendlyHomeworld))
 	{
-		NPCPhrase(GOODBYE_FRDLY_HOMEWORLD);
+		NPCPhrase(ArilouPhrase::GoodbyeFrdlyHomeworld);
 	}
-	else if (PlayerSaid(R, lets_fight))
+	else if (PlayerSaid(R, ArilouPhrase::LetsFight))
 	{
-		NPCPhrase(NO_FIGHT);
+		NPCPhrase(ArilouPhrase::NoFight);
 	}
-	else if (PlayerSaid(R, bug_eyed_fruitcakes))
+	else if (PlayerSaid(R, ArilouPhrase::BugEyedFruitcakes))
 	{
-		NPCPhrase(WE_NEVER_FRIENDS);
+		NPCPhrase(ArilouPhrase::WeNeverFriends);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_MANNER, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, best_if_i_killed_you))
+	else if (PlayerSaid(R, ArilouPhrase::BestIfIKilledYou))
 	{
-		NPCPhrase(WICKED_HUMAN);
+		NPCPhrase(ArilouPhrase::WickedHuman);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_MANNER, static_cast<uint32_t>(2));
 	}
@@ -269,136 +269,136 @@ static void ExitConversation(RESPONSE_REF R)
 static void ArilouHome(RESPONSE_REF R)
 {
 	uint8_t i {};
-	RESPONSE_REF pStr[4];
+	ArilouPhrase pStr[4];
 
 	uint8_t LastStack {0};
-	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-	if (PlayerSaid(R, confused_by_hello))
+	pStr[0] = pStr[1] = pStr[2] = pStr[3] = ArilouPhrase::NullPhrase;
+	if (PlayerSaid(R, ArilouPhrase::ConfusedByHello))
 	{
-		NPCPhrase(CONFUSED_RESPONSE);
+		NPCPhrase(ArilouPhrase::ConfusedResponse);
 	}
-	else if (PlayerSaid(R, happy_by_hello))
+	else if (PlayerSaid(R, ArilouPhrase::HappyByHello))
 	{
-		NPCPhrase(HAPPY_RESPONSE);
+		NPCPhrase(ArilouPhrase::HappyResponse);
 	}
-	else if (PlayerSaid(R, miffed_by_hello))
+	else if (PlayerSaid(R, ArilouPhrase::MiffedByHello))
 	{
-		NPCPhrase(MIFFED_RESPONSE);
+		NPCPhrase(ArilouPhrase::MiffedResponse);
 	}
-	else if (PlayerSaid(R, ok_lets_be_friends))
+	else if (PlayerSaid(R, ArilouPhrase::OkLetsBeFriends))
 	{
-		NPCPhrase(NO_ALLY_BUT_MUCH_GIVE);
+		NPCPhrase(ArilouPhrase::NoAllyButMuchGive);
 	}
-	else if (PlayerSaid(R, what_about_war))
+	else if (PlayerSaid(R, ArilouPhrase::WhatAboutWar))
 	{
-		NPCPhrase(ABOUT_WAR);
+		NPCPhrase(ArilouPhrase::AboutWar);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_1, static_cast<uint32_t>(1));
 		SetHomeworldKnown(*HomeId::Shofixti);
 	}
-	else if (PlayerSaid(R, what_about_urquan))
+	else if (PlayerSaid(R, ArilouPhrase::WhatAboutUrquan))
 	{
-		NPCPhrase(ABOUT_URQUAN);
+		NPCPhrase(ArilouPhrase::AboutUrquan);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_1, static_cast<uint32_t>(2));
 		SetHomeworldKnown(*HomeId::Syreen);
 	}
-	else if (PlayerSaid(R, tell_arilou_about_tpet))
+	else if (PlayerSaid(R, ArilouPhrase::TellArilouAboutTpet))
 	{
-		NPCPhrase(BAD_NEWS_ABOUT_TPET);
+		NPCPhrase(ArilouPhrase::BadNewsAboutTpet);
 
 		LastStack = 1;
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_2, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, what_do_about_tpet))
+	else if (PlayerSaid(R, ArilouPhrase::WhatDoAboutTpet))
 	{
-		NPCPhrase(DANGEROUS_BUT_USEFUL);
+		NPCPhrase(ArilouPhrase::DangerousButUseful);
 
 		LastStack = 1;
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_2, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, learned_about_umgah))
+	else if (PlayerSaid(R, ArilouPhrase::LearnedAboutUmgah))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_CHECKED_UMGAH) != 2)
 		{
-			NPCPhrase(NO_NEWS_YET);
+			NPCPhrase(ArilouPhrase::NoNewsYet);
 		}
 		else
 		{
-			NPCPhrase(UMGAH_UNDER_COMPULSION);
+			NPCPhrase(ArilouPhrase::UmgahUnderCompulsion);
 
 			LastStack = 1;
 
 			SetHomeworldKnown(*HomeId::Umgah);
 		}
 
-		DisablePhrase(learned_about_umgah);
+		DisablePhrase(ArilouPhrase::LearnedAboutUmgah);
 	}
-	else if (PlayerSaid(R, umgah_acting_weird))
+	else if (PlayerSaid(R, ArilouPhrase::UmgahActingWeird))
 	{
-		NPCPhrase(WELL_GO_CHECK);
+		NPCPhrase(ArilouPhrase::WellGoCheck);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_CHECKED_UMGAH, static_cast<uint32_t>(1));
 		AddEvent(EventType::Relative, 0, 10, 0, GameEventId::ArilouUmgahCheck);
-		DisablePhrase(umgah_acting_weird);
+		DisablePhrase(ArilouPhrase::UmgahActingWeird);
 	}
-	else if (PlayerSaid(R, what_do_now))
+	else if (PlayerSaid(R, ArilouPhrase::WhatDoNow))
 	{
-		NPCPhrase(GO_FIND_OUT);
+		NPCPhrase(ArilouPhrase::GoFindOut);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_CHECKED_UMGAH, static_cast<uint32_t>(3));
 		SetHomeworldKnown(*HomeId::Umgah);
 	}
-	else if (PlayerSaid(R, what_did_on_earth))
+	else if (PlayerSaid(R, ArilouPhrase::WhatDidOnEarth))
 	{
-		NPCPhrase(DID_THIS);
+		NPCPhrase(ArilouPhrase::DidThis);
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_3, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, why_did_this))
+	else if (PlayerSaid(R, ArilouPhrase::WhyDidThis))
 	{
-		NPCPhrase(IDF_PARASITES);
+		NPCPhrase(ArilouPhrase::IdfParasites);
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_3, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, tell_more))
+	else if (PlayerSaid(R, ArilouPhrase::TellMore))
 	{
-		NPCPhrase(NOT_NOW);
+		NPCPhrase(ArilouPhrase::NotNow);
 
 		LastStack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_3, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, what_give_me))
+	else if (PlayerSaid(R, ArilouPhrase::WhatGiveMe))
 	{
-		NPCPhrase(ABOUT_PORTAL);
+		NPCPhrase(ArilouPhrase::AboutPortal);
 
 		LastStack = 3;
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_ARILOU_WANT_WRECK, static_cast<uint32_t>(1));
 
-		R = about_portal_again;
-		DisablePhrase(what_give_me);
+		R = *ArilouPhrase::AboutPortalAgain;
+		DisablePhrase(ArilouPhrase::WhatGiveMe);
 	}
-	else if (PlayerSaid(R, what_about_tpet))
+	else if (PlayerSaid(R, ArilouPhrase::WhatAboutTpet))
 	{
-		NPCPhrase(ABOUT_TPET);
+		NPCPhrase(ArilouPhrase::AboutTpet);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_4, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, about_portal_again))
+	else if (PlayerSaid(R, ArilouPhrase::AboutPortalAgain))
 	{
-		NPCPhrase(PORTAL_AGAIN);
+		NPCPhrase(ArilouPhrase::PortalAgain);
 
-		DisablePhrase(about_portal_again);
+		DisablePhrase(ArilouPhrase::AboutPortalAgain);
 	}
-	else if (PlayerSaid(R, got_it))
+	else if (PlayerSaid(R, ArilouPhrase::GotIt))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS) == 1)
 		{
-			NPCPhrase(CLEVER_HUMAN);
+			NPCPhrase(ArilouPhrase::CleverHuman);
 		}
-		NPCPhrase(GIVE_PORTAL);
+		NPCPhrase(ArilouPhrase::GivePortal);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PORTAL_KEY_ON_SHIP, static_cast<uint32_t>(0));
 		uqm::gameState().setFlag(uqm::GameFlag::PORTAL_SPAWNER, static_cast<uint32_t>(1));
@@ -416,10 +416,10 @@ static void ArilouHome(RESPONSE_REF R)
 	switch (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_1))
 	{
 		case 0:
-			pStr[0] = what_about_war;
+			pStr[0] = ArilouPhrase::WhatAboutWar;
 			break;
 		case 1:
-			pStr[0] = what_about_urquan;
+			pStr[0] = ArilouPhrase::WhatAboutUrquan;
 			break;
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET))
@@ -438,10 +438,10 @@ static void ArilouHome(RESPONSE_REF R)
 			switch (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_2))
 			{
 				case 0:
-					pStr[1] = tell_arilou_about_tpet;
+					pStr[1] = ArilouPhrase::TellArilouAboutTpet;
 					break;
 				case 1:
-					pStr[1] = what_do_about_tpet;
+					pStr[1] = ArilouPhrase::WhatDoAboutTpet;
 					break;
 			}
 		}
@@ -449,46 +449,46 @@ static void ArilouHome(RESPONSE_REF R)
 		{
 			if (!uqm::gameState().flag(uqm::GameFlag::ARILOU_CHECKED_UMGAH))
 			{
-				pStr[1] = umgah_acting_weird;
+				pStr[1] = ArilouPhrase::UmgahActingWeird;
 			}
-			else if (PhraseEnabled(learned_about_umgah) && PhraseEnabled(umgah_acting_weird))
+			else if (PhraseEnabled(ArilouPhrase::LearnedAboutUmgah) && PhraseEnabled(ArilouPhrase::UmgahActingWeird))
 			{
-				pStr[1] = learned_about_umgah;
+				pStr[1] = ArilouPhrase::LearnedAboutUmgah;
 			}
 			else if (uqm::gameState().flag(uqm::GameFlag::ARILOU_CHECKED_UMGAH) == 2)
 			{
-				pStr[1] = what_do_now;
+				pStr[1] = ArilouPhrase::WhatDoNow;
 			}
 		}
 	}
 	switch (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_3))
 	{
 		case 0:
-			pStr[2] = what_did_on_earth;
+			pStr[2] = ArilouPhrase::WhatDidOnEarth;
 			break;
 		case 1:
-			pStr[2] = why_did_this;
+			pStr[2] = ArilouPhrase::WhyDidThis;
 			break;
 		case 2:
-			pStr[2] = tell_more;
+			pStr[2] = ArilouPhrase::TellMore;
 			break;
 	}
 	if (!uqm::gameState().flag(uqm::GameFlag::KNOW_ARILOU_WANT_WRECK))
 	{
-		pStr[3] = what_give_me;
+		pStr[3] = ArilouPhrase::WhatGiveMe;
 	}
 	else if (!uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_4))
 	{
-		pStr[3] = what_about_tpet;
+		pStr[3] = ArilouPhrase::WhatAboutTpet;
 	}
 
-	if (pStr[LastStack])
+	if (pStr[LastStack] != ArilouPhrase::NullPhrase)
 	{
 		Response(pStr[LastStack], ArilouHome);
 	}
 	for (i = 0; i < 4; ++i)
 	{
-		if (i != LastStack && pStr[i])
+		if (i != LastStack && *pStr[i] != ArilouPhrase::NullPhrase)
 		{
 			Response(pStr[i], ArilouHome);
 		}
@@ -498,214 +498,214 @@ static void ArilouHome(RESPONSE_REF R)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::PORTAL_KEY_ON_SHIP))
 		{
-			Response(got_it, ArilouHome);
+			Response(ArilouPhrase::GotIt, ArilouHome);
 		}
-		else if (PhraseEnabled(about_portal_again) && !uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER))
+		else if (PhraseEnabled(ArilouPhrase::AboutPortalAgain) && !uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER))
 		{
-			Response(about_portal_again, ArilouHome);
+			Response(ArilouPhrase::AboutPortalAgain, ArilouHome);
 		}
 	}
 	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER) != 3)
 	{
-		Response(best_if_i_killed_you, ExitConversation);
+		Response(ArilouPhrase::BestIfIKilledYou, ExitConversation);
 	}
-	Response(bye_friendly_homeworld, ExitConversation);
+	Response(ArilouPhrase::ByeFriendlyHomeworld, ExitConversation);
 }
 
 static void AngryHomeArilou(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, invaders_from_mars))
+	if (PlayerSaid(R, ArilouPhrase::InvadersFromMars))
 	{
-		NPCPhrase(HAD_OUR_REASONS);
+		NPCPhrase(ArilouPhrase::HadOurReasons);
 
-		DisablePhrase(invaders_from_mars);
+		DisablePhrase(ArilouPhrase::InvadersFromMars);
 	}
-	else if (PlayerSaid(R, why_should_i_trust))
+	else if (PlayerSaid(R, ArilouPhrase::WhyShouldITrust))
 	{
-		NPCPhrase(TRUST_BECAUSE);
+		NPCPhrase(ArilouPhrase::TrustBecause);
 
-		DisablePhrase(why_should_i_trust);
+		DisablePhrase(ArilouPhrase::WhyShouldITrust);
 	}
-	else if (PlayerSaid(R, what_about_interference))
+	else if (PlayerSaid(R, ArilouPhrase::WhatAboutInterference))
 	{
-		NPCPhrase(INTERFERENCE_NECESSARY);
+		NPCPhrase(ArilouPhrase::InterferenceNecessary);
 
-		DisablePhrase(what_about_interference);
+		DisablePhrase(ArilouPhrase::WhatAboutInterference);
 	}
-	else if (PlayerSaid(R, i_just_like_to_leave))
+	else if (PlayerSaid(R, ArilouPhrase::IJustLikeToLeave))
 	{
-		NPCPhrase(SORRY_NO_LEAVE);
+		NPCPhrase(ArilouPhrase::SorryNoLeave);
 
-		DisablePhrase(i_just_like_to_leave);
+		DisablePhrase(ArilouPhrase::IJustLikeToLeave);
 	}
 
-	if (PhraseEnabled(invaders_from_mars))
+	if (PhraseEnabled(ArilouPhrase::InvadersFromMars))
 	{
-		Response(invaders_from_mars, AngryHomeArilou);
+		Response(ArilouPhrase::InvadersFromMars, AngryHomeArilou);
 	}
 	else
 	{
-		Response(bug_eyed_fruitcakes, ExitConversation);
+		Response(ArilouPhrase::BugEyedFruitcakes, ExitConversation);
 	}
 
-	if (PhraseEnabled(why_should_i_trust))
+	if (PhraseEnabled(ArilouPhrase::WhyShouldITrust))
 	{
-		Response(why_should_i_trust, AngryHomeArilou);
+		Response(ArilouPhrase::WhyShouldITrust, AngryHomeArilou);
 	}
-	else if (PhraseEnabled(what_about_interference))
+	else if (PhraseEnabled(ArilouPhrase::WhatAboutInterference))
 	{
-		Response(what_about_interference, AngryHomeArilou);
+		Response(ArilouPhrase::WhatAboutInterference, AngryHomeArilou);
 	}
 
-	Response(ok_lets_be_friends, ArilouHome);
+	Response(ArilouPhrase::OkLetsBeFriends, ArilouHome);
 
-	if (PhraseEnabled(i_just_like_to_leave))
+	if (PhraseEnabled(ArilouPhrase::IJustLikeToLeave))
 	{
-		Response(i_just_like_to_leave, AngryHomeArilou);
+		Response(ArilouPhrase::IJustLikeToLeave, AngryHomeArilou);
 	}
 }
 
 static void AngrySpaceArilou(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, im_sorry))
+	if (PlayerSaid(R, ArilouPhrase::ImSorry))
 	{
-		NPCPhrase(APOLOGIZE_AT_HOMEWORLD);
+		NPCPhrase(ArilouPhrase::ApologizeAtHomeworld);
 
-		DisablePhrase(im_sorry);
+		DisablePhrase(ArilouPhrase::ImSorry);
 	}
 
-	Response(lets_fight, ExitConversation);
-	if (PhraseEnabled(im_sorry))
+	Response(ArilouPhrase::LetsFight, ExitConversation);
+	if (PhraseEnabled(ArilouPhrase::ImSorry))
 	{
-		Response(im_sorry, AngrySpaceArilou);
+		Response(ArilouPhrase::ImSorry, AngrySpaceArilou);
 	}
-	Response(bye_angry_space, ExitConversation);
+	Response(ArilouPhrase::ByeAngrySpace, ExitConversation);
 }
 
 static void FriendlySpaceArilou(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PlayerSaid(R, confused_by_hello))
+	if (PlayerSaid(R, ArilouPhrase::ConfusedByHello))
 	{
-		NPCPhrase(CONFUSED_RESPONSE);
+		NPCPhrase(ArilouPhrase::ConfusedResponse);
 	}
-	else if (PlayerSaid(R, happy_by_hello))
+	else if (PlayerSaid(R, ArilouPhrase::HappyByHello))
 	{
-		NPCPhrase(HAPPY_RESPONSE);
+		NPCPhrase(ArilouPhrase::HappyResponse);
 	}
-	else if (PlayerSaid(R, miffed_by_hello))
+	else if (PlayerSaid(R, ArilouPhrase::MiffedByHello))
 	{
-		NPCPhrase(MIFFED_RESPONSE);
+		NPCPhrase(ArilouPhrase::MiffedResponse);
 	}
-	else if (PlayerSaid(R, whats_up_1)
-			 || PlayerSaid(R, whats_up_2))
+	else if (PlayerSaid(R, ArilouPhrase::WhatsUp1)
+			 || PlayerSaid(R, ArilouPhrase::WhatsUp2))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::ARILOU_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(GENERAL_INFO_1);
+				NPCPhrase(ArilouPhrase::GeneralInfo1);
 				break;
 			case 1:
-				NPCPhrase(GENERAL_INFO_2);
+				NPCPhrase(ArilouPhrase::GeneralInfo2);
 				break;
 			case 2:
-				NPCPhrase(GENERAL_INFO_3);
+				NPCPhrase(ArilouPhrase::GeneralInfo3);
 				break;
 			case 3:
-				NPCPhrase(GENERAL_INFO_4);
+				NPCPhrase(ArilouPhrase::GeneralInfo4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_INFO, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(whats_up_2);
+		DisablePhrase(ArilouPhrase::WhatsUp2);
 	}
-	else if (PlayerSaid(R, why_you_here))
+	else if (PlayerSaid(R, ArilouPhrase::WhyYouHere))
 	{
-		NPCPhrase(LEARN_THINGS);
+		NPCPhrase(ArilouPhrase::LearnThings);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_5, static_cast<uint32_t>(1));
 	}
-	else if (PlayerSaid(R, what_things))
+	else if (PlayerSaid(R, ArilouPhrase::WhatThings))
 	{
-		NPCPhrase(THESE_THINGS);
+		NPCPhrase(ArilouPhrase::TheseThings);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_5, static_cast<uint32_t>(2));
 	}
-	else if (PlayerSaid(R, why_do_it))
+	else if (PlayerSaid(R, ArilouPhrase::WhyDoIt))
 	{
-		NPCPhrase(DO_IT_BECAUSE);
+		NPCPhrase(ArilouPhrase::DoItBecause);
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_5, static_cast<uint32_t>(3));
 	}
-	else if (PlayerSaid(R, give_me_info_1)
-			 || PlayerSaid(R, give_me_info_2))
+	else if (PlayerSaid(R, ArilouPhrase::GiveMeInfo1)
+			 || PlayerSaid(R, ArilouPhrase::GiveMeInfo2))
 	{
 		NumVisits = uqm::gameState().flag(uqm::GameFlag::ARILOU_HINTS);
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(ARILOU_HINTS_1);
+				NPCPhrase(ArilouPhrase::ArilouHints1);
 				break;
 			case 1:
-				NPCPhrase(ARILOU_HINTS_2);
+				NPCPhrase(ArilouPhrase::ArilouHints2);
 				if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
 				{
 					uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 				}
 				break;
 			case 2:
-				NPCPhrase(ARILOU_HINTS_3);
+				NPCPhrase(ArilouPhrase::ArilouHints3);
 				uqm::gameState().setFlag(uqm::GameFlag::KNOW_URQUAN_STORY, static_cast<uint32_t>(1));
 				uqm::gameState().setFlag(uqm::GameFlag::KNOW_KOHR_AH_STORY, static_cast<uint32_t>(1));
 				break;
 			case 3:
-				NPCPhrase(ARILOU_HINTS_4);
+				NPCPhrase(ArilouPhrase::ArilouHints4);
 				--NumVisits;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HINTS, static_cast<uint32_t>(NumVisits));
 
-		DisablePhrase(give_me_info_2);
+		DisablePhrase(ArilouPhrase::GiveMeInfo2);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_5))
 	{
 		case 0:
-			Response(why_you_here, FriendlySpaceArilou);
+			Response(ArilouPhrase::WhyYouHere, FriendlySpaceArilou);
 			break;
 		case 1:
-			Response(what_things, FriendlySpaceArilou);
+			Response(ArilouPhrase::WhatThings, FriendlySpaceArilou);
 			break;
 		case 2:
-			Response(why_do_it, FriendlySpaceArilou);
+			Response(ArilouPhrase::WhyDoIt, FriendlySpaceArilou);
 			break;
 	}
-	if (PhraseEnabled(whats_up_2))
+	if (PhraseEnabled(ArilouPhrase::WhatsUp2))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_INFO) == 0)
 		{
-			Response(whats_up_1, FriendlySpaceArilou);
+			Response(ArilouPhrase::WhatsUp1, FriendlySpaceArilou);
 		}
 		else
 		{
-			Response(whats_up_2, FriendlySpaceArilou);
+			Response(ArilouPhrase::WhatsUp2, FriendlySpaceArilou);
 		}
 	}
-	if (PhraseEnabled(give_me_info_2))
+	if (PhraseEnabled(ArilouPhrase::GiveMeInfo2))
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_HINTS) == 0)
 		{
-			Response(give_me_info_1, FriendlySpaceArilou);
+			Response(ArilouPhrase::GiveMeInfo1, FriendlySpaceArilou);
 		}
 		else
 		{
-			Response(give_me_info_2, FriendlySpaceArilou);
+			Response(ArilouPhrase::GiveMeInfo2, FriendlySpaceArilou);
 		}
 	}
-	Response(bye_friendly_space, ExitConversation);
+	Response(ArilouPhrase::ByeFriendlySpace, ExitConversation);
 }
 
 static void Intro(void)
@@ -715,7 +715,7 @@ static void Intro(void)
 
 	if (uqm::activityKind(uqm::currentActivity()) == ActivityKind::WonLastBattle)
 	{
-		NPCPhrase(OUT_TAKES);
+		NPCPhrase(ArilouPhrase::OutTakes);
 
 		setSegue(Segue::Peace);
 		return;
@@ -726,18 +726,18 @@ static void Intro(void)
 
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
-			NPCPhrase(INIT_HELLO);
+			NPCPhrase(ArilouPhrase::InitHello);
 			RespFunc = (RESPONSE_FUNC)FriendlySpaceArilou;
 		}
 		else
 		{
-			NPCPhrase(FRDLY_HOMEWORLD_HELLO_1);
+			NPCPhrase(ArilouPhrase::FrdlyHomeworldHello1);
 			RespFunc = (RESPONSE_FUNC)ArilouHome;
 			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HOME_VISITS, static_cast<uint32_t>(1));
 		}
-		Response(confused_by_hello, RespFunc);
-		Response(happy_by_hello, RespFunc);
-		Response(miffed_by_hello, RespFunc);
+		Response(ArilouPhrase::ConfusedByHello, RespFunc);
+		Response(ArilouPhrase::HappyByHello, RespFunc);
+		Response(ArilouPhrase::MiffedByHello, RespFunc);
 		uqm::gameState().setFlag(uqm::GameFlag::MET_ARILOU, static_cast<uint32_t>(1));
 		return;
 	}
@@ -749,16 +749,16 @@ static void Intro(void)
 		switch (NumVisits++)
 		{
 			case 0:
-				NPCPhrase(HOSTILE_GOODBYE_1);
+				NPCPhrase(ArilouPhrase::HostileGoodbye1);
 				break;
 			case 1:
-				NPCPhrase(HOSTILE_GOODBYE_2);
+				NPCPhrase(ArilouPhrase::HostileGoodbye2);
 				break;
 			case 2:
-				NPCPhrase(HOSTILE_GOODBYE_3);
+				NPCPhrase(ArilouPhrase::HostileGoodbye3);
 				break;
 			case 3:
-				NPCPhrase(HOSTILE_GOODBYE_4);
+				NPCPhrase(ArilouPhrase::HostileGoodbye4);
 				--NumVisits;
 				break;
 		}
@@ -770,7 +770,7 @@ static void Intro(void)
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1)
 		{
-			NPCPhrase(INIT_ANGRY_HWLD_HELLO);
+			NPCPhrase(ArilouPhrase::InitAngryHwldHello);
 			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HOME_VISITS, static_cast<uint32_t>(1));
 
 			AngryHomeArilou((RESPONSE_REF)0);
@@ -781,10 +781,10 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(ANGRY_SPACE_HELLO_1);
+					NPCPhrase(ArilouPhrase::AngrySpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(ANGRY_SPACE_HELLO_2);
+					NPCPhrase(ArilouPhrase::AngrySpaceHello2);
 					--NumVisits;
 					break;
 			}
@@ -801,16 +801,16 @@ static void Intro(void)
 			switch (NumVisits++)
 			{
 				case 0:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_1);
+					NPCPhrase(ArilouPhrase::FriendlySpaceHello1);
 					break;
 				case 1:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_2);
+					NPCPhrase(ArilouPhrase::FriendlySpaceHello2);
 					break;
 				case 2:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_3);
+					NPCPhrase(ArilouPhrase::FriendlySpaceHello3);
 					break;
 				case 3:
-					NPCPhrase(FRIENDLY_SPACE_HELLO_4);
+					NPCPhrase(ArilouPhrase::FriendlySpaceHello4);
 					--NumVisits;
 					break;
 			}
@@ -827,10 +827,10 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(GOT_PART_YET_1);
+						NPCPhrase(ArilouPhrase::GotPartYet1);
 						break;
 					case 1:
-						NPCPhrase(GOT_PART_YET_1);
+						NPCPhrase(ArilouPhrase::GotPartYet1);
 						--NumVisits;
 						break;
 				}
@@ -842,16 +842,16 @@ static void Intro(void)
 				switch (NumVisits++)
 				{
 					case 0:
-						NPCPhrase(FRDLY_HOMEWORLD_HELLO_1);
+						NPCPhrase(ArilouPhrase::FrdlyHomeworldHello1);
 						break;
 					case 1:
-						NPCPhrase(FRDLY_HOMEWORLD_HELLO_2);
+						NPCPhrase(ArilouPhrase::FrdlyHomeworldHello2);
 						break;
 					case 2:
-						NPCPhrase(FRDLY_HOMEWORLD_HELLO_3);
+						NPCPhrase(ArilouPhrase::FrdlyHomeworldHello3);
 						break;
 					case 3:
-						NPCPhrase(FRDLY_HOMEWORLD_HELLO_4);
+						NPCPhrase(ArilouPhrase::FrdlyHomeworldHello4);
 						--NumVisits;
 						break;
 				}

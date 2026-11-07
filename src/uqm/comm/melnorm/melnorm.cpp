@@ -41,42 +41,42 @@
 
 static uint16_t melnorme_digit_names[] =
 	{
-		ENUMERATE_ZERO,
-		ENUMERATE_ONE,
-		ENUMERATE_TWO,
-		ENUMERATE_THREE,
-		ENUMERATE_FOUR,
-		ENUMERATE_FIVE,
-		ENUMERATE_SIX,
-		ENUMERATE_SEVEN,
-		ENUMERATE_EIGHT,
-		ENUMERATE_NINE};
+		*MelnormePhrase::EnumerateZero,
+		*MelnormePhrase::EnumerateOne,
+		*MelnormePhrase::EnumerateTwo,
+		*MelnormePhrase::EnumerateThree,
+		*MelnormePhrase::EnumerateFour,
+		*MelnormePhrase::EnumerateFive,
+		*MelnormePhrase::EnumerateSix,
+		*MelnormePhrase::EnumerateSeven,
+		*MelnormePhrase::EnumerateEight,
+		*MelnormePhrase::EnumerateNine};
 
 static uint16_t melnorme_teen_names[] =
 	{
-		ENUMERATE_TEN,
-		ENUMERATE_ELEVEN,
-		ENUMERATE_TWELVE,
-		ENUMERATE_THIRTEEN,
-		ENUMERATE_FOURTEEN,
-		ENUMERATE_FIFTEEN,
-		ENUMERATE_SIXTEEN,
-		ENUMERATE_SEVENTEEN,
-		ENUMERATE_EIGHTEEN,
-		ENUMERATE_NINETEEN};
+		*MelnormePhrase::EnumerateTen,
+		*MelnormePhrase::EnumerateEleven,
+		*MelnormePhrase::EnumerateTwelve,
+		*MelnormePhrase::EnumerateThirteen,
+		*MelnormePhrase::EnumerateFourteen,
+		*MelnormePhrase::EnumerateFifteen,
+		*MelnormePhrase::EnumerateSixteen,
+		*MelnormePhrase::EnumerateSeventeen,
+		*MelnormePhrase::EnumerateEighteen,
+		*MelnormePhrase::EnumerateNineteen};
 
 static uint16_t melnorme_tens_names[] =
 	{
 		0, /* invalid */
 		0, /* skip digit */
-		ENUMERATE_TWENTY,
-		ENUMERATE_THIRTY,
-		ENUMERATE_FOURTY,
-		ENUMERATE_FIFTY,
-		ENUMERATE_SIXTY,
-		ENUMERATE_SEVENTY,
-		ENUMERATE_EIGHTY,
-		ENUMERATE_NINETY};
+		*MelnormePhrase::EnumerateTwenty,
+		*MelnormePhrase::EnumerateThirty,
+		*MelnormePhrase::EnumerateFourty,
+		*MelnormePhrase::EnumerateFifty,
+		*MelnormePhrase::EnumerateSixty,
+		*MelnormePhrase::EnumerateSeventy,
+		*MelnormePhrase::EnumerateEighty,
+		*MelnormePhrase::EnumerateNinety};
 
 const static NumberSpeechDesc melnorme_numbers_english =
 	{
@@ -84,19 +84,19 @@ const static NumberSpeechDesc melnorme_numbers_english =
 		{
 						  {
 				/* 1000-999999 */
-				1000,			   /* Divider */
-				0,				   /* Subtrahend */
-				nullptr,		   /* StrDigits - recurse */
-				nullptr,		   /* Names - not used */
-				ENUMERATE_THOUSAND /* CommonIndex */
+				1000,							   /* Divider */
+				0,								   /* Subtrahend */
+				nullptr,						   /* StrDigits - recurse */
+				nullptr,						   /* Names - not used */
+				*MelnormePhrase::EnumerateThousand /* CommonIndex */
 			},
 						  {
 				/* 100-999 */
-				100,				  /* Divider */
-				0,					  /* Subtrahend */
-				melnorme_digit_names, /* StrDigits */
-				nullptr,			  /* Names - not used */
-				ENUMERATE_HUNDRED	  /* CommonIndex */
+				100,							  /* Divider */
+				0,								  /* Subtrahend */
+				melnorme_digit_names,			  /* StrDigits */
+				nullptr,						  /* Names - not used */
+				*MelnormePhrase::EnumerateHundred /* CommonIndex */
 			},
 						  {
 				/* 20-99 */
@@ -394,47 +394,47 @@ static int countTech(void)
 // Many of the conversation lines in strings.h fall into groups
 // of sequential responses.  These structures allow those
 // responses to be interated through.
-const static int ok_buy_event_lines[] =
+const static MelnormePhrase ok_buy_event_lines[] =
 	{
-		OK_BUY_EVENT_1, OK_BUY_EVENT_2, OK_BUY_EVENT_3, OK_BUY_EVENT_4,
-		OK_BUY_EVENT_5, OK_BUY_EVENT_6, OK_BUY_EVENT_7, OK_BUY_EVENT_8};
+		MelnormePhrase::OkBuyEvent1, MelnormePhrase::OkBuyEvent2, MelnormePhrase::OkBuyEvent3, MelnormePhrase::OkBuyEvent4,
+		MelnormePhrase::OkBuyEvent5, MelnormePhrase::OkBuyEvent6, MelnormePhrase::OkBuyEvent7, MelnormePhrase::OkBuyEvent8};
 const size_t NUM_EVENT_ITEMS = std::size(ok_buy_event_lines);
 
-const static int ok_buy_alien_race_lines[] =
+const static MelnormePhrase ok_buy_alien_race_lines[] =
 	{
-		OK_BUY_ALIEN_RACE_1, OK_BUY_ALIEN_RACE_2, OK_BUY_ALIEN_RACE_3,
-		OK_BUY_ALIEN_RACE_4, OK_BUY_ALIEN_RACE_5, OK_BUY_ALIEN_RACE_6,
-		OK_BUY_ALIEN_RACE_7, OK_BUY_ALIEN_RACE_8, OK_BUY_ALIEN_RACE_9,
-		OK_BUY_ALIEN_RACE_10, OK_BUY_ALIEN_RACE_11, OK_BUY_ALIEN_RACE_12,
-		OK_BUY_ALIEN_RACE_13, OK_BUY_ALIEN_RACE_14, OK_BUY_ALIEN_RACE_15,
-		OK_BUY_ALIEN_RACE_16};
+		MelnormePhrase::OkBuyAlienRace1, MelnormePhrase::OkBuyAlienRace2, MelnormePhrase::OkBuyAlienRace3,
+		MelnormePhrase::OkBuyAlienRace4, MelnormePhrase::OkBuyAlienRace5, MelnormePhrase::OkBuyAlienRace6,
+		MelnormePhrase::OkBuyAlienRace7, MelnormePhrase::OkBuyAlienRace8, MelnormePhrase::OkBuyAlienRace9,
+		MelnormePhrase::OkBuyAlienRace10, MelnormePhrase::OkBuyAlienRace11, MelnormePhrase::OkBuyAlienRace12,
+		MelnormePhrase::OkBuyAlienRace13, MelnormePhrase::OkBuyAlienRace14, MelnormePhrase::OkBuyAlienRace15,
+		MelnormePhrase::OkBuyAlienRace16};
 const size_t NUM_ALIEN_RACE_ITEMS = std::size(ok_buy_alien_race_lines);
 
-const static int ok_buy_history_lines[] =
+const static MelnormePhrase ok_buy_history_lines[] =
 	{
-		OK_BUY_HISTORY_1, OK_BUY_HISTORY_2, OK_BUY_HISTORY_3,
-		OK_BUY_HISTORY_4, OK_BUY_HISTORY_5, OK_BUY_HISTORY_6,
-		OK_BUY_HISTORY_7, OK_BUY_HISTORY_8, OK_BUY_HISTORY_9};
+		MelnormePhrase::OkBuyHistory1, MelnormePhrase::OkBuyHistory2, MelnormePhrase::OkBuyHistory3,
+		MelnormePhrase::OkBuyHistory4, MelnormePhrase::OkBuyHistory5, MelnormePhrase::OkBuyHistory6,
+		MelnormePhrase::OkBuyHistory7, MelnormePhrase::OkBuyHistory8, MelnormePhrase::OkBuyHistory9};
 const size_t NUM_HISTORY_ITEMS = std::size(ok_buy_history_lines);
 
-const static int hello_and_down_to_business_lines[] =
+const static MelnormePhrase hello_and_down_to_business_lines[] =
 	{
-		HELLO_AND_DOWN_TO_BUSINESS_1, HELLO_AND_DOWN_TO_BUSINESS_2,
-		HELLO_AND_DOWN_TO_BUSINESS_3, HELLO_AND_DOWN_TO_BUSINESS_4,
-		HELLO_AND_DOWN_TO_BUSINESS_5, HELLO_AND_DOWN_TO_BUSINESS_6,
-		HELLO_AND_DOWN_TO_BUSINESS_7, HELLO_AND_DOWN_TO_BUSINESS_8,
-		HELLO_AND_DOWN_TO_BUSINESS_9, HELLO_AND_DOWN_TO_BUSINESS_10};
+		MelnormePhrase::HelloAndDownToBusiness1, MelnormePhrase::HelloAndDownToBusiness2,
+		MelnormePhrase::HelloAndDownToBusiness3, MelnormePhrase::HelloAndDownToBusiness4,
+		MelnormePhrase::HelloAndDownToBusiness5, MelnormePhrase::HelloAndDownToBusiness6,
+		MelnormePhrase::HelloAndDownToBusiness7, MelnormePhrase::HelloAndDownToBusiness8,
+		MelnormePhrase::HelloAndDownToBusiness9, MelnormePhrase::HelloAndDownToBusiness10};
 const size_t NUM_HELLO_LINES = std::size(hello_and_down_to_business_lines);
 
-const static int rescue_lines[] =
+const static MelnormePhrase rescue_lines[] =
 	{
-		RESCUE_EXPLANATION, RESCUE_AGAIN_1, RESCUE_AGAIN_2,
-		RESCUE_AGAIN_3, RESCUE_AGAIN_4, RESCUE_AGAIN_5};
+		MelnormePhrase::RescueExplanation, MelnormePhrase::RescueAgain1, MelnormePhrase::RescueAgain2,
+		MelnormePhrase::RescueAgain3, MelnormePhrase::RescueAgain4, MelnormePhrase::RescueAgain5};
 const size_t NUM_RESCUE_LINES = std::size(rescue_lines);
 
 // How many lines are available in the given array?
 static size_t
-GetNumLines(const int array[])
+GetNumLines(const MelnormePhrase array[])
 {
 	if (array == ok_buy_event_lines)
 	{
@@ -461,7 +461,7 @@ GetNumLines(const int array[])
 
 // Get the line, with range checking.
 // Returns the last line if the desired one is out of range.
-static int GetLineSafe(const int array[], size_t linenum)
+static MelnormePhrase GetLineSafe(const MelnormePhrase array[], size_t linenum)
 {
 	const size_t array_size = GetNumLines(array);
 	assert(array_size > 0);
@@ -475,10 +475,10 @@ static int GetLineSafe(const int array[], size_t linenum)
 // Data structure to hold the Melnorme's info on a technology
 struct TechSaleData
 {
-	TechId techId; // ID of technology
-	int price;	   // Melnorme's price to sell
-	int sale_line; // Sales pitch line ID
-	int sold_line; // Post-sale line ID
+	TechId techId;			  // ID of technology
+	int price;				  // Melnorme's price to sell
+	MelnormePhrase sale_line; // Sales pitch line ID
+	MelnormePhrase sold_line; // Post-sale line ID
 };
 
 // Right now, all techs have the same price.
@@ -487,19 +487,19 @@ static constexpr auto Techprice {(75 * BioCreditValueDefault)};
 
 TechSaleData tech_sale_catalog[] =
 	{
-		{TechId::ModuleBlaster,			Techprice, NEW_TECH_1,  OK_BUY_NEW_TECH_1 },
-		{TechId::LanderSpeed,			  Techprice, NEW_TECH_2,	 OK_BUY_NEW_TECH_2 },
-		{TechId::ModuleAntimissile,		Techprice, NEW_TECH_3,  OK_BUY_NEW_TECH_3 },
-		{TechId::LanderShieldBio,		  Techprice, NEW_TECH_4,	 OK_BUY_NEW_TECH_4 },
-		{TechId::LanderCargo,			  Techprice, NEW_TECH_5,	 OK_BUY_NEW_TECH_5 },
-		{TechId::ModuleBigfueltank,		Techprice, NEW_TECH_6,  OK_BUY_NEW_TECH_6 },
-		{TechId::LanderRapidfire,		  Techprice, NEW_TECH_7,	 OK_BUY_NEW_TECH_7 },
-		{TechId::LanderShieldQuake,		Techprice, NEW_TECH_8,  OK_BUY_NEW_TECH_8 },
-		{TechId::ModuleTracking,		 Techprice, NEW_TECH_9,	OK_BUY_NEW_TECH_9 },
-		{TechId::LanderShieldLightning, Techprice, NEW_TECH_10, OK_BUY_NEW_TECH_10},
-		{TechId::LanderShieldHeat,	   Techprice, NEW_TECH_11, OK_BUY_NEW_TECH_11},
-		{TechId::ModuleCannon,		   Techprice, NEW_TECH_12, OK_BUY_NEW_TECH_12},
-		{TechId::ModuleFurnace,			Techprice, NEW_TECH_13, OK_BUY_NEW_TECH_13},
+		{TechId::ModuleBlaster,			Techprice, MelnormePhrase::NewTech1,	 MelnormePhrase::OkBuyNewTech1 },
+		{TechId::LanderSpeed,			  Techprice, MelnormePhrase::NewTech2,  MelnormePhrase::OkBuyNewTech2 },
+		{TechId::ModuleAntimissile,		Techprice, MelnormePhrase::NewTech3,	 MelnormePhrase::OkBuyNewTech3 },
+		{TechId::LanderShieldBio,		  Techprice, MelnormePhrase::NewTech4,  MelnormePhrase::OkBuyNewTech4 },
+		{TechId::LanderCargo,			  Techprice, MelnormePhrase::NewTech5,  MelnormePhrase::OkBuyNewTech5 },
+		{TechId::ModuleBigfueltank,		Techprice, MelnormePhrase::NewTech6,	 MelnormePhrase::OkBuyNewTech6 },
+		{TechId::LanderRapidfire,		  Techprice, MelnormePhrase::NewTech7,  MelnormePhrase::OkBuyNewTech7 },
+		{TechId::LanderShieldQuake,		Techprice, MelnormePhrase::NewTech8,	 MelnormePhrase::OkBuyNewTech8 },
+		{TechId::ModuleTracking,		 Techprice, MelnormePhrase::NewTech9,  MelnormePhrase::OkBuyNewTech9 },
+		{TechId::LanderShieldLightning, Techprice, MelnormePhrase::NewTech10, MelnormePhrase::OkBuyNewTech10},
+		{TechId::LanderShieldHeat,	   Techprice, MelnormePhrase::NewTech11, MelnormePhrase::OkBuyNewTech11},
+		{TechId::ModuleCannon,		   Techprice, MelnormePhrase::NewTech12, MelnormePhrase::OkBuyNewTech12},
+		{TechId::ModuleFurnace,			Techprice, MelnormePhrase::NewTech13, MelnormePhrase::OkBuyNewTech13},
 };
 const size_t NUM_TECH_ITEMS = std::size(tech_sale_catalog);
 
@@ -629,41 +629,41 @@ static FlagshipData SIS_copy;
 
 // Extract method to return the response string index
 // for stripping a given module.
-static int GetStripModuleRef(int moduleID)
+static MelnormePhrase GetStripModuleRef(int moduleID)
 {
 	switch (static_cast<ModuleType>(moduleID))
 	{
 		case ModuleType::PlanetLander:
-			return LANDERS;
+			return MelnormePhrase::Landers;
 		case ModuleType::FusionThruster:
-			return THRUSTERS;
+			return MelnormePhrase::Thrusters;
 		case ModuleType::TurningJets:
-			return JETS;
+			return MelnormePhrase::Jets;
 		case ModuleType::CrewPod:
-			return PODS;
+			return MelnormePhrase::Pods;
 		case ModuleType::StorageBay:
-			return BAYS;
+			return MelnormePhrase::Bays;
 		case ModuleType::DynamoUnit:
-			return DYNAMOS;
+			return MelnormePhrase::Dynamos;
 		case ModuleType::ShivaFurnace:
-			return FURNACES;
+			return MelnormePhrase::Furnaces;
 		case ModuleType::GunWeapon:
-			return GUNS;
+			return MelnormePhrase::Guns;
 		case ModuleType::BlasterWeapon:
-			return BLASTERS;
+			return MelnormePhrase::Blasters;
 		case ModuleType::CannonWeapon:
-			return CANNONS;
+			return MelnormePhrase::Cannons;
 		case ModuleType::TrackingSystem:
-			return TRACKERS;
+			return MelnormePhrase::Trackers;
 		case ModuleType::AntimissileDefense:
-			return DEFENSES;
+			return MelnormePhrase::Defenses;
 		// If a modder has added new modules, should it really
 		// be a fatal error if the Melnorme don't know about
 		// them?
 		default:
 			assert(0 && "Unknown module");
 	}
-	return 0;
+	return MelnormePhrase::NullPhrase;
 }
 
 static uint32_t getStripRandomSeed(void)
@@ -864,21 +864,21 @@ static bool StripShip(uint16_t fuel_required)
 
 		if (total == 0)
 		{
-			NPCPhrase(CHARITY);
+			NPCPhrase(MelnormePhrase::Charity);
 			DeltaSISGauges(0, fuel_required, 0);
 			return (false);
 		}
 		else
 		{
-			NPCPhrase(RESCUE_OFFER);
+			NPCPhrase(MelnormePhrase::RescueOffer);
 			rescue_fuel = fuel_required;
 			if (rescue_fuel == capacity)
 			{
-				NPCPhrase(RESCUE_TANKS);
+				NPCPhrase(MelnormePhrase::RescueTanks);
 			}
 			else
 			{
-				NPCPhrase(RESCUE_HOME);
+				NPCPhrase(MelnormePhrase::RescueHome);
 			}
 			for (i = *ModuleType::PlanetLander; i < ModuleType::BombModule0; ++i)
 			{
@@ -886,9 +886,9 @@ static bool StripShip(uint16_t fuel_required)
 				{
 					if (i == end_mod && i != beg_mod)
 					{
-						NPCPhrase(END_LIST_WITH_AND);
+						NPCPhrase(MelnormePhrase::EndListWithAnd);
 					}
-					NPCPhrase(ENUMERATE_ONE + (module_count[i] - 1));
+					NPCPhrase(MelnormePhrase::EnumerateOne + (module_count[i] - 1));
 					NPCPhrase(GetStripModuleRef(i));
 				}
 			}
@@ -900,87 +900,87 @@ static bool StripShip(uint16_t fuel_required)
 
 static void ExitConversation(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, no_trade_now))
+	if (PlayerSaid(R, MelnormePhrase::NoTradeNow))
 	{
-		NPCPhrase(OK_NO_TRADE_NOW_BYE);
+		NPCPhrase(MelnormePhrase::OkNoTradeNowBye);
 	}
-	else if (PlayerSaid(R, youre_on))
+	else if (PlayerSaid(R, MelnormePhrase::YoureOn))
 	{
-		NPCPhrase(YOU_GIVE_US_NO_CHOICE);
+		NPCPhrase(MelnormePhrase::YouGiveUsNoChoice);
 
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(1));
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, so_we_can_attack))
+	else if (PlayerSaid(R, MelnormePhrase::SoWeCanAttack))
 	{
-		NPCPhrase(DECEITFUL_HUMAN);
+		NPCPhrase(MelnormePhrase::DeceitfulHuman);
 
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(2));
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, bye_melnorme_slightly_angry))
+	else if (PlayerSaid(R, MelnormePhrase::ByeMelnormeSlightlyAngry))
 	{
-		NPCPhrase(MELNORME_SLIGHTLY_ANGRY_GOODBYE);
+		NPCPhrase(MelnormePhrase::MelnormeSlightlyAngryGoodbye);
 	}
-	else if (PlayerSaid(R, ok_strip_me))
+	else if (PlayerSaid(R, MelnormePhrase::OkStripMe))
 	{
 		if (ShipWorth() < 4000 / ModuleCostScale)
 		{
 			/* is ship worth stripping */
-			NPCPhrase(NOT_WORTH_STRIPPING);
+			NPCPhrase(MelnormePhrase::NotWorthStripping);
 		}
 		else
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(0));
 
 			StripShip((uint16_t)~0);
-			NPCPhrase(FAIR_JUSTICE);
+			NPCPhrase(MelnormePhrase::FairJustice);
 		}
 	}
-	else if (PlayerSaid(R, fight_some_more))
+	else if (PlayerSaid(R, MelnormePhrase::FightSomeMore))
 	{
-		NPCPhrase(OK_FIGHT_SOME_MORE);
+		NPCPhrase(MelnormePhrase::OkFightSomeMore);
 
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(3));
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, bye_melnorme_pissed_off))
+	else if (PlayerSaid(R, MelnormePhrase::ByeMelnormePissedOff))
 	{
-		NPCPhrase(MELNORME_PISSED_OFF_GOODBYE);
+		NPCPhrase(MelnormePhrase::MelnormePissedOffGoodbye);
 	}
-	else if (PlayerSaid(R, well_if_thats_the_way_you_feel))
+	else if (PlayerSaid(R, MelnormePhrase::WellIfThatsTheWayYouFeel))
 	{
-		NPCPhrase(WE_FIGHT_AGAIN);
+		NPCPhrase(MelnormePhrase::WeFightAgain);
 
 		setSegue(Segue::Hostile);
 	}
-	else if (PlayerSaid(R, you_hate_us_so_we_go_away))
+	else if (PlayerSaid(R, MelnormePhrase::YouHateUsSoWeGoAway))
 	{
-		NPCPhrase(HATE_YOU_GOODBYE);
+		NPCPhrase(MelnormePhrase::HateYouGoodbye);
 	}
-	else if (PlayerSaid(R, take_it))
+	else if (PlayerSaid(R, MelnormePhrase::TakeIt))
 	{
 		StripShip(0);
-		NPCPhrase(HAPPY_TO_HAVE_RESCUED);
+		NPCPhrase(MelnormePhrase::HappyToHaveRescued);
 	}
-	else if (PlayerSaid(R, leave_it))
+	else if (PlayerSaid(R, MelnormePhrase::LeaveIt))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_RESCUE_REFUSED, static_cast<uint32_t>(1));
-		NPCPhrase(MAYBE_SEE_YOU_LATER);
+		NPCPhrase(MelnormePhrase::MaybeSeeYouLater);
 	}
-	else if (PlayerSaid(R, no_help))
+	else if (PlayerSaid(R, MelnormePhrase::NoHelp))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_RESCUE_REFUSED, static_cast<uint32_t>(1));
-		NPCPhrase(GOODBYE_AND_GOODLUCK);
+		NPCPhrase(MelnormePhrase::GoodbyeAndGoodluck);
 	}
-	else if (PlayerSaid(R, no_changed_mind))
+	else if (PlayerSaid(R, MelnormePhrase::NoChangedMind))
 	{
-		NPCPhrase(GOODBYE_AND_GOODLUCK_AGAIN);
+		NPCPhrase(MelnormePhrase::GoodbyeAndGoodluckAgain);
 	}
-	else if (PlayerSaid(R, be_leaving_now)
-			 || PlayerSaid(R, goodbye))
+	else if (PlayerSaid(R, MelnormePhrase::BeLeavingNow)
+			 || PlayerSaid(R, MelnormePhrase::Goodbye))
 	{
-		NPCPhrase(FRIENDLY_GOODBYE);
+		NPCPhrase(MelnormePhrase::FriendlyGoodbye);
 	}
 }
 
@@ -1006,8 +1006,8 @@ static void DoRescue(RESPONSE_REF R)
 
 	if (StripShip(fuel_required))
 	{
-		Response(take_it, ExitConversation);
-		Response(leave_it, ExitConversation);
+		Response(MelnormePhrase::TakeIt, ExitConversation);
+		Response(MelnormePhrase::LeaveIt, ExitConversation);
 	}
 }
 
@@ -1041,9 +1041,9 @@ static bool DeltaCredit(int16_t delta_credit)
 	}
 
 	// Fail
-	NPCPhrase(NEED_MORE_CREDIT0);
+	NPCPhrase(MelnormePhrase::NeedMoreCredit0);
 	NPCNumber(-delta_credit - Credit, nullptr);
-	NPCPhrase(NEED_MORE_CREDIT1);
+	NPCPhrase(MelnormePhrase::NeedMoreCredit1);
 
 	return false;
 }
@@ -1055,14 +1055,16 @@ static bool DeltaCredit(int16_t delta_credit)
 static void CurrentEvents(void)
 {
 	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_EVENTS_INFO_STACK);
-	const int phraseId = GetLineSafe(ok_buy_event_lines, stack);
+	const MelnormePhrase phraseId {GetLineSafe(ok_buy_event_lines, stack)};
 	switch (phraseId)
 	{
-		case OK_BUY_EVENT_1:
+		case MelnormePhrase::OkBuyEvent1:
 			SetHomeworldKnown(*HomeId::Shofixti);
 			break;
-		case OK_BUY_EVENT_6:
+		case MelnormePhrase::OkBuyEvent6:
 			SetHomeworldKnown(*HomeId::Slylandro);
+			break;
+		default:
 			break;
 	}
 	NPCPhrase(phraseId);
@@ -1072,26 +1074,26 @@ static void CurrentEvents(void)
 static void AlienRaces(void)
 {
 	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK);
-	const int phraseId = GetLineSafe(ok_buy_alien_race_lines, stack);
+	const MelnormePhrase phraseId {GetLineSafe(ok_buy_alien_race_lines, stack)};
 	// Two pieces of alien knowledge trigger state changes.
 	switch (phraseId)
 	{
-		case OK_BUY_ALIEN_RACE_5:
+		case MelnormePhrase::OkBuyAlienRace5:
 			SetHomeworldKnown(*HomeId::Druuge);
 			break;
-		case OK_BUY_ALIEN_RACE_7:
+		case MelnormePhrase::OkBuyAlienRace7:
 			SetHomeworldKnown(*HomeId::Thraddash);
 			break;
-		case OK_BUY_ALIEN_RACE_8:
+		case MelnormePhrase::OkBuyAlienRace8:
 			SetHomeworldKnown(*HomeId::Chmmr);
 			break;
-		case OK_BUY_ALIEN_RACE_12:
+		case MelnormePhrase::OkBuyAlienRace12:
 			SetHomeworldKnown(*HomeId::Shofixti);
 			break;
-		case OK_BUY_ALIEN_RACE_13:
+		case MelnormePhrase::OkBuyAlienRace13:
 			SetHomeworldKnown(*HomeId::Slylandro);
 			break;
-		case OK_BUY_ALIEN_RACE_14:
+		case MelnormePhrase::OkBuyAlienRace14:
 			if (!uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI))
 			{
 				uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_PASSWORD, static_cast<uint32_t>(1));
@@ -1099,7 +1101,7 @@ static void AlienRaces(void)
 			}
 			SetHomeworldKnown(*HomeId::Spathi);
 			break;
-		case OK_BUY_ALIEN_RACE_15:
+		case MelnormePhrase::OkBuyAlienRace15:
 			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
 			{
 				uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
@@ -1107,8 +1109,10 @@ static void AlienRaces(void)
 			uqm::gameState().setFlag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED, static_cast<uint32_t>(1));
 			SetHomeworldKnown(*HomeId::Syreen);
 			break;
-		case OK_BUY_ALIEN_RACE_16:
+		case MelnormePhrase::OkBuyAlienRace16:
 			SetHomeworldKnown(*HomeId::Yehat);
+			break;
+		default:
 			break;
 	}
 	NPCPhrase(phraseId);
@@ -1118,7 +1122,7 @@ static void AlienRaces(void)
 static void History(void)
 {
 	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK);
-	const int phraseId = GetLineSafe(ok_buy_history_lines, stack);
+	const MelnormePhrase phraseId {GetLineSafe(ok_buy_history_lines, stack)};
 	NPCPhrase(phraseId);
 	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK, static_cast<uint32_t>(stack + 1));
 }
@@ -1163,35 +1167,35 @@ static void DoBuy(RESPONSE_REF R)
 	if (credit == 0 && !uqm::UQMOptions::read().infiniteCredits)
 	{
 		AskedToBuy = true;
-		NPCPhrase(NEED_CREDIT);
+		NPCPhrase(MelnormePhrase::NeedCredit);
 
 		NatureOfConversation(R);
 	}
-	else if (PlayerSaid(R, buy_fuel)
-			 || PlayerSaid(R, buy_1_fuel)
-			 || PlayerSaid(R, buy_5_fuel)
-			 || PlayerSaid(R, buy_10_fuel)
-			 || PlayerSaid(R, buy_25_fuel)
-			 || PlayerSaid(R, fill_me_up))
+	else if (PlayerSaid(R, MelnormePhrase::BuyFuel)
+			 || PlayerSaid(R, MelnormePhrase::Buy1Fuel)
+			 || PlayerSaid(R, MelnormePhrase::Buy5Fuel)
+			 || PlayerSaid(R, MelnormePhrase::Buy10Fuel)
+			 || PlayerSaid(R, MelnormePhrase::Buy25Fuel)
+			 || PlayerSaid(R, MelnormePhrase::FillMeUp))
 	{
 		needed_credit = 0;
-		if (PlayerSaid(R, buy_1_fuel))
+		if (PlayerSaid(R, MelnormePhrase::Buy1Fuel))
 		{
 			needed_credit = 1;
 		}
-		else if (PlayerSaid(R, buy_5_fuel))
+		else if (PlayerSaid(R, MelnormePhrase::Buy5Fuel))
 		{
 			needed_credit = 5;
 		}
-		else if (PlayerSaid(R, buy_10_fuel))
+		else if (PlayerSaid(R, MelnormePhrase::Buy10Fuel))
 		{
 			needed_credit = 10;
 		}
-		else if (PlayerSaid(R, buy_25_fuel))
+		else if (PlayerSaid(R, MelnormePhrase::Buy25Fuel))
 		{
 			needed_credit = 25;
 		}
-		else if (PlayerSaid(R, fill_me_up))
+		else if (PlayerSaid(R, MelnormePhrase::FillMeUp))
 		{
 			const int16_t remainingCapacity = (capacity - uqm::gameState().sis().FuelOnBoard
 											   + FuelTankScale - 1)
@@ -1211,7 +1215,7 @@ static void DoBuy(RESPONSE_REF R)
 		{
 			if (!uqm::gameState().flag(uqm::GameFlag::MELNORME_FUEL_PROCEDURE))
 			{
-				NPCPhrase(BUY_FUEL_INTRO);
+				NPCPhrase(MelnormePhrase::BuyFuelIntro);
 				uqm::gameState().setFlag(uqm::GameFlag::MELNORME_FUEL_PROCEDURE, static_cast<uint32_t>(1));
 			}
 		}
@@ -1221,19 +1225,19 @@ static void DoBuy(RESPONSE_REF R)
 					+ needed_credit
 				> capacity / FuelTankScale)
 			{
-				NPCPhrase(NO_ROOM_FOR_FUEL);
+				NPCPhrase(MelnormePhrase::NoRoomForFuel);
 				goto TryFuelAgain;
 			}
 
 			if (((int)(needed_credit * FuelCost) <= (int)credit)
 				|| uqm::UQMOptions::read().infiniteCredits)
 			{
-				if (IsExtended() && PlayerSaid(R, fill_me_up))
+				if (IsExtended() && PlayerSaid(R, MelnormePhrase::FillMeUp))
 				{
-					NPCPhrase(OK_FILL_YOU_UP);
+					NPCPhrase(MelnormePhrase::OkFillYouUp);
 				}
 
-				NPCPhrase(GOT_FUEL);
+				NPCPhrase(MelnormePhrase::GotFuel);
 
 				uint32_t f {(uint32_t)needed_credit * FuelTankScale};
 				while (f > 0x3FFFL)
@@ -1257,17 +1261,17 @@ static void DoBuy(RESPONSE_REF R)
 			}
 		}
 TryFuelAgain:
-		NPCPhrase(HOW_MUCH_FUEL);
+		NPCPhrase(MelnormePhrase::HowMuchFuel);
 
-		Response(buy_1_fuel, DoBuy);
-		Response(buy_5_fuel, DoBuy);
-		Response(buy_10_fuel, DoBuy);
-		Response(buy_25_fuel, DoBuy);
-		Response(fill_me_up, DoBuy);
-		Response(done_buying_fuel, DoBuy);
+		Response(MelnormePhrase::Buy1Fuel, DoBuy);
+		Response(MelnormePhrase::Buy5Fuel, DoBuy);
+		Response(MelnormePhrase::Buy10Fuel, DoBuy);
+		Response(MelnormePhrase::Buy25Fuel, DoBuy);
+		Response(MelnormePhrase::FillMeUp, DoBuy);
+		Response(MelnormePhrase::DoneBuyingFuel, DoBuy);
 	}
-	else if (PlayerSaid(R, buy_technology)
-			 || PlayerSaid(R, buy_new_tech))
+	else if (PlayerSaid(R, MelnormePhrase::BuyTechnology)
+			 || PlayerSaid(R, MelnormePhrase::BuyNewTech))
 	{
 		// Note that this code no longer uses the MELNORME_TECH_STACK state
 		// buts, as they're not needed; we can tell what technologies the
@@ -1279,12 +1283,12 @@ TryFuelAgain:
 		// If it's our first time, give an introduction.
 		if (!uqm::gameState().flag(uqm::GameFlag::MELNORME_TECH_PROCEDURE))
 		{
-			NPCPhrase(BUY_NEW_TECH_INTRO);
+			NPCPhrase(MelnormePhrase::BuyNewTechIntro);
 			uqm::gameState().setFlag(uqm::GameFlag::MELNORME_TECH_PROCEDURE, static_cast<uint32_t>(1));
 		}
 
 		// Did the player just attempt to buy a tech?
-		if (PlayerSaid(R, buy_new_tech))
+		if (PlayerSaid(R, MelnormePhrase::BuyNewTech))
 		{
 			nextTech = GetNextTechForSale();
 			if (!nextTech)
@@ -1305,7 +1309,7 @@ TryFuelAgain:
 		nextTech = GetNextTechForSale();
 		if (!nextTech)
 		{
-			NPCPhrase(NEW_TECH_ALL_GONE);
+			NPCPhrase(MelnormePhrase::NewTechAllGone);
 			goto BuyBuyBuy; // No tech left to buy
 		}
 
@@ -1314,27 +1318,27 @@ TryFuelAgain:
 		if (isDifficulty(uqm::Difficulty::Hard) && countTech())
 		{
 			nextTech->price = Techprice + countTech() * 50;
-			NPCPhrase(NEED_MORE_CREDIT0);
+			NPCPhrase(MelnormePhrase::NeedMoreCredit0);
 			NPCNumber(nextTech->price - Techprice, nullptr);
-			NPCPhrase(NEED_MORE_CREDIT1);
+			NPCPhrase(MelnormePhrase::NeedMoreCredit1);
 		}
 
-		Response(buy_new_tech, DoBuy);
-		Response(no_buy_new_tech, DoBuy);
+		Response(MelnormePhrase::BuyNewTech, DoBuy);
+		Response(MelnormePhrase::NoBuyNewTech, DoBuy);
 	}
-	else if (PlayerSaid(R, buy_info)
-			 || PlayerSaid(R, buy_current_events)
-			 || PlayerSaid(R, buy_alien_races)
-			 || PlayerSaid(R, buy_history))
+	else if (PlayerSaid(R, MelnormePhrase::BuyInfo)
+			 || PlayerSaid(R, MelnormePhrase::BuyCurrentEvents)
+			 || PlayerSaid(R, MelnormePhrase::BuyAlienRaces)
+			 || PlayerSaid(R, MelnormePhrase::BuyHistory))
 	{
 		if (!uqm::gameState().flag(uqm::GameFlag::MELNORME_INFO_PROCEDURE))
 		{
-			NPCPhrase(BUY_INFO_INTRO);
+			NPCPhrase(MelnormePhrase::BuyInfoIntro);
 			uqm::gameState().setFlag(uqm::GameFlag::MELNORME_INFO_PROCEDURE, static_cast<uint32_t>(1));
 		}
-		else if (PlayerSaid(R, buy_info))
+		else if (PlayerSaid(R, MelnormePhrase::BuyInfo))
 		{
-			NPCPhrase(OK_BUY_INFO);
+			NPCPhrase(MelnormePhrase::OkBuyInfo);
 		}
 		else
 		{
@@ -1343,15 +1347,15 @@ TryFuelAgain:
 				goto BuyBuyBuy;
 			}
 
-			if (PlayerSaid(R, buy_current_events))
+			if (PlayerSaid(R, MelnormePhrase::BuyCurrentEvents))
 			{
 				CurrentEvents();
 			}
-			else if (PlayerSaid(R, buy_alien_races))
+			else if (PlayerSaid(R, MelnormePhrase::BuyAlienRaces))
 			{
 				AlienRaces();
 			}
-			else if (PlayerSaid(R, buy_history))
+			else if (PlayerSaid(R, MelnormePhrase::BuyHistory))
 			{
 				History();
 			}
@@ -1359,59 +1363,59 @@ TryFuelAgain:
 
 		if (!AnyInfoLeftToSell())
 		{
-			NPCPhrase(INFO_ALL_GONE);
+			NPCPhrase(MelnormePhrase::InfoAllGone);
 			goto BuyBuyBuy;
 		}
 
 		if (uqm::gameState().flag(uqm::GameFlag::MELNORME_EVENTS_INFO_STACK) < NUM_EVENT_ITEMS)
 		{
-			Response(buy_current_events, DoBuy);
+			Response(MelnormePhrase::BuyCurrentEvents, DoBuy);
 		}
 		if (uqm::gameState().flag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK) < NUM_ALIEN_RACE_ITEMS)
 		{
-			Response(buy_alien_races, DoBuy);
+			Response(MelnormePhrase::BuyAlienRaces, DoBuy);
 		}
 		if (uqm::gameState().flag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK) < NUM_HISTORY_ITEMS)
 		{
-			Response(buy_history, DoBuy);
+			Response(MelnormePhrase::BuyHistory, DoBuy);
 		}
-		Response(done_buying_info, DoBuy);
+		Response(MelnormePhrase::DoneBuyingInfo, DoBuy);
 	}
 	else
 	{
-		if (PlayerSaid(R, done_buying_fuel))
+		if (PlayerSaid(R, MelnormePhrase::DoneBuyingFuel))
 		{
-			NPCPhrase(OK_DONE_BUYING_FUEL);
+			NPCPhrase(MelnormePhrase::OkDoneBuyingFuel);
 		}
-		else if (PlayerSaid(R, no_buy_new_tech))
+		else if (PlayerSaid(R, MelnormePhrase::NoBuyNewTech))
 		{
-			NPCPhrase(OK_NO_BUY_NEW_TECH);
+			NPCPhrase(MelnormePhrase::OkNoBuyNewTech);
 		}
-		else if (PlayerSaid(R, done_buying_info))
+		else if (PlayerSaid(R, MelnormePhrase::DoneBuyingInfo))
 		{
-			NPCPhrase(OK_DONE_BUYING_INFO);
+			NPCPhrase(MelnormePhrase::OkDoneBuyingInfo);
 		}
 		else
 		{
-			NPCPhrase(WHAT_TO_BUY);
+			NPCPhrase(MelnormePhrase::WhatToBuy);
 		}
 
 BuyBuyBuy:
 		if (uqm::gameState().sis().FuelOnBoard < capacity)
 		{
-			Response(buy_fuel, DoBuy);
+			Response(MelnormePhrase::BuyFuel, DoBuy);
 		}
 		if (GetNextTechForSale())
 		{
-			Response(buy_technology, DoBuy);
+			Response(MelnormePhrase::BuyTechnology, DoBuy);
 		}
 		if (AnyInfoLeftToSell())
 		{
-			Response(buy_info, DoBuy);
+			Response(MelnormePhrase::BuyInfo, DoBuy);
 		}
 
-		Response(done_buying, NatureOfConversation);
-		Response(be_leaving_now, ExitConversation);
+		Response(MelnormePhrase::DoneBuying, NatureOfConversation);
+		Response(MelnormePhrase::BeLeavingNow, ExitConversation);
 	}
 }
 
@@ -1437,9 +1441,9 @@ static void DoSell(RESPONSE_REF R)
 		rainbow_mask >>= 1;
 	}
 
-	if (!PlayerSaid(R, sell))
+	if (!PlayerSaid(R, MelnormePhrase::Sell))
 	{
-		if (PlayerSaid(R, sell_life_data))
+		if (PlayerSaid(R, MelnormePhrase::SellLifeData))
 		{
 			TimeCount TimeIn;
 			const int16_t beast_value = 0;
@@ -1453,15 +1457,15 @@ static void DoSell(RESPONSE_REF R)
 
 			added_credit = uqm::gameState().sis().TotalBioMass * BioCreditValue + beast_value;
 
-			NPCPhrase(SOLD_LIFE_DATA1);
+			NPCPhrase(MelnormePhrase::SoldLifeData1);
 			NPCNumber(uqm::gameState().sis().TotalBioMass, nullptr);
-			NPCPhrase(SOLD_LIFE_DATA2);
+			NPCPhrase(MelnormePhrase::SoldLifeData2);
 			NPCNumber(added_credit, nullptr);
-			NPCPhrase(SOLD_LIFE_DATA3);
-			// queue WHAT_TO_SELL before talk-segue
+			NPCPhrase(MelnormePhrase::SoldLifeData3);
+			// queue MelnormePhrase::WhatToSell before talk-segue
 			if (num_new_rainbows)
 			{
-				NPCPhrase(WHAT_TO_SELL);
+				NPCPhrase(MelnormePhrase::WhatToSell);
 				what_to_sell_queued = 1;
 			}
 
@@ -1513,7 +1517,7 @@ static void DoSell(RESPONSE_REF R)
 			}
 			ClearSISRect(DrawSisDisplay);
 		}
-		else /* if (R == sell_rainbow_locations) */
+		else /* if (R == MelnormePhrase::SellRainbowLocations) */
 		{
 			TimeCount TimeIn;
 			bool Sleepy = true;
@@ -1521,11 +1525,11 @@ static void DoSell(RESPONSE_REF R)
 
 			added_credit = num_new_rainbows * (diffCase * BioCreditValue);
 
-			NPCPhrase(SOLD_RAINBOW_LOCATIONS1);
+			NPCPhrase(MelnormePhrase::SoldRainbowLocations1);
 			NPCNumber(num_new_rainbows, nullptr);
-			NPCPhrase(SOLD_RAINBOW_LOCATIONS2);
+			NPCPhrase(MelnormePhrase::SoldRainbowLocations2);
 			NPCNumber(added_credit, nullptr);
-			NPCPhrase(SOLD_RAINBOW_LOCATIONS3);
+			NPCPhrase(MelnormePhrase::SoldRainbowLocations3);
 
 			uint8_t planets {num_new_rainbows};
 			num_new_rainbows += uqm::gameState().flag(uqm::GameFlag::MELNORME_RAINBOW_COUNT);
@@ -1538,10 +1542,10 @@ static void DoSell(RESPONSE_REF R)
 			}
 			else
 			{
-				// queue WHAT_TO_SELL before talk-segue
+				// queue MelnormePhrase::WhatToSell before talk-segue
 				if (uqm::gameState().sis().TotalBioMass)
 				{
-					NPCPhrase(WHAT_TO_SELL);
+					NPCPhrase(MelnormePhrase::WhatToSell);
 					what_to_sell_queued = 1;
 				}
 
@@ -1602,26 +1606,26 @@ static void DoSell(RESPONSE_REF R)
 	{
 		if (!what_to_sell_queued)
 		{
-			NPCPhrase(WHAT_TO_SELL);
+			NPCPhrase(MelnormePhrase::WhatToSell);
 		}
 
 		if (uqm::gameState().sis().TotalBioMass)
 		{
-			Response(sell_life_data, DoSell);
+			Response(MelnormePhrase::SellLifeData, DoSell);
 		}
 		if (num_new_rainbows)
 		{
-			Response(sell_rainbow_locations, DoSell);
+			Response(MelnormePhrase::SellRainbowLocations, DoSell);
 		}
-		Response(done_selling, NatureOfConversation);
+		Response(MelnormePhrase::DoneSelling, NatureOfConversation);
 	}
 	else
 	{
-		if (PlayerSaid(R, sell))
+		if (PlayerSaid(R, MelnormePhrase::Sell))
 		{
-			NPCPhrase(NOTHING_TO_SELL);
+			NPCPhrase(MelnormePhrase::NothingToSell);
 		}
-		DisablePhrase(sell);
+		DisablePhrase(MelnormePhrase::Sell);
 
 		NatureOfConversation(R);
 	}
@@ -1633,7 +1637,7 @@ static void NatureOfConversation(RESPONSE_REF R)
 	uint8_t num_new_rainbows {};
 	uint16_t rainbow_mask {};
 
-	if (PlayerSaid(R, get_on_with_business))
+	if (PlayerSaid(R, MelnormePhrase::GetOnWithBusiness))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(5));
 		R = 0;
@@ -1677,13 +1681,13 @@ static void NatureOfConversation(RESPONSE_REF R)
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::TRADED_WITH_MELNORME, static_cast<uint32_t>(1));
 
-			NPCPhrase(TRADING_INFO);
+			NPCPhrase(MelnormePhrase::TradingInfo);
 		}
 
 		if (R == 0)
 		{
 			/* Melnorme reports any news and turns purple */
-			NPCPhrase(BUY_OR_SELL);
+			NPCPhrase(MelnormePhrase::BuyOrSell);
 			AlienTalkSegue(1);
 
 			XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
@@ -1691,43 +1695,43 @@ static void NatureOfConversation(RESPONSE_REF R)
 
 			AlienTalkSegue((uint16_t)~0);
 		}
-		else if (PlayerSaid(R, why_turned_purple))
+		else if (PlayerSaid(R, MelnormePhrase::WhyTurnedPurple))
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::WHY_MELNORME_PURPLE, static_cast<uint32_t>(1));
 
-			NPCPhrase(TURNED_PURPLE_BECAUSE);
+			NPCPhrase(MelnormePhrase::TurnedPurpleBecause);
 		}
-		else if (PlayerSaid(R, done_selling))
+		else if (PlayerSaid(R, MelnormePhrase::DoneSelling))
 		{
-			NPCPhrase(OK_DONE_SELLING);
+			NPCPhrase(MelnormePhrase::OkDoneSelling);
 		}
-		else if (PlayerSaid(R, done_buying))
+		else if (PlayerSaid(R, MelnormePhrase::DoneBuying))
 		{
-			NPCPhrase(OK_DONE_BUYING);
+			NPCPhrase(MelnormePhrase::OkDoneBuying);
 		}
 
 		if (!uqm::gameState().flag(uqm::GameFlag::WHY_MELNORME_PURPLE) && !uqm::UQMOptions::read().infiniteCredits)
 		{
-			Response(why_turned_purple, NatureOfConversation);
+			Response(MelnormePhrase::WhyTurnedPurple, NatureOfConversation);
 		}
 		if (!AskedToBuy)
 		{
-			Response(buy, DoBuy);
+			Response(MelnormePhrase::Buy, DoBuy);
 		}
-		if (PhraseEnabled(sell))
+		if (PhraseEnabled(MelnormePhrase::Sell))
 		{
-			Response(sell, DoSell);
+			Response(MelnormePhrase::Sell, DoSell);
 		}
-		Response(goodbye, ExitConversation);
+		Response(MelnormePhrase::Goodbye, ExitConversation);
 	}
 	else /* needs to be rescued */
 	{
 		if (uqm::gameState().flag(uqm::GameFlag::MELNORME_RESCUE_REFUSED))
 		{
-			NPCPhrase(CHANGED_MIND);
+			NPCPhrase(MelnormePhrase::ChangedMind);
 
-			Response(yes_changed_mind, DoRescue);
-			Response(no_changed_mind, ExitConversation);
+			Response(MelnormePhrase::YesChangedMind, DoRescue);
+			Response(MelnormePhrase::NoChangedMind, ExitConversation);
 		}
 		else
 		{
@@ -1740,10 +1744,10 @@ static void NatureOfConversation(RESPONSE_REF R)
 				uqm::gameState().setFlag(uqm::GameFlag::MELNORME_RESCUE_COUNT, static_cast<uint32_t>(num_rescues));
 			}
 
-			NPCPhrase(SHOULD_WE_HELP_YOU);
+			NPCPhrase(MelnormePhrase::ShouldWeHelpYou);
 
-			Response(yes_help, DoRescue);
-			Response(no_help, ExitConversation);
+			Response(MelnormePhrase::YesHelp, DoRescue);
+			Response(MelnormePhrase::NoHelp, ExitConversation);
 		}
 	}
 }
@@ -1752,9 +1756,9 @@ static uint8_t local_stack0, local_stack1;
 
 static void DoBluster(RESPONSE_REF R)
 {
-	if (PlayerSaid(R, trade_is_for_the_weak))
+	if (PlayerSaid(R, MelnormePhrase::TradeIsForTheWeak))
 	{
-		NPCPhrase(WERE_NOT_AFRAID);
+		NPCPhrase(MelnormePhrase::WereNotAfraid);
 		AlienTalkSegue((uint16_t)~0);
 
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
@@ -1762,61 +1766,61 @@ static void DoBluster(RESPONSE_REF R)
 
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(4));
 	}
-	else if (PlayerSaid(R, why_blue_light))
+	else if (PlayerSaid(R, MelnormePhrase::WhyBlueLight))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::WHY_MELNORME_BLUE, static_cast<uint32_t>(1));
 
-		NPCPhrase(BLUE_IS_MAD);
+		NPCPhrase(MelnormePhrase::BlueIsMad);
 	}
-	else if (PlayerSaid(R, we_strong_1))
+	else if (PlayerSaid(R, MelnormePhrase::WeStrong1))
 	{
 		local_stack0 = 1;
-		NPCPhrase(YOU_NOT_STRONG_1);
+		NPCPhrase(MelnormePhrase::YouNotStrong1);
 	}
-	else if (PlayerSaid(R, we_strong_2))
+	else if (PlayerSaid(R, MelnormePhrase::WeStrong2))
 	{
 		local_stack0 = 2;
-		NPCPhrase(YOU_NOT_STRONG_2);
+		NPCPhrase(MelnormePhrase::YouNotStrong2);
 	}
-	else if (PlayerSaid(R, we_strong_3))
+	else if (PlayerSaid(R, MelnormePhrase::WeStrong3))
 	{
 		local_stack0 = 3;
-		NPCPhrase(YOU_NOT_STRONG_3);
+		NPCPhrase(MelnormePhrase::YouNotStrong3);
 	}
-	else if (PlayerSaid(R, just_testing))
+	else if (PlayerSaid(R, MelnormePhrase::JustTesting))
 	{
 		local_stack1 = 1;
-		NPCPhrase(REALLY_TESTING);
+		NPCPhrase(MelnormePhrase::ReallyTesting);
 	}
 
 	if (!uqm::gameState().flag(uqm::GameFlag::WHY_MELNORME_BLUE))
 	{
-		Response(why_blue_light, DoBluster);
+		Response(MelnormePhrase::WhyBlueLight, DoBluster);
 	}
 	switch (local_stack0)
 	{
 		case 0:
-			Response(we_strong_1, DoBluster);
+			Response(MelnormePhrase::WeStrong1, DoBluster);
 			break;
 		case 1:
-			Response(we_strong_2, DoBluster);
+			Response(MelnormePhrase::WeStrong2, DoBluster);
 			break;
 		case 2:
-			Response(we_strong_3, DoBluster);
+			Response(MelnormePhrase::WeStrong3, DoBluster);
 			break;
 	}
 	switch (local_stack1)
 	{
 		case 0:
-			Response(just_testing, DoBluster);
+			Response(MelnormePhrase::JustTesting, DoBluster);
 			break;
 		case 1:
 			{
-				Response(yes_really_testing, DoFirstMeeting);
+				Response(MelnormePhrase::YesReallyTesting, DoFirstMeeting);
 				break;
 			}
 	}
-	Response(youre_on, ExitConversation);
+	Response(MelnormePhrase::YoureOn, ExitConversation);
 }
 
 static void yack0_respond(void)
@@ -1825,10 +1829,10 @@ static void yack0_respond(void)
 	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK0))
 	{
 		case 0:
-			Response(we_are_from_alliance, DoFirstMeeting);
+			Response(MelnormePhrase::WeAreFromAlliance, DoFirstMeeting);
 			break;
 		case 1:
-			Response(how_know, DoFirstMeeting);
+			Response(MelnormePhrase::HowKnow, DoFirstMeeting);
 			break;
 	}
 }
@@ -1838,13 +1842,13 @@ static void yack1_respond(void)
 	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK1))
 	{
 		case 0:
-			Response(what_about_yourselves, DoFirstMeeting);
+			Response(MelnormePhrase::WhatAboutYourselves, DoFirstMeeting);
 			break;
 		case 1:
-			Response(what_factors, DoFirstMeeting);
+			Response(MelnormePhrase::WhatFactors, DoFirstMeeting);
 			FALLTHROUGH;
 		case 2:
-			Response(get_on_with_business, NatureOfConversation);
+			Response(MelnormePhrase::GetOnWithBusiness, NatureOfConversation);
 			break;
 	}
 }
@@ -1854,16 +1858,16 @@ static void yack2_respond(void)
 	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK2))
 	{
 		case 0:
-			Response(what_about_universe, DoFirstMeeting);
+			Response(MelnormePhrase::WhatAboutUniverse, DoFirstMeeting);
 			break;
 		case 1:
-			Response(giving_is_good_1, DoFirstMeeting);
+			Response(MelnormePhrase::GivingIsGood1, DoFirstMeeting);
 			break;
 		case 2:
-			Response(giving_is_good_2, DoFirstMeeting);
+			Response(MelnormePhrase::GivingIsGood2, DoFirstMeeting);
 			break;
 		case 3:
-			Response(trade_is_for_the_weak, DoBluster);
+			Response(MelnormePhrase::TradeIsForTheWeak, DoBluster);
 			break;
 	}
 }
@@ -1887,70 +1891,70 @@ static void DoFirstMeeting(RESPONSE_REF R)
 		switch (business_count++)
 		{
 			case 0:
-				NPCPhrase(HELLO_NOW_DOWN_TO_BUSINESS_1);
+				NPCPhrase(MelnormePhrase::HelloNowDownToBusiness1);
 				break;
 			case 1:
-				NPCPhrase(HELLO_NOW_DOWN_TO_BUSINESS_2);
+				NPCPhrase(MelnormePhrase::HelloNowDownToBusiness2);
 				break;
 			case 2:
-				NPCPhrase(HELLO_NOW_DOWN_TO_BUSINESS_3);
+				NPCPhrase(MelnormePhrase::HelloNowDownToBusiness3);
 				--business_count;
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_BUSINESS_COUNT, static_cast<uint32_t>(business_count));
 	}
-	else if (PlayerSaid(R, we_are_from_alliance))
+	else if (PlayerSaid(R, MelnormePhrase::WeAreFromAlliance))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK0, static_cast<uint32_t>(1));
-		NPCPhrase(KNOW_OF_YOU);
+		NPCPhrase(MelnormePhrase::KnowOfYou);
 	}
-	else if (PlayerSaid(R, how_know))
+	else if (PlayerSaid(R, MelnormePhrase::HowKnow))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK0, static_cast<uint32_t>(2));
-		NPCPhrase(KNOW_BECAUSE);
+		NPCPhrase(MelnormePhrase::KnowBecause);
 	}
-	else if (PlayerSaid(R, what_about_yourselves))
+	else if (PlayerSaid(R, MelnormePhrase::WhatAboutYourselves))
 	{
 		last_stack = 1;
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK1, static_cast<uint32_t>(1));
-		NPCPhrase(NO_TALK_ABOUT_OURSELVES);
+		NPCPhrase(MelnormePhrase::NoTalkAboutOurselves);
 	}
-	else if (PlayerSaid(R, what_factors))
+	else if (PlayerSaid(R, MelnormePhrase::WhatFactors))
 	{
 		last_stack = 1;
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK1, static_cast<uint32_t>(2));
-		NPCPhrase(FACTORS_ARE);
+		NPCPhrase(MelnormePhrase::FactorsAre);
 	}
-	else if (PlayerSaid(R, what_about_universe))
+	else if (PlayerSaid(R, MelnormePhrase::WhatAboutUniverse))
 	{
 		last_stack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(1));
-		NPCPhrase(NO_FREE_LUNCH);
+		NPCPhrase(MelnormePhrase::NoFreeLunch);
 	}
-	else if (PlayerSaid(R, giving_is_good_1))
+	else if (PlayerSaid(R, MelnormePhrase::GivingIsGood1))
 	{
 		last_stack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(2));
-		NPCPhrase(GIVING_IS_BAD_1);
+		NPCPhrase(MelnormePhrase::GivingIsBad1);
 	}
-	else if (PlayerSaid(R, giving_is_good_2))
+	else if (PlayerSaid(R, MelnormePhrase::GivingIsGood2))
 	{
 		last_stack = 2;
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(3));
-		NPCPhrase(GIVING_IS_BAD_2);
+		NPCPhrase(MelnormePhrase::GivingIsBad2);
 	}
-	else if (PlayerSaid(R, yes_really_testing))
+	else if (PlayerSaid(R, MelnormePhrase::YesReallyTesting))
 	{
-		NPCPhrase(TEST_RESULTS);
+		NPCPhrase(MelnormePhrase::TestResults);
 		AlienTalkSegue((uint16_t)~0);
 
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
 					  c_gameSecond / 2);
 	}
-	else if (PlayerSaid(R, we_apologize))
+	else if (PlayerSaid(R, MelnormePhrase::WeApologize))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(0));
-		NPCPhrase(APOLOGY_ACCEPTED);
+		NPCPhrase(MelnormePhrase::ApologyAccepted);
 		AlienTalkSegue((uint16_t)~0);
 
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
@@ -1963,7 +1967,7 @@ static void DoFirstMeeting(RESPONSE_REF R)
 	(*stack_func[0])();
 	(*stack_func[1])();
 	(*stack_func[2])();
-	Response(no_trade_now, ExitConversation);
+	Response(MelnormePhrase::NoTradeNow, ExitConversation);
 }
 
 static void DoMelnormeMiffed(RESPONSE_REF R)
@@ -1976,14 +1980,14 @@ static void DoMelnormeMiffed(RESPONSE_REF R)
 		switch (miffed_count++)
 		{
 			case 0:
-				NPCPhrase(HELLO_SLIGHTLY_ANGRY_1);
+				NPCPhrase(MelnormePhrase::HelloSlightlyAngry1);
 				break;
 			case 1:
-				NPCPhrase(HELLO_SLIGHTLY_ANGRY_2);
+				NPCPhrase(MelnormePhrase::HelloSlightlyAngry2);
 				break;
 			default:
 				--miffed_count;
-				NPCPhrase(HELLO_SLIGHTLY_ANGRY_3);
+				NPCPhrase(MelnormePhrase::HelloSlightlyAngry3);
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_MIFFED_COUNT, static_cast<uint32_t>(miffed_count));
@@ -1993,49 +1997,49 @@ static void DoMelnormeMiffed(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 	}
-	else if (PlayerSaid(R, explore_relationship))
+	else if (PlayerSaid(R, MelnormePhrase::ExploreRelationship))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK3, static_cast<uint32_t>(1));
 
-		NPCPhrase(EXAMPLE_OF_RELATIONSHIP);
+		NPCPhrase(MelnormePhrase::ExampleOfRelationship);
 	}
-	else if (PlayerSaid(R, excuse_1))
+	else if (PlayerSaid(R, MelnormePhrase::Excuse1))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK3, static_cast<uint32_t>(2));
 
-		NPCPhrase(NO_EXCUSE_1);
+		NPCPhrase(MelnormePhrase::NoExcuse1);
 	}
-	else if (PlayerSaid(R, excuse_2))
+	else if (PlayerSaid(R, MelnormePhrase::Excuse2))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK3, static_cast<uint32_t>(3));
 
-		NPCPhrase(NO_EXCUSE_2);
+		NPCPhrase(MelnormePhrase::NoExcuse2);
 	}
-	else if (PlayerSaid(R, excuse_3))
+	else if (PlayerSaid(R, MelnormePhrase::Excuse3))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK3, static_cast<uint32_t>(4));
 
-		NPCPhrase(NO_EXCUSE_3);
+		NPCPhrase(MelnormePhrase::NoExcuse3);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK3))
 	{
 		case 0:
-			Response(explore_relationship, DoMelnormeMiffed);
+			Response(MelnormePhrase::ExploreRelationship, DoMelnormeMiffed);
 			break;
 		case 1:
-			Response(excuse_1, DoMelnormeMiffed);
+			Response(MelnormePhrase::Excuse1, DoMelnormeMiffed);
 			break;
 		case 2:
-			Response(excuse_2, DoMelnormeMiffed);
+			Response(MelnormePhrase::Excuse2, DoMelnormeMiffed);
 			break;
 		case 3:
-			Response(excuse_3, DoMelnormeMiffed);
+			Response(MelnormePhrase::Excuse3, DoMelnormeMiffed);
 			break;
 	}
-	Response(we_apologize, DoFirstMeeting);
-	Response(so_we_can_attack, ExitConversation);
-	Response(bye_melnorme_slightly_angry, ExitConversation);
+	Response(MelnormePhrase::WeApologize, DoFirstMeeting);
+	Response(MelnormePhrase::SoWeCanAttack, ExitConversation);
+	Response(MelnormePhrase::ByeMelnormeSlightlyAngry, ExitConversation);
 }
 
 static void DoMelnormePissed(RESPONSE_REF R)
@@ -2048,14 +2052,14 @@ static void DoMelnormePissed(RESPONSE_REF R)
 		switch (pissed_count++)
 		{
 			case 0:
-				NPCPhrase(HELLO_PISSED_OFF_1);
+				NPCPhrase(MelnormePhrase::HelloPissedOff1);
 				break;
 			case 1:
-				NPCPhrase(HELLO_PISSED_OFF_2);
+				NPCPhrase(MelnormePhrase::HelloPissedOff2);
 				break;
 			default:
 				--pissed_count;
-				NPCPhrase(HELLO_PISSED_OFF_3);
+				NPCPhrase(MelnormePhrase::HelloPissedOff3);
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_PISSED_COUNT, static_cast<uint32_t>(pissed_count));
@@ -2065,33 +2069,33 @@ static void DoMelnormePissed(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 	}
-	else if (PlayerSaid(R, beg_forgiveness))
+	else if (PlayerSaid(R, MelnormePhrase::BegForgiveness))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK4, static_cast<uint32_t>(1));
 
-		NPCPhrase(LOTS_TO_MAKE_UP_FOR);
+		NPCPhrase(MelnormePhrase::LotsToMakeUpFor);
 	}
-	else if (PlayerSaid(R, you_are_so_right))
+	else if (PlayerSaid(R, MelnormePhrase::YouAreSoRight))
 	{
 		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK4, static_cast<uint32_t>(2));
 
-		NPCPhrase(ONE_LAST_CHANCE);
+		NPCPhrase(MelnormePhrase::OneLastChance);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK4))
 	{
 		case 0:
-			Response(beg_forgiveness, DoMelnormePissed);
+			Response(MelnormePhrase::BegForgiveness, DoMelnormePissed);
 			break;
 		case 1:
-			Response(you_are_so_right, DoMelnormePissed);
+			Response(MelnormePhrase::YouAreSoRight, DoMelnormePissed);
 			break;
 		case 2:
-			Response(ok_strip_me, ExitConversation);
+			Response(MelnormePhrase::OkStripMe, ExitConversation);
 			break;
 	}
-	Response(fight_some_more, ExitConversation);
-	Response(bye_melnorme_pissed_off, ExitConversation);
+	Response(MelnormePhrase::FightSomeMore, ExitConversation);
+	Response(MelnormePhrase::ByeMelnormePissedOff, ExitConversation);
 }
 
 static void DoMelnormeHate(RESPONSE_REF R)
@@ -2103,14 +2107,14 @@ static void DoMelnormeHate(RESPONSE_REF R)
 	switch (hate_count++)
 	{
 		case 0:
-			NPCPhrase(HELLO_HATE_YOU_1);
+			NPCPhrase(MelnormePhrase::HelloHateYou1);
 			break;
 		case 1:
-			NPCPhrase(HELLO_HATE_YOU_2);
+			NPCPhrase(MelnormePhrase::HelloHateYou2);
 			break;
 		default:
 			--hate_count;
-			NPCPhrase(HELLO_HATE_YOU_3);
+			NPCPhrase(MelnormePhrase::HelloHateYou3);
 			break;
 	}
 	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_HATE_COUNT, static_cast<uint32_t>(hate_count));
@@ -2120,8 +2124,8 @@ static void DoMelnormeHate(RESPONSE_REF R)
 	XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 				  c_gameSecond / 2);
 
-	Response(well_if_thats_the_way_you_feel, ExitConversation);
-	Response(you_hate_us_so_we_go_away, ExitConversation);
+	Response(MelnormePhrase::WellIfThatsTheWayYouFeel, ExitConversation);
+	Response(MelnormePhrase::YouHateUsSoWeGoAway, ExitConversation);
 }
 
 static void Intro(void)
