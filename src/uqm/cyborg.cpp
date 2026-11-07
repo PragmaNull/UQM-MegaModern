@@ -585,8 +585,8 @@ bool TurnShip(Element* ShipPtr, uint16_t angle)
 		}
 
 #ifdef NOTYET
-		if (((testFlag(StarShipPtr->ship_input_state, (StatusFlags::Left | StatusFlags::Right)))
-			 ^ (testFlag(StarShipPtr->cur_status_flags, (StatusFlags::Left | StatusFlags::Right))))
+		if (((StarShipPtr->ship_input_state & (StatusFlags::Left | StatusFlags::Right))
+			 ^ (StarShipPtr->cur_status_flags & (StatusFlags::Left | StatusFlags::Right)))
 			== (StatusFlags::Left | StatusFlags::Right))
 		{
 			StarShipPtr->ship_input_state &= ~(StatusFlags::Left | StatusFlags::Right);

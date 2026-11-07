@@ -48,7 +48,7 @@ GfxContextRef SetContext(GfxContextRef Context)
 			UnsetContextFlags(
 				uqm::makeWord(0, GraphicsStatusFlags::GraphicsActive | GraphicsStatusFlags::DrawableActive));
 			SetContextFlags(
-				uqm::makeWord(0, testFlag(_GraphicsStatusFlags, (GraphicsStatusFlags::GraphicsActive | GraphicsStatusFlags::DrawableActive))));
+				uqm::makeWord(0, _GraphicsStatusFlags & (GraphicsStatusFlags::GraphicsActive | GraphicsStatusFlags::DrawableActive)));
 
 			DeactivateContext();
 		}
