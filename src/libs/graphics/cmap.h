@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef CMAP_H
-#define CMAP_H
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_CMAP_H
+#define UQM_LIBS_GRAPHICS_CMAP_H
 
 #include "libs/gfxlib.h"
 
@@ -77,4 +78,4 @@ void FreeNativePalette(NativePalette*);
 void SetNativePaletteColor(NativePalette*, int index, Color);
 Color GetNativePaletteColor(NativePalette*, int index);
 
-#endif /* CMAP_H */
+#endif // UQM_LIBS_GRAPHICS_CMAP_H

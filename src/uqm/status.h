@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_STATUS_H_INCL_
-#define UQM_STATUS_H_INCL_
+#pragma once
+#ifndef UQM_STATUS_H
+#define UQM_STATUS_H
 
 #include "races.h"
 #include "options/options.h"
@@ -79,4 +80,4 @@ extern void PostProcessStatus(Element* ShipPtr);
 }
 #endif
 
-#endif /* UQM_STATUS_H_INCL_ */
+#endif // UQM_STATUS_H

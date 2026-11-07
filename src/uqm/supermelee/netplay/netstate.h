@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_SUPERMELEE_NETPLAY_NETSTATE_H_
-#define UQM_SUPERMELEE_NETPLAY_NETSTATE_H_
+#pragma once
+#ifndef UQM_SUPERMELEE_NETPLAY_NETSTATE_H
+#define UQM_SUPERMELEE_NETPLAY_NETSTATE_H
 
 #include "core/types/enum.h"
 #include "port.h"
@@ -82,4 +83,4 @@ static inline bool NetState_battleActive(NetState state)
 }
 #endif
 
-#endif /* UQM_SUPERMELEE_NETPLAY_NETSTATE_H_ */
+#endif // UQM_SUPERMELEE_NETPLAY_NETSTATE_H

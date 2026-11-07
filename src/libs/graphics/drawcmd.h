@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef DRAWCMD_H
-#define DRAWCMD_H
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_DRAWCMD_H
+#define UQM_LIBS_GRAPHICS_DRAWCMD_H
 
 #include "libs/graphics/tfb_draw.h"
 
@@ -204,4 +205,4 @@ void Lock_DCQ(int slots);
 
 void Unlock_DCQ(void);
 
-#endif
+#endif // UQM_LIBS_GRAPHICS_DRAWCMD_H

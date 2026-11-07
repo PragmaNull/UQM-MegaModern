@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H_
-#define UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H_
+#pragma once
+#ifndef UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H
+#define UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -47,4 +48,4 @@ int luaUqm_custom_init(lua_State* luaState,
 }
 #endif
 
-#endif /* CUSTOMFUNCS_H */
+#endif // UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H

@@ -1,7 +1,8 @@
 // The objects of one game: a full game or a Super Melee session.
+
 #pragma once
-#ifndef UQM_SESSION_GAMESESSION_H_
-#define UQM_SESSION_GAMESESSION_H_
+#ifndef UQM_SESSION_GAMESESSION_H
+#define UQM_SESSION_GAMESESSION_H
 
 #include "uqm/random/UQMRandom.h"
 #include "uqm/session/GameState.h"
@@ -51,4 +52,4 @@ private:
 
 } // namespace uqm
 
-#endif // UQM_SESSION_GAMESESSION_H_
+#endif // UQM_SESSION_GAMESESSION_H

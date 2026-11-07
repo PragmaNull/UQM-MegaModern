@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_SLYLAND_RESINST_H
+#define UQM_COMM_SLYLAND_RESINST_H
+
 inline constexpr uqgsl::czstring SlylandColorMap {"comm.probe.colortable"};
 inline constexpr uqgsl::czstring SlylandConversationPhrases {"comm.probe.dialogue"};
 inline constexpr uqgsl::czstring SlylandFont {"comm.probe.font"};
 inline constexpr uqgsl::czstring SlylandMusic {"comm.probe.music"};
 inline constexpr uqgsl::czstring SlylandPmapAnim {"comm.probe.graphics"};
+
+#endif // UQM_COMM_SLYLAND_RESINST_H

@@ -1,7 +1,8 @@
 // Mutexes and lock guards that the Clang thread safety analysis can check.
+
 #pragma once
-#ifndef UQM_CORE_THREAD_MUTEX_H_
-#define UQM_CORE_THREAD_MUTEX_H_
+#ifndef UQM_CORE_THREAD_MUTEX_H
+#define UQM_CORE_THREAD_MUTEX_H
 
 #include "core/stl/stl.h"
 #include "core/thread/ThreadSafety.h"
@@ -89,4 +90,4 @@ private:
 
 } // namespace uqm
 
-#endif // UQM_CORE_THREAD_MUTEX_H_
+#endif // UQM_CORE_THREAD_MUTEX_H

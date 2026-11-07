@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_PKUNK_RESINST_H
+#define UQM_COMM_PKUNK_RESINST_H
+
 inline constexpr uqgsl::czstring PkunkColorMap {"comm.pkunk.colortable"};
 inline constexpr uqgsl::czstring PkunkConversationPhrases {"comm.pkunk.dialogue"};
 inline constexpr uqgsl::czstring PkunkFont {"comm.pkunk.font"};
 inline constexpr uqgsl::czstring PkunkMusic {"comm.pkunk.music"};
 inline constexpr uqgsl::czstring PkunkPmapAnim {"comm.pkunk.graphics"};
+
+#endif // UQM_COMM_PKUNK_RESINST_H

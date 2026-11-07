@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_COMM_COMMALL_H_
-#define UQM_COMM_COMMALL_H_
+#pragma once
+#ifndef UQM_COMM_COMMALL_H
+#define UQM_COMM_COMMALL_H
 
 #include "options.h"
 #include "uqm/colors.h"
@@ -23,4 +24,4 @@
 #include "uqm/commglue.h"
 #include "libs/reslib.h"
 
-#endif /* UQM_COMM_COMMALL_H_ */
+#endif // UQM_COMM_COMMALL_H

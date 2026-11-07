@@ -1,7 +1,8 @@
 // The random number generator of the game. A planet seed changes its multiplier.
+
 #pragma once
-#ifndef UQM_RANDOM_UQMRANDOM_H_
-#define UQM_RANDOM_UQMRANDOM_H_
+#ifndef UQM_RANDOM_UQMRANDOM_H
+#define UQM_RANDOM_UQMRANDOM_H
 
 #include "libs/math/Random.h"
 #include "uqm/random/GameSeed.h"
@@ -33,4 +34,4 @@ public:
 
 } // namespace uqm
 
-#endif // UQM_RANDOM_UQMRANDOM_H_
+#endif // UQM_RANDOM_UQMRANDOM_H

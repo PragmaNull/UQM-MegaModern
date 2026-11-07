@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef TRACKPLAYER_H
-#define TRACKPLAYER_H
+#pragma once
+#ifndef UQM_LIBS_SOUND_TRACKPLAYER_H
+#define UQM_LIBS_SOUND_TRACKPLAYER_H
 
 #include "core/misc/bittricks.h"
 #include "libs/callback/callback.h"
@@ -66,4 +67,4 @@ extern const char* GetTrackSubtitle(void);
 extern uint16_t GetSubtitleNumberByTrack(uint16_t track);
 extern uint32_t RecalculateDelay(uint32_t numChars, bool talk);
 
-#endif
+#endif // UQM_LIBS_SOUND_TRACKPLAYER_H

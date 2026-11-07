@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_BLACKURQ_RESINST_H
+#define UQM_SHIPS_BLACKURQ_RESINST_H
+
 inline constexpr uqgsl::czstring BuzzsawBigMaskPmapAnim {"ship.kohrah.graphics.buzzsaw.large"};
 inline constexpr uqgsl::czstring BuzzsawMedMaskPmapAnim {"ship.kohrah.graphics.buzzsaw.medium"};
 inline constexpr uqgsl::czstring BuzzsawSmlMaskPmapAnim {"ship.kohrah.graphics.buzzsaw.small"};
@@ -17,3 +21,5 @@ inline constexpr uqgsl::czstring KohrAhRaceStrings {"ship.kohrah.text"};
 inline constexpr uqgsl::czstring KohrAhShipSounds {"ship.kohrah.sounds"};
 inline constexpr uqgsl::czstring KohrAhSmlMaskPmapAnim {"ship.kohrah.graphics.marauder.small"};
 inline constexpr uqgsl::czstring KohrAhVictorySong {"ship.kohrah.ditty"};
+
+#endif // UQM_SHIPS_BLACKURQ_RESINST_H

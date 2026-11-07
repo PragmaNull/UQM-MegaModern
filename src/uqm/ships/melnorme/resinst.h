@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_MELNORME_RESINST_H
+#define UQM_SHIPS_MELNORME_RESINST_H
+
 inline constexpr uqgsl::czstring ConfuseBigMaskPmapAnim {"ship.melnorme.graphics.confuse.large"};
 inline constexpr uqgsl::czstring ConfuseMedMaskPmapAnim {"ship.melnorme.graphics.confuse.medium"};
 inline constexpr uqgsl::czstring ConfuseSmlMaskPmapAnim {"ship.melnorme.graphics.confuse.small"};
@@ -17,3 +21,5 @@ inline constexpr uqgsl::czstring MelnormeVictorySong {"ship.melnorme.ditty"};
 inline constexpr uqgsl::czstring PumpupBigMaskPmapAnim {"ship.melnorme.graphics.pumpup.large"};
 inline constexpr uqgsl::czstring PumpupMedMaskPmapAnim {"ship.melnorme.graphics.pumpup.medium"};
 inline constexpr uqgsl::czstring PumpupSmlMaskPmapAnim {"ship.melnorme.graphics.pumpup.small"};
+
+#endif // UQM_SHIPS_MELNORME_RESINST_H

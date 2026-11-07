@@ -7,8 +7,9 @@
  * config_win.h is generated from src/config_win.h.in.
  */
 
-#ifndef CONFIG_VC6_H_
-#define CONFIG_VC6_H_
+#pragma once
+#ifndef UQM_CONFIG_VC6_H
+#define UQM_CONFIG_VC6_H
 
 #include "core/stl/stl.h"
 
@@ -55,4 +56,4 @@ inline constexpr uqgsl::czstring Scrshotdir {"%UQM_CONFIG_DIR%/screenshots/"};
 /* Defined if your system has wint_t of its own */
 #define HAVE_WINT_T
 
-#endif /* CONFIG_VC6_H_ */
+#endif // UQM_CONFIG_VC6_H

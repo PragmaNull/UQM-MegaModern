@@ -17,8 +17,9 @@
 /* Nosound audio driver
  */
 
-#ifndef LIBS_SOUND_MIXER_NOSOUND_AUDIODRV_NOSOUND_H_
-#define LIBS_SOUND_MIXER_NOSOUND_AUDIODRV_NOSOUND_H_
+#pragma once
+#ifndef UQM_LIBS_SOUND_MIXER_NOSOUND_AUDIODRV_NOSOUND_H
+#define UQM_LIBS_SOUND_MIXER_NOSOUND_AUDIODRV_NOSOUND_H
 
 #include "config.h"
 #include "libs/sound/sound.h"
@@ -68,4 +69,4 @@ void noSound_BufferData(audio_Object bufobj, uint32_t format, void* data,
 						uint32_t size, uint32_t freq);
 
 
-#endif /* LIBS_SOUND_MIXER_NOSOUND_AUDIODRV_NOSOUND_H_ */
+#endif // UQM_LIBS_SOUND_MIXER_NOSOUND_AUDIODRV_NOSOUND_H

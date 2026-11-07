@@ -1,7 +1,6 @@
 #pragma once
-
-#ifndef UQM_CORE_LOG_LOG_H_
-#define UQM_CORE_LOG_LOG_H_
+#ifndef UQM_CORE_LOG_LOG_H
+#define UQM_CORE_LOG_LOG_H
 
 #include "core/log/logger.h"
 
@@ -29,4 +28,4 @@ void saveError(uqm::log::format_string_t<Args...> fmt, Args&&... args)
 }
 } // namespace error
 
-#endif /* UQM_CORE_LOG_LOG_H_ */
+#endif // UQM_CORE_LOG_LOG_H

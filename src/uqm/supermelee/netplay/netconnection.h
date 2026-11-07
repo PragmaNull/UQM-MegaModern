@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_SUPERMELEE_NETPLAY_NETCONNECTION_H_
-#define UQM_SUPERMELEE_NETPLAY_NETCONNECTION_H_
+#pragma once
+#ifndef UQM_SUPERMELEE_NETPLAY_NETCONNECTION_H
+#define UQM_SUPERMELEE_NETPLAY_NETCONNECTION_H
 
 #include "netplay.h"
 // for NETPLAY_STATISTICS
@@ -263,4 +264,4 @@ void netplayDebugPrint(uqm::io::File* file, fmt::format_string<Args...> format, 
 }
 #endif
 
-#endif /* UQM_SUPERMELEE_NETPLAY_NETCONNECTION_H_ */
+#endif // UQM_SUPERMELEE_NETPLAY_NETCONNECTION_H

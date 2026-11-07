@@ -3,6 +3,10 @@
    instead and regenerate. */
 
 #pragma once
+#ifndef UQM_ISCRIPTRES_H
+#define UQM_ISCRIPTRES_H
 
 inline constexpr uqgsl::czstring EventScriptRes {"event.script"};
 inline constexpr uqgsl::czstring ScriptDirInitgameRes {"script.dir.initgame"};
+
+#endif // UQM_ISCRIPTRES_H

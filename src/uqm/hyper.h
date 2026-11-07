@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_HYPER_H_
-#define UQM_HYPER_H_
+#pragma once
+#ifndef UQM_HYPER_H
+#define UQM_HYPER_H
 
 #include "element.h"
 #include "units.h"
@@ -57,4 +58,4 @@ extern void SaveSisHyperState(void);
 }
 #endif
 
-#endif /* UQM_HYPER_H_ */
+#endif // UQM_HYPER_H

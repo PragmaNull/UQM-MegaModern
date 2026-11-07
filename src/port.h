@@ -1,5 +1,6 @@
-#ifndef PORT_H_
-#define PORT_H_
+#pragma once
+#ifndef UQM_PORT_H
+#define UQM_PORT_H
 
 #include "config.h"
 
@@ -245,4 +246,4 @@ typedef unsigned int wint_t;
 // REJECT_DRIVE_PATH_WITHOUT_SLASH can also be defined, if paths of the form
 // "d:foo/bar" (without a slash after the drive letter) are to be rejected.
 
-#endif /* PORT_H_ */
+#endif // UQM_PORT_H

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef PALETTE_H_INCL__
-#define PALETTE_H_INCL__
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_PALETTE_H
+#define UQM_LIBS_GRAPHICS_SDL_PALETTE_H
 
 #include "port.h"
 #include <SDL3/SDL.h>
@@ -48,4 +49,4 @@ static inline SDL_Color ColorToNative(Color color)
 	return native;
 }
 
-#endif /* PALETTE_H_INCL__ */
+#endif // UQM_LIBS_GRAPHICS_SDL_PALETTE_H

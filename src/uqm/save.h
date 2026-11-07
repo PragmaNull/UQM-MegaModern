@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_SAVE_H_
-#define UQM_SAVE_H_
+#pragma once
+#ifndef UQM_SAVE_H
+#define UQM_SAVE_H
 
 #include "sis.h" // SaveSummaryData includes FlagshipData in it
 #include "globdata.h"
@@ -72,4 +73,4 @@ uqstl::optional<uqstl::string> SaveGameJson(SaveSummaryData* summary_desc, const
 }
 #endif
 
-#endif /* UQM_SAVE_H_ */
+#endif // UQM_SAVE_H

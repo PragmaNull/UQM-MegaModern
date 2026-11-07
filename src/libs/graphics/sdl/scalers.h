@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef SCALERS_H_
-#define SCALERS_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_SCALERS_H
+#define UQM_LIBS_GRAPHICS_SDL_SCALERS_H
 
 #include "libs/graphics/gfx_defs.h"
 
@@ -26,4 +27,4 @@ typedef void (*TFB_ScaleFunc)(SDL_Surface* src, SDL_Surface* dst,
 
 TFB_ScaleFunc Scale_PrepPlatform(uqm::GfxFlags flags, const SDL_PixelFormatDetails* fmt);
 
-#endif /* SCALERS_H_ */
+#endif // UQM_LIBS_GRAPHICS_SDL_SCALERS_H

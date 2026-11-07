@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_INPLIB_H_
-#define LIBS_INPLIB_H_
+#pragma once
+#ifndef UQM_LIBS_INPLIB_H
+#define UQM_LIBS_INPLIB_H
 
 #include <stddef.h>
 #include "core/misc/bittricks.h"
@@ -70,4 +71,4 @@ void BeginInputFrame(void);
 }
 #endif
 
-#endif /* LIBS_INPLIB_H_ */
+#endif // UQM_LIBS_INPLIB_H

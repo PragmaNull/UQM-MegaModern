@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef SYREEN_H
-#define SYREEN_H
+#pragma once
+#ifndef UQM_SHIPS_SYREEN_SYREEN_H
+#define UQM_SHIPS_SYREEN_SYREEN_H
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -27,4 +28,4 @@ RaceDesc* init_syreen(void);
 }
 #endif
 
-#endif /* SYREEN_H */
+#endif // UQM_SHIPS_SYREEN_SYREEN_H

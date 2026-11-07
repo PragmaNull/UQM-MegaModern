@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_SETUP_H_
-#define UQM_SETUP_H_
+#pragma once
+#ifndef UQM_SETUP_H
+#define UQM_SETUP_H
 
 #include "displist.h"
 #include "globdata.h"
@@ -111,4 +112,4 @@ void ClearPlayerInputAll(void);
 }
 #endif
 
-#endif /* UQM_SETUP_H_ */
+#endif // UQM_SETUP_H

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_GRAPHICS_DRAWABLE_H_
-#define LIBS_GRAPHICS_DRAWABLE_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_DRAWABLE_H
+#define UQM_LIBS_GRAPHICS_DRAWABLE_H
 
 #include <stdio.h>
 #include "tfb_draw.h"
@@ -84,4 +85,4 @@ extern void _text_blt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin);
 extern void _text_blt_fade(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, FRAME repair, bool* skip);
 extern uint8_t _text_blt_alt(GfxRect* pClipRect, GfxText* TextPtr, GfxPoint ctxOrigin, uint8_t swap, FONT AltFontPtr, uqm::UniChar key);
 
-#endif /* LIBS_GRAPHICS_DRAWABLE_H_ */
+#endif // UQM_LIBS_GRAPHICS_DRAWABLE_H

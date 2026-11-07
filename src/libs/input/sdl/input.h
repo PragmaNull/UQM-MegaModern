@@ -16,12 +16,13 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef INPUT_H
-#define INPUT_H
+#pragma once
+#ifndef UQM_LIBS_INPUT_SDL_INPUT_H
+#define UQM_LIBS_INPUT_SDL_INPUT_H
 
 #include "port.h"
 #include <SDL3/SDL.h>
 
 extern void ProcessInputEvent(const SDL_Event* Event);
 
-#endif
+#endif // UQM_LIBS_INPUT_SDL_INPUT_H

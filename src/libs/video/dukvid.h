@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_VIDEO_DUKVID_H_
-#define LIBS_VIDEO_DUKVID_H_
+#pragma once
+#ifndef UQM_LIBS_VIDEO_DUKVID_H
+#define UQM_LIBS_VIDEO_DUKVID_H
 
 #include "core/types/enum.h"
 #include "libs/video/videodec.h"
@@ -36,4 +37,4 @@ enum class DukVidError
 template <>
 inline constexpr bool IsArithmeticEnum<DukVidError> = true;
 
-#endif // LIBS_VIDEO_DUKVID_H_
+#endif // UQM_LIBS_VIDEO_DUKVID_H

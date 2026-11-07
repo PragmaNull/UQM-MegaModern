@@ -1,7 +1,8 @@
 // std::expected, and a helper that makes an error result.
+
 #pragma once
-#ifndef UQM_CORE_STL_EXPECTED_H_
-#define UQM_CORE_STL_EXPECTED_H_
+#ifndef UQM_CORE_STL_EXPECTED_H
+#define UQM_CORE_STL_EXPECTED_H
 
 #include "core/stl/stl.h"
 
@@ -26,4 +27,4 @@ inline uqstl::unexpected<uqstl::error_code> failure(uqstl::errc code)
 
 } // namespace uqm
 
-#endif /* UQM_CORE_STL_EXPECTED_H_ */
+#endif // UQM_CORE_STL_EXPECTED_H

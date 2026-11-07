@@ -2,4 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_SIS_SHIP_ICODE_H
+#define UQM_SHIPS_SIS_SHIP_ICODE_H
+
 inline constexpr uqgsl::czstring SisCode {"ship.flagship.code"};
+
+#endif // UQM_SHIPS_SIS_SHIP_ICODE_H

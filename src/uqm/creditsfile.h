@@ -1,7 +1,8 @@
 // Reads the credits file: the blocks of text that the credits show.
+
 #pragma once
-#ifndef UQM_UQM_CREDITSFILE_H_
-#define UQM_UQM_CREDITSFILE_H_
+#ifndef UQM_CREDITSFILE_H
+#define UQM_CREDITSFILE_H
 
 #include "core/stl/stl.h"
 #include "core/stl/optional.h"
@@ -45,4 +46,4 @@ struct CreditsBlock
 
 } // namespace uqm
 
-#endif // UQM_UQM_CREDITSFILE_H_
+#endif // UQM_CREDITSFILE_H

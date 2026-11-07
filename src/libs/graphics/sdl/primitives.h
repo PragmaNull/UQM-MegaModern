@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef PRIMITIVES_H
-#define PRIMITIVES_H
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_PRIMITIVES_H
+#define UQM_LIBS_GRAPHICS_SDL_PRIMITIVES_H
 
 /* Function types for the pixel functions */
 
@@ -74,4 +75,4 @@ int clip_rect(SDL_Rect* r, const SDL_Rect* clip_r);
 int clip_blt_rects(SDL_Rect* src_r, SDL_Rect* dst_r, const SDL_Rect* clip_r);
 
 
-#endif /* PRIMITIVES_H */
+#endif // UQM_LIBS_GRAPHICS_SDL_PRIMITIVES_H

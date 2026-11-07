@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_UNITS_H_
-#define UQM_UNITS_H_
+#pragma once
+#ifndef UQM_UNITS_H
+#define UQM_UNITS_H
 
 #include "libs/gfxlib.h"
 #include "../options.h"
@@ -324,4 +325,4 @@ constexpr auto WrapDeltaY(const auto& dy) { return ((dy) < 0 ? ((-(dy) <= LogSpa
 }
 #endif
 
-#endif /* UQM_UNITS_H_ */
+#endif // UQM_UNITS_H

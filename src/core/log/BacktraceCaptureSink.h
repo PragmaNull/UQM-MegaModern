@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UQM_CORE_LOG_BACKTRACECAPTURESINK_H_
-#define UQM_CORE_LOG_BACKTRACECAPTURESINK_H_
+#ifndef UQM_CORE_LOG_BACKTRACECAPTURESINK_H
+#define UQM_CORE_LOG_BACKTRACECAPTURESINK_H
 
 #include <spdlog/async.h>
 #include <spdlog/sinks/base_sink.h>
@@ -52,4 +52,4 @@ private:
 };
 
 } // namespace uqm
-#endif /* UQM_CORE_LOG_BACKTRACECAPTURESINK_H_ */
+#endif // UQM_CORE_LOG_BACKTRACECAPTURESINK_H

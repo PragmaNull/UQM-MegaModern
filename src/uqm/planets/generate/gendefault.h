@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef GENDEFAULT_H
-#define GENDEFAULT_H
+#pragma once
+#ifndef UQM_PLANETS_GENERATE_GENDEFAULT_H
+#define UQM_PLANETS_GENERATE_GENDEFAULT_H
 
 #include "core/types/enum.h"
 #include <cstdint>
@@ -95,4 +96,4 @@ inline constexpr bool IsArithmeticEnum<HardModeEncounter> = true;
 }
 #endif
 
-#endif /* GENDEFAULT_H */
+#endif // UQM_PLANETS_GENERATE_GENDEFAULT_H

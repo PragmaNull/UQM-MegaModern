@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_MYCON_RESINST_H
+#define UQM_SHIPS_MYCON_RESINST_H
+
 inline constexpr uqgsl::czstring MyconBigMaskPmapAnim {"ship.mycon.graphics.podship.large"};
 inline constexpr uqgsl::czstring MyconCaptainMaskPmapAnim {"ship.mycon.graphics.captain"};
 inline constexpr uqgsl::czstring MyconIconMaskPmapAnim {"ship.mycon.icons"};
@@ -14,3 +18,5 @@ inline constexpr uqgsl::czstring MyconVictorySong {"ship.mycon.ditty"};
 inline constexpr uqgsl::czstring PlasmaBigMaskPmapAnim {"ship.mycon.graphics.plasma.large"};
 inline constexpr uqgsl::czstring PlasmaMedMaskPmapAnim {"ship.mycon.graphics.plasma.medium"};
 inline constexpr uqgsl::czstring PlasmaSmlMaskPmapAnim {"ship.mycon.graphics.plasma.small"};
+
+#endif // UQM_SHIPS_MYCON_RESINST_H

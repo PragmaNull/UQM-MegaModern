@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_SOUND_SNDINTRN_H_
-#define LIBS_SOUND_SNDINTRN_H_
+#pragma once
+#ifndef UQM_LIBS_SOUND_SNDINTRN_H
+#define UQM_LIBS_SOUND_SNDINTRN_H
 
 #include <stdio.h>
 #include <cstdint>
@@ -72,4 +73,4 @@ struct TFB_SoundSource
 
 extern TFB_SoundSource soundSource[];
 
-#endif /* LIBS_SOUND_SNDINTRN_H_ */
+#endif // UQM_LIBS_SOUND_SNDINTRN_H

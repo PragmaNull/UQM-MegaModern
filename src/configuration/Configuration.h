@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UQM_CONFIGURATION_CONFIG_H_
-#define UQM_CONFIGURATION_CONFIG_H_
+#ifndef UQM_CONFIGURATION_CONFIGURATION_H
+#define UQM_CONFIGURATION_CONFIGURATION_H
 
 namespace uqm
 {
@@ -15,4 +15,4 @@ bool saveUserSettings(const OptionsStruct& options);
 void applyUserSettings(OptionsStruct& options);
 
 } // namespace uqm
-#endif /* UQM_CONFIGURATION_CONFIG_H_ */
+#endif // UQM_CONFIGURATION_CONFIGURATION_H

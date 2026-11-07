@@ -3,6 +3,8 @@
    instead and regenerate. */
 
 #pragma once
+#ifndef UQM_IMUSICRE_H
+#define UQM_IMUSICRE_H
 
 inline constexpr uqgsl::czstring BattleMusicRes {"music.battle"};
 inline constexpr uqgsl::czstring BattleMusicSamatraRes {"music.battle.samatra"};
@@ -38,3 +40,5 @@ inline constexpr uqgsl::czstring UtwigSpaceMusicRes {"space.utwig.music"};
 inline constexpr uqgsl::czstring VuxSpaceMusicRes {"space.vux.music"};
 inline constexpr uqgsl::czstring YehatSpaceMusicRes {"space.yehat.music"};
 inline constexpr uqgsl::czstring ZoqfotpikSpaceMusicRes {"space.zoqfotpik.music"};
+
+#endif // UQM_IMUSICRE_H

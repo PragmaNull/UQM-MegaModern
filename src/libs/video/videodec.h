@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_VIDEO_VIDEODEC_H_
-#define LIBS_VIDEO_VIDEODEC_H_
+#pragma once
+#ifndef UQM_LIBS_VIDEO_VIDEODEC_H
+#define UQM_LIBS_VIDEO_VIDEODEC_H
 
 #include "core/types/enum.h"
 #include "libs/vidlib.h"
@@ -121,4 +122,4 @@ void VideoDecoder_Free(TFB_VideoDecoder* decoder);
 const char* VideoDecoder_GetName(TFB_VideoDecoder* decoder);
 
 
-#endif // LIBS_VIDEO_VIDEODEC_H_
+#endif // UQM_LIBS_VIDEO_VIDEODEC_H

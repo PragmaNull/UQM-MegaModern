@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_PICKSHIP_H_INCL_
-#define UQM_PICKSHIP_H_INCL_
+#pragma once
+#ifndef UQM_PICKSHIP_H
+#define UQM_PICKSHIP_H
 
 #include "core/misc/bittricks.h"
 #include "races.h"
@@ -36,4 +37,4 @@ extern void RepairPickFrame(GfxRect* pRect, uint16_t frame);
 }
 #endif
 
-#endif /* UQM_PICKSHIP_H_INCL_ */
+#endif // UQM_PICKSHIP_H

@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_UTIL_H_
-#define UQM_UTIL_H_
+#pragma once
+#ifndef UQM_UTIL_H
+#define UQM_UTIL_H
 
 #include "core/stl/stl.h"
 #include "core/misc/bittricks.h"
@@ -50,4 +51,4 @@ void formatFuelValue(uint32_t coarseFuel, uqstl::span<char> buf);
 }
 #endif
 
-#endif /* UQM_UTIL_H_ */
+#endif // UQM_UTIL_H

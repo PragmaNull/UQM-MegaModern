@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_STARBASE_H_
-#define UQM_STARBASE_H_
+#pragma once
+#ifndef UQM_STARBASE_H
+#define UQM_STARBASE_H
 
 #include "core/types/enum.h"
 #include "menustat.h"
@@ -54,4 +55,4 @@ extern uint16_t ShipCost(uint8_t race_id);
 }
 #endif
 
-#endif /* UQM_STARBASE_H_ */
+#endif // UQM_STARBASE_H

@@ -1,5 +1,6 @@
-#ifndef GENDEF_H
-#define GENDEF_H
+#pragma once
+#ifndef UQM_GENDEF_H
+#define UQM_GENDEF_H
 
 // JSD planets/generate.h no longer needed once GenerateFunctions is moved there.  It's where it belongs
 // and the include of generate.h is causing circular definitions elsewhere.
@@ -105,4 +106,4 @@ inline constexpr auto UmgahDefined {PlotId::TalkingPet};
 }
 #endif
 
-#endif /* GENDEF_H */
+#endif // UQM_GENDEF_H

@@ -1,7 +1,8 @@
 // Interface for one physical file tree in the mount stack.
+
 #pragma once
-#ifndef UQM_LIBS_IO_STANDARD_MOUNTSOURCE_H_
-#define UQM_LIBS_IO_STANDARD_MOUNTSOURCE_H_
+#ifndef UQM_LIBS_IO_STANDARD_MOUNTSOURCE_H
+#define UQM_LIBS_IO_STANDARD_MOUNTSOURCE_H
 
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
@@ -55,4 +56,4 @@ inline uqstl::error_code MountSource::rename(uqstl::string_view /*from*/, uqstl:
 
 } // namespace uqm::io::standard
 
-#endif // UQM_LIBS_IO_STANDARD_MOUNTSOURCE_H_
+#endif // UQM_LIBS_IO_STANDARD_MOUNTSOURCE_H

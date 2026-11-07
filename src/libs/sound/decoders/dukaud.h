@@ -16,8 +16,9 @@
 
 /* .duk sound track decoder */
 
-#ifndef DUKAUD_H
-#define DUKAUD_H
+#pragma once
+#ifndef UQM_LIBS_SOUND_DECODERS_DUKAUD_H
+#define UQM_LIBS_SOUND_DECODERS_DUKAUD_H
 
 #include "core/types/enum.h"
 #include "decoder.h"
@@ -36,4 +37,4 @@ enum class DukAudError
 template <>
 inline constexpr bool IsArithmeticEnum<DukAudError> = true;
 
-#endif // DUKAUD_H
+#endif // UQM_LIBS_SOUND_DECODERS_DUKAUD_H

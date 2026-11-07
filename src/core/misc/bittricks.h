@@ -1,7 +1,8 @@
 // Byte helpers: splitting and joining bytes, nibbles and words, and byte order conversion.
+
 #pragma once
-#ifndef UQM_CORE_MISC_BITTRICKS_H_
-#define UQM_CORE_MISC_BITTRICKS_H_
+#ifndef UQM_CORE_MISC_BITTRICKS_H
+#define UQM_CORE_MISC_BITTRICKS_H
 
 #include "core/stl/stl.h"
 
@@ -96,4 +97,4 @@ template <uqstl::unsigned_integral T>
 
 } // namespace uqm
 
-#endif /* UQM_CORE_MISC_BITTRICKS_H_ */
+#endif // UQM_CORE_MISC_BITTRICKS_H

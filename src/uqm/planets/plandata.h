@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_PLANETS_PLANDATA_H_
-#define UQM_PLANETS_PLANDATA_H_
+#pragma once
+#ifndef UQM_PLANETS_PLANDATA_H
+#define UQM_PLANETS_PLANDATA_H
 
 #include "core/types/enum.h"
 #include "libs/reslib.h"
@@ -337,4 +338,4 @@ const extern PlanetFrame* PlanData;
 }
 #endif
 
-#endif /* UQM_PLANETS_PLANDATA_H_ */
+#endif // UQM_PLANETS_PLANDATA_H

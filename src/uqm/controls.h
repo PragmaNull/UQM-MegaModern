@@ -1,6 +1,4 @@
-//Copyright Paul Reiche, Fred Ford. 1992-2002#include "libs/time/timelib.h"
-#include "core/types/enum.h"
-#include "core/stl/atomic.h"
+//Copyright Paul Reiche, Fred Ford. 1992-2002
 
 /*
  *  This program is free software; you can redistribute it and/or modify
@@ -18,8 +16,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_CONTROLS_H_
-#define UQM_CONTROLS_H_
+#pragma once
+#ifndef UQM_CONTROLS_H
+#define UQM_CONTROLS_H
+
+#include "core/types/enum.h"
+#include "core/stl/atomic.h"
 
 #include "core/misc/bittricks.h"
 #include "libs/strlib.h"
@@ -250,4 +252,5 @@ extern void TestSpeechSound(SOUND snd);
 }
 #endif
 
-#endif
+
+#endif // UQM_CONTROLS_H

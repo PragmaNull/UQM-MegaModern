@@ -1,7 +1,6 @@
 #pragma once
-
-#ifndef UQM_CORE_STL_RINGBUFFER_H_
-#define UQM_CORE_STL_RINGBUFFER_H_
+#ifndef UQM_CORE_STL_RING_BUFFER_H
+#define UQM_CORE_STL_RING_BUFFER_H
 
 #ifdef USING_EASTL
 #include <EASTL/ring_buffer.h>
@@ -239,4 +238,4 @@ private:
 } // namespace std
 
 #endif /* !defined(USING_EASTL) */
-#endif /* UQM_CORE_STL_RINGBUFFER_H_ */
+#endif // UQM_CORE_STL_RING_BUFFER_H

@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_GRPINFO_H_
-#define UQM_GRPINFO_H_
+#pragma once
+#ifndef UQM_GRPINFO_H
+#define UQM_GRPINFO_H
 
 #include "core/types/enum.h"
 #include "port.h"
@@ -106,4 +107,4 @@ extern HIPGROUP BuildGroup(Queue* pDstQueue, uint8_t race_id);
 }
 #endif
 
-#endif /* UQM_GRPINFO_H_ */
+#endif // UQM_GRPINFO_H

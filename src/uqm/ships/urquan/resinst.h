@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_URQUAN_RESINST_H
+#define UQM_SHIPS_URQUAN_RESINST_H
+
 inline constexpr uqgsl::czstring FighterBigMaskPmapAnim {"ship.urquan.graphics.fighter.large"};
 inline constexpr uqgsl::czstring FighterMedMaskPmapAnim {"ship.urquan.graphics.fighter.medium"};
 inline constexpr uqgsl::czstring FighterSmlMaskPmapAnim {"ship.urquan.graphics.fighter.small"};
@@ -17,3 +21,5 @@ inline constexpr uqgsl::czstring UrquanRaceStrings {"ship.urquan.text"};
 inline constexpr uqgsl::czstring UrquanShipSounds {"ship.urquan.sounds"};
 inline constexpr uqgsl::czstring UrquanSmlMaskPmapAnim {"ship.urquan.graphics.dreadnought.small"};
 inline constexpr uqgsl::czstring UrquanVictorySong {"ship.urquan.ditty"};
+
+#endif // UQM_SHIPS_URQUAN_RESINST_H

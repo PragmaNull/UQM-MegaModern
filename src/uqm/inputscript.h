@@ -1,7 +1,8 @@
 // Scripted menu input, read from a text file, for testing the game without a keyboard.
+
 #pragma once
-#ifndef UQM_INPUTSCRIPT_H_
-#define UQM_INPUTSCRIPT_H_
+#ifndef UQM_INPUTSCRIPT_H
+#define UQM_INPUTSCRIPT_H
 
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
@@ -98,4 +99,4 @@ private:
 
 } // namespace uqm
 
-#endif // UQM_INPUTSCRIPT_H_
+#endif // UQM_INPUTSCRIPT_H

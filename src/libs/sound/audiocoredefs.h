@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LIBS_SOUND_AUDIOCOREDEFS_H_
-#define LIBS_SOUND_AUDIOCOREDEFS_H_
+#ifndef UQM_LIBS_SOUND_AUDIOCOREDEFS_H
+#define UQM_LIBS_SOUND_AUDIOCOREDEFS_H
 
 #include "core/types/enum.h"
 /* Available drivers */
@@ -69,4 +69,4 @@ inline constexpr bool IsArithmeticEnum<AudioEnum> = true;
 using audio_SourceProp = AudioEnum;
 using audio_BufferProp = AudioEnum;
 
-#endif /*LIBS_SOUND_AUDIOCOREDEFS_H_*/
+#endif // UQM_LIBS_SOUND_AUDIOCOREDEFS_H

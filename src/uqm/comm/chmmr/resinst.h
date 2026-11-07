@@ -2,9 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_CHMMR_RESINST_H
+#define UQM_COMM_CHMMR_RESINST_H
+
 inline constexpr uqgsl::czstring ChmmrColorMap {"comm.chmmr.colortable"};
 inline constexpr uqgsl::czstring ChmmrConversationPhrases {"comm.chmmr.dialogue"};
 inline constexpr uqgsl::czstring ChmmrFont {"comm.chmmr.font"};
 inline constexpr uqgsl::czstring ChmmrMusic {"comm.chmmr.music"};
 inline constexpr uqgsl::czstring ChmmrProcessMusic {"comm.chmmr.process.music"};
 inline constexpr uqgsl::czstring ChmmrPmapAnim {"comm.chmmr.graphics"};
+
+#endif // UQM_COMM_CHMMR_RESINST_H

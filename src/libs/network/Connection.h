@@ -1,7 +1,8 @@
 // A TCP connection that gives the received data to a handler and sends data.
+
 #pragma once
-#ifndef UQM_LIBS_NETWORK_CONNECTION_H_
-#define UQM_LIBS_NETWORK_CONNECTION_H_
+#ifndef UQM_LIBS_NETWORK_CONNECTION_H
+#define UQM_LIBS_NETWORK_CONNECTION_H
 
 #include "core/stl/functional.h"
 #include "core/stl/memory.h"
@@ -46,4 +47,4 @@ private:
 
 } // namespace uqm::net
 
-#endif // UQM_LIBS_NETWORK_CONNECTION_H_
+#endif // UQM_LIBS_NETWORK_CONNECTION_H

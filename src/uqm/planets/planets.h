@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_PLANETS_PLANETS_H_
-#define UQM_PLANETS_PLANETS_H_
+#pragma once
+#ifndef UQM_PLANETS_PLANETS_H
+#define UQM_PLANETS_PLANETS_H
 
 #include "core/types/enum.h"
 #include "libs/mathlib.h"
@@ -476,4 +477,4 @@ extern uint8_t PickClosestHabitable(SolarSystemState* solarSys);
 }
 #endif
 
-#endif /* UQM_PLANETS_PLANETS_H_ */
+#endif // UQM_PLANETS_PLANETS_H

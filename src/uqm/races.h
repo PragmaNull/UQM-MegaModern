@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_RACES_H_
-#define UQM_RACES_H_
+#pragma once
+#ifndef UQM_RACES_H
+#define UQM_RACES_H
 
 
 #include "core/types/enum.h"
@@ -718,4 +719,4 @@ static inline HomeId SpeciesToHomeID(SpeciesId species_id)
 }
 
 
-#endif /* UQM_RACES_H_ */
+#endif // UQM_RACES_H

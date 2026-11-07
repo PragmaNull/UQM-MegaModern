@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_STARCON_H_
-#define UQM_STARCON_H_
+#pragma once
+#ifndef UQM_STARCON_H
+#define UQM_STARCON_H
 #include "core/stl/atomic.h"
 
 #if 0 //defined(__cplusplus)
@@ -35,4 +36,4 @@ extern void FreeGameData(void);
 }
 #endif
 
-#endif /* UQM_STARCON_H_ */
+#endif // UQM_STARCON_H

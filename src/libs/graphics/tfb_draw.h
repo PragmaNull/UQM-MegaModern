@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef TFB_DRAW_H
-#define TFB_DRAW_H
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_TFB_DRAW_H
+#define UQM_LIBS_GRAPHICS_TFB_DRAW_H
 
 #include "core/types/enum.h"
 #include "libs/time/timelib.h"
@@ -205,4 +206,4 @@ const char* TFB_DrawCanvas_GetError(void);
 TFB_Canvas TFB_GetScreenCanvas(ScreenBuffer screen);
 TFB_Canvas TFB_GetFPSCanvas(void);
 
-#endif
+#endif // UQM_LIBS_GRAPHICS_TFB_DRAW_H

@@ -16,11 +16,12 @@
 
 /* Wave decoder */
 
-#ifndef WAV_H
-#define WAV_H
+#pragma once
+#ifndef UQM_LIBS_SOUND_DECODERS_WAV_H
+#define UQM_LIBS_SOUND_DECODERS_WAV_H
 
 #include "decoder.h"
 
 extern TFB_SoundDecoderFuncs wava_DecoderVtbl;
 
-#endif
+#endif // UQM_LIBS_SOUND_DECODERS_WAV_H

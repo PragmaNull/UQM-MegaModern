@@ -1,7 +1,8 @@
 // Expands and creates the host directories that the game uses.
+
 #pragma once
-#ifndef UQM_LIBS_FILE_PATHS_H_
-#define UQM_LIBS_FILE_PATHS_H_
+#ifndef UQM_LIBS_FILE_PATHS_H
+#define UQM_LIBS_FILE_PATHS_H
 
 #include "core/stl/stl.h"
 #include "core/stl/optional.h"
@@ -22,4 +23,4 @@ bool fileExists(uqgsl::czstring path);
 
 } // namespace uqm
 
-#endif // UQM_LIBS_FILE_PATHS_H_
+#endif // UQM_LIBS_FILE_PATHS_H

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_CNCTDLG_H_
-#define UQM_CNCTDLG_H_
+#pragma once
+#ifndef UQM_CNCTDLG_H
+#define UQM_CNCTDLG_H
 
 #ifdef NETPLAY
 
@@ -35,4 +36,4 @@ bool MeleeConnectDialog(int side);
 
 #endif /* NETPLAY */
 
-#endif /* UQM_CNCTDLG_H_ */
+#endif // UQM_CNCTDLG_H

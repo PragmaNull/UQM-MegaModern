@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQMVERSION_H
-#define UQMVERSION_H
+#pragma once
+#ifndef UQM_UQMVERSION_H
+#define UQM_UQMVERSION_H
 
 // The resource compiler reads these macros, so they cannot be constexpr.
 #define UQM_MAJOR_VERSION 0
@@ -41,4 +42,4 @@ inline constexpr const char* UqmExtraVersionHd {"HD " UQM_EXTRA_VERSION};
 inline constexpr const char* UqmStringVersion {UQM_STRING_VERSION};
 #endif
 
-#endif
+#endif // UQM_UQMVERSION_H

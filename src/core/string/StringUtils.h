@@ -1,7 +1,6 @@
 #pragma once
-
-#ifndef UQM_CORE_STRING_STRINGUTILS_H_
-#define UQM_CORE_STRING_STRINGUTILS_H_
+#ifndef UQM_CORE_STRING_STRINGUTILS_H
+#define UQM_CORE_STRING_STRINGUTILS_H
 
 #define __STDC_WANT_LIB_EXT1__ 1
 
@@ -475,4 +474,4 @@ struct formatter<::uqm::EnumNames<E>> : formatter<E>
 
 } // namespace fmt
 
-#endif /* UQM_CORE_STRING_STRINGUTILS_H_ */
+#endif // UQM_CORE_STRING_STRINGUTILS_H

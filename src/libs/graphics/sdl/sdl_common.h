@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef SDL_COMMON_H
-#define SDL_COMMON_H
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_SDL_COMMON_H
+#define UQM_LIBS_GRAPHICS_SDL_SDL_COMMON_H
 
 #include "port.h"
 #include <SDL3/SDL.h>
@@ -69,4 +70,4 @@ extern bool TFB_SDL_ScreenShot(const char* path);
 
 extern int CopySurfaceToClipboard(SDL_Surface* surface);
 
-#endif /* SDL_COMMON_H */
+#endif // UQM_LIBS_GRAPHICS_SDL_SDL_COMMON_H

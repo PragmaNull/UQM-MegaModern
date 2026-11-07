@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#pragma once
 #ifndef UQM_COMM_DRUUGE_STRINGS_H
 #define UQM_COMM_DRUUGE_STRINGS_H
 
@@ -133,4 +134,4 @@ enum class DruugePhrase
 template <>
 inline constexpr bool IsArithmeticEnum<DruugePhrase> = true;
 
-#endif /* UQM_COMM_DRUUGE_STRINGS_H */
+#endif // UQM_COMM_DRUUGE_STRINGS_H

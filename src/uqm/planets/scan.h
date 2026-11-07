@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_PLANETS_SCAN_H_
-#define UQM_PLANETS_SCAN_H_
+#pragma once
+#ifndef UQM_PLANETS_SCAN_H
+#define UQM_PLANETS_SCAN_H
 
 struct ScanDesc;
 struct ScanBlock;
@@ -72,4 +73,4 @@ void GetPlanetTitle(uqstl::span<char> buf);
 }
 #endif
 
-#endif /* UQM_PLANETS_SCAN_H_ */
+#endif // UQM_PLANETS_SCAN_H

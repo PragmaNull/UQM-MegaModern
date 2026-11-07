@@ -1,7 +1,8 @@
 // Connects to a TCP host: resolves the host, then tries its addresses one after the other.
+
 #pragma once
-#ifndef UQM_LIBS_NETWORK_CONNECTOR_H_
-#define UQM_LIBS_NETWORK_CONNECTOR_H_
+#ifndef UQM_LIBS_NETWORK_CONNECTOR_H
+#define UQM_LIBS_NETWORK_CONNECTOR_H
 
 #include "Connection.h"
 #include "NetContext.h"
@@ -48,4 +49,4 @@ private:
 
 } // namespace uqm::net
 
-#endif // UQM_LIBS_NETWORK_CONNECTOR_H_
+#endif // UQM_LIBS_NETWORK_CONNECTOR_H

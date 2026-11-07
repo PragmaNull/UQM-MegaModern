@@ -1,7 +1,8 @@
 // Reads slideshow files: the JSON files with the commands of the cutscenes.
+
 #pragma once
-#ifndef UQM_UQM_SLIDESHOW_H_
-#define UQM_UQM_SLIDESHOW_H_
+#ifndef UQM_SLIDESHOW_H
+#define UQM_SLIDESHOW_H
 
 #include "core/stl/stl.h"
 #include "core/stl/array.h"
@@ -110,4 +111,4 @@ struct SlideCommand
 
 } // namespace uqm
 
-#endif // UQM_UQM_SLIDESHOW_H_
+#endif // UQM_SLIDESHOW_H

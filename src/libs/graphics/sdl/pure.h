@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef PURE_H
-#define PURE_H
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_PURE_H
+#define UQM_LIBS_GRAPHICS_SDL_PURE_H
 
 #include "core/stl/stl.h"
 #include "libs/graphics/sdl/sdl_common.h"
@@ -36,4 +37,4 @@ SDL_Window* TFB_GetSDLWindow(void);
 // Returns true if the ImGui overlay used the event.
 bool TFB_SDL_ImGuiEvent(const SDL_Event* event);
 
-#endif
+#endif // UQM_LIBS_GRAPHICS_SDL_PURE_H

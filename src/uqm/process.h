@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_PROCESS_H_INCL_
-#define UQM_PROCESS_H_INCL_
+#pragma once
+#ifndef UQM_PROCESS_H
+#define UQM_PROCESS_H
 
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
@@ -34,4 +35,4 @@ extern void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI);
 }
 #endif
 
-#endif /* UQM_PROCESS_H_INCL_ */
+#endif // UQM_PROCESS_H

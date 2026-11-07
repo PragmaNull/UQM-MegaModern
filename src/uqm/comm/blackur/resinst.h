@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_BLACKUR_RESINST_H
+#define UQM_COMM_BLACKUR_RESINST_H
+
 inline constexpr uqgsl::czstring BlackurqColorMap {"comm.kohrah.colortable"};
 inline constexpr uqgsl::czstring BlackurqConversationPhrases {"comm.kohrah.dialogue"};
 inline constexpr uqgsl::czstring BlackurqFont {"comm.kohrah.font"};
 inline constexpr uqgsl::czstring BlackurqMusic {"comm.kohrah.music"};
 inline constexpr uqgsl::czstring BlackurqPmapAnim {"comm.kohrah.graphics"};
+
+#endif // UQM_COMM_BLACKUR_RESINST_H

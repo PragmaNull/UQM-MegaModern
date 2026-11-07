@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_STRLIB_H_
-#define LIBS_STRLIB_H_
+#pragma once
+#ifndef UQM_LIBS_STRLIB_H
+#define UQM_LIBS_STRLIB_H
 
 #include "core/misc/bittricks.h"
 #include "port.h"
@@ -88,4 +89,4 @@ const char* AddPadd(const char* str, int16_t* padding);
 }
 #endif
 
-#endif /* LIBS_STRLIB_H_ */
+#endif // UQM_LIBS_STRLIB_H

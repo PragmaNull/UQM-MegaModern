@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_ARILOU_RESINST_H
+#define UQM_SHIPS_ARILOU_RESINST_H
+
 inline constexpr uqgsl::czstring ArilouBigMaskPmapAnim {"ship.arilou.graphics.skiff.large"};
 inline constexpr uqgsl::czstring ArilouCaptainMaskPmapAnim {"ship.arilou.graphics.captain"};
 inline constexpr uqgsl::czstring ArilouIconMaskPmapAnim {"ship.arilou.icons"};
@@ -14,3 +18,5 @@ inline constexpr uqgsl::czstring ArilouVictorySong {"ship.arilou.ditty"};
 inline constexpr uqgsl::czstring WarpBigMaskPmapAnim {"ship.arilou.graphics.warp.large"};
 inline constexpr uqgsl::czstring WarpMedMaskPmapAnim {"ship.arilou.graphics.warp.medium"};
 inline constexpr uqgsl::czstring WarpSmlMaskPmapAnim {"ship.arilou.graphics.warp.small"};
+
+#endif // UQM_SHIPS_ARILOU_RESINST_H

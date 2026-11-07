@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef MELEESETUP_H
-#define MELEESETUP_H
+#pragma once
+#ifndef UQM_SUPERMELEE_MELEESETUP_H
+#define UQM_SUPERMELEE_MELEESETUP_H
 
 typedef struct MeleeTeam MeleeTeam;
 typedef struct MeleeSetup MeleeSetup;
@@ -139,4 +140,4 @@ void MeleeState_setTeam(MeleeState* pMS, size_t teamNr,
 }
 #endif
 
-#endif /* MELEESETUP_H */
+#endif // UQM_SUPERMELEE_MELEESETUP_H

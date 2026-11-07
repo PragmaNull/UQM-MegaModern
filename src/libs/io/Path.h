@@ -1,7 +1,8 @@
 // Helpers for paths in the virtual file system.
+
 #pragma once
-#ifndef UQM_LIBS_IO_PATH_H_
-#define UQM_LIBS_IO_PATH_H_
+#ifndef UQM_LIBS_IO_PATH_H
+#define UQM_LIBS_IO_PATH_H
 
 #include "core/stl/string.h"
 
@@ -30,4 +31,4 @@ uqstl::string_view fileName(uqstl::string_view path);
 
 } // namespace uqm::io::path
 
-#endif // UQM_LIBS_IO_PATH_H_
+#endif // UQM_LIBS_IO_PATH_H

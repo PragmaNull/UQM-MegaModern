@@ -14,12 +14,13 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_GRAPHICS_SDL_SDLIMAGE_H_
-#define LIBS_GRAPHICS_SDL_SDLIMAGE_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_SDLIMAGE_H
+#define UQM_LIBS_GRAPHICS_SDL_SDLIMAGE_H
 
 #include "libs/io/FileSystem.h"
 #include <SDL3/SDL.h>
 
 SDL_Surface* sdl_loadImage(const uqm::io::Directory& dir, const char* fileName);
 
-#endif /* LIBS_GRAPHICS_SDL_SDLIMAGE_H_ */
+#endif // UQM_LIBS_GRAPHICS_SDL_SDLIMAGE_H

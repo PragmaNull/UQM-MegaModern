@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_RESOURCE_INDEX_H_
-#define LIBS_RESOURCE_INDEX_H_
+#pragma once
+#ifndef UQM_LIBS_RESOURCE_INDEX_H
+#define UQM_LIBS_RESOURCE_INDEX_H
 
 typedef struct resource_handlers ResourceHandlers;
 typedef struct resource_desc ResourceDesc;
@@ -53,4 +54,4 @@ struct ResourceIndexDesc
 	size_t numRes;
 };
 
-#endif /* LIBS_RESOURCE_INDEX_H_ */
+#endif // UQM_LIBS_RESOURCE_INDEX_H

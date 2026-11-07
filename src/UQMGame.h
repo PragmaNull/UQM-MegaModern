@@ -15,9 +15,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
 #pragma once
-#ifndef UQMGAME_H_
-#define UQMGAME_H_
+#ifndef UQM_UQMGAME_H
+#define UQM_UQMGAME_H
 
 #include "core/stl/stl.h"
 #include "options/options.h"
@@ -107,4 +108,4 @@ private:
 
 } // namespace uqm
 
-#endif /* UQMGAME_H_ */
+#endif // UQM_UQMGAME_H

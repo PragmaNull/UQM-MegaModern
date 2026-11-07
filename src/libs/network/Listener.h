@@ -1,7 +1,8 @@
 // Accepts TCP connections on a port.
+
 #pragma once
-#ifndef UQM_LIBS_NETWORK_LISTENER_H_
-#define UQM_LIBS_NETWORK_LISTENER_H_
+#ifndef UQM_LIBS_NETWORK_LISTENER_H
+#define UQM_LIBS_NETWORK_LISTENER_H
 
 #include "Connection.h"
 #include "NetContext.h"
@@ -47,4 +48,4 @@ private:
 
 } // namespace uqm::net
 
-#endif // UQM_LIBS_NETWORK_LISTENER_H_
+#endif // UQM_LIBS_NETWORK_LISTENER_H

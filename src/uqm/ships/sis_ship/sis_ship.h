@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef SIS_SHIP_H
-#define SIS_SHIP_H
+#pragma once
+#ifndef UQM_SHIPS_SIS_SHIP_SIS_SHIP_H
+#define UQM_SHIPS_SIS_SHIP_SIS_SHIP_H
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -27,4 +28,4 @@ RaceDesc* init_sis(void);
 }
 #endif
 
-#endif /* SIS_SHIP_H */
+#endif // UQM_SHIPS_SIS_SHIP_SIS_SHIP_H

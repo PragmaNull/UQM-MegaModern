@@ -1,7 +1,8 @@
 // The file system types that the game uses.
+
 #pragma once
-#ifndef UQM_LIBS_IO_FILESYSTEM_H_
-#define UQM_LIBS_IO_FILESYSTEM_H_
+#ifndef UQM_LIBS_IO_FILESYSTEM_H
+#define UQM_LIBS_IO_FILESYSTEM_H
 
 #include "libs/io/standard/FileSystem.h"
 
@@ -15,4 +16,4 @@ using Mount = FileSystem::Mount;
 
 } // namespace uqm::io
 
-#endif // UQM_LIBS_IO_FILESYSTEM_H_
+#endif // UQM_LIBS_IO_FILESYSTEM_H

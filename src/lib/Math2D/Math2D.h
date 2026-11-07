@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UQM_LIB_MATH2D_MATH2D_H_
-#define UQM_LIB_MATH2D_MATH2D_H_
+#ifndef UQM_LIB_MATH2D_MATH2D_H
+#define UQM_LIB_MATH2D_MATH2D_H
 
 #include "core/stl/stl.h"
 
@@ -92,4 +92,4 @@ using Vec2u = Vec2T<uint32_t>;
 
 } // namespace uqm
 
-#endif /* UQM_LIB_MATH2D_MATH2D_H */
+#endif // UQM_LIB_MATH2D_MATH2D_H

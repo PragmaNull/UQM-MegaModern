@@ -1,7 +1,8 @@
 // Ends the game after a fatal error.
+
 #pragma once
-#ifndef UQM_CORE_MISC_FATALEXIT_H_
-#define UQM_CORE_MISC_FATALEXIT_H_
+#ifndef UQM_CORE_MISC_FATALEXIT_H
+#define UQM_CORE_MISC_FATALEXIT_H
 
 #include <cstdlib>
 
@@ -20,4 +21,4 @@ namespace uqm
 
 } // namespace uqm
 
-#endif // UQM_CORE_MISC_FATALEXIT_H_
+#endif // UQM_CORE_MISC_FATALEXIT_H

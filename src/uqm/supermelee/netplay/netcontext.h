@@ -1,7 +1,8 @@
 // The network context that the netplay connections use.
+
 #pragma once
-#ifndef UQM_SUPERMELEE_NETPLAY_NETCONTEXT_H_
-#define UQM_SUPERMELEE_NETPLAY_NETCONTEXT_H_
+#ifndef UQM_SUPERMELEE_NETPLAY_NETCONTEXT_H
+#define UQM_SUPERMELEE_NETPLAY_NETCONTEXT_H
 
 #include "libs/network/NetContext.h"
 
@@ -10,4 +11,4 @@ void initNetplayContext();
 void uninitNetplayContext();
 [[nodiscard]] uqm::net::Context& netplayContext();
 
-#endif // UQM_SUPERMELEE_NETPLAY_NETCONTEXT_H_
+#endif // UQM_SUPERMELEE_NETPLAY_NETCONTEXT_H

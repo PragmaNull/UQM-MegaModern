@@ -1,7 +1,8 @@
 // The calendar of a game and its queue of dated events.
+
 #pragma once
-#ifndef UQM_SESSION_GAMECLOCK_H_
-#define UQM_SESSION_GAMECLOCK_H_
+#ifndef UQM_SESSION_GAMECLOCK_H
+#define UQM_SESSION_GAMECLOCK_H
 
 #include <cstdint>
 #include "core/stl/optional.h"
@@ -92,4 +93,4 @@ private:
 
 } // namespace uqm
 
-#endif // UQM_SESSION_GAMECLOCK_H_
+#endif // UQM_SESSION_GAMECLOCK_H

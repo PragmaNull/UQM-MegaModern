@@ -1,7 +1,8 @@
 // Reads and writes whole files in a directory.
+
 #pragma once
-#ifndef UQM_LIBS_FILE_TEXTFILE_H_
-#define UQM_LIBS_FILE_TEXTFILE_H_
+#ifndef UQM_LIBS_FILE_TEXTFILE_H
+#define UQM_LIBS_FILE_TEXTFILE_H
 
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
@@ -27,4 +28,4 @@ void moveToBadFile(const io::Directory& dir, uqgsl::czstring name);
 
 } // namespace uqm
 
-#endif // UQM_LIBS_FILE_TEXTFILE_H_
+#endif // UQM_LIBS_FILE_TEXTFILE_H

@@ -1,7 +1,8 @@
 // The state of one game, as a save file holds it.
+
 #pragma once
-#ifndef UQM_SESSION_GAMESTATE_H_
-#define UQM_SESSION_GAMESTATE_H_
+#ifndef UQM_SESSION_GAMESTATE_H
+#define UQM_SESSION_GAMESTATE_H
 
 #include "core/stl/functional.h"
 #include "core/stl/map.h"
@@ -115,4 +116,4 @@ private:
 uint32_t getGameStateUint(const char* name);
 void setGameStateUint(const char* name, uint32_t val);
 
-#endif // UQM_SESSION_GAMESTATE_H_
+#endif // UQM_SESSION_GAMESTATE_H

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_ENCOUNT_H_
-#define UQM_ENCOUNT_H_
+#pragma once
+#ifndef UQM_ENCOUNT_H
+#define UQM_ENCOUNT_H
 
 
 #include "core/types/enum.h"
@@ -123,4 +124,4 @@ extern uint8_t EncounterGroup;
 }
 #endif
 
-#endif /* UQM_ENCOUNT_H_ */
+#endif // UQM_ENCOUNT_H

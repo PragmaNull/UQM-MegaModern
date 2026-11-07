@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_NAMEREF_H_
-#define UQM_NAMEREF_H_
+#pragma once
+#ifndef UQM_NAMEREF_H
+#define UQM_NAMEREF_H
 
 #include "libs/reslib.h"
 
@@ -26,4 +27,4 @@ inline DRAWABLE LoadGraphic(RESOURCE res) { return static_cast<DRAWABLE>(LoadGra
 inline FONT LoadFont(RESOURCE res) { return static_cast<FONT>(LoadGraphicInstance(res)); }
 
 
-#endif /* UQM_NAMEREF_H_ */
+#endif // UQM_NAMEREF_H

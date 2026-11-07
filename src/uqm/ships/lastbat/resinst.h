@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_LASTBAT_RESINST_H
+#define UQM_SHIPS_LASTBAT_RESINST_H
+
 inline constexpr uqgsl::czstring GeneratorBigMaskAnim {"ship.samatra.graphics.generator.large"};
 inline constexpr uqgsl::czstring GeneratorMedMaskPmapAnim {"ship.samatra.graphics.generator.medium"};
 inline constexpr uqgsl::czstring GeneratorSmlMaskPmapAnim {"ship.samatra.graphics.generator.small"};
@@ -14,3 +18,5 @@ inline constexpr uqgsl::czstring SamatraSmlMaskPmapAnim {"ship.samatra.graphics.
 inline constexpr uqgsl::czstring SentinelBigMaskAnim {"ship.samatra.graphics.sentinel.large"};
 inline constexpr uqgsl::czstring SentinelMedMaskPmapAnim {"ship.samatra.graphics.sentinel.medium"};
 inline constexpr uqgsl::czstring SentinelSmlMaskPmapAnim {"ship.samatra.graphics.sentinel.small"};
+
+#endif // UQM_SHIPS_LASTBAT_RESINST_H

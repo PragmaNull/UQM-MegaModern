@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UQM_INTELDEFS_H_
-#define UQM_INTELDEFS_H_
+#ifndef UQM_INTELDEFS_H
+#define UQM_INTELDEFS_H
 
 #include <cstdint>
 #include "core/types/enum.h"
@@ -56,4 +56,4 @@ static inline constexpr PlayerControlFlags ComputerControlFlags {PlayerControlFl
 static inline constexpr PlayerControlFlags ControlFlagsMask {PlayerControlFlags::Human | PlayerControlFlags::Network | ComputerControlFlags};
 static inline constexpr PlayerControlFlags DifficultyFlagsMask {PlayerControlFlags::DifficultyStandard | PlayerControlFlags::DifficultyGood | PlayerControlFlags::DifficultyAwesome};
 
-#endif /* UQM_INTELDEFS_H_ */
+#endif // UQM_INTELDEFS_H

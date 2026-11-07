@@ -1,7 +1,8 @@
 // Reads resource index files: the JSON files that give the type and the data of each resource.
+
 #pragma once
-#ifndef UQM_LIBS_RESOURCE_RESINDEX_H_
-#define UQM_LIBS_RESOURCE_RESINDEX_H_
+#ifndef UQM_LIBS_RESOURCE_RESINDEX_H
+#define UQM_LIBS_RESOURCE_RESINDEX_H
 
 #include "core/stl/stl.h"
 #include "core/stl/map.h"
@@ -50,4 +51,4 @@ inline constexpr int c_resourceIndexVersion {1};
 
 } // namespace uqm
 
-#endif // UQM_LIBS_RESOURCE_RESINDEX_H_
+#endif // UQM_LIBS_RESOURCE_RESINDEX_H

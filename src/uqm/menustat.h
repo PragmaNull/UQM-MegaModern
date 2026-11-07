@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_MENUSTAT_H_
-#define UQM_MENUSTAT_H_
+#pragma once
+#ifndef UQM_MENUSTAT_H
+#define UQM_MENUSTAT_H
 
 #include "core/types/enum.h"
 #include "libs/gfxlib.h"
@@ -161,4 +162,4 @@ extern void DrawBorder(BorderFrameIndex Visible);
 }
 #endif
 
-#endif /* UQM_MENUSTAT_H_ */
+#endif // UQM_MENUSTAT_H

@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef BLACKURQ_H
-#define BLACKURQ_H
+#pragma once
+#ifndef UQM_SHIPS_BLACKURQ_BLACKURQ_H
+#define UQM_SHIPS_BLACKURQ_BLACKURQ_H
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -27,4 +28,4 @@ RaceDesc* init_black_urquan(void);
 }
 #endif
 
-#endif /* BLACKURQ_H */
+#endif // UQM_SHIPS_BLACKURQ_BLACKURQ_H

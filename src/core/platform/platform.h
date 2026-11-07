@@ -1,6 +1,6 @@
 #pragma once
-#if !defined CORE_PLATFORM_PLATFORM_H_
-#define CORE_PLATFORM_PLATFORM_H_
+#ifndef UQM_CORE_PLATFORM_PLATFORM_H
+#define UQM_CORE_PLATFORM_PLATFORM_H
 
 #include "core/stl/stl.h"
 #include "core/stl/memory.h"
@@ -26,4 +26,5 @@ uqstl::string strerror(int err);
 uqstl::tm localtime(time_t time);
 } // namespace uqm
 
-#endif /* CORE_PLATFORM_PLATFORM_H_ */
+
+#endif // UQM_CORE_PLATFORM_PLATFORM_H

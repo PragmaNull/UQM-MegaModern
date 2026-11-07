@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_ANDROSYN_RESINST_H
+#define UQM_SHIPS_ANDROSYN_RESINST_H
+
 inline constexpr uqgsl::czstring AndrosynthBigMaskPmapAnim {"ship.androsynth.graphics.guardian.large"};
 inline constexpr uqgsl::czstring AndrosynthCaptMaskPmapAnim {"ship.androsynth.graphics.captain"};
 inline constexpr uqgsl::czstring AndrosynthIconMaskPmapAnim {"ship.androsynth.icons"};
@@ -17,3 +21,5 @@ inline constexpr uqgsl::czstring BlazerSmlMaskPmapAnim {"ship.androsynth.graphic
 inline constexpr uqgsl::czstring BubbleBigMaskPmapAnim {"ship.androsynth.graphics.bubble.large"};
 inline constexpr uqgsl::czstring BubbleMedMaskPmapAnim {"ship.androsynth.graphics.bubble.medium"};
 inline constexpr uqgsl::czstring BubbleSmlMaskPmapAnim {"ship.androsynth.graphics.bubble.small"};
+
+#endif // UQM_SHIPS_ANDROSYN_RESINST_H

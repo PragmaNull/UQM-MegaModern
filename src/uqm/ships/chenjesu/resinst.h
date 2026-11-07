@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_CHENJESU_RESINST_H
+#define UQM_SHIPS_CHENJESU_RESINST_H
+
 inline constexpr uqgsl::czstring ChenjesuBigMaskPmapAnim {"ship.chenjesu.graphics.broodhome.large"};
 inline constexpr uqgsl::czstring ChenjesuCaptainMaskPmapAnim {"ship.chenjesu.graphics.captain"};
 inline constexpr uqgsl::czstring ChenjesuIconMaskPmapAnim {"ship.chenjesu.icons"};
@@ -17,3 +21,5 @@ inline constexpr uqgsl::czstring DoggySmlMaskPmapAnim {"ship.chenjesu.graphics.d
 inline constexpr uqgsl::czstring SparkBigMaskPmapAnim {"ship.chenjesu.graphics.spark.large"};
 inline constexpr uqgsl::czstring SparkMedMaskPmapAnim {"ship.chenjesu.graphics.spark.medium"};
 inline constexpr uqgsl::czstring SparkSmlMaskPmapAnim {"ship.chenjesu.graphics.spark.small"};
+
+#endif // UQM_SHIPS_CHENJESU_RESINST_H

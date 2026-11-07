@@ -2,4 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_PROBE_RESINST_H
+#define UQM_SHIPS_PROBE_RESINST_H
+
 inline constexpr uqgsl::czstring UrquanDroneMiconMaskPmapAnim {"ship.drone.meleeicons"};
+
+#endif // UQM_SHIPS_PROBE_RESINST_H

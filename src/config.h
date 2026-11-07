@@ -1,6 +1,10 @@
 /* This file contains some compile-time configuration options.
  */
 
+#pragma once
+#ifndef UQM_CONFIG_H
+#define UQM_CONFIG_H
+
 #ifdef _MSC_VER
 /* In this case, build.sh is not run to generate a config file, so
 	 * we use a default file config_vc6.h instead.
@@ -18,3 +22,5 @@
 	 * src/config_unix.h.in by build.sh. */
 #include "config_unix.h"
 #endif
+
+#endif // UQM_CONFIG_H

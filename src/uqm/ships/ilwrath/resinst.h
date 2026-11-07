@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_ILWRATH_RESINST_H
+#define UQM_SHIPS_ILWRATH_RESINST_H
+
 inline constexpr uqgsl::czstring FireBigMaskPmapAnim {"ship.ilwrath.graphics.fire.large"};
 inline constexpr uqgsl::czstring FireMedMaskPmapAnim {"ship.ilwrath.graphics.fire.medium"};
 inline constexpr uqgsl::czstring FireSmlMaskPmapAnim {"ship.ilwrath.graphics.fire.small"};
@@ -14,3 +18,5 @@ inline constexpr uqgsl::czstring IlwrathRaceStrings {"ship.ilwrath.text"};
 inline constexpr uqgsl::czstring IlwrathShipSounds {"ship.ilwrath.sounds"};
 inline constexpr uqgsl::czstring IlwrathSmlMaskPmapAnim {"ship.ilwrath.graphics.avenger.small"};
 inline constexpr uqgsl::czstring IlwrathVictorySong {"ship.ilwrath.ditty"};
+
+#endif // UQM_SHIPS_ILWRATH_RESINST_H

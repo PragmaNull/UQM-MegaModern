@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef NOTIFYALL_H
-#define NOTIFYALL_H
+#pragma once
+#ifndef UQM_SUPERMELEE_NETPLAY_NOTIFYALL_H
+#define UQM_SUPERMELEE_NETPLAY_NOTIFYALL_H
 
 #include "../../battle.h"
 #include "../../battlecontrols.h"
@@ -45,4 +46,4 @@ void Netplay_NotifyAll_battleInput(BATTLE_INPUT_STATE input);
 }
 #endif
 
-#endif /* NOTIFYALL_H */
+#endif // UQM_SUPERMELEE_NETPLAY_NOTIFYALL_H

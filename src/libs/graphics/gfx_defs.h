@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LIBS_GRAPHICS_GFX_DEFS_H_
-#define LIBS_GRAPHICS_GFX_DEFS_H_
+#ifndef UQM_LIBS_GRAPHICS_GFX_DEFS_H
+#define UQM_LIBS_GRAPHICS_GFX_DEFS_H
 
 #include "core/types/enum.h"
 
@@ -54,4 +54,4 @@ static inline constexpr GfxFlags GfxFlagsScaleSoftwareOnly {GfxFlagsScaleAny & ~
 
 } // namespace uqm
 
-#endif /* LIBS_GRAPHICS_GFX_DEFS_H_ */
+#endif // UQM_LIBS_GRAPHICS_GFX_DEFS_H

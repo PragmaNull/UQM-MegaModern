@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_SNDLIB_H_
-#define LIBS_SNDLIB_H_
+#pragma once
+#ifndef UQM_LIBS_SNDLIB_H
+#define UQM_LIBS_SNDLIB_H
 
 
 #include "core/types/enum.h"
@@ -172,4 +173,4 @@ static inline void print_mp_array(const MusicPosition mp_array[], const uint16_t
 }
 #endif
 
-#endif /* LIBS_SNDLIB_H_ */
+#endif // UQM_LIBS_SNDLIB_H

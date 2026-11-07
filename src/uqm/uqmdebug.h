@@ -14,6 +14,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#pragma once
+#ifndef UQM_UQMDEBUG_H
+#define UQM_UQMDEBUG_H
+
 #include "clock.h"
 #include "planets/planets.h"
 #include "races.h"
@@ -40,8 +44,7 @@ Starship* findPlayerShip(int16_t playerNr);
 // Resets the energy of the first player (the bottom one) to its maximum.
 void resetEnergyBattle(void);
 
-#if !defined(UQM_UQMDEBUG_H_) && (defined(DEBUG) || defined(USE_DEBUG_KEY))
-#define UQM_UQMDEBUG_H_
+#if defined(DEBUG) || defined(USE_DEBUG_KEY)
 
 
 // If set to true, interactive routines that are called (indirectly) in debug
@@ -206,4 +209,6 @@ void printWorld(const SystemPlanet* world);
 // To add some day:
 // - a function to fast forward the game clock to a specifiable time.
 
-#endif /* UQM_UQMDEBUG_H_ */
+#endif
+
+#endif // UQM_UQMDEBUG_H

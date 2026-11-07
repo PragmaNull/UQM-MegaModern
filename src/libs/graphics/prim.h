@@ -1,4 +1,3 @@
-#include "core/types/enum.h"
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,8 +13,12 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef LIBS_GRAPHICS_PRIM_H_
-#define LIBS_GRAPHICS_PRIM_H_
+
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_PRIM_H
+#define UQM_LIBS_GRAPHICS_PRIM_H
+
+#include "core/types/enum.h"
 
 enum class PrimitiveType : uint8_t
 {
@@ -85,4 +88,4 @@ static inline uint16_t GetPrimNextLink(Primitive* pPrim)
 }
 
 
-#endif /* PRIM_H */
+#endif // UQM_LIBS_GRAPHICS_PRIM_H

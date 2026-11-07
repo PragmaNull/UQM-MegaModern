@@ -1,7 +1,8 @@
 // Setting changes and menu data that the setup menu and the ImGui settings windows share.
+
 #pragma once
-#ifndef UQM_SETUPSETTINGS_H_
-#define UQM_SETUPSETTINGS_H_
+#ifndef UQM_SETUPSETTINGS_H
+#define UQM_SETUPSETTINGS_H
 
 #include <cstdint>
 #include "core/stl/stl.h"
@@ -33,4 +34,4 @@ bool applySettingChange(const SettingBase& setting);
 
 } // namespace uqm
 
-#endif // UQM_SETUPSETTINGS_H_
+#endif // UQM_SETUPSETTINGS_H

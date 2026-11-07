@@ -1,5 +1,6 @@
-#ifndef MELEESHIP_H
-#define MELEESHIP_H
+#pragma once
+#ifndef UQM_SUPERMELEE_MELEESHIP_H
+#define UQM_SUPERMELEE_MELEESHIP_H
 
 #include "core/types/enum.h"
 #include <cstdint>
@@ -58,4 +59,4 @@ static inline bool MeleeShip_valid(MeleeShip ship)
 }
 #endif
 
-#endif /* MELEESHIP_H */
+#endif // UQM_SUPERMELEE_MELEESHIP_H

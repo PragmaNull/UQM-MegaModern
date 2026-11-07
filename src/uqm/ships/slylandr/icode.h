@@ -2,4 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_SLYLANDR_ICODE_H
+#define UQM_SHIPS_SLYLANDR_ICODE_H
+
 inline constexpr uqgsl::czstring SlylandroCode {"ship.slylandro.code"};
+
+#endif // UQM_SHIPS_SLYLANDR_ICODE_H

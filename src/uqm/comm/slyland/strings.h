@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#pragma once
 #ifndef UQM_COMM_SLYLAND_STRINGS_H
 #define UQM_COMM_SLYLAND_STRINGS_H
 
@@ -114,4 +115,4 @@ enum class SlylandroPhrase
 template <>
 inline constexpr bool IsArithmeticEnum<SlylandroPhrase> = true;
 
-#endif /* UQM_COMM_SLYLAND_STRINGS_H */
+#endif // UQM_COMM_SLYLAND_STRINGS_H

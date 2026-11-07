@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_STRINGS_STRINTRN_H_
-#define LIBS_STRINGS_STRINTRN_H_
+#pragma once
+#ifndef UQM_LIBS_STRINGS_STRINTRN_H
+#define UQM_LIBS_STRINGS_STRINTRN_H
 
 #include <stdio.h>
 #include "core/stl/map.h"
@@ -33,4 +34,4 @@ void* _GetStringData(const ResourceFile& resource);
 void* _GetBinaryTableData(const ResourceFile& resource);
 void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata);
 
-#endif /* LIBS_STRINGS_STRINTRN_H_ */
+#endif // UQM_LIBS_STRINGS_STRINTRN_H

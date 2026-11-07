@@ -1,7 +1,8 @@
 // Where the flagship is, where it goes, and how it moves.
+
 #pragma once
-#ifndef UQM_SESSION_FLAGSHIPSTATE_H_
-#define UQM_SESSION_FLAGSHIPSTATE_H_
+#ifndef UQM_SESSION_FLAGSHIPSTATE_H
+#define UQM_SESSION_FLAGSHIPSTATE_H
 
 #include <cstdint>
 #include "libs/gfxlib.h"
@@ -57,4 +58,4 @@ struct FlagshipState
 
 } // namespace uqm
 
-#endif // UQM_SESSION_FLAGSHIPSTATE_H_
+#endif // UQM_SESSION_FLAGSHIPSTATE_H

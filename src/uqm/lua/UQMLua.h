@@ -14,9 +14,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 #pragma once
-#ifndef UQM_LUA_UQMLUA_H_
-#define UQM_LUA_UQMLUA_H_
+#ifndef UQM_LUA_UQMLUA_H
+#define UQM_LUA_UQMLUA_H
 
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
@@ -123,4 +124,4 @@ private:
 
 } // namespace uqm
 
-#endif /* UQM_LUA_UQMLUA_H_ */
+#endif // UQM_LUA_UQMLUA_H

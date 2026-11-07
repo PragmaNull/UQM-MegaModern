@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_SPATHI_RESINST_H
+#define UQM_SHIPS_SPATHI_RESINST_H
+
 inline constexpr uqgsl::czstring DiscrimBigMaskPmapAnim {"ship.spathi.graphics.butt.large"};
 inline constexpr uqgsl::czstring DiscrimMedMaskPmapAnim {"ship.spathi.graphics.butt.medium"};
 inline constexpr uqgsl::czstring DiscrimSmlMaskPmapAnim {"ship.spathi.graphics.butt.small"};
@@ -17,3 +21,5 @@ inline constexpr uqgsl::czstring SpathiRaceStrings {"ship.spathi.text"};
 inline constexpr uqgsl::czstring SpathiShipSounds {"ship.spathi.sounds"};
 inline constexpr uqgsl::czstring SpathiSmlMaskPmapAnim {"ship.spathi.graphics.eluder.small"};
 inline constexpr uqgsl::czstring SpathiVictorySong {"ship.spathi.ditty"};
+
+#endif // UQM_SHIPS_SPATHI_RESINST_H

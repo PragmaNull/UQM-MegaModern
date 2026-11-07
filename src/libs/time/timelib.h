@@ -1,6 +1,8 @@
 // The game clock in game ticks and milliseconds, and the sleep functions that use it.
-#ifndef LIBS_TIME_TIMELIB_H_
-#define LIBS_TIME_TIMELIB_H_
+
+#pragma once
+#ifndef UQM_LIBS_TIME_TIMELIB_H
+#define UQM_LIBS_TIME_TIMELIB_H
 
 #include "core/stl/chrono.h"
 
@@ -55,4 +57,4 @@ void SleepThreadUntil(TimeCount wakeTime);
 // Sleeps for a short time, so that busy-wait loops do not use all of a CPU core.
 void TaskSwitch(void);
 
-#endif /* LIBS_TIME_TIMELIB_H_ */
+#endif // UQM_LIBS_TIME_TIMELIB_H

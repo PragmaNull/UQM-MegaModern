@@ -16,10 +16,13 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
+#ifndef UQM_SUPERMELEE_NETPLAY_NETPLAY_H
+#define UQM_SUPERMELEE_NETPLAY_NETPLAY_H
+
 #include "../../../uqmversion.h"
 
-#if !defined(UQM_SUPERMELEE_NETPLAY_NETPLAY_H_) && defined(NETPLAY)
-#define UQM_SUPERMELEE_NETPLAY_NETPLAY_H_
+#if defined(NETPLAY)
 
 // NETPLAY can either be unset (in which case we will never get here)
 // NetplayFull, or NetplayIpv4 (disables IPv6)
@@ -81,4 +84,6 @@ inline constexpr auto NetplayListenBacklog {2};
 #endif
 
 
-#endif /* UQM_SUPERMELEE_NETPLAY_NETPLAY_H_ */
+#endif
+
+#endif // UQM_SUPERMELEE_NETPLAY_NETPLAY_H

@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_MELNORM_RESINST_H
+#define UQM_COMM_MELNORM_RESINST_H
+
 inline constexpr uqgsl::czstring MelnormeColorMap {"comm.melnorme.colortable"};
 inline constexpr uqgsl::czstring MelnormeConversationPhrases {"comm.melnorme.dialogue"};
 inline constexpr uqgsl::czstring MelnormeFont {"comm.melnorme.font"};
 inline constexpr uqgsl::czstring MelnormeMusic {"comm.melnorme.music"};
 inline constexpr uqgsl::czstring MelnormePmapAnim {"comm.melnorme.graphics"};
+
+#endif // UQM_COMM_MELNORM_RESINST_H

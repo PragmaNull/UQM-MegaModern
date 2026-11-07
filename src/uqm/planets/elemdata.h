@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_PLANETS_ELEMDATA_H_
-#define UQM_PLANETS_ELEMDATA_H_
+#pragma once
+#ifndef UQM_PLANETS_ELEMDATA_H
+#define UQM_PLANETS_ELEMDATA_H
 
 #include "core/types/enum.h"
 #include "core/misc/bittricks.h"
@@ -217,4 +218,4 @@ inline auto ElementCategory(const auto& et) { return Elements[et] & 0x7; }
 }
 #endif
 
-#endif /* UQM_PLANETS_ELEMDATA_H_ */
+#endif // UQM_PLANETS_ELEMDATA_H

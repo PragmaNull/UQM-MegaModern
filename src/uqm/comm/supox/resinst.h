@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_SUPOX_RESINST_H
+#define UQM_COMM_SUPOX_RESINST_H
+
 inline constexpr uqgsl::czstring SupoxColorMap {"comm.supox.colortable"};
 inline constexpr uqgsl::czstring SupoxConversationPhrases {"comm.supox.dialogue"};
 inline constexpr uqgsl::czstring SupoxFont {"comm.supox.font"};
 inline constexpr uqgsl::czstring SupoxMusic {"comm.supox.music"};
 inline constexpr uqgsl::czstring SupoxPmapAnim {"comm.supox.graphics"};
+
+#endif // UQM_COMM_SUPOX_RESINST_H

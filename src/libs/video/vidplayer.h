@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_VIDEO_VIDPLAYER_H_
-#define LIBS_VIDEO_VIDPLAYER_H_
+#pragma once
+#ifndef UQM_LIBS_VIDEO_VIDPLAYER_H
+#define UQM_LIBS_VIDEO_VIDPLAYER_H
 
 #include "video.h"
 
@@ -28,4 +29,4 @@ extern bool TFB_ProcessVideoFrame(VIDEO_REF vid);
 extern uint32_t TFB_GetVideoPosition(VIDEO_REF VidRef);
 extern bool TFB_SeekVideo(VIDEO_REF VidRef, uint32_t pos);
 
-#endif // LIBS_VIDEO_VIDPLAYER_H_
+#endif // UQM_LIBS_VIDEO_VIDPLAYER_H

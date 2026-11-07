@@ -1,7 +1,8 @@
 // Command-line options generated from the settings registry.
+
 #pragma once
-#ifndef UQM_OPTIONS_SETTINGSCLI_H_
-#define UQM_OPTIONS_SETTINGSCLI_H_
+#ifndef UQM_OPTIONS_SETTINGSCLI_H
+#define UQM_OPTIONS_SETTINGSCLI_H
 
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
@@ -54,4 +55,4 @@ private:
 
 } // namespace uqm
 
-#endif // UQM_OPTIONS_SETTINGSCLI_H_
+#endif // UQM_OPTIONS_SETTINGSCLI_H

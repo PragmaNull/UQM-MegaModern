@@ -17,8 +17,9 @@
 /* Audio Core API (derived from OpenAL)
  */
 
-#ifndef LIBS_SOUND_AUDIOCORE_H_
-#define LIBS_SOUND_AUDIOCORE_H_
+#pragma once
+#ifndef UQM_LIBS_SOUND_AUDIOCORE_H
+#define UQM_LIBS_SOUND_AUDIOCORE_H
 
 #include "config.h"
 #include <cstdint>
@@ -111,4 +112,4 @@ void audio_BufferData(audio_Object bufobj, uint32_t format, void* data,
 
 bool audio_GetFormatInfo(uint32_t format, int* channels, int* sample_size);
 
-#endif /* LIBS_SOUND_AUDIOCORE_H_ */
+#endif // UQM_LIBS_SOUND_AUDIOCORE_H

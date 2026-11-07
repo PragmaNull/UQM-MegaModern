@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_SHOFIXTI_RESINST_H
+#define UQM_SHIPS_SHOFIXTI_RESINST_H
+
 inline constexpr uqgsl::czstring DartBigMaskPmapAnim {"ship.shofixti.graphics.missile.large"};
 inline constexpr uqgsl::czstring DartMedMaskPmapAnim {"ship.shofixti.graphics.missile.medium"};
 inline constexpr uqgsl::czstring DartSmlMaskPmapAnim {"ship.shofixti.graphics.missile.small"};
@@ -22,3 +26,5 @@ inline constexpr uqgsl::czstring ShofixtiRaceStrings {"ship.shofixti.text"};
 inline constexpr uqgsl::czstring ShofixtiShipSounds {"ship.shofixti.sounds"};
 inline constexpr uqgsl::czstring ShofixtiSmlMaskPmapAnim {"ship.shofixti.graphics.scout.small"};
 inline constexpr uqgsl::czstring ShofixtiVictorySong {"ship.shofixti.ditty"};
+
+#endif // UQM_SHIPS_SHOFIXTI_RESINST_H

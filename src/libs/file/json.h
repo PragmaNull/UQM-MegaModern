@@ -1,7 +1,8 @@
 // Reads JSON data files with yyjson.
+
 #pragma once
-#ifndef UQM_LIBS_FILE_JSON_H_
-#define UQM_LIBS_FILE_JSON_H_
+#ifndef UQM_LIBS_FILE_JSON_H
+#define UQM_LIBS_FILE_JSON_H
 
 #include "core/stl/stl.h"
 #include "core/stl/limits.h"
@@ -79,4 +80,4 @@ template <typename E>
 
 } // namespace uqm
 
-#endif // UQM_LIBS_FILE_JSON_H_
+#endif // UQM_LIBS_FILE_JSON_H

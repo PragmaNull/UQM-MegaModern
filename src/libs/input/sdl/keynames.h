@@ -14,9 +14,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_INPUT_SDL_KEYNAMES_H_
-#define LIBS_INPUT_SDL_KEYNAMES_H_
+#pragma once
+#ifndef UQM_LIBS_INPUT_SDL_KEYNAMES_H
+#define UQM_LIBS_INPUT_SDL_KEYNAMES_H
 
 const char* VControl_code2name(int code);
 int VControl_name2code(const char* code);
-#endif
+#endif // UQM_LIBS_INPUT_SDL_KEYNAMES_H

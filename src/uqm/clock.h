@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_CLOCK_H_
-#define UQM_CLOCK_H_
+#pragma once
+#ifndef UQM_CLOCK_H
+#define UQM_CLOCK_H
 
 #include "libs/time/timelib.h"
 #include "displist.h"
@@ -90,4 +91,4 @@ extern void UnlockGameClock(void);
 // but not much else
 extern bool GameClockRunning(void);
 
-#endif /* UQM_CLOCK_H_ */
+#endif // UQM_CLOCK_H

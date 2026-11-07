@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#pragma once
 #ifndef UQM_COMM_SUPOX_STRINGS_H
 #define UQM_COMM_SUPOX_STRINGS_H
 
@@ -121,4 +122,4 @@ enum class SupoxPhrase
 template <>
 inline constexpr bool IsArithmeticEnum<SupoxPhrase> = true;
 
-#endif /* UQM_COMM_SUPOX_STRINGS_H */
+#endif // UQM_COMM_SUPOX_STRINGS_H

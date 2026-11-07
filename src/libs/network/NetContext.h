@@ -1,7 +1,8 @@
 // The context that runs the network operations on the thread that polls it.
+
 #pragma once
-#ifndef UQM_LIBS_NETWORK_NETCONTEXT_H_
-#define UQM_LIBS_NETWORK_NETCONTEXT_H_
+#ifndef UQM_LIBS_NETWORK_NETCONTEXT_H
+#define UQM_LIBS_NETWORK_NETCONTEXT_H
 
 #include "core/stl/chrono.h"
 #include "core/stl/memory.h"
@@ -34,4 +35,4 @@ private:
 
 } // namespace uqm::net
 
-#endif // UQM_LIBS_NETWORK_NETCONTEXT_H_
+#endif // UQM_LIBS_NETWORK_NETCONTEXT_H

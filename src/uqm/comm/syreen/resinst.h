@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_SYREEN_RESINST_H
+#define UQM_COMM_SYREEN_RESINST_H
+
 inline constexpr uqgsl::czstring SyreenColorMap {"comm.syreen.colortable"};
 inline constexpr uqgsl::czstring SyreenConversationPhrases {"comm.syreen.dialogue"};
 inline constexpr uqgsl::czstring SyreenFont {"comm.syreen.font"};
 inline constexpr uqgsl::czstring SyreenMusic {"comm.syreen.music"};
 inline constexpr uqgsl::czstring SyreenPmapAnim {"comm.syreen.graphics"};
+
+#endif // UQM_COMM_SYREEN_RESINST_H

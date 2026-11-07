@@ -1,7 +1,8 @@
 // File name filter for directory listings.
+
 #pragma once
-#ifndef UQM_LIBS_IO_MATCHER_H_
-#define UQM_LIBS_IO_MATCHER_H_
+#ifndef UQM_LIBS_IO_MATCHER_H
+#define UQM_LIBS_IO_MATCHER_H
 
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
@@ -48,4 +49,4 @@ private:
 
 } // namespace uqm::io
 
-#endif // UQM_LIBS_IO_MATCHER_H_
+#endif // UQM_LIBS_IO_MATCHER_H

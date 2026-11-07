@@ -1,7 +1,8 @@
 // Reads sound bank files: the JSON files that list the sounds of a sound resource.
+
 #pragma once
-#ifndef UQM_LIBS_SOUND_SOUNDBANK_H_
-#define UQM_LIBS_SOUND_SOUNDBANK_H_
+#ifndef UQM_LIBS_SOUND_SOUNDBANK_H
+#define UQM_LIBS_SOUND_SOUNDBANK_H
 
 #include "core/stl/stl.h"
 #include "core/stl/optional.h"
@@ -18,4 +19,4 @@ inline constexpr int c_soundBankVersion {1};
 
 } // namespace uqm
 
-#endif // UQM_LIBS_SOUND_SOUNDBANK_H_
+#endif // UQM_LIBS_SOUND_SOUNDBANK_H

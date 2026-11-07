@@ -1,7 +1,8 @@
 // Dear ImGui overlay that draws on top of the game screen with the SDL renderer.
 
-#ifndef LIBS_GRAPHICS_IMGUI_IMGUILAYER_H_
-#define LIBS_GRAPHICS_IMGUI_IMGUILAYER_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_IMGUI_IMGUILAYER_H
+#define UQM_LIBS_GRAPHICS_IMGUI_IMGUILAYER_H
 
 #include <SDL3/SDL.h>
 #include "core/stl/memory.h"
@@ -39,4 +40,4 @@ private:
 
 } // namespace uqm
 
-#endif /* LIBS_GRAPHICS_IMGUI_IMGUILAYER_H_ */
+#endif // UQM_LIBS_GRAPHICS_IMGUI_IMGUILAYER_H

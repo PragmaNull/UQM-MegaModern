@@ -15,9 +15,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
 #pragma once
-#ifndef UQM_GLOBDATA_H_
-#define UQM_GLOBDATA_H_
+#ifndef UQM_GLOBDATA_H
+#define UQM_GLOBDATA_H
 
 #include "core/types/enum.h"
 #include "options/OptionTypes.h"
@@ -478,4 +479,4 @@ static inline void SetHomeworldKnown(uint32_t homeworld)
 }
 #endif
 
-#endif /* UQM_GLOBDATA_H_ */
+#endif // UQM_GLOBDATA_H

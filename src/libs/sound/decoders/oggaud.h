@@ -16,11 +16,12 @@
 
 /* Ogg Vorbis adapter */
 
-#ifndef OGGAUD_H
-#define OGGAUD_H
+#pragma once
+#ifndef UQM_LIBS_SOUND_DECODERS_OGGAUD_H
+#define UQM_LIBS_SOUND_DECODERS_OGGAUD_H
 
 #include "decoder.h"
 
 extern TFB_SoundDecoderFuncs ova_DecoderVtbl;
 
-#endif // OGGAUD_H
+#endif // UQM_LIBS_SOUND_DECODERS_OGGAUD_H

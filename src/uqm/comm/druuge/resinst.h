@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_DRUUGE_RESINST_H
+#define UQM_COMM_DRUUGE_RESINST_H
+
 inline constexpr uqgsl::czstring DruugeColorMap {"comm.druuge.colortable"};
 inline constexpr uqgsl::czstring DruugeConversationPhrases {"comm.druuge.dialogue"};
 inline constexpr uqgsl::czstring DruugeFont {"comm.druuge.font"};
 inline constexpr uqgsl::czstring DruugeMusic {"comm.druuge.music"};
 inline constexpr uqgsl::czstring DruugePmapAnim {"comm.druuge.graphics"};
+
+#endif // UQM_COMM_DRUUGE_RESINST_H

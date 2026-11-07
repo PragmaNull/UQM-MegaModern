@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef ORZ_H
-#define ORZ_H
+#pragma once
+#ifndef UQM_SHIPS_ORZ_ORZ_H
+#define UQM_SHIPS_ORZ_ORZ_H
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -31,4 +32,4 @@ void marine_collision(Element* ElementPtr0, GfxPoint* pPt0,
 }
 #endif
 
-#endif /* ORZ_H */
+#endif // UQM_SHIPS_ORZ_ORZ_H

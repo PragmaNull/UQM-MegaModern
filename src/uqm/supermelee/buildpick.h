@@ -1,5 +1,6 @@
-#ifndef BUILDPICK_H
-#define BUILDPICK_H
+#pragma once
+#ifndef UQM_SUPERMELEE_BUILDPICK_H
+#define UQM_SUPERMELEE_BUILDPICK_H
 
 #include <cstdint>
 #include "melee.h"
@@ -24,4 +25,4 @@ void DrawTooltip(ShipInfoDesc* SIPtr);
 }
 #endif
 
-#endif /* BUILDPICK_H */
+#endif // UQM_SUPERMELEE_BUILDPICK_H

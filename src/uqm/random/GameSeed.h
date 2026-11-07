@@ -1,7 +1,8 @@
 // The seed that generates the star map, the planets and the seeded ships of a game.
+
 #pragma once
-#ifndef UQM_RANDOM_GAMESEED_H_
-#define UQM_RANDOM_GAMESEED_H_
+#ifndef UQM_RANDOM_GAMESEED_H
+#define UQM_RANDOM_GAMESEED_H
 
 #include "libs/math/randomdefs.h"
 #include "options/OptionDefs.h"
@@ -48,4 +49,4 @@ struct GameSeed
 
 } // namespace uqm
 
-#endif // UQM_RANDOM_GAMESEED_H_
+#endif // UQM_RANDOM_GAMESEED_H

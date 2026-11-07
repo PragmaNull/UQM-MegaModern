@@ -16,6 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#pragma once
+#ifndef UQM_RESINST_H
+#define UQM_RESINST_H
+
 #include "ikey_con.h"
 #include "igfxres.h"
 #include "ifontres.h"
@@ -23,3 +27,5 @@
 #include "isndres.h"
 #include "imusicre.h"
 #include "iscriptres.h"
+
+#endif // UQM_RESINST_H

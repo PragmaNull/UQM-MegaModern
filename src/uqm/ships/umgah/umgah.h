@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UMGAH_H
-#define UMGAH_H
+#pragma once
+#ifndef UQM_SHIPS_UMGAH_UMGAH_H
+#define UQM_SHIPS_UMGAH_UMGAH_H
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -27,4 +28,4 @@ RaceDesc* init_umgah(void);
 }
 #endif
 
-#endif /* UMGAH_H */
+#endif // UQM_SHIPS_UMGAH_UMGAH_H

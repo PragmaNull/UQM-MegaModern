@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_VELOCITY_H_
-#define UQM_VELOCITY_H_
+#pragma once
+#ifndef UQM_VELOCITY_H
+#define UQM_VELOCITY_H
 
 #include <string.h> /* for memset */
 #include "libs/gfxlib.h"
@@ -75,4 +76,4 @@ constexpr auto WorldToVelocity(const auto& l) { return ((l) << VelocityShift); }
 }
 #endif
 
-#endif /* UQM_VELOCITY_H_ */
+#endif // UQM_VELOCITY_H

@@ -1,7 +1,8 @@
 // Mount source for a directory on the host file system.
+
 #pragma once
-#ifndef UQM_LIBS_IO_STANDARD_DIRECTORYSOURCE_H_
-#define UQM_LIBS_IO_STANDARD_DIRECTORYSOURCE_H_
+#ifndef UQM_LIBS_IO_STANDARD_DIRECTORYSOURCE_H
+#define UQM_LIBS_IO_STANDARD_DIRECTORYSOURCE_H
 
 #include "libs/io/standard/MountSource.h"
 
@@ -32,4 +33,4 @@ private:
 
 } // namespace uqm::io::standard
 
-#endif // UQM_LIBS_IO_STANDARD_DIRECTORYSOURCE_H_
+#endif // UQM_LIBS_IO_STANDARD_DIRECTORYSOURCE_H

@@ -16,8 +16,9 @@
 
 /* AIFF decoder */
 
-#ifndef AIFFAUD_H
-#define AIFFAUD_H
+#pragma once
+#ifndef UQM_LIBS_SOUND_DECODERS_AIFFAUD_H
+#define UQM_LIBS_SOUND_DECODERS_AIFFAUD_H
 
 #include "core/types/enum.h"
 #include "decoder.h"
@@ -36,4 +37,4 @@ enum class AiffError
 template <>
 inline constexpr bool IsArithmeticEnum<AiffError> = true;
 
-#endif /* AIFFAUD_H */
+#endif // UQM_LIBS_SOUND_DECODERS_AIFFAUD_H

@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef STREAM_H
-#define STREAM_H
+#pragma once
+#ifndef UQM_LIBS_SOUND_STREAM_H
+#define UQM_LIBS_SOUND_STREAM_H
 
 #include "sndintrn.h"
 #include "libs/time/timelib.h"
@@ -43,4 +44,4 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 // returns true if the fade was accepted by stream decoder
 bool SetMusicStreamFade(TimePeriod howLong, int endVolume);
 
-#endif
+#endif // UQM_LIBS_SOUND_STREAM_H

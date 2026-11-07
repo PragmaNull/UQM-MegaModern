@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_CREDITS_H_
-#define UQM_CREDITS_H_
+#pragma once
+#ifndef UQM_CREDITS_H
+#define UQM_CREDITS_H
 
 #include "core/misc/bittricks.h"
 
@@ -29,4 +30,4 @@ extern void Credits(bool WithOuttakes);
 }
 #endif
 
-#endif /* UQM_CREDITS_H_ */
+#endif // UQM_CREDITS_H

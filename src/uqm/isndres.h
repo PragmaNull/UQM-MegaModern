@@ -3,8 +3,12 @@
    instead and regenerate. */
 
 #pragma once
+#ifndef UQM_ISNDRES_H
+#define UQM_ISNDRES_H
 
 inline constexpr uqgsl::czstring GameSoundsRes {"sounds.battle"};
 inline constexpr uqgsl::czstring LanderSoundsRes {"sounds.lander"};
 inline constexpr uqgsl::czstring MenuSoundsRes {"sounds.menu"};
 inline constexpr uqgsl::czstring TestSoundsRes {"sounds.test"};
+
+#endif // UQM_ISNDRES_H

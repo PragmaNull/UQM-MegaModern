@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_VIDLIB_H_
-#define LIBS_VIDLIB_H_
+#pragma once
+#ifndef UQM_LIBS_VIDLIB_H
+#define UQM_LIBS_VIDLIB_H
 
 #include "core/misc/bittricks.h"
 #include "libs/sndlib.h"
@@ -65,4 +66,4 @@ extern bool PlayingLegacyVideo(LEGACY_VIDEO_REF ref);
 }
 #endif
 
-#endif /* LIBS_VIDLIB_H_ */
+#endif // UQM_LIBS_VIDLIB_H

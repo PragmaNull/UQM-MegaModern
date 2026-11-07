@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_SETUPMENU_H_
-#define UQM_SETUPMENU_H_
+#pragma once
+#ifndef UQM_SETUPMENU_H
+#define UQM_SETUPMENU_H
 
 #include "core/stl/optional.h"
 #include "uqm/random/GameSeed.h"
@@ -27,4 +28,4 @@ void SetupMenu(void);
 // Shows the seed choices of a new game. Returns nullopt if the player goes back to the main menu.
 uqstl::optional<uqm::GameSeed> NewGameMenu(void);
 
-#endif // UQM_SETUPMENU_H_
+#endif // UQM_SETUPMENU_H

@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_SLYLANDR_RESINST_H
+#define UQM_SHIPS_SLYLANDR_RESINST_H
+
 inline constexpr uqgsl::czstring SlylandroBigMaskPmapAnim {"ship.slylandro.graphics.probe.large"};
 inline constexpr uqgsl::czstring SlylandroCaptainMaskPmapAnim {"ship.slylandro.graphics.captain"};
 inline constexpr uqgsl::czstring SlylandroIconMaskPmapAnim {"ship.slylandro.icons"};
@@ -11,3 +15,5 @@ inline constexpr uqgsl::czstring SlylandroRaceStrings {"ship.slylandro.text"};
 inline constexpr uqgsl::czstring SlylandroShipSounds {"ship.slylandro.sounds"};
 inline constexpr uqgsl::czstring SlylandroSmlMaskPmapAnim {"ship.slylandro.graphics.probe.small"};
 inline constexpr uqgsl::czstring SlylandroVictorySong {"ship.slylandro.ditty"};
+
+#endif // UQM_SHIPS_SLYLANDR_RESINST_H

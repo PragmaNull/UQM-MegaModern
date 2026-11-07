@@ -1,7 +1,8 @@
 // The game state flags, such as SHOFIXTI_VISITS, by enum and by name.
+
 #pragma once
-#ifndef UQM_SESSION_GAMEFLAGS_H_
-#define UQM_SESSION_GAMEFLAGS_H_
+#ifndef UQM_SESSION_GAMEFLAGS_H
+#define UQM_SESSION_GAMEFLAGS_H
 
 #include <cstddef>
 #include <cstdint>
@@ -50,4 +51,4 @@ inline constexpr size_t c_gameFlagCount {uqstl::size(c_gameFlags)};
 
 } // namespace uqm
 
-#endif // UQM_SESSION_GAMEFLAGS_H_
+#endif // UQM_SESSION_GAMEFLAGS_H

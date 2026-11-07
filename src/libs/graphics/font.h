@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_GRAPHICS_FONT_H_
-#define LIBS_GRAPHICS_FONT_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_FONT_H
+#define UQM_LIBS_GRAPHICS_FONT_H
 
 #include "core/stl/vector.h"
 
@@ -70,4 +71,4 @@ extern void GetFontDims(int16_t* w, int16_t* h);
 extern int GetFontCharSpace(void);
 extern bool GoodToGoFPS(void);
 
-#endif /* LIBS_GRAPHICS_FONT_H_ */
+#endif // UQM_LIBS_GRAPHICS_FONT_H

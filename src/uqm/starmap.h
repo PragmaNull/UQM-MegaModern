@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef STARMAP_H_INCL_
-#define STARMAP_H_INCL_
+#pragma once
+#ifndef UQM_STARMAP_H
+#define UQM_STARMAP_H
 
 #include "core/misc/bittricks.h"
 #include "planets/planets.h"
@@ -114,4 +115,4 @@ extern void setStarMarked(const int star_index, const char* marker_state);
 }
 #endif
 
-#endif /* STARMAP_H_INCL_ */
+#endif // UQM_STARMAP_H

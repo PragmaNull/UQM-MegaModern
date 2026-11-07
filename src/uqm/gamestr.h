@@ -19,8 +19,9 @@
  * the game. libs/strlib.h is for the string library.
  */
 
-#ifndef UQM_GAMESTR_H_
-#define UQM_GAMESTR_H_
+#pragma once
+#ifndef UQM_GAMESTR_H
+#define UQM_GAMESTR_H
 
 
 #include "core/types/enum.h"
@@ -107,4 +108,4 @@ void SetCursorFlashBlock(bool state);
 }
 #endif
 
-#endif /* UQM_GAMESTR_H_ */
+#endif // UQM_GAMESTR_H

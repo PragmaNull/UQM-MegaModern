@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef DCQUEUE_H
-#define DCQUEUE_H
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_DCQUEUE_H
+#define UQM_LIBS_GRAPHICS_DCQUEUE_H
 
 // Maximum size of the DCQ.  The larger the DCQ, the larger frameskips
 // become tolerable before initiating livelock deterrence and game
@@ -48,4 +49,4 @@ inline constexpr auto DcqForceBreakSize {16384};
 inline constexpr auto DcqLivelockMax {4096};
 #endif
 
-#endif
+#endif // UQM_LIBS_GRAPHICS_DCQUEUE_H

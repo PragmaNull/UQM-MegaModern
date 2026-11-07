@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBS_CALLBACK_ALARM_H_
-#define LIBS_CALLBACK_ALARM_H_
+#pragma once
+#ifndef UQM_LIBS_CALLBACK_ALARM_H
+#define UQM_LIBS_CALLBACK_ALARM_H
 
 #include "port.h"
 #include "core/stl/chrono.h"
@@ -45,4 +46,4 @@ bool Alarm_processOne(void);
 // Returns the time of the next alarm, or AlarmTime::max() if there is none.
 AlarmTime Alarm_nextTime(void);
 
-#endif /* LIBS_CALLBACK_ALARM_H_ */
+#endif // UQM_LIBS_CALLBACK_ALARM_H

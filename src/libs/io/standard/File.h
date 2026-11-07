@@ -1,7 +1,8 @@
 // Buffered open file. Closes the file when destroyed.
+
 #pragma once
-#ifndef UQM_LIBS_IO_STANDARD_FILE_H_
-#define UQM_LIBS_IO_STANDARD_FILE_H_
+#ifndef UQM_LIBS_IO_STANDARD_FILE_H
+#define UQM_LIBS_IO_STANDARD_FILE_H
 
 #include "core/stl/memory.h"
 #include "core/stl/vector.h"
@@ -75,4 +76,4 @@ private:
 
 } // namespace uqm::io::standard
 
-#endif // UQM_LIBS_IO_STANDARD_FILE_H_
+#endif // UQM_LIBS_IO_STANDARD_FILE_H

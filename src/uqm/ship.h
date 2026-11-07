@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_SHIP_H_INCL_
-#define UQM_SHIP_H_INCL_
+#pragma once
+#ifndef UQM_SHIP_H
+#define UQM_SHIP_H
 
 #include "core/misc/bittricks.h"
 #include "races.h"
@@ -40,4 +41,4 @@ extern STATUS_FLAGS inertial_thrust(Element* ElementPtr);
 }
 #endif
 
-#endif /* UQM_SHIP_H_INCL_ */
+#endif // UQM_SHIP_H

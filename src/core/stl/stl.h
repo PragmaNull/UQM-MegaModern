@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UQM_CORE_STL_H_
-#define UQM_CORE_STL_H_
+#ifndef UQM_CORE_STL_STL_H
+#define UQM_CORE_STL_STL_H
 
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
@@ -27,4 +27,4 @@ static_assert(false, "EASTL is not supported yet. If you want to add support for
 #endif /* !defined(USING_EASTL)*/
 
 
-#endif //UQM_CORE_STL_H_
+#endif // UQM_CORE_STL_STL_H

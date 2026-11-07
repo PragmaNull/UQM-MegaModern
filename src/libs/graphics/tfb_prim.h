@@ -16,6 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_TFB_PRIM_H
+#define UQM_LIBS_GRAPHICS_TFB_PRIM_H
+
 #include "libs/gfxlib.h"
 #include "tfb_draw.h"
 
@@ -29,3 +33,5 @@ void TFB_Prim_StampFill(GfxStamp*, Color, DrawMode, GfxPoint ctxOrigin, bool uns
 void TFB_Prim_FontChar(GfxPoint charOrigin, TFB_Char* fontChar,
 					   TFB_Image* backing, DrawMode, GfxPoint ctxOrigin);
 void TFB_Prim_MaskFrame(FRAME layer, FRAME base, DrawMode mode, Color* fill);
+
+#endif // UQM_LIBS_GRAPHICS_TFB_PRIM_H

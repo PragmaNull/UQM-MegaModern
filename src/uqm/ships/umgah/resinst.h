@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_UMGAH_RESINST_H
+#define UQM_SHIPS_UMGAH_RESINST_H
+
 inline constexpr uqgsl::czstring ConeBigMaskAnim {"ship.umgah.graphics.cone.large"};
 inline constexpr uqgsl::czstring ConeMedMaskAnim {"ship.umgah.graphics.cone.medium"};
 inline constexpr uqgsl::czstring ConeSmlMaskAnim {"ship.umgah.graphics.cone.small"};
@@ -15,3 +19,5 @@ inline constexpr uqgsl::czstring UmgahRaceStrings {"ship.umgah.text"};
 inline constexpr uqgsl::czstring UmgahShipSounds {"ship.umgah.sounds"};
 inline constexpr uqgsl::czstring UmgahSmlMaskPmapAnim {"ship.umgah.graphics.drone.small"};
 inline constexpr uqgsl::czstring UmgahVictorySong {"ship.umgah.ditty"};
+
+#endif // UQM_SHIPS_UMGAH_RESINST_H

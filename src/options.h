@@ -19,8 +19,9 @@
  * for now there's few options which indicate 3do/pc flavors.
  */
 
-#ifndef OPTIONS_H
-#define OPTIONS_H
+#pragma once
+#ifndef UQM_OPTIONS_H
+#define UQM_OPTIONS_H
 
 #include "core/stl/stl.h"
 #include "port.h"
@@ -130,4 +131,4 @@ int loadIndices(const io::Directory& dir);
 bool setGammaCorrection(float gamma);
 } // namespace uqm
 
-#endif
+#endif // UQM_OPTIONS_H

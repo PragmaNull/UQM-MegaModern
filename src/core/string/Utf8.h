@@ -1,7 +1,8 @@
 // UTF-8 decoding, encoding, validation, case conversion and Windows wide-string conversion.
+
 #pragma once
-#ifndef UQM_CORE_STRING_UTF8_H_
-#define UQM_CORE_STRING_UTF8_H_
+#ifndef UQM_CORE_STRING_UTF8_H
+#define UQM_CORE_STRING_UTF8_H
 
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
@@ -58,4 +59,4 @@ uqstl::wstring toWideChar(uqstl::string_view str);
 
 } // namespace uqm
 
-#endif // UQM_CORE_STRING_UTF8_H_
+#endif // UQM_CORE_STRING_UTF8_H

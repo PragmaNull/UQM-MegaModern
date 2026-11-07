@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_STATE_H_
-#define UQM_STATE_H_
+#pragma once
+#ifndef UQM_STATE_H
+#define UQM_STATE_H
 
 #include "core/types/enum.h"
 #include "port.h"
@@ -185,4 +186,4 @@ static inline uint16_t swrite_a32(GameStateFile* fp, const uint32_t* ar, uint16_
 }
 #endif
 
-#endif /* UQM_STATE_H_ */
+#endif // UQM_STATE_H

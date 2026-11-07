@@ -1,7 +1,8 @@
 // Virtual file system that stacks host directories and zip archives.
+
 #pragma once
-#ifndef UQM_LIBS_IO_STANDARD_FILESYSTEM_H_
-#define UQM_LIBS_IO_STANDARD_FILESYSTEM_H_
+#ifndef UQM_LIBS_IO_STANDARD_FILESYSTEM_H
+#define UQM_LIBS_IO_STANDARD_FILESYSTEM_H
 
 #include "core/stl/memory.h"
 #include "core/stl/optional.h"
@@ -103,4 +104,4 @@ private:
 
 } // namespace uqm::io::standard
 
-#endif // UQM_LIBS_IO_STANDARD_FILESYSTEM_H_
+#endif // UQM_LIBS_IO_STANDARD_FILESYSTEM_H

@@ -1,7 +1,8 @@
 // GPU shaders for gamma correction and the screen scalers, for the SDL GPU renderer.
 
-#ifndef LIBS_GRAPHICS_SDL_GPUSHADERS_H_
-#define LIBS_GRAPHICS_SDL_GPUSHADERS_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_GPUSHADERS_H
+#define UQM_LIBS_GRAPHICS_SDL_GPUSHADERS_H
 
 #include <SDL3/SDL.h>
 #include <cstdint>
@@ -68,4 +69,4 @@ private:
 
 } // namespace uqm
 
-#endif /* LIBS_GRAPHICS_SDL_GPUSHADERS_H_ */
+#endif // UQM_LIBS_GRAPHICS_SDL_GPUSHADERS_H

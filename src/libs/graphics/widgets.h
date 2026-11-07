@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_GRAPHICS_WIDGETS_H_
-#define LIBS_GRAPHICS_WIDGETS_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_WIDGETS_H
+#define UQM_LIBS_GRAPHICS_WIDGETS_H
 
 #include "core/types/enum.h"
 #include "core/stl/stl.h"
@@ -256,4 +257,4 @@ void ReleaseArrows(void);
 /* Other implementations will need these values */
 extern Widget* widget_focus;
 
-#endif /* LIBS_GRAPHICS_WIDGETS_H_ */
+#endif // UQM_LIBS_GRAPHICS_WIDGETS_H

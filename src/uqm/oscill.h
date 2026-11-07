@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_OSCILL_H_
-#define UQM_OSCILL_H_
+#pragma once
+#ifndef UQM_OSCILL_H
+#define UQM_OSCILL_H
 
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
@@ -41,4 +42,4 @@ void DrawSlider(void);
 }
 #endif
 
-#endif /* UQM_OSCILL_H_ */
+#endif // UQM_OSCILL_H

@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_COMM_H_
-#define UQM_COMM_H_
+#pragma once
+#ifndef UQM_COMM_H
+#define UQM_COMM_H
 
 #include "commglue.h"
 #include "globdata.h"
@@ -169,4 +170,4 @@ extern uint8_t altResFlags;
 }
 #endif
 
-#endif /* UQM_COMM_H_ */
+#endif // UQM_COMM_H

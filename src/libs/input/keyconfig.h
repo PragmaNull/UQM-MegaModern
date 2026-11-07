@@ -1,7 +1,8 @@
 // Converts key binding templates to and from the keys.json format.
+
 #pragma once
-#ifndef UQM_LIBS_INPUT_KEYCONFIG_H_
-#define UQM_LIBS_INPUT_KEYCONFIG_H_
+#ifndef UQM_LIBS_INPUT_KEYCONFIG_H
+#define UQM_LIBS_INPUT_KEYCONFIG_H
 
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
@@ -27,4 +28,4 @@ struct KeyTemplate
 
 } // namespace uqm
 
-#endif // UQM_LIBS_INPUT_KEYCONFIG_H_
+#endif // UQM_LIBS_INPUT_KEYCONFIG_H

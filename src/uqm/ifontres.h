@@ -3,6 +3,8 @@
    instead and regenerate. */
 
 #pragma once
+#ifndef UQM_IFONTRES_H
+#define UQM_IFONTRES_H
 
 inline constexpr uqgsl::czstring LanderFontRes {"font.lander"};
 inline constexpr uqgsl::czstring MicroFontRes {"font.micro"};
@@ -23,3 +25,5 @@ inline constexpr uqgsl::czstring MeleeTitleFontRes {"font.melee.title"};
 inline constexpr uqgsl::czstring ButtonFontRes {"font.button"};
 inline constexpr uqgsl::czstring PlaymenuFontRes {"font.playmenu"};
 inline constexpr uqgsl::czstring ModuleFontRes {"font.module"};
+
+#endif // UQM_IFONTRES_H

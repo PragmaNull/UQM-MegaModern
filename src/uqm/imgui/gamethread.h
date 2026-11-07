@@ -1,7 +1,8 @@
 // Runs work from the ImGui windows on the game thread.
+
 #pragma once
-#ifndef UQM_IMGUI_GAMETHREAD_H_
-#define UQM_IMGUI_GAMETHREAD_H_
+#ifndef UQM_IMGUI_GAMETHREAD_H
+#define UQM_IMGUI_GAMETHREAD_H
 
 #include "core/stl/functional.h"
 #include "core/stl/optional.h"
@@ -56,4 +57,4 @@ private:
 
 } // namespace uqm
 
-#endif // UQM_IMGUI_GAMETHREAD_H_
+#endif // UQM_IMGUI_GAMETHREAD_H

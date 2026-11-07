@@ -1,7 +1,8 @@
 // The prices, the battle group and the queues of a game, in the GameData struct.
+
 #pragma once
-#ifndef UQM_SESSION_GAMEDATA_H_
-#define UQM_SESSION_GAMEDATA_H_
+#ifndef UQM_SESSION_GAMEDATA_H
+#define UQM_SESSION_GAMEDATA_H
 
 #include <cstdint>
 #include "uqm/displist.h"
@@ -36,4 +37,4 @@ struct GameData
 			 * queue Element is ShipFragment */
 };
 
-#endif // UQM_SESSION_GAMEDATA_H_
+#endif // UQM_SESSION_GAMEDATA_H

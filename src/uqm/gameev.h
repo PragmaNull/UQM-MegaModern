@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_GAMEEV_H_
-#define UQM_GAMEEV_H_
+#pragma once
+#ifndef UQM_GAMEEV_H
+#define UQM_GAMEEV_H
 
 
 #include "core/types/enum.h"
@@ -77,4 +78,4 @@ extern void SetRaceDest(uint8_t which_race, int16_t x, int16_t y, uint8_t days_l
 }
 #endif
 
-#endif /* UQM_GAMEEV_H_ */
+#endif // UQM_GAMEEV_H

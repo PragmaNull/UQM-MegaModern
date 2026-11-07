@@ -18,8 +18,9 @@
 
 // JMS 2011: Added LargePoint type - a coordinate point with larger values to avoid overflows in hires modes.
 
-#ifndef LIBS_GFXLIB_H_
-#define LIBS_GFXLIB_H_
+#pragma once
+#ifndef UQM_LIBS_GFXLIB_H
+#define UQM_LIBS_GFXLIB_H
 
 #include "core/types/enum.h"
 #include <fmt/base.h>
@@ -716,4 +717,4 @@ void ClearSystemRect(void);
 }
 #endif
 
-#endif /* LIBS_GFXLIB_H_ */
+#endif // UQM_LIBS_GFXLIB_H

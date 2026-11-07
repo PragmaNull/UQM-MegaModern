@@ -13,8 +13,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef UQM_GAMEOPT_H_
-#define UQM_GAMEOPT_H_
+
+#pragma once
+#ifndef UQM_GAMEOPT_H
+#define UQM_GAMEOPT_H
 
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
@@ -39,4 +41,4 @@ extern bool TextEntry3DO;
 }
 #endif
 
-#endif /* UQM_GAMEOPT_H_ */
+#endif // UQM_GAMEOPT_H

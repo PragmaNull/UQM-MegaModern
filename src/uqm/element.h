@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_ELEMENT_H_
-#define UQM_ELEMENT_H_
+#pragma once
+#ifndef UQM_ELEMENT_H
+#define UQM_ELEMENT_H
 
 #include "displist.h"
 #include "units.h"
@@ -245,4 +246,4 @@ extern bool CalculateGravity(Element* ElementPtr);
 }
 #endif
 
-#endif /* UQM_ELEMENT_H_ */
+#endif // UQM_ELEMENT_H

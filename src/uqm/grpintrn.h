@@ -1,5 +1,6 @@
-#ifndef UQM_GRPINTRN_H_
-#define UQM_GRPINTRN_H_
+#pragma once
+#ifndef UQM_GRPINTRN_H
+#define UQM_GRPINTRN_H
 
 // For IPGROUP
 #include "grpinfo.h"
@@ -52,4 +53,4 @@ void WriteShipFragment(GameStateFile* fp, const ShipFragment* FragPtr);
 void ReadIpGroup(GameStateFile* fp, InterplanetaryGroup* GroupPtr);
 void WriteIpGroup(GameStateFile* fp, const InterplanetaryGroup* GroupPtr);
 
-#endif
+#endif // UQM_GRPINTRN_H

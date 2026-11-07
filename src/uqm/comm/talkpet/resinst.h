@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_TALKPET_RESINST_H
+#define UQM_COMM_TALKPET_RESINST_H
+
 inline constexpr uqgsl::czstring TalkingPetColorMap {"comm.talkingpet.colortable"};
 inline constexpr uqgsl::czstring TalkingPetConversationPhrases {"comm.talkingpet.dialogue"};
 inline constexpr uqgsl::czstring TalkingPetFont {"comm.talkingpet.font"};
 inline constexpr uqgsl::czstring TalkingPetMusic {"comm.talkingpet.music"};
 inline constexpr uqgsl::czstring TalkingPetPmapAnim {"comm.talkingpet.graphics"};
+
+#endif // UQM_COMM_TALKPET_RESINST_H

@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_DRUUGE_RESINST_H
+#define UQM_SHIPS_DRUUGE_RESINST_H
+
 inline constexpr uqgsl::czstring DruugeBigMaskPmapAnim {"ship.druuge.graphics.mauler.large"};
 inline constexpr uqgsl::czstring DruugeCannonBigMaskPmapAnim {"ship.druuge.graphics.cannon.large"};
 inline constexpr uqgsl::czstring DruugeCannonMedMaskPmapAnim {"ship.druuge.graphics.cannon.medium"};
@@ -14,3 +18,5 @@ inline constexpr uqgsl::czstring DruugeRaceStrings {"ship.druuge.text"};
 inline constexpr uqgsl::czstring DruugeShipSounds {"ship.druuge.sounds"};
 inline constexpr uqgsl::czstring DruugeSmlMaskPmapAnim {"ship.druuge.graphics.mauler.small"};
 inline constexpr uqgsl::czstring DruugeVictorySong {"ship.druuge.ditty"};
+
+#endif // UQM_SHIPS_DRUUGE_RESINST_H

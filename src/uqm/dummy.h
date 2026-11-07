@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef DUMMY_H
-#define DUMMY_H
+#pragma once
+#ifndef UQM_DUMMY_H
+#define UQM_DUMMY_H
 
 #include "races.h"
 
@@ -48,4 +49,4 @@
 #include "ships/sis_ship/sis_ship.h"
 #include "ships/probe/probe.h"
 
-#endif /* DUMMY_H */
+#endif // UQM_DUMMY_H

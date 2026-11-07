@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_ILWRATH_RESINST_H
+#define UQM_COMM_ILWRATH_RESINST_H
+
 inline constexpr uqgsl::czstring IlwrathColorMap {"comm.ilwrath.colortable"};
 inline constexpr uqgsl::czstring IlwrathConversationPhrases {"comm.ilwrath.dialogue"};
 inline constexpr uqgsl::czstring IlwrathFont {"comm.ilwrath.font"};
 inline constexpr uqgsl::czstring IlwrathMusic {"comm.ilwrath.music"};
 inline constexpr uqgsl::czstring IlwrathPmapAnim {"comm.ilwrath.graphics"};
+
+#endif // UQM_COMM_ILWRATH_RESINST_H

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef UQM_OPTIONS_OPTIONS_H
+#define UQM_OPTIONS_OPTIONS_H
 
 #include "core/stl/stl.h"
 #include "core/string/StringUtils.h"
@@ -645,3 +647,5 @@ private:
 };
 
 } // namespace uqm
+
+#endif // UQM_OPTIONS_OPTIONS_H

@@ -1,7 +1,8 @@
 // Value types shared by all file system back ends.
+
 #pragma once
-#ifndef UQM_LIBS_IO_TYPES_H_
-#define UQM_LIBS_IO_TYPES_H_
+#ifndef UQM_LIBS_IO_TYPES_H
+#define UQM_LIBS_IO_TYPES_H
 
 #include "core/stl/stl.h"
 #include "core/stl/expected.h"
@@ -90,4 +91,4 @@ inline uqstl::span<const uqstl::byte> asBytes(const void* data, size_t size)
 
 } // namespace uqm::io
 
-#endif // UQM_LIBS_IO_TYPES_H_
+#endif // UQM_LIBS_IO_TYPES_H

@@ -16,6 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#pragma once
+#ifndef UQM_STARMAPGLOBALDATA_H
+#define UQM_STARMAPGLOBALDATA_H
+
 #include "gendef.h"
 #include "resinst.h"
 #include "hyper.h" // JMS: For ARILOU_HOME_X and Y
@@ -3202,3 +3206,5 @@ static constexpr PlanetFrame PlanetsArray[*PlanetType::NumberOfPlanetTypes] =
 			29,
 		 },
 };
+
+#endif // UQM_STARMAPGLOBALDATA_H

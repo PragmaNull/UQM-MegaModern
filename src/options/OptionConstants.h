@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UQM_OPTIONS_OPTIONCONSTANTS_H_
-#define UQM_OPTIONS_OPTIONCONSTANTS_H_
+#ifndef UQM_OPTIONS_OPTIONCONSTANTS_H
+#define UQM_OPTIONS_OPTIONCONSTANTS_H
 
 #include "options/OptionTypes.h"
 #include "libs/sound/audiocore.h"
@@ -50,4 +50,4 @@ static inline constexpr uqstl::array<OptionListValueT<EmulationMode>, 2> Emulati
 };
 
 } // namespace uqm
-#endif /* UQM_OPTIONS_OPTIONCONSTANTS_H_ */
+#endif // UQM_OPTIONS_OPTIONCONSTANTS_H

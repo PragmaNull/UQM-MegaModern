@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_MSGBOX_H_INCL__
-#define UQM_MSGBOX_H_INCL__
+#pragma once
+#ifndef UQM_CORE_LOG_MSGBOX_MSGBOX_H
+#define UQM_CORE_LOG_MSGBOX_MSGBOX_H
 
 #include "core/stl/stl.h"
 
@@ -34,4 +35,4 @@ void displayMessageBox(uqgsl::czstring utf8Title, uqgsl::czstring utf8Message, M
 
 } // namespace uqm
 
-#endif /* UQM_MSGBOX_H_INCL__ */
+#endif // UQM_CORE_LOG_MSGBOX_MSGBOX_H

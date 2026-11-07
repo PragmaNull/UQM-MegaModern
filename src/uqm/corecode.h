@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef CORECODE_H_
-#define CORECODE_H_
+#pragma once
+#ifndef UQM_CORECODE_H
+#define UQM_CORECODE_H
 
 #include "ships/androsyn/icode.h"
 #include "ships/arilou/icode.h"
@@ -46,4 +47,4 @@
 #include "ships/yehat/icode.h"
 #include "ships/zoqfot/icode.h"
 
-#endif /* CORECODE_H_ */
+#endif // UQM_CORECODE_H

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef SOLARSYS_H
-#define SOLARSYS_H
+#pragma once
+#ifndef UQM_PLANETS_SOLARSYS_H
+#define UQM_PLANETS_SOLARSYS_H
 
 #include "uqm/races.h"
 
@@ -34,4 +35,4 @@ extern void FreeIPData(void);
 }
 #endif
 
-#endif /* SOLARSYS_H */
+#endif // UQM_PLANETS_SOLARSYS_H

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef INPUT_COMMON_H
-#define INPUT_COMMON_H
+#pragma once
+#ifndef UQM_LIBS_INPUT_INPUT_COMMON_H
+#define UQM_LIBS_INPUT_INPUT_COMMON_H
 #include "core/stl/atomic.h"
 
 // driver for TFB_InitInput
@@ -36,4 +37,4 @@ inline constexpr auto MaxFlightAlternates {2};
 
 extern void TFB_SetInputVectors(uqstl::atomic<int>* menu, int num_menu, uqstl::atomic<int>* flight, int num_flight, int num_templ);
 
-#endif
+#endif // UQM_LIBS_INPUT_INPUT_COMMON_H

@@ -15,9 +15,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
 #pragma once
-#ifndef UQM_INTEL_H_
-#define UQM_INTEL_H_
+#ifndef UQM_INTEL_H
+#define UQM_INTEL_H
 
 
 #include "uqm/inteldefs.h"
@@ -111,4 +112,4 @@ static inline bool isNetwork(void)
 	return testFlag(PlayerControl[0] | PlayerControl[1], PlayerControlFlags::Network);
 }
 
-#endif /* UQM_INTEL_H_ */
+#endif // UQM_INTEL_H

@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_COMANDR_RESINST_H
+#define UQM_COMM_COMANDR_RESINST_H
+
 inline constexpr uqgsl::czstring CommanderColorMap {"comm.commander.colortable"};
 inline constexpr uqgsl::czstring CommanderConversationPhrases {"comm.commander.dialogue"};
 inline constexpr uqgsl::czstring CommanderFont {"comm.commander.font"};
@@ -13,3 +17,5 @@ inline constexpr uqgsl::czstring CommanderPmapAnimRed {"comm.commander.red.graph
 
 inline constexpr uqgsl::czstring StarbaseAltMusic {"comm.starbase.music"};
 inline constexpr uqgsl::czstring StarbaseConversationPhrases {"comm.starbase.dialogue"};
+
+#endif // UQM_COMM_COMANDR_RESINST_H

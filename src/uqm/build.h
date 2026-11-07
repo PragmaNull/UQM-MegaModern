@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_BUILD_H_
-#define UQM_BUILD_H_
+#pragma once
+#ifndef UQM_BUILD_H
+#define UQM_BUILD_H
 
 #include "races.h"
 #include "displist.h"
@@ -88,4 +89,4 @@ extern uint8_t GTFO;
 }
 #endif
 
-#endif /* UQM_BUILD_H_ */
+#endif // UQM_BUILD_H

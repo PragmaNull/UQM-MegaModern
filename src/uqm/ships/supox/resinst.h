@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_SUPOX_RESINST_H
+#define UQM_SHIPS_SUPOX_RESINST_H
+
 inline constexpr uqgsl::czstring GobBigMaskPmapAnim {"ship.supox.graphics.glob.large"};
 inline constexpr uqgsl::czstring GobMedMaskPmapAnim {"ship.supox.graphics.glob.medium"};
 inline constexpr uqgsl::czstring GobSmlMaskPmapAnim {"ship.supox.graphics.glob.small"};
@@ -14,3 +18,5 @@ inline constexpr uqgsl::czstring SupoxRaceStrings {"ship.supox.text"};
 inline constexpr uqgsl::czstring SupoxShipSounds {"ship.supox.sounds"};
 inline constexpr uqgsl::czstring SupoxSmlMaskPmapAnim {"ship.supox.graphics.blade.small"};
 inline constexpr uqgsl::czstring SupoxVictorySong {"ship.supox.ditty"};
+
+#endif // UQM_SHIPS_SUPOX_RESINST_H

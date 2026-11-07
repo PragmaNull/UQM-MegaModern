@@ -1,7 +1,8 @@
 // Starts named threads, and other thread utilities.
+
 #pragma once
-#ifndef UQM_CORE_THREAD_THREAD_H_
-#define UQM_CORE_THREAD_THREAD_H_
+#ifndef UQM_CORE_THREAD_THREAD_H
+#define UQM_CORE_THREAD_THREAD_H
 
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
@@ -31,4 +32,4 @@ uqstl::jthread makeThread(uqstl::string name, Func&& func)
 
 } // namespace uqm
 
-#endif // UQM_CORE_THREAD_THREAD_H_
+#endif // UQM_CORE_THREAD_THREAD_H

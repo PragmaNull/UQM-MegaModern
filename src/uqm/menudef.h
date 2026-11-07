@@ -1,7 +1,8 @@
 // Setup menu layout and text, read from the menu definition file.
+
 #pragma once
-#ifndef UQM_MENUDEF_H_
-#define UQM_MENUDEF_H_
+#ifndef UQM_MENUDEF_H
+#define UQM_MENUDEF_H
 
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
@@ -119,4 +120,4 @@ struct MenuDefinition
 
 } // namespace uqm
 
-#endif // UQM_MENUDEF_H_
+#endif // UQM_MENUDEF_H

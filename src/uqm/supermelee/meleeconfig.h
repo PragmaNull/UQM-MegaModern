@@ -1,7 +1,8 @@
 // Converts SuperMelee sides and teams to and from the melee.json format.
+
 #pragma once
-#ifndef UQM_SUPERMELEE_MELEECONFIG_H_
-#define UQM_SUPERMELEE_MELEECONFIG_H_
+#ifndef UQM_SUPERMELEE_MELEECONFIG_H
+#define UQM_SUPERMELEE_MELEECONFIG_H
 
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
@@ -29,4 +30,4 @@ struct MeleeSideConfig
 
 } // namespace uqm
 
-#endif // UQM_SUPERMELEE_MELEECONFIG_H_
+#endif // UQM_SUPERMELEE_MELEECONFIG_H

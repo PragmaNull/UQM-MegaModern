@@ -1,7 +1,8 @@
 // The mount stack of a file system, shared by its directories.
+
 #pragma once
-#ifndef UQM_LIBS_IO_STANDARD_MOUNTTABLE_H_
-#define UQM_LIBS_IO_STANDARD_MOUNTTABLE_H_
+#ifndef UQM_LIBS_IO_STANDARD_MOUNTTABLE_H
+#define UQM_LIBS_IO_STANDARD_MOUNTTABLE_H
 
 #include "libs/io/standard/FileSystem.h"
 #include "libs/io/standard/MountSource.h"
@@ -82,4 +83,4 @@ private:
 
 } // namespace uqm::io::standard
 
-#endif // UQM_LIBS_IO_STANDARD_MOUNTTABLE_H_
+#endif // UQM_LIBS_IO_STANDARD_MOUNTTABLE_H

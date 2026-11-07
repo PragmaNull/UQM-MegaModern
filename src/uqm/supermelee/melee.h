@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_SUPERMELEE_MELEE_H_
-#define UQM_SUPERMELEE_MELEE_H_
+#pragma once
+#ifndef UQM_SUPERMELEE_MELEE_H
+#define UQM_SUPERMELEE_MELEE_H
 
 #include "core/types/enum.h"
 #include "../init.h"
@@ -247,4 +248,4 @@ inline constexpr bool IsArithmeticEnum<MeleeFrameIndex> = true;
 }
 #endif
 
-#endif /* UQM_SUPERMELEE_MELEE_H_ */
+#endif // UQM_SUPERMELEE_MELEE_H

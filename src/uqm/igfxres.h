@@ -3,6 +3,8 @@
    instead and regenerate. */
 
 #pragma once
+#ifndef UQM_IGFXRES_H
+#define UQM_IGFXRES_H
 
 inline constexpr uqgsl::czstring ActivityAnimRes {"graphics.activity"};
 inline constexpr uqgsl::czstring AmbientMaskPmapAnimRes {"graphics.ambient"};
@@ -135,3 +137,5 @@ inline constexpr uqgsl::czstring VisitedStarsAnimRes {"graphics.visitedstars"};
 inline constexpr uqgsl::czstring WreckMaskPmapAnimRes {"graphics.urquanwreck"};
 inline constexpr uqgsl::czstring DosPlanetMaskAnimRes {"graphics.dossphere"};
 inline constexpr uqgsl::czstring PlanetMaskShadeRes {"graphics.3do.shade"};
+
+#endif // UQM_IGFXRES_H

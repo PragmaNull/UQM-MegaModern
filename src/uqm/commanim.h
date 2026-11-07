@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_COMMANIM_H_
-#define UQM_COMMANIM_H_
+#pragma once
+#ifndef UQM_COMMANIM_H
+#define UQM_COMMANIM_H
 
 #include "core/types/enum.h"
 #include "core/misc/bittricks.h"
@@ -223,4 +224,4 @@ extern void DisengageFilters(void);
 }
 #endif
 
-#endif /* UQM_COMMANIM_H_ */
+#endif // UQM_COMMANIM_H

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBS_CALLBACK_ASYNC_H_
-#define LIBS_CALLBACK_ASYNC_H_
+#pragma once
+#ifndef UQM_LIBS_CALLBACK_ASYNC_H
+#define UQM_LIBS_CALLBACK_ASYNC_H
 
 #include <cstdint>
 
@@ -27,4 +28,4 @@ void Async_process(void);
 // Returns the time of the next asynchronous operation, or AlarmTime::max() if there is none.
 AlarmTime Async_nextTime(void);
 
-#endif /* LIBS_CALLBACK_ASYNC_H_ */
+#endif // UQM_LIBS_CALLBACK_ASYNC_H

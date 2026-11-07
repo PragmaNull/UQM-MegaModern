@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef GFX_COMMON_H
-#define GFX_COMMON_H
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_GFX_COMMON_H
+#define UQM_LIBS_GRAPHICS_GFX_COMMON_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,4 +93,4 @@ extern int ScreenHeightActual;
 extern int ScreenColorDepth;
 extern uqm::GfxDriver GraphicsDriver;
 
-#endif
+#endif // UQM_LIBS_GRAPHICS_GFX_COMMON_H

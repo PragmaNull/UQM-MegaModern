@@ -1,7 +1,8 @@
 // Macros for the Clang thread safety analysis. Other compilers ignore them.
+
 #pragma once
-#ifndef UQM_CORE_THREAD_THREADSAFETY_H_
-#define UQM_CORE_THREAD_THREADSAFETY_H_
+#ifndef UQM_CORE_THREAD_THREADSAFETY_H
+#define UQM_CORE_THREAD_THREADSAFETY_H
 
 #if defined(__clang__)
 #define UQM_THREAD_ANNOTATION(x) __attribute__((x))
@@ -41,4 +42,4 @@
 // The analysis does not check the function.
 #define UQM_NO_THREAD_SAFETY_ANALYSIS UQM_THREAD_ANNOTATION(no_thread_safety_analysis)
 
-#endif // UQM_CORE_THREAD_THREADSAFETY_H_
+#endif // UQM_CORE_THREAD_THREADSAFETY_H

@@ -1,7 +1,8 @@
 // A table of strings from a resource: text entries, and optionally a name, a sound clip and a timestamp for each.
+
 #pragma once
-#ifndef UQM_LIBS_STRINGS_STRINGTABLE_H_
-#define UQM_LIBS_STRINGS_STRINGTABLE_H_
+#ifndef UQM_LIBS_STRINGS_STRINGTABLE_H
+#define UQM_LIBS_STRINGS_STRINGTABLE_H
 
 #include "core/stl/stl.h"
 #include "core/stl/map.h"
@@ -82,4 +83,4 @@ using StringTablePtr = uqstl::unique_ptr<StringTable>;
 
 } // namespace uqm
 
-#endif // UQM_LIBS_STRINGS_STRINGTABLE_H_
+#endif // UQM_LIBS_STRINGS_STRINGTABLE_H

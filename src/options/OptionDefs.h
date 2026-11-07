@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OPTIONS_OPTIONDEFS_H_
-#define OPTIONS_OPTIONDEFS_H_
+#ifndef UQM_OPTIONS_OPTIONDEFS_H
+#define UQM_OPTIONS_OPTIONDEFS_H
 
 #include "libs/graphics/gfx_defs.h"	  // for GfxFlags
 #include "libs/sound/audiocoredefs.h" // for AudioFlags.
@@ -345,4 +345,4 @@ struct magic_enum::customize::enum_range<uqm::ScalingMode>
 	static constexpr int max {static_cast<int>(uqm::GfxFlags::Scale_HQXX)};
 };
 
-#endif /* OPTIONS_OPTIONDEFS_H_ */
+#endif // UQM_OPTIONS_OPTIONDEFS_H

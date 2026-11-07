@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef TRACKINT_H
-#define TRACKINT_H
+#pragma once
+#ifndef UQM_LIBS_SOUND_TRACKINT_H
+#define UQM_LIBS_SOUND_TRACKINT_H
 
 #include "libs/callback/callback.h"
 #include "core/stl/optional.h"
@@ -40,4 +41,4 @@ TFB_SoundChunk* find_next_page(TFB_SoundChunk* cur);
 TFB_SoundChunk* find_prev_page(TFB_SoundChunk* cur);
 
 
-#endif // TRACKINT_H
+#endif // UQM_LIBS_SOUND_TRACKINT_H

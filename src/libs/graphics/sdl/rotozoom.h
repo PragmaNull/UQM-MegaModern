@@ -9,9 +9,9 @@
 
 */
 
-
-#ifndef ROTOZOOM_H
-#define ROTOZOOM_H
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_ROTOZOOM_H
+#define UQM_LIBS_GRAPHICS_SDL_ROTOZOOM_H
 
 #include <math.h>
 #ifndef M_PI
@@ -93,4 +93,4 @@ SDL_Surface* zoomSurface(SDL_Surface* src, double zoomx, double zoomy,
 void zoomSurfaceSize(int width, int height, double zoomx, double zoomy,
 					 int* dstwidth, int* dstheight);
 
-#endif
+#endif // UQM_LIBS_GRAPHICS_SDL_ROTOZOOM_H

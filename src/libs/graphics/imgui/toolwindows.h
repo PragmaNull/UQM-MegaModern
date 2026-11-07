@@ -1,7 +1,8 @@
 // Windows that the ImGui overlay lists in its menu bar.
+
 #pragma once
-#ifndef LIBS_GRAPHICS_IMGUI_TOOLWINDOWS_H_
-#define LIBS_GRAPHICS_IMGUI_TOOLWINDOWS_H_
+#ifndef UQM_LIBS_GRAPHICS_IMGUI_TOOLWINDOWS_H
+#define UQM_LIBS_GRAPHICS_IMGUI_TOOLWINDOWS_H
 
 #include "core/stl/stl.h"
 #include "core/stl/functional.h"
@@ -24,4 +25,4 @@ void addToolWindow(uqstl::string name, uqstl::function<void(bool& open)> draw, b
 
 } // namespace uqm
 
-#endif // LIBS_GRAPHICS_IMGUI_TOOLWINDOWS_H_
+#endif // UQM_LIBS_GRAPHICS_IMGUI_TOOLWINDOWS_H

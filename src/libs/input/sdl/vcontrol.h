@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_INPUT_SDL_VCONTROL_H_
-#define LIBS_INPUT_SDL_VCONTROL_H_
+#pragma once
+#ifndef UQM_LIBS_INPUT_SDL_VCONTROL_H
+#define UQM_LIBS_INPUT_SDL_VCONTROL_H
 
 #include "core/types/enum.h"
 #include "port.h"
@@ -121,4 +122,4 @@ int VControl_GetLastGesture(VControlGesture* g);
 inline constexpr auto VcontrolStartbit {0x10000};
 inline constexpr auto VcontrolMask {0x0FFFF};
 
-#endif
+#endif // UQM_LIBS_INPUT_SDL_VCONTROL_H

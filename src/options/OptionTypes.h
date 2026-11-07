@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UQM_OPTIONS_OPTIONTYPES_H_
-#define UQM_OPTIONS_OPTIONTYPES_H_
+#ifndef UQM_OPTIONS_OPTIONTYPES_H
+#define UQM_OPTIONS_OPTIONTYPES_H
 
 #include "core/stl/stl.h"
 #include "core/types/enum.h"
@@ -87,4 +87,4 @@ inline const char* OptionT<bool>::toString() const
 
 } // namespace uqm
 
-#endif /* UQM_OPTIONS_OPTIONTYPES_H_ */
+#endif // UQM_OPTIONS_OPTIONTYPES_H

@@ -2,6 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_SHIPS_PKUNK_RESINST_H
+#define UQM_SHIPS_PKUNK_RESINST_H
+
 inline constexpr uqgsl::czstring BugBigMaskPmapAnim {"ship.pkunk.graphics.bug.large"};
 inline constexpr uqgsl::czstring BugMedMaskPmapAnim {"ship.pkunk.graphics.bug.medium"};
 inline constexpr uqgsl::czstring BugSmlMaskPmapAnim {"ship.pkunk.graphics.bug.small"};
@@ -14,3 +18,5 @@ inline constexpr uqgsl::czstring PkunkRaceStrings {"ship.pkunk.text"};
 inline constexpr uqgsl::czstring PkunkShipSounds {"ship.pkunk.sounds"};
 inline constexpr uqgsl::czstring PkunkSmlMaskPmapAnim {"ship.pkunk.graphics.fury.small"};
 inline constexpr uqgsl::czstring PkunkVictorySong {"ship.pkunk.ditty"};
+
+#endif // UQM_SHIPS_PKUNK_RESINST_H

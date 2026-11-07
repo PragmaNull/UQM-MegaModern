@@ -1,7 +1,8 @@
 // ImGui window that shows and changes the game state: flags, clock, flagship and SIS.
+
 #pragma once
-#ifndef UQM_IMGUI_GAMEWINDOW_H_
-#define UQM_IMGUI_GAMEWINDOW_H_
+#ifndef UQM_IMGUI_GAMEWINDOW_H
+#define UQM_IMGUI_GAMEWINDOW_H
 
 namespace uqm
 {
@@ -11,4 +12,4 @@ void addGameWindow();
 
 } // namespace uqm
 
-#endif // UQM_IMGUI_GAMEWINDOW_H_
+#endif // UQM_IMGUI_GAMEWINDOW_H

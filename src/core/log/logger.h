@@ -1,7 +1,6 @@
 #pragma once
-
-#ifndef UQM_CORE_LOG_LOGGER_H_
-#define UQM_CORE_LOG_LOGGER_H_
+#ifndef UQM_CORE_LOG_LOGGER_H
+#define UQM_CORE_LOG_LOGGER_H
 
 // set the global log level limit.
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
@@ -37,4 +36,4 @@ private:
 
 } // namespace uqm
 
-#endif /* UQM_CORE_LOG_LOGGER_H_ */
+#endif // UQM_CORE_LOG_LOGGER_H

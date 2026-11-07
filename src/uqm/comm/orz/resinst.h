@@ -2,9 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_ORZ_RESINST_H
+#define UQM_COMM_ORZ_RESINST_H
+
 inline constexpr uqgsl::czstring OrzColorMap {"comm.orz.colortable"};
 inline constexpr uqgsl::czstring OrzConversationPhrases {"comm.orz.dialogue"};
 inline constexpr uqgsl::czstring OrzFont {"comm.orz.font"};
 inline constexpr uqgsl::czstring OrzMusic {"comm.orz.music"};
 inline constexpr uqgsl::czstring OrzPmapAnim {"comm.orz.graphics"};
 inline constexpr uqgsl::czstring OrzAngryPmapAnim {"comm.orz.angry.graphics"};
+
+#endif // UQM_COMM_ORZ_RESINST_H

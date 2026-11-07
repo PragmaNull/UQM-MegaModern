@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UQM_CORE_STL_OPTIONAL_H_
-#define UQM_CORE_STL_OPTIONAL_H_
+#ifndef UQM_CORE_STL_OPTIONAL_H
+#define UQM_CORE_STL_OPTIONAL_H
 
 #include "core/stl/stl.h"
 
@@ -20,4 +20,4 @@ using late_constructed = uqstl::optional<T>;
 
 } // namespace uqstl
 
-#endif /* UQM_CORE_STL_OPTIONAL_H_ */
+#endif // UQM_CORE_STL_OPTIONAL_H

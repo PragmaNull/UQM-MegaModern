@@ -18,8 +18,9 @@
 
 // Scalers Internals
 
-#ifndef SCALEINT_H_
-#define SCALEINT_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_SCALEINT_H
+#define UQM_LIBS_GRAPHICS_SDL_SCALEINT_H
 
 #include "libs/graphics/sdl/sdl_common.h"
 #include <cstdint>
@@ -385,4 +386,4 @@ static inline void SCALE_(Blend_bilinear)(const Uint32* row0, const Uint32* row1
 #undef BL_SUM_WERR
 }
 
-#endif /* SCALEINT_H_ */
+#endif // UQM_LIBS_GRAPHICS_SDL_SCALEINT_H

@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef CONS_RES_H_
-#define CONS_RES_H_
+#pragma once
+#ifndef UQM_CONS_RES_H
+#define UQM_CONS_RES_H
 
 #include "libs/gfxlib.h"
 #include "libs/sndlib.h"
@@ -40,4 +41,4 @@ MUSIC_REF loadMainMenuMusic(uint8_t selector);
 }
 #endif
 
-#endif /* CONS_RES_H_ */
+#endif // UQM_CONS_RES_H

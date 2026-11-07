@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_FLASH_H_
-#define UQM_FLASH_H_
+#pragma once
+#ifndef UQM_FLASH_H
+#define UQM_FLASH_H
 
 
 #include "core/types/enum.h"
@@ -235,4 +236,4 @@ void Flash_UpdateOriginal(FlashContext* context);
 }
 #endif
 
-#endif /* UQM_FLASH_H_ */
+#endif // UQM_FLASH_H

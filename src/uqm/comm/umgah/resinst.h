@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_UMGAH_RESINST_H
+#define UQM_COMM_UMGAH_RESINST_H
+
 inline constexpr uqgsl::czstring UmgahColorMap {"comm.umgah.colortable"};
 inline constexpr uqgsl::czstring UmgahConversationPhrases {"comm.umgah.dialogue"};
 inline constexpr uqgsl::czstring UmgahFont {"comm.umgah.font"};
 inline constexpr uqgsl::czstring UmgahMusic {"comm.umgah.music"};
 inline constexpr uqgsl::czstring UmgahPmapAnim {"comm.umgah.graphics"};
+
+#endif // UQM_COMM_UMGAH_RESINST_H

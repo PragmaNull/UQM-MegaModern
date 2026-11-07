@@ -18,8 +18,9 @@
  * Internals
  */
 
-#ifndef LIBS_SOUND_MIXER_MIXERINT_H_
-#define LIBS_SOUND_MIXER_MIXERINT_H_
+#pragma once
+#ifndef UQM_LIBS_SOUND_MIXER_MIXERINT_H
+#define UQM_LIBS_SOUND_MIXER_MIXERINT_H
 
 #include "core/types/enum.h"
 #include "core/stl/stl.h"
@@ -115,4 +116,4 @@ static inline bool mixer_SourceGetFakeSample(mixer_Source* src,
 											 float* psamp, bool left);
 static inline uint32_t mixer_SourceAdvance(mixer_Source* src, bool left);
 
-#endif /* LIBS_SOUND_MIXER_MIXERINT_H_ */
+#endif // UQM_LIBS_SOUND_MIXER_MIXERINT_H

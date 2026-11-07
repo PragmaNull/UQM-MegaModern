@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_PLANETS_GENERATE_GENALL_H_
-#define UQM_PLANETS_GENERATE_GENALL_H_
+#pragma once
+#ifndef UQM_PLANETS_GENERATE_GENALL_H
+#define UQM_PLANETS_GENERATE_GENALL_H
 
 #include "gendefault.h"
 #include <cstdint>
@@ -53,4 +54,4 @@ const extern GenerateFunctions generateYehatFunctions;
 const extern GenerateFunctions generateZoqFotPikFunctions;
 const extern GenerateFunctions generateZoqFotPikScoutFunctions;
 
-#endif /* UQM_PLANETS_GENERATE_GENALL_H_ */
+#endif // UQM_PLANETS_GENERATE_GENALL_H

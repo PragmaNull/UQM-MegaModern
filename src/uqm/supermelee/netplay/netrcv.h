@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_SUPERMELEE_NETPLAY_NETRCV_H_
-#define UQM_SUPERMELEE_NETPLAY_NETRCV_H_
+#pragma once
+#ifndef UQM_SUPERMELEE_NETPLAY_NETRCV_H
+#define UQM_SUPERMELEE_NETPLAY_NETRCV_H
 
 #include "netconnection.h"
 
@@ -36,4 +37,4 @@ uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std:
 }
 #endif
 
-#endif /* UQM_SUPERMELEE_NETPLAY_NETRCV_H_ */
+#endif // UQM_SUPERMELEE_NETPLAY_NETRCV_H

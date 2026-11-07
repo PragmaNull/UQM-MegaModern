@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_GRAPHICS_SDL_2XSCALERS_H_
-#define LIBS_GRAPHICS_SDL_2XSCALERS_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_2XSCALERS_H
+#define UQM_LIBS_GRAPHICS_SDL_2XSCALERS_H
 
 void Scale_Nearest(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r);
 void Scale_BilinearFilter(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r);
@@ -27,4 +28,4 @@ void Scale_HqFilter(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r);
 const extern Scale_FuncDef_t Scale_C_Functions[];
 
 
-#endif /* LIBS_GRAPHICS_SDL_2XSCALERS_H_ */
+#endif // UQM_LIBS_GRAPHICS_SDL_2XSCALERS_H

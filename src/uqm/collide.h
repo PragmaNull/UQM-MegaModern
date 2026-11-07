@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_COLLIDE_H_
-#define UQM_COLLIDE_H_
+#pragma once
+#ifndef UQM_COLLIDE_H
+#define UQM_COLLIDE_H
 
 #include "element.h"
 
@@ -55,4 +56,4 @@ extern void collide(Element* ElementPtr0, Element* ElementPtr1);
 }
 #endif
 
-#endif /* UQM_COLLIDE_H_ */
+#endif // UQM_COLLIDE_H

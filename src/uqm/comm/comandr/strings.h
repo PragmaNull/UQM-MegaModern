@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#pragma once
 #ifndef UQM_COMM_COMANDR_STRINGS_H
 #define UQM_COMM_COMANDR_STRINGS_H
 
@@ -123,4 +124,4 @@ enum class CommanderPhrase
 template <>
 inline constexpr bool IsArithmeticEnum<CommanderPhrase> = true;
 
-#endif /* UQM_COMM_COMANDR_STRINGS_H */
+#endif // UQM_COMM_COMANDR_STRINGS_H

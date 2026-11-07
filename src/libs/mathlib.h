@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_MATHLIB_H_
-#define LIBS_MATHLIB_H_
+#pragma once
+#ifndef UQM_LIBS_MATHLIB_H
+#define UQM_LIBS_MATHLIB_H
 
 #include "core/misc/bittricks.h"
 
@@ -53,4 +54,4 @@ inline static float scaleThing(float original, float thingToScale)
 }
 #endif
 
-#endif /* LIBS_MATHLIB_H_ */
+#endif // UQM_LIBS_MATHLIB_H

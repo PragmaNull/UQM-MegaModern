@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef VIDINTERN_H_
-#define VIDINTERN_H_
+#pragma once
+#ifndef UQM_LIBS_VIDEO_VIDINTRN_H
+#define UQM_LIBS_VIDEO_VIDINTRN_H
 
 #include <cstdint>
 #include "core/stl/string.h"
@@ -40,4 +41,4 @@ struct legacy_video_ref
 	MUSIC_REF speechref;
 };
 
-#endif
+#endif // UQM_LIBS_VIDEO_VIDINTRN_H

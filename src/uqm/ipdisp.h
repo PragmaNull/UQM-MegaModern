@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef UQM_IPDISP_H_INCL_
-#define UQM_IPDISP_H_INCL_
+#pragma once
+#ifndef UQM_IPDISP_H
+#define UQM_IPDISP_H
 
 #include "core/misc/bittricks.h"
 
@@ -35,4 +36,4 @@ extern void DoMissions(void);
 }
 #endif
 
-#endif /* UQM_IPDISP_H_INCL_ */
+#endif // UQM_IPDISP_H

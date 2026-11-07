@@ -16,11 +16,12 @@
 
 /* MikMod adapter */
 
-#ifndef MODAUD_H
-#define MODAUD_H
+#pragma once
+#ifndef UQM_LIBS_SOUND_DECODERS_MODAUD_H
+#define UQM_LIBS_SOUND_DECODERS_MODAUD_H
 
 #include "decoder.h"
 
 extern TFB_SoundDecoderFuncs moda_DecoderVtbl;
 
-#endif // MODAUD_H
+#endif // UQM_LIBS_SOUND_DECODERS_MODAUD_H

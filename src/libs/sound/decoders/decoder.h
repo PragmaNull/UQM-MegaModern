@@ -18,8 +18,9 @@
  * API is heavily influenced by SDL_sound.
  */
 
-#ifndef DECODER_H
-#define DECODER_H
+#pragma once
+#ifndef UQM_LIBS_SOUND_DECODERS_DECODER_H
+#define UQM_LIBS_SOUND_DECODERS_DECODER_H
 
 #include "core/types/enum.h"
 #include "port.h"
@@ -154,4 +155,4 @@ void SoundDecoder_Rewind(TFB_SoundDecoder* decoder);
 void SoundDecoder_Free(TFB_SoundDecoder* decoder);
 const char* SoundDecoder_GetName(TFB_SoundDecoder* decoder);
 
-#endif
+#endif // UQM_LIBS_SOUND_DECODERS_DECODER_H

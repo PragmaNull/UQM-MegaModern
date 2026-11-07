@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_GRAPHICS_CONTEXT_H_
-#define LIBS_GRAPHICS_CONTEXT_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_CONTEXT_H
+#define UQM_LIBS_GRAPHICS_CONTEXT_H
 
 #include "tfb_draw.h"
 
@@ -111,4 +112,4 @@ inline GRAPHICS_STATUS GraphicsStatus() { return _GraphicsStatusFlags & (GRAPHIC
 bool GetContextValidRect(GfxRect* pValidRect, GfxPoint* origin);
 extern void FixContextFontEffect(void);
 
-#endif /* LIBS_GRAPHICS_CONTEXT_H_ */
+#endif // UQM_LIBS_GRAPHICS_CONTEXT_H

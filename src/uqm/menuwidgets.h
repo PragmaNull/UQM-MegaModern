@@ -1,7 +1,8 @@
 // Setup menu widgets built from a menu definition and bound to settings.
+
 #pragma once
-#ifndef UQM_MENUWIDGETS_H_
-#define UQM_MENUWIDGETS_H_
+#ifndef UQM_MENUWIDGETS_H
+#define UQM_MENUWIDGETS_H
 
 #include "core/stl/stl.h"
 #include "core/stl/vector.h"
@@ -104,4 +105,4 @@ void initLabelWidget(WidgetLabel& widget, uqstl::vector<const char*>& lines);
 
 } // namespace uqm
 
-#endif // UQM_MENUWIDGETS_H_
+#endif // UQM_MENUWIDGETS_H

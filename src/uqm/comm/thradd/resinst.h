@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_THRADD_RESINST_H
+#define UQM_COMM_THRADD_RESINST_H
+
 inline constexpr uqgsl::czstring ThraddColorMap {"comm.thraddash.colortable"};
 inline constexpr uqgsl::czstring ThraddConversationPhrases {"comm.thraddash.dialogue"};
 inline constexpr uqgsl::czstring ThraddFont {"comm.thraddash.font"};
 inline constexpr uqgsl::czstring ThraddMusic {"comm.thraddash.music"};
 inline constexpr uqgsl::czstring ThraddPmapAnim {"comm.thraddash.graphics"};
+
+#endif // UQM_COMM_THRADD_RESINST_H

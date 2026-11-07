@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef GENERATE_H
-#define GENERATE_H
+#pragma once
+#ifndef UQM_PLANETS_GENERATE_H
+#define UQM_PLANETS_GENERATE_H
 
 typedef struct GenerateFunctions GenerateFunctions;
 
@@ -110,4 +111,4 @@ const GenerateFunctions* getGenerateFunctions(uint8_t Index);
 }
 #endif
 
-#endif /* GENERATE_H */
+#endif // UQM_PLANETS_GENERATE_H

@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef SIS_H_INCL__
-#define SIS_H_INCL__
+#pragma once
+#ifndef UQM_SIS_H
+#define UQM_SIS_H
 
 #include "core/types/enum.h"
 #include "core/misc/bittricks.h"
@@ -311,4 +312,4 @@ template <>
 inline constexpr bool IsArithmeticEnum<BevelLevel> = true;
 
 
-#endif /* SIS_H_INCL__ */
+#endif // UQM_SIS_H

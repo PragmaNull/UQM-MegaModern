@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef PNG2SDL_H_
-#define PNG2SDL_H_
+#pragma once
+#ifndef UQM_LIBS_GRAPHICS_SDL_PNG2SDL_H
+#define UQM_LIBS_GRAPHICS_SDL_PNG2SDL_H
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
@@ -34,4 +35,4 @@ extern SDL_Surface* SDL_PNGFormatAlpha(SDL_Surface* src);
 }
 #endif
 
-#endif
+#endif // UQM_LIBS_GRAPHICS_SDL_PNG2SDL_H

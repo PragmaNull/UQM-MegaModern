@@ -1,7 +1,8 @@
 // Read-only mount source for a zip archive.
+
 #pragma once
-#ifndef UQM_LIBS_IO_STANDARD_ZIPSOURCE_H_
-#define UQM_LIBS_IO_STANDARD_ZIPSOURCE_H_
+#ifndef UQM_LIBS_IO_STANDARD_ZIPSOURCE_H
+#define UQM_LIBS_IO_STANDARD_ZIPSOURCE_H
 
 #include "core/stl/map.h"
 #include "libs/io/standard/MountSource.h"
@@ -46,4 +47,4 @@ private:
 
 } // namespace uqm::io::standard
 
-#endif // UQM_LIBS_IO_STANDARD_ZIPSOURCE_H_
+#endif // UQM_LIBS_IO_STANDARD_ZIPSOURCE_H

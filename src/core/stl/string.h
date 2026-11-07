@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UQM_CORE_STL_STRING_H_
-#define UQM_CORE_STL_STRING_H_
+#ifndef UQM_CORE_STL_STRING_H
+#define UQM_CORE_STL_STRING_H
 
 #include "core/stl/stl.h"
 
@@ -25,4 +25,4 @@ using fixed_string = string; // std library has no fixed string :(
 static_assert(false, "EASTL is not supported yet. If you want to add support for it, submit a PR!");
 #endif /* !defined(USING_EASTL)*/
 
-#endif /* UQM_CORE_STL_STRING_H_ */
+#endif // UQM_CORE_STL_STRING_H

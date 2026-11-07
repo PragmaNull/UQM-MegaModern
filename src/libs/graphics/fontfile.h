@@ -1,7 +1,8 @@
 // Reads font metrics files: the JSON files that give the spacing and kerning of a font.
+
 #pragma once
-#ifndef UQM_LIBS_GRAPHICS_FONTFILE_H_
-#define UQM_LIBS_GRAPHICS_FONTFILE_H_
+#ifndef UQM_LIBS_GRAPHICS_FONTFILE_H
+#define UQM_LIBS_GRAPHICS_FONTFILE_H
 
 #include "core/stl/stl.h"
 #include "core/stl/optional.h"
@@ -38,4 +39,4 @@ struct FontMetrics
 
 } // namespace uqm
 
-#endif // UQM_LIBS_GRAPHICS_FONTFILE_H_
+#endif // UQM_LIBS_GRAPHICS_FONTFILE_H

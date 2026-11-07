@@ -1,7 +1,8 @@
 // The internal state of the network classes. Only the network sources include this header, because it includes Asio.
+
 #pragma once
-#ifndef UQM_LIBS_NETWORK_NETIMPL_H_
-#define UQM_LIBS_NETWORK_NETIMPL_H_
+#ifndef UQM_LIBS_NETWORK_NETIMPL_H
+#define UQM_LIBS_NETWORK_NETIMPL_H
 
 #ifdef _WIN32
 #ifndef NOMINMAX
@@ -56,4 +57,4 @@ private:
 
 } // namespace uqm::net
 
-#endif // UQM_LIBS_NETWORK_NETIMPL_H_
+#endif // UQM_LIBS_NETWORK_NETIMPL_H

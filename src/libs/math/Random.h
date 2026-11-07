@@ -20,8 +20,8 @@
 // Copyright (c) 1989, Robert Leyland and Scott Anderson
 
 #pragma once
-#ifndef LIBS_MATH_RANDOM_H_
-#define LIBS_MATH_RANDOM_H_
+#ifndef UQM_LIBS_MATH_RANDOM_H
+#define UQM_LIBS_MATH_RANDOM_H
 
 #include "libs/math/randomdefs.h"
 
@@ -120,4 +120,4 @@ public:
 
 } // namespace uqm
 
-#endif /* LIBS_MATH_RANDOM_H_ */
+#endif // UQM_LIBS_MATH_RANDOM_H

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBS_CALLBACK_CALLBACK_H_
-#define LIBS_CALLBACK_CALLBACK_H_
+#pragma once
+#ifndef UQM_LIBS_CALLBACK_CALLBACK_H
+#define UQM_LIBS_CALLBACK_CALLBACK_H
 
 #include <cstdint>
 
@@ -40,4 +41,4 @@ bool Callback_remove(CallbackID id);
 void Callback_process(void);
 bool Callback_haveMore(void);
 
-#endif /* LIBS_CALLBACK_CALLBACK_H_ */
+#endif // UQM_LIBS_CALLBACK_CALLBACK_H

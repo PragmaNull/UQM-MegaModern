@@ -13,8 +13,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef UQM_BATTLE_H_
-#define UQM_BATTLE_H_
+
+#pragma once
+#ifndef UQM_BATTLE_H
+#define UQM_BATTLE_H
 
 #include "options.h"
 #include "core/misc/bittricks.h"
@@ -67,4 +69,4 @@ extern bool RunAwayAllowed(void);
 }
 #endif
 
-#endif /* UQM_BATTLE_H_ */
+#endif // UQM_BATTLE_H

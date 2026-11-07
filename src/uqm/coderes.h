@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_CODERES_H_
-#define UQM_CODERES_H_
+#pragma once
+#ifndef UQM_CODERES_H
+#define UQM_CODERES_H
 
 #include "libs/reslib.h"
 
@@ -40,4 +41,4 @@ struct CodeResRef
 }
 #endif
 
-#endif /* UQM_CODERES_H_ */
+#endif // UQM_CODERES_H

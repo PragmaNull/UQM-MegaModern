@@ -1,7 +1,8 @@
 // Unbuffered byte stream that a mount source opens.
+
 #pragma once
-#ifndef UQM_LIBS_IO_STANDARD_STREAM_H_
-#define UQM_LIBS_IO_STANDARD_STREAM_H_
+#ifndef UQM_LIBS_IO_STANDARD_STREAM_H
+#define UQM_LIBS_IO_STANDARD_STREAM_H
 
 #include "core/stl/stl.h"
 
@@ -49,4 +50,4 @@ inline bool Stream::flush(uqstl::error_code& /*error*/)
 
 } // namespace uqm::io::standard
 
-#endif // UQM_LIBS_IO_STANDARD_STREAM_H_
+#endif // UQM_LIBS_IO_STANDARD_STREAM_H

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_SHIPCONT_H_
-#define UQM_SHIPCONT_H_
+#pragma once
+#ifndef UQM_SHIPCONT_H
+#define UQM_SHIPCONT_H
 
 #include "menustat.h"
 
@@ -45,4 +46,4 @@ extern FONT ModuleFont;
 }
 #endif
 
-#endif /* UQM_SHIPCONT_H_ */
+#endif // UQM_SHIPCONT_H

@@ -14,8 +14,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef YEHAT_H
-#define YEHAT_H
+#pragma once
+#ifndef UQM_SHIPS_YEHAT_YEHAT_H
+#define UQM_SHIPS_YEHAT_YEHAT_H
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -27,4 +28,4 @@ RaceDesc* init_yehat(void);
 }
 #endif
 
-#endif /* YEHAT_H */
+#endif // UQM_SHIPS_YEHAT_YEHAT_H

@@ -2,8 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
+#pragma once
+#ifndef UQM_COMM_ZOQFOT_RESINST_H
+#define UQM_COMM_ZOQFOT_RESINST_H
+
 inline constexpr uqgsl::czstring ZoqfotpikColorMap {"comm.zoqfotpik.colortable"};
 inline constexpr uqgsl::czstring ZoqfotpikConversationPhrases {"comm.zoqfotpik.dialogue"};
 inline constexpr uqgsl::czstring ZoqfotpikFont {"comm.zoqfotpik.font"};
 inline constexpr uqgsl::czstring ZoqfotpikMusic {"comm.zoqfotpik.music"};
 inline constexpr uqgsl::czstring ZoqfotpikPmapAnim {"comm.zoqfotpik.graphics"};
+
+#endif // UQM_COMM_ZOQFOT_RESINST_H

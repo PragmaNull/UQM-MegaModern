@@ -16,10 +16,11 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBS_INPUT_INPINTRN_H_
-#define LIBS_INPUT_INPINTRN_H_
+#pragma once
+#ifndef UQM_LIBS_INPUT_INPINTRN_H
+#define UQM_LIBS_INPUT_INPINTRN_H
 
 #include "libs/inplib.h"
 #include "libs/input/input_common.h"
 
-#endif /* LIBS_INPUT_INPINTRN_H_ */
+#endif // UQM_LIBS_INPUT_INPINTRN_H

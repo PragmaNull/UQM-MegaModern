@@ -16,8 +16,9 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef UQM_PLANETS_LIFEFORM_H_
-#define UQM_PLANETS_LIFEFORM_H_
+#pragma once
+#ifndef UQM_PLANETS_LIFEFORM_H
+#define UQM_PLANETS_LIFEFORM_H
 
 #include "core/misc/bittricks.h"
 
@@ -76,4 +77,4 @@ extern LifeformDesc CreatureData[];
 }
 #endif
 
-#endif /* UQM_PLANETS_LIFEFORM_H_ */
+#endif // UQM_PLANETS_LIFEFORM_H

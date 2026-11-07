@@ -13,8 +13,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-#ifndef UQM_COLORS_H_
-#define UQM_COLORS_H_
+
+#pragma once
+#ifndef UQM_COLORS_H
+#define UQM_COLORS_H
 
 #include "libs/gfxlib.h"
 
@@ -549,4 +551,4 @@ inline constexpr auto ScanBiologicalTintColor {BrightGreenColor};
 // Transparent
 inline constexpr auto Transparent {BuildColorRgba(0x50, 0x50, 0x50, 0x00)};
 
-#endif /* UQM_COLORS_H_ */
+#endif // UQM_COLORS_H

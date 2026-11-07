@@ -1,4 +1,7 @@
 #pragma once
+#ifndef UQM_CORE_TYPES_ENUM_H
+#define UQM_CORE_TYPES_ENUM_H
+
 #include "core/stl/concepts.h"
 #include <compare>
 #include <cstdint>
@@ -280,3 +283,5 @@ constexpr int64_t declaredBits()
 	return bits;
 }
 #endif
+
+#endif // UQM_CORE_TYPES_ENUM_H

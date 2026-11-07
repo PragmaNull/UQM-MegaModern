@@ -1,7 +1,8 @@
 // Reads animation files: the JSON files that list the images of the frames of a drawable.
+
 #pragma once
-#ifndef UQM_LIBS_GRAPHICS_ANIFILE_H_
-#define UQM_LIBS_GRAPHICS_ANIFILE_H_
+#ifndef UQM_LIBS_GRAPHICS_ANIFILE_H
+#define UQM_LIBS_GRAPHICS_ANIFILE_H
 
 #include "core/stl/stl.h"
 #include "core/stl/optional.h"
@@ -36,4 +37,4 @@ struct AniFrame
 
 } // namespace uqm
 
-#endif // UQM_LIBS_GRAPHICS_ANIFILE_H_
+#endif // UQM_LIBS_GRAPHICS_ANIFILE_H

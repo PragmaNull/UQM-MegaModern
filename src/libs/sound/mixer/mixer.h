@@ -17,8 +17,9 @@
 /* Mixer for low-level sound output drivers
  */
 
-#ifndef LIBS_SOUND_MIXER_MIXER_H_
-#define LIBS_SOUND_MIXER_MIXER_H_
+#pragma once
+#ifndef UQM_LIBS_SOUND_MIXER_MIXER_H
+#define UQM_LIBS_SOUND_MIXER_MIXER_H
 
 #include "core/types/enum.h"
 #include "config.h"
@@ -263,4 +264,4 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 static_assert(sizeof(mixer_Object) >= sizeof(void*), "mixer_Object must be able to hold a pointer");
 static_assert(sizeof(mixer_IntVal) >= sizeof(mixer_Object), "mixer_IntVal must be able to hold a mixer_Object");
 
-#endif /* LIBS_SOUND_MIXER_MIXER_H_ */
+#endif // UQM_LIBS_SOUND_MIXER_MIXER_H

@@ -1,7 +1,8 @@
 // ImGui windows that edit the settings and the cheats.
+
 #pragma once
-#ifndef UQM_IMGUI_SETTINGSWINDOW_H_
-#define UQM_IMGUI_SETTINGSWINDOW_H_
+#ifndef UQM_IMGUI_SETTINGSWINDOW_H
+#define UQM_IMGUI_SETTINGSWINDOW_H
 
 namespace uqm
 {
@@ -11,4 +12,4 @@ void addSettingsWindows();
 
 } // namespace uqm
 
-#endif // UQM_IMGUI_SETTINGSWINDOW_H_
+#endif // UQM_IMGUI_SETTINGSWINDOW_H
