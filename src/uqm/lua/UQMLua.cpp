@@ -94,6 +94,7 @@ void getScriptResData(const char* pathName, RESOURCE_DATA* resdata)
 
 void loadLib(lua_State* luaState, const luaL_Reg& lib)
 {
+	const LuaStackGuard stackGuard {luaState};
 	lua_pushglobaltable(luaState);
 
 	lua_pushcfunction(luaState, lib.func);
@@ -103,7 +104,6 @@ void loadLib(lua_State* luaState, const luaL_Reg& lib)
 	// [-2] -> table globalTable
 	// [-1] -> table libTable
 	lua_setfield(luaState, -2, lib.name);
-	lua_pop(luaState, 1);
 }
 
 struct ReaderState
@@ -199,8 +199,8 @@ bool UQMLua::beginComm(const luaUqm_custom_Function* customFuncs, ResourceName s
 	loadLibs(m_state.get(), CommLibs);
 	if (customFuncs != nullptr)
 	{
+		const LuaStackGuard stackGuard {m_state.get()};
 		luaUqm_custom_init(m_state.get(), customFuncs);
-		lua_pop(m_state.get(), 1);
 	}
 
 	if (scriptRes == NullResource)
@@ -253,10 +253,11 @@ uqstl::string UQMLua::interpolate(uqstl::string_view str)
 		const uqstl::string expression {fmt::format("return {}", str.substr(startTag + 2, endTag - startTag - 2))};
 		pos = endTag + 2;
 
+		const LuaStackGuard stackGuard {luaState};
+
 		if (luaL_loadstring(luaState, expression.c_str()) != LUA_OK)
 		{
 			log::error("UQMLua::interpolate(): luaL_loadstring() failed: {}", lua_tostring(luaState, -1));
-			lua_pop(luaState, 1);
 			continue;
 		}
 
@@ -264,7 +265,6 @@ uqstl::string UQMLua::interpolate(uqstl::string_view str)
 		{
 			log::error("[script] UQMLua::interpolate(): A script error occurred in interpolation {} in string '{}': {}.",
 					   interI, str, lua_tostring(luaState, -1));
-			lua_pop(luaState, 1);
 			continue;
 		}
 
@@ -280,8 +280,6 @@ uqstl::string UQMLua::interpolate(uqstl::string_view str)
 		{
 			result.append(part, partLen);
 		}
-
-		lua_pop(luaState, 1);
 	}
 
 	result += str.substr(pos);
@@ -301,8 +299,8 @@ bool UQMLua::beginEvents(const luaUqm_custom_Function* customFuncs, ResourceName
 	loadLibs(m_state.get(), EventLibs);
 	if (customFuncs != nullptr)
 	{
+		const LuaStackGuard stackGuard {m_state.get()};
 		luaUqm_custom_init(m_state.get(), customFuncs);
-		lua_pop(m_state.get(), 1);
 	}
 
 	return runScriptRes(scriptRes);
@@ -318,6 +316,7 @@ void UQMLua::callEvent(uqgsl::czstring eventId)
 {
 	assert(m_eventsActive);
 	lua_State* const luaState {m_state.get()};
+	const LuaStackGuard stackGuard {luaState};
 
 	pushEventTable(luaState);
 	lua_pushstring(luaState, eventId);
@@ -330,7 +329,6 @@ void UQMLua::callEvent(uqgsl::czstring eventId)
 	if (lua_isnil(luaState, -1))
 	{
 		log::warn("[script] UQMLua::callEvent(): Event '{}' is not registered.", eventId);
-		lua_pop(luaState, 2);
 		return;
 	}
 
@@ -387,18 +385,17 @@ void UQMLua::runDebugConsole()
 void UQMLua::runDebugLine(uqgsl::czstring line, std::FILE* out, std::FILE* err)
 {
 	lua_State* const luaState {m_state.get()};
+	const LuaStackGuard stackGuard {luaState};
 
 	if (luaL_loadstring(luaState, line) != LUA_OK)
 	{
 		fmt::print(err, "Syntax error: {}\n", lua_tostring(luaState, -1));
-		lua_pop(luaState, 1);
 		return;
 	}
 
 	if (lua_pcall(luaState, 0, 1, 0) != LUA_OK)
 	{
 		fmt::print(err, "Runtime error: {}\n", lua_tostring(luaState, -1));
-		lua_pop(luaState, 1);
 		return;
 	}
 
@@ -412,7 +409,6 @@ void UQMLua::runDebugLine(uqgsl::czstring line, std::FILE* out, std::FILE* err)
 	{
 		fmt::print(out, "({}) {}\n", resultTypeStr, resultStr);
 	}
-	lua_pop(luaState, 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -517,10 +513,10 @@ bool UQMLua::callStackFunction(lua_State* luaState)
 
 bool UQMLua::callFunction(lua_State* luaState, uqgsl::czstring name)
 {
+	const LuaStackGuard stackGuard {luaState};
 	lua_getglobal(luaState, name);
 	if (!lua_isfunction(luaState, -1))
 	{
-		lua_pop(luaState, 1);
 		return false;
 	}
 

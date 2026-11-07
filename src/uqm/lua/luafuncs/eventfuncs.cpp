@@ -56,6 +56,7 @@ int luaUqm_event_open(lua_State* luaState)
 static bool isEventRegistered(lua_State* luaState, int argn)
 {
 	argn = lua_absindex(luaState, argn);
+	const uqm::LuaStackGuard stackGuard {luaState};
 
 	uqm::UQMLua::pushEventTable(luaState);
 	lua_pushvalue(luaState, argn);
@@ -65,13 +66,7 @@ static bool isEventRegistered(lua_State* luaState, int argn)
 
 	// [-2] -> table eventTable
 	// [-1] -> function eventFun
-	const bool result {!lua_isnil(luaState, -1)};
-
-	// [-2] -> table eventTable
-	// [-1] -> function eventFun
-	lua_pop(luaState, 2);
-
-	return result;
+	return !lua_isnil(luaState, -1);
 }
 
 // [1] -> int year
@@ -156,6 +151,7 @@ static int luaUqm_event_register(lua_State* luaState)
 		return 0;
 	}
 
+	const uqm::LuaStackGuard stackGuard {luaState};
 	uqm::UQMLua::pushEventTable(luaState);
 	lua_pushvalue(luaState, 1);
 	lua_pushvalue(luaState, 2);
@@ -163,10 +159,6 @@ static int luaUqm_event_register(lua_State* luaState)
 	// [-2] -> string eventIdStr
 	// [-1] -> function eventFun
 	lua_settable(luaState, -3);
-
-	// [-1] -> table eventTable
-	lua_pop(luaState, 1);
-
 	return 0;
 }
 
@@ -183,6 +175,7 @@ static int luaUqm_event_unregister(lua_State* luaState)
 		return 0;
 	}
 
+	const uqm::LuaStackGuard stackGuard {luaState};
 	uqm::UQMLua::pushEventTable(luaState);
 	lua_pushvalue(luaState, 1);
 	lua_pushnil(luaState);
@@ -190,10 +183,6 @@ static int luaUqm_event_unregister(lua_State* luaState)
 	// [-2] -> string eventIdStr
 	// [-1] -> nil
 	lua_settable(luaState, -3);
-
-	// [-1] -> table eventTable
-	lua_pop(luaState, 1);
-
 	return 0;
 }
 

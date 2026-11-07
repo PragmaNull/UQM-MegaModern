@@ -176,6 +176,7 @@ static void pushResponseCallbackRegistry(lua_State* luaState)
 static void setResponseCallback(lua_State* luaState, int responseArgN,
 								int callbackArgN)
 {
+	const uqm::LuaStackGuard stackGuard {luaState};
 	pushResponseCallbackRegistry(luaState);
 	// [-1] -> table responseCallbackRegistry
 
@@ -185,9 +186,6 @@ static void setResponseCallback(lua_State* luaState, int responseArgN,
 	// [-2] -> string response
 	// [-1] -> function callback
 	lua_settable(luaState, -3);
-
-	// [-3] -> table responseCallbackRegistry
-	lua_pop(luaState, 1);
 }
 
 // The callback function is pushed on the stack.
@@ -210,6 +208,7 @@ static void pushResponseCallback(lua_State* luaState, ResponseRef response)
 static void npcPhraseCallback(CallbackArg extra)
 {
 	lua_State* const luaState {uqm::lua().commState()};
+	const uqm::LuaStackGuard stackGuard {luaState};
 	pushNpcPhraseCallback(luaState);
 	if (lua_pcall(luaState, 0, 0, 0) != 0)
 	{
@@ -217,7 +216,6 @@ static void npcPhraseCallback(CallbackArg extra)
 		uqm::log::error("[script] An error occurred during a "
 						"doNpcPhrase() callback: {}",
 						lua_tostring(luaState, -1));
-		lua_pop(luaState, 1);
 	}
 	(void)extra;
 }
@@ -227,6 +225,7 @@ static void npcPhraseCallback(CallbackArg extra)
 static void responseCallback(ResponseRef response)
 {
 	lua_State* const luaState {uqm::lua().commState()};
+	const uqm::LuaStackGuard stackGuard {luaState};
 	pushResponseCallback(luaState, response);
 	pushPhraseId(luaState, response);
 	if (lua_pcall(luaState, 1, 0, 0) != 0)
@@ -235,7 +234,6 @@ static void responseCallback(ResponseRef response)
 		uqm::log::error("[script] An error occurred during an "
 						"addResponse() callback: {}",
 						lua_tostring(luaState, -1));
-		lua_pop(luaState, 1);
 	}
 }
 

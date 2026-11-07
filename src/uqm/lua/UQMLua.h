@@ -32,6 +32,29 @@
 
 namespace uqm
 {
+
+// Restores the top of the Lua stack on destruction.
+class LuaStackGuard
+{
+public:
+	explicit LuaStackGuard(lua_State* luaState)
+		: m_state {luaState}
+		, m_top {lua_gettop(luaState)}
+	{
+	}
+
+	~LuaStackGuard()
+	{
+		lua_settop(m_state, m_top);
+	}
+
+	LuaStackGuard(const LuaStackGuard&) = delete;
+	LuaStackGuard& operator=(const LuaStackGuard&) = delete;
+
+private:
+	lua_State* m_state;
+	int m_top;
+};
 struct luaUqm_custom_Function;
 
 
