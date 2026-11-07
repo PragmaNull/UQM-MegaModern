@@ -1801,7 +1801,6 @@ void resetCrewBattle(void)
 {
 	Starship* StarShipPtr;
 	uint16_t delta;
-	GfxContextRef OldContext;
 
 	if (!(uqm::currentActivity() & ActivityFlag::InBattle) || (inHQSpace()))
 	{
@@ -1816,9 +1815,8 @@ void resetCrewBattle(void)
 
 	delta = StarShipPtr->RaceDescPtr->ship_info.max_crew - StarShipPtr->RaceDescPtr->ship_info.crew_level;
 
-	OldContext = SetContext(StatusContext);
+	const ContextScope contextScope {StatusContext};
 	DeltaCrew((Element*)StarShipPtr->hShip, delta);
-	SetContext(OldContext);
 }
 
 ////////////////////////////////////////////////////////////////////////////

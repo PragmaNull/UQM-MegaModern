@@ -246,7 +246,6 @@ void font_DrawShadowedText(GfxText* pText, ShadowAngle direction,
 						   Color text_color, Color shadow_color)
 {
 	GfxPoint shadow_angle = {0, 0};
-	Color OldColor;
 
 	switch (direction)
 	{
@@ -279,7 +278,7 @@ void font_DrawShadowedText(GfxText* pText, ShadowAngle direction,
 	pText->baseline.x += uqm::ResScale(shadow_angle.x);
 	pText->baseline.y += uqm::ResScale(shadow_angle.y);
 
-	OldColor = SetContextForeGroundColor(shadow_color);
+	const ForegroundColorScope colorScope {shadow_color};
 
 	font_DrawText(pText);
 
@@ -289,8 +288,6 @@ void font_DrawShadowedText(GfxText* pText, ShadowAngle direction,
 	SetContextForeGroundColor(text_color);
 
 	font_DrawText(pText);
-
-	SetContextForeGroundColor(OldColor);
 }
 
 bool GetContextFontLeading(int16_t* pheight)

@@ -319,13 +319,11 @@ enum class DrawOrbitalMode
 static void DrawEnterOrbitText(GfxRect rect)
 {
 	GfxText text;
-	FrameRef OldFontEffect {};
 	int16_t leading {};
 	uqstl::array<char, 256> buf;
 
-	FontRef OldFont {SetContextFont(MicroFont)};
-	OldFontEffect = SetContextFontEffect(
-		SetAbsFrameIndex(FontGradFrame, 12));
+	const FontScope fontScope {MicroFont};
+	const FontEffectScope fontEffectScope {SetAbsFrameIndex(FontGradFrame, 12)};
 
 	GetContextFontLeading(&leading);
 
@@ -355,9 +353,6 @@ static void DrawEnterOrbitText(GfxRect rect)
 			text.baseline.x = og_baseline_x;
 		}
 	}
-
-	SetContextFont(OldFont);
-	SetContextFontEffect(OldFontEffect);
 }
 
 void DrawOrbitMapGraphic(void)

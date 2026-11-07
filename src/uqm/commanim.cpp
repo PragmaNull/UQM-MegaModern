@@ -603,8 +603,6 @@ static void ApplyFilterToStamp(GfxStamp s)
 	for (uint16_t i {0}; i < FilterData.NumFilters; i++)
 	{
 		DrawMode mode;
-		DrawMode oldMode;
-		Color oldColor;
 		Color FGColor;
 		const AnimFilter* FTPtr = &FilterData.FilterArray[i];
 
@@ -628,13 +626,10 @@ static void ApplyFilterToStamp(GfxStamp s)
 		}
 
 		mode = MAKE_DRAW_MODE((DrawKind)FTPtr->Kind, factor);
-		oldMode = SetContextDrawMode(mode);
-		oldColor = SetContextForeGroundColor(FGColor);
+		const DrawModeScope drawModeScope {mode};
+		const ForegroundColorScope colorScope {FGColor};
 
 		DrawFilledStamp(&s);
-
-		SetContextDrawMode(oldMode);
-		SetContextForeGroundColor(oldColor);
 	}
 }
 

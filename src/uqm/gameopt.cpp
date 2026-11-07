@@ -877,14 +877,13 @@ static void DrawLabel(GfxPoint pt, int16_t width, uint32_t gamestr)
 	GfxText t;
 	uqstl::array<char, 256> buf;
 	int16_t leading {};
-	Color OldColor;
 
 	DrawLines(SCL_POINT(pt), ResScale(width));
 
 	uqm::utf8StringCopy(buf, GameString(gamestr));
 
-	FontRef OldFont {SetContextFont(LabelFont)};
-	OldColor = SetContextForeGroundColor(SummTextColor);
+	const FontScope fontScope {LabelFont};
+	const ForegroundColorScope colorScope {SummTextColor};
 
 	GetContextFontLeading(&leading);
 
@@ -895,9 +894,6 @@ static void DrawLabel(GfxPoint pt, int16_t width, uint32_t gamestr)
 	t.pStr = AlignText((const char*)buf.data(), &t.baseline.x);
 
 	font_DrawText(&t);
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 static auto SummLabelLeftX() { return (11 - SafeNum(9)); }
@@ -1000,7 +996,6 @@ static void DrawSaveLoad(PickGameState* pickState)
 static void DrawSaveLoadText(PickGameState* pickState)
 {
 	GfxRect r;
-	Color OldColor;
 	GfxText text;
 	uqstl::array<char, 256> buf;
 	int16_t leading {};
@@ -1026,9 +1021,8 @@ static void DrawSaveLoadText(PickGameState* pickState)
 	SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 
-	FontRef OldFont {SetContextFont(SafeBool(MicroFont, LabelFont))};
-	OldColor = SetContextForeGroundColor(
-		SafeBool(SummTextColor, LoadSaveLabelColor));
+	const FontScope fontScope {SafeBool(MicroFont, LabelFont)};
+	const ForegroundColorScope colorScope {SafeBool(SummTextColor, LoadSaveLabelColor)};
 
 	GetContextFontLeading(&leading);
 
@@ -1043,9 +1037,6 @@ static void DrawSaveLoadText(PickGameState* pickState)
 	text.pStr = buf.data();
 
 	font_DrawText(&text);
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 static constexpr auto NumColors {9};
@@ -1216,7 +1207,6 @@ static void DrawBombPodText(GfxStamp* s)
 	GfxText t;
 	uqstl::array<char, 256> buf;
 	int16_t leading {};
-	Color OldColor;
 	GfxRect r;
 	int16_t og_baseline_x = 0;
 
@@ -1227,7 +1217,7 @@ static void DrawBombPodText(GfxStamp* s)
 	}
 
 	const FontScope fontScope {SquareFont};
-	OldColor = SetContextForeGroundColor(BlackColor);
+	const ForegroundColorScope colorScope {BlackColor};
 
 	GetContextFontLeading(&leading);
 
@@ -1282,8 +1272,6 @@ static void DrawBombPodText(GfxStamp* s)
 			t.baseline.y += leading;
 		}
 	}
-
-	SetContextForeGroundColor(OldColor);
 }
 
 static void DrawNoLimit(void)

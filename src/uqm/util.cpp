@@ -356,7 +356,6 @@ GfxStamp SaveContextFrame(const GfxRect* saveRect)
 static void DrawPauseText(GfxRect* rect)
 {
 	GfxText text;
-	Color OldColor;
 	GfxRect block;
 
 	if (!strlen(GameString(GameStringBase::QuitmenuString + 4)))
@@ -364,9 +363,8 @@ static void DrawPauseText(GfxRect* rect)
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(DosBool(LabelFont, StarConFont))};
-	OldColor = SetContextForeGroundColor(
-		BuildShadeRgba(DosBool(0x74, 0x6B)));
+	const FontScope fontScope {DosBool(LabelFont, StarConFont)};
+	const ForegroundColorScope colorScope {BuildShadeRgba(DosBool(0x74, 0x6B))};
 
 	// Blank out the text
 	block = *rect;
@@ -389,9 +387,6 @@ static void DrawPauseText(GfxRect* rect)
 	text.CharCount = (uint16_t)~0;
 
 	font_DrawText(&text);
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 bool PauseGame(void)

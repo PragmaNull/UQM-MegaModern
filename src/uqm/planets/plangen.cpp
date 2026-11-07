@@ -383,14 +383,12 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 	GfxPoint pt;
 	uqstl::array<Primitive, NumBatchPoints> BatchArray;
 	const int8_t* pSrc {};
-	GfxPoint oldOrigin;
-	GfxRect ClipRect;
 	int16_t num_frames = 3;
 	const int16_t* level_tab {};
 
 	const FGFrameScope frameScope {mask};
-	oldOrigin = SetContextOrigin(MAKE_POINT(0, 0));
-	GetContextClipRect(&ClipRect);
+	const OriginScope originScope {MAKE_POINT(0, 0)};
+	const ClipRectScope clipRectScope {};
 	SetContextClipRect(nullptr);
 
 	const int16_t w {mask->Bounds.width};
@@ -477,8 +475,6 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 			DrawBatch(BatchArray.data(), i, BatchFlags::None);
 		}
 	}
-	SetContextClipRect(&ClipRect);
-	SetContextOrigin(oldOrigin);
 }
 
 static void RenderTopography(FrameRef DstFrame, int8_t* pTopoData, int w, int h,

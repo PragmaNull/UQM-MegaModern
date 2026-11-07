@@ -272,7 +272,6 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 {
 	GfxRect r;
 	GfxText t;
-	FrameRef OldFontEffect {};
 	int16_t leading {};
 	uqstl::array<char, 256> buf;
 
@@ -301,19 +300,15 @@ static void DrawBattleText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 	font_DrawTracedText(&t, Transparent,
 						HiLite ? BattleTraceHlColor : BattleTraceColor);
 
-	OldFontEffect = SetContextFontEffect(
-		SetAbsFrameIndex(FontGradFrame, 8 + HiLite));
+	const FontEffectScope fontEffectScope {SetAbsFrameIndex(FontGradFrame, 8 + HiLite)};
 
 	font_DrawText(&t);
-
-	SetContextFontEffect(OldFontEffect);
 }
 
 static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 {
 	GfxRect r;
 	GfxText t;
-	Color OldColor;
 	uqstl::array<char, 256> buf;
 
 	if (!ButtonText(which_icon))
@@ -321,9 +316,8 @@ static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(ButtonFont)};
-	OldColor = SetContextForeGroundColor(
-		HiLite ? ButtonLabelHilite : ButtonLabelColor);
+	const FontScope fontScope {ButtonFont};
+	const ForegroundColorScope colorScope {HiLite ? ButtonLabelHilite : ButtonLabelColor};
 
 	GetFrameRect(stamp.frame, &r);
 
@@ -338,9 +332,6 @@ static void DrawButtonText(GfxStamp stamp, uint16_t which_icon, bool HiLite)
 	t.pStr = AlignText((const char*)buf.data(), &t.baseline.x);
 
 	font_DrawText(&t);
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 static void DrawVerticalText(const char* str, GfxPoint point)
@@ -813,7 +804,6 @@ void QuickRepair(uint16_t whichFrame, GfxRect* pRect)
 static void DrawSuperMeleeTitle(void)
 {
 	GfxText t;
-	FrameRef OldFontEffect {};
 	const char* buf = GameString(GameStringBase::MeleeString + 9);
 
 	if (strlen(buf) == 0)
@@ -821,9 +811,8 @@ static void DrawSuperMeleeTitle(void)
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(LoadFont(MeleeTitleFontRes))};
-	OldFontEffect = SetContextFontEffect(
-		SetAbsFrameIndex(FontGradFrame, 7));
+	const FontScope fontScope {LoadFont(MeleeTitleFontRes)};
+	const FontEffectScope fontEffectScope {SetAbsFrameIndex(FontGradFrame, 7)};
 
 	t.baseline.x = (CanvasWidth >> 1) - (SafeNeg(1));
 	t.baseline.y = ResScale(4);
@@ -832,9 +821,6 @@ static void DrawSuperMeleeTitle(void)
 	t.CharCount = (uint16_t)~0;
 
 	font_DrawText(&t);
-
-	SetContextFont(OldFont);
-	SetContextFontEffect(OldFontEffect);
 }
 
 void RepairMeleeFrame(const GfxRect* pRect)

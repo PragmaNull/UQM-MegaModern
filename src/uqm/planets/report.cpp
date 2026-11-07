@@ -371,11 +371,9 @@ void DoDiscoveryReport(SoundBankRef ReadOutSounds)
 	GfxContextRef OldContext {SetContext(context)};
 	saveStamp = SaveContextFrame(nullptr);
 	{
-		FontRef OldFont {};
 		FrameRef OldFontEffect {};
 
-		OldFont = SetContextFont(
-			pSolarSysState->SysInfo.PlanetInfo.LanderFont);
+		const FontScope fontScope {pSolarSysState->SysInfo.PlanetInfo.LanderFont};
 		if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::PC)
 		{
 			OldFontEffect = SetContextFontEffect(
@@ -400,7 +398,6 @@ void DoDiscoveryReport(SoundBankRef ReadOutSounds)
 		uqm::lua().endComm();
 
 		SetContextFontEffect(OldFontEffect);
-		SetContextFont(OldFont);
 	}
 	// Restore previous screen
 	DrawStamp(&saveStamp);

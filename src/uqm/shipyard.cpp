@@ -764,7 +764,6 @@ static void DrawShipyardShipText(GfxRect* r, int Index)
 {
 	uqstl::array<char, 64> race_name;
 	uqstl::array<char, 64> ship_name;
-	Color OldColor;
 	int16_t leading {};
 	GfxRect block;
 	GfxText text;
@@ -792,8 +791,8 @@ static void DrawShipyardShipText(GfxRect* r, int Index)
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(ModuleFont)};
-	OldColor = SetContextForeGroundColor(ShpRectColor);
+	const FontScope fontScope {ModuleFont};
+	const ForegroundColorScope colorScope {ShpRectColor};
 
 	GetContextFontLeading(&leading);
 
@@ -824,9 +823,6 @@ static void DrawShipyardShipText(GfxRect* r, int Index)
 	text.CharCount = (uint16_t)~0;
 	font_DrawShadowedText(&text, ShadowAngle::West, ShpTextColor,
 						  ShpShadowColor);
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 static void DrawRaceStrings(uint8_t NewRaceItem)

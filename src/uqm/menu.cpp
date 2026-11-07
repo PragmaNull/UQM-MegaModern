@@ -655,15 +655,14 @@ static void Draw3DOMenuText(GfxRect* r, int Index)
 	GfxText text;
 	int16_t leading {};
 	GfxRect block;
-	Color OldColor;
 
 	if (IndexToText(Index) == nullptr)
 	{
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(PlayMenuFont)};
-	OldColor = SetContextForeGroundColor(PmRectColor);
+	const FontScope fontScope {PlayMenuFont};
+	const ForegroundColorScope colorScope {PmRectColor};
 
 	GetContextFontLeading(&leading);
 
@@ -688,9 +687,6 @@ static void Draw3DOMenuText(GfxRect* r, int Index)
 
 	font_DrawShadowedText(&text, ShadowAngle::NorthWest, PmTextColor,
 						  PmShadowColor);
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)

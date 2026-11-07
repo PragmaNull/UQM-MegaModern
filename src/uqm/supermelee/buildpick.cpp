@@ -144,11 +144,9 @@ void DrawPickIcon(MeleeShip ship, bool DrawErase)
 	}
 	else
 	{ // erase icon
-		Color OldColor;
 
-		OldColor = SetContextForeGroundColor(GetShipFlashColor());
+		const ForegroundColorScope colorScope {GetShipFlashColor()};
 		DrawFilledStamp(&s);
-		SetContextForeGroundColor(OldColor);
 	}
 }
 
@@ -174,7 +172,6 @@ void DrawTooltip(ShipInfoDesc* SIPtr)
 {
 	uqstl::array<char, PATH_MAX> buf {};
 	GfxText Text;
-	Color oldColor;
 	GfxRect r;
 
 	GetToolTipFrameRect(&r);
@@ -193,7 +190,7 @@ void DrawTooltip(ShipInfoDesc* SIPtr)
 	DrawTooltipBox();
 
 	const FontScope fontScope {StarConFont};
-	oldColor = SetContextForeGroundColor(TooltipColorNameBack);
+	const ForegroundColorScope colorScope {TooltipColorNameBack};
 	font_DrawText(&Text);
 
 	SetContextForeGroundColor(TooltipColorNameFront);
@@ -218,8 +215,6 @@ void DrawTooltip(ShipInfoDesc* SIPtr)
 			font_DrawText(&Text);
 		}
 	}
-
-	SetContextForeGroundColor(oldColor);
 }
 
 void DrawPickFrame(MeleeState* pMS)

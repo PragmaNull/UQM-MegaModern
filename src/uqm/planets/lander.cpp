@@ -2913,21 +2913,20 @@ static void DrawMinDatText(void)
 {
 	GfxText text;
 	GfxRect rect;
-	Color OldColor;
 
 	if (!strlen(GameString(GameStringBase::StatusString + 20)) || !strlen(GameString(GameStringBase::StatusString + 21)))
 	{
 		return;
 	}
 
-	OldColor = SetContextForeGroundColor(BlackColor);
+	const ForegroundColorScope colorScope {BlackColor};
 	rect.corner.x = ResScale(5);
 	rect.corner.y = RadarHeight() - ResScale(7);
 	rect.extent.width = ResScale(46);
 	rect.extent.height = ResScale(6);
 	DrawFilledRectangle(&rect);
 
-	FontRef OldFont {SetContextFont(TinyFontBold)};
+	const FontScope fontScope {TinyFontBold};
 	SetContextForeGroundColor(LandStatMinColor);
 	text.align = TextAlign::Left;
 	text.baseline.x = rect.corner.x + ResScale(1);
@@ -2944,9 +2943,6 @@ static void DrawMinDatText(void)
 	text.CharCount = (uint16_t)~0;
 
 	font_DrawText(&text);
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 void InitLander(uint8_t LanderFlags)

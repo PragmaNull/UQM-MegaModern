@@ -89,11 +89,9 @@ void RepairSISBorder(void)
 void ClearSISRect(ClearSisFlags ClearFlags)
 {
 	//GfxRect r; Unused
-	Color OldColor;
 
 	const ContextScope contextScope {StatusContext};
-	OldColor = SetContextForeGroundColor(
-		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
+	const ForegroundColorScope colorScope {BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08)};
 
 	//r.corner.x = ResScale (2);
 	//r.extent.width = StatusWidth() - ResScale (4); Unused
@@ -119,8 +117,6 @@ void ClearSISRect(ClearSisFlags ClearFlags)
 #endif /* NEVER */
 	}
 	UnbatchGraphics();
-
-	SetContextForeGroundColor(OldColor);
 }
 
 // Draw the SIS title. This is the field at the top of the screen, on the
@@ -774,10 +770,6 @@ void DrawFlagshipStats(void)
 {
 	GfxRect r;
 	GfxText t;
-	FontRef OldFont {};
-	Color OldColor;
-	FrameRef OldFontEffect {};
-	GfxContextRef OldContext {};
 	uqstl::array<char, 128> buf;
 	int16_t leading {};
 	uint8_t i {};
@@ -848,9 +840,9 @@ void DrawFlagshipStats(void)
 	}
 	/* END collect stats */
 
-	OldContext = SetContext(SpaceContext);
-	OldFont = SetContextFont(StarConFont);
-	OldFontEffect = SetContextFontEffect(nullptr);
+	const ContextScope contextScope {SpaceContext};
+	const FontScope fontScope {StarConFont};
+	const FontEffectScope fontEffectScope {nullptr};
 	GetContextFontLeading(&leading);
 
 	r.corner.x = 0;
@@ -858,7 +850,7 @@ void DrawFlagshipStats(void)
 	r.extent.width = SisScreenWidth();
 	r.extent.height = (DosBool(4, 3) * leading);
 
-	OldColor = SetContextForeGroundColor(BlackColor);
+	const ForegroundColorScope colorScope {BlackColor};
 	DrawFilledRectangle(&r);
 
 	/*
@@ -952,11 +944,6 @@ void DrawFlagshipStats(void)
 	t.baseline.y += leading;
 	fmt::format_to_sz_n(buf, "{:4}", (fuel / FuelTankScale));
 	font_DrawText(&t);
-
-	SetContextFontEffect(OldFontEffect);
-	SetContextForeGroundColor(OldColor);
-	SetContextFont(OldFont);
-	SetContext(OldContext);
 }
 
 const static char* describeWeapon(ModuleType moduleType)

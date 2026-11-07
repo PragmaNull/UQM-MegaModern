@@ -454,7 +454,6 @@ static void RedistributeFuel(void)
 static void DrawEscapePodText(GfxRect rect)
 {
 	GfxText text;
-	Color OldColor;
 	int16_t leading {};
 	GfxRect block;
 	uqstl::array<char, 256> buf;
@@ -464,8 +463,8 @@ static void DrawEscapePodText(GfxRect rect)
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(SquareFont)};
-	OldColor = SetContextForeGroundColor(BlackColor);
+	const FontScope fontScope {SquareFont};
+	const ForegroundColorScope colorScope {BlackColor};
 
 	block = rect;
 	block.corner.x += DosBoolScl(171, 9);
@@ -509,15 +508,11 @@ static void DrawEscapePodText(GfxRect rect)
 			text.baseline.x = og_baseline_x;
 		}
 	}
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 static void DrawNoLandersText(GfxRect rect)
 {
 	GfxText text;
-	Color OldColor;
 	GfxRect block;
 
 	if (IsDos() || !strlen(GameString(EndStarbaseStringBase)))
@@ -525,8 +520,8 @@ static void DrawNoLandersText(GfxRect rect)
 		return;
 	}
 
-	FontRef OldFont {SetContextFont(SquareFont)};
-	OldColor = SetContextForeGroundColor(BlackColor);
+	const FontScope fontScope {SquareFont};
+	const ForegroundColorScope colorScope {BlackColor};
 
 	block = rect;
 	block.corner.y += ResScale(9);
@@ -545,9 +540,6 @@ static void DrawNoLandersText(GfxRect rect)
 
 	SetContextForeGroundColor(LanderPodTextColor);
 	font_DrawText(&text);
-
-	SetContextFont(OldFont);
-	SetContextForeGroundColor(OldColor);
 }
 
 static auto LanderX() { return (ResScale(24) - SafePad()); }

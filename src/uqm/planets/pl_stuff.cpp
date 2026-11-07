@@ -510,7 +510,6 @@ static void renderTintFrame(Color tintColor)
 {
 	const PlanetOrbit* Orbit = &pSolarSysState->Orbit;
 	DrawMode mode;
-	DrawMode oldMode;
 	GfxStamp s;
 	GfxRect r;
 	double is_red {NAN};
@@ -539,10 +538,9 @@ static void renderTintFrame(Color tintColor)
 	// apply the tint
 	mode = MAKE_DRAW_MODE(DrawKind::Additive, DrawFactor1 * is_red);
 
-	oldMode = SetContextDrawMode(mode);
+	const DrawModeScope drawModeScope {mode};
 	SetContextForeGroundColor(tintColor);
 	DrawFilledRectangle(&r);
-	SetContextDrawMode(oldMode);
 }
 
 void DrawPCScanTint(uint16_t scan)

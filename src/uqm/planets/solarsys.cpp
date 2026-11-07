@@ -2708,20 +2708,18 @@ static void DrawBackgroundStars(uint8_t num_pieces, uint8_t num_drawn, uint8_t s
 static void DrawNebula(FrameRef nebula)
 {
 	GfxStamp s;
-	DrawMode oldMode;
 
 	if (!nebula)
 	{
 		return;
 	}
 
-	oldMode = SetContextDrawMode(MAKE_DRAW_MODE(DrawKind::Alpha,
-												(uqm::UQMOptions::read().nebulaevol + 1) * 5));
+	const DrawModeScope drawModeScope {MAKE_DRAW_MODE(DrawKind::Alpha,
+													  (uqm::UQMOptions::read().nebulaevol + 1) * 5)};
 	s.origin.x = 0;
 	s.origin.y = 0;
 	s.frame = nebula;
 	DrawStamp(&s);
-	SetContextDrawMode(oldMode);
 }
 
 static FrameRef CreateStarBackGround(uqm::UQMRandom& SysRNG, FrameRef nebula, FrameRef junk)
