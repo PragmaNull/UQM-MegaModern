@@ -19,15 +19,11 @@
     - `HangarColorMap` in `MENU_STATE`, which is cleared with `memset`.
     - `sphereMap` in `PLANET_ORBIT`, which is in the `PLANET_DESC` arrays.
   - Global and static sound banks and color maps (`MenuSounds`, `GameSounds`, `LanderSounds`, `hypercmaps`, `SunCMap` and others). They can become RAII only after `exit()` no longer runs while the game thread runs (see "Exit code 127"). If they become RAII before that, their destructors can run during `exit()`, after the audio system has shut down.
-- **RAII guards for paired calls:** these pairs occur in many places, so each needs its own guard type, not `uqgsl::finally`:
-  - `BatchGraphics()` and `UnbatchGraphics()` (about 120 places).
-  - Save and restore of the drawing context state: `SetContext`, `SetContextFont`, and `GetContextClipRect` with `SetContextClipRect` (23 places save the clip rect).
-  - `SetInputCallback`, which 5 places set and restore.
-  - `yyjson_doc_free` and `yyjson_mut_doc_free` (`keyconfig.cpp`, `Setting.cpp`, `meleeconfig.cpp`, `menudef.cpp`). Use `unique_ptr` with a deleter, as `free` already has for the text that `yyjson` writes.
-  - SDL handles that are released by hand: surfaces, `SDL_IOStream`, gamepads, audio streams, and `SDL_LockSurface` with `SDL_UnlockSurface`.
-  - The Lua stack: `lua_pop` in `UQMLua.cpp` and `luafuncs/eventfuncs.cpp` (19 calls). Add a guard that restores `lua_gettop`.
-  - `CallbackList_lock` and `CallbackList_unlock` in `callback.cpp`, and `lockDcq` and `unlockDcq` in `dcqueue.cpp`. Change them to `uqm::LockGuard`.
-- **libpng errors:** `png2sdl.cpp` uses `setjmp` and `longjmp` for libpng errors. A `longjmp` that skips a destructor is undefined behavior, so the png read and write structs cannot have RAII owners. Use an error callback that throws, then use RAII for the png structs and `row_pointers`.
+- **RAII guards for paired calls:** the guard types exist (`BatchScope`, `ContextValueScope` and `ClipRectScope` in `gfxlib.h`, `SurfaceLock` and the owners in `sdl/sdl_ptr.h`). These pairs still need them, because code follows the restore, the clip rect variable has other uses, or a `break`, `continue` or lambda is in the range:
+  - About 110 saves of drawing context values (`SetContext`, `SetContextFont`, colors, clip rects and others).
+  - About 44 `BatchGraphics()` and `UnbatchGraphics()` pairs.
+  - 11 `SDL_LockSurface` and `SDL_UnlockSurface` pairs, most in `canvas.cpp`.
+  - Long-lived SDL handles in structs and globals: the screen surfaces and `ScreenTextures` in `sdl_pure.cpp`, the gamepads in `vcontrol.cpp` and the audio streams in `audiodrv_sdl.cpp`.
 
 Keep these, because they are large and in use: `graphics`, `sound`, `video`, `input`, `io`, `resource`, `strings`, `luauqm`, `network` (`NETPLAY` is on), `callback` (netplay and `uqm/sis.cpp` use the alarms and async calls), and `math`. Do not change the RNG: seeded games must give the same results.
 
