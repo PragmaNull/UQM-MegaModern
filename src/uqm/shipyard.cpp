@@ -2611,65 +2611,66 @@ bool DoShipyard(MenuState* pMS)
 			pMS->hMusic = LoadMusicInstance(ShipyardMusicRes);
 
 			SetTransitionSource(nullptr);
-			BatchGraphics();
-			DrawSISFrame();
-			DrawSISMessage(GameString(GameStringBase::StarbaseString + 3));
-			DrawSISTitle(GameString(GameStringBase::StarbaseString));
-			SetContext(SpaceContext);
-			DrawBluePrint(pMS);
-
-			pMS->CurState = *ShipyardMenuItem::Crew;
-			DrawMenuStateStrings(MenuString::Crew, pMS->CurState);
-
-			SetContext(SpaceContext);
-			s.origin.x = 0;
-			s.origin.y = 0;
-			s.frame = SetAbsFrameIndex(pMS->ModuleFrame, 0);
-
-			if (!(IsPad() || classicPackPresent))
 			{
-				// PC hangar
-				// the PC ship dock needs to overwrite the border
-				// expand the clipping rect by 1 pixel
-				GetContextClipRect(&old_r);
-				r = old_r;
-				r.corner.x -= ResScale(1);
-				r.extent.width += ResScale(2);
-				r.extent.height += ResScale(1);
+				const BatchScope batch {};
+				DrawSISFrame();
+				DrawSISMessage(GameString(GameStringBase::StarbaseString + 3));
+				DrawSISTitle(GameString(GameStringBase::StarbaseString));
+				SetContext(SpaceContext);
+				DrawBluePrint(pMS);
 
-				SetContextClipRect(&r);
-				DrawStamp(&s);
+				pMS->CurState = *ShipyardMenuItem::Crew;
+				DrawMenuStateStrings(MenuString::Crew, pMS->CurState);
 
-				if (uqm::UQMOptions::read().customBorder)
+				SetContext(SpaceContext);
+				s.origin.x = 0;
+				s.origin.y = 0;
+				s.frame = SetAbsFrameIndex(pMS->ModuleFrame, 0);
+
+				if (!(IsPad() || classicPackPresent))
 				{
-					DrawBorder(BorderFrameIndex::SisRepair);
-				}
+					// PC hangar
+					// the PC ship dock needs to overwrite the border
+					// expand the clipping rect by 1 pixel
+					GetContextClipRect(&old_r);
+					r = old_r;
+					r.corner.x -= ResScale(1);
+					r.extent.width += ResScale(2);
+					r.extent.height += ResScale(1);
 
-				SetContextClipRect(&old_r);
+					SetContextClipRect(&r);
+					DrawStamp(&s);
 
-				animatePowerLines(pMS);
-			}
-			else
-			{
-				DrawStamp(&s);
+					if (uqm::UQMOptions::read().customBorder)
+					{
+						DrawBorder(BorderFrameIndex::SisRepair);
+					}
 
-				if (classicPackPresent)
-				{
+					SetContextClipRect(&old_r);
+
 					animatePowerLines(pMS);
 				}
-			}
+				else
+				{
+					DrawStamp(&s);
 
-			if (isPC(uqm::UQMOptions::read().whichFonts))
-			{
-				SetContextFont(TinyFont);
-			}
-			else
-			{
-				SetContextFont(TinyFontBold);
-			}
+					if (classicPackPresent)
+					{
+						animatePowerLines(pMS);
+					}
+				}
 
-			ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
-			UnbatchGraphics();
+				if (isPC(uqm::UQMOptions::read().whichFonts))
+				{
+					SetContextFont(TinyFont);
+				}
+				else
+				{
+					SetContextFont(TinyFontBold);
+				}
+
+				ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
+			}
 
 			PlayMusicResume(pMS->hMusic, NormalVolume);
 

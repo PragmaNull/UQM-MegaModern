@@ -1268,87 +1268,87 @@ bool DoOutfit(MenuState* pMS)
 			}
 
 			SetTransitionSource(nullptr);
-			BatchGraphics();
-			DrawSISFrame();
-			DrawSISMessage(GameString(GameStringBase::StarbaseString + 2));
-			DrawSISTitle(GameString(GameStringBase::StarbaseString));
-
-			SetContext(SpaceContext);
-
-			DrawStamp(&s);
-			DestroyDrawable(ReleaseDrawable(s.frame));
-
-			for (num_frames = 0; num_frames < NumDriveSlots;
-				 ++num_frames)
 			{
-				const uint8_t which_piece {*uqm::gameState().sis().DriveSlots[num_frames]};
-				if (which_piece < EmptySlot)
+				const BatchScope batch {};
+				DrawSISFrame();
+				DrawSISMessage(GameString(GameStringBase::StarbaseString + 2));
+				DrawSISTitle(GameString(GameStringBase::StarbaseString));
+
+				SetContext(SpaceContext);
+
+				DrawStamp(&s);
+				DestroyDrawable(ReleaseDrawable(s.frame));
+
+				for (num_frames = 0; num_frames < NumDriveSlots;
+					 ++num_frames)
 				{
-					DrawShipPiece(pMS->ModuleFrame, which_piece,
-								  num_frames, false);
+					const uint8_t which_piece {*uqm::gameState().sis().DriveSlots[num_frames]};
+					if (which_piece < EmptySlot)
+					{
+						DrawShipPiece(pMS->ModuleFrame, which_piece,
+									  num_frames, false);
+					}
 				}
+				for (num_frames = 0; num_frames < NumJetSlots;
+					 ++num_frames)
+				{
+					const uint8_t which_piece {*uqm::gameState().sis().JetSlots[num_frames]};
+					if (which_piece < EmptySlot)
+					{
+						DrawShipPiece(pMS->ModuleFrame, which_piece,
+									  num_frames, false);
+					}
+				}
+				for (num_frames = 0; num_frames < NumModuleSlots;
+					 ++num_frames)
+				{
+					const uint8_t which_piece {*uqm::gameState().sis().ModuleSlots[num_frames]};
+					if (which_piece < EmptySlot)
+					{
+						DrawShipPiece(pMS->ModuleFrame, which_piece,
+									  num_frames, false);
+					}
+				}
+				RedistributeFuel();
+				DisplayLanders(pMS);
+				if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 3)
+				{
+					uint8_t ShieldFlags {};
+
+					ShieldFlags = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS);
+
+					s.frame = SetAbsFrameIndex(pMS->ModuleFrame,
+											   ShieldLocationInModuleAni);
+					if (ShieldFlags & (1 << *LanderEvent::EarthquakeDisaster))
+					{
+						DrawStamp(&s);
+					}
+					s.frame = IncFrameIndex(s.frame);
+					if (ShieldFlags & (1 << *LanderEvent::BiologicalDisaster))
+					{
+						DrawStamp(&s);
+					}
+					s.frame = IncFrameIndex(s.frame);
+					if (ShieldFlags & (1 << *LanderEvent::LightningDisaster))
+					{
+						DrawStamp(&s);
+					}
+					s.frame = IncFrameIndex(s.frame);
+					if (ShieldFlags & (1 << *LanderEvent::LavaspotDisaster))
+					{
+						DrawStamp(&s);
+					}
+				}
+
+				DrawMenuStateStrings(MenuString::Fuel, pMS->CurState);
+				DrawFlagshipName(false, false);
+
+				DrawFlagshipStats();
+
+				ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
+
+				PlayMusicResume(pMS->hMusic, NormalVolume);
 			}
-			for (num_frames = 0; num_frames < NumJetSlots;
-				 ++num_frames)
-			{
-				const uint8_t which_piece {*uqm::gameState().sis().JetSlots[num_frames]};
-				if (which_piece < EmptySlot)
-				{
-					DrawShipPiece(pMS->ModuleFrame, which_piece,
-								  num_frames, false);
-				}
-			}
-			for (num_frames = 0; num_frames < NumModuleSlots;
-				 ++num_frames)
-			{
-				const uint8_t which_piece {*uqm::gameState().sis().ModuleSlots[num_frames]};
-				if (which_piece < EmptySlot)
-				{
-					DrawShipPiece(pMS->ModuleFrame, which_piece,
-								  num_frames, false);
-				}
-			}
-			RedistributeFuel();
-			DisplayLanders(pMS);
-			if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 3)
-			{
-				uint8_t ShieldFlags {};
-
-				ShieldFlags = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS);
-
-				s.frame = SetAbsFrameIndex(pMS->ModuleFrame,
-										   ShieldLocationInModuleAni);
-				if (ShieldFlags & (1 << *LanderEvent::EarthquakeDisaster))
-				{
-					DrawStamp(&s);
-				}
-				s.frame = IncFrameIndex(s.frame);
-				if (ShieldFlags & (1 << *LanderEvent::BiologicalDisaster))
-				{
-					DrawStamp(&s);
-				}
-				s.frame = IncFrameIndex(s.frame);
-				if (ShieldFlags & (1 << *LanderEvent::LightningDisaster))
-				{
-					DrawStamp(&s);
-				}
-				s.frame = IncFrameIndex(s.frame);
-				if (ShieldFlags & (1 << *LanderEvent::LavaspotDisaster))
-				{
-					DrawStamp(&s);
-				}
-			}
-
-			DrawMenuStateStrings(MenuString::Fuel, pMS->CurState);
-			DrawFlagshipName(false, false);
-
-			DrawFlagshipStats();
-
-			ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
-
-			PlayMusicResume(pMS->hMusic, NormalVolume);
-
-			UnbatchGraphics();
 
 			SetFlashRect(SfrMenu3do(), false);
 

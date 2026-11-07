@@ -735,71 +735,72 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 	inactive = WidgetInactiveColor;
 	editing = WidgetLabelColor;
 
-	BatchGraphics();
-
-	t.baseline.x = x + Lstep();
-	t.baseline.y = y;
-	t.align = TextAlign::Right;
-	t.CharCount = ~0;
-	t.pStr = self->category;
-	if (widget_focus == _self)
 	{
-		Widget_DrawToolTips(3, self->tooltip.data());
-		oldtext = SetContextForeGroundColor(selected);
-	}
-	else
-	{
-		oldtext = SetContextForeGroundColor(default_color);
-	}
-	font_DrawText(&t);
+		const BatchScope batch {};
 
-	t.baseline.x -= t.baseline.x;
-
-	/* Force string termination */
-	self->value[WidgetTextentryWidth - uqm::ResScale(1)] = 0;
-
-	t.baseline.y = y;
-	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value.data());
-	t.pStr = self->value.data();
-
-	if (!any(self->state, TextEntryWidgetState::Editing))
-	{ // normal or selected state
-		t.baseline.x = Rstep();
-		t.align = TextAlign::Left;
-
+		t.baseline.x = x + Lstep();
+		t.baseline.y = y;
+		t.align = TextAlign::Right;
+		t.CharCount = ~0;
+		t.pStr = self->category;
 		if (widget_focus == _self)
 		{
+			Widget_DrawToolTips(3, self->tooltip.data());
 			oldtext = SetContextForeGroundColor(selected);
 		}
 		else
 		{
-			oldtext = SetContextForeGroundColor(inactive);
+			oldtext = SetContextForeGroundColor(default_color);
 		}
 		font_DrawText(&t);
-	}
-	else
-	{ // editing state
-		uint16_t i {};
-		GfxRect text_r;
-		uqstl::array<uint8_t, WidgetTextentryWidth> char_deltas;
-		GfxRect r;
-		int16_t leading {};
 
-		t.baseline.x = Rstep();
-		t.align = TextAlign::Left;
+		t.baseline.x -= t.baseline.x;
 
-		// calc background box dimensions
-		// XXX: this may need some tuning, especially if a
-		//   different font is used. The font 'leading' values
-		//   are not what they should be.
-		const auto BoxVertOffset {uqm::ResScale(2)};
-		GetContextFontLeading(&leading);
-		r.corner.x = t.baseline.x - uqm::ResScale(1);
-		r.corner.y = t.baseline.y - leading + BoxVertOffset;
-		r.extent.width = CanvasWidth - r.corner.x - uqm::ResScale(10);
-		r.extent.height = leading - uqm::ResScale(1);
+		/* Force string termination */
+		self->value[WidgetTextentryWidth - uqm::ResScale(1)] = 0;
 
-		TextRect(&t, &text_r, char_deltas.data());
+		t.baseline.y = y;
+		t.CharCount = (uint16_t)uqm::utf8StringCount(self->value.data());
+		t.pStr = self->value.data();
+
+		if (!any(self->state, TextEntryWidgetState::Editing))
+		{ // normal or selected state
+			t.baseline.x = Rstep();
+			t.align = TextAlign::Left;
+
+			if (widget_focus == _self)
+			{
+				oldtext = SetContextForeGroundColor(selected);
+			}
+			else
+			{
+				oldtext = SetContextForeGroundColor(inactive);
+			}
+			font_DrawText(&t);
+		}
+		else
+		{ // editing state
+			uint16_t i {};
+			GfxRect text_r;
+			uqstl::array<uint8_t, WidgetTextentryWidth> char_deltas;
+			GfxRect r;
+			int16_t leading {};
+
+			t.baseline.x = Rstep();
+			t.align = TextAlign::Left;
+
+			// calc background box dimensions
+			// XXX: this may need some tuning, especially if a
+			//   different font is used. The font 'leading' values
+			//   are not what they should be.
+			const auto BoxVertOffset {uqm::ResScale(2)};
+			GetContextFontLeading(&leading);
+			r.corner.x = t.baseline.x - uqm::ResScale(1);
+			r.corner.y = t.baseline.y - leading + BoxVertOffset;
+			r.extent.width = CanvasWidth - r.corner.x - uqm::ResScale(10);
+			r.extent.height = leading - uqm::ResScale(1);
+
+			TextRect(&t, &text_r, char_deltas.data());
 #if 0
 		// XXX: this should potentially be used in ChangeCallback
 		if ((text_r.extent.width + 2) >= r.extent.width)
@@ -811,63 +812,62 @@ void Widget_DrawTextEntry(Widget* _self, int x, int y)
 		}
 #endif
 
-		oldtext = SetContextForeGroundColor(selected);
-		DrawFilledRectangle(&r);
+			oldtext = SetContextForeGroundColor(selected);
+			DrawFilledRectangle(&r);
 
-		// calculate the cursor position and draw it
-		const uint8_t* pchar_deltas {char_deltas.data()};
-		for (i = self->cursor_pos; i > 0; --i)
-		{
-			r.corner.x += (int16_t)*pchar_deltas++;
-		}
-		if (self->cursor_pos < t.CharCount) /* cursor mid-line */
-		{
-			r.corner.x -= uqm::ResScale(1);
-		}
-
-		if (any(self->state, TextEntryWidgetState::BlockCursor))
-		{ // Use block cursor for keyboardless systems
-
-			r.corner.y = r.corner.y;
-			r.extent.height = r.extent.height;
-
-			if (self->cursor_pos == t.CharCount)
-			{ // cursor at end-line -- use insertion point
-				r.extent.width = uqm::ResScale(1);
-				r.corner.x -= uqm::IfHd(3);
+			// calculate the cursor position and draw it
+			const uint8_t* pchar_deltas {char_deltas.data()};
+			for (i = self->cursor_pos; i > 0; --i)
+			{
+				r.corner.x += (int16_t)*pchar_deltas++;
 			}
-			else if (self->cursor_pos + 1 == t.CharCount)
-			{ // extra pixel for last char margin
-				r.extent.width = (int16_t)*pchar_deltas - uqm::IfHd(3);
-				r.corner.x += uqm::ResScale(1);
+			if (self->cursor_pos < t.CharCount) /* cursor mid-line */
+			{
+				r.corner.x -= uqm::ResScale(1);
+			}
+
+			if (any(self->state, TextEntryWidgetState::BlockCursor))
+			{ // Use block cursor for keyboardless systems
+
+				r.corner.y = r.corner.y;
+				r.extent.height = r.extent.height;
+
+				if (self->cursor_pos == t.CharCount)
+				{ // cursor at end-line -- use insertion point
+					r.extent.width = uqm::ResScale(1);
+					r.corner.x -= uqm::IfHd(3);
+				}
+				else if (self->cursor_pos + 1 == t.CharCount)
+				{ // extra pixel for last char margin
+					r.extent.width = (int16_t)*pchar_deltas - uqm::IfHd(3);
+					r.corner.x += uqm::ResScale(1);
+				}
+				else
+				{ // normal mid-line char
+					r.extent.width = (int16_t)*pchar_deltas;
+					r.corner.x += uqm::ResScale(1);
+				}
 			}
 			else
-			{ // normal mid-line char
-				r.extent.width = (int16_t)*pchar_deltas;
-				r.corner.x += uqm::ResScale(1);
-			}
-		}
-		else
-		{ // Insertion point cursor
-			r.corner.y = r.corner.y + uqm::ResScale(1);
-			r.extent.height = r.extent.height - uqm::ResScale(2);
-			r.extent.width = uqm::ResScale(1);
+			{ // Insertion point cursor
+				r.corner.y = r.corner.y + uqm::ResScale(1);
+				r.extent.height = r.extent.height - uqm::ResScale(2);
+				r.extent.width = uqm::ResScale(1);
 
-			if (self->cursor_pos == t.CharCount)
-			{
-				r.corner.x -= uqm::IfHd(3);
+				if (self->cursor_pos == t.CharCount)
+				{
+					r.corner.x -= uqm::IfHd(3);
+				}
 			}
-		}
-		// position cursor within input field rect
-		r.corner.x += uqm::ResScale(1);
-		SetContextForeGroundColor(WidgetCursorColor);
-		DrawFilledRectangle(&r);
+			// position cursor within input field rect
+			r.corner.x += uqm::ResScale(1);
+			SetContextForeGroundColor(WidgetCursorColor);
+			DrawFilledRectangle(&r);
 
-		SetContextForeGroundColor(editing);
-		font_DrawText(&t);
+			SetContextForeGroundColor(editing);
+			font_DrawText(&t);
+		}
 	}
-
-	UnbatchGraphics();
 	if (oldfont)
 	{
 		SetContextFont(oldfont);

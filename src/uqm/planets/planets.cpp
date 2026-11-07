@@ -232,77 +232,77 @@ void DrawPlanetSurfaceBorder(void)
 	clipRect.extent.height += ResScale(1);
 	SetContextClipRect(&clipRect);
 
-	BatchGraphics();
-
-	// Border bulk
-	SetContextForeGroundColor(
-		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
-	r.corner.x = 0;
-	r.corner.y = clipRect.extent.height - MapHeight() - MapBorderHeight();
-	r.extent.width = clipRect.extent.width;
-	r.extent.height = MapBorderHeight() - ResScale(2);
-	DrawFilledRectangle(&r);
-
-	SetContextForeGroundColor(SisBottomRightBorderColor);
-
-	// Border top shadow line
-	r.extent.width -= ResScale(1);
-	r.extent.height = ResScale(1);
-	r.corner.x = ResScale(1);
-	r.corner.y -= ResScale(1);
-	DrawFilledRectangle(&r);
-
-	// XXX: We will need bulk left and right rects here if MapWidth() changes
-
-	// Right shadow line
-	r.extent.width = ResScale(1);
-	r.extent.height = MapHeight() + ResScale(2);
-	r.corner.y += MapBorderHeight() - ResScale(1);
-	r.corner.x = clipRect.extent.width - ResScale(1);
-	DrawFilledRectangle(&r);
-
-	SetContextForeGroundColor(SisLeftBorderColor);
-
-	// Left shadow line
-	r.corner.x -= MapWidth() + ResScale(1);
-	DrawFilledRectangle(&r);
-
-	// Border bottom shadow line
-	r.extent.width = MapWidth() + ResScale(2);
-	r.extent.height = ResScale(1);
-	DrawFilledRectangle(&r);
-
-	if (isPC(uqm::UQMOptions::read().landerStyle))
 	{
-		r.corner.x = ResScale(UqmMapWidth - Sc2MapWidth)
-				   - SisOrgX() + ResScale(1) + SafePos(1);
-		r.corner.y = clipRect.extent.height - MapHeight() - ResScale(1);
-		r.extent.width = ResScale(1);
-		r.extent.height = MapHeight();
-		SetContextForeGroundColor(SisBottomRightBorderColor);
-		DrawFilledRectangle(&r);
-		r.corner.x += ResScale(1);
-		r.extent.width = ResScale(4);
-		r.corner.y -= ResScale(1);
-		r.extent.height += ResScale(2);
+		const BatchScope batch {};
+
+		// Border bulk
 		SetContextForeGroundColor(
-			BuildColorRgba(0x52, 0x52, 0x52, 0xFF));
+			BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
+		r.corner.x = 0;
+		r.corner.y = clipRect.extent.height - MapHeight() - MapBorderHeight();
+		r.extent.width = clipRect.extent.width;
+		r.extent.height = MapBorderHeight() - ResScale(2);
 		DrawFilledRectangle(&r);
-		r.corner.x += ResScale(4);
+
+		SetContextForeGroundColor(SisBottomRightBorderColor);
+
+		// Border top shadow line
+		r.extent.width -= ResScale(1);
+		r.extent.height = ResScale(1);
+		r.corner.x = ResScale(1);
+		r.corner.y -= ResScale(1);
+		DrawFilledRectangle(&r);
+
+		// XXX: We will need bulk left and right rects here if MapWidth() changes
+
+		// Right shadow line
 		r.extent.width = ResScale(1);
-		r.corner.y += ResScale(1);
-		r.extent.height -= ResScale(2);
-		SetContextForeGroundColor(SisLeftBorderColor);
+		r.extent.height = MapHeight() + ResScale(2);
+		r.corner.y += MapBorderHeight() - ResScale(1);
+		r.corner.x = clipRect.extent.width - ResScale(1);
 		DrawFilledRectangle(&r);
 
-		DrawBorder(BorderFrameIndex::LanderDos);
-	}
-	else
-	{
-		DrawBorder(BorderFrameIndex::Lander3do);
-	}
+		SetContextForeGroundColor(SisLeftBorderColor);
 
-	UnbatchGraphics();
+		// Left shadow line
+		r.corner.x -= MapWidth() + ResScale(1);
+		DrawFilledRectangle(&r);
+
+		// Border bottom shadow line
+		r.extent.width = MapWidth() + ResScale(2);
+		r.extent.height = ResScale(1);
+		DrawFilledRectangle(&r);
+
+		if (isPC(uqm::UQMOptions::read().landerStyle))
+		{
+			r.corner.x = ResScale(UqmMapWidth - Sc2MapWidth)
+					   - SisOrgX() + ResScale(1) + SafePos(1);
+			r.corner.y = clipRect.extent.height - MapHeight() - ResScale(1);
+			r.extent.width = ResScale(1);
+			r.extent.height = MapHeight();
+			SetContextForeGroundColor(SisBottomRightBorderColor);
+			DrawFilledRectangle(&r);
+			r.corner.x += ResScale(1);
+			r.extent.width = ResScale(4);
+			r.corner.y -= ResScale(1);
+			r.extent.height += ResScale(2);
+			SetContextForeGroundColor(
+				BuildColorRgba(0x52, 0x52, 0x52, 0xFF));
+			DrawFilledRectangle(&r);
+			r.corner.x += ResScale(4);
+			r.extent.width = ResScale(1);
+			r.corner.y += ResScale(1);
+			r.extent.height -= ResScale(2);
+			SetContextForeGroundColor(SisLeftBorderColor);
+			DrawFilledRectangle(&r);
+
+			DrawBorder(BorderFrameIndex::LanderDos);
+		}
+		else
+		{
+			DrawBorder(BorderFrameIndex::Lander3do);
+		}
+	}
 
 	SetContextClipRect(&oldClipRect);
 }
@@ -432,58 +432,58 @@ static void DrawOrbitalDisplay(DrawOrbitalMode Mode)
 	SetContext(SpaceContext);
 	GetContextClipRect(&r);
 
-	BatchGraphics();
-
-	if (Mode != DrawOrbitalMode::Update)
 	{
-		SetTransitionSource(nullptr);
-		DrawSISFrame();
-		DrawSISMessage(nullptr);
-		DrawSISTitle(uqm::gameState().sis().PlanetName.data());
-		DrawStarBackGround();
-		DrawPlanetSurfaceBorder();
-	}
+		const BatchScope batch {};
 
-	if (Mode == DrawOrbitalMode::Wait)
-	{
-		DrawOrbitMapGraphic();
-
-		if (isPC(uqm::UQMOptions::read().landerStyle))
+		if (Mode != DrawOrbitalMode::Update)
 		{
-			InitPCLander(true);
+			SetTransitionSource(nullptr);
+			DrawSISFrame();
+			DrawSISMessage(nullptr);
+			DrawSISTitle(uqm::gameState().sis().PlanetName.data());
+			DrawStarBackGround();
+			DrawPlanetSurfaceBorder();
+		}
+
+		if (Mode == DrawOrbitalMode::Wait)
+		{
+			DrawOrbitMapGraphic();
+
+			if (isPC(uqm::UQMOptions::read().landerStyle))
+			{
+				InitPCLander(true);
+			}
+		}
+		else if (Mode == DrawOrbitalMode::Full)
+		{
+			DrawDefaultPlanetSphere();
+			DrawMenuStateStrings(MenuString::Scan, *PlanetMenuItem::Scan);
+		}
+		else if (Mode == DrawOrbitalMode::FromStarmap)
+		{
+			DrawDefaultPlanetSphere();
+			DrawMenuStateStrings(MenuString::Scan, *PlanetMenuItem::Starmap);
+		}
+		else
+		{
+			DrawMenuStateStrings(MenuString::Scan, *PlanetMenuItem::Scan);
+		}
+
+		if (Mode != DrawOrbitalMode::Wait)
+		{
+			SetContext(GetScanContext(nullptr));
+			DrawPlanet(0, BlackColor);
+			if (isPC(uqm::UQMOptions::read().landerStyle))
+			{
+				InitPCLander(false);
+			}
+		}
+
+		if (Mode != DrawOrbitalMode::Update)
+		{
+			ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
 		}
 	}
-	else if (Mode == DrawOrbitalMode::Full)
-	{
-		DrawDefaultPlanetSphere();
-		DrawMenuStateStrings(MenuString::Scan, *PlanetMenuItem::Scan);
-	}
-	else if (Mode == DrawOrbitalMode::FromStarmap)
-	{
-		DrawDefaultPlanetSphere();
-		DrawMenuStateStrings(MenuString::Scan, *PlanetMenuItem::Starmap);
-	}
-	else
-	{
-		DrawMenuStateStrings(MenuString::Scan, *PlanetMenuItem::Scan);
-	}
-
-	if (Mode != DrawOrbitalMode::Wait)
-	{
-		SetContext(GetScanContext(nullptr));
-		DrawPlanet(0, BlackColor);
-		if (isPC(uqm::UQMOptions::read().landerStyle))
-		{
-			InitPCLander(false);
-		}
-	}
-
-	if (Mode != DrawOrbitalMode::Update)
-	{
-		ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
-	}
-
-	UnbatchGraphics();
 
 	// for later RepairBackRect()
 

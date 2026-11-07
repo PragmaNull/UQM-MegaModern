@@ -644,7 +644,7 @@ static void DrawShipBox(uint16_t side, FleetShipIndex index, MeleeShip ship, boo
 
 	GetShipBox(&r, side, row, col);
 
-	BatchGraphics();
+	const BatchScope batch {};
 	if (IsHd())
 	{ // Draw prerendered rectangles in HdResolutionFactor
 		GfxStamp s;
@@ -686,7 +686,6 @@ static void DrawShipBox(uint16_t side, FleetShipIndex index, MeleeShip ship, boo
 
 		DrawStamp(&s);
 	}
-	UnbatchGraphics();
 }
 
 static void ClearShipBox(uint16_t side, FleetShipIndex index)
@@ -1404,61 +1403,61 @@ void DrawMeleeShipStrings(MeleeState* pMS, MeleeShip NewStarShip)
 	r.corner.y += ResScale(76);
 	r.extent.height = ShipInfoHeight();
 	SetContextClipRect(&r);
-	BatchGraphics();
-
-	if (NewStarShip == MeleeShip::None)
 	{
-		GfxRect r;
-		GfxText t;
+		const BatchScope batch {};
 
-		ClearShipStatus(0);
-
-		SetContextFont(StarConFont);
-		r.corner.x = ResScale(3);
-		r.corner.y = ResScale(4);
-		r.extent.width = ResScale(57);
-		r.extent.height = ResScale(60);
-		SetContextForeGroundColor(BlackColor);
-		DrawRectangle(&r, IsHd());
-		t.baseline.x = StatusWidth() >> 1;
-		t.baseline.y = ResScale(32);
-		t.align = TextAlign::Center;
-		if (pMS->row < NumMeleeRows)
+		if (NewStarShip == MeleeShip::None)
 		{
-			// A ship is selected (or an empty fleet position).
-			t.pStr = GameString(GameStringBase::MeleeString + 0); // "Empty"
+			GfxRect r;
+			GfxText t;
+
+			ClearShipStatus(0);
+
+			SetContextFont(StarConFont);
+			r.corner.x = ResScale(3);
+			r.corner.y = ResScale(4);
+			r.extent.width = ResScale(57);
+			r.extent.height = ResScale(60);
+			SetContextForeGroundColor(BlackColor);
+			DrawRectangle(&r, IsHd());
+			t.baseline.x = StatusWidth() >> 1;
+			t.baseline.y = ResScale(32);
+			t.align = TextAlign::Center;
+			if (pMS->row < NumMeleeRows)
+			{
+				// A ship is selected (or an empty fleet position).
+				t.pStr = GameString(GameStringBase::MeleeString + 0); // "Empty"
+				t.CharCount = (uint16_t)~0;
+				font_DrawText(&t);
+				t.pStr = GameString(GameStringBase::MeleeString + 1); // "Slot"
+			}
+			else
+			{
+				// The team name is selected.
+				t.pStr = GameString(GameStringBase::MeleeString + 2); // "Team"
+				t.CharCount = (uint16_t)~0;
+				font_DrawText(&t);
+				t.pStr = GameString(GameStringBase::MeleeString + 3); // "Name"
+			}
+			t.baseline.y += TinyTextHeight();
 			t.CharCount = (uint16_t)~0;
 			font_DrawText(&t);
-			t.pStr = GameString(GameStringBase::MeleeString + 1); // "Slot"
 		}
 		else
 		{
-			// The team name is selected.
-			t.pStr = GameString(GameStringBase::MeleeString + 2); // "Team"
-			t.CharCount = (uint16_t)~0;
-			font_DrawText(&t);
-			t.pStr = GameString(GameStringBase::MeleeString + 3); // "Name"
+			MasterShipHandle hMasterShip {GetStarShipFromIndex(&master_q, *NewStarShip)};
+			MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
+
+			InitShipStatus(&MasterPtr->ShipInfo, nullptr, nullptr, true);
+
+			if (uqm::UQMOptions::read().meleeToolTips && pMS->MeleeOption == MeleeMenuItem::BuildPick)
+			{
+				DrawTooltip(&MasterPtr->ShipInfo);
+			}
+
+			UnlockMasterShip(&master_q, hMasterShip);
 		}
-		t.baseline.y += TinyTextHeight();
-		t.CharCount = (uint16_t)~0;
-		font_DrawText(&t);
 	}
-	else
-	{
-		MasterShipHandle hMasterShip {GetStarShipFromIndex(&master_q, *NewStarShip)};
-		MasterShipInfo* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
-
-		InitShipStatus(&MasterPtr->ShipInfo, nullptr, nullptr, true);
-
-		if (uqm::UQMOptions::read().meleeToolTips && pMS->MeleeOption == MeleeMenuItem::BuildPick)
-		{
-			DrawTooltip(&MasterPtr->ShipInfo);
-		}
-
-		UnlockMasterShip(&master_q, hMasterShip);
-	}
-
-	UnbatchGraphics();
 	SetContextClipRect(&OldRect);
 }
 

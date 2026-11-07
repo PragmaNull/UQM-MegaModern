@@ -191,206 +191,205 @@ static int16_t add_text(int status, GfxText* pTextIn)
 	GfxContextRef OldContext = nullptr;
 	GfxRect arrow;
 
-	BatchGraphics();
-
-	GetFrameRect(SetAbsFrameIndex(ActivityFrame, 6), &arrow);
-
-	uint16_t maxchars {(uint16_t)~0};
-	if (status == 1)
 	{
-		if (last_subtitle == pTextIn->pStr)
+		const BatchScope batch {};
+
+		GetFrameRect(SetAbsFrameIndex(ActivityFrame, 6), &arrow);
+
+		uint16_t maxchars {(uint16_t)~0};
+		if (status == 1)
 		{
-			// draws cached subtitle
-			GfxStamp s;
-
-			s.origin.x = 0;
-			s.origin.y = 0;
-			s.frame = TextCacheFrame;
-			DrawStamp(&s);
-			UnbatchGraphics();
-			return last_baseline;
-		}
-		else
-		{
-			// draw to subtitle cache; prepare first
-			OldContext = SetContext(TextCacheContext);
-			ClearDrawable();
-
-			last_subtitle = pTextIn->pStr;
-		}
-
-		text_width = CommData.AlienTextWidth;
-		if (CommData.AlienConv == Conversation::Orz && uqm::UQMOptions::read().orzCompFont && testFlag(CommData.AlienTalkDesc.AnimFlags, AnimationFlags::PauseTalking))
-		{
-			SetContextFont(ComputerFont); // Orz intro
-		}
-		else
-		{
-			SetContextFont(CommData.AlienFont);
-		}
-		GetContextFontLeading(&leading);
-
-		pText = pTextIn;
-	}
-	else if (GetContextFontLeading(&leading), status <= -4)
-	{
-		text_width = (int16_t)(SisScreenWidth() - ResScale(8)
-							   - (TextXOffs() << 2)
-							   - (arrow.extent.width + ResScale(2)));
-
-		pText = pTextIn;
-	}
-	else
-	{
-		text_width = (int16_t)(SisScreenWidth() - ResScale(8)
-							   - (TextXOffs() << 2)
-							   - (arrow.extent.width + ResScale(2)));
-
-		switch (status)
-		{
-			case -3:
-				{
-					// Unknown. Never reached; color matches the background color.
-					// reused to mimic DOS
-					if (!IsDarkMode)
-					{
-						SetContextForeGroundColor(
-							BuildColor(
-								MakeRgb15(0x00, 0x00, 0x14), 0x01));
-					}
-					else
-					{
-						SetContextForeGroundColor(BlackColor);
-					}
-					break;
-				}
-			case -2:
-				{ // Not highlighted dialog options.
-					if (!IsDarkMode)
-					{
-						SetContextForeGroundColor(
-							CommPlayerTextNormalColor);
-					}
-					else
-					{
-						SetContextForeGroundColor(
-							BuildColorRgba(0x00, 0x00, 0xAA, 0xFF));
-					}
-					break;
-				}
-			case -1:
-				{ // Currently highlighted dialog option.
-					if (!IsDarkMode)
-					{
-						SetContextForeGroundColor(
-							CommPlayerTextHighlightColor);
-					}
-					else
-					{
-						SetContextForeGroundColor(
-							BuildColorRgba(0x55, 0x55, 0xFF, 0xFF));
-					}
-					break;
-				}
-		}
-
-		maxchars = pTextIn->CharCount;
-		locText = *pTextIn;
-		locText.baseline.x -= ResScale(8);
-		locText.CharCount = (uint16_t)~0;
-		locText.pStr = StrBullet;
-		font_DrawText(&locText);
-
-		locText = *pTextIn;
-		pText = &locText;
-		pText->baseline.y -= leading;
-	}
-
-	numchars = 0;
-	pStr = pText->pStr;
-
-	if (status > 0 && any(CommData.AlienTextValign, TextVAlign::Middle | TextVAlign::Bottom))
-	{
-		num_lines = _count_lines(pText);
-		if (CommData.AlienTextValign == TextVAlign::Bottom)
-		{
-			pText->baseline.y -= (leading * num_lines);
-		}
-		else if (CommData.AlienTextValign == TextVAlign::Middle)
-		{
-			pText->baseline.y -= ((leading * num_lines) / 2);
-		}
-		if (pText->baseline.y < 0)
-		{
-			pText->baseline.y = 0;
-		}
-	}
-
-	do
-	{
-		pText->pStr = pStr;
-		pText->baseline.y += leading;
-
-		eol = getLineWithinWidth(pText, &pStr, text_width, maxchars);
-
-		maxchars -= pText->CharCount;
-		if (maxchars != 0)
-		{
-			--maxchars;
-		}
-		numchars += pText->CharCount;
-
-		if (status <= 0)
-		{
-			// Player dialog option or (status == -4) other non-alien
-			// text.
-			if (pText->baseline.y < SisScreenHeight())
+			if (last_subtitle == pTextIn->pStr)
 			{
-				font_DrawText(pText);
-			}
+				// draws cached subtitle
+				GfxStamp s;
 
-			if (status < -4 && pText->baseline.y >= -status - 10)
-			{
-				// Never actually reached. Status is never <-4.
-				++pStr;
-				break;
-			}
-		}
-		else
-		{
-			// Alien speech
-			if (CommData.AlienConv == Conversation::Orz && uqm::UQMOptions::read().orzCompFont)
-			{
-				font_DrawTracedTextAlt(pText,
-									   CommData.AlienTextFColor,
-									   CommData.AlienTextBColor,
-									   ComputerFont, '*');
+				s.origin.x = 0;
+				s.origin.y = 0;
+				s.frame = TextCacheFrame;
+				DrawStamp(&s);
+				return last_baseline;
 			}
 			else
 			{
-				// Normal case : other races than Orz
-				font_DrawTracedText(pText,
-									CommData.AlienTextFColor,
-									CommData.AlienTextBColor);
+				// draw to subtitle cache; prepare first
+				OldContext = SetContext(TextCacheContext);
+				ClearDrawable();
+
+				last_subtitle = pTextIn->pStr;
+			}
+
+			text_width = CommData.AlienTextWidth;
+			if (CommData.AlienConv == Conversation::Orz && uqm::UQMOptions::read().orzCompFont && testFlag(CommData.AlienTalkDesc.AnimFlags, AnimationFlags::PauseTalking))
+			{
+				SetContextFont(ComputerFont); // Orz intro
+			}
+			else
+			{
+				SetContextFont(CommData.AlienFont);
+			}
+			GetContextFontLeading(&leading);
+
+			pText = pTextIn;
+		}
+		else if (GetContextFontLeading(&leading), status <= -4)
+		{
+			text_width = (int16_t)(SisScreenWidth() - ResScale(8)
+								   - (TextXOffs() << 2)
+								   - (arrow.extent.width + ResScale(2)));
+
+			pText = pTextIn;
+		}
+		else
+		{
+			text_width = (int16_t)(SisScreenWidth() - ResScale(8)
+								   - (TextXOffs() << 2)
+								   - (arrow.extent.width + ResScale(2)));
+
+			switch (status)
+			{
+				case -3:
+					{
+						// Unknown. Never reached; color matches the background color.
+						// reused to mimic DOS
+						if (!IsDarkMode)
+						{
+							SetContextForeGroundColor(
+								BuildColor(
+									MakeRgb15(0x00, 0x00, 0x14), 0x01));
+						}
+						else
+						{
+							SetContextForeGroundColor(BlackColor);
+						}
+						break;
+					}
+				case -2:
+					{ // Not highlighted dialog options.
+						if (!IsDarkMode)
+						{
+							SetContextForeGroundColor(
+								CommPlayerTextNormalColor);
+						}
+						else
+						{
+							SetContextForeGroundColor(
+								BuildColorRgba(0x00, 0x00, 0xAA, 0xFF));
+						}
+						break;
+					}
+				case -1:
+					{ // Currently highlighted dialog option.
+						if (!IsDarkMode)
+						{
+							SetContextForeGroundColor(
+								CommPlayerTextHighlightColor);
+						}
+						else
+						{
+							SetContextForeGroundColor(
+								BuildColorRgba(0x55, 0x55, 0xFF, 0xFF));
+						}
+						break;
+					}
+			}
+
+			maxchars = pTextIn->CharCount;
+			locText = *pTextIn;
+			locText.baseline.x -= ResScale(8);
+			locText.CharCount = (uint16_t)~0;
+			locText.pStr = StrBullet;
+			font_DrawText(&locText);
+
+			locText = *pTextIn;
+			pText = &locText;
+			pText->baseline.y -= leading;
+		}
+
+		numchars = 0;
+		pStr = pText->pStr;
+
+		if (status > 0 && any(CommData.AlienTextValign, TextVAlign::Middle | TextVAlign::Bottom))
+		{
+			num_lines = _count_lines(pText);
+			if (CommData.AlienTextValign == TextVAlign::Bottom)
+			{
+				pText->baseline.y -= (leading * num_lines);
+			}
+			else if (CommData.AlienTextValign == TextVAlign::Middle)
+			{
+				pText->baseline.y -= ((leading * num_lines) / 2);
+			}
+			if (pText->baseline.y < 0)
+			{
+				pText->baseline.y = 0;
 			}
 		}
-	} while (!eol && maxchars);
-	pText->pStr = pStr;
 
-	if (status == 1)
-	{
-		GfxStamp s;
+		do
+		{
+			pText->pStr = pStr;
+			pText->baseline.y += leading;
 
-		// We were drawing to cache -- flush to screen
-		SetContext(OldContext);
-		s.origin.x = s.origin.y = 0;
-		s.frame = TextCacheFrame;
-		DrawStamp(&s);
+			eol = getLineWithinWidth(pText, &pStr, text_width, maxchars);
 
-		last_baseline = pText->baseline.y;
+			maxchars -= pText->CharCount;
+			if (maxchars != 0)
+			{
+				--maxchars;
+			}
+			numchars += pText->CharCount;
+
+			if (status <= 0)
+			{
+				// Player dialog option or (status == -4) other non-alien
+				// text.
+				if (pText->baseline.y < SisScreenHeight())
+				{
+					font_DrawText(pText);
+				}
+
+				if (status < -4 && pText->baseline.y >= -status - 10)
+				{
+					// Never actually reached. Status is never <-4.
+					++pStr;
+					break;
+				}
+			}
+			else
+			{
+				// Alien speech
+				if (CommData.AlienConv == Conversation::Orz && uqm::UQMOptions::read().orzCompFont)
+				{
+					font_DrawTracedTextAlt(pText,
+										   CommData.AlienTextFColor,
+										   CommData.AlienTextBColor,
+										   ComputerFont, '*');
+				}
+				else
+				{
+					// Normal case : other races than Orz
+					font_DrawTracedText(pText,
+										CommData.AlienTextFColor,
+										CommData.AlienTextBColor);
+				}
+			}
+		} while (!eol && maxchars);
+		pText->pStr = pStr;
+
+		if (status == 1)
+		{
+			GfxStamp s;
+
+			// We were drawing to cache -- flush to screen
+			SetContext(OldContext);
+			s.origin.x = s.origin.y = 0;
+			s.frame = TextCacheFrame;
+			DrawStamp(&s);
+
+			last_baseline = pText->baseline.y;
+		}
 	}
-
-	UnbatchGraphics();
 	return (pText->baseline.y);
 }
 

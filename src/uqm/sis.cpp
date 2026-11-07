@@ -256,105 +256,106 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 	SetContextFGFrame(Screen);
 	SetContextClipRect(&r);
 
-	BatchGraphics();
-	SetContextBackGroundColor(SisMessageBackgroundColor);
-
-	if (pStr == 0)
 	{
-		switch (uqm::activityKind(uqm::currentActivity()))
+		const BatchScope batch {};
+		SetContextBackGroundColor(SisMessageBackgroundColor);
+
+		if (pStr == 0)
 		{
-			default:
-			case ActivityKind::InEncounter:
-				pStr = "";
-				break;
-			case ActivityKind::InLastBattle:
-			case ActivityKind::InInterplanetary:
-				GetClusterName(CurStarDescPtr(), buf.data());
-				pStr = buf.data();
-				break;
-			case ActivityKind::InHyperspace:
-				if (inHyperSpace())
-				{
-					pStr = GameString(GameStringBase::NavigationString);
-					// "HyperSpace"
-				}
-				else
-				{
-					const GfxPoint Log = MAKE_POINT(
-						LogxToUniverse(uqm::gameState().sis().log_x),
-						LogyToUniverse(uqm::gameState().sis().log_y));
-
-					pStr = GameString(GameStringBase::NavigationString + 1);
-					// "QuasiSpace"
-
-					if (uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS)
-						&& (Log.x == ArilouHomeX
-							&& Log.y == ArilouHomeY))
+			switch (uqm::activityKind(uqm::currentActivity()))
+			{
+				default:
+				case ActivityKind::InEncounter:
+					pStr = "";
+					break;
+				case ActivityKind::InLastBattle:
+				case ActivityKind::InInterplanetary:
+					GetClusterName(CurStarDescPtr(), buf.data());
+					pStr = buf.data();
+					break;
+				case ActivityKind::InHyperspace:
+					if (inHyperSpace())
 					{
-						uqm::utf8StringCopy({uqm::gameState().sis().PlanetName.data(), sizeof uqm::gameState().sis().PlanetName},
-											GameString(GameStringBase::StarString + 148));
-						// "Falayalaralfali"
+						pStr = GameString(GameStringBase::NavigationString);
+						// "HyperSpace"
 					}
-				}
-				break;
+					else
+					{
+						const GfxPoint Log = MAKE_POINT(
+							LogxToUniverse(uqm::gameState().sis().log_x),
+							LogyToUniverse(uqm::gameState().sis().log_y));
+
+						pStr = GameString(GameStringBase::NavigationString + 1);
+						// "QuasiSpace"
+
+						if (uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS)
+							&& (Log.x == ArilouHomeX
+								&& Log.y == ArilouHomeY))
+						{
+							uqm::utf8StringCopy({uqm::gameState().sis().PlanetName.data(), sizeof uqm::gameState().sis().PlanetName},
+												GameString(GameStringBase::StarString + 148));
+							// "Falayalaralfali"
+						}
+					}
+					break;
+			}
 		}
-	}
 
-	if (!(testFlag(flags, SisMessageFlags::MyColor)))
-	{
-		SetContextForeGroundColor(SisMessageTextColor);
-	}
+		if (!(testFlag(flags, SisMessageFlags::MyColor)))
+		{
+			SetContextForeGroundColor(SisMessageTextColor);
+		}
 
-	t.baseline.y = SisMessageHeight() - ResScale(2);
-	t.baseline.x = ResScale(ResDescale(SisMessageWidth()) >> 1);
-	t.pStr = pStr;
-	t.CharCount = (uint16_t)~0;
-	if (isPC(uqm::UQMOptions::read().whichFonts) || SaveOrLoad)
-	{
-		SetContextFont(TinyFont);
-	}
-	else
-	{
-		SetContextFont(TinyFontBold);
+		t.baseline.y = SisMessageHeight() - ResScale(2);
+		t.baseline.x = ResScale(ResDescale(SisMessageWidth()) >> 1);
+		t.pStr = pStr;
+		t.CharCount = (uint16_t)~0;
+		if (isPC(uqm::UQMOptions::read().whichFonts) || SaveOrLoad)
+		{
+			SetContextFont(TinyFont);
+		}
+		else
+		{
+			SetContextFont(TinyFontBold);
+
+			if (CurPos < 0 && ExPos < 0)
+			{
+				uqstl::array<char, 100> buf;
+
+				uqm::utf8StringCopy(buf, pStr);
+				replaceChar(buf.data(), UnicharSpace, UnicharTab);
+
+				t.pStr = buf.data();
+				t.CharCount = (uint16_t)~0;
+			}
+		}
+
+		if (testFlag(flags, SisMessageFlags::ClearFlashRect))
+		{
+			SetFlashRect(nullptr, false);
+		}
 
 		if (CurPos < 0 && ExPos < 0)
-		{
-			uqstl::array<char, 100> buf;
+		{ // normal state
+			ClearDrawable();
 
-			uqm::utf8StringCopy(buf, pStr);
-			replaceChar(buf.data(), UnicharSpace, UnicharTab);
-
-			t.pStr = buf.data();
-			t.CharCount = (uint16_t)~0;
+			DrawBorder(BorderFrameIndex::SisMsg);
+			t.align = TextAlign::Center;
+			font_DrawText(&t);
 		}
-	}
+		else
+		{ // editing state
+			int i {};
+			GfxRect text_r;
+			// XXX: 128 is currently safe, but it would be better to specify
+			//   the size to TextRect()
+			uqstl::array<uint8_t, 128> char_deltas;
+			const uint8_t* pchar_deltas {};
 
-	if (testFlag(flags, SisMessageFlags::ClearFlashRect))
-	{
-		SetFlashRect(nullptr, false);
-	}
+			t.baseline.x = ResScale(3);
+			t.align = TextAlign::Left;
 
-	if (CurPos < 0 && ExPos < 0)
-	{ // normal state
-		ClearDrawable();
-
-		DrawBorder(BorderFrameIndex::SisMsg);
-		t.align = TextAlign::Center;
-		font_DrawText(&t);
-	}
-	else
-	{ // editing state
-		int i {};
-		GfxRect text_r;
-		// XXX: 128 is currently safe, but it would be better to specify
-		//   the size to TextRect()
-		uqstl::array<uint8_t, 128> char_deltas;
-		const uint8_t* pchar_deltas {};
-
-		t.baseline.x = ResScale(3);
-		t.align = TextAlign::Left;
-
-		TextRect(&t, &text_r, char_deltas.data());
+			TextRect(&t, &text_r, char_deltas.data());
 #if 0
 		if (text_r.extent.width + t.baseline.x + ResScale (2)
 				>= r.extent.width)
@@ -368,111 +369,110 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		}
 #endif
 
-		ClearDrawable();
-		DrawBorder(BorderFrameIndex::SisMsg);
+			ClearDrawable();
+			DrawBorder(BorderFrameIndex::SisMsg);
 
-		if (CurPos >= 0 && CurPos <= t.CharCount)
-		{ // calc and draw the cursor
-			GfxRect cur_r = text_r;
+			if (CurPos >= 0 && CurPos <= t.CharCount)
+			{ // calc and draw the cursor
+				GfxRect cur_r = text_r;
 
-			pchar_deltas = char_deltas.data();
-			for (i = CurPos; i > 0; --i)
-			{
-				cur_r.corner.x += (int16_t)*pchar_deltas++;
-			}
-			if (CurPos < t.CharCount) /* end of line */
-			{
-				cur_r.corner.x -= ResScale(1);
-			}
-
-			if (testFlag(flags, SisMessageFlags::BlockCursor))
-			{ // Use block cursor for keyboardless systems
-
-				cur_r.corner.y = 0;
-				cur_r.extent.height = r.extent.height;
-
-				SetCursorFlashBlock(true);
-
-				if (CurPos == t.CharCount)
-				{ // cursor at end-line -- use insertion point
-					cur_r.extent.width = ResScale(1);
-					cur_r.corner.x -= IfHd(3);
-				}
-				else if (CurPos + 1 == t.CharCount)
-				{ // extra pixel for last char margin
-					cur_r.extent.width = (int16_t)*pchar_deltas - IfHd(3);
-					cur_r.corner.x += ResScale(1);
-				}
-				else if (CurPos < ExPos)
+				pchar_deltas = char_deltas.data();
+				for (i = CurPos; i > 0; --i)
 				{
-					cur_r.extent.width = (int16_t)*pchar_deltas
-									   - ResScale(1);
-					cur_r.corner.x += ResScale(1);
+					cur_r.corner.x += (int16_t)*pchar_deltas++;
+				}
+				if (CurPos < t.CharCount) /* end of line */
+				{
+					cur_r.corner.x -= ResScale(1);
+				}
+
+				if (testFlag(flags, SisMessageFlags::BlockCursor))
+				{ // Use block cursor for keyboardless systems
+
+					cur_r.corner.y = 0;
+					cur_r.extent.height = r.extent.height;
+
+					SetCursorFlashBlock(true);
+
+					if (CurPos == t.CharCount)
+					{ // cursor at end-line -- use insertion point
+						cur_r.extent.width = ResScale(1);
+						cur_r.corner.x -= IfHd(3);
+					}
+					else if (CurPos + 1 == t.CharCount)
+					{ // extra pixel for last char margin
+						cur_r.extent.width = (int16_t)*pchar_deltas - IfHd(3);
+						cur_r.corner.x += ResScale(1);
+					}
+					else if (CurPos < ExPos)
+					{
+						cur_r.extent.width = (int16_t)*pchar_deltas
+										   - ResScale(1);
+						cur_r.corner.x += ResScale(1);
+					}
+					else
+					{ // normal mid-line char
+						cur_r.extent.width = (int16_t)*pchar_deltas;
+						cur_r.corner.x += ResScale(1);
+					}
+
+					if (cur_r.extent.width >= 200)
+					{
+						cur_r.extent.width = ResScale(1);
+						cur_r.corner.x -= IfHd(3);
+					}
+					else
+					{
+						SetContextForeGroundColor(SisMessageCursorColor);
+						DrawFilledRectangle(&cur_r);
+					}
 				}
 				else
-				{ // normal mid-line char
-					cur_r.extent.width = (int16_t)*pchar_deltas;
-					cur_r.corner.x += ResScale(1);
+				{ // Insertion point cursor
+					cur_r.corner.y = ResScale(1);
+					cur_r.extent.height = r.extent.height - ResScale(2);
+					cur_r.extent.width = ResScale(1);
+
+					if (CurPos == t.CharCount)
+					{
+						text_r.corner.x -= IfHd(3);
+					}
+
+					SetCursorFlashBlock(false);
 				}
 
-				if (cur_r.extent.width >= 200)
+				SetCursorRect(&cur_r, OffScreenContext);
+			}
+
+			SetContextForeGroundColor(SisMessageTextColor);
+
+			if (ExPos >= 0 && ExPos < t.CharCount)
+			{ // handle extra characters
+				t.CharCount = ExPos;
+				font_DrawText(&t);
+
+				// print extra chars
+				SetContextForeGroundColor(SisMessageExtraTextColor);
+				for (i = ExPos, pchar_deltas = char_deltas.data(); i > 0; --i)
 				{
-					cur_r.extent.width = ResScale(1);
-					cur_r.corner.x -= IfHd(3);
+					t.baseline.x += (int16_t)*pchar_deltas++;
 				}
-				else
-				{
-					SetContextForeGroundColor(SisMessageCursorColor);
-					DrawFilledRectangle(&cur_r);
-				}
+				t.pStr = uqm::skipUTF8Chars(t.pStr, ExPos);
+				t.CharCount = (uint16_t)~0;
+				font_DrawText(&t);
 			}
 			else
-			{ // Insertion point cursor
-				cur_r.corner.y = ResScale(1);
-				cur_r.extent.height = r.extent.height - ResScale(2);
-				cur_r.extent.width = ResScale(1);
-
-				if (CurPos == t.CharCount)
-				{
-					text_r.corner.x -= IfHd(3);
-				}
-
-				SetCursorFlashBlock(false);
+			{ // just print the text
+				font_DrawText(&t);
 			}
-
-			SetCursorRect(&cur_r, OffScreenContext);
 		}
 
-		SetContextForeGroundColor(SisMessageTextColor);
-
-		if (ExPos >= 0 && ExPos < t.CharCount)
-		{ // handle extra characters
-			t.CharCount = ExPos;
-			font_DrawText(&t);
-
-			// print extra chars
-			SetContextForeGroundColor(SisMessageExtraTextColor);
-			for (i = ExPos, pchar_deltas = char_deltas.data(); i > 0; --i)
-			{
-				t.baseline.x += (int16_t)*pchar_deltas++;
-			}
-			t.pStr = uqm::skipUTF8Chars(t.pStr, ExPos);
-			t.CharCount = (uint16_t)~0;
-			font_DrawText(&t);
-		}
-		else
-		{ // just print the text
-			font_DrawText(&t);
+		if (testFlag(flags, SisMessageFlags::SetFlashRect))
+		{
+			r.corner.x = 0;
+			r.corner.y = 0;
 		}
 	}
-
-	if (testFlag(flags, SisMessageFlags::SetFlashRect))
-	{
-		r.corner.x = 0;
-		r.corner.y = 0;
-	}
-
-	UnbatchGraphics();
 
 	SetContextClipRect(nullptr);
 
@@ -531,96 +531,97 @@ void DrawStatusMessage(const char* pStr)
 	r.corner.y += ctxRect.corner.y;
 	SetContextClipRect(&r);
 
-	BatchGraphics();
-	SetContextBackGroundColor(StatusMessageBackgroundColor);
-	ClearDrawable();
-
-	DrawBorder(BorderFrameIndex::StatMsg);
-
-	if (!pStr)
 	{
-		if (curMsgMode == StatMsgMode::Credits)
+		const BatchScope batch {};
+		SetContextBackGroundColor(StatusMessageBackgroundColor);
+		ClearDrawable();
+
+		DrawBorder(BorderFrameIndex::StatMsg);
+
+		if (!pStr)
 		{
-			if (uqm::UQMOptions::read().infiniteCredits)
+			if (curMsgMode == StatMsgMode::Credits)
 			{
-				fmt::format_to_sz_n(buf, "{} {}",
-									(isPC(uqm::UQMOptions::read().whichMenu) && isPC(uqm::UQMOptions::read().whichFonts)) ?
-										GameString(GameStringBase::StatusString + 2) :
-										StrInfinitySign,						   // "UNLIMITED"
-									GameString(GameStringBase::StatusString + 0)); // "Cr"
+				if (uqm::UQMOptions::read().infiniteCredits)
+				{
+					fmt::format_to_sz_n(buf, "{} {}",
+										(isPC(uqm::UQMOptions::read().whichMenu) && isPC(uqm::UQMOptions::read().whichFonts)) ?
+											GameString(GameStringBase::StatusString + 2) :
+											StrInfinitySign,						   // "UNLIMITED"
+										GameString(GameStringBase::StatusString + 0)); // "Cr"
+				}
+				else
+				{
+					fmt::format_to_sz_n(buf, "{} {}", uqm::makeWord(uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0), uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1)), GameString(GameStringBase::StatusString + 0)); // "Cr"
+				}
+			}
+			else if (curMsgMode == StatMsgMode::ResUnits)
+			{
+				if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) >= 2 || uqm::UQMOptions::read().infiniteRU)
+				{
+					fmt::format_to_sz_n(buf, "{} {}",
+										(isPC(uqm::UQMOptions::read().whichMenu) && isPC(uqm::UQMOptions::read().whichFonts)) ?
+											GameString(GameStringBase::StatusString + 2) :
+											StrInfinitySign,						   // "UNLIMITED"
+										GameString(GameStringBase::StatusString + 1)); // "RU"
+				}
+				else
+				{
+					fmt::format_to_sz_n(buf, "{} {}", uqm::gameState().sis().ResUnits,
+										GameString(GameStringBase::StatusString + 1)); // "RU"
+				}
 			}
 			else
-			{
-				fmt::format_to_sz_n(buf, "{} {}", uqm::makeWord(uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0), uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1)), GameString(GameStringBase::StatusString + 0)); // "Cr"
+			{ // Just a date
+				DateToString(buf,
+							 uqm::gameState().clock().month(),
+							 uqm::gameState().clock().day(),
+							 uqm::gameState().clock().year());
 			}
+			pStr = buf.data();
 		}
-		else if (curMsgMode == StatMsgMode::ResUnits)
+
+		t.baseline.x = (StatusMessageWidth() >> 1);
+		t.baseline.y = StatusMessageHeight() - ResScale(1);
+		t.align = TextAlign::Center;
+		t.pStr = pStr;
+		t.CharCount = (uint16_t)~0;
+
 		{
-			if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) >= 2 || uqm::UQMOptions::read().infiniteRU)
+			Color statusColor = StatusMessageTextColor;
+
+			if (curMsgMode == StatMsgMode::Warning)
 			{
-				fmt::format_to_sz_n(buf, "{} {}",
-									(isPC(uqm::UQMOptions::read().whichMenu) && isPC(uqm::UQMOptions::read().whichFonts)) ?
-										GameString(GameStringBase::StatusString + 2) :
-										StrInfinitySign,						   // "UNLIMITED"
-									GameString(GameStringBase::StatusString + 1)); // "RU"
+				statusColor = StatusMessageWarningTextColor;
 			}
-			else
+			if (curMsgMode == StatMsgMode::Alert)
 			{
-				fmt::format_to_sz_n(buf, "{} {}", uqm::gameState().sis().ResUnits,
-									GameString(GameStringBase::StatusString + 1)); // "RU"
+				statusColor = StatusMessageAlertTextColor;
 			}
+
+			SetContextForeGroundColor(statusColor);
+		}
+
+		if (isPC(uqm::UQMOptions::read().whichFonts) || uqm::UQMOptions::read().customBorder)
+		{
+			SetContextFont(TinyFont);
 		}
 		else
-		{ // Just a date
-			DateToString(buf,
-						 uqm::gameState().clock().month(),
-						 uqm::gameState().clock().day(),
-						 uqm::gameState().clock().year());
-		}
-		pStr = buf.data();
-	}
-
-	t.baseline.x = (StatusMessageWidth() >> 1);
-	t.baseline.y = StatusMessageHeight() - ResScale(1);
-	t.align = TextAlign::Center;
-	t.pStr = pStr;
-	t.CharCount = (uint16_t)~0;
-
-	{
-		Color statusColor = StatusMessageTextColor;
-
-		if (curMsgMode == StatMsgMode::Warning)
 		{
-			statusColor = StatusMessageWarningTextColor;
+			uqstl::array<char, 100> buf;
+
+			SetContextFont(TinyFontBold);
+
+			uqm::utf8StringCopy(buf, pStr);
+			replaceChar(buf.data(), UnicharSpace, UnicharTab);
+
+			t.pStr = buf.data();
+			t.CharCount = (uint16_t)~0;
 		}
-		if (curMsgMode == StatMsgMode::Alert)
-		{
-			statusColor = StatusMessageAlertTextColor;
-		}
 
-		SetContextForeGroundColor(statusColor);
+		SetContextForeGroundColor(StatusMessageTextColor);
+		font_DrawText(&t);
 	}
-
-	if (isPC(uqm::UQMOptions::read().whichFonts) || uqm::UQMOptions::read().customBorder)
-	{
-		SetContextFont(TinyFont);
-	}
-	else
-	{
-		uqstl::array<char, 100> buf;
-
-		SetContextFont(TinyFontBold);
-
-		uqm::utf8StringCopy(buf, pStr);
-		replaceChar(buf.data(), UnicharSpace, UnicharTab);
-
-		t.pStr = buf.data();
-		t.CharCount = (uint16_t)~0;
-	}
-
-	SetContextForeGroundColor(StatusMessageTextColor);
-	font_DrawText(&t);
-	UnbatchGraphics();
 
 	SetContextClipRect(nullptr);
 }

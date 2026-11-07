@@ -345,123 +345,123 @@ uint16_t InitEncounter(void)
 	s.origin.x = s.origin.y = 0;
 
 	SetTransitionSource(nullptr);
-	BatchGraphics();
-
-	SetContextBackGroundColor(BlackColor);
-	ClearDrawable();
-	s.frame = SegueFrame;
-	DrawStamp(&s);
-
-	//    t.baseline.x = SisScreenWidth() >> 1;
-	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
-	t.baseline.y = ResScale(10);
-	t.align = TextAlign::Center;
-
-	SetContextForeGroundColor(
-		BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
-	if (inHQSpace())
 	{
-		t.pStr = GameString(GameStringBase::EncounterString + 0);
-		// "ENCOUNTER IN"
-		t.CharCount = (uint16_t)~0;
-		font_DrawText(&t);
-		t.baseline.y += ResScale(12);
-		t.pStr = GameString(GameStringBase::EncounterString + 1);
-		// "DEEP SPACE"
-		t.CharCount = (uint16_t)~0;
-		font_DrawText(&t);
-	}
-	else
-	{
-		uqstl::array<char, 256> buf;
+		const BatchScope batch {};
 
-		t.pStr = GameString(GameStringBase::EncounterString + 2);
-		// "ENCOUNTER AT"
-		t.CharCount = (uint16_t)~0;
-		font_DrawText(&t);
-		t.baseline.y += ResScale(12);
-		GetClusterName(CurStarDescPtr(), buf.data());
-		t.pStr = buf.data();
-		t.CharCount = (uint16_t)~0;
-		font_DrawText(&t);
-		t.baseline.y += ResScale(12);
-		t.pStr = uqm::gameState().sis().PlanetName.data();
-		t.CharCount = (uint16_t)~0;
-		font_DrawText(&t);
-	}
-	DrawSISMessage(nullptr);
+		SetContextBackGroundColor(BlackColor);
+		ClearDrawable();
+		s.frame = SegueFrame;
+		DrawStamp(&s);
 
-	s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
-	s.origin.y = SisScreenHeight() >> 1;
-	s.frame = planet[0];
-	DrawStamp(&s);
+		//    t.baseline.x = SisScreenWidth() >> 1;
+		t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
+		t.baseline.y = ResScale(10);
+		t.align = TextAlign::Center;
 
-	if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InLastBattle)
-	{
-		ShipFragmentHandle hStarShip {};
-		ShipFragmentHandle hNextShip {};
-		const uqstl::array<GfxPoint, 10> display_pt {
-			{
-				{10, 51},
-				{-10, 51},
-				{33, 40},
-				{-33, 40},
-				{49, 18},
-				{-49, 18},
-				{52, -6},
-				{-52, -6},
-				{44, -27},
-				{-44, -27},
-			 }
-		 };
-		constexpr auto NumDisplayPts {std::size(display_pt)};
-
-		for (hStarShip = GetHeadLink(&uqm::gameState().game().npc_built_ship_q), i = 0;
-			 hStarShip && i < 60; hStarShip = hNextShip, ++i)
+		SetContextForeGroundColor(
+			BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
+		if (inHQSpace())
 		{
-			GfxRect r;
+			t.pStr = GameString(GameStringBase::EncounterString + 0);
+			// "ENCOUNTER IN"
+			t.CharCount = (uint16_t)~0;
+			font_DrawText(&t);
+			t.baseline.y += ResScale(12);
+			t.pStr = GameString(GameStringBase::EncounterString + 1);
+			// "DEEP SPACE"
+			t.CharCount = (uint16_t)~0;
+			font_DrawText(&t);
+		}
+		else
+		{
+			uqstl::array<char, 256> buf;
 
-			const ShipFragment* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
-			if (FragPtr->crew_level != InfiniteFleet)
+			t.pStr = GameString(GameStringBase::EncounterString + 2);
+			// "ENCOUNTER AT"
+			t.CharCount = (uint16_t)~0;
+			font_DrawText(&t);
+			t.baseline.y += ResScale(12);
+			GetClusterName(CurStarDescPtr(), buf.data());
+			t.pStr = buf.data();
+			t.CharCount = (uint16_t)~0;
+			font_DrawText(&t);
+			t.baseline.y += ResScale(12);
+			t.pStr = uqm::gameState().sis().PlanetName.data();
+			t.CharCount = (uint16_t)~0;
+			font_DrawText(&t);
+		}
+		DrawSISMessage(nullptr);
+
+		s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
+		s.origin.y = SisScreenHeight() >> 1;
+		s.frame = planet[0];
+		DrawStamp(&s);
+
+		if (uqm::activityKind(uqm::currentActivity()) != ActivityKind::InLastBattle)
+		{
+			ShipFragmentHandle hStarShip {};
+			ShipFragmentHandle hNextShip {};
+			const uqstl::array<GfxPoint, 10> display_pt {
+				{
+					{10, 51},
+					{-10, 51},
+					{33, 40},
+					{-33, 40},
+					{49, 18},
+					{-49, 18},
+					{52, -6},
+					{-52, -6},
+					{44, -27},
+					{-44, -27},
+				 }
+			 };
+			constexpr auto NumDisplayPts {std::size(display_pt)};
+
+			for (hStarShip = GetHeadLink(&uqm::gameState().game().npc_built_ship_q), i = 0;
+				 hStarShip && i < 60; hStarShip = hNextShip, ++i)
 			{
-				hNextShip = _GetSuccLink(FragPtr);
+				GfxRect r;
+
+				const ShipFragment* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
+				if (FragPtr->crew_level != InfiniteFleet)
+				{
+					hNextShip = _GetSuccLink(FragPtr);
+				}
+				else /* if infinite ships */
+				{
+					hNextShip = hStarShip;
+				}
+
+				s.origin = display_pt[i % NumDisplayPts];
+				if (i >= NumDisplayPts)
+				{
+					uint16_t radius {};
+
+					radius = square_root((long)s.origin.x * s.origin.x
+										 + (long)s.origin.y * s.origin.y)
+						   + ((i / NumDisplayPts) * 18);
+
+					radius <<= resolutionFactor;
+
+					const uint16_t angle {ARCTAN(s.origin.x, s.origin.y)};
+					s.origin.x = (Cosine(angle, radius));
+					s.origin.y = (Sine(angle, radius));
+				}
+				else
+				{
+					s.origin.x <<= resolutionFactor;
+					s.origin.y <<= resolutionFactor;
+				}
+				s.frame = SetAbsFrameIndex(FragPtr->icons, 0);
+				GetFrameRect(s.frame, &r);
+				s.origin.x += ResScale(OrigSisScreenWidth() >> 1) - (r.extent.width >> 1);
+				s.origin.y += ResScale(OrigSisScreenHeight() >> 1) - (r.extent.height >> 1);
+				DrawStamp(&s);
+
+				UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 			}
-			else /* if infinite ships */
-			{
-				hNextShip = hStarShip;
-			}
-
-			s.origin = display_pt[i % NumDisplayPts];
-			if (i >= NumDisplayPts)
-			{
-				uint16_t radius {};
-
-				radius = square_root((long)s.origin.x * s.origin.x
-									 + (long)s.origin.y * s.origin.y)
-					   + ((i / NumDisplayPts) * 18);
-
-				radius <<= resolutionFactor;
-
-				const uint16_t angle {ARCTAN(s.origin.x, s.origin.y)};
-				s.origin.x = (Cosine(angle, radius));
-				s.origin.y = (Sine(angle, radius));
-			}
-			else
-			{
-				s.origin.x <<= resolutionFactor;
-				s.origin.y <<= resolutionFactor;
-			}
-			s.frame = SetAbsFrameIndex(FragPtr->icons, 0);
-			GetFrameRect(s.frame, &r);
-			s.origin.x += ResScale(OrigSisScreenWidth() >> 1) - (r.extent.width >> 1);
-			s.origin.y += ResScale(OrigSisScreenHeight() >> 1) - (r.extent.height >> 1);
-			DrawStamp(&s);
-
-			UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 		}
 	}
-
-	UnbatchGraphics();
 	DestroyDrawable(ReleaseDrawable(SegueFrame));
 	ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
 
@@ -772,36 +772,37 @@ uint16_t UninitEncounter(void)
 							r.extent.width = ResScale(34);
 							r.corner.x = scavenge_r.corner.x + scavenge_r.extent.width
 									   - (ResScale(10) + r.extent.width);
-							BatchGraphics(); // to avoid blinking text
-
-							// Back of the RU counter
-							ClearRectBack(&r);
-
-							/* collect bounty ResUnits */
-							j = ShipCost(EncounterRace) >> 3;
-							if (EncounterRace == RaceId::Slylandro)
 							{
-								j = 550;
-							}
-							if (EncounterRace == RaceId::Melnorme)
-							{
-								j = j * 2;
-							}
+								const BatchScope batch {}; // to avoid blinking text
 
-							RecycleAmount += j;
-							fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", RecycleAmount);
-							t.baseline.x =
-								r.corner.x + r.extent.width
-								- ResScale(1);
-							t.baseline.y = r.corner.y + ResScale(14);
-							t.align = TextAlign::Right;
-							t.pStr = buf.data();
-							t.CharCount = (uint16_t)~0;
-							SetContextForeGroundColor(
-								BuildColor(
-									MakeRgb15(0x00, 0x00, 0x18), 0x50));
-							font_DrawText(&t);
-							UnbatchGraphics();
+								// Back of the RU counter
+								ClearRectBack(&r);
+
+								/* collect bounty ResUnits */
+								j = ShipCost(EncounterRace) >> 3;
+								if (EncounterRace == RaceId::Slylandro)
+								{
+									j = 550;
+								}
+								if (EncounterRace == RaceId::Melnorme)
+								{
+									j = j * 2;
+								}
+
+								RecycleAmount += j;
+								fmt::format_to_n(buf.data(), sizeof(buf) - 1, "{}", RecycleAmount);
+								t.baseline.x =
+									r.corner.x + r.extent.width
+									- ResScale(1);
+								t.baseline.y = r.corner.y + ResScale(14);
+								t.align = TextAlign::Right;
+								t.pStr = buf.data();
+								t.CharCount = (uint16_t)~0;
+								SetContextForeGroundColor(
+									BuildColor(
+										MakeRgb15(0x00, 0x00, 0x18), 0x50));
+								font_DrawText(&t);
+							}
 							DeltaSISGauges(0, 0, j);
 
 							if ((VictoryState++ - 1) % MaxDeadDisplayed)

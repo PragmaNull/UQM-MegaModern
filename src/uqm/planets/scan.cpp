@@ -279,7 +279,7 @@ static void PrintCoarseScanPC(void)
 								  ScanPcTitleColor);
 	SetContextFont(MicroFont);
 
-	BatchGraphics();
+	const BatchScope batch {};
 	PrintScanText(&t);
 
 	SetContextFont(SafeBool(TinyFont, TinyFontCond));
@@ -448,8 +448,6 @@ static void PrintCoarseScanPC(void)
 	}
 	fmt::format_to_sz_n(buf, "{}{}", val, StrDegreeSign);
 	PrintScanText(&t);
-
-	UnbatchGraphics();
 }
 
 static void PrintCoarseScan3DO(void)
@@ -472,7 +470,7 @@ static void PrintCoarseScan3DO(void)
 
 	GetPlanetTitle(buf);
 
-	BatchGraphics();
+	const BatchScope batch {};
 
 	t.align = TextAlign::Center;
 	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
@@ -612,8 +610,6 @@ static void PrintCoarseScan3DO(void)
 	val = GetRotationalPeriod();
 	MakeDayValue(buf, val, StrEarthSign);
 	PrintScanText(&t);
-
-	UnbatchGraphics();
 }
 
 static void initPlanetLocationImage(void)
@@ -912,39 +908,39 @@ static bool DoPickPlanetSide(MenuState* pMS)
 			}
 		}
 
-		BatchGraphics();
-
-		dx = dx << MagShift;
-		if (dx)
 		{
-			new_pt.x += dx;
-			if (new_pt.x < 0)
-			{
-				new_pt.x += (ScaledMapWidth() << MagShift);
-			}
-			else if (new_pt.x >= (ScaledMapWidth() << MagShift))
-			{
-				new_pt.x -= (ScaledMapWidth() << MagShift);
-			}
-		}
-		dy = dy << MagShift;
-		if (dy)
-		{
-			new_pt.y += dy;
-			if (new_pt.y < 0 || new_pt.y >= (MapHeight() << MagShift))
-			{
-				new_pt.y = planetLoc.y;
-			}
-		}
+			const BatchScope batch {};
 
-		if (!pointsEqual(new_pt, planetLoc))
-		{
-			setPlanetLoc(new_pt, true);
+			dx = dx << MagShift;
+			if (dx)
+			{
+				new_pt.x += dx;
+				if (new_pt.x < 0)
+				{
+					new_pt.x += (ScaledMapWidth() << MagShift);
+				}
+				else if (new_pt.x >= (ScaledMapWidth() << MagShift))
+				{
+					new_pt.x -= (ScaledMapWidth() << MagShift);
+				}
+			}
+			dy = dy << MagShift;
+			if (dy)
+			{
+				new_pt.y += dy;
+				if (new_pt.y < 0 || new_pt.y >= (MapHeight() << MagShift))
+				{
+					new_pt.y = planetLoc.y;
+				}
+			}
+
+			if (!pointsEqual(new_pt, planetLoc))
+			{
+				setPlanetLoc(new_pt, true);
+			}
+
+			flashPlanetLocation();
 		}
-
-		flashPlanetLocation();
-
-		UnbatchGraphics();
 
 		if (dx || dy)
 		{

@@ -186,68 +186,69 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 	selected = MenuHighlightColor;
 	inactive = MenuTextColor;
 
-	BatchGraphics();
-
-	t.baseline.x = x;
-	t.baseline.y = y;
-	t.align = TextAlign::Left;
-	t.CharCount = ~0;
-	t.pStr = self->category;
-	if (widget_focus == _self)
 	{
-		oldtext = SetContextForeGroundColor(selected);
-	}
-	else
-	{
-		oldtext = SetContextForeGroundColor(default_color);
-	}
-	font_DrawText(&t);
+		const BatchScope batch {};
 
-	/* Force string termination */
-	self->value[WidgetTextentryWidth - 1] = 0;
-
-	t.baseline.y = y;
-	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value.data());
-	t.pStr = self->value.data();
-
-	if (!any(self->state, TextEntryWidgetState::Editing))
-	{ // normal or selected state
-		t.baseline.x = ResScale(160);
-		t.align = TextAlign::Center;
-
+		t.baseline.x = x;
+		t.baseline.y = y;
+		t.align = TextAlign::Left;
+		t.CharCount = ~0;
+		t.pStr = self->category;
 		if (widget_focus == _self)
 		{
 			oldtext = SetContextForeGroundColor(selected);
 		}
 		else
 		{
-			oldtext = SetContextForeGroundColor(inactive);
+			oldtext = SetContextForeGroundColor(default_color);
 		}
 		font_DrawText(&t);
-	}
-	else
-	{ // editing state
-		uint16_t i {};
-		GfxRect text_r;
-		uqstl::array<uint8_t, WidgetTextentryWidth> char_deltas;
-		GfxRect r;
-		int16_t leading {};
 
-		t.baseline.x = x + (ResScale(90));
-		t.align = TextAlign::Left;
+		/* Force string termination */
+		self->value[WidgetTextentryWidth - 1] = 0;
 
-		// calc background box dimensions
-		// XXX: this may need some tuning, especially if a
-		//   different font is used. The font 'leading' values
-		//   are not what they should be.
-		const auto BoxVertOffset {ResScale(2)};
-		GetContextFontLeading(&leading);
-		r.corner.x = t.baseline.x - ResScale(1);
-		r.corner.y = t.baseline.y - leading + BoxVertOffset;
-		r.extent.width = McdWidth() - r.corner.x - ResScale(10);
-		r.extent.height = leading - ResScale(1);
+		t.baseline.y = y;
+		t.CharCount = (uint16_t)uqm::utf8StringCount(self->value.data());
+		t.pStr = self->value.data();
 
-		TextRect(&t, &text_r, char_deltas.data());
+		if (!any(self->state, TextEntryWidgetState::Editing))
+		{ // normal or selected state
+			t.baseline.x = ResScale(160);
+			t.align = TextAlign::Center;
+
+			if (widget_focus == _self)
+			{
+				oldtext = SetContextForeGroundColor(selected);
+			}
+			else
+			{
+				oldtext = SetContextForeGroundColor(inactive);
+			}
+			font_DrawText(&t);
+		}
+		else
+		{ // editing state
+			uint16_t i {};
+			GfxRect text_r;
+			uqstl::array<uint8_t, WidgetTextentryWidth> char_deltas;
+			GfxRect r;
+			int16_t leading {};
+
+			t.baseline.x = x + (ResScale(90));
+			t.align = TextAlign::Left;
+
+			// calc background box dimensions
+			// XXX: this may need some tuning, especially if a
+			//   different font is used. The font 'leading' values
+			//   are not what they should be.
+			const auto BoxVertOffset {ResScale(2)};
+			GetContextFontLeading(&leading);
+			r.corner.x = t.baseline.x - ResScale(1);
+			r.corner.y = t.baseline.y - leading + BoxVertOffset;
+			r.extent.width = McdWidth() - r.corner.x - ResScale(10);
+			r.extent.height = leading - ResScale(1);
+
+			TextRect(&t, &text_r, char_deltas.data());
 #if 0
 		// XXX: this should potentially be used in ChangeCallback
 		if ((text_r.extent.width + 2) >= r.extent.width)
@@ -259,63 +260,62 @@ static void MCD_DrawTextEntry(Widget* _self, int x, int y)
 		}
 #endif
 
-		oldtext = SetContextForeGroundColor(selected);
-		DrawFilledRectangle(&r);
+			oldtext = SetContextForeGroundColor(selected);
+			DrawFilledRectangle(&r);
 
-		// calculate the cursor position and draw it
-		const uint8_t* pchar_deltas {char_deltas.data()};
-		for (i = self->cursor_pos; i > 0; --i)
-		{
-			r.corner.x += (int16_t)*pchar_deltas++;
-		}
-		if (self->cursor_pos < t.CharCount) /* cursor mid-line */
-		{
-			r.corner.x -= ResScale(1);
-		}
-
-		if (any(self->state, TextEntryWidgetState::BlockCursor))
-		{ // Use block cursor for keyboardless systems
-
-			r.corner.y = r.corner.y;
-			r.extent.height = r.extent.height;
-
-			if (self->cursor_pos == t.CharCount)
-			{ // cursor at end-line -- use insertion point
-				r.extent.width = ResScale(1);
-				r.corner.x -= IfHd(3);
+			// calculate the cursor position and draw it
+			const uint8_t* pchar_deltas {char_deltas.data()};
+			for (i = self->cursor_pos; i > 0; --i)
+			{
+				r.corner.x += (int16_t)*pchar_deltas++;
 			}
-			else if (self->cursor_pos + 1 == t.CharCount)
-			{ // extra pixel for last char margin
-				r.extent.width = (int16_t)*pchar_deltas - IfHd(3);
-				r.corner.x += ResScale(1);
+			if (self->cursor_pos < t.CharCount) /* cursor mid-line */
+			{
+				r.corner.x -= ResScale(1);
+			}
+
+			if (any(self->state, TextEntryWidgetState::BlockCursor))
+			{ // Use block cursor for keyboardless systems
+
+				r.corner.y = r.corner.y;
+				r.extent.height = r.extent.height;
+
+				if (self->cursor_pos == t.CharCount)
+				{ // cursor at end-line -- use insertion point
+					r.extent.width = ResScale(1);
+					r.corner.x -= IfHd(3);
+				}
+				else if (self->cursor_pos + 1 == t.CharCount)
+				{ // extra pixel for last char margin
+					r.extent.width = (int16_t)*pchar_deltas - IfHd(3);
+					r.corner.x += ResScale(1);
+				}
+				else
+				{ // normal mid-line char
+					r.extent.width = (int16_t)*pchar_deltas;
+					r.corner.x += ResScale(1);
+				}
 			}
 			else
-			{ // normal mid-line char
-				r.extent.width = (int16_t)*pchar_deltas;
-				r.corner.x += ResScale(1);
-			}
-		}
-		else
-		{ // Insertion point cursor
-			r.corner.y = r.corner.y + ResScale(1);
-			r.extent.height = r.extent.height - ResScale(2);
-			r.extent.width = ResScale(1);
+			{ // Insertion point cursor
+				r.corner.y = r.corner.y + ResScale(1);
+				r.extent.height = r.extent.height - ResScale(2);
+				r.extent.width = ResScale(1);
 
-			if (self->cursor_pos == t.CharCount)
-			{
-				text_r.corner.x -= IfHd(3);
+				if (self->cursor_pos == t.CharCount)
+				{
+					text_r.corner.x -= IfHd(3);
+				}
 			}
-		}
-		// position cursor within input field rect
-		r.corner.x += ResScale(1);
-		SetContextForeGroundColor(MenuCursorColor);
-		DrawFilledRectangle(&r);
+			// position cursor within input field rect
+			r.corner.x += ResScale(1);
+			SetContextForeGroundColor(MenuCursorColor);
+			DrawFilledRectangle(&r);
 
-		SetContextForeGroundColor(inactive);
-		font_DrawText(&t);
+			SetContextForeGroundColor(inactive);
+			font_DrawText(&t);
+		}
 	}
-
-	UnbatchGraphics();
 	SetContextForeGroundColor(oldtext);
 }
 

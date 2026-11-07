@@ -1195,7 +1195,7 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 	{
 		SetTransitionSource(nullptr);
 	}
-	BatchGraphics();
+	const BatchScope batch {};
 
 	which_space = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE);
 
@@ -1747,8 +1747,6 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 				   UniverseToDispy(cursorLoc.y));
 		flashCurrentLocation(nullptr, true);
 	}
-
-	UnbatchGraphics();
 }
 
 static void EraseCursor(int16_t curs_x, int16_t curs_y)

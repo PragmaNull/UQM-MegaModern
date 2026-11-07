@@ -905,171 +905,171 @@ void DrawMineralHelpers(void)
 
 	GfxContextRef OldContext {SetContext(StatusContext)};
 
-	BatchGraphics();
-
-	DrawFlagStatDisplay(""); // (GameString (STATUS_STRING_BASE + 6));
-
-	SetContextFont(TinyFont);
-
-	GetContextFontLeading(&leading);
-	leading -= ResScale(1);
-
-	const auto ElementOrgY = [&] {
-		return ResScale(24);
-	};
-	const auto ElementSpacingY = [&] {
-		return ResScale(9);
-	};
-
-	const auto ElementCol0 = [&] {
-		return ResScale(10);
-	};
-	const auto ElementCol1 = [&] {
-		return ResScale(32);
-	};
-	const auto ElementCol2 = [&] {
-		return ResScale(58);
-	};
-
-	// setup Element icons
-	s.frame = SetAbsFrameIndex(MiscDataFrame,
-							   (NumScandotTransitions << 1) + 3);
-	s.origin.x = ElementCol0();
-	s.origin.y = ElementOrgY();
-	// setup Element worths
-	t.baseline.x = ElementCol1();
-	t.baseline.y = ElementOrgY() + ResScale(3);
-	t.align = TextAlign::Right;
-	t.pStr = buf.data();
-	t.CharCount = (uint16_t)~0;
-
-	r.extent = GetFrameBounds(s.frame);
-	r.corner.x = ElementCol0() - ResScale(3);
-
-	// draw Element icons and worths
-	for (uint16_t i {0}; i < MineralCategory::NumElementCategories; ++i)
 	{
-		// draw Element icon
+		const BatchScope batch {};
+
+		DrawFlagStatDisplay(""); // (GameString (STATUS_STRING_BASE + 6));
+
+		SetContextFont(TinyFont);
+
+		GetContextFontLeading(&leading);
+		leading -= ResScale(1);
+
+		const auto ElementOrgY = [&] {
+			return ResScale(24);
+		};
+		const auto ElementSpacingY = [&] {
+			return ResScale(9);
+		};
+
+		const auto ElementCol0 = [&] {
+			return ResScale(10);
+		};
+		const auto ElementCol1 = [&] {
+			return ResScale(32);
+		};
+		const auto ElementCol2 = [&] {
+			return ResScale(58);
+		};
+
+		// setup Element icons
+		s.frame = SetAbsFrameIndex(MiscDataFrame,
+								   (NumScandotTransitions << 1) + 3);
+		s.origin.x = ElementCol0();
+		s.origin.y = ElementOrgY();
+		// setup Element worths
+		t.baseline.x = ElementCol1();
+		t.baseline.y = ElementOrgY() + ResScale(3);
+		t.align = TextAlign::Right;
+		t.pStr = buf.data();
+		t.CharCount = (uint16_t)~0;
+
+		r.extent = GetFrameBounds(s.frame);
+		r.corner.x = ElementCol0() - ResScale(3);
+
+		// draw Element icons and worths
+		for (uint16_t i {0}; i < MineralCategory::NumElementCategories; ++i)
+		{
+			// draw Element icon
+			DrawStamp(&s);
+			s.frame = SetRelFrameIndex(s.frame, 5);
+			s.origin.y += ElementSpacingY();
+
+			// print Element worth
+			SetContextForeGroundColor(ModulePriceColor);
+			fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().ElementWorth[i]);
+			font_DrawText(&t);
+
+			// print x'es
+			fmt::format_to_sz_n(buf, "x");
+			t.baseline.x -= ResScale(11);
+			font_DrawText(&t);
+
+			// print the Element amount
+			SetContextForeGroundColor(ModuleNameColor);
+			t.baseline.x = ElementCol2();
+			fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().ElementAmounts[i]);
+			font_DrawText(&t);
+
+			t.baseline.x = ElementCol1();
+			t.baseline.y += ElementSpacingY();
+		}
+
+		SetContextForeGroundColor(BlackColor);
+		r.corner.y = s.origin.y - ResScale(3);
+		DrawFilledRectangle(&r);
+
+		s.frame = SetAbsFrameIndex(s.frame, 68);
+		s.origin.x = r.corner.x + ResRecenter(r.extent.height);
+		s.origin.y = r.corner.y + ResRecenter(r.extent.height);
 		DrawStamp(&s);
-		s.frame = SetRelFrameIndex(s.frame, 5);
-		s.origin.y += ElementSpacingY();
 
-		// print Element worth
-		SetContextForeGroundColor(ModulePriceColor);
-		fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().ElementWorth[i]);
-		font_DrawText(&t);
-
-		// print x'es
-		fmt::format_to_sz_n(buf, "x");
-		t.baseline.x -= ResScale(11);
-		font_DrawText(&t);
-
-		// print the Element amount
+		// print the bio amount
 		SetContextForeGroundColor(ModuleNameColor);
 		t.baseline.x = ElementCol2();
-		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().ElementAmounts[i]);
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().TotalBioMass);
+		font_DrawText(&t);
+		t.baseline.y += ElementSpacingY();
+
+		r.corner.x = ResScale(4);
+		r.corner.y = t.baseline.y - ResScale(7);
+		r.extent.width = FieldWidth() - ResScale(3);
+		r.extent.height = ResScale(1);
+		SetContextForeGroundColor(CargoSelectedBackColor);
+		DrawFilledRectangle(&r);
+
+		SetContextForeGroundColor(ModuleNameColor);
+		t.align = TextAlign::Left;
+		t.baseline.x = r.corner.x + ResScale(2);
+		t.baseline.y = r.corner.y + leading + ResScale(1);
+		t.pStr = GameString(GameStringBase::StatusString + 8); // FUEL:
+		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 
-		t.baseline.x = ElementCol1();
-		t.baseline.y += ElementSpacingY();
-	}
+		t.baseline.y += leading;
+		t.pStr = GameString(GameStringBase::StatusString + 9); // CREW:
+		t.CharCount = (uint16_t)~0;
+		font_DrawText(&t);
 
-	SetContextForeGroundColor(BlackColor);
-	r.corner.y = s.origin.y - ResScale(3);
-	DrawFilledRectangle(&r);
+		t.baseline.y += leading;
+		t.pStr = GameString(GameStringBase::StatusString + 10); // LAND.:
+		t.CharCount = (uint16_t)~0;
+		font_DrawText(&t);
 
-	s.frame = SetAbsFrameIndex(s.frame, 68);
-	s.origin.x = r.corner.x + ResRecenter(r.extent.height);
-	s.origin.y = r.corner.y + ResRecenter(r.extent.height);
-	DrawStamp(&s);
+		t.baseline.y += leading;
+		t.pStr = GameString(GameStringBase::StatusString + 11); // CARGO:
+		t.CharCount = (uint16_t)~0;
+		font_DrawText(&t);
 
-	// print the bio amount
-	SetContextForeGroundColor(ModuleNameColor);
-	t.baseline.x = ElementCol2();
-	fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().TotalBioMass);
-	font_DrawText(&t);
-	t.baseline.y += ElementSpacingY();
+		SetContextForeGroundColor(ModulePriceColor);
+		t.align = TextAlign::Right;
+		t.baseline.x = r.extent.width + ResScale(2);
+		t.baseline.y = r.corner.y + leading + ResScale(1);
+		t.pStr = WholeFuelValue();
+		t.CharCount = (uint16_t)~0;
+		font_DrawText(&t);
 
-	r.corner.x = ResScale(4);
-	r.corner.y = t.baseline.y - ResScale(7);
-	r.extent.width = FieldWidth() - ResScale(3);
-	r.extent.height = ResScale(1);
-	SetContextForeGroundColor(CargoSelectedBackColor);
-	DrawFilledRectangle(&r);
+		t.baseline.y += leading;
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().CrewEnlisted);
+		t.pStr = buf.data();
+		t.CharCount = (uint16_t)~0;
+		font_DrawText(&t);
 
-	SetContextForeGroundColor(ModuleNameColor);
-	t.align = TextAlign::Left;
-	t.baseline.x = r.corner.x + ResScale(2);
-	t.baseline.y = r.corner.y + leading + ResScale(1);
-	t.pStr = GameString(GameStringBase::StatusString + 8); // FUEL:
-	t.CharCount = (uint16_t)~0;
-	font_DrawText(&t);
+		t.baseline.y += leading;
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().NumLanders);
+		t.pStr = buf.data();
+		t.CharCount = (uint16_t)~0;
+		font_DrawText(&t);
 
-	t.baseline.y += leading;
-	t.pStr = GameString(GameStringBase::StatusString + 9); // CREW:
-	t.CharCount = (uint16_t)~0;
-	font_DrawText(&t);
+		t.baseline.y += leading;
 
-	t.baseline.y += leading;
-	t.pStr = GameString(GameStringBase::StatusString + 10); // LAND.:
-	t.CharCount = (uint16_t)~0;
-	font_DrawText(&t);
-
-	t.baseline.y += leading;
-	t.pStr = GameString(GameStringBase::StatusString + 11); // CARGO:
-	t.CharCount = (uint16_t)~0;
-	font_DrawText(&t);
-
-	SetContextForeGroundColor(ModulePriceColor);
-	t.align = TextAlign::Right;
-	t.baseline.x = r.extent.width + ResScale(2);
-	t.baseline.y = r.corner.y + leading + ResScale(1);
-	t.pStr = WholeFuelValue();
-	t.CharCount = (uint16_t)~0;
-	font_DrawText(&t);
-
-	t.baseline.y += leading;
-	fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().CrewEnlisted);
-	t.pStr = buf.data();
-	t.CharCount = (uint16_t)~0;
-	font_DrawText(&t);
-
-	t.baseline.y += leading;
-	fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().NumLanders);
-	t.pStr = buf.data();
-	t.CharCount = (uint16_t)~0;
-	font_DrawText(&t);
-
-	t.baseline.y += leading;
-
-	if (GetStorageBayCapacity())
-	{
-		float totalCapacity = (float)uqm::gameState().sis().TotalElementMass
-							/ (float)GetStorageBayCapacity() * 100;
-
-		if (totalCapacity == 100)
+		if (GetStorageBayCapacity())
 		{
-			fmt::format_to_sz_n(buf, "{:.0}%", totalCapacity);
-		}
-		else if (totalCapacity > 9)
-		{
-			fmt::format_to_sz_n(buf, "{:.1}%", totalCapacity);
+			float totalCapacity = (float)uqm::gameState().sis().TotalElementMass
+								/ (float)GetStorageBayCapacity() * 100;
+
+			if (totalCapacity == 100)
+			{
+				fmt::format_to_sz_n(buf, "{:.0}%", totalCapacity);
+			}
+			else if (totalCapacity > 9)
+			{
+				fmt::format_to_sz_n(buf, "{:.1}%", totalCapacity);
+			}
+			else
+			{
+				fmt::format_to_sz_n(buf, "{:.2}%", totalCapacity);
+			}
 		}
 		else
 		{
-			fmt::format_to_sz_n(buf, "{:.2}%", totalCapacity);
+			fmt::format_to_sz_n(buf, "---");
 		}
-	}
-	else
-	{
-		fmt::format_to_sz_n(buf, "---");
-	}
 
-	t.pStr = buf.data();
-	t.CharCount = (uint16_t)~0;
-	font_DrawText(&t);
-
-	UnbatchGraphics();
+		t.pStr = buf.data();
+		t.CharCount = (uint16_t)~0;
+		font_DrawText(&t);
+	}
 
 	SetContext(OldContext);
 }

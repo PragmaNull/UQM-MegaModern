@@ -1545,135 +1545,134 @@ static void ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 		OldContext = SetContext(RadarContext);
 	}
 
-	BatchGraphics();
-
-	// Display planet area, accounting for horizontal wrapping if
-	// near the edges.
 	{
-		GfxStamp s;
+		const BatchScope batch {};
 
-		ClearDrawable();
-		s.origin.x = -new_pt.x + (MapSurface.width >> 1);
-		s.origin.y = -new_pt.y + (MapSurface.height >> 1);
-		s.frame = pSolarSysState->Orbit.TopoZoomFrame;
+		// Display planet area, accounting for horizontal wrapping if
+		// near the edges.
+		{
+			GfxStamp s;
 
-		DrawStamp(&s);
-		s.origin.x += ScaledMapWidth() << MagShift;
-		DrawStamp(&s);
-		s.origin.x -= ScaledMapWidth() << (MagShift + 1);
-		DrawStamp(&s);
-	}
+			ClearDrawable();
+			s.origin.x = -new_pt.x + (MapSurface.width >> 1);
+			s.origin.y = -new_pt.y + (MapSurface.height >> 1);
+			s.frame = pSolarSysState->Orbit.TopoZoomFrame;
 
-	BuildObjectList();
-
-	DrawBatch(DisplayArray.data(), DisplayLinks, BatchFlags::None);
-
-	// Draw the lander while is still alive and keep drawing for a few
-	// frames while it is exploding
-	if (crew_left || damage_index || explosion_index < 3)
-	{
-		lander_s.origin.x = MapSurface.width >> 1;
-		lander_s.origin.y = (MapSurface.height >> 1) + landingOffset;
-		lander_s.frame = LanderFrame[0];
-
-		if (landingOffset != OnTheGround)
-		{ // Landing, draw a shadow
-			shadow_s.origin.x = lander_s.origin.y + (MapSurface.width >> 1)
-							  - (MapSurface.height >> 1); //2;
-			shadow_s.origin.y = lander_s.origin.y;
-			shadow_s.frame = lander_s.frame;
-			SetContextForeGroundColor(BlackColor);
-			DrawFilledStamp(&shadow_s);
+			DrawStamp(&s);
+			s.origin.x += ScaledMapWidth() << MagShift;
+			DrawStamp(&s);
+			s.origin.x -= ScaledMapWidth() << (MagShift + 1);
+			DrawStamp(&s);
 		}
 
-		if (damage_index == 0)
-		{ // No damage -- normal lander
-			DrawStamp(&lander_s);
-		}
-		else if (shieldHit)
-		{ // Was protected by a shield
-			--damage_index;
-			if (damage_index > 0)
-			{
-				shield_s.origin = lander_s.origin;
-				shield_s.frame = SetEquFrameIndex(
-					LanderFrame[4], lander_s.frame);
+		BuildObjectList();
 
-				// XXX: Shouldn't this color-cycle with damage_index?
-				//   damage_index is used, but only as a VGA index!
-				/*SetContextForeGroundColor (BuildColor (
+		DrawBatch(DisplayArray.data(), DisplayLinks, BatchFlags::None);
+
+		// Draw the lander while is still alive and keep drawing for a few
+		// frames while it is exploding
+		if (crew_left || damage_index || explosion_index < 3)
+		{
+			lander_s.origin.x = MapSurface.width >> 1;
+			lander_s.origin.y = (MapSurface.height >> 1) + landingOffset;
+			lander_s.frame = LanderFrame[0];
+
+			if (landingOffset != OnTheGround)
+			{ // Landing, draw a shadow
+				shadow_s.origin.x = lander_s.origin.y + (MapSurface.width >> 1)
+								  - (MapSurface.height >> 1); //2;
+				shadow_s.origin.y = lander_s.origin.y;
+				shadow_s.frame = lander_s.frame;
+				SetContextForeGroundColor(BlackColor);
+				DrawFilledStamp(&shadow_s);
+			}
+
+			if (damage_index == 0)
+			{ // No damage -- normal lander
+				DrawStamp(&lander_s);
+			}
+			else if (shieldHit)
+			{ // Was protected by a shield
+				--damage_index;
+				if (damage_index > 0)
+				{
+					shield_s.origin = lander_s.origin;
+					shield_s.frame = SetEquFrameIndex(
+						LanderFrame[4], lander_s.frame);
+
+					// XXX: Shouldn't this color-cycle with damage_index?
+					//   damage_index is used, but only as a VGA index!
+					/*SetContextForeGroundColor (BuildColor (
 						MakeRgb15 (0x1F, 0x1F, 0x1F) | 0x8000,
 						damage_index));*/
-				SetContextForeGroundColor(
-					BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F),
-							   damage_index));
-				DrawFilledStamp(&shield_s);
-			}
-			DrawStamp(&lander_s);
-		}
-		else
-		{ // Direct hit, no shield
-			--damage_index;
-			SetContextForeGroundColor(
-				DamageColorCycle(BlackColor, damage_index));
-			DrawFilledStamp(&lander_s);
-		}
-	}
-
-	if (landingOffset == OnTheGround && crew_left
-		&& GetPredLink(DisplayLinks) != EndOfList)
-	{
-		CheckObjectCollision(EndOfList);
-	}
-
-	{
-		PlanetsideDesc* pPSD = planetSideDesc;
-		if (pPSD->NumFrames)
-		{
-			--pPSD->NumFrames;
-			SetContextForeGroundColor(
-				pPSD->ColorCycle[pPSD->NumFrames >> 1]);
-
-			if (isPC(uqm::UQMOptions::read().landerStyle))
-			{
-				pPSD->MineralText[0].baseline.x = RadarWidth() >> 1;
-				pPSD->MineralText[0].baseline.y = ResScale(8);
-				// original value
+					SetContextForeGroundColor(
+						BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F),
+								   damage_index));
+					DrawFilledStamp(&shield_s);
+				}
+				DrawStamp(&lander_s);
 			}
 			else
-			{
-				pPSD->MineralText[0].baseline.x -= dx;
-				pPSD->MineralText[0].baseline.y -= dy;
+			{ // Direct hit, no shield
+				--damage_index;
+				SetContextForeGroundColor(
+					DamageColorCycle(BlackColor, damage_index));
+				DrawFilledStamp(&lander_s);
 			}
-			font_DrawText(&pPSD->MineralText[0]);
-			pPSD->MineralText[1].baseline.x =
-				pPSD->MineralText[0].baseline.x;
-			pPSD->MineralText[1].baseline.y =
-				pPSD->MineralText[0].baseline.y + ResScale(7);
-			font_DrawText(&pPSD->MineralText[1]);
-			pPSD->MineralText[2].baseline.x =
-				pPSD->MineralText[1].baseline.x;
-			pPSD->MineralText[2].baseline.y =
-				pPSD->MineralText[1].baseline.y + ResScale(7);
-			font_DrawText(&pPSD->MineralText[2]);
+		}
+
+		if (landingOffset == OnTheGround && crew_left
+			&& GetPredLink(DisplayLinks) != EndOfList)
+		{
+			CheckObjectCollision(EndOfList);
+		}
+
+		{
+			PlanetsideDesc* pPSD = planetSideDesc;
+			if (pPSD->NumFrames)
+			{
+				--pPSD->NumFrames;
+				SetContextForeGroundColor(
+					pPSD->ColorCycle[pPSD->NumFrames >> 1]);
+
+				if (isPC(uqm::UQMOptions::read().landerStyle))
+				{
+					pPSD->MineralText[0].baseline.x = RadarWidth() >> 1;
+					pPSD->MineralText[0].baseline.y = ResScale(8);
+					// original value
+				}
+				else
+				{
+					pPSD->MineralText[0].baseline.x -= dx;
+					pPSD->MineralText[0].baseline.y -= dy;
+				}
+				font_DrawText(&pPSD->MineralText[0]);
+				pPSD->MineralText[1].baseline.x =
+					pPSD->MineralText[0].baseline.x;
+				pPSD->MineralText[1].baseline.y =
+					pPSD->MineralText[0].baseline.y + ResScale(7);
+				font_DrawText(&pPSD->MineralText[1]);
+				pPSD->MineralText[2].baseline.x =
+					pPSD->MineralText[1].baseline.x;
+				pPSD->MineralText[2].baseline.y =
+					pPSD->MineralText[1].baseline.y + ResScale(7);
+				font_DrawText(&pPSD->MineralText[2]);
+			}
+		}
+
+		RedrawSurfaceScan(&new_pt);
+
+		if (lander_flags & KillCrew)
+		{
+			DeltaLanderCrew(-1, *LanderEvent::LightningDisaster);
+		}
+
+		if (isPC(uqm::UQMOptions::read().landerStyle))
+		{
+			DrawRadarBorder();
+			RotatePlanetSphere(true, nullptr);
 		}
 	}
-
-	RedrawSurfaceScan(&new_pt);
-
-	if (lander_flags & KillCrew)
-	{
-		DeltaLanderCrew(-1, *LanderEvent::LightningDisaster);
-	}
-
-	if (isPC(uqm::UQMOptions::read().landerStyle))
-	{
-		DrawRadarBorder();
-		RotatePlanetSphere(true, nullptr);
-	}
-
-
-	UnbatchGraphics();
 
 	SetContext(OldContext);
 }
