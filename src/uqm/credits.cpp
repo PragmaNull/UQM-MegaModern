@@ -26,6 +26,7 @@
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
 #include "creditsfile.h"
+#include "libs/file/json.h"
 #include "libs/file/textfile.h"
 #include "libs/graphics/drawable.h"
 #include "nameref.h"
@@ -527,7 +528,7 @@ static void processCreditsFrame(void)
 static bool LoadCredits(void)
 {
 	const char* const path {res_GetString(CreditsFileRes)};
-	auto text {uqm::readTextFile(uqm::contentDir(), path)};
+	auto text {uqm::readTextFile(uqm::contentDir(), path, uqm::JsonPadding)};
 	auto blocks {text ? uqm::creditsFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!blocks)
 	{
@@ -719,33 +720,32 @@ void Credits(bool WithOuttakes)
 	CommWndRect.corner.y = ResScale(5);
 
 	InitCredits();
+	SetInputCallback(on_input_frame);
+
+	if (WithOuttakes)
 	{
-		const InputCallbackScope creditsCallback {on_input_frame};
-
-		if (WithOuttakes)
-		{
-			OutTakesRunning = true;
-			OutTakes();
-			OutTakesRunning = false;
-		}
-
-		if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
-		{
-			if (hMusic)
-			{
-				PlayMusic(hMusic, true, 1);
-			}
-
-			// nothing to do now but wait until credits
-			//  are done or canceled by user
-			cis.InputFunc = DoCreditsInput;
-			cis.AllowCancel = !WithOuttakes;
-			cis.CloseWhenDone = !WithOuttakes;
-			cis.AllowSpeedChange = true;
-			SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
-			DoInput(&cis, true);
-		}
+		OutTakesRunning = true;
+		OutTakes();
+		OutTakesRunning = false;
 	}
+
+	if (!(uqm::currentActivity() & ActivityFlag::CheckAbort))
+	{
+		if (hMusic)
+		{
+			PlayMusic(hMusic, true, 1);
+		}
+
+		// nothing to do now but wait until credits
+		//  are done or canceled by user
+		cis.InputFunc = DoCreditsInput;
+		cis.AllowCancel = !WithOuttakes;
+		cis.CloseWhenDone = !WithOuttakes;
+		cis.AllowSpeedChange = true;
+		SetMenuSounds(MenuSoundFlags::None, MenuSoundFlags::None);
+		DoInput(&cis, true);
+	}
+	SetInputCallback(nullptr);
 	FadeMusic(0, c_gameSecond / 2);
 	UninitCredits();
 

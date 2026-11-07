@@ -680,13 +680,14 @@ static bool DoPlanetOrbit(MenuState* pMS)
 				bool AutoPilotSet {};
 				{
 					// Deactivate planet rotation
-					const InputCallbackScope noCallback {nullptr};
+					InputCallbackScope noCallback {nullptr};
 
 					RepairSISBorder();
 
 					AutoPilotSet = StarMap();
 					if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 					{
+						noCallback.keep();
 						return false;
 					}
 				}

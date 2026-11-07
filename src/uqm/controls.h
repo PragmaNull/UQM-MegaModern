@@ -212,14 +212,24 @@ public:
 
 	~InputCallbackScope()
 	{
-		SetInputCallback(m_previous);
+		if (m_restore)
+		{
+			SetInputCallback(m_previous);
+		}
 	}
 
 	InputCallbackScope(const InputCallbackScope&) = delete;
 	InputCallbackScope& operator=(const InputCallbackScope&) = delete;
 
+	// Keeps the current callback when the scope ends.
+	void keep()
+	{
+		m_restore = false;
+	}
+
 private:
 	InputFrameCallback* m_previous;
+	bool m_restore {true};
 };
 // pInputState must point to a struct derived from InputStateDesc
 void DoInput(void* pInputState, bool resetInput);

@@ -789,7 +789,7 @@ static bool DispatchLander(void)
 	EraseCoarseScan();
 
 	// Deactivate planet rotation callback
-	const InputCallbackScope noCallback {nullptr};
+	InputCallbackScope noCallback {nullptr};
 
 	if (!uqm::UQMOptions::read().infiniteFuel)
 	{
@@ -808,6 +808,7 @@ static bool DispatchLander(void)
 	PlanetSide(planetLoc);
 	if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 	{
+		noCallback.keep();
 		return false;
 	}
 
@@ -820,6 +821,7 @@ static bool DispatchLander(void)
 		uqm::currentActivity() |= ActivityFlag::StartEncounter;
 		SaveSolarSysLocation();
 
+		noCallback.keep();
 		return false;
 	}
 
