@@ -3042,7 +3042,7 @@ void GetPlanetOrMoonName(uqstl::span<char> buf)
 
 	if (buf.size() >= 3 && !name_has_suffix)
 	{
-		fmt::format_to_sz_n(buf, "-{}", 'A' + moon);
+		fmt::format_to_sz_n(buf, "-{}", static_cast<char>('A' + moon));
 		buf[buf.size() - 1] = '\0';
 	}
 }

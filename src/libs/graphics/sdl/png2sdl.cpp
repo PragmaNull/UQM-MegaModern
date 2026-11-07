@@ -291,7 +291,8 @@ SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
 
 	SDL_LockSurface(surface.get());
 	/* Create the array of pointers to image data */
-	uqstl::vector<png_bytep> rows(header.height);
+	uqstl::vector<png_bytep> rows {};
+	rows.resize(header.height);
 	for (png_uint_32 row {0}; row < header.height; row++)
 	{
 		rows[row] = static_cast<png_bytep>(surface->pixels) + row * surface->pitch;
@@ -477,7 +478,8 @@ int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst)
 	}
 
 	/* Create the array of pointers to image data */
-	uqstl::vector<png_bytep> rows(static_cast<size_t>(surface->h));
+	uqstl::vector<png_bytep> rows {};
+	rows.resize(static_cast<size_t>(surface->h));
 	for (int i {0}; i < surface->h; i++)
 	{
 		rows[i] = static_cast<png_bytep>(surface->pixels) + i * surface->pitch;
