@@ -1113,7 +1113,7 @@ ConversationData* init_spahome_comm()
 	spahome_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	// use alternate "Safe Ones" track if available
-	altResFlags |= UseAltSong;
+	altResFlags |= AltResFlags::Song;
 
 	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER) == 3)
 	{

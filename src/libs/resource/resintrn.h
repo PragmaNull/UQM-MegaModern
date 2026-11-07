@@ -25,7 +25,7 @@
 #include "index.h"
 #include "libs/reslib.h"
 
-ResourceDesc* lookupResourceDesc(ResourceIndex idx, RESOURCE res);
+ResourceDesc* lookupResourceDesc(ResourceIndex idx, ResourceName res);
 void loadResourceDesc(ResourceDesc* desc);
 
 void _set_current_index_header(ResourceIndex newResourceIndex);

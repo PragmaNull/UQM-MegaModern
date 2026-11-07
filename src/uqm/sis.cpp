@@ -88,7 +88,7 @@ void RepairSISBorder(void)
 	SetContext(OldContext);
 }
 
-void ClearSISRect(uint8_t ClearFlags)
+void ClearSISRect(ClearSisFlags ClearFlags)
 {
 	//GfxRect r; Unused
 	Color OldColor;
@@ -101,12 +101,12 @@ void ClearSISRect(uint8_t ClearFlags)
 	//r.extent.width = StatusWidth() - ResScale (4); Unused
 
 	BatchGraphics();
-	if (ClearFlags & DrawSisDisplay)
+	if (testFlag(ClearFlags, ClearSisFlags::DrawDisplay))
 	{
 		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 	}
 
-	if (ClearFlags & ClearSisRadar)
+	if (testFlag(ClearFlags, ClearSisFlags::ClearRadar))
 	{
 		DrawMenuStateStrings(static_cast<MenuString>(0xFF), 1);
 #ifdef NEVER
@@ -247,13 +247,13 @@ void DrawSaveInfo(FlagshipData SisState)
 
 void DrawSISMessage(const char* pStr)
 {
-	DrawSISMessageEx(pStr, -1, -1, DsmeNone);
+	DrawSISMessageEx(pStr, -1, -1, SisMessageFlags::None);
 }
 
 // See sis.h for the allowed flags. This is the field at the top of the
 // screen, on the left hand side.
 bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
-					  uint16_t flags)
+					  SisMessageFlags flags)
 {
 	char buf[256];
 	GfxText t;
@@ -314,7 +314,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		}
 	}
 
-	if (!(flags & DsmeMycolor))
+	if (!(testFlag(flags, SisMessageFlags::MyColor)))
 	{
 		SetContextForeGroundColor(SisMessageTextColor);
 	}
@@ -343,7 +343,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		}
 	}
 
-	if (flags & DsmeClearfr)
+	if (testFlag(flags, SisMessageFlags::ClearFlashRect))
 	{
 		SetFlashRect(nullptr, false);
 	}
@@ -399,7 +399,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 				cur_r.corner.x -= ResScale(1);
 			}
 
-			if (flags & DsmeBlockcur)
+			if (testFlag(flags, SisMessageFlags::BlockCursor))
 			{ // Use block cursor for keyboardless systems
 
 				cur_r.corner.y = 0;
@@ -480,7 +480,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		}
 	}
 
-	if (flags & DsmeSetfr)
+	if (testFlag(flags, SisMessageFlags::SetFlashRect))
 	{
 		r.corner.x = 0;
 		r.corner.y = 0;
@@ -1898,7 +1898,7 @@ static void AutoPilotTextLogic(void)
 	{
 		DrawSISMessageEx(
 			GameString(GameStringBase::NavigationString + 2),
-			-1, -1, DsmeMycolor); // "OUT OF FUEL"
+			-1, -1, SisMessageFlags::MyColor); // "OUT OF FUEL"
 		return;
 	}
 
@@ -1906,7 +1906,7 @@ static void AutoPilotTextLogic(void)
 	{
 		DrawSISMessageEx(
 			GameString(GameStringBase::NavigationString + 3),
-			-1, -1, DsmeMycolor); // "AUTO-PILOT"
+			-1, -1, SisMessageFlags::MyColor); // "AUTO-PILOT"
 		return;
 	}
 
@@ -1935,7 +1935,7 @@ static void AutoPilotTextLogic(void)
 							destination.y / 10, destination.y % 10,			  // Y Coordinates
 							target_distance);
 
-		DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
+		DrawSISMessageEx(buf, -1, -1, SisMessageFlags::MyColor);
 		return;
 	}
 
@@ -1947,7 +1947,7 @@ static void AutoPilotTextLogic(void)
 							GameString(GameStringBase::NavigationString)	  // "HyperSpace"
 		);
 
-		DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
+		DrawSISMessageEx(buf, -1, -1, SisMessageFlags::MyColor);
 		return;
 	}
 
@@ -1984,7 +1984,7 @@ static void AutoPilotTextLogic(void)
 							target_distance);
 	}
 
-	DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
+	DrawSISMessageEx(buf, -1, -1, SisMessageFlags::MyColor);
 }
 
 static constexpr auto BlinkRate {c_gameSecond * 3 / 40}; // 9 @ 120 ticks/second

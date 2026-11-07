@@ -71,7 +71,7 @@ extern tfb::ColorMap* TFB_GetColorMap(int index);
 extern void TFB_ReturnColorMap(tfb::ColorMap* map);
 
 extern bool XFormColorMap_step(void);
-extern void SetColorMapColors(Color* colors, COLORMAPPTR ColorMapPtr,
+extern void SetColorMapColors(Color* colors, ColorMapPtr colorMapPtr,
 							  uint16_t from, uint16_t to);
 extern Color GetColorMapColor(uint16_t ColorMapIndex, uint16_t ColorIndex);
 

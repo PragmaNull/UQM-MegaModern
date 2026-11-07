@@ -290,7 +290,7 @@ static AnimFilterSet vux_filters =
 
 static void ZexBeingEatenAlive(void)
 {
-	if (altResFlags & UseAltFrame)
+	if (testFlag(altResFlags, AltResFlags::Frame))
 	{ // make sure we're using the correct set of frames
 		if (IsHd())
 		{
@@ -826,7 +826,7 @@ static void NormalVux(ResponseRef R)
 
 static void Intro(void)
 {
-	if (altResFlags & UseAltFrame)
+	if (testFlag(altResFlags, AltResFlags::Frame))
 	{
 		CommData.AlienAmbientArray[17].AnimFlags &= ~AnimationFlags::Disabled;
 	}
@@ -924,11 +924,11 @@ ConversationData* init_vux_comm(void)
 	// use alternate "ZEX" track and frame if available
 	if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		altResFlags |= UseAltSong;
+		altResFlags |= AltResFlags::Song;
 
 		if (IsExtended())
 		{
-			altResFlags |= UseAltFrame;
+			altResFlags |= AltResFlags::Frame;
 		}
 	}
 

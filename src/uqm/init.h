@@ -38,8 +38,8 @@ extern int16_t InitShips(void);
 extern void UninitShips(void);
 extern void ReloadGameContent(void);
 
-extern bool load_animation(FrameRef* pixarray, RESOURCE big_res,
-						   RESOURCE med_res, RESOURCE sml_res);
+extern bool load_animation(FrameRef* pixarray, ResourceName big_res,
+						   ResourceName med_res, ResourceName sml_res);
 extern bool free_image(FrameRef* pixarray);
 
 } // namespace uqm

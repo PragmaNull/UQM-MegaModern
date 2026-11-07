@@ -88,7 +88,7 @@ static int curFrameOfs;
 struct FontSizeDef
 {
 	int size;
-	RESOURCE res;
+	ResourceName res;
 	FontRef font;
 };
 

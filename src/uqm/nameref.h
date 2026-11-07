@@ -25,8 +25,8 @@
 
 namespace uqm
 {
-inline DrawableRef LoadGraphic(RESOURCE res) { return static_cast<DrawableRef>(LoadGraphicInstance(res)); }
-inline FontRef LoadFont(RESOURCE res) { return static_cast<FontRef>(LoadGraphicInstance(res)); }
+inline DrawableRef LoadGraphic(ResourceName res) { return static_cast<DrawableRef>(LoadGraphicInstance(res)); }
+inline FontRef LoadFont(ResourceName res) { return static_cast<FontRef>(LoadGraphicInstance(res)); }
 
 } // namespace uqm
 

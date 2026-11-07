@@ -85,7 +85,7 @@ static bool GenerateWreck_generatePlanets(SolarSystemState* solarSys)
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = GenerateWorlds(SmallRocky);
+		pPlanet->data_index = GenerateWorlds(WorldTypes::SmallRocky);
 	}
 	else
 	{

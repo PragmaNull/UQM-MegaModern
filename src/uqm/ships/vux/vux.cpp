@@ -201,7 +201,7 @@ static void limpet_collision(Element* ElementPtr0, GfxPoint* pPt0,
 						 ElementPtr1);
 			s.frame = SetAbsFrameIndex(
 				StarShipPtr->RaceDescPtr->ship_data.weapon[0], (uint16_t)uqm::random().next());
-			ModifySilhouette(ElementPtr1, &s, ModifyImage);
+			ModifySilhouette(ElementPtr1, &s, ModifyFlags::Image);
 		}
 		else
 		{

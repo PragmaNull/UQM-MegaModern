@@ -38,7 +38,7 @@ struct ResourceHandlers
 
 struct ResourceDesc
 {
-	RESOURCE res_id;
+	ResourceName res_id;
 	// STRING values point into it.
 	ResourceArg arg;
 	ResourceHandlers* vtable;

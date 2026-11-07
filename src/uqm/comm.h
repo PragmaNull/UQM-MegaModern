@@ -20,6 +20,7 @@
 
 #include "commglue.h"
 #include "core/misc/bittricks.h"
+#include "core/types/enum.h"
 #include "globdata.h"
 #include "libs/gfxlib.h"
 #include "setup.h"
@@ -160,11 +161,16 @@ extern void DeltaLastTime(TimePeriod diff);
 
 extern bool cwLock;
 
-inline constexpr auto UseAltFrame {1 << 0};
-inline constexpr auto UseAltColormap {1 << 1};
-inline constexpr auto UseAltSong {1 << 2};
-inline constexpr auto UseAltAll {UseAltFrame | UseAltColormap | UseAltSong};
-extern uint8_t altResFlags;
+enum class AltResFlags : uint8_t
+{
+	None = 0,
+	Frame = 1 << 0,
+	Colormap = 1 << 1,
+	Song = 1 << 2,
+	All = Frame | Colormap | Song,
+};
+ENUM_BITWISE_OPS(AltResFlags)
+extern AltResFlags altResFlags;
 
 } // namespace uqm
 

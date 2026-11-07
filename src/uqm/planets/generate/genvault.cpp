@@ -78,7 +78,7 @@ static bool GenerateVault_generatePlanets(SolarSystemState* solarSys)
 
 	if (!uqm::isOriginalSeed())
 	{
-		pPlanet->data_index = GenerateWorlds(LargeRocky);
+		pPlanet->data_index = GenerateWorlds(WorldTypes::LargeRocky);
 
 		if (!pPlanet->NumPlanets)
 		{

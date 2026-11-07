@@ -135,7 +135,7 @@ inline SpeciesId postIncSpeciesId_HACK(SpeciesId& id)
 
 struct CaptainGraphics
 {
-	RESOURCE captain_rsc;
+	ResourceName captain_rsc;
 	FrameRef background;
 	FrameRef turn;
 	FrameRef thrust;
@@ -199,9 +199,9 @@ struct ShipInfoDesc
 	uint8_t energy_level;
 	uint8_t max_energy;
 
-	RESOURCE race_strings_rsc;
-	RESOURCE icons_rsc;
-	RESOURCE melee_icon_rsc;
+	ResourceName race_strings_rsc;
+	ResourceName icons_rsc;
+	ResourceName melee_icon_rsc;
 
 	uqm::StringTable* race_strings;
 	FrameRef icons;
@@ -218,12 +218,12 @@ struct FleetStatus
 
 struct ShipResources
 {
-	RESOURCE ship_rsc[NumViews];
-	RESOURCE weapon_rsc[NumViews];
-	RESOURCE special_rsc[NumViews];
+	ResourceName ship_rsc[NumViews];
+	ResourceName weapon_rsc[NumViews];
+	ResourceName special_rsc[NumViews];
 	CaptainGraphics captain_control;
-	RESOURCE victory_ditty_rsc;
-	RESOURCE ship_sounds_rsc;
+	ResourceName victory_ditty_rsc;
+	ResourceName ship_sounds_rsc;
 
 	FrameRef ship[NumViews];
 	FrameRef weapon[NumViews];

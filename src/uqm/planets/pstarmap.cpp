@@ -2103,7 +2103,7 @@ static void UpdateCursorInfo(std::span<char> prevbuf)
 							MakeRgb15(0x0E, 0xA7, 0xD9), 0x00));
 				}
 
-				DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
+				DrawSISMessageEx(buf, -1, -1, SisMessageFlags::MyColor);
 				SetContext(OldContext);
 			}
 			else
@@ -2346,13 +2346,13 @@ static void DrawMatchedStarName(TextEntryState* pTES)
 	int16_t ExPos = 0;
 	int16_t CurPos = -1;
 	const StarDesc* SDPtr = &star_array[pSS->SortedStars[pSS->CurIndex]];
-	uint16_t flags {};
+	SisMessageFlags flags {};
 
 	if (pSS->SingleClust || pSS->SingleMatch)
 	{ // draw full star name
 		GetClusterName(SDPtr, buf);
 		ExPos = -1;
-		flags = DsmeSetfr;
+		flags = SisMessageFlags::SetFlashRect;
 	}
 	else
 	{ // draw substring match
@@ -2366,10 +2366,10 @@ static void DrawMatchedStarName(TextEntryState* pTES)
 		ExPos += pSS->ClusterLen;
 		CurPos = pTES->CursorPos;
 
-		flags = DsmeClearfr;
+		flags = SisMessageFlags::ClearFlashRect;
 		if (pTES->JoystickMode)
 		{
-			flags |= DsmeBlockcur;
+			flags |= SisMessageFlags::BlockCursor;
 		}
 	}
 
@@ -2426,7 +2426,7 @@ static void MatchNextStar(StarSearchState* pSS, bool Reset)
 static bool OnStarNameChange(TextEntryState* pTES)
 {
 	StarSearchState* pSS = (StarSearchState*)pTES->CbParam;
-	uint16_t flags {};
+	SisMessageFlags flags {};
 	bool ret = true;
 
 	if (strncmp(pSS->Text, pSS->LastText, sizeof(pSS->Text)) != 0)
@@ -2442,15 +2442,15 @@ static bool OnStarNameChange(TextEntryState* pTES)
 	{ // nothing found
 		if (pSS->Text[0] == '\0')
 		{
-			flags = DsmeSetfr;
+			flags = SisMessageFlags::SetFlashRect;
 		}
 		else
 		{
-			flags = DsmeClearfr;
+			flags = SisMessageFlags::ClearFlashRect;
 		}
 		if (pTES->JoystickMode)
 		{
-			flags |= DsmeBlockcur;
+			flags |= SisMessageFlags::BlockCursor;
 		}
 
 		ret = DrawSISMessageEx(pSS->Text, pTES->CursorPos, -1, flags);
@@ -2540,7 +2540,7 @@ static bool DoStarSearch(MenuState* pMS)
 	StarSearchState searchState {};
 	StarSearchState* pss {&searchState};
 
-	DrawSISMessageEx("", 0, 0, DsmeSetfr);
+	DrawSISMessageEx("", 0, 0, SisMessageFlags::SetFlashRect);
 
 	TextEntry3DO = (bool)is3DO(uqm::UQMOptions::read().whichFonts);
 
@@ -2588,7 +2588,7 @@ static bool DoStarSearch(MenuState* pMS)
 		success = true;
 	}
 
-	DrawSISMessageEx(pss->Text, -1, -1, DsmeClearfr);
+	DrawSISMessageEx(pss->Text, -1, -1, SisMessageFlags::ClearFlashRect);
 
 	TextEntry3DO = false;
 

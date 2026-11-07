@@ -490,7 +490,7 @@ ConversationData* init_rebel_yehat_comm(void)
 	yehat_desc.AlienTextWidth = (SisTextWidth() - ResScale(16)) * 2 / 3;
 
 	// use alternate "Rebels" track if available
-	altResFlags |= UseAltSong;
+	altResFlags |= AltResFlags::Song;
 
 	setSegue(Segue::Peace);
 	ConversationData* retval {&yehat_desc};

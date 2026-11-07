@@ -28,7 +28,7 @@
 
 namespace uqm
 {
-static RESOURCE code_resources[] = {
+static ResourceName code_resources[] = {
 	NullResource,
 	ArilouCode,
 	ChmmrCode,

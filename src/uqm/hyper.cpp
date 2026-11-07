@@ -582,7 +582,7 @@ bool LoadHyperspace(void)
 		}
 		else
 		{
-			ClearSISRect(DrawSisDisplay);
+			ClearSISRect(ClearSisFlags::DrawDisplay);
 			RepairSISBorder();
 		}
 	}
@@ -618,7 +618,7 @@ bool LoadHyperspace(void)
 void EraseRadar(void)
 {
 	BatchGraphics();
-	ClearSISRect(ClearSisRadar);
+	ClearSISRect(ClearSisFlags::ClearRadar);
 	SeedUniverse();
 	UnbatchGraphics();
 }
@@ -2319,7 +2319,7 @@ void HyperspaceMenu(void)
 
 	if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
-		ClearSISRect(ClearSisRadar);
+		ClearSISRect(ClearSisFlags::ClearRadar);
 		WaitForNoInput(c_gameSecond / 2, false);
 	}
 

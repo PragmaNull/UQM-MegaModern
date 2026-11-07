@@ -1481,7 +1481,7 @@ static bool ShowLegacyVideo(LegacyVideo vid)
 	return true;
 }
 
-bool ShowPresentation(RESOURCE res)
+bool ShowPresentation(ResourceName res)
 {
 	const char* resType = res_GetResourceType(res);
 	if (!resType)

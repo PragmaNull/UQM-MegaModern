@@ -685,7 +685,7 @@ static bool DoInstallModule(MenuState* pMS)
 
 
 		SetContext(SpaceContext);
-		ClearSISRect(ClearSisRadar);
+		ClearSISRect(ClearSisFlags::ClearRadar);
 		SetFlashRect(nullptr, false);
 		goto InitFlash;
 	}
@@ -874,7 +874,7 @@ static bool DoInstallModule(MenuState* pMS)
 			SetFlashRect(SfrMenu3do(), false);
 
 			pMS->InputFunc = DoOutfit;
-			ClearSISRect(DrawSisDisplay);
+			ClearSISRect(ClearSisFlags::DrawDisplay);
 		}
 	}
 	else if (motion)

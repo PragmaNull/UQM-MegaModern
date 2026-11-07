@@ -445,9 +445,9 @@ struct GfxText
 #include "libs/strlib.h"
 
 using ColorMapRef = uqm::StringTable*;
-// COLORMAPPTR is really a pointer to colortable entry structure
+// ColorMapPtr is really a pointer to colortable entry structure
 // which is documented in doc/devel/strtab, .ct files section
-const typedef void* COLORMAPPTR;
+using ColorMapPtr = const void*;
 
 #include "graphics/prim.h"
 
@@ -651,7 +651,7 @@ extern HotSpot GetFrameHot(FrameRef Frame);
 extern bool InstallGraphicResTypes(void);
 extern DrawableRef LoadGraphicFile(const char* pStr);
 extern FontRef LoadFontFile(const char* pStr);
-extern void* LoadGraphicInstance(RESOURCE res);
+extern void* LoadGraphicInstance(ResourceName res);
 extern DrawableRef LoadDisplayPixmap(const GfxRect* area, FrameRef frame);
 extern FrameRef SetContextFontEffect(FrameRef EffectFrame);
 extern FontRef SetContextFont(FontRef Font);
@@ -700,14 +700,14 @@ extern DrawableRef ReleaseDrawable(FrameRef Frame);
 
 extern DrawableRef GetFrameParentDrawable(FrameRef Frame);
 
-extern bool SetColorMap(COLORMAPPTR ColorMapPtr);
-extern TimeCount XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval);
+extern bool SetColorMap(ColorMapPtr colorMapPtr);
+extern TimeCount XFormColorMap(ColorMapPtr colorMapPtr, TimePeriod TimeInterval);
 extern TimeCount FadeScreen(ScreenFadeType fadeType, TimePeriod TimeInterval);
 extern void FlushColorXForms(void);
 extern uint8_t GetColorMapTableIndex(ColorMapRef map, size_t index);
 
 // The color map 'index' of 'map'. The index wraps at the number of color maps.
-extern COLORMAPPTR GetColorMapAddress(ColorMapRef map, size_t index);
+extern ColorMapPtr GetColorMapAddress(ColorMapRef map, size_t index);
 
 void SetSystemRect(const GfxRect* pRect);
 void ClearSystemRect(void);

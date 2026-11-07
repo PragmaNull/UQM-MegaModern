@@ -1411,7 +1411,7 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 		}
 		DateToString(buf, sizeof buf,
 					 pSD->month_index, pSD->day_index, pSD->year_index);
-		ClearSISRect(DrawSisDisplay);
+		ClearSISRect(ClearSisFlags::DrawDisplay);
 		DrawBorder(BorderFrameIndex::SisStatSumm);
 		DrawStatusMessage(buf);
 		uqm::gameState().game().built_ship_q.release();

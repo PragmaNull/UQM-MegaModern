@@ -380,7 +380,7 @@ static constexpr auto MaxNumberTracks {20};
 
 static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 {
-	NUMBER_SPEECH speech = CommData.AlienNumberSpeech;
+	NumberSpeechRef speech = CommData.AlienNumberSpeech;
 	int queued = 0;
 	int toplevel = 0;
 	const char* TrackNames[MaxNumberTracks];

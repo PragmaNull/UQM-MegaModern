@@ -1515,7 +1515,7 @@ static void DoSell(ResponseRef R)
 					Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & ActivityFlag::CheckAbort);
 				}
 			}
-			ClearSISRect(DrawSisDisplay);
+			ClearSISRect(ClearSisFlags::DrawDisplay);
 		}
 		else /* if (R == MelnormePhrase::SellRainbowLocations) */
 		{
@@ -1595,7 +1595,7 @@ static void DoSell(ResponseRef R)
 						Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & ActivityFlag::CheckAbort);
 					}
 				}
-				ClearSISRect(DrawSisDisplay);
+				ClearSISRect(ClearSisFlags::DrawDisplay);
 			}
 		}
 

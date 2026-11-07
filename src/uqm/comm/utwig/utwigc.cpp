@@ -1063,7 +1063,7 @@ ConversationData* init_utwig_comm(void)
 	// use alternate 'Happy Utwig!' track
 	if (uqm::gameState().flag(uqm::GameFlag::UTWIG_HAVE_ULTRON))
 	{
-		altResFlags |= UseAltSong;
+		altResFlags |= AltResFlags::Song;
 	}
 
 

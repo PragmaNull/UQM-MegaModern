@@ -24,7 +24,7 @@
 
 // At other times, it is nullptr.
 
-ResourceDesc* lookupResourceDesc(ResourceIndex idx, RESOURCE res)
+ResourceDesc* lookupResourceDesc(ResourceIndex idx, ResourceName res)
 {
 	auto it = idx->map->find(res);
 	return it != idx->map->end() ? it->second : nullptr;
@@ -63,7 +63,7 @@ void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
 	return resdata;
 }
 
-const char* res_GetResourceType(RESOURCE res)
+const char* res_GetResourceType(ResourceName res)
 {
 	if (res == NullResource)
 	{
@@ -85,7 +85,7 @@ const char* res_GetResourceType(RESOURCE res)
 
 
 // Get a resource by its resource ID.
-void* res_GetResource(RESOURCE res)
+void* res_GetResource(ResourceName res)
 {
 	if (res == NullResource)
 	{
@@ -116,7 +116,7 @@ void* res_GetResource(RESOURCE res)
 	// May still be nullptr, if the load failed.
 }
 
-uint32_t res_GetIntResource(RESOURCE res)
+uint32_t res_GetIntResource(ResourceName res)
 {
 	if (res == NullResource)
 	{
@@ -137,13 +137,13 @@ uint32_t res_GetIntResource(RESOURCE res)
 	return desc->resdata.num;
 }
 
-bool res_GetBooleanResource(RESOURCE res)
+bool res_GetBooleanResource(ResourceName res)
 {
 	return (bool)(res_GetIntResource(res) != 0);
 }
 
 // NB: this function appears to be never called!
-void res_FreeResource(RESOURCE res)
+void res_FreeResource(ResourceName res)
 {
 	ResourceFreeFun* freeFun {};
 
@@ -190,7 +190,7 @@ void res_FreeResource(RESOURCE res)
 // the resource. If res_GetResource() get called again for this
 // resource, a NEW copy will be loaded, regardless of whether a detached
 // copy still exists.
-void* res_DetachResource(RESOURCE res)
+void* res_DetachResource(ResourceName res)
 {
 	ResourceFreeFun* freeFun {};
 

@@ -289,7 +289,7 @@ static uint16_t DoSellMinerals(void)
 
 	SleepThread(c_gameSecond / 2);
 
-	ClearSISRect(DrawSisDisplay);
+	ClearSISRect(ClearSisFlags::DrawDisplay);
 
 	return total;
 }
@@ -2142,7 +2142,7 @@ static void SellMinerals(ResponseRef R)
 			AlienTalkSegue(sseg);
 			uqm::gameState().sis().TotalElementMass -= amount[sseg - 1];
 			DeltaSISGauges(0, 0, Ru[sseg - 1]);
-			ClearSISRect(DrawSisDisplay);
+			ClearSISRect(ClearSisFlags::DrawDisplay);
 		}
 	}
 
@@ -2190,11 +2190,11 @@ ConversationData* init_starbase_comm()
 	commander_desc.AlienTextBaseline.y = ResScale(20);
 
 	// use alternate Starbase track if available
-	altResFlags |= UseAltSong;
+	altResFlags |= AltResFlags::Song;
 
 	if (is3DO(uqm::UQMOptions::read().flagshipColor))
 	{
-		altResFlags |= UseAltFrame;
+		altResFlags |= AltResFlags::Frame;
 	}
 
 	CurBulletinMask = 0;

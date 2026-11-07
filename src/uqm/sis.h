@@ -28,8 +28,13 @@
 
 namespace uqm
 {
-inline constexpr auto ClearSisRadar {1 << 2};
-inline constexpr auto DrawSisDisplay {1 << 3};
+enum class ClearSisFlags : uint8_t
+{
+	None = 0,
+	ClearRadar = 1 << 2,
+	DrawDisplay = 1 << 3,
+};
+ENUM_BITWISE_OPS(ClearSisFlags)
 
 inline constexpr auto UndefinedDelta {0x7FFF};
 
@@ -197,7 +202,7 @@ inline constexpr auto AfterBombInstalled {1 << 7};
 extern void RepairSISBorder(void);
 extern void InitSISContexts(void);
 extern void DrawSISFrame(void);
-extern void ClearSISRect(uint8_t ClearFlags);
+extern void ClearSISRect(ClearSisFlags ClearFlags);
 extern void SetFlashRect(const GfxRect* pRect, bool purple);
 extern void SetAdditionalRect(const GfxRect* pRect, uint16_t number);
 extern void DumpAdditionalRect(void);
@@ -214,18 +219,22 @@ extern void DrawSaveInfo(FlagshipData SisState);
 extern void DrawSISTitle(const char* pStr);
 
 // Flags for DrawSISMessageEx (may be OR'ed):
-inline constexpr auto DsmeNone {0};
-inline constexpr auto DsmeSetfr {1 << 0};
-// Set the flash rectangle to the message area.
-inline constexpr auto DsmeClearfr {1 << 1};
-// Disable the flash rectangle.
-inline constexpr auto DsmeBlockcur {1 << 2};
-// Use a block cursor instead of an insertion point cursor,
-// when editing in the message field.
-inline constexpr auto DsmeMycolor {1 << 3};
+enum class SisMessageFlags : uint8_t
+{
+	None = 0,
+	SetFlashRect = 1 << 0,
+	// Set the flash rectangle to the message area.
+	ClearFlashRect = 1 << 1,
+	// Disable the flash rectangle.
+	BlockCursor = 1 << 2,
+	// Use a block cursor instead of an insertion point cursor,
+	// when editing in the message field.
+	MyColor = 1 << 3,
+};
+ENUM_BITWISE_OPS(SisMessageFlags)
 // Use the current foreground color, instead of the default.
 extern bool DrawSISMessageEx(const char* pStr, int16_t CurPos,
-							 int16_t ExPos, uint16_t flags);
+							 int16_t ExPos, SisMessageFlags flags);
 
 extern void DrawSISMessage(const char* pStr);
 extern void DateToString(char* buf, size_t bufLen,

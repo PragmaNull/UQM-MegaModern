@@ -58,7 +58,7 @@ public:
 
 	// Prepares the communication environment and runs the script 'scriptRes', if it is not NullResource.
 	// Adds a 'custom' table if 'customFuncs' is not nullptr.
-	bool beginComm(const luaUqm_custom_Function* customFuncs, RESOURCE scriptRes);
+	bool beginComm(const luaUqm_custom_Function* customFuncs, ResourceName scriptRes);
 	void endComm();
 	// The Lua state while a communication environment is active, or nullptr.
 	[[nodiscard]] lua_State* commState() const noexcept;
@@ -67,7 +67,7 @@ public:
 	[[nodiscard]] uqstl::string interpolate(uqstl::string_view str);
 
 	// Prepares the event environment and runs the script 'scriptRes'.
-	bool beginEvents(const luaUqm_custom_Function* customFuncs, RESOURCE scriptRes);
+	bool beginEvents(const luaUqm_custom_Function* customFuncs, ResourceName scriptRes);
 	void endEvents();
 	void callEvent(uqgsl::czstring eventId);
 
@@ -97,7 +97,7 @@ private:
 	};
 
 	// Returns the file name of the script resource 'res'.
-	[[nodiscard]] static uqstl::optional<uqstl::string> scriptFileName(RESOURCE res);
+	[[nodiscard]] static uqstl::optional<uqstl::string> scriptFileName(ResourceName res);
 	// Replaces the global table with a new table that has the safe standard libraries.
 	static void prepareEnvironment(lua_State* luaState);
 	// Calls the open function of each library and sets the result as a global with the name of the library.
@@ -108,7 +108,7 @@ private:
 	// Runs all .lua files in the directory, in the same environment.
 	static void runLuaDir(lua_State* luaState, const io::Directory& dir, uqstl::string_view luaDirName);
 	// Loads the script resource and calls it.
-	bool runScriptRes(RESOURCE scriptRes);
+	bool runScriptRes(ResourceName scriptRes);
 
 	void runInitScripts();
 	void runDebugLine(uqgsl::czstring line, std::FILE* out, std::FILE* err);

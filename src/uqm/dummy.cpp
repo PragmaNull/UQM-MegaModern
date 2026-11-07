@@ -173,7 +173,7 @@ bool InstallCodeResType()
 }
 
 
-void* LoadCodeResInstance(RESOURCE res)
+void* LoadCodeResInstance(ResourceName res)
 {
 	void* hData {res_GetResource(res)};
 	if (hData)

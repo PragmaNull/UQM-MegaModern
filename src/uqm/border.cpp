@@ -247,7 +247,7 @@ void DrawSISFrame(void)
 	DrawBorder(BorderFrameIndex::SisMain);
 
 	InitSISContexts();
-	ClearSISRect(DrawSisDisplay);
+	ClearSISRect(ClearSisFlags::DrawDisplay);
 
 	UnbatchGraphics();
 }

@@ -622,12 +622,12 @@ ConversationData* init_urquan_comm(void)
 		 && uqm::gameState().game().BattleGroupRef
 		 && uqm::gameState().game().BattleGroupRef == GrpOffs))
 	{
-		altResFlags |= UseAltSong;
+		altResFlags |= AltResFlags::Song;
 	}
 
 	if (IsExtended())
 	{
-		altResFlags |= UseAltColormap;
+		altResFlags |= AltResFlags::Colormap;
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED)

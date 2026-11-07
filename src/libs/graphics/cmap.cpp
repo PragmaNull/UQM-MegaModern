@@ -31,7 +31,7 @@
 struct ColorTransformControl
 {
 	int CMapIndex; // -1 means unused
-	COLORMAPPTR CMapPtr;
+	ColorMapPtr CMapPtr;
 	TimePeriod Ticks;
 	TimeCount StartTime;
 	TimeCount EndTime;
@@ -235,7 +235,7 @@ void GetColorMapColors(Color* colors, tfb::ColorMap* map)
 	}
 }
 
-bool SetColorMap(COLORMAPPTR map)
+bool SetColorMap(ColorMapPtr map)
 {
 	const uint8_t* colors = (uint8_t*)map;
 
@@ -507,7 +507,7 @@ static void FlushPLUTXForms(void)
 	XFormControl.Highest = -1; // all gone
 }
 
-static TimeCount XFormPLUT(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
+static TimeCount XFormPLUT(ColorMapPtr colorMapPtr, TimePeriod TimeInterval)
 {
 	tfb::ColorMap* map {};
 	int x {};
@@ -516,7 +516,7 @@ static TimeCount XFormPLUT(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 	TimeCount Now;
 
 	Now = GetTimeCounter();
-	const int index {*(uint8_t*)ColorMapPtr};
+	const int index {*(uint8_t*)colorMapPtr};
 
 	const uqm::LockGuard lock {XFormControl.Lock};
 	// Find an available slot, or reuse if required
@@ -564,7 +564,7 @@ static TimeCount XFormPLUT(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 	}
 
 	control->CMapIndex = index;
-	control->CMapPtr = ColorMapPtr;
+	control->CMapPtr = colorMapPtr;
 	control->Ticks = uqstl::max(TimeInterval, TimePeriod {}); /* prevent negative fade */
 	control->StartTime = Now;
 	control->EndTime = EndTime = Now + control->Ticks;
@@ -572,9 +572,9 @@ static TimeCount XFormPLUT(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 	return (EndTime);
 }
 
-TimeCount XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
+TimeCount XFormColorMap(ColorMapPtr colorMapPtr, TimePeriod TimeInterval)
 {
-	if (!ColorMapPtr)
+	if (!colorMapPtr)
 	{
 		return TimeCount {};
 	}
@@ -585,7 +585,7 @@ TimeCount XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 		TimeInterval = TimePeriod {};
 	}
 
-	return XFormPLUT(ColorMapPtr, TimeInterval);
+	return XFormPLUT(colorMapPtr, TimeInterval);
 }
 
 void FlushColorXForms(void)
@@ -596,7 +596,7 @@ void FlushColorXForms(void)
 
 // The type conversions are implicit and will generate errors
 // or warnings if types change imcompatibly
-COLORMAPPTR GetColorMapAddress(ColorMapRef map, size_t index)
+ColorMapPtr GetColorMapAddress(ColorMapRef map, size_t index)
 {
 	if (map == nullptr || map->size() == 0)
 	{
@@ -606,10 +606,10 @@ COLORMAPPTR GetColorMapAddress(ColorMapRef map, size_t index)
 	return bytes.empty() ? nullptr : bytes.data();
 }
 
-static void DoTransformColorMap(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t from,
+static void DoTransformColorMap(Color* colors, ColorMapPtr colorMapPtr, uint16_t from,
 								uint16_t to)
 { // New fancy func to change colors of current colormap
-	const int p_index = *(uint8_t*)ColorMapPtr;
+	const int p_index = *(uint8_t*)colorMapPtr;
 	const uqm::LockGuard lock {s_mapLock};
 
 	tfb::ColorMap* map {colormaps[p_index]};
@@ -621,7 +621,7 @@ static void DoTransformColorMap(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t
 
 	{
 		tfb::ColorMap* newmap = nullptr;
-		uint8_t* newPtr = (uint8_t*)ColorMapPtr + 2;
+		uint8_t* newPtr = (uint8_t*)colorMapPtr + 2;
 
 		newmap = clone_colormap(map, p_index);
 		const Color* c {colors};
@@ -639,15 +639,15 @@ static void DoTransformColorMap(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t
 	}
 }
 
-void SetColorMapColors(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t from,
+void SetColorMapColors(Color* colors, ColorMapPtr colorMapPtr, uint16_t from,
 					   uint16_t to)
 {
-	if (!ColorMapPtr)
+	if (!colorMapPtr)
 	{
 		return;
 	}
 
-	DoTransformColorMap(colors, ColorMapPtr, from, to);
+	DoTransformColorMap(colors, colorMapPtr, from, to);
 }
 
 Color GetColorMapColor(uint16_t ColorMapIndex, uint16_t ColorIndex)

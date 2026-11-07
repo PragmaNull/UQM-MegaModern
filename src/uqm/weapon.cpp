@@ -253,7 +253,7 @@ ElementHandle weapon_collision(Element* WeaponElementPtr, GfxPoint* pWPt,
 }
 
 FrameRef ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
-						  uint8_t modify_flags)
+						  ModifyFlags modify_flags)
 {
 	GfxRect r {};
 	GfxRect originalRect {};
@@ -267,7 +267,7 @@ FrameRef ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
 	GetFrameRect(ObjectIntersect.IntersectStamp.frame, &originalRect);
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (modify_flags & ModifyImage)
+	if (testFlag(modify_flags, ModifyFlags::Image))
 	{
 		ShipIntersect.IntersectStamp.frame = SetAbsFrameIndex(
 			StarShipPtr->RaceDescPtr->ship_info.icons, 1);
@@ -300,7 +300,7 @@ FrameRef ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
 	ObjectIntersect.IntersectStamp.origin.y +=
 		status_y_offsets[ElementPtr->playerNr];
 
-	if (modify_flags & ModifySwap)
+	if (testFlag(modify_flags, ModifyFlags::Swap))
 	{
 		originalRect.corner.x += ObjectIntersect.IntersectStamp.origin.x;
 		originalRect.corner.y += ObjectIntersect.IntersectStamp.origin.y;

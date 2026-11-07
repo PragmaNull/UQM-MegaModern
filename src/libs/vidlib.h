@@ -57,7 +57,7 @@ extern bool VidProcessFrame(void);
 extern uint32_t VidGetPosition(void); // position in milliseconds
 extern bool VidSeek(uint32_t pos);	  // position in milliseconds
 
-extern LegacyVideo LoadLegacyVideoInstance(RESOURCE res);
+extern LegacyVideo LoadLegacyVideoInstance(ResourceName res);
 extern bool DestroyLegacyVideo(LegacyVideo vid);
 extern LegacyVideoRef PlayLegacyVideo(LegacyVideo vid);
 extern void StopLegacyVideo(LegacyVideoRef ref);

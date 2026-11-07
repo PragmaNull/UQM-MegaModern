@@ -25,7 +25,7 @@
 namespace uqm
 {
 extern bool InstallCodeResType(void);
-extern void* LoadCodeResInstance(RESOURCE res);
+extern void* LoadCodeResInstance(ResourceName res);
 extern void* CaptureCodeRes(void* hCode, void* pData, void** ppLocData);
 extern void* ReleaseCodeRes(void* CodeRef);
 extern bool DestroyCodeRes(void* hCode);

@@ -494,7 +494,7 @@ void CargoMenu(void)
 	DoInput(&menuState, true);
 
 	// erase the cargo display
-	ClearSISRect(DrawSisDisplay);
+	ClearSISRect(ClearSisFlags::DrawDisplay);
 }
 
 } // namespace uqm

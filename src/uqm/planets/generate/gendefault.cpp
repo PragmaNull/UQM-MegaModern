@@ -319,15 +319,15 @@ void GeneratePlanets(SolarSystemState* solarSys)
 	}
 }
 
-uint8_t GenerateWorlds(uint8_t whichType)
+uint8_t GenerateWorlds(WorldTypes whichType)
 {
 	uint8_t planet {*PlanetType::FirstSmallRocky};
 
-	if (whichType & SmallRocky)
+	if (testFlag(whichType, WorldTypes::SmallRocky))
 	{
 		planet = *PlanetType::FirstSmallRocky + SysGenRNG->next() % NumberOfSmallRockyWorlds;
 	}
-	else if (whichType & LargeRocky)
+	else if (testFlag(whichType, WorldTypes::LargeRocky))
 	{
 		planet = *PlanetType::FirstLargeRocky + SysGenRNG->next() % (NumberOfLargeRockyWorlds - 2);
 		// Skip over rainbow_world and shattered_world, which are adjacent.
@@ -336,7 +336,7 @@ uint8_t GenerateWorlds(uint8_t whichType)
 			planet += 2;
 		}
 	}
-	else if (whichType & AllRocky)
+	else if (testFlag(whichType, WorldTypes::AllRocky))
 	{
 		planet = *PlanetType::FirstRocky + SysGenRNG->next() % (NumberOfRockyWorlds - 2);
 		// Skip over rainbow_world and shattered_world, which are adjacent.
@@ -345,7 +345,7 @@ uint8_t GenerateWorlds(uint8_t whichType)
 			planet += 2;
 		}
 	}
-	else if (whichType & OnlyLarge)
+	else if (testFlag(whichType, WorldTypes::OnlyLarge))
 	{
 		planet = *PlanetType::FirstLargeRocky + SysGenRNG->next() % (NumberOfLargeRockyWorlds + NumberOfGasGiants - 2);
 		// Skip over rainbow_world and shattered_world, which are adjacent.
@@ -354,7 +354,7 @@ uint8_t GenerateWorlds(uint8_t whichType)
 			planet += 2;
 		}
 	}
-	else if (whichType & OnlyGas)
+	else if (testFlag(whichType, WorldTypes::OnlyGas))
 	{
 		planet = *PlanetType::FirstGasGiant + SysGenRNG->next() % NumberOfGasGiants;
 	}
@@ -389,7 +389,7 @@ void GenerateGasGiantRanged(SolarSystemState* solarSys)
 	pSunDesc->PlanetByte = i;
 	SystemPlanet* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
-	pPlanet->data_index = GenerateWorlds(OnlyGas);
+	pPlanet->data_index = GenerateWorlds(WorldTypes::OnlyGas);
 
 	if (solarSys->PlanetDesc[i].radius < DwarfGasgDist)
 	{

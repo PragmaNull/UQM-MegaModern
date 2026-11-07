@@ -160,7 +160,7 @@ static bool GenerateSpathi_generateMoons(SolarSystemState* solarSys,
 		}
 		else
 		{
-			pMoonDesc->data_index = GenerateWorlds(SmallRocky);
+			pMoonDesc->data_index = GenerateWorlds(WorldTypes::SmallRocky);
 		}
 	}
 

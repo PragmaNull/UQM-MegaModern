@@ -20,6 +20,7 @@
 #ifndef UQM_WEAPON_H
 #define UQM_WEAPON_H
 
+#include "core/types/enum.h"
 #include "element.h"
 #include "libs/gfxlib.h"
 
@@ -54,11 +55,16 @@ extern ElementHandle weapon_collision(Element* ElementPtr0, GfxPoint* pPt0,
 extern int16_t TrackShip(Element* Tracker, uint16_t* pfacing);
 extern void Untarget(Element* ElementPtr);
 
-inline constexpr auto ModifyImage {1 << 0};
-inline constexpr auto ModifySwap {1 << 1};
+enum class ModifyFlags : uint8_t
+{
+	None = 0,
+	Image = 1 << 0,
+	Swap = 1 << 1,
+};
+ENUM_BITWISE_OPS(ModifyFlags)
 
 extern FrameRef ModifySilhouette(Element* ElementPtr, GfxStamp* modify_stamp,
-								 uint8_t modify_flags);
+								 ModifyFlags modify_flags);
 
 } // namespace uqm
 

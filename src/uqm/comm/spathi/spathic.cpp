@@ -947,7 +947,7 @@ ConversationData* init_spathi_comm(void)
 	// use alternate Fwiffo track if available
 	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 	{
-		altResFlags |= UseAltSong;
+		altResFlags |= AltResFlags::Song;
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1

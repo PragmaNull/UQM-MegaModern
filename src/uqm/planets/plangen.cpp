@@ -203,7 +203,7 @@ void RepairColorOpacity(Color* TopoColors, int width, int height)
 	}
 }
 
-void SetPlanetColors(COLORMAPPTR cmap)
+void SetPlanetColors(ColorMapPtr cmap)
 { // Setting colors for table that is used to color spheres
 	// Hacky, but imitates the original rather well
 	// That way we can have only 1 set of spheres and color them
@@ -259,7 +259,7 @@ void AdjustColor(Color* c, uint16_t scan, uint16_t height, uint16_t width, int8_
 	}
 }
 
-RESOURCE GetAltColorMap(SystemPlanet* pPlanetDesc)
+ResourceName GetAltColorMap(SystemPlanet* pPlanetDesc)
 {
 	switch (static_cast<PlanetType>(pPlanetDesc->data_index))
 	{
@@ -484,7 +484,7 @@ static void RenderLevelMasks(FrameRef mask, int8_t* pTopoData, bool SurfDef)
 }
 
 static void RenderTopography(FrameRef DstFrame, int8_t* pTopoData, int w, int h,
-							 bool SurfDef, COLORMAPPTR scanColors)
+							 bool SurfDef, ColorMapPtr scanColors)
 {
 	int16_t base {};
 	int16_t d {};

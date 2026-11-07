@@ -99,7 +99,7 @@ static bool GenerateAndrosynth_generatePlanets(SolarSystemState* solarSys)
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 			if (pPlanet->data_index > PlanetType::LastRocky)
 			{
-				pPlanet->data_index = GenerateWorlds(AllRocky);
+				pPlanet->data_index = GenerateWorlds(WorldTypes::AllRocky);
 			}
 		}
 	}

@@ -87,7 +87,7 @@ struct NumberSpeechDesc
 	// 0-9, 10-19, ..20-90, ..100-900, etc.
 	SpeechDigit Digits[MaxSpeechDigits];
 };
-const typedef NumberSpeechDesc* NUMBER_SPEECH;
+using NumberSpeechRef = const NumberSpeechDesc*;
 
 using LdasFlags = uint32_t;
 
@@ -129,9 +129,9 @@ consteval bool isArithmeticEnum(Conversation) { return true; }
 
 struct AlienAltResources
 {
-	RESOURCE AlienFrameRes;
-	RESOURCE AlienColorMapRes;
-	RESOURCE AlienSongRes;
+	ResourceName AlienFrameRes;
+	ResourceName AlienColorMapRes;
+	ResourceName AlienSongRes;
 };
 
 struct ConversationData
@@ -144,18 +144,18 @@ struct ConversationData
 	uint16_t (*uninit_encounter_func)(void);
 	/* Called when Encounter is done for cleanup */
 
-	RESOURCE AlienFrameRes;
-	RESOURCE AlienFontRes;
+	ResourceName AlienFrameRes;
+	ResourceName AlienFontRes;
 	Color AlienTextFColor, AlienTextBColor;
 	GfxPoint AlienTextBaseline;
 	uint16_t AlienTextWidth;
 	TextAlign AlienTextAlign;
 	TextVAlign AlienTextValign;
-	RESOURCE AlienColorMapRes;
-	RESOURCE AlienSongRes;
+	ResourceName AlienColorMapRes;
+	ResourceName AlienSongRes;
 	AlienAltResources AltRes;
 
-	RESOURCE ConversationPhrasesRes;
+	ResourceName ConversationPhrasesRes;
 
 	uint16_t NumAnimations;
 	AnimationDesc AlienAmbientArray[MaxAnimations];
@@ -168,7 +168,7 @@ struct ConversationData
 	// the first frame is neutral
 	AnimationDesc AlienTalkDesc;
 
-	NUMBER_SPEECH AlienNumberSpeech;
+	NumberSpeechRef AlienNumberSpeech;
 
 	FrameRef AlienFrame;
 	FontRef AlienFont;

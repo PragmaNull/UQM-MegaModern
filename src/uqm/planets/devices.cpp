@@ -757,7 +757,7 @@ bool DevicesMenu(void)
 	if (uqm::gameState().sis().CrewEnlisted != (uint16_t)~0
 		&& !(uqm::currentActivity() & ActivityFlag::CheckAbort))
 	{
-		ClearSISRect(DrawSisDisplay);
+		ClearSISRect(ClearSisFlags::DrawDisplay);
 
 		if (!uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER)
 			&& !(uqm::currentActivity() & ActivityFlag::StartEncounter)

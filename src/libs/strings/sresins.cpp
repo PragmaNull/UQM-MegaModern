@@ -45,7 +45,7 @@ bool InstallStringTableResType(void)
 namespace uqm
 {
 
-StringTablePtr loadStringTable(RESOURCE res)
+StringTablePtr loadStringTable(ResourceName res)
 {
 	void* const data {res_GetResource(res)};
 	if (data)
@@ -57,7 +57,7 @@ StringTablePtr loadStringTable(RESOURCE res)
 
 } // namespace uqm
 
-const char* LoadStringInstance(RESOURCE res)
+const char* LoadStringInstance(ResourceName res)
 {
 	const char* data {(const char*)res_GetResource(res)};
 	if (data)

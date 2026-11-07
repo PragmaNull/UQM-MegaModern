@@ -451,7 +451,7 @@ static bool GenerateSol_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 			CalcGravity(&solarSys->SysInfo.PlanetInfo);
 
 		{ // For Sol Textures
-			RESOURCE maskAnim = nullptr;
+			ResourceName maskAnim = nullptr;
 
 			if (uqm::UQMOptions::read().sphereType)
 			{
@@ -607,7 +607,7 @@ static bool GenerateSol_generateOrbital(SolarSystemState* solarSys, SystemPlanet
 			CalcGravity(&solarSys->SysInfo.PlanetInfo);
 
 		{ // For Sol Textures
-			RESOURCE maskAnim = nullptr;
+			ResourceName maskAnim = nullptr;
 
 			if (uqm::UQMOptions::read().sphereType)
 			{

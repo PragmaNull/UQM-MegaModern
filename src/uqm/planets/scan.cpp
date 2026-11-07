@@ -1009,7 +1009,7 @@ static bool PickPlanetSide(void)
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
 	{
-		ClearSISRect(ClearSisRadar);
+		ClearSISRect(ClearSisFlags::ClearRadar);
 	}
 
 	SetContext(ScanContext);

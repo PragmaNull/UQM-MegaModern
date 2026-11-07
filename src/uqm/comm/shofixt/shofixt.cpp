@@ -679,7 +679,7 @@ ConversationData* init_shofixti_comm(void)
 	// generalised in the future.
 	if (IsExtended())
 	{
-		altResFlags |= UseAltFrame;
+		altResFlags |= AltResFlags::Frame;
 	}
 
 	shofixti_desc.AlienTextBaseline.x =

@@ -43,7 +43,7 @@ bool InstallGraphicResTypes(void)
 }
 
 /* Needs to be void * because it could be either a DrawableRef or a FontRef. */
-void* LoadGraphicInstance(RESOURCE res)
+void* LoadGraphicInstance(ResourceName res)
 {
 	void* hData {res_GetResource(res)};
 	if (hData)

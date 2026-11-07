@@ -729,7 +729,7 @@ static void GiveRadios(ResponseRef R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
 					  c_gameSecond / 2);
 
-		if (altResFlags & UseAltSong)
+		if (testFlag(altResFlags, AltResFlags::Song))
 		{
 			const uint32_t MusicPos = PLRGetPos();
 			StopMusic();
@@ -740,7 +740,7 @@ static void GiveRadios(ResponseRef R)
 			SeekMusic(MusicPos);
 			FadeMusic(NormalVolume, c_gameSecond);
 
-			altResFlags &= ~UseAltSong;
+			altResFlags &= ~AltResFlags::Song;
 		}
 
 		AlienTalkSegue((uint16_t)~0);
@@ -844,12 +844,12 @@ ConversationData* init_commander_comm()
 
 	if (!uqm::gameState().flag(uqm::GameFlag::RADIOACTIVES_PROVIDED))
 	{
-		altResFlags |= UseAltSong;
+		altResFlags |= AltResFlags::Song;
 	}
 
 	if (IsHd())
 	{
-		altResFlags |= UseAltFrame;
+		altResFlags |= AltResFlags::Frame;
 	}
 
 

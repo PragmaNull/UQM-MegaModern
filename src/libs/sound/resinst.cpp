@@ -36,7 +36,7 @@ bool InstallAudioResTypes(void)
 	return (true);
 }
 
-uqm::SoundBankPtr uqm::loadSoundBank(RESOURCE res)
+uqm::SoundBankPtr uqm::loadSoundBank(ResourceName res)
 {
 	void* const data {res_GetResource(res)};
 	if (data)
@@ -46,7 +46,7 @@ uqm::SoundBankPtr uqm::loadSoundBank(RESOURCE res)
 	return SoundBankPtr {static_cast<SoundBank*>(data)};
 }
 
-MusicRef LoadMusicInstance(RESOURCE res)
+MusicRef LoadMusicInstance(ResourceName res)
 {
 	void* hData {res_GetResource(res)};
 	if (hData)

@@ -123,7 +123,7 @@ static bool GenerateMelnorme_generatePlanets(SolarSystemState* solarSys)
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-			pPlanet->data_index = GenerateWorlds(AllRocky);
+			pPlanet->data_index = GenerateWorlds(WorldTypes::AllRocky);
 		}
 	}
 

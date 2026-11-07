@@ -84,7 +84,7 @@ namespace uqm
 {
 using SoundBankPtr = uqstl::unique_ptr<SoundBank>;
 // Returns an empty pointer if the resource is not a sound bank.
-[[nodiscard]] SoundBankPtr loadSoundBank(RESOURCE res);
+[[nodiscard]] SoundBankPtr loadSoundBank(ResourceName res);
 } // namespace uqm
 using MusicRef = tfb::SoundSample**;
 
@@ -92,7 +92,7 @@ extern bool InitSound(int argc, char* argv[]);
 extern void UninitSound(void);
 extern MusicRef LoadMusicFile(const char* pStr);
 extern bool InstallAudioResTypes(void);
-extern MusicRef LoadMusicInstance(RESOURCE res);
+extern MusicRef LoadMusicInstance(ResourceName res);
 extern bool DestroyMusic(MusicRef musicRef);
 
 inline constexpr auto MaxChannels {8};

@@ -146,7 +146,7 @@ static bool GenerateUtwig_generatePlanets(SolarSystemState* solarSys)
 
 			if (!uqm::isStarSeed())
 			{
-				pPlanet->data_index = GenerateWorlds(OnlyGas);
+				pPlanet->data_index = GenerateWorlds(WorldTypes::OnlyGas);
 			}
 
 			GeneratePlanets(solarSys);

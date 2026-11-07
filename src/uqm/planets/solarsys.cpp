@@ -295,7 +295,7 @@ static void GenerateTexturedMoons(SolarSystemState* system, SystemPlanet* planet
 	for (i = 0, pMoonDesc = &system->MoonDesc[0];
 		 i < planet->NumPlanets; ++i, ++pMoonDesc)
 	{
-		RESOURCE maskAnim = nullptr;
+		ResourceName maskAnim = nullptr;
 
 		// BW : precompute the generated texture to display it in IP
 		if (!(pMoonDesc->data_index & *PlanetType::WorldTypeSpecial))
@@ -647,7 +647,7 @@ static void GenerateTexturedPlanets(void)
 	for (i = 0, pCurDesc = pSolarSysState->PlanetDesc;
 		 i < pSolarSysState->SunDesc[0].NumPlanets; ++i, ++pCurDesc)
 	{
-		RESOURCE maskanim = nullptr;
+		ResourceName maskanim = nullptr;
 
 		DoPlanetaryAnalysis(&pSolarSysState->SysInfo, pCurDesc);
 
@@ -2063,7 +2063,7 @@ static void DrawOuterSystem(void)
 	DrawHyperCoords(CurStarDescPtr()->star_pt);
 }
 
-RESOURCE spaceMusicSwitch(uint8_t SpeciesID)
+ResourceName spaceMusicSwitch(uint8_t SpeciesID)
 {
 	switch (static_cast<SpeciesId>(SpeciesID))
 	{

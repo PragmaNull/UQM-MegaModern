@@ -81,7 +81,7 @@ static TimePeriod fadeTime;
 // Dark mode
 bool IsDarkMode = false;
 bool cwLock = false; // To avoid drawing over comWindow if JumpTrack() is called
-uint8_t altResFlags = 0;
+AltResFlags altResFlags {};
 static uint16_t fadeIndex;
 
 struct ResponseEntry
@@ -1754,7 +1754,7 @@ void DoResponsePhrase(ResponseRef R, ResponseFunc response_func,
 void SetUpCommData(void)
 { // Kruzen: Better loading alt resources
 	// Loading alien frame
-	if (altResFlags & UseAltFrame)
+	if (testFlag(altResFlags, AltResFlags::Frame))
 	{
 		CommData.AlienFrame = CaptureDrawable(
 			LoadGraphic(CommData.AltRes.AlienFrameRes));
@@ -1763,7 +1763,7 @@ void SetUpCommData(void)
 		{
 			CommData.AlienFrame = CaptureDrawable(
 				LoadGraphic(CommData.AlienFrameRes));
-			altResFlags &= ~UseAltFrame;
+			altResFlags &= ~AltResFlags::Frame;
 		}
 	}
 	else
@@ -1776,14 +1776,14 @@ void SetUpCommData(void)
 	CommData.AlienFont = LoadFont(CommData.AlienFontRes);
 
 	// Loading alien colormap
-	if (altResFlags & UseAltColormap)
+	if (testFlag(altResFlags, AltResFlags::Colormap))
 	{
 		CommData.AlienColorMap = uqm::loadStringTable(CommData.AltRes.AlienColorMapRes).release();
 
 		if (!CommData.AlienColorMap) // Failed to load
 		{
 			CommData.AlienColorMap = uqm::loadStringTable(CommData.AlienColorMapRes).release();
-			altResFlags &= ~UseAltColormap;
+			altResFlags &= ~AltResFlags::Colormap;
 		}
 	}
 	else
@@ -1793,14 +1793,14 @@ void SetUpCommData(void)
 	CommData.AlienColorMapIndex = 0;
 
 	// Loading alien song
-	if (altResFlags & UseAltSong)
+	if (testFlag(altResFlags, AltResFlags::Song))
 	{
 		CommData.AlienSong = LoadMusicInstance(CommData.AltRes.AlienSongRes);
 
 		if (!CommData.AlienSong) // Failed to load
 		{
 			CommData.AlienSong = LoadMusicInstance(CommData.AlienSongRes);
-			altResFlags &= ~UseAltSong;
+			altResFlags &= ~AltResFlags::Song;
 		}
 	}
 	else
@@ -1982,7 +1982,7 @@ static void HailAlien(void)
 
 	ReleaseTalkingAnim();
 	DisengageFilters();
-	altResFlags &= ~UseAltAll;
+	altResFlags &= ~AltResFlags::All;
 
 	// Some support code tests either of these to see if the
 	// game is currently in comm or Encounter
@@ -2021,7 +2021,7 @@ uint16_t InitCommunication(Conversation which_comm)
 			}
 			else
 			{
-				ClearSISRect(DrawSisDisplay);
+				ClearSISRect(ClearSisFlags::DrawDisplay);
 				RepairSISBorder();
 			}
 			DrawSISMessage(nullptr);

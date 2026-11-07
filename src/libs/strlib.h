@@ -33,12 +33,12 @@
 #include "libs/reslib.h"
 
 extern bool InstallStringTableResType(void);
-const extern char* LoadStringInstance(RESOURCE res);
+const extern char* LoadStringInstance(ResourceName res);
 
 namespace uqm
 {
 // Returns an empty pointer if the resource is not a string table.
-[[nodiscard]] StringTablePtr loadStringTable(RESOURCE res);
+[[nodiscard]] StringTablePtr loadStringTable(ResourceName res);
 
 } // namespace uqm
 

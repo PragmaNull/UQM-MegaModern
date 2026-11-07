@@ -45,7 +45,7 @@ extern void AdvanceLoadProgress(void);
 extern void InitMenuMusic(void);
 extern void UninitMenuMusic(void);
 
-extern bool ShowPresentation(RESOURCE presentation);
+extern bool ShowPresentation(ResourceName presentation);
 
 } // namespace uqm
 

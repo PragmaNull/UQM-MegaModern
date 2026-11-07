@@ -1874,7 +1874,7 @@ static void InitPlanetSide(GfxPoint pt)
 	{
 		SetContext(RadarContext);
 		SetContextBackGroundColor(BlackColor);
-		ClearSISRect(ClearSisRadar);
+		ClearSISRect(ClearSisFlags::ClearRadar);
 		MapSurface = MAKE_EXTENT(RadarWidth(), RadarHeight());
 
 		DrawMineralHelpers();

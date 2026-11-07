@@ -45,7 +45,7 @@ FrameRef blast[NumViews];
 FrameRef explosion[NumViews];
 
 
-bool load_animation(FrameRef* pixarray, RESOURCE big_res, RESOURCE med_res, RESOURCE sml_res)
+bool load_animation(FrameRef* pixarray, ResourceName big_res, ResourceName med_res, ResourceName sml_res)
 {
 	DrawableRef d {LoadGraphic(big_res)};
 	if (!d)

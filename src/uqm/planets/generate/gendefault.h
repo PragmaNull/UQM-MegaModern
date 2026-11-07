@@ -26,11 +26,16 @@
 
 namespace uqm
 {
-inline constexpr auto SmallRocky {1 << 0};
-inline constexpr auto LargeRocky {1 << 1};
-inline constexpr auto AllRocky {1 << 2};
-inline constexpr auto OnlyLarge {1 << 3};
-inline constexpr auto OnlyGas {1 << 4};
+enum class WorldTypes : uint8_t
+{
+	None = 0,
+	SmallRocky = 1 << 0,
+	LargeRocky = 1 << 1,
+	AllRocky = 1 << 2,
+	OnlyLarge = 1 << 3,
+	OnlyGas = 1 << 4,
+};
+ENUM_BITWISE_OPS(WorldTypes)
 
 
 bool GenerateDefault_initNpcs(SolarSystemState* solarSys);
@@ -64,7 +69,7 @@ bool GenerateDefault_landerReport(SolarSystemState*);
 bool GenerateDefault_landerReportCycle(SolarSystemState*);
 extern void GeneratePlanets(SolarSystemState* system);
 extern bool CheckForHabitable(SolarSystemState* solarSys);
-extern uint8_t GenerateWorlds(uint8_t whichType);
+extern uint8_t GenerateWorlds(WorldTypes whichType);
 extern void GenerateGasGiantRanged(SolarSystemState* solarSys);
 extern uint8_t GenerateCrystalWorld(void);
 extern uint8_t GenerateDesolateWorld(void);

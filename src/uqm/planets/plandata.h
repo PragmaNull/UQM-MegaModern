@@ -251,9 +251,9 @@ struct PlanetFrame
 	ElementDeposit UsefulElements[NumUsefulElements];
 	/* Minerals on the planet */
 
-	RESOURCE CMapInstance;
+	ResourceName CMapInstance;
 	/* Color map */
-	RESOURCE XlatTabInstance;
+	ResourceName XlatTabInstance;
 	/* Color translation map */
 
 	// Parameters for map-generation algoritms:

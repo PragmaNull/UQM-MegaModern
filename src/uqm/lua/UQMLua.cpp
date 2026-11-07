@@ -176,7 +176,7 @@ void UQMLua::runInitScripts()
 	runLuaDir(m_state.get(), contentDir(), scriptDir);
 }
 
-bool UQMLua::runScriptRes(RESOURCE scriptRes)
+bool UQMLua::runScriptRes(ResourceName scriptRes)
 {
 	const uqstl::optional<uqstl::string> fileName {scriptFileName(scriptRes)};
 	if (!fileName || !loadScript(m_state.get(), contentDir(), *fileName))
@@ -190,7 +190,7 @@ bool UQMLua::runScriptRes(RESOURCE scriptRes)
 // Communication
 /////////////////////////////////////////////////////////////////////////////
 
-bool UQMLua::beginComm(const luaUqm_custom_Function* customFuncs, RESOURCE scriptRes)
+bool UQMLua::beginComm(const luaUqm_custom_Function* customFuncs, ResourceName scriptRes)
 {
 	assert(!m_commActive);
 	m_commActive = true;
@@ -292,7 +292,7 @@ uqstl::string UQMLua::interpolate(uqstl::string_view str)
 // Game events
 /////////////////////////////////////////////////////////////////////////////
 
-bool UQMLua::beginEvents(const luaUqm_custom_Function* customFuncs, RESOURCE scriptRes)
+bool UQMLua::beginEvents(const luaUqm_custom_Function* customFuncs, ResourceName scriptRes)
 {
 	assert(!m_eventsActive);
 	m_eventsActive = true;
@@ -419,7 +419,7 @@ void UQMLua::runDebugLine(uqgsl::czstring line, std::FILE* out, std::FILE* err)
 // Helpers
 /////////////////////////////////////////////////////////////////////////////
 
-uqstl::optional<uqstl::string> UQMLua::scriptFileName(RESOURCE res)
+uqstl::optional<uqstl::string> UQMLua::scriptFileName(ResourceName res)
 {
 	void* const data {res_GetResource(res)};
 	if (data == nullptr)

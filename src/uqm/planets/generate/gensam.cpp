@@ -180,7 +180,7 @@ static bool GenerateSaMatra_generatePlanets(SolarSystemState* solarSys)
 
 			pSunDesc->MoonByte = PlanetByteGen(pPlanet);
 
-			pPlanet->data_index = GenerateWorlds(LargeRocky);
+			pPlanet->data_index = GenerateWorlds(WorldTypes::LargeRocky);
 		}
 	}
 
@@ -232,7 +232,7 @@ static bool GenerateSaMatra_generatePlanets(SolarSystemState* solarSys)
 
 		if (pPlanet->NumPlanets > 1)
 		{
-			pPlanet->data_index = GenerateWorlds(OnlyLarge);
+			pPlanet->data_index = GenerateWorlds(WorldTypes::OnlyLarge);
 			pSunDesc->MoonByte = PlanetByteGen(pPlanet);
 		}
 		else

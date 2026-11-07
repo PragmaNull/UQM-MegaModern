@@ -29,7 +29,7 @@
 struct ResourceIndexDesc;
 using ResourceIndex = ResourceIndexDesc*;
 
-const typedef char* RESOURCE;
+using ResourceName = const char*;
 
 typedef union
 {
@@ -82,13 +82,13 @@ ResourceIndex InitResourceSystem(void);
 void UninitResourceSystem(void);
 bool InstallResTypeVectors(const char* res_type, ResourceLoadFun* loadFun, ResourceFreeFun* freeFun);
 bool InstallResTextTypeVectors(const char* res_type, ResourceTextLoadFun* loadFun, ResourceFreeFun* freeFun);
-void* res_GetResource(RESOURCE res);
-void* res_DetachResource(RESOURCE res);
-void res_FreeResource(RESOURCE res);
+void* res_GetResource(ResourceName res);
+void* res_DetachResource(ResourceName res);
+void res_FreeResource(ResourceName res);
 uint16_t CountResourceTypes(void);
-uint32_t res_GetIntResource(RESOURCE res);
-bool res_GetBooleanResource(RESOURCE res);
-const char* res_GetResourceType(RESOURCE res);
+uint32_t res_GetIntResource(ResourceName res);
+bool res_GetBooleanResource(ResourceName res);
+const char* res_GetResourceType(ResourceName res);
 
 // Loads a JSON resource index.
 void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix);

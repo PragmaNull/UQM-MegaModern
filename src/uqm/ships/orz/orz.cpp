@@ -421,9 +421,9 @@ void intruder_preprocess(Element* ElementPtr)
 										   GetFrameCount(ElementPtr->next.image.farray[0]) - 2);
 				if (IsHd()) // Clear background
 				{
-					ModifySilhouette(ShipPtr, &s, ModifySwap);
+					ModifySilhouette(ShipPtr, &s, ModifyFlags::Swap);
 				}
-				ModifySilhouette(ShipPtr, &s, 0);
+				ModifySilhouette(ShipPtr, &s, ModifyFlags::None);
 			}
 
 			ElementPtr->next.location = ShipPtr->next.location;
@@ -437,7 +437,7 @@ LeftShip:
 				s.origin.x = ResScale(16 + (ElementPtr->turn_wait & 3) * 9);
 				s.origin.y = ResScale(14 + (ElementPtr->turn_wait >> 2) * 11);
 				s.frame = ElementPtr->next.image.frame;
-				ModifySilhouette(ShipPtr, &s, ModifySwap);
+				ModifySilhouette(ShipPtr, &s, ModifyFlags::Swap);
 			}
 			else if (ElementPtr->thrust_wait == 0)
 			{
@@ -469,7 +469,7 @@ LeftShip:
 					s.origin.y = ResScale(14 + (ElementPtr->turn_wait >> 2) * 11);
 					s.frame = SetAbsFrameIndex(ElementPtr->next.image.farray[0],
 											   GetFrameCount(ElementPtr->next.image.farray[0]) - 1);
-					ModifySilhouette(ShipPtr, &s, 0);
+					ModifySilhouette(ShipPtr, &s, ModifyFlags::None);
 					ProcessSound(GetSound(
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 								 ElementPtr);
@@ -846,7 +846,7 @@ void marine_collision(Element* ElementPtr0, GfxPoint* pPt0,
 				s.origin.x = ResScale(16 + (ElementPtr0->turn_wait & 3) * 9);
 				s.origin.y = ResScale(14 + (ElementPtr0->turn_wait >> 2) * 11);
 				s.frame = ElementPtr0->next.image.frame;
-				ModifySilhouette(ElementPtr1, &s, 0);
+				ModifySilhouette(ElementPtr1, &s, ModifyFlags::None);
 
 				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),

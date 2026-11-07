@@ -854,7 +854,7 @@ static void DrawRaceStrings(uint8_t NewRaceItem)
 	r.extent.width = RadarWidth() + ResScale(4);
 	r.extent.height = ResScale(12);
 	BatchGraphics();
-	ClearSISRect(ClearSisRadar);
+	ClearSISRect(ClearSisFlags::ClearRadar);
 	SetContextForeGroundColor(DkgrayColor);
 
 	if (!IsDos())

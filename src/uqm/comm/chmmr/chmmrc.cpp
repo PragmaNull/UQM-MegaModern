@@ -784,7 +784,7 @@ ConversationData* init_chmmr_comm(void)
 	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_UNLEASHED)
 		|| uqm::gameState().flag(uqm::GameFlag::CHMMR_EMERGING))
 	{
-		altResFlags |= UseAltSong;
+		altResFlags |= AltResFlags::Song;
 	}
 
 	chmmr_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
