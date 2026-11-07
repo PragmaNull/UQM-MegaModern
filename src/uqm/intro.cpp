@@ -181,7 +181,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 	uint16_t piece {};
 	Color SisBack;
 
-	GfxContextRef OldContext {SetContext(OffScreenContext)};
+	const ContextScope contextScope {OffScreenContext};
 
 	FrameRef SkelFrame {CaptureDrawable(LoadGraphic(SisskelMaskPmapAnimRes))};
 	FrameRef ModuleFrame {CaptureDrawable(LoadGraphic(SismodsMaskPmapAnimRes))};
@@ -265,7 +265,6 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 	hs.y = r.extent.height / 2;
 	SetFrameHot(SisFrame, hs);
 
-	SetContext(OldContext);
 	FlushGraphics();
 
 	pPIS->SisFrame = SisFrame;

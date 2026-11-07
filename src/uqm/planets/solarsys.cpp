@@ -2606,48 +2606,48 @@ static void DrawSystem(int16_t radius, bool IsInnerSystem)
 													   clipRect.extent.width, clipRect.extent.height, 1));
 	}
 
-	GfxContextRef oldContext {SetContext(OffScreenContext)};
-	SetContextFGFrame(SolarSysFrame);
-	SetContextClipRect(nullptr);
-
-	DrawStarBackGround();
-
-	pBaseDesc = pSolarSysState->pBaseDesc;
-	if (IsInnerSystem)
-	{ // Draw the inner system view *planet's* orbit segment
-		pCurDesc = pSolarSysState->pOrbitalDesc;
-		DrawOrbit(pCurDesc, ResScale(DisplayFactorUs() * 4),
-				  DisplayFactor(), radius);
-	}
-
-	// Draw the planet orbits or moon orbits
-	for (i = pBaseDesc->pPrevDesc->NumPlanets, pCurDesc = pBaseDesc;
-		 i; --i, ++pCurDesc)
 	{
+		const ContextScope contextScope {OffScreenContext};
+		SetContextFGFrame(SolarSysFrame);
+		SetContextClipRect(nullptr);
+
+		DrawStarBackGround();
+
+		pBaseDesc = pSolarSysState->pBaseDesc;
 		if (IsInnerSystem)
-		{
-			DrawOrbit(pCurDesc, 2, 1, 2);
+		{ // Draw the inner system view *planet's* orbit segment
+			pCurDesc = pSolarSysState->pOrbitalDesc;
+			DrawOrbit(pCurDesc, ResScale(DisplayFactorUs() * 4),
+					  DisplayFactor(), radius);
 		}
-		else
+
+		// Draw the planet orbits or moon orbits
+		for (i = pBaseDesc->pPrevDesc->NumPlanets, pCurDesc = pBaseDesc;
+			 i; --i, ++pCurDesc)
 		{
-			DrawOrbit(pCurDesc, DisplayFactor(),
-					  ResScale(DisplayFactorUs() / 4), radius);
+			if (IsInnerSystem)
+			{
+				DrawOrbit(pCurDesc, 2, 1, 2);
+			}
+			else
+			{
+				DrawOrbit(pCurDesc, DisplayFactor(),
+						  ResScale(DisplayFactorUs() / 4), radius);
+			}
+		}
+
+		if (!uqm::UQMOptions::read().orbitingPlanets && !uqm::UQMOptions::read().texturedPlanets)
+		{
+			if (IsInnerSystem) // Draw the inner system view
+			{
+				DrawInnerPlanets(pSolarSysState->pOrbitalDesc);
+			}
+			else // Draw the outer system view
+			{
+				DrawOuterPlanets(radius);
+			}
 		}
 	}
-
-	if (!uqm::UQMOptions::read().orbitingPlanets && !uqm::UQMOptions::read().texturedPlanets)
-	{
-		if (IsInnerSystem) // Draw the inner system view
-		{
-			DrawInnerPlanets(pSolarSysState->pOrbitalDesc);
-		}
-		else // Draw the outer system view
-		{
-			DrawOuterPlanets(radius);
-		}
-	}
-
-	SetContext(oldContext);
 
 	// Draw the now-saved view graphic
 	s.origin.x = 0;

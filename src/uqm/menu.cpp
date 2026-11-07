@@ -726,167 +726,167 @@ void DrawMenuStateStrings(MenuString beg_index, int16_t NewState)
 		s.frame = SetAbsFrameIndex(PlayFrame, beg_index + NewState);
 	}
 
-	PreUpdateFlashRect();
-	GfxContextRef OldContext {SetContext(StatusContext)};
-	GetContextClipRect(&r);
-	s.origin.x = RadarX() - r.corner.x;
-	s.origin.y = RadarY() - r.corner.y;
-	r.corner.x = s.origin.x - ResScale(1);
-	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
-		r.corner.y = s.origin.y - PcMenuHeight() - IfHd(2);
-	}
-	else
-	{
-		r.corner.y = s.origin.y - ResScale(11) + DosNumScl(3);
-	}
-	r.extent.width = RadarWidth() + ResScale(3);
-	BatchGraphics();
-	SetContextForeGroundColor(
-		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
-	if (s.frame && uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
-	{
-		if (beg_index == MenuString::Crew)
+		PreUpdateFlashRect();
+		const ContextScope contextScope {StatusContext};
+		GetContextClipRect(&r);
+		s.origin.x = RadarX() - r.corner.x;
+		s.origin.y = RadarY() - r.corner.y;
+		r.corner.x = s.origin.x - ResScale(1);
+		if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 		{
-			fmt::format_to_sz_n(pm_crew_str, "{}({})",
-								GameString(GameStringBase::MainmenuString + static_cast<int>(MenuString::Crew)),
-								uqm::gameState().game().CrewCost);
+			r.corner.y = s.origin.y - PcMenuHeight() - IfHd(2);
 		}
-		if (beg_index == MenuString::Fuel)
+		else
 		{
-			fmt::format_to_sz_n(pm_fuel_str, "{}({})",
-								GameString(GameStringBase::MainmenuString + static_cast<int>(MenuString::Fuel)),
-								uqm::gameState().game().FuelCost);
+			r.corner.y = s.origin.y - ResScale(11) + DosNumScl(3);
 		}
-		if (beg_index == MenuString::SoundOn)
+		r.extent.width = RadarWidth() + ResScale(3);
+		const BatchScope batch {};
+		SetContextForeGroundColor(
+			BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
+		if (s.frame && uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 		{
-			end_index = *beg_index + 6;
+			if (beg_index == MenuString::Crew)
+			{
+				fmt::format_to_sz_n(pm_crew_str, "{}({})",
+									GameString(GameStringBase::MainmenuString + static_cast<int>(MenuString::Crew)),
+									uqm::gameState().game().CrewCost);
+			}
+			if (beg_index == MenuString::Fuel)
+			{
+				fmt::format_to_sz_n(pm_fuel_str, "{}({})",
+									GameString(GameStringBase::MainmenuString + static_cast<int>(MenuString::Fuel)),
+									uqm::gameState().game().FuelCost);
+			}
+			if (beg_index == MenuString::SoundOn)
+			{
+				end_index = *beg_index + 6;
+
+				switch (beg_index + NewState)
+				{
+					case MenuString::SoundOn:
+					case MenuString::SoundOff:
+						NewState = 0;
+						break;
+					case MenuString::MusicOn:
+					case MenuString::MusicOff:
+						NewState = 1;
+						break;
+					case MenuString::CyborgOff:
+					case MenuString::CyborgNormal:
+					case MenuString::CyborgDouble:
+					case MenuString::CyborgSuper:
+						NewState = 2;
+						break;
+					case MenuString::ReadVerySlow:
+					case MenuString::ReadSlow:
+					case MenuString::ReadModerate:
+					case MenuString::ReadFast:
+					case MenuString::ReadVeryFast:
+						NewState = 3;
+						break;
+					case MenuString::ChangeCaptain:
+						NewState = 4;
+						break;
+					case MenuString::ChangeShip:
+						NewState = 5;
+						break;
+					case MenuString::ExitSettings:
+						NewState = 6;
+						break;
+					default:
+						break;
+				}
+			}
+			r.extent.height = RadarHeight() + ResScale(12);
+
+			DrawPCMenu(*beg_index, end_index, (uint8_t)NewState, hilite, &r);
+			s.frame = 0;
+
+			if (uqm::UQMOptions::read().submenu)
+			{
+				FunkyMenu(*beg_index + (uint8_t)NewState, s);
+			}
+		}
+		else
+		{
+			// Gray rectangle behind Lander and HyperSpace radar
+			r.corner.x -= ResScale(1);
+			r.corner.y += DosNumScl(5);
+			r.extent.width += ResScale(1);
+			r.extent.height = RadarHeight()
+							+ ResScale(isPC(uqm::UQMOptions::read().whichMenu) ? 9 : 12);
+			r.extent.height -= DosNumScl(6);
+
+			if (!uqm::UQMOptions::read().customBorder)
+			{
+				DrawFilledRectangle(&r);
+			}
+			else
+			{
+				DrawBorder(BorderFrameIndex::SisRadar);
+			}
+		}
+		if (s.frame)
+		{
+			if (uqm::UQMOptions::read().submenu)
+			{
+				FunkyMenu(*beg_index + (uint8_t)NewState, s);
+			}
+			else
+			{
+				DrawStamp(&s);
+			}
+
+			Draw3DOMenuText(&r, *beg_index + NewState);
+
+			GfxText t;
+			uqstl::array<char, 20> buf;
 
 			switch (beg_index + NewState)
 			{
-				case MenuString::SoundOn:
-				case MenuString::SoundOff:
-					NewState = 0;
+				case MenuString::Crew:
+					t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
+					t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
+					t.align = TextAlign::Right;
+					t.CharCount = (uint16_t)~0;
+					t.pStr = buf.data();
+					fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().CrewCost);
+					if (isPC(uqm::UQMOptions::read().whichFonts))
+					{
+						SetContextFont(TinyFont);
+					}
+					else
+					{
+						SetContextFont(TinyFontBold);
+					}
+					SetContextForeGroundColor(ThreedomenuTextColor);
+					font_DrawText(&t);
 					break;
-				case MenuString::MusicOn:
-				case MenuString::MusicOff:
-					NewState = 1;
-					break;
-				case MenuString::CyborgOff:
-				case MenuString::CyborgNormal:
-				case MenuString::CyborgDouble:
-				case MenuString::CyborgSuper:
-					NewState = 2;
-					break;
-				case MenuString::ReadVerySlow:
-				case MenuString::ReadSlow:
-				case MenuString::ReadModerate:
-				case MenuString::ReadFast:
-				case MenuString::ReadVeryFast:
-					NewState = 3;
-					break;
-				case MenuString::ChangeCaptain:
-					NewState = 4;
-					break;
-				case MenuString::ChangeShip:
-					NewState = 5;
-					break;
-				case MenuString::ExitSettings:
-					NewState = 6;
+				case MenuString::Fuel:
+					t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
+					t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
+					t.align = TextAlign::Right;
+					t.CharCount = (uint16_t)~0;
+					t.pStr = buf.data();
+					fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().FuelCost);
+					if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::Console3DO && !uqm::UQMOptions::read().wholeFuel)
+					{
+						SetContextFont(TinyFontBold);
+					}
+					else
+					{
+						SetContextFont(TinyFont);
+					}
+					SetContextForeGroundColor(ThreedomenuTextColor);
+					font_DrawText(&t);
 					break;
 				default:
 					break;
 			}
 		}
-		r.extent.height = RadarHeight() + ResScale(12);
-
-		DrawPCMenu(*beg_index, end_index, (uint8_t)NewState, hilite, &r);
-		s.frame = 0;
-
-		if (uqm::UQMOptions::read().submenu)
-		{
-			FunkyMenu(*beg_index + (uint8_t)NewState, s);
-		}
 	}
-	else
-	{
-		// Gray rectangle behind Lander and HyperSpace radar
-		r.corner.x -= ResScale(1);
-		r.corner.y += DosNumScl(5);
-		r.extent.width += ResScale(1);
-		r.extent.height = RadarHeight()
-						+ ResScale(isPC(uqm::UQMOptions::read().whichMenu) ? 9 : 12);
-		r.extent.height -= DosNumScl(6);
-
-		if (!uqm::UQMOptions::read().customBorder)
-		{
-			DrawFilledRectangle(&r);
-		}
-		else
-		{
-			DrawBorder(BorderFrameIndex::SisRadar);
-		}
-	}
-	if (s.frame)
-	{
-		if (uqm::UQMOptions::read().submenu)
-		{
-			FunkyMenu(*beg_index + (uint8_t)NewState, s);
-		}
-		else
-		{
-			DrawStamp(&s);
-		}
-
-		Draw3DOMenuText(&r, *beg_index + NewState);
-
-		GfxText t;
-		uqstl::array<char, 20> buf;
-
-		switch (beg_index + NewState)
-		{
-			case MenuString::Crew:
-				t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
-				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
-				t.align = TextAlign::Right;
-				t.CharCount = (uint16_t)~0;
-				t.pStr = buf.data();
-				fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().CrewCost);
-				if (isPC(uqm::UQMOptions::read().whichFonts))
-				{
-					SetContextFont(TinyFont);
-				}
-				else
-				{
-					SetContextFont(TinyFontBold);
-				}
-				SetContextForeGroundColor(ThreedomenuTextColor);
-				font_DrawText(&t);
-				break;
-			case MenuString::Fuel:
-				t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
-				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
-				t.align = TextAlign::Right;
-				t.CharCount = (uint16_t)~0;
-				t.pStr = buf.data();
-				fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().FuelCost);
-				if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::Console3DO && !uqm::UQMOptions::read().wholeFuel)
-				{
-					SetContextFont(TinyFontBold);
-				}
-				else
-				{
-					SetContextFont(TinyFont);
-				}
-				SetContextForeGroundColor(ThreedomenuTextColor);
-				font_DrawText(&t);
-				break;
-			default:
-				break;
-		}
-	}
-	UnbatchGraphics();
-	SetContext(OldContext);
 	PostUpdateFlashRect();
 }
 

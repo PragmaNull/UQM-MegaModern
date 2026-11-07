@@ -906,7 +906,6 @@ static void DrawAllLabels(GfxRect rect)
 {
 	GfxPoint pt;
 	int16_t width {};
-	Color OldColor;
 
 	for (uint16_t i {4}; i <= 8; i++)
 	{
@@ -916,15 +915,16 @@ static void DrawAllLabels(GfxRect rect)
 		}
 	}
 
-	OldColor = SetContextForeGroundColor(BlackColor);
+	{
+		const ForegroundColorScope colorScope {BlackColor};
 
-	rect.corner.x += ResScale(1);
-	rect.corner.y += ResScale(1);
-	rect.extent.width -= ResScale(2);
-	rect.extent.height = ResScale(137 - SafeNum(1));
+		rect.corner.x += ResScale(1);
+		rect.corner.y += ResScale(1);
+		rect.extent.width -= ResScale(2);
+		rect.extent.height = ResScale(137 - SafeNum(1));
 
-	DrawFilledRectangle(&rect);
-	SetContextForeGroundColor(OldColor);
+		DrawFilledRectangle(&rect);
+	}
 
 	width = SummLabelLeftW;
 	pt.x = SummLabelLeftX();
@@ -1364,7 +1364,7 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 		// Save the states because we will hack them
 		SaveSS = uqm::gameState().sis();
 
-		GfxContextRef OldContext {SetContext(StatusContext)};
+		const ContextScope contextScope {StatusContext};
 		// Hack StatusContext so we can use standard SIS display funcs
 		GetContextClipRect(&OldRect);
 		r.corner.x = SisOrgX()
@@ -1554,8 +1554,6 @@ static void DrawSavegameSummary(PickGameState* pickState, uint16_t gameIndex)
 		}
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
-
-		SetContext(OldContext);
 
 		// Restore the state and queues because we hacked them
 		swap(uqm::gameState().game().built_ship_q, player_built_q);
@@ -1892,7 +1890,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 
 	LoadGameDescriptions(pickState.summary.data());
 
-	GfxContextRef OldContext {SetContext(SpaceContext)};
+	const ContextScope contextScope {SpaceContext};
 	// Save the current state of the screen for later restoration
 	DlgStamp = SaveContextFrame(nullptr);
 	GetContextClipRect(&DlgRect);
@@ -2028,8 +2026,6 @@ static bool PickGame(bool saving, bool fromMainMenu)
 	}
 
 	DestroyDrawable(ReleaseDrawable(DlgStamp.frame));
-
-	SetContext(OldContext);
 
 	ResumeMusic();
 

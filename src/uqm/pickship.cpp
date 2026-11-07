@@ -347,41 +347,41 @@ static StarshipHandle GetArmadaStarShip(void)
 	//    MenuSounds = CaptureSound (LoadSound (MenuSoundsRes));
 
 	InitPickFrame();
-	GfxContextRef OldContext {SetContext(SpaceContext)};
-	DrawArmadaPickShip(false, &pick_r);
-
 	{
-		MenuState menuState;
+		const ContextScope contextScope {SpaceContext};
+		DrawArmadaPickShip(false, &pick_r);
 
-		menuState.InputFunc = DoPickBattleShip;
-		menuState.Initialized = false;
-		menuState.first_item.x = NumPickShipColumns >> 1;
-		menuState.first_item.y = 0;
-		menuState.CurFrame = 0;
-		menuState.flash_rect1.corner = pick_r.corner;
-		menuState.flash_rect1.extent.width = 0;
+		{
+			MenuState menuState;
 
-		SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
-		DoInput(&menuState, false);
+			menuState.InputFunc = DoPickBattleShip;
+			menuState.Initialized = false;
+			menuState.first_item.x = NumPickShipColumns >> 1;
+			menuState.first_item.y = 0;
+			menuState.CurFrame = 0;
+			menuState.flash_rect1.corner = pick_r.corner;
+			menuState.flash_rect1.extent.width = 0;
 
-		SetFlashRect(nullptr, false);
+			SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
+			DoInput(&menuState, false);
 
-		hBattleShip = (StarshipHandle)menuState.CurFrame;
-	}
+			SetFlashRect(nullptr, false);
 
-	if (hBattleShip)
-	{
-		if (hBattleShip == GetTailLink(&race_q[0]))
-		{ // Player chose SIS. There will be no more choices.
-			battle_counter[RpgPlayerNum] = 1;
+			hBattleShip = (StarshipHandle)menuState.CurFrame;
 		}
 
-		WaitForSoundEnd(0);
+		if (hBattleShip)
+		{
+			if (hBattleShip == GetTailLink(&race_q[0]))
+			{ // Player chose SIS. There will be no more choices.
+				battle_counter[RpgPlayerNum] = 1;
+			}
+
+			WaitForSoundEnd(0);
+		}
+
+		//    DestroySound (ReleaseSound (MenuSounds));
 	}
-
-	//    DestroySound (ReleaseSound (MenuSounds));
-
-	SetContext(OldContext);
 	DestroyPickFrame();
 
 	return (hBattleShip);

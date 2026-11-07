@@ -2292,38 +2292,36 @@ static bool DoHyperspaceMenu(MenuState* pMS)
 
 void HyperspaceMenu(void)
 {
-	Color OldColor;
 	MenuState menuState;
 
 	UnbatchGraphics();
 
-	GfxContextRef OldContext {SetContext(SpaceContext)};
-	OldColor = SetContextBackGroundColor(BlackColor);
-
-
-	memset(&menuState, 0, sizeof(menuState));
-	menuState.InputFunc = DoHyperspaceMenu;
-	menuState.Initialized = true;
-	menuState.CurState = *HyperMenuItem::Starmap;
-
-	DrawMenuStateStrings(MenuString::Starmap, *HyperMenuItem::Starmap);
-	SetFlashRect(SfrMenu3do(), false);
-
-	SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
-	DoInput(&menuState, true);
-
-	SetFlashRect(nullptr, false);
-
-	SetContext(SpaceContext);
-
-	if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
 	{
-		ClearSISRect(ClearSisFlags::ClearRadar);
-		WaitForNoInput(c_gameSecond / 2, false);
-	}
+		const ContextScope contextScope {SpaceContext};
+		const BackgroundColorScope backgroundScope {BlackColor};
 
-	SetContextBackGroundColor(OldColor);
-	SetContext(OldContext);
+
+		memset(&menuState, 0, sizeof(menuState));
+		menuState.InputFunc = DoHyperspaceMenu;
+		menuState.Initialized = true;
+		menuState.CurState = *HyperMenuItem::Starmap;
+
+		DrawMenuStateStrings(MenuString::Starmap, *HyperMenuItem::Starmap);
+		SetFlashRect(SfrMenu3do(), false);
+
+		SetMenuSounds(MenuSoundFlags::Arrows, MenuSoundFlags::Select);
+		DoInput(&menuState, true);
+
+		SetFlashRect(nullptr, false);
+
+		SetContext(SpaceContext);
+
+		if (!(uqm::currentActivity() & (ActivityFlag::CheckAbort | ActivityFlag::CheckLoad)))
+		{
+			ClearSISRect(ClearSisFlags::ClearRadar);
+			WaitForNoInput(c_gameSecond / 2, false);
+		}
+	}
 	if (!(uqm::currentActivity() & ActivityFlag::InBattle))
 	{
 		cleanup_hyperspace();

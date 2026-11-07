@@ -1249,8 +1249,6 @@ static void ShowCombatShip(MenuState* pMS, uint16_t which_window,
 	{
 		TimeCount TimeIn;
 		GfxRect r;
-		GfxContextRef OldContext {};
-		GfxRect OldClipRect;
 
 		bool AllDoorsFinished {false};
 		r.corner.x = r.corner.y = 0;
@@ -1273,51 +1271,49 @@ static void ShowCombatShip(MenuState* pMS, uint16_t which_window,
 				AllDoorsFinished = true;
 			}
 
-			OldContext = SetContext(SpaceContext);
-			GetContextClipRect(&OldClipRect);
+			const ContextScope contextScope {SpaceContext};
 			SetContextBackGroundColor(BlackColor);
 
-			BatchGraphics();
-			pship_win_info = &ship_win_info[0];
-			for (i = 0; i < num_ships; ++i)
+			const BatchScope batch {};
 			{
+				const ClipRectScope clipRectScope {};
+				pship_win_info = &ship_win_info[0];
+				for (i = 0; i < num_ships; ++i)
 				{
-					GfxRect ClipRect;
-
-					ClipRect.corner.x = SisOrgX() + pship_win_info->finished_s.x;
-					ClipRect.corner.y = SisOrgY() + pship_win_info->finished_s.y;
-					ClipRect.extent.width = ShipWinWidth();
-					ClipRect.extent.height = ShipWinHeight();
-					SetContextClipRect(&ClipRect);
-
-					ClearDrawable();
-					DrawStamp(&pship_win_info->ship_s);
-					ShowShipCrew(pship_win_info->StarShipPtr, &r);
-					if (!AllDoorsFinished || YankedStarShipPtr)
 					{
-						DrawStamp(&pship_win_info->lfdoor_s);
-						DrawStamp(&pship_win_info->rtdoor_s);
-						if (YankedStarShipPtr)
-						{ // Close the doors
-							++pship_win_info->lfdoor_s.origin.x;
-							--pship_win_info->rtdoor_s.origin.x;
-						}
-						else
-						{ // Open the doors
-							--pship_win_info->lfdoor_s.origin.x;
-							++pship_win_info->rtdoor_s.origin.x;
+						GfxRect ClipRect;
+
+						ClipRect.corner.x = SisOrgX() + pship_win_info->finished_s.x;
+						ClipRect.corner.y = SisOrgY() + pship_win_info->finished_s.y;
+						ClipRect.extent.width = ShipWinWidth();
+						ClipRect.extent.height = ShipWinHeight();
+						SetContextClipRect(&ClipRect);
+
+						ClearDrawable();
+						DrawStamp(&pship_win_info->ship_s);
+						ShowShipCrew(pship_win_info->StarShipPtr, &r);
+						if (!AllDoorsFinished || YankedStarShipPtr)
+						{
+							DrawStamp(&pship_win_info->lfdoor_s);
+							DrawStamp(&pship_win_info->rtdoor_s);
+							if (YankedStarShipPtr)
+							{ // Close the doors
+								++pship_win_info->lfdoor_s.origin.x;
+								--pship_win_info->rtdoor_s.origin.x;
+							}
+							else
+							{ // Open the doors
+								--pship_win_info->lfdoor_s.origin.x;
+								++pship_win_info->rtdoor_s.origin.x;
+							}
 						}
 					}
+					++pship_win_info;
 				}
-				++pship_win_info;
 			}
-
-			SetContextClipRect(&OldClipRect);
 #ifndef USE_3DO_HANGAR
 			animatePowerLines(nullptr);
 #endif
-			UnbatchGraphics();
-			SetContext(OldContext);
 		}
 	}
 }

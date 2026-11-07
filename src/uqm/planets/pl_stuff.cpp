@@ -49,73 +49,74 @@ void DrawCurrentPlanetSphere(void)
 {
 	GfxStamp s;
 	PlanetOrbit* Orbit = &pSolarSysState->Orbit;
-	GfxContextRef oldContext = SetContext(PlanetContext);
+	{
+		const ContextScope contextScope {PlanetContext};
 
-	s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
-	s.origin.y = PlanetOrgY();
+		s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
+		s.origin.y = PlanetOrgY();
 
-	{ // re-render current frame
-		rotFrameIndex ^= 1;
+		{ // re-render current frame
+			rotFrameIndex ^= 1;
 
-		rotPointIndex -= rotDirection; // roll back
-		if (rotPointIndex < 0)
-		{
-			rotPointIndex = rotwidth - 1;
-		}
-		else if (rotPointIndex >= rotwidth)
-		{
-			rotPointIndex = 0;
-		}
-
-		if (useDosSpheres)
-		{
-			if (rotFrameIndex)
+			rotPointIndex -= rotDirection; // roll back
+			if (rotPointIndex < 0)
 			{
-				Orbit->SphereFrame = IncFrameIndex(Orbit->SphereFrame);
+				rotPointIndex = rotwidth - 1;
+			}
+			else if (rotPointIndex >= rotwidth)
+			{
+				rotPointIndex = 0;
 			}
 
-			RenderDOSPlanetSphere(
-				Orbit, Orbit->SphereFrame, rotPointIndex);
-		}
-		else if (use3DOSpheres)
-		{
-			Orbit->SphereFrame = SetAbsFrameIndex(Orbit->SphereFrame,
-												  rotFrameIndex);
-
-			Render3DOPlanetSphere(
-				Orbit, Orbit->SphereFrame, rotPointIndex, rotwidth,
-				rotheight);
-		}
-		else
-		{
-			Orbit->SphereFrame = SetAbsFrameIndex(Orbit->SphereFrame,
-												  rotFrameIndex);
-			RenderPlanetSphere(Orbit, Orbit->SphereFrame, rotPointIndex,
-							   pSolarSysState->pOrbitalDesc->data_index
-								   & *PlanetType::PlanetShielded,
-							   throbShield, rotwidth, rotheight,
-							   (rotheight >> 1) - IfHd(2));
-		}
-	}
-	{
-		const BatchScope batch {};
-		s.frame = Orbit->SphereFrame;
-		DrawStamp(&s);
-		if (Orbit->ObjectFrame)
-		{
-			s.frame = Orbit->ObjectFrame;
-
-			if (use3DOSpheres)
+			if (useDosSpheres)
 			{
-				Draw3DOShield(s);
+				if (rotFrameIndex)
+				{
+					Orbit->SphereFrame = IncFrameIndex(Orbit->SphereFrame);
+				}
+
+				RenderDOSPlanetSphere(
+					Orbit, Orbit->SphereFrame, rotPointIndex);
+			}
+			else if (use3DOSpheres)
+			{
+				Orbit->SphereFrame = SetAbsFrameIndex(Orbit->SphereFrame,
+													  rotFrameIndex);
+
+				Render3DOPlanetSphere(
+					Orbit, Orbit->SphereFrame, rotPointIndex, rotwidth,
+					rotheight);
 			}
 			else
 			{
-				DrawStamp(&s);
+				Orbit->SphereFrame = SetAbsFrameIndex(Orbit->SphereFrame,
+													  rotFrameIndex);
+				RenderPlanetSphere(Orbit, Orbit->SphereFrame, rotPointIndex,
+								   pSolarSysState->pOrbitalDesc->data_index
+									   & *PlanetType::PlanetShielded,
+								   throbShield, rotwidth, rotheight,
+								   (rotheight >> 1) - IfHd(2));
+			}
+		}
+		{
+			const BatchScope batch {};
+			s.frame = Orbit->SphereFrame;
+			DrawStamp(&s);
+			if (Orbit->ObjectFrame)
+			{
+				s.frame = Orbit->ObjectFrame;
+
+				if (use3DOSpheres)
+				{
+					Draw3DOShield(s);
+				}
+				else
+				{
+					DrawStamp(&s);
+				}
 			}
 		}
 	}
-	SetContext(oldContext);
 
 	PrepareNextRotationFrame();
 }

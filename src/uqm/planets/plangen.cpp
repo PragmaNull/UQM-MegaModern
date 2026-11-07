@@ -1093,7 +1093,6 @@ void Draw3DOShield(GfxStamp ShieldFrame)
 	static uint8_t i;
 	static uint8_t cr;
 	static bool flip;
-	DrawMode oldmode;
 	const uqstl::array<uint8_t, 6> factor {0xFF, 0xE6, 0xC5, 0xA4, 0x83, 0x62};
 
 	if (factor[i] == 0x62)
@@ -1105,12 +1104,10 @@ void Draw3DOShield(GfxStamp ShieldFrame)
 		flip = false;
 	}
 
-	oldmode = SetContextDrawMode(MAKE_DRAW_MODE(DrawKind::Additive,
-												factor[i]));
-
-	DrawStamp(&ShieldFrame);
-
-	SetContextDrawMode(oldmode);
+	{
+		const DrawModeScope drawModeScope {MAKE_DRAW_MODE(DrawKind::Additive, factor[i])};
+		DrawStamp(&ShieldFrame);
+	}
 
 	if (cr % chooseIfHd(3, 4) == 0)
 	{

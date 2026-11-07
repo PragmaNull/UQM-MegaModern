@@ -1564,13 +1564,11 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 			}
 		}
 #else
-		Color oldColor;
 		GfxLine l;
 		const uint8_t c = 0x3F + IfHd(0x11);
 		const GfxPoint* CNPtr {&constel_array[0]};
 
-		oldColor = SetContextForeGroundColor(
-			BuildColorRgba(c, c, c, 0xFF));
+		const ForegroundColorScope colorScope {BuildColorRgba(c, c, c, 0xFF)};
 
 		while (CNPtr->x < MaxXUniverse && CNPtr->y < MaxYUniverse)
 		{ // Have to add 2 because of HdResolutionFactor nature (can't get exact middle of 4x4)
@@ -1582,7 +1580,6 @@ static void DrawStarMap(uint16_t race_update, GfxRect* pClipRect)
 			CNPtr++;
 			DrawLine(&l, 1);
 		}
-		SetContextForeGroundColor(oldColor);
 #endif
 	}
 

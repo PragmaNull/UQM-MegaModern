@@ -270,20 +270,21 @@ bool InitContexts(void)
 	}
 	AdvanceLoadProgress();
 
-	GfxContextRef oldContext {SetContext(StatusContext)};
-	SetContextFGFrame(Screen);
-	r.corner.x = SpaceWidth() + SafeX();
-	r.corner.y = SafeY();
-	r.extent.width = StatusWidth();
-	r.extent.height = StatusHeight();
-	SetContextClipRect(&r);
-
-	SpaceContext = CreateContext("SpaceContext");
-	if (SpaceContext == nullptr)
 	{
-		return false;
+		const ContextScope contextScope {StatusContext};
+		SetContextFGFrame(Screen);
+		r.corner.x = SpaceWidth() + SafeX();
+		r.corner.y = SafeY();
+		r.extent.width = StatusWidth();
+		r.extent.height = StatusHeight();
+		SetContextClipRect(&r);
+
+		SpaceContext = CreateContext("SpaceContext");
+		if (SpaceContext == nullptr)
+		{
+			return false;
+		}
 	}
-	SetContext(oldContext);
 	AdvanceLoadProgress();
 
 	OffScreenContext = CreateContext("OffScreenContext");

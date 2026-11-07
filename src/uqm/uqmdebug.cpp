@@ -2126,7 +2126,6 @@ void debugContexts(void)
 	static uqstl::atomic<bool> inDebugContexts {false};
 	// Prevent this function from being called from within itself.
 
-	GfxContextRef orgContext;
 	GfxContextRef debugDrawContext;
 	// We're going to use this context to draw in.
 	FrameRef debugDrawFrame;
@@ -2160,42 +2159,42 @@ void debugContexts(void)
 	debugDrawContext = CreateContext("debugDrawContext");
 	// New work frame is a copy of the original.
 	debugDrawFrame = CaptureDrawable(CloneFrame(savedScreen));
-	orgContext = SetContext(debugDrawContext);
-	SetContextFGFrame(debugDrawFrame);
-
-	hueIncrement = 360.0 / contextCount;
-
-	visibleContextI = 0;
-	for (context = GetFirstContext(); context != nullptr;
-		 context = GetNextContext(context))
 	{
-		if (context == debugDrawContext)
+		const ContextScope contextScope {debugDrawContext};
+		SetContextFGFrame(debugDrawFrame);
+
+		hueIncrement = 360.0 / contextCount;
+
+		visibleContextI = 0;
+		for (context = GetFirstContext(); context != nullptr;
+			 context = GetNextContext(context))
 		{
-			// Skip our own context.
-			continue;
+			if (context == debugDrawContext)
+			{
+				// Skip our own context.
+				continue;
+			}
+
+			if (isContextVisible(context))
+			{
+				// Only draw the visible contexts.
+				drawContext(context, visibleContextI * hueIncrement);
+				visibleContextI++;
+			}
+
+			describeContext(stderr, context);
 		}
 
-		if (isContextVisible(context))
+		// Blit the final debugging frame to the screen.
+		putScreen(debugDrawFrame);
+
+		// Wait for a key:
 		{
-			// Only draw the visible contexts.
-			drawContext(context, visibleContextI * hueIncrement);
-			visibleContextI++;
+			WaitState state;
+			state.InputFunc = waitForKey;
+			DoInput(&state, true);
 		}
-
-		describeContext(stderr, context);
 	}
-
-	// Blit the final debugging frame to the screen.
-	putScreen(debugDrawFrame);
-
-	// Wait for a key:
-	{
-		WaitState state;
-		state.InputFunc = waitForKey;
-		DoInput(&state, true);
-	}
-
-	SetContext(orgContext);
 
 	// Destroy the debugging frame and context.
 	DestroyContext(debugDrawContext);

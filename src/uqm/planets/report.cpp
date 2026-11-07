@@ -366,40 +366,41 @@ void DoDiscoveryReport(SoundBankRef ReadOutSounds)
 #endif
 
 	GfxContextRef context {GetScanContext(&ownContext)};
-	GfxContextRef OldContext {SetContext(context)};
-	saveStamp = SaveContextFrame(nullptr);
 	{
-		FrameRef OldFontEffect {};
-
-		const FontScope fontScope {pSolarSysState->SysInfo.PlanetInfo.LanderFont};
-		if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::PC)
+		const ContextScope contextScope {context};
+		saveStamp = SaveContextFrame(nullptr);
 		{
-			OldFontEffect = SetContextFontEffect(
-				pSolarSysState->SysInfo.PlanetInfo.LanderFontEff);
-		}
-		else
-		{
-			OldFontEffect = SetContextFontEffect(nullptr);
-		}
+			FrameRef OldFontEffect {};
 
-		uqm::lua().beginComm(nullptr, NullResource);
-		uqstl::late_constructed<uqstl::string> interpolatedReport {};
-		const PlanetData& planetInfo {pSolarSysState->SysInfo.PlanetInfo};
-		uqstl::string_view report {planetInfo.DiscoveryStrings->text(planetInfo.DiscoveryIndex)};
-		if (uqm::UQMLua::needsInterpolate(report.data()))
-		{
-			interpolatedReport.emplace(uqm::lua().interpolate(report));
-			report = *interpolatedReport;
+			const FontScope fontScope {pSolarSysState->SysInfo.PlanetInfo.LanderFont};
+			if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::PC)
+			{
+				OldFontEffect = SetContextFontEffect(
+					pSolarSysState->SysInfo.PlanetInfo.LanderFontEff);
+			}
+			else
+			{
+				OldFontEffect = SetContextFontEffect(nullptr);
+			}
+
+			uqm::lua().beginComm(nullptr, NullResource);
+			uqstl::late_constructed<uqstl::string> interpolatedReport {};
+			const PlanetData& planetInfo {pSolarSysState->SysInfo.PlanetInfo};
+			uqstl::string_view report {planetInfo.DiscoveryStrings->text(planetInfo.DiscoveryIndex)};
+			if (uqm::UQMLua::needsInterpolate(report.data()))
+			{
+				interpolatedReport.emplace(uqm::lua().interpolate(report));
+				report = *interpolatedReport;
+			}
+			MakeReport(ReadOutSounds, report);
+
+			uqm::lua().endComm();
+
+			SetContextFontEffect(OldFontEffect);
 		}
-		MakeReport(ReadOutSounds, report);
-
-		uqm::lua().endComm();
-
-		SetContextFontEffect(OldFontEffect);
+		// Restore previous screen
+		DrawStamp(&saveStamp);
 	}
-	// Restore previous screen
-	DrawStamp(&saveStamp);
-	SetContext(OldContext);
 	// TODO: Make GfxContextRef ref-counted
 	if (ownContext)
 	{

@@ -513,7 +513,6 @@ static void DoTimePassage(void)
 void VisitStarBase(void)
 {
 	MenuState menuState;
-	GfxContextRef OldContext {};
 	StatMsgMode prevMsgMode = StatMsgMode::Undefined;
 
 	// XXX: This should probably be moved out to Starcon2Main()
@@ -596,9 +595,10 @@ void VisitStarBase(void)
 	memset(&menuState, 0, sizeof(menuState));
 	menuState.InputFunc = DoStarBase;
 
-	OldContext = SetContext(ScreenContext);
-	DoInput(&menuState, true);
-	SetContext(OldContext);
+	{
+		const ContextScope contextScope {ScreenContext};
+		DoInput(&menuState, true);
+	}
 
 	SetStatusMessageMode(prevMsgMode);
 	CleanupAfterStarBase();

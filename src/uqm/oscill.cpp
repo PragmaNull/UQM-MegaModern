@@ -98,7 +98,7 @@ void DrawOscilloscopeLines(GfxStamp* s, uint8_t* scope_data, bool nonStop, bool 
 	int i {};
 	Color scopeColor;
 
-	GfxContextRef oldContext {SetContext(OffScreenContext)};
+	const ContextScope contextScope {OffScreenContext};
 	SetContextFGFrame(scopeWork);
 	SetContextClipRect(nullptr);
 
@@ -148,8 +148,6 @@ void DrawOscilloscopeLines(GfxStamp* s, uint8_t* scope_data, bool nonStop, bool 
 		line.second.y = line.first.y;
 		DrawLine(&line, ResScale(1));
 	}
-
-	SetContext(oldContext);
 
 	s->frame = scopeWork;
 }

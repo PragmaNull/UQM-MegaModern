@@ -822,8 +822,6 @@ static void DrawSuperMeleeTitle(void)
 void RepairMeleeFrame(const GfxRect* pRect)
 {
 	GfxRect r;
-	GfxRect OldRect;
-	GfxPoint oldOrigin;
 
 	r.corner.x = pRect->corner.x + SafeX();
 	r.corner.y = pRect->corner.y + SafeY();
@@ -834,47 +832,43 @@ void RepairMeleeFrame(const GfxRect* pRect)
 		r.extent.height += ResScale(1);
 	}
 
-	GfxContextRef OldContext {SetContext(SpaceContext)};
-	GetContextClipRect(&OldRect);
-	SetContextClipRect(&r);
-	// Offset the origin so that we draw the correct gfx in the cliprect
-	oldOrigin = SetContextOrigin(MAKE_POINT(-r.corner.x + SafeX(),
-											-r.corner.y + SafeY()));
-	BatchGraphics();
+	{
+		const ContextScope contextScope {SpaceContext};
+		const ClipRectScope clipRectScope {};
+		SetContextClipRect(&r);
+		// Offset the origin so that we draw the correct gfx in the cliprect
+		const OriginScope originScope {MAKE_POINT(-r.corner.x + SafeX(), -r.corner.y + SafeY())};
+		const BatchScope batch {};
 
-	DrawMeleeIcon(*MeleeFrameIndex::MeleeBackground, false); // Entire melee background
+		DrawMeleeIcon(*MeleeFrameIndex::MeleeBackground, false); // Entire melee background
 
-	DrawTeams();
+		DrawTeams();
 
-	if (pRect->corner.x == 0 && pRect->corner.y == 0
-		&& pRect->extent.width == CanvasWidth
-		&& pRect->extent.height == CanvasHeight)
-	{ // Only draw these on a full screen redraw
+		if (pRect->corner.x == 0 && pRect->corner.y == 0
+			&& pRect->extent.width == CanvasWidth
+			&& pRect->extent.height == CanvasHeight)
+		{ // Only draw these on a full screen redraw
 
-		DrawSuperMeleeTitle();
+			DrawSuperMeleeTitle();
 
-		DrawMeleeIcon(*MeleeFrameIndex::LoadButtonTop, false);
-		DrawMeleeIcon(*MeleeFrameIndex::SaveButtonTop, false);
-		DrawMeleeIcon(*MeleeFrameIndex::LoadButtonBott, false);
-		DrawMeleeIcon(*MeleeFrameIndex::SaveButtonBott, false);
-		DrawMeleeIcon(*MeleeFrameIndex::QuitButton, false);
+			DrawMeleeIcon(*MeleeFrameIndex::LoadButtonTop, false);
+			DrawMeleeIcon(*MeleeFrameIndex::SaveButtonTop, false);
+			DrawMeleeIcon(*MeleeFrameIndex::LoadButtonBott, false);
+			DrawMeleeIcon(*MeleeFrameIndex::SaveButtonBott, false);
+			DrawMeleeIcon(*MeleeFrameIndex::QuitButton, false);
 
 #ifdef NETPLAY
-		DrawMeleeIcon(*MeleeFrameIndex::NetButtonTop, false);
-		//DrawMeleeIcon (NET_BUTTON_BOTT, false);
+			DrawMeleeIcon(*MeleeFrameIndex::NetButtonTop, false);
+			//DrawMeleeIcon (NET_BUTTON_BOTT, false);
 #endif
-		DrawMeleeIcon(*MeleeFrameIndex::BattleButtonHl, true);
-	}
+			DrawMeleeIcon(*MeleeFrameIndex::BattleButtonHl, true);
+		}
 
-	if (pMeleeState->MeleeOption == MeleeMenuItem::BuildPick)
-	{
-		DrawPickFrame(pMeleeState);
+		if (pMeleeState->MeleeOption == MeleeMenuItem::BuildPick)
+		{
+			DrawPickFrame(pMeleeState);
+		}
 	}
-
-	UnbatchGraphics();
-	SetContextOrigin(oldOrigin);
-	SetContextClipRect(&OldRect);
-	SetContext(OldContext);
 
 	DrawBorderPadding(0);
 }
