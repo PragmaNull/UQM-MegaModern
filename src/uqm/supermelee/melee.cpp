@@ -152,6 +152,7 @@ static constexpr auto TeamPickTextColor {BuildColorRgb(0x32, 0x32, 0x9B)};
 FrameRef MeleeFrame;
 MeleeState* pMeleeState;
 FontRef MicroThinFont;
+static FontRef MeleeTitleFont;
 FontRef ButtonFont;
 
 bool DoMelee(MeleeState* pMS);
@@ -807,20 +808,16 @@ static void DrawSuperMeleeTitle(void)
 		return;
 	}
 
-	const FontRef titleFont {LoadFont(MeleeTitleFontRes)};
-	{
-		const FontScope fontScope {titleFont};
-		const FontEffectScope fontEffectScope {SetAbsFrameIndex(FontGradFrame, 7)};
+	const FontScope fontScope {MeleeTitleFont};
+	const FontEffectScope fontEffectScope {SetAbsFrameIndex(FontGradFrame, 7)};
 
-		t.baseline.x = (CanvasWidth >> 1) - (SafeNeg(1));
-		t.baseline.y = ResScale(4);
-		t.align = TextAlign::Center;
-		t.pStr = AlignText((const char*)buf, &t.baseline.x);
-		t.CharCount = (uint16_t)~0;
+	t.baseline.x = (CanvasWidth >> 1) - (SafeNeg(1));
+	t.baseline.y = ResScale(4);
+	t.align = TextAlign::Center;
+	t.pStr = AlignText((const char*)buf, &t.baseline.x);
+	t.CharCount = (uint16_t)~0;
 
-		font_DrawText(&t);
-	}
-	DestroyFont(titleFont);
+	font_DrawText(&t);
 }
 
 void RepairMeleeFrame(const GfxRect* pRect)
@@ -1949,6 +1946,7 @@ static void LoadMeleeInfo(MeleeState* pMS)
 	MeleeFrame = CaptureDrawable(LoadGraphic(MeleeScreenPmapAnimRes));
 	BuildBuildPickFrame();
 	MicroThinFont = LoadFont(MicroThinFontRes);
+	MeleeTitleFont = LoadFont(MeleeTitleFontRes);
 	ButtonFont = LoadFont(ButtonFontRes);
 	FontGradFrame = CaptureDrawable(
 		LoadGraphic(FontgradPmapAnimRes));
@@ -1988,6 +1986,8 @@ static void FreeMeleeInfo(MeleeState* pMS)
 
 	DestroyBuildPickFrame();
 	DestroyFont(MicroThinFont);
+	DestroyFont(MeleeTitleFont);
+	MeleeTitleFont = nullptr;
 	DestroyFont(ButtonFont);
 	DestroyDrawable(ReleaseDrawable(FontGradFrame));
 	FontGradFrame = 0;
