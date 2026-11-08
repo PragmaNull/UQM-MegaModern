@@ -40,6 +40,7 @@
 
 #include "core/log/log.h"
 #include "core/stl/array.h"
+#include "core/stl/optional.h"
 #include "core/stl/stl.h"
 #include "core/stl/vector.h"
 #include "sdl_common.h"
@@ -395,7 +396,7 @@ namespace
 
 // Writes the image. Calls setjmp, so its local variables must have trivial destructors.
 bool writePng(png_structp png, png_infop info, SDL_Surface* surface, SDL_IOStream* dst,
-			  uqstl::span<const png_color> palette, png_bytep* rows)
+			  const uqstl::optional<uqstl::vector<png_color>>& palette, png_bytep* rows)
 {
 	if (setjmp(png_jmpbuf(png)))
 	{
@@ -408,10 +409,10 @@ bool writePng(png_structp png, png_infop info, SDL_Surface* surface, SDL_IOStrea
 	/* Prepare chunks */
 	const SDL_PixelFormatDetails* const format {SDL_GetPixelFormatDetails(surface->format)};
 	int colortype {PNG_COLOR_MASK_COLOR};
-	if (!palette.empty())
+	if (palette)
 	{
 		colortype |= PNG_COLOR_MASK_PALETTE;
-		png_set_PLTE(png, info, palette.data(), static_cast<int>(palette.size()));
+		png_set_PLTE(png, info, palette->data(), static_cast<int>(palette->size()));
 	}
 	else if (format->bytes_per_pixel > 3 || format->Amask)
 	{
@@ -466,14 +467,15 @@ int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst)
 		return fail("Couldn't create image information for PNG file");
 	}
 
-	uqstl::vector<png_color> palette {};
+	uqstl::optional<uqstl::vector<png_color>> palette {};
 	const SDL_PixelFormatDetails* const format {SDL_GetPixelFormatDetails(surface->format)};
 	if (const SDL_Palette* const pal {SDL_GetSurfacePalette(surface)};
 		pal != nullptr && format->bytes_per_pixel > 0 && format->bytes_per_pixel <= 8)
 	{
+		palette.emplace();
 		for (const SDL_Color& color : uqstl::span {pal->colors, static_cast<size_t>(pal->ncolors)})
 		{
-			palette.push_back({color.r, color.g, color.b});
+			palette->push_back({color.r, color.g, color.b});
 		}
 	}
 
