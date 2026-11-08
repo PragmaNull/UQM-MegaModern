@@ -2476,22 +2476,22 @@ static void DrawBluePrint(MenuState* pMS)
 	uint16_t num_frames {};
 	GfxStamp s;
 
-	FrameRef ModuleFrame {CaptureDrawable(LoadGraphic(SisbluMaskAnimRes))};
+	const FrameOwner ModuleFrame {CaptureDrawable(LoadGraphic(SisbluMaskAnimRes))};
 
 	s.origin.x = -SafePad();
 	s.origin.y = 0;
-	s.frame = DecFrameIndex(ModuleFrame);
+	s.frame = DecFrameIndex(ModuleFrame.get());
 	SetContextForeGroundColor(BlueprintColor);
 	DrawFilledStamp(&s);
 
 	for (num_frames = 0; num_frames < NumDriveSlots; ++num_frames)
 	{
-		DrawShipPiece(ModuleFrame, *uqm::gameState().sis().DriveSlots[num_frames],
+		DrawShipPiece(ModuleFrame.get(), *uqm::gameState().sis().DriveSlots[num_frames],
 					  num_frames, true);
 	}
 	for (num_frames = 0; num_frames < NumJetSlots; ++num_frames)
 	{
-		DrawShipPiece(ModuleFrame, *uqm::gameState().sis().JetSlots[num_frames],
+		DrawShipPiece(ModuleFrame.get(), *uqm::gameState().sis().JetSlots[num_frames],
 					  num_frames, true);
 	}
 	for (num_frames = 0; num_frames < NumModuleSlots; ++num_frames)
@@ -2501,7 +2501,7 @@ static void DrawBluePrint(MenuState* pMS)
 		if (!(pMS->CurState == StarbaseMenuItem::Shipyard
 			  && (which_piece == ModuleType::CrewPod || which_piece == ModuleType::StorageBay)))
 		{
-			DrawShipPiece(ModuleFrame, which_piece, num_frames, true);
+			DrawShipPiece(ModuleFrame.get(), which_piece, num_frames, true);
 		}
 	}
 
@@ -2513,7 +2513,7 @@ static void DrawBluePrint(MenuState* pMS)
 		if (pMS->CurState == StarbaseMenuItem::Shipyard
 			&& (which_piece == ModuleType::CrewPod || which_piece == ModuleType::StorageBay))
 		{
-			DrawShipPiece(ModuleFrame, which_piece, num_frames, true);
+			DrawShipPiece(ModuleFrame.get(), which_piece, num_frames, true);
 		}
 	}
 
@@ -2560,8 +2560,6 @@ static void DrawBluePrint(MenuState* pMS)
 
 	showRemainingCrew();
 	showRemainingPoints(0);
-
-	DestroyDrawable(ReleaseDrawable(ModuleFrame));
 }
 
 bool DoShipyard(MenuState* pMS)

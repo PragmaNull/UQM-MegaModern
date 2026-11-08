@@ -204,6 +204,7 @@ static bool DoDiffChooser(MenuState* pMS)
 	const ContextScope contextScope {ScreenContext};
 	const ClipRectScope clipRectScope {};
 	s = SaveContextFrame(nullptr);
+	const FrameOwner screenCopy {s.frame};
 
 	DrawDiffChooser(pMS, a, false);
 
@@ -216,7 +217,6 @@ static bool DoDiffChooser(MenuState* pMS)
 
 		if (uqm::currentActivity() & ActivityFlag::CheckAbort)
 		{
-			DestroyDrawable(ReleaseDrawable(s.frame));
 			return false;
 		}
 		else if (PulsedInputState.menu[*MenuKey::MenuSelect])
@@ -300,7 +300,6 @@ static bool DoDiffChooser(MenuState* pMS)
 		}
 	}
 
-	DestroyDrawable(ReleaseDrawable(s.frame));
 	FlushInput();
 
 	return response;

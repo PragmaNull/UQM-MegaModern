@@ -369,6 +369,7 @@ void DoDiscoveryReport(SoundBankRef ReadOutSounds)
 	{
 		const ContextScope contextScope {context};
 		saveStamp = SaveContextFrame(nullptr);
+		const FrameOwner screenCopy {saveStamp.frame};
 		{
 			FrameRef OldFontEffect {};
 
@@ -407,7 +408,6 @@ void DoDiscoveryReport(SoundBankRef ReadOutSounds)
 		DestroyScanContext();
 	}
 
-	DestroyDrawable(ReleaseDrawable(saveStamp.frame));
 
 	WaitForNoInput(WaitInfinite, true);
 }

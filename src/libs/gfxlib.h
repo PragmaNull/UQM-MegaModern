@@ -26,6 +26,7 @@
 #include <math.h>
 
 #include "core/misc/bittricks.h"
+#include "core/stl/memory.h"
 #include "core/types/enum.h"
 #include "libs/time/timelib.h"
 #include "port.h"
@@ -747,6 +748,17 @@ using BackgroundColorScope = ContextValueScope<Color, &SetContextBackGroundColor
 using FGFrameScope = ContextValueScope<FrameRef, &SetContextFGFrame>;
 using DrawModeScope = ContextValueScope<DrawMode, &SetContextDrawMode>;
 using OriginScope = ContextValueScope<GfxPoint, &SetContextOrigin>;
+
+// Destroys a frame and its drawable.
+struct FrameFree
+{
+	void operator()(FrameRef frame) const
+	{
+		DestroyDrawable(ReleaseDrawable(frame));
+	}
+};
+
+using FrameOwner = uqstl::unique_ptr<FrameDesc, FrameFree>;
 
 // Batches the drawing commands from construction to destruction.
 class [[nodiscard]] BatchScope

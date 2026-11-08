@@ -421,6 +421,7 @@ bool PauseGame(void)
 		r.corner.x = (ctxRect.extent.width - r.extent.width) >> 1;
 		r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
 		saveStamp = SaveContextFrame(&ctxRect);
+		const FrameOwner screenCopy {saveStamp.frame};
 
 		mode = MAKE_DRAW_MODE(DrawKind::Desaturate, DesatAmount);
 		{
@@ -464,7 +465,6 @@ bool PauseGame(void)
 		GamePaused = false;
 
 		DrawStamp(&saveStamp);
-		DestroyDrawable(ReleaseDrawable(saveStamp.frame));
 		ClearSystemRect();
 
 		FadeMusic(oldVolume, c_gameSecond / 2);

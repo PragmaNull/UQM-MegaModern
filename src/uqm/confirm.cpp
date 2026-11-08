@@ -117,6 +117,7 @@ bool DoConfirmExit(void)
 		r.corner.x = (ctxRect.extent.width - r.extent.width) >> 1;
 		r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
 		s = SaveContextFrame(&ctxRect);
+		const FrameOwner screenCopy {s.frame};
 
 		mode = MAKE_DRAW_MODE(DrawKind::Desaturate, DesatAmount);
 		{
@@ -181,7 +182,6 @@ bool DoConfirmExit(void)
 		{
 			DrawConfirmationWindow(true, true);
 		}
-		DestroyDrawable(ReleaseDrawable(s.frame));
 		ClearSystemRect();
 		if (response || (uqm::currentActivity() & ActivityFlag::CheckAbort))
 		{
@@ -261,6 +261,7 @@ void DoPopupWindow(const char* msg)
 		// TODO: Maybe DrawLabelAsWindow() should return a saved GfxStamp?
 		//   We do not know the dimensions here, and so save the whole context
 		s = SaveContextFrame(nullptr);
+		const FrameOwner screenCopy {s.frame};
 
 		Widget_SetFont(StarConFont);
 		Widget_SetWindowColors(ShadowboxBackgroundColor,
@@ -277,7 +278,6 @@ void DoPopupWindow(const char* msg)
 		}
 		ClearSystemRect();
 		DrawStamp(&s);
-		DestroyDrawable(ReleaseDrawable(s.frame));
 	}
 
 	if (FlashPaused)

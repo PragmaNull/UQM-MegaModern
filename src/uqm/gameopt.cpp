@@ -1893,6 +1893,7 @@ static bool PickGame(bool saving, bool fromMainMenu)
 	const ContextScope contextScope {SpaceContext};
 	// Save the current state of the screen for later restoration
 	DlgStamp = SaveContextFrame(nullptr);
+	const FrameOwner screenCopy {DlgStamp.frame};
 	GetContextClipRect(&DlgRect);
 
 	DrawMenuStateStrings(MenuString::SaveGame, !saving);
@@ -2025,7 +2026,6 @@ static bool PickGame(bool saving, bool fromMainMenu)
 		ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &DlgRect);
 	}
 
-	DestroyDrawable(ReleaseDrawable(DlgStamp.frame));
 
 	ResumeMusic();
 
