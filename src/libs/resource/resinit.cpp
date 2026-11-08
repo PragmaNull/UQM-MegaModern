@@ -188,7 +188,7 @@ ResourceIndex _get_current_index_header(void)
 
 void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix)
 {
-	uqstl::optional<uqstl::string> text {uqm::readTextFile(dir, filename, uqm::JsonPadding)};
+	uqstl::optional<uqstl::string> text {uqm::readJsonText(dir, filename)};
 	if (!text)
 	{
 		return;

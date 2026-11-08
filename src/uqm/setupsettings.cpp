@@ -41,7 +41,7 @@ uqstl::optional<MenuDefinition> readMenuDefinition(uqgsl::czstring resource, con
 		log::error("The resource '{}' is not defined.", resource);
 		return uqstl::nullopt;
 	}
-	auto json {readTextFile(contentDir(), path, JsonPadding)};
+	auto json {readJsonText(contentDir(), path)};
 	if (!json)
 	{
 		log::error("Could not read the menu definition '{}'.", path);

@@ -184,10 +184,10 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 
 	const ContextScope contextScope {OffScreenContext};
 
-	FrameRef SkelFrame {CaptureDrawable(LoadGraphic(SisskelMaskPmapAnimRes))};
-	FrameRef ModuleFrame {CaptureDrawable(LoadGraphic(SismodsMaskPmapAnimRes))};
+	const FrameOwner SkelFrame {CaptureDrawable(LoadGraphic(SisskelMaskPmapAnimRes))};
+	const FrameOwner ModuleFrame {CaptureDrawable(LoadGraphic(SismodsMaskPmapAnimRes))};
 
-	GetFrameRect(SkelFrame, &r);
+	GetFrameRect(SkelFrame.get(), &r);
 	SisFrame = CaptureDrawable(CreateDrawable(
 		CreateFlags::WantPixmap | CreateFlags::WantAlpha, r.extent.width, r.extent.height, 1));
 	SetContextFGFrame(SisFrame);
@@ -196,7 +196,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 	SetContextBackGroundColor(SisBack);
 	ClearDrawable();
 
-	s.frame = SetAbsFrameIndex(SkelFrame, is3DO(uqm::UQMOptions::read().flagshipColor));
+	s.frame = SetAbsFrameIndex(SkelFrame.get(), is3DO(uqm::UQMOptions::read().flagshipColor));
 	s.origin.x = 0;
 	s.origin.y = 0;
 	DrawStamp(&s);
@@ -209,7 +209,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 			s.origin.x = DriveTopX();
 			s.origin.y = DriveTopYP();
 			s.origin.x += slot * ShipPieceOffset();
-			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
+			s.frame = SetAbsFrameIndex(ModuleFrame.get(), piece);
 			DrawStamp(&s);
 		}
 	}
@@ -221,7 +221,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 			s.origin.x = JetTopX();
 			s.origin.y = JetTopYP();
 			s.origin.x += slot * ShipPieceOffset();
-			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
+			s.frame = SetAbsFrameIndex(ModuleFrame.get(), piece);
 			DrawStamp(&s);
 		}
 	}
@@ -233,7 +233,7 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 			s.origin.x = ModuleTopXP();
 			s.origin.y = ModuleTopYP();
 			s.origin.x += slot * ShipPieceOffset();
-			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
+			s.frame = SetAbsFrameIndex(ModuleFrame.get(), piece);
 			if (piece >= ModuleType::BombModule0)
 			{ // Blue glow around the bomb - mimic PC-DOS pre-rendered cutscene
 				const ForegroundColorScope colorScope {BuildColorRgb(0x00, 0x00, 0x5F)};
@@ -259,8 +259,6 @@ static void Present_GenerateSIS(PresentationInputState* pPIS)
 		}
 	}
 
-	DestroyDrawable(ReleaseDrawable(SkelFrame));
-	DestroyDrawable(ReleaseDrawable(ModuleFrame));
 
 	hs.x = r.extent.width / 2;
 	hs.y = r.extent.height / 2;
@@ -411,7 +409,7 @@ static void Present_DrawMovieFrame(PresentationInputState* pPIS)
 
 static bool ShowPresentationFile(const char* name)
 {
-	auto text {uqm::readTextFile(uqm::contentDir(), name, uqm::JsonPadding)};
+	auto text {uqm::readJsonText(uqm::contentDir(), name)};
 	const auto commands {text ? uqm::slideshowFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!commands)
 	{

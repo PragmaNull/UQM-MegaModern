@@ -155,7 +155,7 @@ uqstl::string meleeConfigToJson(uqstl::span<const MeleeSideConfig> sides)
 
 uqstl::optional<uqstl::vector<MeleeSideConfig>> meleeConfigFromJson(uqstl::string json)
 {
-	const uqm::JsonDoc doc {uqm::parseJsonInPlace(json, "Melee configuration")};
+	const uqm::JsonText doc {uqstl::move(json), "Melee configuration"};
 	if (!doc)
 	{
 		return uqstl::nullopt;

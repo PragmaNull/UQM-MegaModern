@@ -38,7 +38,7 @@ bool readKern(yyjson_val* key, yyjson_val* value, FontKern& kern)
 uqstl::optional<FontMetrics> fontMetricsFromJson(uqstl::string json)
 {
 	static constexpr uqstl::string_view c_what {"Font metrics"};
-	const JsonDoc doc {parseJsonInPlace(json, c_what)};
+	const JsonText doc {uqstl::move(json), c_what};
 	yyjson_val* const root {versionedRoot(doc, c_fontMetricsVersion, c_what)};
 	if (root == nullptr)
 	{

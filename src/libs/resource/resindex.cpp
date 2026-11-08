@@ -100,7 +100,7 @@ namespace uqm
 uqstl::optional<uqstl::vector<ResourceEntry>> resourceIndexFromJson(uqstl::string json, uqstl::string_view prefix)
 {
 	static constexpr uqstl::string_view c_what {"Resource index"};
-	const JsonDoc doc {parseJsonInPlace(json, c_what)};
+	const JsonText doc {uqstl::move(json), c_what};
 	yyjson_val* const resources {versionedMember(doc, c_resourceIndexVersion, "resources", YYJSON_TYPE_OBJ, c_what)};
 	if (resources == nullptr)
 	{

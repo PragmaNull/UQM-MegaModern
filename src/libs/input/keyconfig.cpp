@@ -90,7 +90,7 @@ uqstl::optional<KeyTemplate> readTemplate(yyjson_val* templateObj, uqstl::span<c
 
 uqstl::optional<uqstl::vector<KeyTemplate>> keyConfigFromJson(uqstl::string json, uqstl::span<const uqgsl::czstring> controlNames)
 {
-	const uqm::JsonDoc doc {uqm::parseJsonInPlace(json, "Key configuration")};
+	const uqm::JsonText doc {uqstl::move(json), "Key configuration"};
 	if (!doc)
 	{
 		return uqstl::nullopt;

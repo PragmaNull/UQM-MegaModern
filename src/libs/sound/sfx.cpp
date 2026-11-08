@@ -150,7 +150,7 @@ void* _GetSoundBankData(const ResourceFile& resource)
 {
 	uqstl::vector<tfb::SoundSample*> samples {};
 
-	auto text {readResourceText(resource, uqm::JsonPadding)};
+	auto text {readResourceText(resource)};
 	const auto sounds {text ? uqm::soundBankFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!sounds)
 	{

@@ -808,7 +808,7 @@ void LoadGroups(SaveReader& reader, yyjson_val* root)
 bool LoadGame(uint16_t which_game, SaveSummaryData* SummPtr)
 {
 	const uqstl::string file {saveFileName(which_game)};
-	auto json {uqm::readTextFile(uqm::saveDir(), file.c_str(), uqm::JsonPadding)};
+	auto json {uqm::readJsonText(uqm::saveDir(), file.c_str())};
 	if (!json)
 	{
 		return false;
@@ -818,7 +818,7 @@ bool LoadGame(uint16_t which_game, SaveSummaryData* SummPtr)
 
 bool LoadGameFile(const char* path)
 {
-	auto text {uqm::readTextFile(path, uqm::JsonPadding)};
+	auto text {uqm::readJsonText(path)};
 	if (!text)
 	{
 		uqm::log::error("Could not open the save file '{}'.", path);
@@ -829,7 +829,7 @@ bool LoadGameFile(const char* path)
 
 bool LoadGameFromJson(uqstl::string json, uqstl::string_view file, SaveSummaryData* SummPtr)
 {
-	const JsonDoc doc {parseJsonInPlace(json, file, YYJSON_READ_ALLOW_INVALID_UNICODE)};
+	const JsonText doc {uqstl::move(json), file, YYJSON_READ_ALLOW_INVALID_UNICODE};
 	if (!doc)
 	{
 		return false;

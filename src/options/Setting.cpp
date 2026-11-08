@@ -262,7 +262,7 @@ uqstl::string SettingsRegistry::toJson() const
 
 bool SettingsRegistry::fromJson(uqstl::string json)
 {
-	const uqm::JsonDoc doc {uqm::parseJsonInPlace(json, "Settings")};
+	const uqm::JsonText doc {uqstl::move(json), "Settings"};
 	if (!doc)
 	{
 		return false;

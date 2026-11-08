@@ -14,6 +14,7 @@
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
+#include "libs/file/textfile.h"
 
 namespace uqm
 {
@@ -38,19 +39,52 @@ inline constexpr yyjson_write_flag JsonWritePretty {YYJSON_WRITE_PRETTY_TWO_SPAC
 // Returns the text of 'doc', or nullopt if yyjson cannot write it.
 [[nodiscard]] uqstl::optional<uqstl::string> writeJson(const JsonMutDoc& doc, yyjson_write_flag flags = JsonWritePretty);
 
-// The space that parseJsonInPlace() adds to the text. Read the text with this much spare capacity.
+// The space that yyjson needs after the text to parse it in place.
 inline constexpr size_t JsonPadding {YYJSON_PADDING_SIZE};
 
-// Parses 'text' in place and adds padding to it. 'text' must live longer than the document. Returns an empty JsonDoc,
-// and logs the error with 'what', if 'text' is not valid JSON.
-[[nodiscard]] JsonDoc parseJsonInPlace(uqstl::string& text, uqstl::string_view what, yyjson_read_flag flags = YYJSON_READ_NOFLAG);
+// A JSON document that yyjson parsed in place in its own text.
+class JsonText
+{
+public:
+	JsonText() = default;
+
+	// Logs the error with 'what' if 'text' is not valid JSON. 'text' needs a capacity of JsonPadding more characters,
+	// as readJsonText() gives, or the parse copies it.
+	JsonText(uqstl::string text, uqstl::string_view what, yyjson_read_flag flags = YYJSON_READ_NOFLAG);
+
+	[[nodiscard]] explicit operator bool() const
+	{
+		return m_doc != nullptr;
+	}
+
+	[[nodiscard]] yyjson_doc* get() const
+	{
+		return m_doc.get();
+	}
+
+private:
+	// The text that the document points into.
+	uqstl::unique_ptr<uqstl::string> m_text {};
+	JsonDoc m_doc {};
+};
+
+// Reads a file with the capacity that JsonText needs.
+[[nodiscard]] inline uqstl::optional<uqstl::string> readJsonText(const io::Directory& dir, uqgsl::czstring name)
+{
+	return readTextFile(dir, name, JsonPadding);
+}
+
+[[nodiscard]] inline uqstl::optional<uqstl::string> readJsonText(uqgsl::czstring path)
+{
+	return readTextFile(path, JsonPadding);
+}
 
 // Returns the root object of 'doc' if its "version" is 'version'. Otherwise logs with 'what' and returns nullptr.
-[[nodiscard]] yyjson_val* versionedRoot(const JsonDoc& doc, int64_t version, uqstl::string_view what);
+[[nodiscard]] yyjson_val* versionedRoot(const JsonText& doc, int64_t version, uqstl::string_view what);
 
 // Returns the value of 'key' in the root object of 'doc' if the "version" of the root is 'version' and the value is of
 // 'type'. Otherwise logs with 'what' and returns nullptr.
-[[nodiscard]] yyjson_val* versionedMember(const JsonDoc& doc, int64_t version, const char* key, yyjson_type type,
+[[nodiscard]] yyjson_val* versionedMember(const JsonText& doc, int64_t version, const char* key, yyjson_type type,
 										  uqstl::string_view what);
 
 [[nodiscard]] inline uqstl::string jsonString(yyjson_val* value)

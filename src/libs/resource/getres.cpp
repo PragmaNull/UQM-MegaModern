@@ -18,6 +18,7 @@
 
 //#include <string_view>
 #include "core/log/log.h"
+#include "libs/file/json.h"
 #include "options.h"
 #include "port.h"
 #include "resintrn.h"
@@ -42,10 +43,10 @@ void loadResourceDesc(ResourceDesc* desc)
 	}
 }
 
-uqstl::optional<uqstl::string> readResourceText(const ResourceFile& resource, size_t padding)
+uqstl::optional<uqstl::string> readResourceText(const ResourceFile& resource)
 {
 	uqstl::string text {};
-	text.reserve(resource.length + padding);
+	text.reserve(resource.length + uqm::JsonPadding);
 	text.resize(resource.length);
 	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
 	if (resource.file.error())

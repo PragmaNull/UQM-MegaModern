@@ -528,7 +528,7 @@ static void processCreditsFrame(void)
 static bool LoadCredits(void)
 {
 	const char* const path {res_GetString(CreditsFileRes)};
-	auto text {uqm::readTextFile(uqm::contentDir(), path, uqm::JsonPadding)};
+	auto text {uqm::readJsonText(uqm::contentDir(), path)};
 	auto blocks {text ? uqm::creditsFromJson(uqstl::move(*text)) : uqstl::nullopt};
 	if (!blocks)
 	{

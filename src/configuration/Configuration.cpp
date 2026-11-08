@@ -19,7 +19,7 @@ static_assert(c_controlTemplateCount == uqstl::to_underlying(ControlTemplate::NU
 
 bool loadUserSettings(OptionsStruct& options)
 {
-	auto json {readTextFile(uqm::configDir(), c_settingsFile, uqm::JsonPadding)};
+	auto json {readJsonText(uqm::configDir(), c_settingsFile)};
 	if (!json)
 	{
 		uqm::log::info("No {} found; using default settings.", c_settingsFile);

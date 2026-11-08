@@ -6,17 +6,17 @@
 namespace uqm
 {
 
-JsonDoc parseJsonInPlace(uqstl::string& text, uqstl::string_view what, yyjson_read_flag flags)
+JsonText::JsonText(uqstl::string text, uqstl::string_view what, yyjson_read_flag flags)
+	: m_text {uqstl::make_unique<uqstl::string>(uqstl::move(text))}
 {
-	const size_t length {text.size()};
-	text.append(YYJSON_PADDING_SIZE, '\0');
+	const size_t length {m_text->size()};
+	m_text->append(JsonPadding, '\0');
 	yyjson_read_err err {};
-	JsonDoc doc {yyjson_read_opts(text.data(), length, flags | YYJSON_READ_INSITU, nullptr, &err)};
-	if (!doc)
+	m_doc.reset(yyjson_read_opts(m_text->data(), length, flags | YYJSON_READ_INSITU, nullptr, &err));
+	if (!m_doc)
 	{
 		uqm::log::error("{}: JSON parse error at byte {}: {}", what, err.pos, err.msg);
 	}
-	return doc;
 }
 
 uqstl::optional<uqstl::string> writeJson(const JsonMutDoc& doc, yyjson_write_flag flags)
@@ -30,7 +30,7 @@ uqstl::optional<uqstl::string> writeJson(const JsonMutDoc& doc, yyjson_write_fla
 	return uqstl::string {text.get(), length};
 }
 
-yyjson_val* versionedRoot(const JsonDoc& doc, int64_t version, uqstl::string_view what)
+yyjson_val* versionedRoot(const JsonText& doc, int64_t version, uqstl::string_view what)
 {
 	if (!doc)
 	{
@@ -45,7 +45,7 @@ yyjson_val* versionedRoot(const JsonDoc& doc, int64_t version, uqstl::string_vie
 	return root;
 }
 
-yyjson_val* versionedMember(const JsonDoc& doc, int64_t version, const char* key, yyjson_type type, uqstl::string_view what)
+yyjson_val* versionedMember(const JsonText& doc, int64_t version, const char* key, yyjson_type type, uqstl::string_view what)
 {
 	yyjson_val* const root {versionedRoot(doc, version, what)};
 	if (root == nullptr)

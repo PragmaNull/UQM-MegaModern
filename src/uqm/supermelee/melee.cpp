@@ -2541,7 +2541,7 @@ static constexpr const char* c_meleeConfigFile {"melee.json"};
 
 static int LoadMeleeConfig(MeleeState* pMS)
 {
-	auto json {uqm::readTextFile(uqm::configDir(), c_meleeConfigFile, uqm::JsonPadding)};
+	auto json {uqm::readJsonText(uqm::configDir(), c_meleeConfigFile)};
 	if (!json)
 	{
 		return -1;

@@ -241,7 +241,7 @@ uqstl::optional<SlideCommand> readCommand(yyjson_val* obj)
 uqstl::optional<uqstl::vector<SlideCommand>> slideshowFromJson(uqstl::string json)
 {
 	static constexpr uqstl::string_view c_what {"Slideshow"};
-	const JsonDoc doc {parseJsonInPlace(json, c_what)};
+	const JsonText doc {uqstl::move(json), c_what};
 	yyjson_val* const commands {versionedMember(doc, c_slideshowVersion, "commands", YYJSON_TYPE_ARR, c_what)};
 	if (commands == nullptr)
 	{

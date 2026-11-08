@@ -51,18 +51,16 @@ void SetStringTableEntry(uqm::StringTable* strtab, int index, uqstl::string_view
 namespace
 {
 
-// Parses the file in 'buffer'. 'buffer' must live longer than the document.
-[[nodiscard]] uqm::JsonDoc readJsonFile(uqstl::string_view path, uqstl::string& buffer)
+[[nodiscard]] uqm::JsonText readJsonFile(uqstl::string_view path)
 {
 	const uqstl::string pathText {path};
-	auto text {uqm::readTextFile(uqm::contentDir(), pathText.c_str(), uqm::JsonPadding)};
+	auto text {uqm::readJsonText(uqm::contentDir(), pathText.c_str())};
 	if (!text)
 	{
 		uqm::log::warn("Warning: Can't open '{}'", path);
 		return {};
 	}
-	buffer = uqstl::move(*text);
-	return uqm::parseJsonInPlace(buffer, path, YYJSON_READ_ALLOW_INVALID_UNICODE);
+	return {uqstl::move(*text), path, YYJSON_READ_ALLOW_INVALID_UNICODE};
 }
 
 [[nodiscard]] uqstl::string joinNumbers(yyjson_val* numbers)
@@ -150,8 +148,7 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	const uqstl::string_view clipDir {clipsField != nullptr ? clipsField : ""};
 	const uqstl::string_view timingPath {timingField != nullptr ? timingField : ""};
 
-	uqstl::string textBuffer {};
-	const uqm::JsonDoc textDoc {readJsonFile(textPath, textBuffer)};
+	const uqm::JsonText textDoc {readJsonFile(textPath)};
 	if (!textDoc)
 	{
 		return;
@@ -165,12 +162,11 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 		return;
 	}
 
-	uqstl::string timingBuffer {};
-	uqm::JsonDoc timingDoc {};
+	uqm::JsonText timingDoc {};
 	yyjson_val* timingLines {};
 	if (!timingPath.empty())
 	{
-		timingDoc = readJsonFile(timingPath, timingBuffer);
+		timingDoc = readJsonFile(timingPath);
 		const char* const conversation {yyjson_get_str(yyjson_obj_get(root, "conversation"))};
 		if (timingDoc && conversation != nullptr)
 		{
@@ -264,13 +260,13 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 // of text lines.
 void* _GetStringData(const ResourceFile& resource)
 {
-	auto text {readResourceText(resource, uqm::JsonPadding)};
+	auto text {readResourceText(resource)};
 	if (!text)
 	{
 		uqm::log::warn("Warning: Can't read '{}'", resource.path);
 		return nullptr;
 	}
-	const uqm::JsonDoc doc {uqm::parseJsonInPlace(*text, resource.path, YYJSON_READ_ALLOW_INVALID_UNICODE)};
+	const uqm::JsonText doc {uqstl::move(*text), resource.path, YYJSON_READ_ALLOW_INVALID_UNICODE};
 	yyjson_val* const strings {uqm::versionedMember(doc, c_stringTableVersion, "strings", YYJSON_TYPE_ARR, resource.path)};
 	const size_t count {yyjson_arr_size(strings)};
 	if (count == 0)
