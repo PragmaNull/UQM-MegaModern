@@ -9,9 +9,10 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_BUILD_DIR = PROJECT_ROOT / "conanbuild"
 CONFIGS = ("Release", "Debug", "RelWithDebInfo", "MinSizeRel")
 IS_WINDOWS = os.name == "nt"
+# Linux has its own default, so that a checkout shared with Windows (WSL) can hold both builds.
+DEFAULT_BUILD_DIR = PROJECT_ROOT / ("conanbuild" if IS_WINDOWS else "conanbuild-linux")
 
 
 def make_parser(description, config_default="Release"):

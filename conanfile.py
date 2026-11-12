@@ -31,7 +31,7 @@ class UrQuanMastersConan(ConanFile):
         'libpng/1.6.54',
         'magic_enum/0.9.7',
         'nlohmann_json/3.12.0',
-        'openal-soft/1.23.1',
+        'openal-soft/1.24.3',
         'scnlib/4.0.1',
         'sdl/3.4.16',
         'spdlog/1.17.0',
@@ -45,6 +45,11 @@ class UrQuanMastersConan(ConanFile):
         'enable_asan': False,
         'enable_linter': False,
     }
+
+    def requirements(self):
+        # openal-soft and sdl require different pulseaudio versions on Linux.
+        if self.settings.os == 'Linux':
+            self.requires('pulseaudio/17.0', override=True)
 
     def layout(self):
         cmake_layout(self)

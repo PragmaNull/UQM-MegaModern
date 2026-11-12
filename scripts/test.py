@@ -10,14 +10,14 @@ from build import build
 def main():
     parser = make_parser("Run the unit tests via ctest.", config_default=None)
     parser.add_argument("--build", action="store_true",
-                        help="build the test target before running")
+                        help="build the game and the tests before running")
     parser.add_argument("-R", "--filter", help="only run tests matching this regex")
     parser.add_argument("-j", "--jobs", type=int, default=os.cpu_count(),
                         help="number of tests to run in parallel (default: number of CPUs)")
     args, extra = parser.parse_known_args()
 
     if args.build:
-        config = build(args.build_dir, args.config, args.asan, ["--target", "UQM_Tests"])
+        config = build(args.build_dir, args.config, args.asan)
     else:
         config, _ = cached_config(args.build_dir)
         if config is None:

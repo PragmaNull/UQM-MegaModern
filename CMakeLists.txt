@@ -148,8 +148,7 @@ target_compile_definitions(${APP_TARGET} PRIVATE
     "$<$<CONFIG:Release>:"
         "NDEBUG"
     ">"
-    "WIN32;"
-    "_CONSOLE;"
+    "$<$<BOOL:${WIN32}>:WIN32;_CONSOLE>;"
     "_VW=320;"
     "_VH=240;"
    
@@ -198,13 +197,22 @@ if (ENABLE_ASAN)
                 -fsanitize=address
             )
         endif()
+    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        message(STATUS "Enabling ASAN for GCC")
+        target_compile_options(${APP_TARGET} PRIVATE
+            -fsanitize=address
+            -fsanitize-address-use-after-scope
+            -fno-optimize-sibling-calls
+            -fno-omit-frame-pointer
+        )
+        target_link_options(${APP_TARGET} PRIVATE -fsanitize=address)
     # MSVC (Visual Studio cl.exe)
     elseif (MSVC)
         message(STATUS "Enabling ASAN for MSVC")
         target_compile_options(${APP_TARGET} PRIVATE /fsanitize=address /Zi)
         target_link_options(${APP_TARGET} PRIVATE /fsanitize=address)
     else()
-        message(FATAL_ERROR "AddressSanitizer not supported with this compiler on Windows")
+        message(FATAL_ERROR "AddressSanitizer not supported with this compiler")
     endif()
 endif()
 
@@ -285,9 +293,9 @@ target_link_libraries(${APP_TARGET}
         utf8proc::utf8proc
         vorbis::vorbis 
         yyjson::yyjson
-        ws2_32
+        $<$<BOOL:${WIN32}>:ws2_32>
         ZLIB::ZLIB 
-        $<$<CONFIG:Release>:user32>
+        $<$<AND:$<BOOL:${WIN32}>,$<CONFIG:Release>>:user32>
 )
 
 #print_library_properties(SDL3::SDL3)

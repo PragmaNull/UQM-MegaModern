@@ -82,11 +82,13 @@ The game data is in a separate repository: [UQM-MegaModern-Content](https://gith
 
 ### Requirements
 
-* Windows 10 or later. Linux and macOS builds are not supported yet.
+* Windows 10 or later, or Linux. macOS builds are not supported yet.
 * [CMake](https://cmake.org/) and [Ninja](https://ninja-build.org/)
 * [Python](https://www.python.org/) 3 and [Conan](https://conan.io/) 2 (`pip install conan`)
 
 Conan installs the libraries that the game uses. See [conanfile.py](conanfile.py) for the list.
+
+#### Windows
 
 Make a Conan profile for `clang-cl` with `conan profile detect`, then set the compiler in the profile. For example:
 
@@ -107,6 +109,37 @@ tools.cmake.cmaketoolchain:generator=Ninja
 tools.build:compiler_executables={"c": "clang-cl.exe", "cpp": "clang-cl.exe"}
 ```
 
+#### Linux
+
+The Linux build uses GCC 15 or later. These steps are for Debian and Ubuntu, and work in WSL2.
+
+1. Install the build tools. Install Conan with `pipx`, because `pip install` fails with `externally-managed-environment`:
+
+   ```bash
+   sudo apt-get install -y build-essential cmake ninja-build python3 pipx pkgconf
+   pipx install conan
+   conan profile detect
+   ```
+
+2. Install the system development packages for SDL (X11, OpenGL, EGL and udev). Conan does not install them, and `setup.sh` stops with an error if one is missing:
+
+   ```bash
+   sudo apt-get install -y libx11-dev libx11-xcb-dev libfontenc-dev libice-dev libsm-dev \
+     libxau-dev libxaw7-dev libxcomposite-dev libxcursor-dev libxdamage-dev libxdmcp-dev \
+     libxext-dev libxfixes-dev libxi-dev libxinerama-dev libxkbfile-dev libxmu-dev \
+     libxmuu-dev libxpm-dev libxrandr-dev libxrender-dev libxres-dev libxss-dev libxt-dev \
+     libxtst-dev libxv-dev libxxf86vm-dev libxcb-glx0-dev libxcb-render0-dev \
+     libxcb-render-util0-dev libxcb-xkb-dev libxcb-icccm4-dev libxcb-image0-dev \
+     libxcb-keysyms1-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-sync-dev \
+     libxcb-xfixes0-dev libxcb-xinerama0-dev libxcb-dri3-dev uuid-dev libxcb-cursor-dev \
+     libxcb-dri2-0-dev libxcb-present-dev libxcb-composite0-dev libxcb-ewmh-dev \
+     libxcb-res0-dev libxcb-util-dev libgl-dev libudev-dev libegl-dev
+   ```
+
+3. Use the `.sh` scripts in place of the `.bat` scripts below. They take the same arguments. The default build directory on Linux is `conanbuild-linux`, so that a checkout shared with Windows (for example in WSL) can hold both builds.
+
+The first `setup.sh` builds many libraries from source and can take a long time.
+
 ### Build and run
 
 From the repository root:
@@ -115,6 +148,14 @@ From the repository root:
 setup.bat
 build.bat
 run.bat
+```
+
+On Linux:
+
+```bash
+./setup.sh
+./build.sh
+./run.sh
 ```
 
 * `setup.bat [-c CONFIG] [--asan] [-p PROFILE]` installs the libraries and configures CMake.
@@ -139,6 +180,8 @@ cmake --build conanbuild
 test.bat      :: unit tests and save tests (ctest)
 regress.bat   :: input scripts in test/scripts
 ```
+
+On Linux, use `./test.sh` and `./regress.sh`. `test --build` builds the game and the tests first, because the save tests run the game.
 
 See [CLAUDE.md](CLAUDE.md) for more information about the build options, the tests, and the code conventions. The developer documents are in [doc/devel](doc/devel).
 

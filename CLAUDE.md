@@ -21,7 +21,9 @@ regress.bat [--build] [-R REGEX] [-j N]         :: run the input scripts in test
 shaders.bat                                     :: compile src/libs/graphics/sdl/shaders/*.hlsl to headers
 ```
 
-- `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
+On Linux, use the `.sh` files with the same arguments (`./setup.sh`, `./build.sh`, `./test.sh`, `./run.sh`, `./regress.sh`, `./shaders.sh`). They need `python3`, `conan`, `cmake`, `ninja` and a C++23 compiler. On Debian/Ubuntu, install conan with `pipx install conan` (`pip install` fails with `externally-managed-environment`). Run `conan profile detect` once before `setup.sh`.
+
+- `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild` on Windows, `conanbuild-linux` on Linux).
 - `build`/`test` default to the config already in `CMakeCache.txt`; `build` reconfigures if `--config`/`--asan` differ.
 - `build --clang-tidy` runs clang-tidy with the checks in `.clang-tidy` after the build. `--tidy-fix` also applies the fixes, with braced initialization and the format of `src/.clang-format`. Use a separate build dir, for example `-B conanbuild-tidy`.
 - `shaders` downloads its shader compilers to `.cache/shadertools` the first time. The generated headers are committed, so run it only after a change to a shader.

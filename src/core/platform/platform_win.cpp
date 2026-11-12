@@ -23,7 +23,7 @@ uqstl::string getEnvironmentValue(uqgsl::czstring env_name)
 	}
 #else
 	// This also works on Windows, but gives a warning
-	if (char* buffer = std::getenv(env_name.c_str()); buffer != nullptr)
+	if (char* buffer = std::getenv(env_name); buffer != nullptr)
 	{
 		return {buffer};
 	}
@@ -33,7 +33,7 @@ uqstl::string getEnvironmentValue(uqgsl::czstring env_name)
 
 bool setEnvironmentValue(uqgsl::czstring name, uqgsl::czstring value, bool overwrite)
 {
-#ifndef HAVE_SETENV
+#ifdef _WIN32
 	if (!overwrite)
 	{
 		if (const uqstl::string old {getEnvironmentValue(name)}; old.empty())

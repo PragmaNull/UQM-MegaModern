@@ -52,7 +52,7 @@ void NetplayOptions::configureCommands(CLI::App& app)
 			->check(CLI::Range(1, 65535));
 	}
 	netplayGroup->add_option("--netdelay", m_inputDelayFrames, fmt::format("Number of frames to buffer/delay network input for. Default={}.", m_inputDelayFrames))
-		->check(CLI::Range(0ull, getMaxFrameInputDelay()));
+		->check(CLI::Range(size_t {0}, getMaxFrameInputDelay()));
 }
 
 size_t NetplayOptions::getMaxFrameInputDelay() const

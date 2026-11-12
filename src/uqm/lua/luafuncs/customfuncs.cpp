@@ -30,7 +30,7 @@ static int luaFunctionWrapper(lua_State* luaState)
 {
 	int arg {};
 	int isNum {};
-	int (*fun)(int) = (int(__cdecl*)(int))lua_topointer(luaState, lua_upvalueindex(1));
+	int (*fun)(int) = reinterpret_cast<int (*)(int)>(const_cast<void*>(lua_topointer(luaState, lua_upvalueindex(1))));
 
 	if (lua_gettop(luaState) == 0)
 	{

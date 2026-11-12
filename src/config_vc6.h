@@ -22,27 +22,32 @@ inline constexpr uqgsl::czstring Userdir {"~/.uqm-megamodern/"};
 /* Directory where config files will be stored */
 inline constexpr auto Configdir {Userdir};
 
+#ifdef _WIN32
+#define UQM_CONFIG_DIR_VAR "%UQM_CONFIG_DIR%"
+#else
+#define UQM_CONFIG_DIR_VAR "${UQM_CONFIG_DIR}"
+#endif
+
 /* Directory where supermelee teams will be stored */
-inline constexpr uqgsl::czstring Meleedir {"%UQM_CONFIG_DIR%/teams/"};
+inline constexpr uqgsl::czstring Meleedir {UQM_CONFIG_DIR_VAR "/teams/"};
 
 /* Directory where save games will be stored */
-inline constexpr uqgsl::czstring Savedir {"%UQM_CONFIG_DIR%/save/"};
+inline constexpr uqgsl::czstring Savedir {UQM_CONFIG_DIR_VAR "/save/"};
 
 /* Directory where screenshots will be stored */
-inline constexpr uqgsl::czstring Scrshotdir {"%UQM_CONFIG_DIR%/screenshots/"};
+inline constexpr uqgsl::czstring Scrshotdir {UQM_CONFIG_DIR_VAR "/screenshots/"};
 
-/* Defined if your system has readdir_r of its own */
-#undef HAVE_READDIR_R
+#undef UQM_CONFIG_DIR_VAR
 
-/* Defined if your system has setenv of its own */
-#undef HAVE_SETENV
-
-/* Defined if your system has strcasecmp of its own */
-#undef HAVE_STRCASECMP_UQM
-// Not using "HAVE_STRCASECMP" as that conflicts with SDL.
-
+#ifdef _WIN32
 /* Defined if your system has stricmp of its own */
 #define HAVE_STRICMP
+#else
+#define HAVE_READDIR_R
+#define HAVE_SETENV
+// Not using "HAVE_STRCASECMP" as that conflicts with SDL.
+#define HAVE_STRCASECMP_UQM
+#endif
 
 /* Defined if your system has getopt_long */
 #undef HAVE_GETOPT_LONG

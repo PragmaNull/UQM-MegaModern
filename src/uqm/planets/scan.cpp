@@ -1267,7 +1267,7 @@ bool callPickupForScanType(SolarSystemState* solarSys, SystemPlanet* world,
 static void ScanPlanet(uint16_t scanType)
 {
 	const auto ScanDuration = [&] {
-		return ((GameTicksPerSecond * 7 / 4 + chooseIfHd(UINT8_MAX, 0ui8)));
+		return ((GameTicksPerSecond * 7 / 4 + chooseIfHd<uint8_t>(UINT8_MAX, 0)));
 	};
 	// NumFlashColors for flashing blips; 1 for the final frame
 	const auto ScanLinesOg = [&] {
